@@ -40,9 +40,6 @@ backup.directory=
 backup.prefix=
 backup.suffix=~
 
-# Default WWW browser
-browser=jedit_moz_remote
-
 ###
 ### BUFFER SETTINGS
 ### These can also be specified as buffer-local properties

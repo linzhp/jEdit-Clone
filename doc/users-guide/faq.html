@@ -13,7 +13,6 @@
 <li><a href=#bigfile>Why does the display mess up when editing large files?</a>
 <li><a href=#overwrite>Why doesn't overwrite mode work?</a>
 <li><a href=#altgr>Why doesn't the AltGr key work?</a>
-<li><a href=#www>Why doesn't the `Open in WWW Browser' command work?</a>
 <li><a href=#homeend>Why don't C+HOME/C+END work properly?</a>
 <li><a href=#alt>Why don't the Alt key mnemonics work?</a>
 <li><a href=#slow>Why is jEdit so slow?</a>
@@ -144,22 +143,6 @@ altgr.jar from the system and user plugin directories (see the
 JDK 1.1.7 and earlier had a bug where the AltGr key generated
 the wrong keycode. Upgrade to JDK 1.1.8 or later to fix this
 problem.
-
-<a name=www>
-<h1>Why doesn't the `Open in WWW Browser' command work?</h1>
-</a>
-
-On Unix and Windows, make sure that either the full path to
-the browser is entered in `Tools-&gt;Global Options-&gt;General',
-or that the browser's directory is listed in your PATH.<p>
-
-On Unix, it is recommended that the `jedit_moz_remote' wrapper
-for Netscape Navigator be used. The script relies on the `netscape'
-executable being in the PATH.<p>
-
-On the MacOS, the `Open in WWW Browser' feature does not work at
-all. If anybody can confirm otherwise, I will be happy to post
-information here.
 
 <a name=homeend>
 <h1>Why don't C+HOME/C+END work properly?</h1>

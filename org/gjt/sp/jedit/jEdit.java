@@ -1040,8 +1040,6 @@ public class jEdit
 		addAction(new org.gjt.sp.jedit.actions.about());
 		addAction(new org.gjt.sp.jedit.actions.block_comment());
 		addAction(new org.gjt.sp.jedit.actions.box_comment());
-		addAction(new org.gjt.sp.jedit.actions.browser_open_sel());
-		addAction(new org.gjt.sp.jedit.actions.browser_open_url());
 		addAction(new org.gjt.sp.jedit.actions.buffer_options());
 		addAction(new org.gjt.sp.jedit.actions.clear());
 		addAction(new org.gjt.sp.jedit.actions.clear_marker());
@@ -1526,6 +1524,9 @@ public class jEdit
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.104  1999/05/26 22:01:07  sp
+ * Unbundling WWW Browser commands, documentation updates
+ *
  * Revision 1.103  1999/05/26 04:46:03  sp
  * Minor API change, soft tabs fixed ,1.7pre1
  *

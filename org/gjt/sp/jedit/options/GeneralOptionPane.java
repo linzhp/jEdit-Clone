@@ -104,15 +104,6 @@ public class GeneralOptionPane extends OptionPane
 		addComponent(jEdit.getProperty("options.general.lineSeparator"),
 			lineSeparator);
 
-		/* WWW browser */
-		String[] browsers = { "jedit_moz_remote", "iexplore.exe",
-			"netscape.exe" };
-		browser = new JComboBox(browsers);
-		browser.setEditable(true);
-		browser.setSelectedItem(jEdit.getProperty("browser"));
-		addComponent(jEdit.getProperty("options.general.browser"),
-			browser);
-
 		/* Session management */
 		saveDesktop = new JCheckBox(jEdit.getProperty(
 			"options.general.saveDesktop"));
@@ -186,7 +177,6 @@ public class GeneralOptionPane extends OptionPane
 			break;
 		}
 		jEdit.setProperty("buffer.lineSeparator",lineSep);
-		jEdit.setProperty("browser",(String)browser.getSelectedItem());
 		jEdit.setProperty("view.showTips",showTips.getModel()
 			.isSelected() ? "on" : "off");
 		jEdit.setProperty("view.showToolbar",showToolbar.getModel()
@@ -205,7 +195,6 @@ public class GeneralOptionPane extends OptionPane
 	private JTextField backupPrefix;
 	private JTextField backupSuffix;
 	private JComboBox lineSeparator;
-	private JComboBox browser;
 	private JCheckBox saveDesktop;
 	private JCheckBox server;
 	private JCheckBox showTips;

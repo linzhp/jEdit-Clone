@@ -91,6 +91,8 @@ file=new-file \
      close-file \
      close-view \
      - \
+     word-count \
+     - \
      save \
      save-as \
      save-url \
@@ -98,6 +100,9 @@ file=new-file \
      - \
      send \
      print \
+     - \
+     buffer-options \
+     global-options \
      - \
      exit
 file.label=$File
@@ -111,12 +116,15 @@ no-recent.label=No Recent Files
 reload.label=Re$load
 close-file.label=$Close File
 close-view.label=Close Vie$w
+word-count.label=Word Coun$t...
 save.label=S$ave
 save-as.label=Sa$ve As...
 save-url.label=Save to URL...
 save-all.label=Save All Buffers
 send.label=Sen$d...
 print.label=Pri$nt...
+buffer-options.label=$Buffer Options...
+global-options.label=$Global Options...
 exit.label=E$xit
 
 ### Edit menu
@@ -156,8 +164,8 @@ paste-previous.label=Paste Pre$vious...
 paste-predefined.label=Paste Pre$defined...
 clear.label=Clea$r
 select-all.label=Select $All
-tab.label=Spaces to Tabs
-untab.label=Tabs to Spaces
+tab.label=$Spaces to Tabs
+untab.label=$Tabs to Spaces
 to-lower.label=To $Lowercase
 to-upper.label=To $Uppercase
 format.label=F$ormat Text
@@ -232,29 +240,16 @@ box-comment.label=Box Comment
 block-comment.label=Block Comment
 
 ### Tools menu
-tools=word-count \
-      - \
-      compile \
+tools=compile \
       toggle-console \
       - \
       prev-error \
-      next-error \
-      - \
-      browser-open-sel \
-      browser-open-url \
-      - \
-      buffer-options \
-      global-options
+      next-error
 tools.label=$Tools
-word-count.label=Word Co$unt...
 compile.label=$Compile
 toggle-console.label=Show/Hi$de Console
 prev-error.label=Go to $Previous Error
 next-error.label=Go to $Next Error
-browser-open-sel.label=$Open Selection in WWW Browser
-browser-open-url.label=Open in $WWW Browser
-buffer-options.label=Buffe$r Options...
-global-options.label=$Global Options...
 
 ### Search menu
 search=find \
@@ -368,14 +363,6 @@ badurl.title=Invalid URL
 # {0} - the URL
 badurl.message=The following URL is invalid: {0}
 
-# Couldn't load browser dialog
-wwwerror.title=WWW Browser Error
-# {0} - the WWW browser
-wwwerror.message=There was an error while starting the WWW browser.\n\
-	({0})\n\
-	Check that the browser is set correctly in\n\
-	Tools->Global Options->General.
-
 # Save To URL dialog
 saveurl.title=Save To URL
 saveurl.message=URL to save file to:
@@ -481,7 +468,7 @@ pastepredef.edit=Edit
 # Clipping editor dialog
 clipedit.title=Clipping Editor
 
-# Console dialog
+# Console component
 console.output=Output
 console.errors=Errors
 console.ioerror=I/O error: {0}
@@ -531,7 +518,6 @@ options.general.backupDirectory=Backup directory (none=current):\
 options.general.backupPrefix=Backup filename prefix:\ 
 options.general.backupSuffix=Backup filename suffix:\ 
 options.general.lineSeparator=Default line separator:\ 
-options.general.browser=WWW browser:\ 
 options.general.saveDesktop=Save session on exit
 options.general.server=Enable jEdit server
 options.general.showTips=Show hints in status bar

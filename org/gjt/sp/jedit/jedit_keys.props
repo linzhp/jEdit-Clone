@@ -7,13 +7,13 @@
 help.shortcut=F1
 paste-previous.shortcut=F2
 paste-predefined.shortcut=F3
-# F4
-hypersearch.shortcut=F5
-compile.shortcut=F6
-toggle-console.shortcut=F7
-prev-error.shortcut=F8
-next-error.shortcut=F9
-browser-open-url.shortcut=F10
+hypersearch.shortcut=F4
+compile.shortcut=F5
+toggle-console.shortcut=F6
+prev-error.shortcut=F7
+next-error.shortcut=F8
+# F9
+# F10
 prev-buffer.shortcut=F11
 next-buffer.shortcut=F12
 
