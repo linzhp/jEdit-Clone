@@ -265,7 +265,7 @@ implements ActionListener, CaretListener, KeyListener, WindowListener
 	{
 		updateStatus(textArea.getCaretPosition(),force);
 	}
-	
+
 	/**
 	 * Returns the buffer being edited by this view.
 	 */

@@ -19,7 +19,7 @@
 
 package org.gjt.sp.jedit.mode;
 
-import jstyle.BatchFileTokenMarker;
+import org.gjt.sp.jedit.syntax.BatchFileTokenMarker;
 import org.gjt.sp.jedit.*;
 
 public class bat extends autoindent

@@ -19,7 +19,7 @@
 
 package org.gjt.sp.jedit.mode;
 
-import jstyle.TeXTokenMarker;
+import org.gjt.sp.jedit.syntax.TeXTokenMarker;
 import org.gjt.sp.jedit.*;
 
 public class tex extends autoindent

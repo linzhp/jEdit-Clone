@@ -19,7 +19,7 @@
 
 package org.gjt.sp.jedit.mode;
 
-import jstyle.MakefileTokenMarker;
+import org.gjt.sp.jedit.syntax.MakefileTokenMarker;
 import org.gjt.sp.jedit.*;
 
 public class makefile extends autoindent

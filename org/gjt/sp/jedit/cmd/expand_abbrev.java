@@ -40,17 +40,17 @@ public class expand_abbrev implements Command
 		String line;
 		try
 		{
-			line = buffer.getText(start,len);
+			line = buffer.getText(start,len); // chop newline
 			// scan backwards to find word
 			int wordStart = start;
 loop:			for(int i = dot - 1; i >= start; i--)
 			{
-				char c = line.charAt(dot - start);
+				char c = line.charAt(i - start);
 				switch(c)
 				{
 				case ' ':
 				case '\t':
-					wordStart = i;
+					wordStart = i + 1;
 					break loop;
 				default:
 					if(separators.indexOf(c) != -1)
@@ -60,8 +60,14 @@ loop:			for(int i = dot - 1; i >= start; i--)
 					}
 				}
 			}
-			String word = line.substring(wordStart - start,dot
-				- start);
+			if(wordStart == dot)
+			{
+				view.getToolkit().beep();
+				return;
+			}
+			String word = line.substring(wordStart - start,
+						     dot - start);
+			System.out.println("looking for " + word);
 			// loop through lines in file looking for previous
 			// occurance of word
 			for(int i = lineNo - 1; i >= 0; i--)
@@ -72,10 +78,12 @@ loop:			for(int i = dot - 1; i >= start; i--)
 					- lineStart;
 				line = buffer.getText(lineStart, lineLen);
 				int index = line.indexOf(word);
+				System.out.println("index=" + index);
+				System.out.println("lineLen=" + lineLen);
 				if(index != -1)
 				{
 					int wordEnd = lineLen;
-loop2:					for(int j = index; j < lineLen; j++)
+loop2:					for(int j = index + 1; j < lineLen; j++)
 					{
 						char c = line.charAt(j);
 						switch(c)
@@ -93,6 +101,8 @@ loop2:					for(int j = index; j < lineLen; j++)
 							}
 						}
 					}
+					System.out.println("wordEnd="
+						+ wordEnd);
 					view.getTextArea().replaceSelection(
 						line.substring(index +
 							word.length(),

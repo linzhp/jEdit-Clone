@@ -47,7 +47,7 @@ public class SyntaxView extends PlainView
 			int start = lineElement.getStartOffset();
 			String line = jEdit.untab(getTabSize(),
 				buffer.getText(start,lineElement.getEndOffset()
-					       - start));
+					       - (start + 1)));
 			if(tokenMarker == null)
 			{
 				Color color = (Color)colors.get("default");

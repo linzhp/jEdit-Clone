@@ -19,7 +19,7 @@
 
 package org.gjt.sp.jedit.mode;
 
-import jstyle.ShellScriptTokenMarker;
+import org.gjt.sp.jedit.syntax.ShellScriptTokenMarker;
 import org.gjt.sp.jedit.*;
 
 public class sh extends autoindent

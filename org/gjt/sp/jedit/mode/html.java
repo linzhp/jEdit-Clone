@@ -19,7 +19,7 @@
 
 package org.gjt.sp.jedit.mode;
 
-import jstyle.HTMLTokenMarker;
+import org.gjt.sp.jedit.syntax.HTMLTokenMarker;
 import org.gjt.sp.jedit.*;
 
 public class html extends autoindent

@@ -22,8 +22,8 @@ package org.gjt.sp.jedit;
 import java.util.Hashtable;
 
 /**
- * An edit mode. At the moment, edit modes can only define indent behaviour,
- * but other uses will exist in the future.
+ * An edit mode. At the moment, edit modes can define indent behaviour
+ * and syntax colorizing rules. Other uses will exist in the future.
  * @see CommandMgr#getMode
  * @see CommandMgr#getModeName
  * @see Buffer#getMode
