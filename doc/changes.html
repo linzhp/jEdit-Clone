@@ -4,6 +4,7 @@
 
 <a href=#wishlist>Wish List</a><br>
 <a href=#todo>To Do</a><br>
+<a href=#14pre6>Version 1.4pre6</a><br>
 <a href=#14pre5>Version 1.4pre5</a><br>
 <a href=#14pre4>Version 1.4pre4</a><br>
 <a href=#14pre3>Version 1.4pre3</a><br>
@@ -39,6 +40,9 @@ that HTML and TeX modes can subclass?
 <li>`Locate Bracket' and `Select Block' should skip
 comments/quoted literals that might contain unmatched brackets.
 <li>Backup directory feature, where all ...~ files are placed
+<li>Syntax colorizing is still slow - should use a visible line cache to speed
+up scrolling
+<li>Error list component/toolbar/dialog
 </ul>
 
 <a name=todo>
@@ -46,13 +50,31 @@ comments/quoted literals that might contain unmatched brackets.
 </a>
 
 <ul>
-<li>Syntax colorizing is still slow - should use a visible line cache to speed
-up scrolling
 <li>Context menu - mnemonics/arrows don't work, and selection is extended if
 mouse is held down
-<li>Error list component/toolbar/dialog
-<li>History doesn't work very well in Search &amp; Replace
-<li>Typing lags behind on last line of document?
+<li>Typing lags behind on last line of document? I think this is a Swing bug...
+</ul>
+
+<a name=14pre6>
+<h1>Version 1.4pre6</h1>
+</a>
+
+<h2>Enhancements</h2>
+
+<ul>
+<li>`Accents to HTML Entities' plugin optimizations (Romain Guy)
+</ul>
+
+<h2>Bug Fixes</h2>
+
+<ul>
+<li>Files got corrupted if the line separator was set to DOS/Windows in
+the Options dialog box (this only affected new files, existing files are
+safe)
+<li>Find Selection didn't work
+<li>Soft tabs didn't work in text mode
+<li>Desktop wasn't saved sometimes
+<li>Using the history would delete what was already entered in the text field
 </ul>
 
 <a name=14pre5>

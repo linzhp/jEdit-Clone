@@ -1,6 +1,6 @@
 /*
  * find_selection.java
- * Copyright (C) 1998 Slava Pestov
+ * Copyright (C) 1998, 1999 Slava Pestov
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -37,7 +37,7 @@ public class find_selection extends EditAction
 			.getSelectedText();
 		if(selection != null)
 		{
-			jEdit.setProperty("search.find.value",selection);
+			jEdit.setProperty("history.find.0",selection);
 			buffer.find(view,false);
 		}
 		else

@@ -45,7 +45,7 @@ public class jEdit
 	 * The date when a change was last made to the source code,
 	 * in <code>YYYYMMDD</code> format.
 	 */
-	public static final String BUILD = "19990219";
+	public static final String BUILD = "19990220";
 
 	/**
 	 * AWK regexp syntax.
@@ -869,10 +869,10 @@ public class jEdit
 	{
 		if(!_closeBuffer(view,buffer))
 			return false;
+		if(buffers.size() == 1)
+			exit(view);
 		int index = buffers.indexOf(buffer);
 		buffers.removeElementAt(index);
-		if(buffers.isEmpty())
-			exit(view);
 		Buffer prev = (Buffer)buffers.elementAt(Math.max(0,index - 1));
 		Enumeration enum = getViews();
 		while(enum.hasMoreElements())

@@ -228,13 +228,19 @@ public class GeneralOptionPane extends OptionPane
 		jEdit.setProperty("recent",recent.getText());
 		jEdit.setProperty("clipHistory",clipHistory.getText());
 		jEdit.setProperty("backups",backups.getText());
-		String lineSep = (String)lineSeparator.getSelectedItem();
-		if("Unix (\\n)".equals(lineSep))
+		String lineSep = null;
+		switch(lineSeparator.getSelectedIndex())
+		{
+		case 0:
 			lineSep = "\n";
-		else if("Windows (\\r\\n)".equals(lineSep))
+			break;
+		case 1:
 			lineSep = "\r\n";
-		else if("MacOS (\\r)".equals(lineSep))
+			break;
+		case 2:
 			lineSep = "\r";
+			break;
+		}
 		jEdit.setProperty("buffer.lineSeparator",lineSep);
 		jEdit.setProperty("browser",(String)browser.getSelectedItem());
 		jEdit.setProperty("buffer.make",(String)make.getSelectedItem());

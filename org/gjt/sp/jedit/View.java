@@ -494,10 +494,10 @@ implements CaretListener, KeyListener, WindowListener
 		Mode mode = buffer.getMode();
 		if(mode instanceof KeyListener)
 			((KeyListener)mode).keyTyped(evt);
-		else if(mode != null && jEdit.getAutoIndent()
-			&& keyCode == KeyEvent.VK_TAB)
+		else if(keyCode == KeyEvent.VK_TAB)
 		{
-			if(mode.indentLine(buffer,this,textArea
+			if(mode != null && jEdit.getAutoIndent()
+				&& mode.indentLine(buffer,this,textArea
 				.getCaretPosition()))
 			{
 				evt.consume();

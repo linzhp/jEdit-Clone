@@ -31,7 +31,6 @@ public class HistoryTextField extends JTextField implements KeyListener
 		super(width);
 		this.name = name;
 		history = new String[100];
-		//historyPos = 1;
 		String line;
 		int i = 0;
 		while((line = jEdit.getProperty("history." + name + "." + i)) != null)
@@ -61,13 +60,20 @@ public class HistoryTextField extends JTextField implements KeyListener
 		switch(evt.getKeyCode())
 		{
 		case KeyEvent.VK_DOWN:
-			if(historyPos <= 1)
-				getToolkit().beep();
+			if(historyPos == 1)
+                        {
+                                historyPos = 0;
+                                setText(current);
+                        }
+                        else if(historyPos < 1)
+                                getToolkit().beep();
 			else
 				setText(history[--historyPos - 1]);
 			evt.consume();
 			break;
 		case KeyEvent.VK_UP:
+                        if(historyPos == 0)
+                                current = getText();
 			String line = history[historyPos];
 			if(line == null)
 				getToolkit().beep();
@@ -86,5 +92,6 @@ public class HistoryTextField extends JTextField implements KeyListener
 	// private members
 	private String name;
 	private String[] history;
+        private String current;
 	private int historyPos;
 }

@@ -27,19 +27,6 @@ import org.gjt.sp.jedit.*;
 public class SearchAndReplace extends JDialog
 implements ActionListener, KeyListener, WindowListener
 {
-	private View view;
-	private HistoryTextField find;
-	private HistoryTextField replace;
-	private JCheckBox keepDialog;
-	private JCheckBox ignoreCase;
-	private JComboBox regexpSyntax;
-	private JButton findBtn;
-	private JButton replaceSelection;
-	private JButton replaceAll;
-	private JButton cancel;
-	private int selStart;
-	private int selEnd;
-	
 	public SearchAndReplace(View view)
 	{
 		super(view,jEdit.getProperty("search.title"),false);
@@ -149,12 +136,12 @@ implements ActionListener, KeyListener, WindowListener
 		else if(source == findBtn)
 		{
 			if(view.getBuffer().find(view,false))
-				_dispose();
+				disposeOrKeepDialog();
 		}
 		else if(source == replaceSelection)
 		{
 			if(view.getBuffer().replaceAll(view,selStart,selEnd))
-				_dispose();
+				disposeOrKeepDialog();
 			else
 				getToolkit().beep();
 		}
@@ -162,17 +149,10 @@ implements ActionListener, KeyListener, WindowListener
 		{
 			if(view.getBuffer().replaceAll(view,0,
 				view.getBuffer().getLength()))
-				_dispose();
+				disposeOrKeepDialog();
 			else
 				getToolkit().beep();
 		}
-	}
-
-	public void _dispose()
-	{
-		if(keepDialog.getModel().isSelected())
-			return;
-		dispose();
 	}
 
 	public void keyPressed(KeyEvent evt)
@@ -182,7 +162,7 @@ implements ActionListener, KeyListener, WindowListener
 		case KeyEvent.VK_ENTER:
 			save();
 			if(view.getBuffer().find(view,false));
-				_dispose();
+				disposeOrKeepDialog();
 			break;
 		case KeyEvent.VK_ESCAPE:
 			save();
@@ -208,4 +188,25 @@ implements ActionListener, KeyListener, WindowListener
 	public void windowDeiconified(WindowEvent evt) {}
 	public void windowActivated(WindowEvent evt) {}
 	public void windowDeactivated(WindowEvent evt) {}
+
+        // private members
+	private View view;
+	private HistoryTextField find;
+	private HistoryTextField replace;
+	private JCheckBox keepDialog;
+	private JCheckBox ignoreCase;
+	private JComboBox regexpSyntax;
+	private JButton findBtn;
+	private JButton replaceSelection;
+	private JButton replaceAll;
+	private JButton cancel;
+	private int selStart;
+	private int selEnd;
+	
+	private void disposeOrKeepDialog()
+	{
+		if(keepDialog.getModel().isSelected())
+			return;
+		dispose();
+	}
 }
