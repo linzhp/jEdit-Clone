@@ -18,10 +18,9 @@
  */
 package org.gjt.sp.jedit.syntax;
 
-import java.util.*;
-import jstyle.*;
+import com.sun.java.swing.text.Segment;
 
-public class MakefileTokenMarker extends JSTokenMarker
+public class MakefileTokenMarker extends TokenMarker
 {
 	// public members
 	public static final String MAKE_CMD = "make_cmd";
@@ -30,65 +29,56 @@ public class MakefileTokenMarker extends JSTokenMarker
 	public static final String DQUOTE = "dquote";
 	public static final String SQUOTE = "squote";
 
-	public Enumeration markTokens(String line, int lineIndex)
+	public Token markTokens(Segment line, int lineIndex)
 	{
 		ensureCapacity(lineIndex);
+		lastToken = null;
 		String token = lineIndex == 0 ? null : lineInfo[lineIndex - 1];
-		tokens.removeAllElements();
-		int lastOffset = 0;
-		int length = line.length();
-loop:		for(int i = 0; i < length; i++)
+		int offset = line.offset;
+		int lastOffset = offset;
+		int length = line.count + offset;
+loop:		for(int i = offset; i < length; i++)
 		{
-			char c = line.charAt(i);
+			char c = line.array[i];
 			switch(c)
 			{
 			case ':': case '=': case ' ':
-				if(token == null && lastOffset == 0)
+				if(token == null && lastOffset == offset)
 				{
-					tokens.addElement(new JSToken(line
-						.substring(0,i + 1),MAKE_CMD));
+					addToken((i+1) - lastOffset,MAKE_CMD);
 					lastOffset = i + 1;
 				}
 				break;
 			case '\t':
 				// silly hack
-				if(token == null && lastOffset == 0)
+				if(token == null && lastOffset == offset)
 				{
-					tokens.addElement(new JSToken(line
-						.substring(0,i),null));
-					lastOffset = i;
+					addToken((i+1) - lastOffset,null);
+					lastOffset = i + 1;
 				}
 				break;
 			case '#':
-				if(token == null && (i == 0 ||
-					line.charAt(i - 1) != '\\'))
+				if(token == null && (i == offset ||
+					line.array[i - 1] != '\\'))
 				{
-					tokens.addElement(new JSToken(line
-						.substring(lastOffset,i),
-						null));
-					tokens.addElement(new JSToken(line
-						.substring(i,length),
-						COMMENT));
+					addToken(i - lastOffset,null);
+					addToken(length - i,COMMENT);
 					lastOffset = length;
 					break loop;
 				}
 				break;
 			case '$':
-				if(token == null && lastOffset != 0)
+				if(token == null && lastOffset != offset)
 				{
-					tokens.addElement(new JSToken(line
-						.substring(lastOffset,i),
-						null));
+					addToken(i - lastOffset,null);
 					lastOffset = i;
 					if(length - i > 1)
 	 				{
-				      		if(line.charAt(i + 1) == '(')
+				      		if(line.array[i + 1] == '(')
 							token = VARIABLE;
 						else
 						{
-							tokens.addElement(new JSToken(
-								line.substring(i,i+1),
-								VARIABLE));
+							addToken(2,VARIABLE);
 							lastOffset += 2;
 						}
 					}
@@ -98,60 +88,56 @@ loop:		for(int i = 0; i < length; i++)
 				if(token == VARIABLE)
 				{
 					token = null;
-					tokens.addElement(new JSToken(line
-						.substring(lastOffset,i + 1),
-						VARIABLE));
+					addToken((i+1) - lastOffset,VARIABLE);
 					lastOffset = i + 1;
 				}
 				break;
 			case '"':
-				if(i != 0 && line.charAt(i - 1) == '\\')
+				if(i != offset && line.array[i - 1] == '\\')
 					break;
 				if(token == null)
 				{
 					token = DQUOTE;
-					tokens.addElement(new JSToken(line
-						.substring(lastOffset,i),
-						null));
+					addToken(i - lastOffset,null);
 					lastOffset = i;
 				}
 				else if(token == DQUOTE)
 				{
 					token = null;
-					tokens.addElement(new JSToken(line
-						.substring(lastOffset,i + 1),
-						DQUOTE));
+					addToken((i+1) - lastOffset,DQUOTE);
 					lastOffset = i + 1;
 				}
 				break;
 			case '\'':
-				if(i != 0 && line.charAt(i - 1) == '\\')
+				if(i != offset && line.array[i - 1] == '\\')
 					break;
 				if(token == null)
 				{
 					token = SQUOTE;
-					tokens.addElement(new JSToken(line
-						.substring(lastOffset,i),
-						null));
+					addToken(i - lastOffset,null);
 					lastOffset = i;
 				}
 				else if(token == SQUOTE)
 				{
 					token = null;
-					tokens.addElement(new JSToken(line
-						.substring(lastOffset,i + 1),
-						SQUOTE));
+					addToken((i+1) - lastOffset,SQUOTE);
 					lastOffset = i + 1;
 				}
 				break;
 			}
 		}
 		if(lastOffset != length)
-			tokens.addElement(new JSToken(line.substring(lastOffset,
-				length),lastOffset == 0 ? MAKE_CMD : token));
+			addToken(length - lastOffset,lastOffset == offset ?
+				 MAKE_CMD : token);
 		lineInfo[lineIndex] = (token == DQUOTE || token == SQUOTE ?
 			token : null);
 		lastLine = lineIndex;
-		return tokens.elements();
+		if(lastToken != null)
+		{
+			lastToken.nextValid = false;
+			return firstToken;
+		}
+		else
+			return null;
 	}
 }

@@ -36,7 +36,9 @@ public class locate_bracket implements Command
 			.getProperty("closeBrackets");
 		if(closeBrackets == null)
 			closeBrackets = ">)]}";
-		int dot = view.getTextArea().getSelectionStart();
+		int dot = view.getTextArea().getCaretPosition();
+		if(dot != 0)
+			dot--;
 		char bracket;
 		try
 		{
@@ -84,7 +86,7 @@ public class locate_bracket implements Command
 		if(offset >= 0)
 		{
 			offset += start;
-			view.getTextArea().select(offset,offset + 1);
+			view.getTextArea().setCaretPosition(offset + 1);
 			return;
 		}
 		// check previous lines
@@ -99,7 +101,7 @@ public class locate_bracket implements Command
 			if(offset >= 0)
 			{
 				offset += start;
-				view.getTextArea().select(offset,offset + 1);
+				view.getTextArea().setCaretPosition(offset+1);
 				return;
 			}
 		}
@@ -144,7 +146,7 @@ public class locate_bracket implements Command
 		if(offset >= 0)
 		{
 			offset += (dot + 1);
-			view.getTextArea().select(offset,offset + 1);
+			view.getTextArea().setCaretPosition(offset + 1);
 			return;
 		}
 		// check following lines
@@ -159,7 +161,7 @@ public class locate_bracket implements Command
 			if(offset >= 0)
 			{
 				offset += start;
-				view.getTextArea().select(offset,offset + 1);
+				view.getTextArea().setCaretPosition(offset+1);
 				return;
 			}
 		}

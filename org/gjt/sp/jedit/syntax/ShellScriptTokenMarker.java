@@ -18,10 +18,9 @@
  */
 package org.gjt.sp.jedit.syntax;
 
-import java.util.*;
-import jstyle.*;
+import com.sun.java.swing.text.Segment;
 
-public class ShellScriptTokenMarker extends JSTokenMarker
+public class ShellScriptTokenMarker extends TokenMarker
 {
 	// public members
 	public static final String COMMAND = "command";
@@ -31,56 +30,62 @@ public class ShellScriptTokenMarker extends JSTokenMarker
 	public static final String DQUOTE = "dquote";
 	public static final String SQUOTE = "squote";
 
-	public Enumeration markTokens(String line, int lineIndex)
+	public Token markTokens(Segment line, int lineIndex)
 	{
 		ensureCapacity(lineIndex);
+		lastToken = null;
 		String token = lineIndex == 0 ? null : lineInfo[lineIndex - 1];
-		tokens.removeAllElements();
-		int lastOffset = 0;
-		int length = line.length();
-loop:		for(int i = 0; i < length; i++)
+		byte cmdState = 0; // 0 = space before command, 1 = inside
+				// command, 2 = after command
+		int offset = line.offset;
+		int lastOffset = offset;
+		int length = line.count + offset;
+loop:		for(int i = offset; i < length; i++)
 		{
-			char c = line.charAt(i);
+			char c = line.array[i];
 			if(token == VARIABLE)
 			{
 				if(!Character.isLetterOrDigit(c) && c != '_')
 				{
 					token = null;
-					tokens.addElement(new JSToken(line
-						.substring(lastOffset,i),
-						VARIABLE));
-					lastOffset = i;
+					addToken((i+1) - lastOffset,VARIABLE);
+					lastOffset = i + 1;
+					continue; // otherwise $# wouldn't work
 				}
 			}
 			else if(token == LVARIABLE && c == '}')
 			{
 				token = null;
-				tokens.addElement(new JSToken(line
-						.substring(lastOffset,i + 1),
-						VARIABLE));
+				addToken((i+1) - lastOffset,VARIABLE);
 				lastOffset = i + 1;
 			}
 			switch(c)
 			{
-			case ' ': case '\t': case '=': case '(': case ')':
-				if(token == null && lastOffset == 0)
+			case ' ': case '\t': case '(':
+				if(token == null && cmdState == 1/*insideCmd*/)
 				{
-					tokens.addElement(new JSToken(line
-						.substring(lastOffset,i),
-						COMMAND));
+					addToken(i - lastOffset,COMMAND);
 					lastOffset = i;
+					cmdState = 2; /*afterCmd*/
 				}
 				break;
-			case '#':
-				if(token == null && (i == 0 ||
-					line.charAt(i - 1) != '\\'))
+			case '=': case ')':
+				if(token == null && cmdState == 1/*insideCmd*/)
 				{
-					tokens.addElement(new JSToken(line
-						.substring(lastOffset,i),
-						null));
-					tokens.addElement(new JSToken(line
-						.substring(i,length),
-						COMMENT));
+					addToken(i - lastOffset,null);
+					lastOffset = i;
+					cmdState = 2; /*afterCmd*/
+				}
+				break;
+			case '&': case '|': case ';':
+				cmdState = 0; /*beforeCmd*/
+				break;
+			case '#':
+				if(token == null && (i == offset ||
+					line.array[i - 1] != '\\'))
+				{
+					addToken(i - lastOffset,null);
+					addToken(length - i,COMMENT);
 					lastOffset = length;
 					break loop;
 				}
@@ -88,9 +93,9 @@ loop:		for(int i = 0; i < length; i++)
 			case '$':
 				if(token == null)
 				{
-					if(i != length - 2)
+					if(length - i >= 2)
 					{
-						switch(line.charAt(i+1))
+						switch(line.array[i+1])
 						{
 						case '(':
 							continue;
@@ -104,63 +109,72 @@ loop:		for(int i = 0; i < length; i++)
 					}
 					else
 						token = VARIABLE;
-					tokens.addElement(new JSToken(line
-						.substring(lastOffset,i),
-						null));
+					addToken(i - lastOffset,null);
+					cmdState = 2; /*afterCmd*/
 					lastOffset = i;
 				}
 				break;
 			case '"':
-				if(i != 0 && line.charAt(i - 1) == '\\')
+				if(i != offset && line.array[i - 1] == '\\')
 					break;
 				if(token == null)
 				{
 					token = DQUOTE;
-					tokens.addElement(new JSToken(line
-						.substring(lastOffset,i),
-						null));
+					addToken(i - lastOffset,null);
+					cmdState = 2; /*afterCmd*/
 					lastOffset = i;
 				}
 				else if(token == DQUOTE)
 				{
 					token = null;
-					tokens.addElement(new JSToken(line
-						.substring(lastOffset,i + 1),
-						DQUOTE));
+					addToken((i+1) - lastOffset,DQUOTE);
+					cmdState = 2; /*afterCmd*/
 					lastOffset = i + 1;
 				}
 				break;
 			case '\'':
-				if(i != 0 && line.charAt(i - 1) == '\\')
+				if(i != offset && line.array[i - 1] == '\\')
 					break;
 				if(token == null)
 				{
 					token = SQUOTE;
-					tokens.addElement(new JSToken(line
-						.substring(lastOffset,i),
-						null));
+					addToken(i - lastOffset,null);
+					cmdState = 2; /*afterCmd*/
 					lastOffset = i;
 				}
 				else if(token == SQUOTE)
 				{
 					token = null;
-					tokens.addElement(new JSToken(line
-						.substring(lastOffset,i + 1),
-						SQUOTE));
+					addToken((i+1) - lastOffset,SQUOTE);
+					cmdState = 2; /*afterCmd*/
 					lastOffset = i + 1;
+				}
+				break;
+			default:
+				if(Character.isLetter(c))
+				{
+					if(cmdState == 0 /*beforeCmd*/)
+					{
+						addToken(i - lastOffset,token);
+						lastOffset = i;
+						cmdState++; /*insideCmd*/
+					}
 				}
 				break;
 			}
 		}
 		if(lastOffset != length)
-		{
-			tokens.addElement(new JSToken(line.substring(
-				lastOffset,length),lastOffset == 0 && token == null?
-				COMMAND : token));
-		}
+			addToken(length - lastOffset,token == null &&
+				cmdState == 1 ? COMMAND : token);
 		lineInfo[lineIndex] = (token == SQUOTE || token == DQUOTE
 			? token : null);
 		lastLine = lineIndex;
-		return tokens.elements();
+		if(lastToken != null)
+		{
+			lastToken.nextValid = false;
+			return firstToken;
+		}
+		else
+			return null;
 	}
 }

@@ -22,7 +22,6 @@ package org.gjt.sp.jedit.syntax;
 import com.sun.java.swing.text.*;
 import java.awt.*;
 import java.util.*;
-import jstyle.*;
 import org.gjt.sp.jedit.jEdit;
 import org.gjt.sp.jedit.Buffer;
 
@@ -32,6 +31,7 @@ public class SyntaxView extends PlainView
 	public SyntaxView(Element elem)
 	{
 		super(elem);
+		line = new Segment();
 	}
 	
 	public void drawLine(int lineIndex, Graphics g, int x, int y)
@@ -39,40 +39,43 @@ public class SyntaxView extends PlainView
 		Buffer buffer = (Buffer)getDocument();
 		FontMetrics metrics = g.getFontMetrics();
 		Hashtable colors = buffer.getColors();
-		JSTokenMarker tokenMarker = buffer.getTokenMarker();
+		TokenMarker tokenMarker = buffer.getTokenMarker();
 		try
 		{
 			Element lineElement = getElement().getElement(
 				lineIndex);
 			int start = lineElement.getStartOffset();
-			String line = jEdit.untab(getTabSize(),
-				buffer.getText(start,lineElement.getEndOffset()
-					       - (start + 1)));
+			buffer.getText(start,lineElement.getEndOffset()
+				- (start + 1),line);
 			if(tokenMarker == null)
 			{
 				Color color = (Color)colors.get("default");
 				if(color == null)
 					color = Color.black;
 				g.setColor(color);
-				g.drawString(line,x,y);
+				Utilities.drawTabbedText(line,x,y,g,this,0);
 			}
 			else
 			{
-				Enumeration enum = tokenMarker.markTokens(line,
+				Token tokens = tokenMarker.markTokens(line,
 					lineIndex);
-				while(enum.hasMoreElements())
+				int offset = 0;
+				for(; tokens != null; tokens = tokens.next)
 				{
-					JSToken token = (JSToken)enum
-						.nextElement();
-					Object id = token.id;
+					int length = tokens.length;
+					String id = tokens.id;
 					if(id == null)
 						id = "default";
-					String sequence = token.sequence;
 					Color color = (Color)colors.get(id);
 					g.setColor(color == null ?
 						   Color.black : color);
-					g.drawString(sequence,x,y);
-					x += metrics.stringWidth(sequence);
+				   	line.count = length;
+					x = Utilities.drawTabbedText(line,x,
+						   y,g,this,offset);
+					line.offset += length;
+					offset += length;
+					if(!tokens.nextValid)
+						break;
 				}
 			}
 		}
@@ -83,5 +86,6 @@ public class SyntaxView extends PlainView
 		}
 	}
 
-
+	// private members
+	private Segment line;
 }

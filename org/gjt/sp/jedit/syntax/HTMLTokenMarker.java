@@ -18,38 +18,38 @@
  */
 package org.gjt.sp.jedit.syntax;
 
-import java.util.*;
-import jstyle.*;
+import com.sun.java.swing.text.Segment;
+import org.gjt.sp.jedit.jEdit;
 
-public class HTMLTokenMarker extends JSTokenMarker
+public class HTMLTokenMarker extends TokenMarker
 {
 	// public members
 	public static final String COMMENT = "comment";
 	public static final String TAG = "tag";
 	public static final String ENTITY = "entity";
 
-	public Enumeration markTokens(String line, int lineIndex)
+	public Token markTokens(Segment line, int lineIndex)
 	{
 		ensureCapacity(lineIndex);
+		lastToken = null;
 		String token = lineIndex == 0 ? null : lineInfo[lineIndex - 1];
-		tokens.removeAllElements();
-		int lastOffset = 0;
-		int length = line.length();
-		for(int i = 0; i < length; i++)
+		int offset = line.offset;
+		int lastOffset = offset;
+		int length = line.count + offset;
+		for(int i = offset; i < length; i++)
 		{
-			char c = line.charAt(i);
+			char c = line.array[i];
 			switch(c)
 			{
 			case '<':
 				// check if it's a comment
 				if(length - i > 3)
 				{
-					if(line.regionMatches(i,"<!--",0,3))
+					if(jEdit.regionMatches(false,line,i,
+							       "<!--"))
 					{
 						token = COMMENT;
-						tokens.addElement(new JSToken(
-							line.substring(
-							lastOffset,i),null));
+						addToken(i - lastOffset,null);
 						lastOffset = i;
 						break;
 					}
@@ -57,9 +57,7 @@ public class HTMLTokenMarker extends JSTokenMarker
 				if(token == null)
 				{
 					token = TAG;
-					tokens.addElement(new JSToken(line
-						.substring(lastOffset,i),
-							null));
+					addToken(i - lastOffset,null);
 					lastOffset = i;
 				}
 				break;
@@ -67,20 +65,17 @@ public class HTMLTokenMarker extends JSTokenMarker
 				if(token == TAG)
 				{
 					token = null;
-					tokens.addElement(new JSToken(line
-						.substring(lastOffset,i + 1),
-						TAG));
+					addToken((i+1) - lastOffset,TAG);
 					lastOffset = i + 1;
 				}
 				else if(token == COMMENT)
 				{
-					if(i >= 2 && line.regionMatches(i - 2,
-						"-->",0,3))
+					if(i >= 2 && jEdit.regionMatches(false,
+						line,i - 2,"-->"))
 					{
 						token = null;
-						tokens.addElement(new JSToken(
-							line.substring(lastOffset,i + 1),
-							COMMENT));
+						addToken((i+1) - lastOffset,
+							 COMMENT);
 						lastOffset = i + 1;
 					}
 				}
@@ -89,9 +84,7 @@ public class HTMLTokenMarker extends JSTokenMarker
 				if(token == null)
 				{
 					token = ENTITY;
-					tokens.addElement(new JSToken(line
-						.substring(lastOffset,i),
-							 null));
+					addToken(i - lastOffset,null);
 					lastOffset = i;
 				}
 				break;
@@ -99,19 +92,22 @@ public class HTMLTokenMarker extends JSTokenMarker
 				if(token == ENTITY)
 				{
 					token = null;
-					tokens.addElement(new JSToken(line
-						.substring(lastOffset,i + 1),
-						ENTITY));
+					addToken((i+1) - lastOffset,ENTITY);
 					lastOffset = i + 1;
 				}
 				break;
 			}
 		}
 		if(lastOffset != length)
-			tokens.addElement(new JSToken(line.substring(
-				lastOffset,length),token));
+			addToken(length - lastOffset,token);
 		lineInfo[lineIndex] = token;
 		lastLine = lineIndex;
-		return tokens.elements();
+		if(lastToken != null)
+		{
+			lastToken.nextValid = false;
+			return firstToken;
+		}
+		else
+			return null;
 	}
 }

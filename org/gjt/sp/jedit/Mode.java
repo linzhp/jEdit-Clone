@@ -18,9 +18,7 @@
  */
 
 package org.gjt.sp.jedit;
-
-import java.util.Hashtable;
-import jstyle.JSTokenMarker;
+import org.gjt.sp.jedit.syntax.TokenMarker;
 
 /**
  * An edit mode. At the moment, edit modes can define indent behaviour
@@ -53,10 +51,10 @@ public interface Mode
 		int caret);
 
 	/**
-	 * Returns a JSTokenMarker for this mode. Can return null if this
-	 * mode doesn's support syntax colorizing.
+	 * Returns a <code>TokenMarker</code> for this mode. Can return null
+	 * if this mode doesn's support syntax colorizing.
 	 */
-	public abstract JSTokenMarker createTokenMarker();
+	public abstract TokenMarker createTokenMarker();
 
 	/**
 	 * Called when a buffer leaves this mode.

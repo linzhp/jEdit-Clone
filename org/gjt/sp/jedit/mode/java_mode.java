@@ -21,9 +21,10 @@ package org.gjt.sp.jedit.mode;
 
 import com.sun.java.swing.text.Element;
 import jstyle.*;
+import org.gjt.sp.jedit.syntax.TokenMarker;
 import org.gjt.sp.jedit.*;
 
-public class java_mode extends autoindent //implements Mode
+public class java_mode implements Mode
 {
 	private JSLineBeautifier beautifier;
 	
@@ -32,7 +33,11 @@ public class java_mode extends autoindent //implements Mode
 		beautifier = new jstyle.JSLineBeautifier();
 	}
 
-	/*public boolean indentLine(Buffer buffer, View view, int caret)
+	public void enter(Buffer buffer)
+	{
+	}
+
+	public boolean indentLine(Buffer buffer, View view, int caret)
 	{
 		Element map = buffer.getDefaultRootElement();
 		int index = map.getElementIndex(caret);
@@ -65,10 +70,14 @@ public class java_mode extends autoindent //implements Mode
 			e.printStackTrace();
 		}
 		return true;
-	}*/
+	}
 
-	public JSTokenMarker createTokenMarker()
+	public TokenMarker createTokenMarker()
 	{
-		return new JavaTokenMarker();
+		return null; //new JavaTokenMarker();
+	}
+
+	public void leave(Buffer buffer)
+	{
 	}
 }

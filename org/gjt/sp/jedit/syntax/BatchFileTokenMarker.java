@@ -18,10 +18,10 @@
  */
 package org.gjt.sp.jedit.syntax;
 
-import java.util.*;
-import jstyle.*;
+import com.sun.java.swing.text.Segment;
+import org.gjt.sp.jedit.jEdit;
 
-public class BatchFileTokenMarker extends JSTokenMarker
+public class BatchFileTokenMarker extends TokenMarker
 {
 	// public members
 	public static final String COMMAND = "command";
@@ -29,29 +29,27 @@ public class BatchFileTokenMarker extends JSTokenMarker
 	public static final String VARIABLE = "variable";
 	public static final String QUOTE = "quote";
 
-	public Enumeration markTokens(String line, int lineIndex)
+	public Token markTokens(Segment line, int lineIndex)
 	{
+		lastToken = null;
 		String token = null;
-		tokens.removeAllElements();
-		int lastOffset = 0;
-		int length = line.length();
-loop:		for(int i = 0; i < length; i++)
+		int offset = line.offset;
+		int lastOffset = offset;
+		int length = line.count + offset;
+loop:		for(int i = line.offset; i < length; i++)
 		{
-			char c = line.charAt(i);
+			char c = line.array[i];
 			switch(c)
 			{
 			case '%':
 				if(token == null)
 				{
-					tokens.addElement(new JSToken(line
-						.substring(lastOffset,i),null));
+					addToken(i - lastOffset,null);
 					lastOffset = i;
-					if(length - i <= 3 || line.charAt(i+2)
+					if(length - i <= 3 || line.array[i+2]
 					   == ' ')
 					{
-						tokens.addElement(new JSToken(
-							line.substring(i,i+2),
-							VARIABLE));
+						addToken(2,VARIABLE);
 						i++;
 						lastOffset = i + 1;
 					}
@@ -61,9 +59,7 @@ loop:		for(int i = 0; i < length; i++)
 				else if(token == VARIABLE)
 				{
 					token = null;
-					tokens.addElement(new JSToken(line
-						.substring(lastOffset,i + 1),
-						VARIABLE));
+					addToken((i+1) - lastOffset,VARIABLE);
 					lastOffset = i + 1;
 				}
 				break;
@@ -71,45 +67,38 @@ loop:		for(int i = 0; i < length; i++)
 				if(token == null)
 				{
 					token = QUOTE;
-					tokens.addElement(new JSToken(line
-						.substring(lastOffset,i),
-						null));
+					addToken(i - lastOffset,null);
 					lastOffset = i;
 				}
 				else if(token == QUOTE)
 				{
 					token = null;
-					tokens.addElement(new JSToken(line
-						.substring(lastOffset,i + 1),
-						QUOTE));
+					addToken((i+1) - lastOffset,QUOTE);
 					lastOffset = i + 1;
 				}
 				break;
 			case '=':
-				if(token == null && lastOffset == 0)
+				if(token == null && lastOffset == offset)
 				{
-					tokens.addElement(new JSToken(line
-						.substring(0,i),null));
+					addToken(i - lastOffset,null);
 					lastOffset = i;
 				}
 				break;
 			case ' ':
-				if(lastOffset == 0)
+				if(lastOffset == offset)
 				{
-					if(line.regionMatches(true,i - 3,"rem",
-							      0,3))
+					if(jEdit.regionMatches(true,line,
+							       i - 3,"rem"))
 					{
-						tokens.addElement(new JSToken(
-							line,COMMENT));
+						addToken(length - lastOffset,
+							 COMMENT);
 						lastOffset = length;
 						break loop;
 					}
 					else if(token == null)
 					{
-						tokens.addElement(new JSToken(
-							line.substring(
-							lastOffset,i),
-							COMMAND));
+						addToken(i - lastOffset,
+							 COMMAND);
 						lastOffset = i;
 					}
 				}
@@ -117,12 +106,15 @@ loop:		for(int i = 0; i < length; i++)
 			}
 		}
 		if(lastOffset != length)
+			addToken(length - lastOffset,lastOffset == offset ?
+				COMMAND : token);
+		if(lastToken != null)
 		{
-			tokens.addElement(new JSToken(line.substring(
-				lastOffset,length),lastOffset == 0 ?
-				COMMAND : token));
+			lastToken.nextValid = false;
+			return firstToken;
 		}
-		return tokens.elements();
+		else
+			return null;
 	}
 
 	public boolean isNextLineRequested()

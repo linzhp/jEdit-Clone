@@ -29,8 +29,7 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 import java.util.zip.*;
-import jstyle.JSTokenMarker;
-import org.gjt.sp.jedit.syntax.SyntaxTextArea;
+import org.gjt.sp.jedit.syntax.*;
 
 /**
  * A <code>Buffer</code> is an open file. The buffer class doesn't
@@ -164,11 +163,11 @@ implements DocumentListener, UndoableEditListener
 				int start = match.getStartIndex() + index;
 				int len = match.getEndIndex() - match
 					.getStartIndex();
-				index += len;
 				String str = getText(start,len);
 				remove(start,len);
-				insertString(start,regexp.substitute(
-					str,replaceStr),null);
+				String subst = regexp.substitute(str,replaceStr);
+				index += subst.length();
+				insertString(start,subst,null);
 				found = true;
 			}
 			if(!found)
@@ -393,7 +392,7 @@ implements DocumentListener, UndoableEditListener
 	/**
 	 * Returns the token marker for this buffer.
 	 */
-	public JSTokenMarker getTokenMarker()
+	public TokenMarker getTokenMarker()
 	{
 		if(jEdit.getSyntaxColorizing())
 			return tokenMarker;
@@ -405,11 +404,12 @@ implements DocumentListener, UndoableEditListener
 	 * Sets the token marker for this buffer.
 	 * @param tokenMarker the new token marker
 	 */
-	public void setTokenMarker(JSTokenMarker tokenMarker)
+	public void setTokenMarker(TokenMarker tokenMarker)
 	{
 		this.tokenMarker = tokenMarker;
 		if(tokenMarker == null)
 			return;
+		Segment line = new Segment();
 		try
 		{
 			Element map = getDefaultRootElement();
@@ -418,9 +418,8 @@ implements DocumentListener, UndoableEditListener
 			{
 				Element lineElement = map.getElement(i);
 				int start = lineElement.getStartOffset();
-				String line = getText(start,lineElement
-					.getEndOffset() - start);
-				// a void version of markTokens() would be nice
+				getText(start,lineElement.getEndOffset()
+					- start,line);
 				tokenMarker.markTokens(line,i);
 			}
 		}
@@ -667,7 +666,7 @@ implements DocumentListener, UndoableEditListener
 	private UndoManager undo;
 	private Vector markers;
 	private int[] caretInfo;
-	private JSTokenMarker tokenMarker;
+	private TokenMarker tokenMarker;
 	private Hashtable colors;
 
 	private void init()

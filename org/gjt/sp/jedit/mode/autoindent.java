@@ -20,7 +20,7 @@
 package org.gjt.sp.jedit.mode;
 
 import com.sun.java.swing.text.*;
-import jstyle.JSTokenMarker;
+import org.gjt.sp.jedit.syntax.TokenMarker;
 import org.gjt.sp.jedit.jEdit;
 import org.gjt.sp.jedit.Buffer;
 import org.gjt.sp.jedit.Mode;
@@ -65,7 +65,7 @@ public class autoindent implements Mode
 		return true;
 	}
 
-	public JSTokenMarker createTokenMarker()
+	public TokenMarker createTokenMarker()
 	{
 		return null;
 	}

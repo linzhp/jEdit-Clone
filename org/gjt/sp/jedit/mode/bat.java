@@ -19,13 +19,12 @@
 
 package org.gjt.sp.jedit.mode;
 
-import jstyle.JSTokenMarker;
-import org.gjt.sp.jedit.syntax.BatchFileTokenMarker;
+import org.gjt.sp.jedit.syntax.*;
 import org.gjt.sp.jedit.*;
 
 public class bat extends autoindent
 {
-	public JSTokenMarker createTokenMarker()
+	public TokenMarker createTokenMarker()
 	{
 		return new BatchFileTokenMarker();
 	}

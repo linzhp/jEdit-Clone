@@ -19,13 +19,12 @@
 
 package org.gjt.sp.jedit.mode;
 
-import jstyle.JSTokenMarker;
-import org.gjt.sp.jedit.syntax.MakefileTokenMarker;
+import org.gjt.sp.jedit.syntax.*;
 import org.gjt.sp.jedit.*;
 
 public class makefile extends autoindent
 {
-	public JSTokenMarker createTokenMarker()
+	public TokenMarker createTokenMarker()
 	{
 		return new MakefileTokenMarker();
 	}

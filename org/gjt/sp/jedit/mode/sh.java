@@ -19,13 +19,12 @@
 
 package org.gjt.sp.jedit.mode;
 
-import jstyle.JSTokenMarker;
-import org.gjt.sp.jedit.syntax.ShellScriptTokenMarker;
+import org.gjt.sp.jedit.syntax.*;
 import org.gjt.sp.jedit.*;
 
 public class sh extends autoindent
 {
-	public JSTokenMarker createTokenMarker()
+	public TokenMarker createTokenMarker()
 	{
 		return new ShellScriptTokenMarker();
 	}

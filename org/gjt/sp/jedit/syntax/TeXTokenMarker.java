@@ -18,10 +18,10 @@
  */
 package org.gjt.sp.jedit.syntax;
 
-import java.util.*;
-import jstyle.*;
+import com.sun.java.swing.text.Segment;
+import org.gjt.sp.jedit.jEdit;
 
-public class TeXTokenMarker extends JSTokenMarker
+public class TeXTokenMarker extends TokenMarker
 {
 	// public members
 	public static final String COMMENT = "comment";
@@ -30,44 +30,65 @@ public class TeXTokenMarker extends JSTokenMarker
 	public static final String BDFORMULA = "bdformula";
 	public static final String EDFORMULA = "edformula";
 
-	public Enumeration markTokens(String line, int lineIndex)
+	public Token markTokens(Segment line, int lineIndex)
 	{
 		ensureCapacity(lineIndex);
+		lastToken = null;
 		String token = lineIndex == 0 ? null : lineInfo[lineIndex - 1];
-		tokens.removeAllElements();
-		int lastOffset = 0;
-		int length = line.length();
-loop:		for(int i = 0; i < length; i++)
+		int offset = line.offset;
+		int lastOffset = offset;
+		int length = line.count + offset;
+loop:		for(int i = offset; i < length; i++)
 		{
-			char c = line.charAt(i);
+			char c = line.array[i];
 			if(token == COMMAND)
 			{
+				// if a backslash is followed immediately
+				// by a non-alpha character, the command at
+				// the non-alpha char. If we have a backslash,
+				// some text, and then a non-alpha char,
+				// the command ends before the non-alpha char.
 				if(!Character.isLetter(c))
 				{
-					token = null;
-					tokens.addElement(new JSToken(line
-						.substring(lastOffset,i + 1),COMMAND));
-					lastOffset = i + 1;
-					continue;
+					if(i != offset && line.array[i-1]
+					   == '\\')
+					{
+						// \<non alpha>
+						// we skip over this character,
+						// hence the `continue'
+						token = null;
+						addToken((i+1) - lastOffset,
+							COMMAND);
+						lastOffset = i+1;
+						continue;
+					}
+					else
+					{
+						//\blah<non alpha>
+						// we leave the character in
+						// the stream, and it's not
+						// part of the command token
+						token = null;
+						addToken(i - lastOffset,
+							 COMMAND);
+						lastOffset = i;
+					}
 				}
 			}
 			switch(c)
 			{
 			case '%':
-				if(i != 0 && line.charAt(i - 1) == '\\')
+				if(i != offset && line.array[i-1] == '\\')
 					break;
-				tokens.addElement(new JSToken(line.substring(
-					lastOffset,i),token));
-				tokens.addElement(new JSToken(line.substring(i),
-					COMMENT));
+				addToken(i - lastOffset,token);
+				addToken(length - i,COMMENT);
 				lastOffset = length;
 				break loop;
 			case '\\':
 				if(token == null)
 				{
 					token = COMMAND;
-					tokens.addElement(new JSToken(line
-						.substring(lastOffset,i),null));
+					addToken(i - lastOffset,null);
 					lastOffset = i;
 				}
 				break;
@@ -75,29 +96,24 @@ loop:		for(int i = 0; i < length; i++)
 				if(token == null) // singe $
 				{
 					token = FORMULA;
-					tokens.addElement(new JSToken(line
-						 .substring(lastOffset,i),null));
+					addToken(i - lastOffset,null);
 					lastOffset = i;
 				}
 				else if(token == COMMAND) // \...$
 				{
 					token = FORMULA;
-					tokens.addElement(new JSToken(line
-						 .substring(lastOffset,i),
-						 COMMAND));
+					addToken(i - lastOffset,COMMAND);
 					lastOffset = i;
 				}
 				else if(token == FORMULA) // $$aaa
 				{
-					if(i != 0 && line.charAt(i - 1) == '$')
+					if(i != offset && line.array[i-1] == '$')
 					{
 						token = BDFORMULA;
 						break;
 					}
 					token = null;
-					tokens.addElement(new JSToken(line
-						.substring(lastOffset,i + 1),
-						FORMULA));
+					addToken((i+1) - lastOffset,FORMULA);
 					lastOffset = i + 1;
 				}
 				else if(token == BDFORMULA) // $$aaa$
@@ -107,20 +123,22 @@ loop:		for(int i = 0; i < length; i++)
 				else if(token == EDFORMULA) // $$aaa$$
 				{
 					token = null;
-					tokens.addElement(new JSToken(line
-						.substring(lastOffset,i + 1),
-						FORMULA));
+					addToken((i+1) - lastOffset,FORMULA);
 					lastOffset = i + 1;
 				}
 				break;
 			}
 		}
 		if(lastOffset != length)
-			tokens.addElement(new JSToken(line.substring(
-				lastOffset,length),token));
-		lineInfo[lineIndex] = (token == FORMULA || token == BDFORMULA
-			|| token == EDFORMULA) ? token : null;
+			addToken(length - lastOffset,token);
+		lineInfo[lineIndex] = (token != COMMAND ? token : null);
 		lastLine = lineIndex;
-		return tokens.elements();
+		if(lastToken != null)
+		{
+			lastToken.nextValid = false;
+			return firstToken;
+		}
+		else
+			return null;
 	}
 }
