@@ -124,7 +124,7 @@ public class HistoryTextField extends JComboBox
 /*
  * ChangeLog:
  * $Log$
- * Revision 1.12  1999/03/19 06:03:35  sp
- * Fixed history text field bug, some other small changes maybe
+ * Revision 1.13  1999/03/19 06:08:45  sp
+ * Fixed conflicts from incomplete commit, removed obsolete files
  *
  */
