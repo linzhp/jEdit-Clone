@@ -27,6 +27,9 @@ import com.sun.java.swing.text.BadLocationException;
 import com.sun.java.swing.text.Element;
 import com.sun.java.swing.text.PlainDocument;
 import com.sun.java.swing.undo.UndoManager;
+import java.awt.Graphics;
+import java.awt.PrintJob;
+import java.awt.Toolkit;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -257,6 +260,61 @@ implements DocumentListener, UndoableEditListener
 			if(view.getBuffer() == this)
 				view.updateStatus(true);
 		}
+	}
+
+	public void print(View view)
+	{
+		PrintJob job = view.getToolkit().getPrintJob(view,name,null);
+		if(job == null)
+			return;
+		int topMargin;
+		int leftMargin;
+		int bottomMargin;
+		int rightMargin;
+		int ppi = job.getPageResolution();
+		try
+		{
+			topMargin = (int)(Float.valueOf(jEdit.props
+				.getProperty("margin.top")).floatValue()
+				* ppi);
+		}
+		catch(NumberFormatException nf)
+		{
+			topMargin = ppi / 2;
+		}
+		try
+		{
+			leftMargin = (int)(Float.valueOf(jEdit.props
+				.getProperty("margin.left")).floatValue()
+				* ppi);
+		}
+		catch(NumberFormatException nf)
+		{
+			leftMargin = ppi / 2;
+		}
+		try
+		{
+			bottomMargin = (int)(Float.valueOf(jEdit.props
+				.getProperty("margin.bottom")).floatValue()
+				* ppi);
+		}
+		catch(NumberFormatException nf)
+		{
+			bottomMargin = topMargin;
+		}
+		try
+		{
+			rightMargin = (int)(Float.valueOf(jEdit.props
+				.getProperty("margin.right")).floatValue()
+				* ppi);
+		}
+		catch(NumberFormatException nf)
+		{
+			rightMargin = leftMargin;
+		}
+		System.out.println("t=" + topMargin + ",l=" + leftMargin
+			+ ",b=" + bottomMargin + ",r=" + rightMargin);
+		job.end();
 	}
 
 	public File getFile()

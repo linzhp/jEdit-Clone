@@ -8,9 +8,7 @@ call .\installit
 cd ..
 copy bin\jedit.bat %DIRECTORY%
 copy bin\jopen.bat %DIRECTORY%
-copy doc\* %DIRECTORY%\doc
-copy BUGS %DIRECTORY%\doc
-copy COPYING %DIRECTORY%\doc
-copy INSTALL %DIRECTORY%\doc
+copy doc\*.txt %DIRECTORY%\doc
 copy README %DIRECTORY%\doc
-copy TODO %DIRECTORY%\doc
+copy COPYING %DIRECTORY%\doc
+copy VERSION %DIRECTORY%\doc

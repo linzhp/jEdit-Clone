@@ -25,6 +25,7 @@ resources=jEdit.class \
 	Cmd_new_view.class \
 	Cmd_open.class \
 	Cmd_paste.class \
+	Cmd_print.class \
 	Cmd_redo.class \
 	Cmd_save.class \
 	Cmd_select_all.class \

@@ -1,6 +1,6 @@
 # Makefile
-files=../BUGS ../INSTALL ../README ../TODO ../COPYING commands.txt menus.txt \
-	plugins.txt props.txt server.txt
+files=../README ../COPYING ../VERSION \
+	index.txt installing.txt starting.txt menus.txt
 directory=$(SLAVA_DOC_DIR)
 all:
 install: default-install

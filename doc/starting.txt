@@ -1,0 +1,113 @@
+STARTING JEDIT (starting.txt, last modified 29 Sep 1998)
+
+Contents
+--------
+1. Starting jEdit
+2. Platform Specific Notes
+3. jEdit Initialization
+
+1. Starting jEdit
+-----------------
+Usually, jEdit is started to edit one or more files with this command:
+
+	jedit <filename 1> <filename 2>...
+
+Or if another instance of jEdit is already running, jOpen can be used to open
+files in it:
+
+	jopen <filename 1> <filename 2>...
+
+jEdit can also be started with no arguments:
+
+	jedit
+
+In that case, it will open a new `Untitled' file. If jOpen is started with no
+arguments, it opens a new view of the first buffer.
+
+A number of options can also be given to jEdit:
+
+	-version: Print jEdit version and exit
+	-usage: Print a command line usage
+	-nousrprops: Don't load user properties
+	-helpdir=<dir>: Documentation directory
+	-plugindir=<dir>: Plugin directory
+	-server=<file>: Write server port to <file>
+
+If jEdit is started with the jedit shell script or the jedit.bat batch file,
+-helpdir, -plugindir and -server are set automatically.
+
+jOpen also accepts certain options:
+
+	-version: Print jOpen version and exit
+	-usage: Print command line usage
+	-server=<hostname>: jEdit server to connect to
+	-portfile=<file>: File with server port
+
+If jOpen is started with the jopen shell script or the jopen.bat batch file,
+-portfile is set automatically.
+
+If you want to open a file whose name starts with a dash (-), you must place
+the -- argument before it in the command line to stop it from being interpreted
+as an option:
+
+	jedit -- -file-who's-name-starts-with-dash
+
+The -- indicates the end of options. No more options after it are interpreted.
+
+CAVEAT: If you give jOpen a relative pathname, it will be resolved relative to
+jEdit's working directory, now jOpen's. For example, if jEdit was started from
+/home/bob/Work, and jOpen is invoked with argument `filename' from the directory
+/home/bob/Play, jEdit will try to open /home/bob/Work/filename, not
+/home/bob/Play/filename as expected.
+
+2. Platform Specific Notes
+--------------------------
+Unix and clones:
+
+You need to set the PATH variable to point to the directory with the jedit and
+jedit shell scripts so that the shell can locate them. The default location is
+/opt/slava/bin. If you're using a Bourne shell (sh, ash, jsh, bash, zsh) The
+command to add /opt/slava/bin to the PATH is:
+
+	set PATH=$PATH:/opt/slava/bin; export PATH
+
+If you're using a C shell (csh, tcsh) the equivalent is:
+
+	setenv PATH $PATH:/opt/slava/bin
+
+It is advisable to place these commands in the .profile script (Bourne shell)
+or the .csh.login script (C shell) so that the PATH will be set every time you
+log in.
+
+Windows 95 and 98:
+
+If you want to use jEdit from the command line, you must add it's directory to
+the PATH. By default, jEdit is installed in C:\Program Files\jEdit. The command
+to add that directory to the PATH is:
+
+	set PATH=%PATH%;C:\Program Files\jEdit
+
+It is advisable to place this command in your C:\AUTOEXEC.BAT so that it's
+executed every time the computer starts up.
+
+Windows NT:
+
+The PATH is set in the System control panel in Windows NT. The default
+installation directory is the same as that in Windows 95/98.
+
+Other Platforms:
+
+On systems without a DOS or Unix style shell such as the Mac, jEdit will have
+to be started manually with the following options:
+
+	-plugindir=<dir>: One of these for each directory with plugins
+	-helpdir=<dir>: The doc directory in the jEdit distribution
+	-server=<file>: Some file, in a temporary directory perhaps
+
+jOpen will have to be started with these options:
+
+	-portfile=<file>: The same filename specified in the -server option to
+	jEdit
+
+-- Slava Pestov
+<slava_pestov@geocities.com>

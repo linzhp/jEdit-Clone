@@ -73,6 +73,12 @@ editor.linewrap=off
 editor.autoindent=on
 #editor.autoindent=off
 
+### Printing
+margin.top=0.5
+margin.left=0.5
+margin.bottom=0.5
+margin.right=0.5
+
 ### About dialog
 about.title=About jEdit
 about.message=jEdit version {0} build {1}, Copyright (C) 1998 Slava Pestov.\n\
@@ -144,7 +150,7 @@ status=({1,choice,0#--|1#**}:{2,choice,0#--|1#**}) {0} (Line {3}/{4} {5}%)
 ### Menubar
 editor_mbar=file edit plugins buffers help
 file=new_file new_view open open@/url %open_recent - close_file \
-	close_view save save@/as save@/url - exit
+	close_view - save save@/as save@/url - print - exit
 file.label=File
 new_file.label=New File
 new_file.shortcut=C-n
@@ -166,6 +172,8 @@ save@/as.label=Save As...
 save@/as.shortcut=CS-s
 save@/url.label=Save To URL...
 save@/url.shortcut=CS-u
+print.label=Print...
+print.shortcut=C-p
 exit.label=Exit
 exit.shortcut=C-q
 edit=undo redo - cut copy paste clear select_all - find find@/next \
@@ -206,18 +214,13 @@ no_markers.label=No Markers Defined
 plugins.label=Plugins
 no_plugins.label=No Plugins
 buffers.label=Buffers
-help=about - help@README help@INSTALL help@COPYING help@BUGS help@TODO - \
-	help@commands.txt help@menus.txt help@plugins.txt help@props.txt \
-	help@server.txt
+help=about help - help@README help@COPYING help@VERSION - \
+	help@installing.txt help@starting.txt help@menus.txt
 help.label=Help
 about.label=About jEdit...
 help@README.label=Readme
-help@INSTALL.label=Installation
 help@COPYING.label=Copying
-help@BUGS.label=Known Bugs
-help@TODO.label=To Do
-help@commands.txt=Commands
+help@VERSION.label=Version Info
+help@installing.txt.label=Installation
+help@starting.txt.label=Starting
 help@menus.txt.label=Menus
-help@plugins.txt.label=Plugins
-help@props.txt.label=Properties
-help@server.txt.label=Server

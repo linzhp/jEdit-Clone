@@ -1,5 +1,5 @@
 /*
- * Cmd_help.java - Command
+ * Cmd_print.java - Command
  * Copyright (C) 1998 Slava Pestov
  *
  * This program is free software; you can redistribute it and/or
@@ -19,7 +19,7 @@
 
 import java.util.Hashtable;
 
-public class Cmd_help implements Command
+public class Cmd_print implements Command
 {
 	public Object init(Hashtable args)
 	{
@@ -28,16 +28,13 @@ public class Cmd_help implements Command
 
 	public Object exec(Hashtable args)
 	{
-		String arg = (String)args.get(ARG);
-		if(arg == null)
-			arg = "index.txt";
 		View view = (View)args.get(VIEW);
-		if(view != null)
+		if(view == null)
+			return Boolean.FALSE;
+		else
 		{
-			jEdit.buffers.openBuffer(view,jEdit.props
-				.getProperty("helpdir") + arg);
+			view.getBuffer().print(view);
 			return Boolean.TRUE;
 		}
-		return Boolean.FALSE;
 	}
 }

@@ -27,19 +27,20 @@ import java.net.Socket;
 public class jOpen
 {
 	public static final String VERSION = "1.0";
-	public static final String BUILD = "19980926";
+	public static final String BUILD = "19980929";
 	
 	public static void usage()
 	{
 		System.err.println("Usage: jopen [<options>] [<files>]");
 		System.err.println("Valid options:");
 		System.err.println("    --: End of options");
-		System.err.println("    -version: Print jOpen version");
-		System.err.println("    -usage: Print this message");
+		System.err.println("    -version: Print jOpen version and"
+			+ " exit");
+		System.err.println("    -usage: Print this message and exit");
 		System.err.println("    -server=<server>: Server to connect"
 			+ " to");
-		System.err.println("    -portfile=<file>: File with port"
-			+ " number");
+		System.err.println("    -portfile=<file>: File with server"
+			+ " port");
 		System.exit(1);
 	}
 

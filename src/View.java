@@ -83,6 +83,7 @@ implements ActionListener, KeyListener, CaretListener, WindowListener
 			setBuffer(view.getBuffer());
 		textArea.addCaretListener(this);
 		textArea.addKeyListener(this);
+		textArea.setBorder(null);
 		updateStatus();
 		updatePluginsMenu();
 		updateBuffersMenu();

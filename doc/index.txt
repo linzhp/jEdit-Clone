@@ -1,0 +1,20 @@
+HELP INDEX (index.txt, last modified 29 Sep 1998)
+
+If you're viewing this file with jEdit, you can open a file by double click on its
+name and pressing CS-o - that is pressing `o' while holding down the Control and
+Shift keys.
+
+General
+-------
+README          Basic information about jEdit
+COPYING         The GNU General Public License
+VERSION         Version history, known bugs and to do list
+
+Basic Usage
+-----------
+installing.txt  Instructions for installing jEdit
+starting.txt    Instructions for starting jEdit
+menus.txt       A description of jEdit's menus
+
+-- Slava Pestov
+<slava_pestov@geocities.com>

@@ -36,7 +36,7 @@ import com.sun.java.swing.UIManager;
 public class jEdit
 {
 	public static final String VERSION = "0.2";
-	public static final String BUILD = "19980928";
+	public static final String BUILD = "19980929";
 	public static final PropsMgr props = new PropsMgr();
 	public static final CommandMgr cmds = new CommandMgr();
 	public static final BufferMgr buffers = new BufferMgr();
@@ -49,14 +49,14 @@ public class jEdit
 		System.err.println("Usage: jedit [<options>] [<files>]");
 		System.err.println("Valid options:");
 		System.err.println("    --: End of options");
-		System.err.println("    -version: Print jEdit version");
-		System.err.println("    -usage: Print this message");
+		System.err.println("    -version: Print jEdit version and"
+			+ " exit");
+		System.err.println("    -usage: Print this message and exit");
 		System.err.println("    -nousrprops: Don't load user"
 			+ " properties");
 		System.err.println("    -helpdir=<path>: Documentation"
 			+ " directory");
-		System.err.println("    -plugindir=<path>: Plugin search"
-			+ " path");
+		System.err.println("    -plugindir=<path>: Plugin directory");
 		System.err.println("    -server=<file>: Write server port to"
 			+ " <file>");
 		System.exit(1);

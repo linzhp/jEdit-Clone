@@ -1,0 +1,14 @@
+VERSION INFORMATION (VERSION, last modified 29 Sep 1998)
+
+-- Version 0.2 To Do:
+- Search and replace
+- Printing
+- Options dialog
+- Better documentation
+- Persistent markers
+- Fix handling of obscure errors
+- Make code thread safe
+- Make null pointer handling better
+
+-- Slava Pestov
+<slava_pestov@geocities.com>

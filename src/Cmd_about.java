@@ -28,9 +28,8 @@ public class Cmd_about implements Command
 
 	public Object exec(Hashtable args)
 	{
-		View view = (View)args.get(VIEW);
 		Object[] _args = { jEdit.VERSION, jEdit.BUILD };
-		jEdit.message(view,"about",_args);
+		jEdit.message((View)args.get(VIEW),"about",_args);
 		return Boolean.TRUE;
 	}
 }

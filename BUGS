@@ -1,8 +1,0 @@
-JEDIT KNOWN BUGS
-
-- some null pointer conditions might not be handled well
-- code isn't very thread safe
-- some obscure error conditions aren't handled very well
-
--- Slava Pestov
-<slava_pestov@geocities.com>

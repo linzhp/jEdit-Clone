@@ -1,0 +1,15 @@
+# KDE Config File
+[KDE Desktop Entry]
+Comment[C]=jEdit text editor
+Name[C]=jEdit text editor
+SwallowTitle=
+SwallowExec=
+BinaryPattern=jedit;
+Name[C]=jEdit
+MimeType=
+Exec=jedit -- %u
+Icon=txt.xpm
+TerminalOptions=
+Path=
+Type=Application
+Terminal=0

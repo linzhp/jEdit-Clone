@@ -23,9 +23,7 @@ todos:
 	find -name \*.bat -exec todos {} \;
 	find -name \*.java -exec todos {} \;
 	find -name \*.txt -exec todos {} \;
-	todos BUGS
-	todos COPYING
-	todos INSTALL
 	todos README
-	todos TODO
+	todos COPYING
+	todos VERSION
 include Rules.make
