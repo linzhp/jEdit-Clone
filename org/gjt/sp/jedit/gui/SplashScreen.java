@@ -37,8 +37,9 @@ public class SplashScreen extends JWindow
 				BorderLayout.CENTER);
 		}
 		
-		splash.add(new JLabel("jEdit " + jEdit.VERSION + " build " +
-			jEdit.BUILD, SwingConstants.CENTER), BorderLayout.SOUTH);
+		splash.add(new JLabel("jEdit " + jEdit.getVersion() + " build "
+			+ jEdit.getBuild(), SwingConstants.CENTER),
+			BorderLayout.SOUTH);
 		splash.setBorder(new CompoundBorder(
 			new SoftBevelBorder(BevelBorder.RAISED),
 			new CompoundBorder(new EmptyBorder(2,2,2,2),

@@ -243,8 +243,8 @@ implements ActionListener, KeyListener, Runnable
 			
 			out.write("Subject: " + subject);
 			out.write(CRLF);
-			out.write("X-Mailer: jEdit " + jEdit.VERSION
-				+ " build " + jEdit.BUILD);
+			out.write("X-Mailer: jEdit " + jEdit.getVersion()
+				+ " build " + jEdit.getBuild());
 			out.write(CRLF);
 			out.write("X-jEdit-Selection-Only: " +
 				selectionOnly);

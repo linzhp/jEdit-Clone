@@ -10,6 +10,7 @@
 <li><a href=#jar>Contents of JAR Files</a>
 <li><a href=#plugin>Plugin Interface</a>
 <li><a href=#props>Plugin Properties</a>
+<li><a href=#deps>Specifying Dependencies</a>
 <li><a href=#thread>Thread Safety in jEdit</a>
 </ul>
 
@@ -83,6 +84,30 @@ is stored
 
 All of these properties must be defined for the plugin to have an entry
 in the help system.
+
+<a name=deps>
+<h1>Specifying Dependencies</h1>
+</a>
+
+Before initializing a plugin, jEdit looks for any properties named
+<code>plugin.<i>plugin class</i>.depend.<i>i</i></code> where <i>i</i>
+is an index starting at 0. Each property is of the form
+<code><i>what</i> <i>arg</i></code>.<p>
+
+The following values of <i>what</i> are supported:
+
+<ul>
+<li><code>jdk</code> - JDK version dependency. jEdit will check that the
+JDK version is at least <i>arg</i> before loading this plugin.
+<li><code>jedit</code> - jEdit build dependency. jEdit will check that
+it's build (returned by the <code>jEdit.getBuild()</code> method) is at
+least <i>arg</i> before loading this plugin.
+<li><code>class</code> - Class dependency. jEdit will check that the
+class named <i>arg</i> is defined before loading this plugin.
+</ul>
+
+If any dependency checks fail, a message is printed and the plugin is
+not loaded.
 
 <a name=thread>
 <h1>Thread Safety in jEdit</h1>

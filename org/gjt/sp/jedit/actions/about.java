@@ -31,7 +31,7 @@ public class about extends EditAction
 
 	public void actionPerformed(ActionEvent evt)
 	{
-		Object[] aboutArgs = { jEdit.VERSION, jEdit.BUILD,
+		Object[] aboutArgs = { jEdit.getVersion(), jEdit.getBuild(),
 			System.getProperty("java.version"),
 			System.getProperty("os.name"),
 			System.getProperty("os.version"),

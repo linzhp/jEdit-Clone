@@ -38,15 +38,22 @@ import org.gjt.sp.jedit.gui.*;
 public class jEdit
 {
 	/**
-	 * The jEdit version.
+	 * Returns the jEdit version as a human-readable string.
 	 */
-	public static final String VERSION = "1.6pre6";
-	
+	public static String getVersion()
+	{
+		return "1.6pre6";
+	}
+
 	/**
-	 * The date when a change was last made to the source code,
-	 * in <code>YYYYMMDD</code> format.
+	 * Returns the internal version. String.compareTo() can be used
+	 * to compare different internal versions.
 	 */
-	public static final String BUILD = "19990508";
+	public static String getBuild()
+	{
+		// (major) (minor) (<99 = preX, 99 = final) (bug fix)
+		return "01.06.06.00";
+	}
 
 	/**
 	 * The main method of the jEdit application.
@@ -358,8 +365,9 @@ public class jEdit
 			}
 			catch(IOException io)
 			{
-				System.err.println(" -- error loading plugin: "
-					+ plugins[i]);
+				String[] args = { plugin };
+				System.err.println(jEdit.getProperty(
+					"jar.error.load",args));
 				io.printStackTrace();
 			}
 		}
@@ -922,7 +930,8 @@ public class jEdit
 
 	private static void version()
 	{
-		System.err.println("jEdit " + VERSION + " build " + BUILD);
+		System.err.println("jEdit " + getVersion() + " build " +
+			getBuild());
 	}
 
 	/**
@@ -1517,6 +1526,9 @@ public class jEdit
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.97  1999/05/08 06:37:21  sp
+ * jEdit.VERSION/BUILD becomes jEdit.getVersion()/getBuild(), plugin dependencies
+ *
  * Revision 1.96  1999/05/08 00:13:00  sp
  * Splash screen change, minor documentation update, toolbar API fix
  *

@@ -17,6 +17,21 @@ lineSep.windows=DOS/Windows (\\r\\n)
 lineSep.mac=MacOS (\\r)
 
 ###
+### JAR LOADER MESSAGES
+###
+
+jar.scanning=Scanning JAR file: {0}
+jar.error.load=Error loading {0}
+jar.error.zip=Error loading class {0} from {1}
+jar.disabled=-- disabled at user request: {0}
+jar.loaded=-- loaded successfully: {0}
+jar.error.init=-- initialization failed: {0}
+jar.error.deps=-- dependency check failed: {0}\nThe following is required:
+jar.what.jdk=\tJDK version >= {0}
+jar.what.jedit=\tjEdit version >= {0}
+jar.what.class=\tExistance of class {0}
+
+###
 ### TOOLBAR
 ###
 view.toolbar=new-file open-file open-url close-file - save save-all - \
@@ -289,7 +304,7 @@ help.label=Help Contents...
 plugin-help.label=Plugin Help Contents...
 
 ###
-### MISC STUFF
+### VIEW STUFF
 ###
 
 # Title

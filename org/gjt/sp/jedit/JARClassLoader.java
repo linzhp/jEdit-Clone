@@ -39,7 +39,8 @@ public class JARClassLoader extends ClassLoader
 		index = classLoaders.size();
 		classLoaders.addElement(this);
 
-		System.out.println("Scanning JAR file: " + path);
+		String[] args = { path };
+		System.out.println(jEdit.getProperty("jar.scanning",args));
 
 		zipFile = new ZipFile(path);
 
@@ -57,22 +58,6 @@ public class JARClassLoader extends ClassLoader
 				if(name.endsWith("Plugin.class"))
 					pluginClasses.addElement(name);
 			}
-		}
-	}
-
-	public void loadPluginClass(String name)
-		throws Exception
-	{
-		Class clazz = loadClass(MiscUtilities.fileToClass(name),false);
-		int modifiers = clazz.getModifiers();
-		if(Plugin.class.isAssignableFrom(clazz)
-			&& !Modifier.isInterface(modifiers)
-			&& !Modifier.isAbstract(modifiers))
-		{
-			Plugin plugin = (Plugin)clazz.newInstance();
-			System.out.println(" -- loaded plugin: " +
-				clazz.getName());
-			jEdit.addPlugin(plugin);
 		}
 	}
 
@@ -141,7 +126,6 @@ public class JARClassLoader extends ClassLoader
 	private static Vector classLoaders = new Vector();
 	private int index;
 	private Vector pluginClasses = new Vector();
-
 	private ZipFile zipFile;
 
 	private void loadAllPlugins()
@@ -155,13 +139,107 @@ public class JARClassLoader extends ClassLoader
 			}
 			catch(Throwable t)
 			{
-				System.out.println(" -- error initializing"
-					+ " plugin: " + name);
+				String[] args = { name };
+				System.err.println(jEdit.getProperty("jar.error.init",args));
 				t.printStackTrace();
 			}
 		}
 	}
 
+	private void loadPluginClass(String name)
+		throws Exception
+	{
+		name = MiscUtilities.fileToClass(name);
+
+		// Check if it is disabled
+		if("yes".equals(jEdit.getProperty("plugin." + name + ".disabled")))
+		{
+			String[] args = { name };
+			System.err.println(jEdit.getProperty("jar.disabled",args));
+			return;
+		}
+
+		// Check dependencies
+		if(!checkDependencies(name))
+			return;
+
+		Class clazz = loadClass(name,false);
+		int modifiers = clazz.getModifiers();
+		if(Plugin.class.isAssignableFrom(clazz)
+			&& !Modifier.isInterface(modifiers)
+			&& !Modifier.isAbstract(modifiers))
+		{
+			Plugin plugin = (Plugin)clazz.newInstance();
+			jEdit.addPlugin(plugin);
+
+			String[] args = { name };
+			System.out.println(jEdit.getProperty("jar.loaded",args));
+		}
+	}
+
+	private boolean checkDependencies(String name)
+	{
+		int i = 0;
+
+		// For `failed dependencies' error message
+		StringBuffer deps = new StringBuffer();
+
+		String[] args = { name };
+		deps.append(jEdit.getProperty("jar.error.deps",args));
+		deps.append('\n');
+
+		boolean ok = true;
+
+		String dep;
+		while((dep = jEdit.getProperty("plugin." + name + ".depend." + i++)) != null)
+		{
+			int index = dep.indexOf(' ');
+			if(index == -1)
+			{
+				deps.append(dep);
+				deps.append('\n');
+				ok = false;
+				continue;
+			}
+
+			String what = dep.substring(0,index);
+			String arg = dep.substring(index + 1);
+
+			String[] args2 = { arg };
+			deps.append(jEdit.getProperty("jar.what." + what,args2));
+			deps.append('\n');
+
+			if(what.equals("jdk"))
+			{
+				if(System.getProperty("java.version")
+					.compareTo(arg) < 0)
+					ok = false;
+			}
+			else if(what.equals("jedit"))
+			{
+				if(jEdit.getBuild().compareTo(arg) < 0)
+					ok = false;
+			}
+			else if(what.equals("class"))
+			{
+				try
+				{
+					loadClass(arg,false);
+				}
+				catch(Exception e)
+				{
+					ok = false;
+				}
+			}
+			else
+				ok = false;
+		}
+
+		if(!ok)
+			System.out.print(deps);
+		return ok;
+	}
+				
 	private Class findOtherClass(String clazz, boolean resolveIt)
 		throws ClassNotFoundException
 	{
@@ -217,9 +295,9 @@ public class JARClassLoader extends ClassLoader
 				success = in.read(data,offset,len);
 				if (success == -1)
 				{
-					System.err.println("Error loading class "
-						+ clazz + " from "
-						+ zipFile.getName());
+					String[] args = { clazz, zipFile.getName() };
+					System.err.println(jEdit.getProperty(
+						"jar.error.zip",args));
 					throw new ClassNotFoundException(clazz);
 				}
 			}
@@ -244,6 +322,9 @@ public class JARClassLoader extends ClassLoader
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.8  1999/05/08 06:37:21  sp
+ * jEdit.VERSION/BUILD becomes jEdit.getVersion()/getBuild(), plugin dependencies
+ *
  * Revision 1.7  1999/05/07 06:15:43  sp
  * Resource loading update, fix for abstract Plugin classes in JARs
  *
