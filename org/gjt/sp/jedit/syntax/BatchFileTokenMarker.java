@@ -35,7 +35,7 @@ public class BatchFileTokenMarker extends TokenMarker
 		int offset = line.offset;
 		int lastOffset = offset;
 		int length = line.count + offset;
-loop:		for(int i = line.offset; i < length; i++)
+loop:		for(int i = offset; i < length; i++)
 		{
 			switch(line.array[i])
 			{
@@ -83,9 +83,9 @@ loop:		for(int i = line.offset; i < length; i++)
 				}
 				break;
 			case ':':
-				if(lastOffset == offset && token == null)
+				if(i == offset)
 				{
-					addToken(length - offset,Token.LABEL);
+					addToken(line.count,Token.LABEL);
 					lastOffset = length;
 					break loop;
 				}
@@ -133,6 +133,9 @@ loop:		for(int i = line.offset; i < length; i++)
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.13  1999/03/26 05:13:04  sp
+ * Enhanced menu item updates
+ *
  * Revision 1.12  1999/03/13 08:50:39  sp
  * Syntax colorizing updates and cleanups, general code reorganizations
  *

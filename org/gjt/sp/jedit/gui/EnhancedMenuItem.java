@@ -55,7 +55,7 @@ public class EnhancedMenuItem extends JMenuItem
 		if(keyBinding != null)
 		{
 			g.setFont(acceleratorFont);
-			g.setColor(getModel().isSelected() ?
+			g.setColor(getModel().isArmed() ?
 				acceleratorSelectionForeground :
 				acceleratorForeground);
 			FontMetrics fm = g.getFontMetrics();
