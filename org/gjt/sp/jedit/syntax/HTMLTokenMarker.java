@@ -155,7 +155,7 @@ loop:		for(int i = offset; i < length; i++)
 				break;
 			case '/':
 				backslash = false;
-				if(token == Token.ALTTXT && length - i >= 1)
+				if(token == Token.ALTTXT && length - i > 1)
 				{
 					switch(line.array[i+1])
 					{

@@ -148,14 +148,18 @@ implements KeyListener
 				break; /* Oops */
 			}
 
-			/*int emacsIndex = msg.indexOf(':',lineNoIndex + 1);
-			// Check for Emacs style file:line:col:line:col:
+			// Emacs style errors have
+			// filename:line:column:endline:endcolumn:
+			int emacsIndex = msg.indexOf(':',lineNoIndex + 1);
 			if(emacsIndex != -1)
 			{
-				errorMode = EMACS;
-				break;
-				// Second pass will fetch error message
-			}*/
+				if(msg.charAt(msg.length() - 1) == ':' &&
+					msg.length() - emacsIndex != 1)
+				{
+					errorMode = EMACS;
+					break;
+				}
+			}
 			
 			// If not, set the error message variable
 			error = msg.substring(lineNoIndex + 1);
@@ -190,6 +194,13 @@ implements KeyListener
 				jEdit.addError(view.getBuffer().getPath(),
 					lineNo,error);
 			}
+			break;
+		case EMACS:
+			// Easy peasy
+			error = msg.trim();
+			errorMode = GENERIC;
+
+			jEdit.addError(view.getBuffer().getPath(),lineNo,error);
 			break;
 		}
 	}

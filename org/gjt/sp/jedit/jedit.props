@@ -50,12 +50,6 @@ buffer.tabSize=8
 buffer.openBrackets=([{
 buffer.closeBrackets=)]}
 
-# Addint ==null checks to auto indent is something I can't
-# be bothered going, so here we go :) Real values are specified
-# in C/C++/Java/JavaScript modes
-buffer.openIndentBrackets=
-buffer.closeIndentBrackets=
-
 # Print margins
 buffer.margin.top=0.5
 buffer.margin.left=0.5

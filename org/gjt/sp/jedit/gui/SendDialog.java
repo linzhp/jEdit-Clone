@@ -1,6 +1,6 @@
 /*
  * SendDialog.java - Send To Dialog
- * Copyright (C) 1998 Slava Pestov
+ * Copyright (C) 1998, 1999 Slava Pestov
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -30,7 +30,7 @@ import org.gjt.sp.jedit.Buffer;
 import org.gjt.sp.jedit.View;
 
 public class SendDialog extends JDialog
-implements ActionListener, WindowListener, Runnable
+implements ActionListener, KeyListener, Runnable
 {
 	public static final String CRLF = "\r\n";
 	private View view;
@@ -113,8 +113,9 @@ implements ActionListener, WindowListener, Runnable
 		pack();
 		setLocation((screen.width - getSize().width) / 2,
 			(screen.height - getSize().height) / 2);
-		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
-		addWindowListener(this);
+		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+		getRootPane().setDefaultButton(send);
+		addKeyListener(this);
 		send.addActionListener(this);
 		cancel.addActionListener(this);
 		show();
@@ -280,19 +281,27 @@ implements ActionListener, WindowListener, Runnable
 		if(source == cancel)
 			dispose();
 		else if(source == send)
-			(thread = new Thread(this)).start();
+			doSend();
 	}
 
-	public void windowOpened(WindowEvent evt) {}
-	
-	public void windowClosing(WindowEvent evt)
+	public void keyPressed(KeyEvent evt)
 	{
-		dispose();
+		switch(evt.getKeyCode())
+		{
+		case KeyEvent.VK_ENTER:
+			doSend();
+			break;
+		case KeyEvent.VK_ESCAPE:
+			dispose();
+			break;
+		}
 	}
-	
-	public void windowClosed(WindowEvent evt) {}
-	public void windowIconified(WindowEvent evt) {}
-	public void windowDeiconified(WindowEvent evt) {}
-	public void windowActivated(WindowEvent evt) {}
-	public void windowDeactivated(WindowEvent evt) {}
+
+	public void keyReleased(KeyEvent evt) {}
+	public void keyTyped(KeyEvent evt) {}
+
+	private void doSend()
+	{
+		(thread = new Thread(this)).start();
+	}
 }

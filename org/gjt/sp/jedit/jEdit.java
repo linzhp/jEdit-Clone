@@ -39,13 +39,13 @@ public class jEdit
 	/**
 	 * The jEdit version.
 	 */
-	public static final String VERSION = "1.4pre1";
+	public static final String VERSION = "1.4pre2";
 	
 	/**
 	 * The date when a change was last made to the source code,
 	 * in <code>YYYYMMDD</code> format.
 	 */
-	public static final String BUILD = "19990128";
+	public static final String BUILD = "19990203";
 
 	/**
 	 * AWK regexp syntax.
@@ -328,6 +328,7 @@ public class jEdit
 		addAction(new org.gjt.sp.jedit.actions.open_url());
 		addAction(new org.gjt.sp.jedit.actions.options());
 		addAction(new org.gjt.sp.jedit.actions.paste());
+		addAction(new org.gjt.sp.jedit.actions.paste_predefined());
 		addAction(new org.gjt.sp.jedit.actions.paste_previous());
 		addAction(new org.gjt.sp.jedit.actions.pipe_selection());
 		addAction(new org.gjt.sp.jedit.actions.prev_error());
@@ -1522,8 +1523,7 @@ loop:		for(int i = 0; i < str.length(); i++)
 	 */
 	public static void clearErrors()
 	{
-		if(errors != null)
-			errors.removeAllElements();
+		errors = null;
 		currentError = -1;
 	}
 

@@ -6,7 +6,7 @@
 ###
 ### MENUBAR
 ###
-view.mbar=buffers file edit search tools help
+view.mbar=buffers file edit tools search help
 
 ### Buffers menu
 buffers.label=$Buffers
@@ -55,6 +55,7 @@ edit=undo \
      copy \
      paste \
      paste-previous \
+     paste-predefined \
      clear \
      select-all \
      - \
@@ -80,6 +81,7 @@ cut.label=$Cut
 copy.label=C$opy
 paste.label=$Paste
 paste-previous.label=Paste Pre$vious...
+paste-predefined.label=Paste Pre$defined...
 clear.label=Clea$r
 select-all.label=Select $All
 tab.label=Spaces to Tabs
@@ -163,36 +165,6 @@ box-comment.label=Box Comment
 block-comment.label=Block Comment
 uncomment.label=Uncomment
 
-### Search menu
-search=find \
-       find-next \
-       find-selection \
-       - \
-       replace \
-       replace-next \
-       replace-all \
-       - \
-       hypersearch \
-       - \
-       goto-line \
-       - \
-       set-marker \
-       %clear-marker \
-       %goto-marker
-search.label=$Search
-find.label=$Find...
-find-next.label=Find $Next
-find-selection.label=F$ind Selection
-replace.label=$Replace
-replace-next.label=Re$place & Find Next
-replace-all.label=Replace $All
-hypersearch.label=H$yperSearch...
-goto-line.label=Go to $Line...
-set-marker.label=Set $Marker...
-clear-marker.label=$Clear Marker
-goto-marker.label=$Go to Marker
-no-markers.label=No Markers Defined
-
 ### Tools menu
 tools=execute \
       pipe-selection \
@@ -235,6 +207,36 @@ mode.label=Mo$de
 ### Plugins menu
 plugins.label=P$lugins
 no-plugins.label=No Plugins
+
+### Search menu
+search=find \
+       find-next \
+       find-selection \
+       - \
+       replace \
+       replace-next \
+       replace-all \
+       - \
+       hypersearch \
+       - \
+       goto-line \
+       - \
+       set-marker \
+       %clear-marker \
+       %goto-marker
+search.label=$Search
+find.label=$Find...
+find-next.label=Find $Next
+find-selection.label=F$ind Selection
+replace.label=$Replace
+replace-next.label=Re$place & Find Next
+replace-all.label=Replace $All
+hypersearch.label=H$yperSearch...
+goto-line.label=Go to $Line...
+set-marker.label=Set $Marker...
+clear-marker.label=$Clear Marker
+goto-marker.label=$Go to Marker
+no-markers.label=No Markers Defined
 
 ### Help menu
 help=about \
@@ -412,8 +414,22 @@ reerror.message=The regular expression is invalid. ({0})
 # Paste previous dialog
 pasteprev.title=Paste Previous
 pasteprev.caption=Previous clippings:
-pasteprev.insert=Insert Clipping
+pasteprev.insert=Insert
 pasteprev.cancel=Cancel
+
+# Paste predefined dialog
+pastepredef.title=Paste Predefined
+pastepredef.caption=Predefined clippings:
+pastepredef.add=Add
+pastepredef.delete=Delete
+pastepredef.edit=Edit
+pastepredef.insert=Insert
+pastepredef.cancel=Cancel
+
+# Clipping editor dialog
+clipedit.title=Clipping Editor
+clipedit.ok=OK
+clipedit.cancel=Cancel
 
 # Command output dialog
 output.title=Command Output
@@ -427,15 +443,6 @@ filechanged.title=File Changed on Disk
 filechanged.message=The file {0}\n\
 	has been modified on disk by another program. Are you sure\n\
 	you want to continue saving it?
-
-# Close dialog
-close.title=Unsaved Changes
-close.caption=The following buffers have unsaved changes:\ 
-close.save=Save
-close.saveAll=Save All
-close.discard=Discard
-close.discardAll=Discard All
-close.cancel=Cancel
 
 # Options dialog
 options.title=Options

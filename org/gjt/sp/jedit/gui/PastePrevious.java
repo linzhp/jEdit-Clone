@@ -1,6 +1,6 @@
 /*
  * PastePrevious.java - Paste previous dialog
- * Copyright (C) 1998 Slava Pestov
+ * Copyright (C) 1998, 1999 Slava Pestov
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -59,10 +59,9 @@ implements ActionListener, KeyListener
 		panel.add(insert);
 		panel.add(cancel);
 		content.add("South",panel);
+		addKeyListener(this);
 		getRootPane().setDefaultButton(insert);
-		insert.addKeyListener(this);
 		insert.addActionListener(this);
-		cancel.addKeyListener(this);
 		cancel.addActionListener(this);
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		Dimension screen = getToolkit().getScreenSize();
@@ -75,9 +74,9 @@ implements ActionListener, KeyListener
 	public void actionPerformed(ActionEvent evt)
 	{
 		Object source = evt.getSource();
-		if(evt.getSource() == insert)
+		if(source == insert)
 			doInsert();
-		else if(evt.getSource() == cancel)
+		else if(source == cancel)
 			dispose();
 	}
 

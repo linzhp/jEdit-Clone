@@ -19,11 +19,11 @@
 
 package org.gjt.sp.jedit;
 
+import gnu.regexp.*;
 import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.text.*;
 import javax.swing.undo.*;
-import gnu.regexp.*;	
 import java.awt.*;
 import java.io.*;
 import java.net.*;
@@ -1014,8 +1014,7 @@ implements DocumentListener, UndoableEditListener
 				}
 			}
 			bin.close();
-                        if(buf.length() != 0 && buf.charAt(buf.length() - 1)
-                           == '\n')
+                        if(buf.length() != 0 && buf.charAt(buf.length() - 1) == '\n')
 				buf.setLength(buf.length() - 1);
 			insertString(0,buf.toString(),null);
 			newFile = false;

@@ -39,7 +39,9 @@ public class autoindent implements Mode
 		String closeBrackets = (String)buffer.getProperty("indentCloseBrackets");
 		if(openBrackets == null || closeBrackets == null
 			|| openBrackets.length() != closeBrackets.length())
-			return false;
+		{
+			openBrackets = closeBrackets = "";
+		}
 		int tabSize = buffer.getTabSize();
 		boolean noTabs = "yes".equals(buffer.getProperty("noTabs"));
 		Element map = buffer.getDefaultRootElement();

@@ -16,6 +16,7 @@ delete-start-line.shortcut	C+d C+s
 replace-all.shortcut		C+e C+a
 box-comment.shortcut		C+e C+b
 wing-comment.shortcut		C+e C+c
+paste-predefined.shortcut	C+e C+d
 execute.shortcut		C+e C+e
 format.shortcut			C+e C+f
 replace-next.shortcut		C+e C+g
