@@ -748,6 +748,37 @@ public class JEditTextArea extends JComponent
 	}
 
 	/**
+	 * Returns the entire text of this text area.
+	 */
+	public String getText()
+	{
+		try
+		{
+			return document.getText(0,document.getLength());
+		}
+		catch(BadLocationException bl)
+		{
+			return null;
+		}
+	}
+
+	/**
+	 * Sets the entire text of this text area.
+	 */
+	public void setText(String text)
+	{
+		try
+		{
+			document.remove(0,document.getLength());
+			document.insertString(0,text,null);
+		}
+		catch(BadLocationException bl)
+		{
+			bl.printStackTrace();
+		}
+	}
+
+	/**
 	 * Returns the specified substring of the document.
 	 * @param start The start offset
 	 * @param len The length of the substring
@@ -1709,6 +1740,8 @@ public class JEditTextArea extends JComponent
 			char ch = lineText.charAt(offset - 1);
 
 			String noWordSep = (String)document.getProperty("noWordSep");
+			if(noWordSep == null)
+				noWordSep = "";
 
 			// If the user clicked on a non-letter char,
 			// we select the surrounding non-letters
@@ -1765,6 +1798,9 @@ public class JEditTextArea extends JComponent
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.15  1999/07/21 05:45:14  sp
+ * AltGr fix, documentation restructuring
+ *
  * Revision 1.14  1999/07/16 23:45:49  sp
  * 1.7pre6 BugFree version
  *

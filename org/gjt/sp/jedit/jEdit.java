@@ -51,7 +51,7 @@ public class jEdit
 	 */
 	public static String getVersion()
 	{
-		return "1.7pre6";
+		return "1.7pre7";
 	}
 
 	/**
@@ -61,7 +61,7 @@ public class jEdit
 	public static String getBuild()
 	{
 		// (major) (minor) (<99 = preX, 99 = final) (bug fix)
-		return "01.07.06.00";
+		return "01.07.07.00";
 	}
 
 	/**
@@ -1650,6 +1650,9 @@ public class jEdit
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.123  1999/07/21 05:45:14  sp
+ * AltGr fix, documentation restructuring
+ *
  * Revision 1.122  1999/07/16 23:45:49  sp
  * 1.7pre6 BugFree version
  *

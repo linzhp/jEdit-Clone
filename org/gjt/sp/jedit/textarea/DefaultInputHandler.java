@@ -250,7 +250,8 @@ public class DefaultInputHandler implements InputHandler
 	{
 		int modifiers = evt.getModifiers();
 		char c = evt.getKeyChar();
-		if((modifiers & ~KeyEvent.SHIFT_MASK) == 0)
+		if(c != KeyEvent.CHAR_UNDEFINED &&
+			(modifiers & KeyEvent.ALT_MASK) == 0)
 		{
 			if(c >= 0x20 && c != 0x7f)
 			{
