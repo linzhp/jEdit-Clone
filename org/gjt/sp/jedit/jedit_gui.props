@@ -562,6 +562,9 @@ options.colors.keyword2Color=Keyword 2
 options.colors.keyword3Color=Keyword 3
 options.colors.operatorColor=Operator
 options.colors.invalidColor=Invalid token
+options.keys.label=Shortcuts
+options.keys.name=Command
+options.keys.binding=Keyboard shortcut
 
 # Color chooser, used by options.colors
 colorChooser.title=Pick a Color

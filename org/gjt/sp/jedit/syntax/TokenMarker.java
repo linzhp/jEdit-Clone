@@ -202,7 +202,7 @@ public abstract class TokenMarker
 	 */
 	protected void addToken(int length, byte id)
 	{
-		if(id >= INTERNAL_FIRST && id != Token.END)
+		if(id >= Token.INTERNAL_FIRST && id <= Token.INTERNAL_LAST)
 			throw new InternalError("Invalid id: " + id);
 
 		if(firstToken == null)
@@ -270,6 +270,9 @@ public abstract class TokenMarker
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.23  1999/05/03 08:28:14  sp
+ * Documentation updates, key binding editor, syntax text area bug fix
+ *
  * Revision 1.22  1999/05/03 04:28:01  sp
  * Syntax colorizing bug fixing, console bug fix for Swing 1.1.1
  *
@@ -303,20 +306,5 @@ public abstract class TokenMarker
  *
  * Revision 1.12  1999/03/15 03:40:23  sp
  * Search and replace updates, TSQL mode/token marker updates
- *
- * Revision 1.11  1999/03/14 04:13:40  sp
- * Fixed ArrayIndexOutOfBounds in TokenMarker, minor Javadoc updates, minor documentation updates
- *
- * Revision 1.10  1999/03/14 02:22:13  sp
- * Syntax colorizing tweaks, server bug fix
- *
- * Revision 1.9  1999/03/13 09:11:46  sp
- * Syntax code updates, code cleanups
- *
- * Revision 1.8  1999/03/13 08:50:39  sp
- * Syntax colorizing updates and cleanups, general code reorganizations
- *
- * Revision 1.7  1999/03/12 23:51:00  sp
- * Console updates, uncomment removed cos it's too buggy, cvs log tags added
  *
  */

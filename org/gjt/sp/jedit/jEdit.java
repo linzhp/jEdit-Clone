@@ -1132,6 +1132,7 @@ public class jEdit
 		addOptionPane(org.gjt.sp.jedit.options.GeneralOptionPane.class);
 		addOptionPane(org.gjt.sp.jedit.options.EditorOptionPane.class);
 		addOptionPane(org.gjt.sp.jedit.options.ColorTableOptionPane.class);
+		addOptionPane(org.gjt.sp.jedit.options.KeyTableOptionPane.class);
 	}
 
 	/**
@@ -1522,6 +1523,9 @@ public class jEdit
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.91  1999/05/03 08:28:14  sp
+ * Documentation updates, key binding editor, syntax text area bug fix
+ *
  * Revision 1.90  1999/05/03 04:28:01  sp
  * Syntax colorizing bug fixing, console bug fix for Swing 1.1.1
  *
@@ -1556,14 +1560,5 @@ public class jEdit
  *
  * Revision 1.80  1999/04/23 05:02:25  sp
  * new LineInfo[] array in TokenMarker
- *
- * Revision 1.79  1999/04/22 06:20:06  sp
- * Minor API change for XMode
- *
- * Revision 1.78  1999/04/22 06:03:25  sp
- * Syntax colorizing change
- *
- * Revision 1.77  1999/04/22 05:31:17  sp
- * Documentation updates, minor SyntaxTextArea update
  *
  */

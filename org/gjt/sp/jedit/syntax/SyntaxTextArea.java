@@ -63,7 +63,6 @@ public class SyntaxTextArea extends JEditorPane
 		lineHighlightColor = new Color(0xe0e0e0);
 		bracketHighlightColor = new Color(0xffaaaa);
 		lineSegment = new Segment();
-		scroller = new SyntaxSafeScroller();
 		addCaretListener(new CaretHandler());
 	}
 
@@ -476,8 +475,7 @@ public class SyntaxTextArea extends JEditorPane
 	// protected members
 	protected void doElectricScroll(Rectangle rect)
 	{
-		scroller.rect = rect;
-		SwingUtilities.invokeLater(scroller);
+		SwingUtilities.invokeLater(new SyntaxSafeScroller(rect));
 	}
 
 	// private members
@@ -491,8 +489,6 @@ public class SyntaxTextArea extends JEditorPane
 	private Segment lineSegment;
 	private int lastLine = -1;
 	private int lastBracket = -1;
-	/* Don't create a new instance every time we need to scroll */
-	private SyntaxSafeScroller scroller;
 
 	private void _replaceSelection(String content)
 	{
@@ -631,6 +627,11 @@ public class SyntaxTextArea extends JEditorPane
 	{
 		public Rectangle rect;
 
+		public SyntaxSafeScroller(Rectangle rect)
+		{
+			this.rect = rect;
+		}
+
 		public void run()
 		{
 			int height = getToolkit().getFontMetrics(
@@ -719,6 +720,9 @@ public class SyntaxTextArea extends JEditorPane
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.22  1999/05/03 08:28:14  sp
+ * Documentation updates, key binding editor, syntax text area bug fix
+ *
  * Revision 1.21  1999/05/03 04:28:01  sp
  * Syntax colorizing bug fixing, console bug fix for Swing 1.1.1
  *

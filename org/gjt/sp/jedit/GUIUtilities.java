@@ -188,7 +188,7 @@ public class GUIUtilities
 				+ name);
 			return null;
 		}
-		if(keyStroke != null)
+		if(keyStroke != null && keyStroke.length() != 0)
 		{
 			index = keyStroke.indexOf(' ');
 			if(index == -1)
@@ -239,7 +239,8 @@ public class GUIUtilities
 		{
 			for(int i = 0; i < index; i++)
 			{
-				switch(keyStroke.charAt(i))
+				switch(Character.toUpperCase(keyStroke
+					.charAt(i)))
 				{
 				case 'A':
 					modifiers |= InputEvent.ALT_MASK;
@@ -343,20 +344,13 @@ public class GUIUtilities
 			System.out.println("Tool button label is null: " + name);
 			return null;
 		}
-		int index = toolTip.indexOf('$');
-		if(index != -1)
-		{
-			toolTip = toolTip.substring(0,index)
-				.concat(toolTip.substring(index + 1));
-		}
-		if(toolTip.endsWith("..."))
-			toolTip = toolTip.substring(0,toolTip.length() - 3);
+		toolTip = prettifyMenuLabel(toolTip);
 		String shortcut = jEdit.getProperty(name + ".shortcut");
 		if(shortcut != null)
 			toolTip = toolTip + " (" + shortcut + ")";
 		button.setToolTipText(toolTip);
 
-		index = name.indexOf('@');
+		int index = name.indexOf('@');
 		String actionCommand;
 		if(index != -1)
 		{
@@ -374,6 +368,24 @@ public class GUIUtilities
 			button.setActionCommand(actionCommand);
 		}
 		return button;
+	}
+
+	/**
+	 * `Prettyfies' a menu item label by removing the `$' sign and the
+	 * training ellipisis, if any. This can be used to process the
+	 * contents of an <i>action</i>.label property.
+	 */
+	public static String prettifyMenuLabel(String label)
+	{
+		int index = label.indexOf('$');
+		if(index != -1)
+		{
+			label = label.substring(0,index)
+				.concat(label.substring(index + 1));
+		}
+		if(label.endsWith("..."))
+			label = label.substring(0,label.length() - 3);
+		return label;
 	}
 
 	/**
@@ -586,6 +598,9 @@ public class GUIUtilities
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.17  1999/05/03 08:28:14  sp
+ * Documentation updates, key binding editor, syntax text area bug fix
+ *
  * Revision 1.16  1999/04/24 01:55:28  sp
  * MiscUtilities.constructPath() bug fixed, event system bug(s) fix
  *

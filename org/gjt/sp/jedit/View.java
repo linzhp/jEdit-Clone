@@ -811,6 +811,9 @@ public class View extends JFrame
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.69  1999/05/03 08:28:14  sp
+ * Documentation updates, key binding editor, syntax text area bug fix
+ *
  * Revision 1.68  1999/05/03 04:28:01  sp
  * Syntax colorizing bug fixing, console bug fix for Swing 1.1.1
  *
@@ -844,20 +847,5 @@ public class View extends JFrame
  *
  * Revision 1.58  1999/04/01 04:13:00  sp
  * Bug fixing for 1.5final
- *
- * Revision 1.57  1999/03/28 01:36:24  sp
- * Backup system overhauled, HistoryTextField updates
- *
- * Revision 1.56  1999/03/27 23:47:57  sp
- * Updated docs, view tweak, goto-line fix, next/prev error tweak
- *
- * Revision 1.55  1999/03/27 03:05:17  sp
- * Modular SyntaxTextArea
- *
- * Revision 1.54  1999/03/24 05:45:27  sp
- * Juha Lidfors' backup directory patch, removed debugging messages from various locations, documentation updates
- *
- * Revision 1.53  1999/03/21 08:37:16  sp
- * Slimmer action system, history text field update
  *
  */
