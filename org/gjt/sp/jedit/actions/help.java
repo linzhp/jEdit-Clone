@@ -20,7 +20,9 @@
 package org.gjt.sp.jedit.actions;
 
 import java.awt.event.ActionEvent;
-import org.gjt.sp.jedit.EditAction;
+import java.io.File;
+import java.net.*;
+import org.gjt.sp.jedit.*;
 import org.gjt.sp.jedit.gui.HelpViewer;
 
 public class help extends EditAction
@@ -32,6 +34,15 @@ public class help extends EditAction
 	
 	public void actionPerformed(ActionEvent evt)
 	{
-		new HelpViewer(getClass().getResource("/doc/index.html"));
+		try
+		{
+			new HelpViewer(new URL("file:" + jEdit.getJEditHome() +
+				File.separator + "doc" + File.separator
+				+ "index.html"));
+		}
+		catch(MalformedURLException mf)
+		{
+			mf.printStackTrace();
+		}
 	}
 }

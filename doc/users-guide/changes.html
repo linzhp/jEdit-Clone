@@ -1,4 +1,5 @@
 <html>
+<head><title>Version History</title></head>
 <body>
 <h1>Version History</h1>
 
@@ -16,20 +17,49 @@
 <h2>New Featuress</h2>
 
 <ul>
-<li>Automatic upgrade notification: jEdit will not periodically connect
+<li>The colors &amp; styles option pane is now finished
+<li>Automatic upgrade notification: jEdit will now periodically connect
 to a server and check if a newer release of jEdit is available
-<li>Old socket-based server replaced with new RMI-based system
+<li>Old socket-based server replaced with new RMI-based system. This has
+a number of advantages over the old system:
+<ul>
+<li>Other applications can remotely control jEdit
+<li>Clients can now wait for the buffers they opened to be closed
+(jedit implements this with the -wait switch)
+<li>RMI is well documented, in contrast to the poor server protocol old
+jEdit versions used
+</ul>
 </ul>
 
 <h2>Enhancements</h2>
 
 <ul>
+<li>jEdit configuration files (.jedit-props, .jedit-history) are now
+stored in a .jedit subdirectory of the user's home directory. This
+reduces clutter in the home directory.<p>
+If you want to preserve your old
+settings in 1.7pre4, you will have to rename the following files:
+<ul>
+<li>.jedit-props to .jedit/properties
+<li>.jedit-history to .jedit/history
+<li>.jedit-jars to .jedit/jars
+<li>Any other files (.jedit-desktop, .jedit-server-*) can be
+deleted because they are only used by obsolete versions of jEdit
+</ul>
 <li>`Save All Buffers' now asks for confirmation because saving all
 buffers
-<li>New -wait command line option makes jEdit wait for the new view
-to be closed if it's connecting to another instance
 <li>Buffers and views are now stored in a link list; some of jEdit's
 internals are now a little cleaner
+<li>Multiple files can now be selected and opened in the `Open File'
+dialog
+</ul>
+
+<h2>Bug Fixes</h2>
+
+<ul>
+<li>Multiple files could be selected in the `Open File' dialog, even
+though only the first one would be opened. Real multiple file opening
+will be added as soon as Swing is fixed
 </ul>
 
 <a name=17pre3>

@@ -752,6 +752,10 @@ public class SyntaxTextArea extends JEditorPane
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.31  1999/06/16 03:29:59  sp
+ * Added <title> tags to docs, configuration data is now stored in a
+ * ~/.jedit directory, style option pane finished
+ *
  * Revision 1.30  1999/06/09 05:22:11  sp
  * Find next now supports multi-file searching, minor Perl mode tweak
  *
@@ -782,11 +786,5 @@ public class SyntaxTextArea extends JEditorPane
  *
  * Revision 1.21  1999/05/03 04:28:01  sp
  * Syntax colorizing bug fixing, console bug fix for Swing 1.1.1
- *
- * Revision 1.20  1999/05/02 00:07:21  sp
- * Syntax system tweaks, console bugfix for Swing 1.1.1
- *
- * Revision 1.19  1999/04/28 04:10:40  sp
- * Overwrite/overstrike mode
  *
  */

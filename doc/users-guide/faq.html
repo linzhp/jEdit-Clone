@@ -1,27 +1,43 @@
 <html>
+<head><title>Frequently Asked Questions</title></head>
 <body>
 
-<h1>jEdit Frequently Asked Questions</h1>
+<h1>Frequently Asked Questions</h1>
 
 <ul>
+<li><a href=#jdk>JDK bugs that cause problems in jEdit</a>
 <li><a href=#console>What happened to the console?</a>
 <li><a href=#wwwbrowser>What happened to the `Open in WWW Browser' command?</a>
 <li><a href=#rot13>What happened to the Rot13 and Reverse plugins?</a>
-<li><a href=#bestjdk>What is the best JDK/Swing version for jEdit?</a>
 <li><a href=#permissions>Why are file permissions reset to the defaults
 when I save?</a>
 <li><a href=#clipboard>Why can't I copy and paste between jEdit and other
 applications?</a>
-<li><a href=#print>Why can't I print in JDK 1.2?</a>
 <li><a href=#memory>Why do I get OutOfMemoryErrors?</a>
 <li><a href=#noswing>Why do I get a ClassDefNotFoundError on startup?</a>
-<li><a href=#access>Why do I get an AccessException on startup?</a>
-<li><a href=#bigfile>Why does the display mess up when editing large files?</a>
-<li><a href=#overwrite>Why doesn't overwrite mode work?</a>
-<li><a href=#altgr>Why doesn't the AltGr key work?</a>
-<li><a href=#homeend>Why don't C+HOME/C+END work properly?</a>
-<li><a href=#alt>Why don't the Alt key mnemonics work?</a>
 <li><a href=#slow>Why is jEdit so slow?</a>
+</ul>
+
+<a name=jdk>
+<h1>JDK bugs that cause problems in jEdit</h1>
+</a>
+
+Before reporting a problem with jEdit, make sure it's not a JDK bug:
+
+<ul>
+<li>Bug #4060861 - not having your computer's host name assigned to
+127.0.0.1 will cause RMI to throw an AccessException
+(fixed in JDK 1.1.8 and 1.2beta3)
+<li>Bug #4186108, maybe others - printing doesn't work very well with
+JDK 1.2 (not yet fixed)
+<li> Bug #4159610 - Alt key menu mnemonics insert the mnemonic character
+into the text (only seems to occur with JDK 1.2, the bug parade
+lists it as being fixed in a `non-public release', so it should appear in
+a new JDK soon)
+<li>Bug #4211210 - having more than about 2000 lines in a text area causes
+problems (not yet fixed)
+<li>Bug #4122687 - the AltGr key doesn't work (fixed in JDK 1.1.8 and 1.2)
+<li>Bug ???? - overwrite mode doesn't work on JDK 1.2 (not present in JDK 1.1.x)
 </ul>
 
 <a name=console>
@@ -48,23 +64,6 @@ have been rolled into Mike Dillon's TextTools plugin, which is distributed
 separately from jEdit. Download it from
 &lt;http://www.icg-online.de/jedit/&gt;.
 
-<a name=bestjdk>
-<h1>What is the best JDK/Swing version for jEdit?</h1>
-</a>
-
-jEdit runs best with JDK 1.1.8 and Swing 1.1.1beta2. It runs reasonably
-well with JDK 1.2, but mainly because of JDK bugs, it has the following
-problems:
-
-<ul>
-<li>Printing doesn't work
-<li>Overwrite mode doesn't work
-<li>C+HOME/C+END behave in a broken manner
-<li>Alt-key mnemonics don't work properly
-</ul>
-
-Hopefully these will be fixed in a future JDK 1.2 release.
-
 <a name=permissions>
 <h1>Why are file permissions reset to the defaults when I save?</h1>
 </a>
@@ -78,22 +77,10 @@ disable backups in `File-&gt;Global Options'.
 
 If you're using jEdit on a Unix system, you will not be able to access
 the `middle-mouse-button' cut buffer, only the Motif clipboard. This
-is due to the way the JDK is implemented on Unix - there is no way to
-changes this.<p>
+is due to the way the JDK is implemented on Unix.<p>
 
 A crude workaround is to use an application that supports both clipboards,
 such as nedit, to transfer data.
-
-<a name=print>
-<h1>Why can't I print in JDK 1.2?</h1>
-</a>
-
-JDK 1.2 has a bug where the entire printed document is stored in memory,
-rather than a spool file. This can fill up memory and cause problems
-and crashes.<p>
-
-This bug is entered as #4186108 in the Bug Parade - see
-&lt;http://developer.java.sun.com&gt; for details.
 
 <a name=memory>
 <h1>Why do I get OutOfMemoryErrors?</h1>
@@ -143,68 +130,6 @@ Swing installed properly. For jEdit to work, Swing 1.1beta3 or later
 must be installed, and it's swingall.jar file must be in the CLASSPATH.<p>
 
 Swing can be downloaded from &lt;java.sun.com/products/jfc/index.html&gt;.
-
-<a name=access>
-<h1>Why do I get an AccessException on startup?</h1>
-</a>
-
-This is due to a JDK bug on some Unix JDK versions. There are two workarounds:
-
-<ul>
-<li>Disable jEdit's RMI interface with the -normi command line option
-<li>Edit your <code>/etc/hosts</code> so that your machine's host name
-is aliased to something other than 0.0.0.0 (for example, change it to
-127.0.0.1, or your machine's actual IP address)
-</ul>
-
-<a name=bigfile>
-<h1>Why does the display mess up when editing large files?</h1>
-</a>
-
-Due to an AWT bug in Unix versions of the JDK, the
-Swing JTextComponent component has problems editing documents greater
-than about 2000 lines. The problem is that the viewscreen turns gray
-and GUI elements are repainted incorrectly.
-
-<a name=overwrite>
-<h1>Why doesn't overwrite mode work?</h1>
-</a>
-
-Overwrite mode doesn't appear to work on JDK 1.2. I am
-working on a fix; it will be available as soon as possible.<p>
-
-If overwrite mode doesn't work on other systems, the most likely
-problem is that your jEdit is still loading the AltGrPatch plugin
-that was obsoleted as of version 1.6pre4. Delete any copies of
-altgr.jar from the system and user plugin directories (see the
-<a href=plugins.html>jEdit Plugins</a> help topic for details).
-
-<a name=altgr>
-<h1>Why doesn't the AltGr key work?</h1>
-</a>
-
-JDK 1.1.7 and earlier had a bug where the AltGr key generated
-the wrong keycode. Upgrade to JDK 1.1.8 or later to fix this
-problem.
-
-<a name=homeend>
-<h1>Why don't C+HOME/C+END work properly?</h1>
-</a>
-
-Swing versions earlier than 1.1.1beta2 had broken C+HOME/C+END actions.
-Upgrade to a later Swing release.<p>
-
-Swing can be downloaded from &lt;java.sun.com/products/jfc/index.html&gt;.
-
-<a name=alt>
-<h1>Why don't the Alt key mnemonics work?</h1>
-</a>
-
-On JDK 1.2 and 1.1.x where x is earlier than about 6, the AWT incorrectly
-sets the modifiers of KEY_TYPED events to 0 even if the Alt key is pressed.
-The end result is that the keystroke is inserted in the document. This
-is an AWT bug, and as far as I know the only way to fix it is
-to upgrade to a later JDK version.
 
 <a name=slow>
 <h1>Why is jEdit so slow?</h1>

@@ -19,8 +19,9 @@
 
 package org.gjt.sp.jedit.actions;
 
-import javax.swing.JFileChooser;
+import javax.swing.*;
 import java.awt.event.ActionEvent;
+import java.awt.*;
 import java.io.File;
 import org.gjt.sp.jedit.*;
 
@@ -38,7 +39,6 @@ public class open_file extends EditAction
 			.getFile().getParent());
 		chooser.setDialogType(JFileChooser.OPEN_DIALOG);
 		chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-		chooser.setMultiSelectionEnabled(false); // because of Swing bugs
 		int retVal = chooser.showDialog(view,null);
 		if(retVal == JFileChooser.APPROVE_OPTION)
 		{
@@ -47,4 +47,4 @@ public class open_file extends EditAction
 				false,false);
 		}
 	}
-}
+}	

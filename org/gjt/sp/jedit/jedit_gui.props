@@ -547,8 +547,14 @@ options.keys.label=Shortcuts
 options.keys.name=Command
 options.keys.binding=Keyboard shortcut
 
-# Color chooser, used by options.colors
+# Color chooser, used by options.styles
 colorChooser.title=Pick a Color
+
+# Style editor, used by options.styles
+styleEditor.title=Style Editor
+styleEditor.italics=Italics
+styleEditor.bold=Bold
+styleEditor.color=Text color:\ 
 
 # Plugin options dialog
 plugin-options.title=Plugin Options

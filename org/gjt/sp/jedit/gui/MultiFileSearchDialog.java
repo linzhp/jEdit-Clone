@@ -164,9 +164,11 @@ public class MultiFileSearchDialog extends JDialog
 			case KeyEvent.VK_ENTER:
 				okClicked = true;
 				dispose();
+				evt.consume();
 				break;
 			case KeyEvent.VK_ESCAPE:
 				dispose();
+				evt.consume();
 				break;
 			}
 		}

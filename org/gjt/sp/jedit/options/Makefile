@@ -9,7 +9,9 @@ classes=org/gjt/sp/jedit/options/EditorOptionPane.class \
 	org/gjt/sp/jedit/options/KeyTableOptionPane.class \
 	org/gjt/sp/jedit/options/StyleOptionPane.class
 
-others='org/gjt/sp/jedit/options/ColorTableModel.class' \
+others='org/gjt/sp/jedit/options/StyleEditor.class' \
+	'org/gjt/sp/jedit/options/StyleOptionPane$$ListHandler.class' \
+	'org/gjt/sp/jedit/options/ColorTableModel.class' \
 	'org/gjt/sp/jedit/options/ColorTableModel$$ColorChoice.class' \
 	'org/gjt/sp/jedit/options/ColorTableModel$$ColorRenderer.class' \
 	'org/gjt/sp/jedit/options/KeyTableModel.class' \

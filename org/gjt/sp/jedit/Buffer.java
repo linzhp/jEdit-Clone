@@ -688,7 +688,7 @@ loop:		for(int i = 0; i < markers.size(); i++)
 	 * A UID can be converted back to a buffer with the
 	 * jEdit.getBuffer() method.
 	 *
-	 * @see org.gjt.sp.jedit.jEdit.getBuffer(int)
+	 * @see org.gjt.sp.jedit.jEdit#getBuffer(int)
 	 */
 	public final int getUID()
 	{
@@ -1352,6 +1352,10 @@ loop:		for(int i = 0; i < markers.size(); i++)
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.86  1999/06/16 03:29:59  sp
+ * Added <title> tags to docs, configuration data is now stored in a
+ * ~/.jedit directory, style option pane finished
+ *
  * Revision 1.85  1999/06/15 05:03:54  sp
  * RMI interface complete, save all hack, views & buffers are stored as a link
  * list now

@@ -581,6 +581,17 @@ public class GUIUtilities
 	}
 
 	/**
+	 * Converts a style into it's string representation.
+	 * @param style The style
+	 */
+	public static String getStyleString(SyntaxStyle style)
+	{
+		return "color:" + getColorHexString(style.getColor())
+			+ " style:" + (style.isItalics() ? "i" : "")
+			+ (style.isBold() ? "b" : "");
+	}
+
+	/**
 	 * Loads a windows's geometry from the properties.
 	 * The geometry is loaded from the <code><i>name</i>.x</code>,
 	 * <code><i>name</i>.y</code>, <code><i>name</i>.width</code> and
@@ -669,6 +680,10 @@ public class GUIUtilities
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.23  1999/06/16 03:29:59  sp
+ * Added <title> tags to docs, configuration data is now stored in a
+ * ~/.jedit directory, style option pane finished
+ *
  * Revision 1.22  1999/06/13 05:47:02  sp
  * Minor changes required for LatestVersion plugin
  *

@@ -21,8 +21,10 @@
 package org.gjt.sp.jedit.options;
 
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.*;
 import javax.swing.table.*;
 import javax.swing.*;
+import java.awt.event.*;
 import java.awt.*;
 import java.util.Vector;
 import org.gjt.sp.jedit.syntax.SyntaxStyle;
@@ -60,6 +62,8 @@ public class StyleOptionPane extends OptionPane
 
 	public void save()
 	{
+		colorModel.save();
+		styleModel.save();
 	}
 
 	// private members
@@ -73,6 +77,8 @@ public class StyleOptionPane extends OptionPane
 		colorModel = createColorTableModel();
 		colorTable = new JTable(colorModel);
 		colorTable.getTableHeader().setReorderingAllowed(false);
+		colorTable.getSelectionModel().addListSelectionListener(
+			new ListHandler(colorTable));
 		TableColumnModel tcm = colorTable.getColumnModel();
  		TableColumn colorColumn = tcm.getColumn(1);
 		colorColumn.setCellRenderer(new ColorTableModel.ColorRenderer());
@@ -93,6 +99,8 @@ public class StyleOptionPane extends OptionPane
 		styleModel = createStyleTableModel();
 		styleTable = new JTable(styleModel);
 		styleTable.getTableHeader().setReorderingAllowed(false);
+		styleTable.getSelectionModel().addListSelectionListener(
+			new ListHandler(styleTable));
 		TableColumnModel tcm = styleTable.getColumnModel();
  		TableColumn styleColumn = tcm.getColumn(1);
 		styleColumn.setCellRenderer(new StyleTableModel.StyleRenderer());
@@ -106,6 +114,46 @@ public class StyleOptionPane extends OptionPane
 	private StyleTableModel createStyleTableModel()
 	{
 		return new StyleTableModel();
+	}
+
+	class ListHandler implements ListSelectionListener
+	{
+		JTable table;
+
+		ListHandler(JTable table)
+		{
+			this.table = table;
+		}
+
+		public void valueChanged(ListSelectionEvent evt)
+		{
+			if(evt.getValueIsAdjusting())
+				return;
+			if(table.getSelectedRow() == -1)
+				return;
+			if(table == colorTable)
+			{
+				Color color = JColorChooser.showDialog(
+					StyleOptionPane.this,
+					jEdit.getProperty("colorChooser.title"),
+					(Color)colorModel.getValueAt(
+					table.getSelectedRow(),1));
+				if(color != null)
+					colorModel.setValueAt(color,table
+						.getSelectedRow(),1);
+			}
+			else if(table == styleTable)
+			{
+				SyntaxStyle style = new StyleEditor(
+					StyleOptionPane.this,
+					(SyntaxStyle)styleModel.getValueAt(
+					table.getSelectedRow(),1)).getStyle();
+				if(style != null)
+					styleModel.setValueAt(style,table
+						.getSelectedRow(),1);
+			}
+			table.clearSelection();
+		}
 	}
 }
 
@@ -151,6 +199,13 @@ class ColorTableModel extends AbstractTableModel
 		}
 	}
 
+	public void setValueAt(Object value, int row, int col)
+	{
+		ColorChoice ch = (ColorChoice)colorChoices.elementAt(row);
+		if(col == 1)
+			ch.color = (Color)value;
+	}
+
 	public String getColumnName(int index)
 	{
 		switch(index)
@@ -161,6 +216,17 @@ class ColorTableModel extends AbstractTableModel
 			return jEdit.getProperty("options.styles.color");
 		default:
 			return null;
+		}
+	}
+
+	public void save()
+	{
+		for(int i = 0; i < colorChoices.size(); i++)
+		{
+			ColorChoice ch = (ColorChoice)colorChoices
+				.elementAt(i);
+			jEdit.setProperty(ch.property,
+				GUIUtilities.getColorHexString(ch.color));
 		}
 	}
 
@@ -268,6 +334,13 @@ class StyleTableModel extends AbstractTableModel
 		}
 	}
 
+	public void setValueAt(Object value, int row, int col)
+	{
+		StyleChoice ch = (StyleChoice)styleChoices.elementAt(row);
+		if(col == 1)
+			ch.style = (SyntaxStyle)value;
+	}
+
 	public String getColumnName(int index)
 	{
 		switch(index)
@@ -278,6 +351,17 @@ class StyleTableModel extends AbstractTableModel
 			return jEdit.getProperty("options.styles.style");
 		default:
 			return null;
+		}
+	}
+
+	public void save()
+	{
+		for(int i = 0; i < styleChoices.size(); i++)
+		{
+			StyleChoice ch = (StyleChoice)styleChoices
+				.elementAt(i);
+			jEdit.setProperty(ch.property,
+				GUIUtilities.getStyleString(ch.style));
 		}
 	}
 
@@ -348,9 +432,116 @@ class StyleTableModel extends AbstractTableModel
 	}
 }
 
+class StyleEditor extends JDialog
+implements ActionListener, KeyListener
+{
+	StyleEditor(Component comp, SyntaxStyle style)
+	{
+		super(JOptionPane.getFrameForComponent(comp),
+			jEdit.getProperty("styleEditor.title"),true);
+
+		getContentPane().setLayout(new BorderLayout());
+
+		JPanel panel = new JPanel();
+		panel.add(italics = new JCheckBox(
+			jEdit.getProperty("styleEditor.italics")));
+		italics.getModel().setSelected(style.isItalics());
+		panel.add(bold = new JCheckBox(
+			jEdit.getProperty("styleEditor.bold")));
+		bold.getModel().setSelected(style.isBold());
+		panel.add(new JLabel(jEdit.getProperty(
+			jEdit.getProperty("styleEditor.color"))));
+		panel.add(color = new JButton("    "));
+		color.setBackground(style.getColor());
+		color.setRequestFocusEnabled(false);
+		color.addActionListener(this);
+
+		getContentPane().add(BorderLayout.CENTER,panel);
+
+		panel = new JPanel();
+		panel.add(ok = new JButton(jEdit.getProperty("common.ok")));
+		getRootPane().setDefaultButton(ok);
+		ok.addActionListener(this);
+		panel.add(cancel = new JButton(jEdit.getProperty("common.cancel")));
+		cancel.addActionListener(this);
+
+		getContentPane().add(BorderLayout.SOUTH,panel);
+
+		addKeyListener(this);
+
+		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+
+		Dimension screen = getToolkit().getScreenSize();
+		pack();
+		setLocation((screen.width - getSize().width) / 2,
+			(screen.height - getSize().height) / 2);
+		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+		show();
+	}
+
+	public void actionPerformed(ActionEvent evt)
+	{
+		Object source = evt.getSource();
+		if(source == ok)
+		{
+			okClicked = true;
+			dispose();
+		}
+		else if(source == cancel)
+			dispose();
+		else if(source == color)
+		{
+			Color c = JColorChooser.showDialog(this,
+				jEdit.getProperty("colorChooser.title"),
+				color.getBackground());
+			if(c != null)
+				color.setBackground(c);
+		}
+	}
+
+	public void keyPressed(KeyEvent evt)
+	{
+		switch(evt.getKeyCode())
+		{
+		case KeyEvent.VK_ENTER:
+			okClicked = true;
+			dispose();
+			evt.consume();
+			break;
+		case KeyEvent.VK_ESCAPE:
+			dispose();
+			evt.consume();
+			break;
+		}
+	}
+
+	public void keyReleased(KeyEvent evt) {}
+	public void keyTyped(KeyEvent evt) {}
+
+	public SyntaxStyle getStyle()
+	{
+		if(!okClicked)
+			return null;
+		return new SyntaxStyle(color.getBackground(),
+				italics.getModel().isSelected(),
+				bold.getModel().isSelected());
+	}
+
+	// private members
+	private JCheckBox italics;
+	private JCheckBox bold;
+	private JButton color;
+	private JButton ok;
+	private JButton cancel;
+	private boolean okClicked;
+}
 /**
  * ChangeLog:
  * $Log$
+ * Revision 1.2  1999/06/16 03:29:59  sp
+ * Added <title> tags to docs, configuration data is now stored in a
+ * ~/.jedit directory, style option pane finished
+ *
  * Revision 1.1  1999/06/12 02:30:27  sp
  * Find next can now perform multifile searches, multifile-search command added,
  * new style option pane

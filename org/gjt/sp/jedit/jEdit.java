@@ -73,10 +73,10 @@ public class jEdit
 		boolean endOpts = false;
 		boolean readOnly = false;
 		boolean wait = false;
-		String userHome = System.getProperty("user.home");
-		String userDir = System.getProperty("user.dir");
-		usrProps = userHome + File.separator + ".jedit-props";
-		historyFile = userHome + File.separator + ".jedit-history";
+		settingsDirectory = System.getProperty("user.home") +
+			File.separator + ".jedit";
+		serverPath = "org.gjt.sp.jedit/RemoteEditor/"
+			+ System.getProperty("user.name");
 		boolean desktop = true;
 		boolean showSplash = true;
 		int lineNo = -1;
@@ -100,10 +100,10 @@ public class jEdit
 					version();
 					System.exit(1);
 				}
-				else if(arg.equals("-nousrprops"))
-					usrProps = null;
-				else if(arg.equals("-nohistory"))
-					historyFile = null;
+				else if(arg.equals("-nosettings"))
+					settingsDirectory = null;
+				else if(arg.startsWith("-settings="))
+					settingsDirectory = arg.substring(10);
 				else if(arg.equals("-rmi"))
 				{
 					if(serverPath != null)
@@ -120,10 +120,6 @@ public class jEdit
 					desktop = false;
 				else if(arg.equals("-nosplash"))
 					showSplash = false;
-				else if(arg.startsWith("-usrprops="))
-					usrProps = arg.substring(10);
-				else if(arg.startsWith("-history="))
-					historyFile = arg.substring(9);
 				else if(arg.equals("-readonly"))
 					readOnly = true;
 				else if(arg.startsWith("-+"))
@@ -148,6 +144,8 @@ public class jEdit
 			}
 		}
 
+		String userDir = System.getProperty("user.dir");
+
 		// Try to connect to the RMI server
 		if(serverPath != null)
 		{
@@ -170,6 +168,12 @@ public class jEdit
 					buf = editor.newFile(null);
 	
 				RemoteView view = editor.newView(null,buf);
+				if(lineNo != -1)
+				{
+					int pos = buf.getLineStartOffset(lineNo);
+					if(pos != -1)
+						view.setCaretPosition(pos);
+				}
 				if(wait)
 					editor.waitForClose(view);
 
@@ -208,15 +212,17 @@ public class jEdit
 		initPlugins();
 		initUserProperties();
 		initPLAF();
-		if(historyFile != null)
-			HistoryModel.loadHistory(historyFile);
+		propertiesChanged();
+		initRecent();
+		if(settingsDirectory != null)
+		{
+			HistoryModel.loadHistory(settingsDirectory + File.separator
+				+ "history");
+		}
 		SearchAndReplace.load();
 
 		// Start plugins
 		JARClassLoader.initPlugins();
-
-		propertiesChanged();
-		initRecent();
 
 		// Load files specified on the command line
 		Buffer buffer = null;
@@ -243,6 +249,9 @@ public class jEdit
 		}
 		if(buffer == null)
 			buffer = newFile(null);
+
+		// Start the RMI service last, to prevent races
+		initRMI();
 
 		// Create the view
 		newView(null,buffer);
@@ -343,66 +352,6 @@ public class jEdit
 			autosave.interrupt();
 
 		autosave = new Autosave();
-
-		if(serverPath != null)
-		{
-			if(remoteEditor == null)
-			{
-				try
-				{
-					remoteEditor = new RemoteEditorImpl();
-					Naming.bind(serverPath,remoteEditor);
-					System.out.println("Started RMI service on "
-						+ serverPath);
-				}
-				catch(AccessException a)
-				{
-					System.err.println("The RMI registry cannot"
-						+ " determine the local host.");
-					System.err.println("On Unix, try changing the"
-						+ "/etc/hosts file so that");
-					System.err.println("127.0.0.1 is mapped to this"
-						+ " machine's host name, and is aliased");
-					System.err.println("to localhost.");
-					a.printStackTrace();
-					
-				}
-				catch(java.rmi.ConnectException c)
-				{
-					System.err.println("Error starting RMI service "
-						+ serverPath + ":");
-					System.err.println("rmiregistry not running");
-				}
-				catch(Exception e)
-				{
-					System.err.println("Error starting RMI service "
-						+ serverPath + ":");
-					e.printStackTrace();
-					remoteEditor = null;
-				}
-			}
-		}
-		else if(remoteEditor != null)
-		{
-			try
-			{
-				Naming.unbind(serverPath);
-				remoteEditor.stop();
-			}
-			catch(AccessException a)
-			{
-			}
-			catch(java.rmi.ConnectException c)
-			{
-			}
-			catch(Exception e)
-			{
-				System.err.println("Error stopping RMI service "
-					+ serverPath + ":");
-				e.printStackTrace();
-			}
-			remoteEditor = null;
-		}
 
 		try
 		{
@@ -883,6 +832,14 @@ public class jEdit
 	}
 
 	/**
+	 * Returns the user settings directory.
+	 */
+	public static String getSettingsDirectory()
+	{
+		return settingsDirectory;
+	}
+
+	/**
 	 * Adds an editor event listener to the global editor listener
 	 * list.
 	 * @param listener The editor event listener
@@ -927,7 +884,10 @@ public class jEdit
 			while(buffer != null)
 			{
 				if(buffer.isNewFile())
+				{
+					buffer = buffer.next;
 					continue;
+				}
 				setProperty("desktop." + bufNum + ".path",
 					buffer.getPath());
 				setProperty("desktop." + bufNum + ".mode",
@@ -996,19 +956,21 @@ public class jEdit
 		unsetProperty("recent." + maxRecent);
 
 		// Save the history lists
-		HistoryModel.saveHistory(historyFile);
+		HistoryModel.saveHistory(settingsDirectory + File.separator
+			+ "history");
 
 		// Save search and replace state
 		SearchAndReplace.save();
 
 		// Write the user properties file
-		if(usrProps != null)
+		if(settingsDirectory != null)
 		{
 			try
 			{
 				OutputStream out = new FileOutputStream(
-					usrProps);
-				props.save(out,"Use the -nousrprops switch"
+					settingsDirectory + File.separator
+					+ "properties");
+				props.save(out,"Use the -nosettings switch"
 					+ " if you want to edit this file in jEdit");
 				out.close();
 			}
@@ -1026,8 +988,7 @@ public class jEdit
 
 	// private members
 	private static String jEditHome;
-	private static String usrProps;
-	private static String historyFile;
+	private static String settingsDirectory;
 	private static String serverPath;
 	private static RemoteEditorImpl remoteEditor;
 	private static Properties defaultProps;
@@ -1039,6 +1000,10 @@ public class jEdit
 	private static Vector pluginActions;
 	private static Vector modes;
 	private static Vector optionPanes;
+	private static int untitledCount;
+	private static Vector recent;
+	private static int maxRecent;
+	private static EventMulticaster multicaster;
 
 	// buffer link list
 	private static Buffer buffersFirst;
@@ -1047,11 +1012,6 @@ public class jEdit
 	// view link list
 	private static View viewsFirst;
 	private static View viewsLast;
-
-	private static int untitledCount;
-	private static Vector recent;
-	private static int maxRecent;
-	private static EventMulticaster multicaster;
 
 	private jEdit() {}
 
@@ -1063,9 +1023,10 @@ public class jEdit
 		System.err.println("    -version: Print jEdit version and"
 			+ " exit");
 		System.err.println("    -usage: Print this message and exit");
-		System.err.println("    -nousrprops: Don't load user"
-			+ " properties");
-		System.err.println("    -nohistory: Don't load history lists");
+		System.err.println("    -nosettings: Don't load user-specific"
+			+ " settings");
+		System.err.println("    -settings=<path>: Load user-specific"
+			+ " settings from <path>");
 		System.err.println("    -normi: Don't start RMI service");
 		System.err.println("    -rmi: Start RMI service");
 		System.err.println("    -rmi=<path>: Start RMI service bound"
@@ -1076,10 +1037,6 @@ public class jEdit
 			+ " exiting");
 		System.err.println("    -nodesktop: Ignore saved desktop");
 		System.err.println("    -nosplash: Don't show splash screen");
-		System.err.println("    -usrprops=<file>: Read user properties"
-			+ " from <file>");
-		System.err.println("    -history=<file>: Load history list"
-			+ " from <file>");
 		System.err.println("    -readonly: Open files read-only");
 		System.err.println("    -+<line>: Go to line number <line> of"
 			+ " opened file");
@@ -1129,6 +1086,17 @@ public class jEdit
 				jEditHome = System.getProperty("user.dir");
 		}
 		jEditHome = jEditHome + File.separator;
+
+		if(settingsDirectory != null)
+		{
+			File _settingsDirectory = new File(settingsDirectory);
+			if(!_settingsDirectory.exists())
+				_settingsDirectory.mkdir();
+	
+			File _jarsDirectory = new File(settingsDirectory,"jars");
+			if(!_jarsDirectory.exists())
+				_jarsDirectory.mkdir();
+		}
 	}
 
 	/**
@@ -1295,8 +1263,8 @@ public class jEdit
 		plugins = new Vector();
 		pluginMenus = new Vector();
 		loadPlugins(jEditHome + "jars");
-		loadPlugins(System.getProperty("user.home") + File.separator
-			+ ".jedit-jars");
+		if(settingsDirectory != null)
+			loadPlugins(settingsDirectory + File.separator + "jars");
 	}
 
 	/**
@@ -1306,11 +1274,12 @@ public class jEdit
 	{
 		props = new Properties(defaultProps);
 
-		if(usrProps != null)
+		if(settingsDirectory != null)
 		{
 			try
 			{
-				loadProps(new FileInputStream(usrProps));
+				loadProps(new FileInputStream(settingsDirectory
+					+ File.separator + "properties"));
 			}
 			catch(FileNotFoundException fnf)
 			{
@@ -1354,6 +1323,51 @@ public class jEdit
 			String recentFile = getProperty("recent." + i);
 			if(recentFile != null)
 				recent.addElement(recentFile);
+		}
+	}
+
+	/**
+	 * Initializes the jEdit RMI service.
+	 */
+	private static void initRMI()
+	{
+		if(serverPath != null)
+		{
+			if(remoteEditor == null)
+			{
+				try
+				{
+					remoteEditor = new RemoteEditorImpl();
+					Naming.bind(serverPath,remoteEditor);
+					System.out.println("Started RMI service on "
+						+ serverPath);
+				}
+				catch(AccessException a)
+				{
+					System.err.println("The RMI registry cannot"
+						+ " determine the local host.");
+					System.err.println("On Unix, try changing the"
+						+ "/etc/hosts file so that");
+					System.err.println("127.0.0.1 is mapped to this"
+						+ " machine's host name, and is aliased");
+					System.err.println("to localhost.");
+					a.printStackTrace();
+					
+				}
+				catch(java.rmi.ConnectException c)
+				{
+					System.err.println("Error starting RMI service "
+						+ serverPath + ":");
+					System.err.println("rmiregistry not running");
+				}
+				catch(Exception e)
+				{
+					System.err.println("Error starting RMI service "
+						+ serverPath + ":");
+					e.printStackTrace();
+					remoteEditor = null;
+				}
+			}
 		}
 	}
 
@@ -1544,6 +1558,10 @@ public class jEdit
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.116  1999/06/16 03:29:59  sp
+ * Added <title> tags to docs, configuration data is now stored in a
+ * ~/.jedit directory, style option pane finished
+ *
  * Revision 1.115  1999/06/15 05:03:54  sp
  * RMI interface complete, save all hack, views & buffers are stored as a link
  * list now

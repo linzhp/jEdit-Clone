@@ -317,6 +317,9 @@ public class View extends JFrame
 		if(this.buffer == buffer)
 			return;
 
+		if(buffer == null)
+			throw new NullPointerException("Not supported yet");
+
 		Buffer oldBuffer = this.buffer;
 		if(oldBuffer != null)
 		{
@@ -808,6 +811,10 @@ public class View extends JFrame
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.78  1999/06/16 03:29:59  sp
+ * Added <title> tags to docs, configuration data is now stored in a
+ * ~/.jedit directory, style option pane finished
+ *
  * Revision 1.77  1999/06/15 05:03:54  sp
  * RMI interface complete, save all hack, views & buffers are stored as a link
  * list now
