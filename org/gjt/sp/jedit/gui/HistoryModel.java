@@ -251,6 +251,9 @@ public class HistoryModel
 			case ']':
 				buf.append("\\]");
 				break;
+			case '\\':
+				buf.append("\\\\");
+				break;
 			default:
 				buf.append(c);
 				break;
@@ -263,6 +266,9 @@ public class HistoryModel
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.6  1999/05/12 05:23:41  sp
+ * Fixed compile % -vs- $ bug, also HistoryModel \ bug
+ *
  * Revision 1.5  1999/05/09 03:50:17  sp
  * HistoryTextField is now a text field again
  *
