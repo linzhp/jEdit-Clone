@@ -21,6 +21,7 @@ package org.gjt.sp.jedit.remote.impl;
 import java.net.*;
 import java.rmi.server.UnicastRemoteObject;
 import java.rmi.*;
+import org.gjt.sp.jedit.event.*;
 import org.gjt.sp.jedit.remote.*;
 import org.gjt.sp.jedit.*;
 
@@ -34,23 +35,28 @@ public class RemoteEditorImpl extends UnicastRemoteObject
 {
 	public RemoteEditorImpl()
 		throws RemoteException
-	{}
+	{
+		jEdit.addEditorListener(editorHandler = new EditorHandler());
+	}
+
+	public void stop()
+	{
+		jEdit.removeEditorListener(editorHandler);
+	}
 
 	public RemoteBuffer newFile(RemoteView view)
 		throws RemoteException
 	{
-		System.out.println("newFile() executing here");
 		return new RemoteBufferImpl(jEdit.newFile(
-			view == null ? null : ((RemoteViewImpl)view).view));
+			view == null ? null : jEdit.getView(view.getUID())));
 	}
 
 	public RemoteBuffer openFile(RemoteView view, String parent, String path,
 		boolean readOnly, boolean newFile)
 		throws RemoteException
 	{
-		System.out.println("openFile() executing here");
 		return new RemoteBufferImpl(jEdit.openFile(
-			view == null ? null : ((RemoteViewImpl)view).view,
+			view == null ? null : jEdit.getView(view.getUID()),
 			parent,path,readOnly,newFile));
 	}
 
@@ -58,7 +64,7 @@ public class RemoteEditorImpl extends UnicastRemoteObject
 		throws RemoteException
 	{
 		jEdit.closeBuffer(
-			view == null ? null : ((RemoteViewImpl)view).view,
+			view == null ? null : jEdit.getView(view.getUID()),
 			((RemoteBufferImpl)buffer).buffer);
 	}
 
@@ -83,22 +89,31 @@ public class RemoteEditorImpl extends UnicastRemoteObject
 	public void waitForClose(RemoteBuffer buffer)
 		throws RemoteException
 	{
+		synchronized(bufferWaitLock)
+		{
+			try
+			{
+				while(!buffer.isClosed())
+					bufferWaitLock.wait();
+			}
+			catch(InterruptedException i)
+			{
+			}
+		}
 	}
 
 	public RemoteView newView(RemoteView view, RemoteBuffer buffer)
 		throws RemoteException
 	{
-		System.out.println("newView() executing here");
-		System.out.println(buffer.getClass().getName());
 		return new RemoteViewImpl(jEdit.newView(
-			view == null ? null : ((RemoteViewImpl)view).view,
-			buffer == null ? null : ((RemoteBufferImpl)buffer).buffer));
+			view == null ? null : jEdit.getView(view.getUID()),
+			buffer == null ? null : jEdit.getBuffer(buffer.getUID())));
 	}
 
 	public void closeView(RemoteView view)
 		throws RemoteException
 	{
-		jEdit.closeView(((RemoteViewImpl)view).view);
+		jEdit.closeView(jEdit.getView(view.getUID()));
 	}
 
 	public RemoteView[] getViews()
@@ -116,18 +131,57 @@ public class RemoteEditorImpl extends UnicastRemoteObject
 	public void waitForClose(RemoteView view)
 		throws RemoteException
 	{
+		synchronized(viewWaitLock)
+		{
+			try
+			{
+				while(!view.isClosed())
+					viewWaitLock.wait();
+			}
+			catch(InterruptedException i)
+			{
+			}
+		}
 	}
 
-	public void exit(RemoteView view)
+	public synchronized void exit(RemoteView view)
 		throws RemoteException
 	{
-		jEdit.exit(view == null ? null : ((RemoteViewImpl)view).view);
+		jEdit.exit(jEdit.getView(view.getUID()));
 	}
+
+	class EditorHandler extends EditorAdapter
+	{
+		public void bufferClosed(EditorEvent evt)
+		{
+			synchronized(viewWaitLock)
+			{
+				viewWaitLock.notifyAll();
+			}
+		}
+
+		public void viewClosed(EditorEvent evt)
+		{
+			synchronized(viewWaitLock)
+			{
+				viewWaitLock.notifyAll();
+			}
+		}
+	}
+
+	// private members
+	private EditorHandler editorHandler;
+	private Object bufferWaitLock = new Object();
+	private Object viewWaitLock = new Object();
 }
 
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.2  1999/06/15 05:03:54  sp
+ * RMI interface complete, save all hack, views & buffers are stored as a link
+ * list now
+ *
  * Revision 1.1  1999/06/14 08:21:07  sp
  * Started rewriting `jEdit server' to use RMI (doesn't work yet)
  *

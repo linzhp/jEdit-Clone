@@ -72,6 +72,7 @@ public class BufferListSet implements SearchFileSet
 				}
 			}
 		}
+		System.out.println("returning null");
 		return null;
 	}
 
@@ -89,7 +90,7 @@ public class BufferListSet implements SearchFileSet
 
 	private void updateBufferList()
 	{
-		Vector _buffers = new Vector();
+		Vector _buffers = new Vector(buffers.length);
 		for(int i = 0; i < buffers.length; i++)
 		{
 			Buffer buffer = buffers[i];
@@ -107,6 +108,10 @@ public class BufferListSet implements SearchFileSet
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.4  1999/06/15 05:03:54  sp
+ * RMI interface complete, save all hack, views & buffers are stored as a link
+ * list now
+ *
  * Revision 1.3  1999/06/09 07:28:10  sp
  * Multifile search and replace tweaks, removed console.html
  *

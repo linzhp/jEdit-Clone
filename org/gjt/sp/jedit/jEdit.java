@@ -72,6 +72,7 @@ public class jEdit
 		// Parse command line
 		boolean endOpts = false;
 		boolean readOnly = false;
+		boolean wait = false;
 		String userHome = System.getProperty("user.home");
 		String userDir = System.getProperty("user.dir");
 		usrProps = userHome + File.separator + ".jedit-props";
@@ -113,6 +114,8 @@ public class jEdit
 					serverPath = arg.substring(5);
 				else if(arg.equals("-normi"))
 					serverPath = null;
+				else if(arg.equals("-wait"))
+					wait = true;
 				else if(arg.equals("-nodesktop"))
 					desktop = false;
 				else if(arg.equals("-nosplash"))
@@ -166,14 +169,19 @@ public class jEdit
 				if(buf == null)
 					buf = editor.newFile(null);
 	
-				editor.newView(null,buf);
-	
+				RemoteView view = editor.newView(null,buf);
+				if(wait)
+					editor.waitForClose(view);
+
 				// Clean up
 				editor = null;
 				buf = null;
 				System.runFinalization();
 				System.gc();
 				return;
+			}
+			catch(java.rmi.ConnectException c)
+			{
 			}
 			catch(NotBoundException nb)
 			{
@@ -183,25 +191,13 @@ public class jEdit
 				System.err.println("Error while contacting jEdit RMI"
 					+ " service:");
 				e.printStackTrace();
+				System.exit(1);
 			}
 		}
 
 		// Show the kool splash screen
 		if(showSplash)
 			GUIUtilities.showSplashScreen();
-
-		// Install RMI security manager
-		try
-		{
-			if(serverPath != null)
-				System.setSecurityManager(new RMISecurityManager());
-		}
-		catch(Exception e)
-		{
-			System.err.println("Error installing RMI security manager:");
-			e.printStackTrace();
-			serverPath = null;
-		}
 
 		// Get things rolling
 		initMisc();
@@ -273,7 +269,7 @@ public class jEdit
 	 * Fetches a property, returning null if it's not defined.
 	 * @param name The property
 	 */
-	public static String getProperty(String name)
+	public static final String getProperty(String name)
 	{
 		return props.getProperty(name);
 	}
@@ -284,7 +280,7 @@ public class jEdit
 	 * @param name The property
 	 * @param def The default value
 	 */
-	public static String getProperty(String name, String def)
+	public static final String getProperty(String name, String def)
 	{
 		return props.getProperty(name,def);
 	}
@@ -295,7 +291,7 @@ public class jEdit
 	 * @param name The property
 	 * @param args The positional parameters
 	 */
-	public static String getProperty(String name, Object[] args)
+	public static final String getProperty(String name, Object[] args)
 	{
 		if(name == null)
 			return null;
@@ -311,7 +307,7 @@ public class jEdit
 	 * @param name The property
 	 * @param value The new value
 	 */
-	public static void setProperty(String name, String value)
+	public static final void setProperty(String name, String value)
 	{
 		props.put(name,value);
 	
@@ -324,7 +320,7 @@ public class jEdit
 	 * @param name The property
 	 * @param value The new value
 	 */
-	public static void setDefaultProperty(String name, String value)
+	public static final void setDefaultProperty(String name, String value)
 	{
 		defaultProps.put(name,value);
 	}
@@ -333,7 +329,7 @@ public class jEdit
 	 * Unsets (clears) a property.
 	 * @param name The property
 	 */
-	public static void unsetProperty(String name)
+	public static final void unsetProperty(String name)
 	{
 		props.remove(name);
 	}
@@ -368,7 +364,14 @@ public class jEdit
 					System.err.println("127.0.0.1 is mapped to this"
 						+ " machine's host name, and is aliased");
 					System.err.println("to localhost.");
+					a.printStackTrace();
 					
+				}
+				catch(java.rmi.ConnectException c)
+				{
+					System.err.println("Error starting RMI service "
+						+ serverPath + ":");
+					System.err.println("rmiregistry not running");
 				}
 				catch(Exception e)
 				{
@@ -384,6 +387,13 @@ public class jEdit
 			try
 			{
 				Naming.unbind(serverPath);
+				remoteEditor.stop();
+			}
+			catch(AccessException a)
+			{
+			}
+			catch(java.rmi.ConnectException c)
+			{
 			}
 			catch(Exception e)
 			{
@@ -534,15 +544,12 @@ public class jEdit
 	 */
 	public static EditAction[] getActions()
 	{
-		if(actions == null)
+		EditAction[] actions = new EditAction[actionHash.size()];
+		Enumeration enum = actionHash.elements();
+		int i = 0;
+		while(enum.hasMoreElements())
 		{
-			actions = new EditAction[actionHash.size()];
-			Enumeration enum = actionHash.elements();
-			int i = 0;
-			while(enum.hasMoreElements())
-			{
-				actions[i++] = (EditAction)enum.nextElement();
-			}
+			actions[i++] = (EditAction)enum.nextElement();
 		}
 		return actions;
 	}
@@ -669,9 +676,9 @@ public class jEdit
 			path = MiscUtilities.constructPath(parent,path);
 			
 		}
-		for(int i = 0; i < buffers.size(); i++)
+		Buffer buffer = buffersFirst;
+		while(buffer != null)
 		{
-			Buffer buffer = (Buffer)buffers.elementAt(i);
 			if(buffer.getPath().equals(path))
 			{
 				if(view != null)
@@ -683,9 +690,11 @@ public class jEdit
 				}
 				return buffer;
 			}
+			buffer = buffer.next;
 		}
-		Buffer buffer = new Buffer(view,url,path,readOnly,newFile);
-		buffers.addElement(buffer);
+		buffer = new Buffer(view,url,path,readOnly,newFile);
+		addBufferToList(buffer);
+
 		if(marker != null)
 			gotoMarker(buffer,null,marker);
 		if(view != null)
@@ -719,10 +728,10 @@ public class jEdit
 	{
 		if(_closeBuffer(view,buffer))
 		{
-			if(buffers.size() == 1)
+			if(buffersFirst == buffersLast)
 				exit(view);
 			else
-				buffers.removeElement(buffer);
+				removeBufferFromList(buffer);
 		}
 		else
 			return false;
@@ -741,12 +750,29 @@ public class jEdit
 	 */
 	public static Buffer getBuffer(String path)
 	{
-		Buffer[] bufferArray = getBuffers();
-		for(int i = 0; i < bufferArray.length; i++)
+		Buffer buffer = buffersFirst;
+		while(buffer != null)
 		{
-			Buffer buffer = bufferArray[i];
 			if(buffer.getPath().equals(path))
 				return buffer;
+			buffer = buffer.next;
+		}
+		return null;
+	}
+
+	/**
+	 * Returns the buffer with the specified unique identifier.
+	 * @param uid The unique identifier
+	 * @see org.gjt.sp.jedit.Buffer#getUID()
+	 */
+	public static Buffer getBuffer(int uid)
+	{
+		Buffer buffer = buffersFirst;
+		while(buffer != null)
+		{
+			if(buffer.getUID() == uid)
+				return buffer;
+			buffer = buffer.next;
 		}
 		return null;
 	}
@@ -756,6 +782,13 @@ public class jEdit
 	 */
 	public static Buffer[] getBuffers()
 	{
+		Vector buffers = new Vector();
+		Buffer buffer = buffersFirst;
+		while(buffer != null)
+		{
+			buffers.addElement(buffer);
+			buffer = buffer.next;
+		}
 		Buffer[] array = new Buffer[buffers.size()];
 		buffers.copyInto(array);
 		return array;
@@ -772,7 +805,7 @@ public class jEdit
 		if(view != null)
 			view.saveCaretInfo();
 		View newView = new View(view,buffer);
-		views.addElement(newView);
+		addViewToList(newView);
 		fireEditorEvent(new EditorEvent(EditorEvent.VIEW_CREATED,
 			newView,buffer));
 		return newView;
@@ -783,7 +816,7 @@ public class jEdit
 	 */
 	public static void closeView(View view)
 	{
-		if(views.size() == 1)
+		if(viewsFirst == viewsLast)
 			exit(view); /* exit does editor event & save */
 		else
 		{
@@ -791,12 +824,27 @@ public class jEdit
 				view,view.getBuffer()));
 
 			view.close();
-
-			view.dispose();
-			views.removeElement(view);
+			removeViewFromList(view);
 		}
 
 
+	}
+
+	/**
+	 * Returns the view with the specified unique identifier.
+	 * @param uid The unique identifier
+	 * @see org.gjt.sp.jedit.View#getUID()
+	 */
+	public static View getView(int uid)
+	{
+		View view = viewsFirst;
+		while(view != null)
+		{
+			if(view.getUID() == uid)
+				return view;
+			view = view.next;
+		}
+		return null;
 	}
 
 	/**
@@ -804,6 +852,13 @@ public class jEdit
 	 */
 	public static View[] getViews()
 	{
+		Vector views = new Vector();
+		View view = viewsFirst;
+		while(view != null)
+		{
+			views.addElement(view);
+			view = view.next;
+		}
 		View[] array = new View[views.size()];
 		views.copyInto(array);
 		return array;
@@ -832,7 +887,7 @@ public class jEdit
 	 * list.
 	 * @param listener The editor event listener
 	 */
-	public static void addEditorListener(EditorListener listener)
+	public static final void addEditorListener(EditorListener listener)
 	{
 		multicaster.addListener(listener);
 	}
@@ -842,7 +897,7 @@ public class jEdit
 	 * list.
 	 * @param listener The editor event listener
 	 */
-	public static void removeEditorListener(EditorListener listener)
+	public static final void removeEditorListener(EditorListener listener)
 	{
 		multicaster.removeListener(listener);
 	}
@@ -851,7 +906,7 @@ public class jEdit
 	 * Fires an editor event to all registered listeners.
 	 * @param evt The event
 	 */
-	public static void fireEditorEvent(EditorEvent evt)
+	public static final void fireEditorEvent(EditorEvent evt)
 	{
 		multicaster.fire(evt);
 	}
@@ -868,9 +923,9 @@ public class jEdit
 		{
 			int bufNum = 0;
 			view.saveCaretInfo();
-			for(int i = 0; i < buffers.size(); i++)
+			Buffer buffer = buffersFirst;
+			while(buffer != null)
 			{
-				Buffer buffer = (Buffer)buffers.elementAt(i);
 				if(buffer.isNewFile())
 					continue;
 				setProperty("desktop." + bufNum + ".path",
@@ -886,15 +941,18 @@ public class jEdit
 				setProperty("desktop." + bufNum + ".selEnd",
 					String.valueOf(buffer.getSavedSelEnd()));
 				bufNum++;
+				buffer = buffer.next;
 			}
 			unsetProperty("desktop." + bufNum + ".path");
 		}
 
 		// Close all buffers
-		for(int i = buffers.size() - 1; i >= 0; i--)	
+		Buffer buffer = buffersFirst;
+		while(buffer != null)
 		{
-			if(!_closeBuffer(view,(Buffer)buffers.elementAt(i)))
+			if(!_closeBuffer(view,buffer))
 				return;
+			buffer = buffer.next;
 		}
 
 		// Stop RMI service
@@ -903,6 +961,13 @@ public class jEdit
 			try
 			{
 				Naming.unbind(serverPath);
+				remoteEditor.stop();
+			}
+			catch(AccessException a)
+			{
+			}
+			catch(java.rmi.ConnectException c)
+			{
 			}
 			catch(Exception e)
 			{
@@ -969,15 +1034,21 @@ public class jEdit
 	private static Properties props;
 	private static Autosave autosave;
 	private static Hashtable actionHash;
-	private static EditAction[] actions;
 	private static Vector plugins;
 	private static Vector pluginMenus;
 	private static Vector pluginActions;
 	private static Vector modes;
 	private static Vector optionPanes;
+
+	// buffer link list
+	private static Buffer buffersFirst;
+	private static Buffer buffersLast;
+
+	// view link list
+	private static View viewsFirst;
+	private static View viewsLast;
+
 	private static int untitledCount;
-	private static Vector buffers;
-	private static Vector views;
 	private static Vector recent;
 	private static int maxRecent;
 	private static EventMulticaster multicaster;
@@ -999,6 +1070,10 @@ public class jEdit
 		System.err.println("    -rmi: Start RMI service");
 		System.err.println("    -rmi=<path>: Start RMI service bound"
 			+ " to <path>");
+		System.err.println("    -wait: If connecting to another"
+			+ " running instance, wait until");
+		System.err.println("    the user closes the new view before"
+			+ " exiting");
 		System.err.println("    -nodesktop: Ignore saved desktop");
 		System.err.println("    -nosplash: Don't show splash screen");
 		System.err.println("    -usrprops=<file>: Read user properties"
@@ -1025,8 +1100,6 @@ public class jEdit
 	 */
 	private static void initMisc()
 	{
-		buffers = new Vector();
-		views = new Vector();
 		multicaster = new EventMulticaster();
 
 		// Add our protcols to java.net.URL's list
@@ -1318,8 +1391,8 @@ public class jEdit
 			System.err.println("Error while loading desktop:");
 			e.printStackTrace();
 		}
-		if(b == null && buffers.size() > 0)
-			b = (Buffer)buffers.elementAt(buffers.size() - 1);
+		if(b == null && buffersLast != null)
+			b = buffersLast;
 		return b;
 	}		
 			
@@ -1333,6 +1406,52 @@ public class jEdit
 			buffer.setCaretInfo(m.getStart(),m.getEnd());
 		else if(view != null)
 			view.getTextArea().select(m.getStart(),m.getEnd());
+	}
+
+	private static void addBufferToList(Buffer buffer)
+	{
+		if(buffersFirst == null)
+			buffersFirst = buffersLast = buffer;
+		else
+		{
+			buffer.prev = buffersLast;
+			buffersLast.next = buffer;
+			buffersLast = buffer;
+		}
+	}
+
+	private static void removeBufferFromList(Buffer buffer)
+	{
+		if(buffer == buffersFirst)
+			buffersFirst = buffer.next;
+		else
+			buffer.prev.next = buffer.next;
+
+		if(buffer == buffersLast)
+			buffersLast = buffersLast.prev;
+	}
+
+	private static void addViewToList(View view)
+	{
+		if(viewsFirst == null)
+			viewsFirst = viewsLast = view;
+		else
+		{
+			view.prev = viewsLast;
+			viewsLast.next = view;
+			viewsLast = view;
+		}
+	}
+
+	private static void removeViewFromList(View view)
+	{
+		if(view == viewsFirst)
+			viewsFirst = view.next;
+		else
+			view.prev.next = view.next;
+
+		if(view == viewsLast)
+			viewsLast = viewsLast.prev;
 	}
 
 	private static boolean _closeBuffer(View view, Buffer buffer)
@@ -1425,6 +1544,10 @@ public class jEdit
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.115  1999/06/15 05:03:54  sp
+ * RMI interface complete, save all hack, views & buffers are stored as a link
+ * list now
+ *
  * Revision 1.114  1999/06/14 08:21:07  sp
  * Started rewriting `jEdit server' to use RMI (doesn't work yet)
  *

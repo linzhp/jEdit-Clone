@@ -38,13 +38,13 @@ public class open_file extends EditAction
 			.getFile().getParent());
 		chooser.setDialogType(JFileChooser.OPEN_DIALOG);
 		chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+		chooser.setMultiSelectionEnabled(false); // because of Swing bugs
 		int retVal = chooser.showDialog(view,null);
 		if(retVal == JFileChooser.APPROVE_OPTION)
 		{
 			File file = chooser.getSelectedFile();
-			if(file != null)
-				jEdit.openFile(view,null,file.getAbsolutePath(),
-					false,false);
+			jEdit.openFile(view,null,file.getAbsolutePath(),
+				false,false);
 		}
 	}
 }

@@ -13,7 +13,8 @@ others=org/gjt/sp/jedit/remote/impl/RemoteBufferImpl_Skel.class \
 	org/gjt/sp/jedit/remote/impl/RemoteEditorImpl_Skel.class \
 	org/gjt/sp/jedit/remote/impl/RemoteEditorImpl_Stub.class \
 	org/gjt/sp/jedit/remote/impl/RemoteViewImpl_Skel.class \
-	org/gjt/sp/jedit/remote/impl/RemoteViewImpl_Stub.class
+	org/gjt/sp/jedit/remote/impl/RemoteViewImpl_Stub.class \
+	'org/gjt/sp/jedit/remote/impl/RemoteEditorImpl$$EditorHandler.class'
 all: $(classes)
 	$(RMIC) -d . \
 		org.gjt.sp.jedit.remote.impl.RemoteEditorImpl \

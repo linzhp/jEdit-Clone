@@ -39,11 +39,21 @@ public interface RemoteView extends Remote
 
 	void setBuffer(RemoteBuffer buffer)
 		throws RemoteException;
+
+	boolean isClosed()
+		throws RemoteException;
+
+	int getUID()
+		throws RemoteException;
 }
 
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.2  1999/06/15 05:03:54  sp
+ * RMI interface complete, save all hack, views & buffers are stored as a link
+ * list now
+ *
  * Revision 1.1  1999/06/14 08:21:07  sp
  * Started rewriting `jEdit server' to use RMI (doesn't work yet)
  *

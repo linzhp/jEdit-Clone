@@ -15,7 +15,7 @@ applications?</a>
 <li><a href=#print>Why can't I print in JDK 1.2?</a>
 <li><a href=#memory>Why do I get OutOfMemoryErrors?</a>
 <li><a href=#noswing>Why do I get a ClassDefNotFoundError on startup?</a>
-<li><a href=#exithang>Why does jEdit hang when exiting?</a>
+<li><a href=#access>Why do I get an AccessException on startup?</a>
 <li><a href=#bigfile>Why does the display mess up when editing large files?</a>
 <li><a href=#overwrite>Why doesn't overwrite mode work?</a>
 <li><a href=#altgr>Why doesn't the AltGr key work?</a>
@@ -144,13 +144,18 @@ must be installed, and it's swingall.jar file must be in the CLASSPATH.<p>
 
 Swing can be downloaded from &lt;java.sun.com/products/jfc/index.html&gt;.
 
-<a name=exithang>
-<h1>Why does jEdit hang when exiting?</h1>
+<a name=access>
+<h1>Why do I get an AccessException on startup?</h1>
 </a>
 
-There is a bug in some JDKs where calling <code>ServerSocket.close()</code>
-will hang the JVM. JDK 1.1.8 does not seem to have this problem - upgrade
-if you are experiencing problems.
+This is due to a JDK bug on some Unix JDK versions. There are two workarounds:
+
+<ul>
+<li>Disable jEdit's RMI interface with the -normi command line option
+<li>Edit your <code>/etc/hosts</code> so that your machine's host name
+is aliased to something other than 0.0.0.0 (for example, change it to
+127.0.0.1, or your machine's actual IP address)
+</ul>
 
 <a name=bigfile>
 <h1>Why does the display mess up when editing large files?</h1>

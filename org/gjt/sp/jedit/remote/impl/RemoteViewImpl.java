@@ -21,7 +21,7 @@ package org.gjt.sp.jedit.remote.impl;
 import java.rmi.server.UnicastRemoteObject;
 import java.rmi.*;
 import org.gjt.sp.jedit.remote.*;
-import org.gjt.sp.jedit.View;
+import org.gjt.sp.jedit.*;
 
 /**
  * An RMI implementation of the View class.
@@ -53,7 +53,19 @@ public class RemoteViewImpl extends UnicastRemoteObject implements RemoteView
 
 	public void setBuffer(RemoteBuffer buffer) throws RemoteException
 	{
-		view.setBuffer(((RemoteBufferImpl)buffer).buffer);
+		view.setBuffer(jEdit.getBuffer(buffer.getUID()));
+	}
+
+	public boolean isClosed()
+		throws RemoteException
+	{
+		return view.isClosed();
+	}
+
+	public int getUID()
+		throws RemoteException
+	{
+		return view.getUID();
 	}
 
 	// package-private members
@@ -63,6 +75,10 @@ public class RemoteViewImpl extends UnicastRemoteObject implements RemoteView
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.2  1999/06/15 05:03:54  sp
+ * RMI interface complete, save all hack, views & buffers are stored as a link
+ * list now
+ *
  * Revision 1.1  1999/06/14 08:21:07  sp
  * Started rewriting `jEdit server' to use RMI (doesn't work yet)
  *

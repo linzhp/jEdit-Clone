@@ -415,6 +415,10 @@ autosaveexists.message=An autosave file {0} was found!\n\
 	This probably means that jEdit crashed before you could save.\n\
 	Open it to see your unsaved data.
 
+# Save all confirm dialog
+saveall.title=Save All Buffers
+saveall.message=Are you sure you want to save all modified buffers?
+
 # Search and replace dialog
 search.title=Search And Replace
 search.find=Find:\ 
@@ -495,7 +499,6 @@ options.general.backupPrefix=Backup filename prefix:\
 options.general.backupSuffix=Backup filename suffix:\ 
 options.general.lineSeparator=Default line separator:\ 
 options.general.saveDesktop=Save session on exit
-options.general.server=Enable jEdit server
 options.general.showTips=Show hints in status bar
 options.general.showToolbar=Show toolbar
 options.general.showFullPath=Show full path of buffers in title bar

@@ -47,7 +47,13 @@ A number of `switches' can also be passed to jEdit.
 	-usage: Display a command line usage message and exit<br>
 	-nousrprops: Don't load user properties<br>
 	-nohistory: Don't load history lists<br>
-	-nodesktop: Ignore saved desktop<br>
+	-normi: Disables jEdit's RMI interface<br>
+	-rmi: Enables jEdit's RMI interface<br>
+	-rmi=<i>path</i>: Enables jEdit's RMI service and registers it as
+	<i>path</i><br>
+	-wait: When connecting to another instance, wait for the newly
+	created view to be closed before exiting<br>
+	-nodesktop: Ignore saved desktop (open file set)<br>
 	-nosplash: Don't show initial splash screen<br>
 	-usrprops=<i>file</i>: Load user properties from <i>file</i><br>
 	-history=<i>file</i>: Load history lists from <i>file</i><br>
@@ -71,7 +77,9 @@ Once jEdit is started, additional files can be opened in a number of ways:
 <ul>
 <li><b>By starting another copy of jEdit.</b> -
 if jEdit is started when there is another copy running, the files are opened in
-the already running copy.
+the already running copy. For this to work jEdit's RMI interface
+must be enabled - see the <a href=advanced.html#rmi>jEdit RMI Interface</a>
+help topic for details.
 <li><b>With the `File->Open File' command.</b> - This displays a standard
 file selection dialog box.
 <li><b>With the `File-&gt;Open URL' command.</b> - This displays a text

@@ -23,7 +23,7 @@ import javax.swing.text.Element;
 import java.rmi.server.UnicastRemoteObject;
 import java.rmi.*;
 import org.gjt.sp.jedit.remote.*;
-import org.gjt.sp.jedit.Buffer;
+import org.gjt.sp.jedit.*;
 
 /**
  * An RMI implementation of the Buffer class.
@@ -42,7 +42,7 @@ public class RemoteBufferImpl extends UnicastRemoteObject
 	public void save(RemoteView view, String path)
 		throws RemoteException
 	{
-		buffer.save(((RemoteViewImpl)view).view,path);
+		buffer.save(jEdit.getView(view.getUID()),path);
 	}
 
 	public String getText(int start, int len)
@@ -98,6 +98,12 @@ public class RemoteBufferImpl extends UnicastRemoteObject
 		return buffer.isClosed();
 	}
 
+	public int getUID()
+		throws RemoteException
+	{
+		return buffer.getUID();
+	}
+
 	// package-private members
 	Buffer buffer;
 }
@@ -105,6 +111,10 @@ public class RemoteBufferImpl extends UnicastRemoteObject
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.2  1999/06/15 05:03:54  sp
+ * RMI interface complete, save all hack, views & buffers are stored as a link
+ * list now
+ *
  * Revision 1.1  1999/06/14 08:21:07  sp
  * Started rewriting `jEdit server' to use RMI (doesn't work yet)
  *

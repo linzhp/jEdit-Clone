@@ -276,7 +276,7 @@ public class Buffer extends DefaultSyntaxDocument
 	/**
 	 * Returns the URL this buffer is editing.
 	 */
-	public URL getURL()
+	public final URL getURL()
 	{
 		return url;
 	}
@@ -284,7 +284,7 @@ public class Buffer extends DefaultSyntaxDocument
 	/**
 	 * Returns the file this buffer is editing.
 	 */
-	public File getFile()
+	public final File getFile()
 	{
 		return file;
 	}
@@ -292,7 +292,7 @@ public class Buffer extends DefaultSyntaxDocument
 	/**
 	 * Returns the autosave file for this buffer.
 	 */
-	public File getAutosaveFile()
+	public final File getAutosaveFile()
 	{
 		return autosaveFile;
 	}
@@ -300,7 +300,7 @@ public class Buffer extends DefaultSyntaxDocument
 	/**
 	 * Returns the name of this buffer.
 	 */
-	public String getName()
+	public final String getName()
 	{
 		return name;
 	}
@@ -308,16 +308,16 @@ public class Buffer extends DefaultSyntaxDocument
 	/**
 	 * Returns the path name of this buffer.
 	 */
-	public String getPath()
+	public final String getPath()
 	{
 		return path;
 	}
 
 	/**
-	 * Returns true if this buffer has been closed (with
-	 * <code>jEdit.closeBuffer</code>).
+	 * Returns true if this buffer has been closed with
+	 * <code>jEdit.closeBuffer()</code>.
 	 */
-	public boolean isClosed()
+	public final boolean isClosed()
 	{
 		return closed;
 	}
@@ -325,7 +325,7 @@ public class Buffer extends DefaultSyntaxDocument
 	/**
 	 * Returns true if this is an untitled file, false otherwise.
 	 */
-	public boolean isNewFile()
+	public final boolean isNewFile()
 	{
 		return newFile;
 	}
@@ -334,7 +334,7 @@ public class Buffer extends DefaultSyntaxDocument
 	 * Returns true if this file has changed since last save, false
 	 * otherwise.
 	 */
-	public boolean isDirty()
+	public final boolean isDirty()
 	{
 		return dirty;
 	}
@@ -342,7 +342,7 @@ public class Buffer extends DefaultSyntaxDocument
 	/**
 	 * Returns true if this file is read only, false otherwise.
 	 */
-	public boolean isReadOnly()
+	public final boolean isReadOnly()
 	{
 		return readOnly;
 	}
@@ -369,7 +369,7 @@ public class Buffer extends DefaultSyntaxDocument
 	/**
 	 * Returns this buffer's undo manager.
 	 */
-	public UndoManager getUndo()
+	public final UndoManager getUndo()
 	{
 		return undo;
 	}
@@ -404,7 +404,7 @@ public class Buffer extends DefaultSyntaxDocument
 	/**
 	 * Returns this buffer's edit mode.
 	 */
-	public Mode getMode()
+	public final Mode getMode()
 	{
 		return mode;
 	}
@@ -412,7 +412,7 @@ public class Buffer extends DefaultSyntaxDocument
 	/**
 	 * Returns the localised name of this buffer's edit mode.
 	 */
-	public String getModeName()
+	public final String getModeName()
 	{
 		return jEdit.getModeName(mode);
 	}
@@ -515,7 +515,7 @@ public class Buffer extends DefaultSyntaxDocument
 	/**
 	 * Returns the token marker for this buffer.
 	 */
-	public TokenMarker getTokenMarker()
+	public final TokenMarker getTokenMarker()
 	{
 		if(syntaxColorizing)
 			return tokenMarker;
@@ -526,7 +526,7 @@ public class Buffer extends DefaultSyntaxDocument
 	/**
 	 * Returns an enumeration of set markers.
 	 */
-	public Enumeration getMarkers()
+	public final Enumeration getMarkers()
 	{
 		return markers.elements();
 	}
@@ -657,7 +657,7 @@ loop:		for(int i = 0; i < markers.size(); i++)
 	 * @param savedSelEnd The selection end
 	 * @see org.gjt.sp.jedit.View#getTextArea()
 	 */
-	public void setCaretInfo(int savedSelStart, int savedSelEnd)
+	public final void setCaretInfo(int savedSelStart, int savedSelEnd)
 	{
 		this.savedSelStart = savedSelStart;
 		this.savedSelEnd = savedSelEnd;
@@ -666,7 +666,7 @@ loop:		for(int i = 0; i < markers.size(); i++)
 	/**
 	 * Returns the saved selection start.
 	 */
-	public int getSavedSelStart()
+	public final int getSavedSelStart()
 	{
 		return savedSelStart;
 	}
@@ -674,16 +674,32 @@ loop:		for(int i = 0; i < markers.size(); i++)
 	/**
 	 * Returns the saved selection end.
 	 */
-	public int getSavedSelEnd()
+	public final int getSavedSelEnd()
 	{
 		return savedSelEnd;
+	}
+
+	/**
+	 * Returns this buffer's unique identifier (UID). UIDs are
+	 * guaranteed to be unique during a jEdit session - they
+	 * are not reused (unless more than 2^32 buffers are created,
+	 * but that isn't a very realistic condition).<p>
+	 *
+	 * A UID can be converted back to a buffer with the
+	 * jEdit.getBuffer() method.
+	 *
+	 * @see org.gjt.sp.jedit.jEdit.getBuffer(int)
+	 */
+	public final int getUID()
+	{
+		return uid;
 	}
 
 	/**
 	 * Adds a buffer event listener to this buffer.
 	 * @param listener The event listener
 	 */
-	public void addBufferListener(BufferListener listener)
+	public final void addBufferListener(BufferListener listener)
 	{
 		multicaster.addListener(listener);
 	}
@@ -692,7 +708,7 @@ loop:		for(int i = 0; i < markers.size(); i++)
 	 * Removes a buffer event listener from this buffer.
 	 * @param listener The event listener
 	 */
-	public void removeBufferListener(BufferListener listener)
+	public final void removeBufferListener(BufferListener listener)
 	{
 		multicaster.removeListener(listener);
 	}
@@ -701,7 +717,7 @@ loop:		for(int i = 0; i < markers.size(); i++)
 	 * Forwards a buffer event to all registered listeners.
 	 * @param evt The event
 	 */
-	public void fireBufferEvent(BufferEvent evt)
+	public final void fireBufferEvent(BufferEvent evt)
 	{
 		multicaster.fire(evt);
 	}
@@ -716,10 +732,16 @@ loop:		for(int i = 0; i < markers.size(); i++)
 	}
 
 	// package-private members
+	Buffer prev;
+	Buffer next;
+	final int uid;
+
 	Buffer(View view, URL url, String path, boolean readOnly, boolean newFile)
 	{
 		init = true;
-		
+
+		uid = UID++;
+
 		this.url = url;
 		this.path = path;
 		this.newFile = newFile;
@@ -768,6 +790,8 @@ loop:		for(int i = 0; i < markers.size(); i++)
 	}
 
 	// private members
+	private static int UID;
+
 	private File file;
 	private long modTime;
 	private File autosaveFile;
@@ -1328,6 +1352,10 @@ loop:		for(int i = 0; i < markers.size(); i++)
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.85  1999/06/15 05:03:54  sp
+ * RMI interface complete, save all hack, views & buffers are stored as a link
+ * list now
+ *
  * Revision 1.84  1999/06/13 05:47:02  sp
  * Minor changes required for LatestVersion plugin
  *

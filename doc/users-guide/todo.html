@@ -6,155 +6,89 @@
 
 <h1>jEdit To Do</h1>
 
+<table border=5>
+<tr>
+<th>Version</th><th>Notes</th>
+</tr>
+<tr>
+<td>1.7pre1</td><td>Released</td>
+</tr>
+<tr>
+<td>1.7pre2</td><td>Released</td>
+</tr>
+<tr>
+<td>1.7pre3</td><td>Released</td>
+</tr>
+
+<tr>
+<td>1.7pre4</td>
+<td>To do:
 <ul>
-<li><a href=#shortterm>Short Term</a>
-<li><a href=#medterm>Medium Term</a>
-<li><a href=#longterm>Long Term</a>
+<li>Color/style editors in options
+<li>Multi-file find next is severely broken
+<li>Multiple files can be selected in `Open File', but only the
+first is opened<p>
+<b>JFileChooser.getSelectedFiles() doesn't work</b>
+<li>Buffers/views stored in a link list, with UIDs<p>
+<b>DONE - but needs to be tested real well</b>
+<li>Fix RMI stuff<p>
+<b>DONE - but needs to be tested real well</b>
+<li>Document RMI stuff<p>
+<b>PARTLY DONE - need to write some docs for developers</b>
+<li>RemoteEditor.waitForClose()<p>
+<b>DONE</b>
+<li>Save-all should ask before saving<p>
+<b>DONE</b>
 </ul>
+</td>
+</tr>
 
-<a name=shortterm>
-<h1>Short Term</h1>
-</a>
-
-This is what needs to be done as soon as possible:
-
+<tr>
+<td>1.7pre5</td>
+<td>To do:
 <ul>
-<li>Finish Perl mode (qw( (aaa) ), multiline matching)
+<li>MacOS clipboard workaround
+<li>Finish Perl mode
+<li>New text component
+</ul>
+</td>
+</tr>
+
+<tr>
+<td>1.7pre6</td>
+<td>To do:
+<ul>
+<li>New document class
+</ul>
+</td>
+</tr>
+
+<tr>
+<td>1.7pre7</td>
+<td>To do:
+<ul>
 <li>Faster literal search
-<li>Finish StyleOptionPane
-<li>!!! if a clip starts with &lt;html&gt;, Paste Previous/Predefined act
-weird (how to turn of Swing's auto html?)
-<li>Multiple file selection in open file dialog
-<li>Clipboard doesn't work on mac
-<li>RMI: waitFor(Buffer/View)
-<li>RMI: security?
-<li>RMI: should the server notify the clients somehow that it's exiting?
-<li>RMI: class cast problems
-<li>RMI: add `accessException' crap to faq
+<li>Rewrite token markers to use PerlTokenMarker-like structure
 </ul>
+</td>
+</tr>
 
-<a name=medterm>
-<h1>Medium Term</h1>
-</a>
-
-This is what needs to be done before 1.7final is released:
-
+<tr>
+<td>1.8 and beyond</td>
+<td>To do:
 <ul>
-<li>Port jEdit to Swing 1.1.1. It is a much better release
-and this should be done as soon as 1.1.1 is released. The
-following workarounds should be removed from jEdit:
-
-<ul>
-<li>The removeAll() hack in the View.update*Menu methods
-<li>... maybe more?
-</ul>
-
-<li>Syntax highlighting has problems with proportional width fonts
-
-<li>Multiline token colorization needs some work.<p>
-The C+END `bug' still exists. Changing a large range of lines still
-messes up the display (and tokenizeLines() isn't appropriate in some
-situations)
-
-<li>Editor needs to be embeddable in other applications.<p>
-jEdit should provide support for running inside another
-application. An AppOwner or similar interface will provide
-support for exiting, fetching properties, and so on.
-</ul>
-
-<li>Multi-line search patterns.<p>
-This sort of works with searching; but it would be hard to implement
-with replacement.
-
-<li>All token markers should be rewritten to use the same structure
-as PerlTokenMarker - they will be faster.
-</ul>
-
-<a name=longterm>
-<h1>Long Term</h1>
-</a>
-
-This is what needs to be done eventually:
-
-<ul>
-<li>jEdit API needs to be made thread-safe.
-<li>Class/method/variable completion.
-
-<li>As it is right now, the toolbar is useless. It would be much handier
-if:
-<ul>
-<li>It was customizable
-<li>It was possible to add buttons that inserted predefined chunks of text,
-a la Paste Predefined
-</ul>
-Since I don't like toolbars myself, this is better implemented as a plugin
-- with the new 1.6 toolbar API, it is very easy.
-
-<li>Write custom text component, to overcome performance problems, and
-2000 line bug
-
-<li>Write costom document, to overcome load() bottleneck, etc
-
-<li>Folding - probably requires the above 2 items.
-
-<li>Integrate XMode.<p>
-Mike Dillon's XMode is a much better way of writing syntax
-modes than the current `manual' way.<p>
-
-<li>Auto indent improvements.<p>
-Auto indent should support `smart' indent (for example, shifting
-the indent on the next line after an `if'). Also, it should line
-up closing and opening brackets, instead of the current indent
-shifting that does not always work correctly.<p>
-
-Pressing keys such as {, } or : in C mode should invoke indentation
-routines automatically.<p>
-
-If we include XMode, we might as well get as much out of the
-XML parser as possible- a simple way of specifying indentation
-using XML should be supported.
-
-<li>Macro language.<p>
-
-Some operations are very tedious without a macro language.<p>
-
-The following issues need to be considered:
-
-<ul>
-<li>What language?<p>
-JPython, being quite complete, fast and easy
-to learn is a good choice for this.
-
-<li>What level of integration? Should it be a macro language only,
-or should it integrate deeply with jEdit, with parts of the editor
-written in this language?<p>
-
-If we choose to do full integration, actions can be eliminated,
-being replaced by short prodedures in that language.<p>
-
-If we choose to keep actions, how should they be invoked from the
-language? As functions? With a special wrapper?
-
-<li>Should properties be obsoleted?<p>
-Manual calls to jEdit.setProperty(), or global variables in that
-language can be used instead. No need to parse two different
-file types at startup.
-
-<li>Should the Java-based plugin API be obsoleted?<p>
-This is unlikely,
-since the extension language will be slower and more limited than
-pure Java, no matter what we do. Also, installing a .jar is much
-easier than a whole bunch of .py or whatever files.
-</ul>
-
-<li>Piece content.<p>
-Mike Dillon once said he was planning on implementing a piece
-content similar to one used in Microsoft Word and many other
-programs.<p>
-
-This will lead to faster autosave, better undo, and faster
-editing in general.
-
+<li>Embeddability
+<li>Folding
+<li>Menu bar overhaul (EnhancedMenu/Bar classes, support getMenuByName(),
+getMenuItemByName(), will make current dynamic menu system obsolete, will
+also support loading menus for stuff other than views)
+<li>Macro language
+<li>XMode integration
+<li>XML indent
+<li>Thread safe API
+<li>Piece content
+<li>Drop support for Swing &lt; 1.1.1 (removeAll() hack, MacOS clipboard
+workaround, maybe others)
 </ul>
 
 </body>

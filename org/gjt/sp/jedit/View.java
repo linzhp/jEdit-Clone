@@ -300,7 +300,7 @@ public class View extends JFrame
 	/**
 	 * Returns the buffer being edited by this view.
 	 */
-	public Buffer getBuffer()
+	public final Buffer getBuffer()
 	{
 		return buffer;
 	}
@@ -346,7 +346,7 @@ public class View extends JFrame
 	 * Sets the buffer being edited by this view.
 	 * @param buffer The buffer to edit.
 	 */
-	public void setBuffer(Buffer buffer)
+	public final void setBuffer(Buffer buffer)
 	{
 		_setBuffer(buffer);
 		updateBuffersMenu();
@@ -365,7 +365,7 @@ public class View extends JFrame
 	/**
 	 * Returns this view's text area.
 	 */
-	public JEditTextArea getTextArea()
+	public final JEditTextArea getTextArea()
 	{
 		return textArea;
 	}
@@ -434,10 +434,35 @@ public class View extends JFrame
 	}
 
 	/**
+	 * Returns this view's unique identifier (UID). UIDs are
+	 * guaranteed to be unique during a jEdit session - they
+	 * are not reused (unless more than 2^32 views are created,
+	 * but that isn't a very realistic condition).<p>
+	 *
+	 * A UID can be converted back to a view with the
+	 * jEdit.getView() method.
+	 *
+	 * @see org.gjt.sp.jedit.jEdit#getView(int)
+	 */
+	public final int getUID()
+	{
+		return uid;
+	}
+
+	/**
+	 * Returns true if this view has been closed with
+	 * <code>jEdit.closeView()</code>.
+	 */
+	public final boolean isClosed()
+	{
+		return closed;
+	}
+
+	/**
 	 * Adds a view event listener to this view.
 	 * @param listener The event listener
 	 */
-	public void addViewListener(ViewListener listener)
+	public final void addViewListener(ViewListener listener)
 	{
 		multicaster.addListener(listener);
 	}
@@ -446,7 +471,7 @@ public class View extends JFrame
 	 * Removes a view event listener from this view.
 	 * @param listener The event listener
 	 */
-	public void removeViewListener(ViewListener listener)
+	public final void removeViewListener(ViewListener listener)
 	{
 		multicaster.removeListener(listener);
 	}
@@ -455,14 +480,19 @@ public class View extends JFrame
 	 * Forwards a view event to all registered listeners.
 	 * @param evt The event
 	 */
-	public void fireViewEvent(ViewEvent evt)
+	public final void fireViewEvent(ViewEvent evt)
 	{
 		multicaster.fire(evt);
 	}
 
 	// package-private members
+	View prev;
+	View next;
+	final int uid;
+
 	View(View view, Buffer buffer)
 	{
+		uid = UID++;
 		multicaster = new EventMulticaster();
 
 		buffers = GUIUtilities.loadMenu(this,"buffers");
@@ -598,15 +628,19 @@ public class View extends JFrame
 	
 	void close()
 	{
+		closed = true;
 		GUIUtilities.saveGeometry(this,"view");
 		saveCaretInfo();
 		jEdit.removeEditorListener(editorListener);
 		Buffer[] bufferArray = jEdit.getBuffers();
 		for(int i = 0; i < bufferArray.length; i++)
 			bufferArray[i].removeBufferListener(bufferListener);
+		dispose();
 	}
 
 	// private members
+	private static int UID;
+
 	private JMenu buffers;
 	private JMenu openRecent;
 	private JMenu clearMarker;
@@ -627,6 +661,7 @@ public class View extends JFrame
 	private EventMulticaster multicaster;
 	private BufferListener bufferListener;
 	private EditorListener editorListener;
+	private boolean closed;
 
 	private void handleKeyEvent(KeyEvent evt)
 	{
@@ -773,6 +808,10 @@ public class View extends JFrame
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.77  1999/06/15 05:03:54  sp
+ * RMI interface complete, save all hack, views & buffers are stored as a link
+ * list now
+ *
  * Revision 1.76  1999/05/28 02:00:25  sp
  * SyntaxView bug fix, faq update, MiscUtilities.isURL() method added
  *
