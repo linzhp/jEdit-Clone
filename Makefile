@@ -27,10 +27,12 @@ clean:
 	find -name \*.class -exec rm {} \;
 realclean: clean
 	find -name \*.jar -exec rm {} \;
-zip: all clean todos
+alpha:
 	(cd ..; zip -qr9 jEdit-`date +%Y%m%d`.zip jEdit)
-tgz: all clean todos
-	(cd ..; tar cfz jEdit-`date +%Y%m%d`.tgz jEdit)
+beta:
+	(cd ..; zip -qr9 jEdit-`grep "CURRENT VERSION:" jEdit/VERSION|\
+		awk '{print $$3}'`.zip jEdit)
+zip: all clean todos alpha beta
 todos:
 	find -name \*.bat -exec todos {} \;
 include Rules.make
