@@ -73,6 +73,16 @@ public class Token
 	public static final String KEYWORD3 = "keyword3";
 
 	/**
+	 * Operator 1 token id.
+	 */
+	public static final String OPERATOR1 = "operator1";
+
+	/**
+	 * Operator 2 token id.
+	 */
+	public static final String OPERATOR2 = "operator2";
+
+	/**
 	 * The length of this token.
 	 */
 	public int length;

@@ -71,6 +71,8 @@ buffer.colors.keyword3=green
 buffer.colors.label=#8888ff
 buffer.colors.literal1=gray
 buffer.colors.literal2=gray
+buffer.colors.operator1=orange
+buffer.colors.operator2=darkGray
 
 ###
 ### VIEW SETTINGS
@@ -203,7 +205,7 @@ mode.filename.Makefile=makefile
 mode.filename.makefile=makefile
 
 # Patch mode
-mode.patch.name=Patch (DIFF)
+mode.patch.name=Patch/DIFF
 mode.extension.diff=patch
 mode.extension.patch=patch
 
@@ -262,5 +264,3 @@ mode.tsql.commentStart=/*
 mode.tsql.commentEnd=*/
 mode.tsql.blockComment=--
 mode.tsql.boxComment=**
-mode.tsql.colors.operator=orange
-mode.tsql.colors.punctuation=gray

@@ -50,13 +50,15 @@ implements ActionListener, KeyListener, ListSelectionListener, WindowListener
 		positions = new Vector();
 		Container content = getContentPane();
 		content.setLayout(new BorderLayout());
-		JPanel panel = new JPanel();
-		panel.setLayout(new BorderLayout());
-		panel.add("West",new JLabel(jEdit.getProperty(
-			"hypersearch.find")));
+		JPanel panel = new JPanel(new BorderLayout());
+		panel.add(new JLabel(jEdit.getProperty("hypersearch.find")),
+			BorderLayout.WEST);
 		find = new JTextField(jEdit.getProperty("search.find.value"),20);
-		panel.add("Center",find);
-		content.add("North",panel);
+		panel.add(find, BorderLayout.CENTER);
+		content.add(panel, BorderLayout.NORTH);
+
+		JPanel stretchPanel = new JPanel(new BorderLayout());
+
 		panel = new JPanel();
 		ignoreCase = new JCheckBox(jEdit.getProperty(
 			"search.ignoreCase"),
@@ -72,12 +74,16 @@ implements ActionListener, KeyListener, ListSelectionListener, WindowListener
 		getRootPane().setDefaultButton(findBtn);
 		close = new JButton(jEdit.getProperty("hypersearch.close"));
 		panel.add(close);
-		content.add("Center",panel);
+		stretchPanel.add(panel,BorderLayout.NORTH);
+
 		results = new JList();
 		results.setVisibleRowCount(10);
 		results.setFont(view.getTextArea().getFont());
 		results.addListSelectionListener(this);
-		content.add("South",new JScrollPane(results));
+		stretchPanel.add(new JScrollPane(results), BorderLayout.CENTER);
+
+		content.add(stretchPanel, BorderLayout.CENTER);
+
 		Dimension screen = getToolkit().getScreenSize();
 		pack();
 		setLocation((screen.width - getSize().width) / 2,

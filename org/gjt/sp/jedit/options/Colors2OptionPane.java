@@ -136,6 +136,32 @@ public class Colors2OptionPane extends ColorsOptionPane
 		keyword3Color = createColorButton("buffer.colors.keyword3");
 		layout.setConstraints(keyword3Color,cons);
 		add(keyword3Color);
+
+		cons.gridx = 0;
+		cons.gridy = 7;
+		cons.gridwidth = 3;
+		label = new JLabel(jEdit.getProperty(
+			"options.colors2.operator1Color"),SwingConstants.RIGHT);
+		layout.setConstraints(label,cons);
+		add(label);
+		cons.gridx = 3;
+		cons.gridwidth = 1;
+		operator1Color = createColorButton("buffer.colors.operator1");
+		layout.setConstraints(operator1Color,cons);
+		add(operator1Color);
+
+		cons.gridx = 0;
+		cons.gridy = 8;
+		cons.gridwidth = 3;
+		label = new JLabel(jEdit.getProperty(
+			"options.colors2.operator2Color"),SwingConstants.RIGHT);
+		layout.setConstraints(label,cons);
+		add(label);
+		cons.gridx = 3;
+		cons.gridwidth = 1;
+		operator2Color = createColorButton("buffer.colors.operator2");
+		layout.setConstraints(operator2Color,cons);
+		add(operator2Color);
 	}
 
 	public void save()
@@ -149,6 +175,8 @@ public class Colors2OptionPane extends ColorsOptionPane
 		saveColorButton("buffer.colors.keyword1",keyword1Color);
 		saveColorButton("buffer.colors.keyword2",keyword2Color);
 		saveColorButton("buffer.colors.keyword3",keyword3Color);
+		saveColorButton("buffer.colors.operator1",operator1Color);
+		saveColorButton("buffer.colors.operator2",operator2Color);
 	}
 
 	// private members
@@ -159,4 +187,6 @@ public class Colors2OptionPane extends ColorsOptionPane
 	private JButton keyword1Color;
 	private JButton keyword2Color;
 	private JButton keyword3Color;
+	private JButton operator1Color;
+	private JButton operator2Color;
 }

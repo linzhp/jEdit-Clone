@@ -1,3 +1,21 @@
+/*
+ * TSQLTokenMarker.java - Transact-SQL token marker
+ * Copyright (C) 1999 mike dillon
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
 package org.gjt.sp.jedit.syntax;
 
 import javax.swing.text.Segment;
@@ -5,9 +23,6 @@ import javax.swing.text.Segment;
 public class TSQLTokenMarker extends TokenMarker
 {
 	// public members
-	public static final String OPERATOR = "operator";
-	public static final String PUNCTUATION = "punctuation";
-
 	public TSQLTokenMarker(KeywordMap keywords)
 	{
 		this.keywords = keywords;
@@ -39,7 +54,7 @@ loop:
 				else if (token == null)
 				{
 					lastOffset = searchBack(line, i, lastOffset);
-					addToken(1,OPERATOR);
+					addToken(1,Token.OPERATOR1);
 					lastOffset = i + 1;
 				}
 				break;
@@ -64,7 +79,7 @@ loop:
 			case '.': case ',': case '(': case ')':
 				if (token == null) {
 					lastOffset = searchBack(line, i, lastOffset);
-					addToken(1,PUNCTUATION);
+					addToken(1, Token.OPERATOR2);
 					lastOffset = i + 1;
 				}
 				break;
@@ -72,7 +87,7 @@ loop:
 			case '~': case '<': case '>': case '=':
 				if (token == null) {
 					lastOffset = searchBack(line, i, lastOffset);
-					addToken(1,OPERATOR);
+					addToken(1,Token.OPERATOR1);
 					lastOffset = i + 1;
 				}
 				break;
@@ -101,7 +116,7 @@ loop:
 					else
 					{
 						lastOffset = searchBack(line, i, lastOffset);
-						addToken(1,OPERATOR);
+						addToken(1,Token.OPERATOR1);
 						lastOffset = i + 1;
 					}
 				}
@@ -119,7 +134,7 @@ loop:
 					else
 					{
 						lastOffset = searchBack(line, i, lastOffset);
-						addToken(1,OPERATOR);
+						addToken(1,Token.OPERATOR1);
 						lastOffset = i + 1;
 					}
 				}
@@ -129,7 +144,7 @@ loop:
 				(line.array[i+1] == '=' || line.array[i+1] == '<' || line.array[i+1] == '>'))
 				{
 					lastOffset = searchBack(line, i, lastOffset);
-					addToken(1,OPERATOR);
+					addToken(1,Token.OPERATOR1);
 					lastOffset = i + 1;
 				}
 				break;

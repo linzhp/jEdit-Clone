@@ -1,6 +1,23 @@
+/*
+ * tsql.java - Transact-SQL editing mode
+ * Copyright (C) 1999 mike dillon
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
 package org.gjt.sp.jedit.mode;
 
-import org.gjt.sp.jedit.mode.*;
 import org.gjt.sp.jedit.syntax.*;
 
 public class tsql extends autoindent
@@ -382,21 +399,21 @@ public class tsql extends autoindent
 
   private static void addOperators()
   {
-    keywords.add("ALL",TSQLTokenMarker.OPERATOR);
-    keywords.add("AND",TSQLTokenMarker.OPERATOR);
-    keywords.add("ANY",TSQLTokenMarker.OPERATOR);
-    keywords.add("BETWEEN",TSQLTokenMarker.OPERATOR);
-    keywords.add("CROSS",TSQLTokenMarker.OPERATOR);
-    keywords.add("EXISTS",TSQLTokenMarker.OPERATOR);
-    keywords.add("IN",TSQLTokenMarker.OPERATOR);
-    keywords.add("INTERSECT",TSQLTokenMarker.OPERATOR);
-    keywords.add("JOIN",TSQLTokenMarker.OPERATOR);
-    keywords.add("LIKE",TSQLTokenMarker.OPERATOR);
-    keywords.add("NOT",TSQLTokenMarker.OPERATOR);
-    keywords.add("NULL",TSQLTokenMarker.OPERATOR);
-    keywords.add("OR",TSQLTokenMarker.OPERATOR);
-    keywords.add("OUTER",TSQLTokenMarker.OPERATOR);
-    keywords.add("SOME",TSQLTokenMarker.OPERATOR);
+    keywords.add("ALL",Token.KEYWORD3);
+    keywords.add("AND",Token.KEYWORD3);
+    keywords.add("ANY",Token.KEYWORD3);
+    keywords.add("BETWEEN",Token.KEYWORD3);
+    keywords.add("CROSS",Token.KEYWORD3);
+    keywords.add("EXISTS",Token.KEYWORD3);
+    keywords.add("IN",Token.KEYWORD3);
+    keywords.add("INTERSECT",Token.KEYWORD3);
+    keywords.add("JOIN",Token.KEYWORD3);
+    keywords.add("LIKE",Token.KEYWORD3);
+    keywords.add("NOT",Token.KEYWORD3);
+    keywords.add("NULL",Token.KEYWORD3);
+    keywords.add("OR",Token.KEYWORD3);
+    keywords.add("OUTER",Token.KEYWORD3);
+    keywords.add("SOME",Token.KEYWORD3);
   }
 
   private static void addSystemStoredProcedures()

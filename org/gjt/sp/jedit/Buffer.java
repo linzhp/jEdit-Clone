@@ -44,6 +44,11 @@ public class Buffer extends PlainDocument
 implements DocumentListener, UndoableEditListener
 {
 	/**
+	 * Size of I/O buffers.
+	 */
+	public static final int IOBUFSIZE = 32768;
+
+	/**
 	 * Finds the next instance of the search string in this buffer.
 	 * The search string is obtained from the
 	 * <code>search.find.value</code> property.
@@ -998,7 +1003,7 @@ implements DocumentListener, UndoableEditListener
 			if(name.endsWith(".gz"))
 				in = new GZIPInputStream(in);
 			BufferedReader bin = new BufferedReader(
-				new InputStreamReader(in));
+				new InputStreamReader(in),IOBUFSIZE);
 			String line;
 			int count = 0;
 			while ((line = bin.readLine()) != null)
@@ -1189,7 +1194,8 @@ implements DocumentListener, UndoableEditListener
 	private void save(OutputStream _out)
 		throws IOException, BadLocationException
 	{
-		OutputStreamWriter out = new OutputStreamWriter(_out);
+		BufferedWriter out = new BufferedWriter(
+			new OutputStreamWriter(_out),IOBUFSIZE);
 		String newline = jEdit.getProperty("buffer.lineSeparator",
 			System.getProperty("line.separator"));
 		Element map = getDefaultRootElement();
