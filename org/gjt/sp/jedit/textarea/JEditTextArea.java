@@ -51,7 +51,10 @@ public class JEditTextArea extends Container
 
 		painter.addComponentListener(new ComponentHandler());
 		painter.addMouseListener(new MouseHandler());
-		painter.addMouseMotionListener(new MouseMotionHandler());
+
+		AutoScroll scroller = new AutoScroll();
+		scrollTimer = new Timer(100,scroller);
+		painter.addMouseMotionListener(scroller);
 
 		addFocusListener(new FocusHandler());
 
@@ -294,6 +297,8 @@ public class JEditTextArea extends Container
 		super.removeNotify();
 		if(focusedComponent == this)
 			focusedComponent = null;
+		if(scrollTimer.isRunning())
+			scrollTimer.stop();
 	}
 
 	// protected members
@@ -305,6 +310,8 @@ public class JEditTextArea extends Container
 	
 	protected TextAreaPainter painter;
 	protected TextAreaModel model;
+
+	protected Timer scrollTimer;
 
 	protected static Timer caretTimer;
 	protected boolean caretBlinks;
@@ -409,6 +416,27 @@ public class JEditTextArea extends Container
 		}
 	}
 
+	class AutoScroll implements ActionListener, MouseMotionListener
+	{
+		private int x, y;
+
+		public void actionPerformed(ActionEvent evt)
+		{
+			model.select(model.getMarkPosition(),
+				model.xyToOffset(x,y));
+		}
+
+		public void mouseDragged(MouseEvent evt)
+		{
+			x = evt.getX();
+			y = evt.getY();
+			if(!scrollTimer.isRunning())
+				scrollTimer.start();
+		}
+			
+		public void mouseMoved(MouseEvent evt) {}
+	}
+
 	class AdjustHandler implements AdjustmentListener
 	{
 		public void adjustmentValueChanged(AdjustmentEvent evt)
@@ -474,14 +502,11 @@ public class JEditTextArea extends Container
 				break;
 			}
 		}
-	}
 
-	class MouseMotionHandler extends MouseMotionAdapter
-	{
-		public void mouseDragged(MouseEvent evt)
+		public void mouseReleased(MouseEvent evt)
 		{
-			model.select(model.getMarkPosition(),
-				model.xyToOffset(evt.getX(),evt.getY()));
+			if(scrollTimer.isRunning())
+				scrollTimer.stop();
 		}
 	}
 
@@ -495,6 +520,9 @@ public class JEditTextArea extends Container
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.9  1999/06/30 07:08:02  sp
+ * Text area bug fixes
+ *
  * Revision 1.8  1999/06/30 05:01:55  sp
  * Lots of text area bug fixes and optimizations
  *

@@ -228,10 +228,18 @@ public class TextAreaModel
 							- width;
 					else
 						charWidth = fm.charWidth(c);
-	
-					if(x - charWidth / 2 <= width)
-						return offset + i;
-	
+
+					if(painter.isBlockCaretEnabled())
+					{
+						if(x + charWidth / 2 <= width)
+							return offset + i;
+					}
+					else
+					{
+						if(x - charWidth / 2 <= width)
+							return offset + i;
+					}
+
 					width += charWidth;
 				}
 
@@ -674,6 +682,9 @@ public class TextAreaModel
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.9  1999/06/30 07:08:02  sp
+ * Text area bug fixes
+ *
  * Revision 1.8  1999/06/30 05:01:55  sp
  * Lots of text area bug fixes and optimizations
  *

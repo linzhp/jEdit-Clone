@@ -395,7 +395,7 @@ public class TextAreaPainter extends Component implements TabExpander
 
 		if(currentLineIndex < 0 || currentLineIndex >= model.getLineCount())
 		{
-			paintHighlight(model,gfx,y += model.getLineHeight());
+			paintHighlight(model,gfx,y);
 			gfx.setColor(defaultColor);
 			gfx.drawString("~",0,y);
 			return 1;
@@ -463,6 +463,12 @@ public class TextAreaPainter extends Component implements TabExpander
 
 		y += model.getLineHeight();
 
+		// We do this because xToOffset() uses currentLine to avoid
+		// unnecessary getText()s, and we must keep the offset and
+		// count values from being mangled
+		int segmentOffset = currentLine.offset;
+		int segmentCount = currentLine.count;
+
 		int offset = 0;
 		Token tokens = currentLineTokens;
 		for(;;)
@@ -483,7 +489,7 @@ public class TextAreaPainter extends Component implements TabExpander
 				styles[id].setGraphicsFlags(gfx,defaultFont);
 
 			currentLine.count = length;
-			x = Utilities.drawTabbedText(currentLine,x,y,gfx,this,offset);
+			x = Utilities.drawTabbedText(currentLine,x,y,gfx,this,0);
 			currentLine.offset += length;
 			offset += length;
 
@@ -494,6 +500,9 @@ public class TextAreaPainter extends Component implements TabExpander
 			gfx.setColor(eolMarkerColor);
 			gfx.drawString(".",x,y);
 		}
+
+		currentLine.offset = segmentOffset;
+		currentLine.count = segmentCount;
 	}
 
 	protected void paintHighlight(TextAreaModel model, Graphics gfx, int y)
@@ -596,6 +605,9 @@ public class TextAreaPainter extends Component implements TabExpander
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.9  1999/06/30 07:08:02  sp
+ * Text area bug fixes
+ *
  * Revision 1.8  1999/06/30 05:01:55  sp
  * Lots of text area bug fixes and optimizations
  *
