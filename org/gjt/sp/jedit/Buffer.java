@@ -408,7 +408,7 @@ implements DocumentListener, UndoableEditListener
 		int pageWidth = pageDimension.width;
 		int pageHeight = pageDimension.height;
 		int y = 0;
-loop:		for(int i = 0; i < map.getElementCount(); i++)
+		for(int i = 0; i < map.getElementCount(); i++)
 		{
 			if(gfx == null)
 			{
@@ -549,8 +549,7 @@ loop:		for(int i = 0; i < map.getElementCount(); i++)
 	 */
 	public void setTokenMarker(JSTokenMarker tokenMarker)
 	{
-		if("on".equals(jEdit.props.getProperty("buffer.syntax")))
-			this.tokenMarker = tokenMarker;
+		this.tokenMarker = tokenMarker;
 	}
 
 	/**
@@ -558,7 +557,10 @@ loop:		for(int i = 0; i < map.getElementCount(); i++)
 	 */
 	public JSTokenMarker getTokenMarker()
 	{
-		return tokenMarker;
+		if(jEdit.getSyntaxColorizing())
+			return tokenMarker;
+		else
+			return null;
 	}
 	
 	/**

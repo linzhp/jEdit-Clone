@@ -25,32 +25,9 @@ import java.awt.*;
 public class SyntaxTextArea extends JEditorPane
 {
 	// public members
-	public SyntaxTextArea(int rows, int columns)
+	public SyntaxTextArea()
 	{
-		this.rows = rows;
-		this.columns = columns;
 		setEditorKit(new SyntaxEditorKit());
 	}
-
-	public Dimension getPreferredSize()
-	{
-		Dimension d = super.getPreferredSize();
-		FontMetrics fm = getToolkit().getFontMetrics(getFont());
-		d.width = Math.max(d.width,fm.charWidth('m') * columns);
-		d.height = Math.max(d.height,fm.getHeight() * rows);
-		return d;
-	}
-
-	public Dimension getMinimumSize()
-	{
-		FontMetrics fm = getToolkit().getFontMetrics(getFont());
-		Dimension d = new Dimension();
-		d.width = fm.charWidth('m') * columns;
-		d.height = fm.getHeight() * rows;
-		return d;
-	}
-
-	// private members
-	private int columns;
-	private int rows;
 }
+

@@ -48,38 +48,13 @@ implements ActionListener, CaretListener, KeyListener, WindowListener
 	 * changed:
 	 * <ul>
 	 * <li><code>lf</code>
-	 * <li><code>view.font</code>
-	 * <li><code>view.fontsize</code>
-	 * <li><code>view.fontstyle</code>
-	 * <li><code>view.tabsize</code>
 	 * <li><code>view.linewrap</code>
-	 * <li><code>view.autoindent</code>
+	 * <li><code>buffermgr.recent</code>
 	 * @see PropsMgr
 	 */
 	public void propertiesChanged()
 	{
-		String family = jEdit.props.getProperty("view.font",
-			"Monospaced");
-		int size, style;
-		try
-		{
-			size = Integer.parseInt(jEdit.props
-				.getProperty("view.fontsize"));
-		}
-		catch(NumberFormatException nf)
-		{
-			size = 12;
-		}
-		try
-		{
-			style = Integer.parseInt(jEdit.props
-				.getProperty("view.fontstyle"));
-		}
-		catch(NumberFormatException nf)
-		{
-			style = 0;
-		}
-		Font font = new Font(family,style,size);
+		Font font = jEdit.getFont();
 		textArea.setFont(font);
 		status.setFont(font);
 		/*String linewrap = jEdit.props.getProperty("view.linewrap");
@@ -93,8 +68,6 @@ implements ActionListener, CaretListener, KeyListener, WindowListener
 			textArea.setLineWrap(true);
 			textArea.setWrapStyleWord(false);
 		}*/
-		autoindent = "on".equals(jEdit.props.getProperty(
-			"view.autoindent"));
 		SwingUtilities.updateComponentTreeUI(this);
 		updateOpenRecentMenu();
 	}
@@ -367,7 +340,7 @@ implements ActionListener, CaretListener, KeyListener, WindowListener
 		if(evt.getKeyCode() == KeyEvent.VK_TAB)
 		{
 			Mode mode = buffer.getMode();
-			if(mode != null && autoindent)
+			if(mode != null && jEdit.getAutoIndent())
 			{
 				if(mode.indentLine(buffer,this,textArea
 					.getCaretPosition()))
@@ -444,10 +417,10 @@ implements ActionListener, CaretListener, KeyListener, WindowListener
 		catch(Exception e)
 		{
 		}
-		textArea = new SyntaxTextArea(h,w);
+		textArea = new SyntaxTextArea();
 		scroller = new JScrollPane(textArea,ScrollPaneConstants
 			.VERTICAL_SCROLLBAR_ALWAYS,ScrollPaneConstants
-			.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+			.HORIZONTAL_SCROLLBAR_AS_NEEDED);	
 		status = new JLabel("Tastes like chicken!");
 		if(view == null)
 			setBuffer(null);
@@ -460,6 +433,10 @@ implements ActionListener, CaretListener, KeyListener, WindowListener
 		menuBar = jEdit.loadMenubar(this,"view.mbar");
 		setJMenuBar(menuBar);
 		propertiesChanged();
+		FontMetrics fm = getToolkit().getFontMetrics(textArea
+			.getFont());
+		scroller.getViewport().setPreferredSize(new Dimension(
+			w * fm.charWidth('m'),h * fm.getHeight()));
 		getContentPane().add("Center",scroller);
 		getContentPane().add("South",status);
 		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
@@ -497,7 +474,6 @@ implements ActionListener, CaretListener, KeyListener, WindowListener
 	private JScrollPane scroller;
 	private SyntaxTextArea textArea;
 	private JLabel status;
-	private boolean autoindent;
 	private int lastLine;
 	private JMenuBar menuBar;
 	private Buffer buffer;

@@ -54,7 +54,7 @@ public class java_mode implements Mode
 		synchronized(this)
 		{
 			beautifier.init();
-			beautifier.setSpaceIndentation(buffer.getTabSize());
+			beautifier.setTabIndentation(buffer.getTabSize());
 			beautifier.setBracketIndent(buffer.getProperty("ib")
 				!= null);
 			beautifier.setSwitchIndent(buffer.getProperty("fs")

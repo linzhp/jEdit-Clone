@@ -41,7 +41,6 @@ public class expand_abbrev implements Command
 		try
 		{
 			line = buffer.getText(start,len);
-			System.out.println("ea debug: line=" + line);
 			// scan backwards to find word
 			int wordStart = start;
 loop:			for(int i = dot - 1; i >= start; i--)
@@ -61,27 +60,20 @@ loop:			for(int i = dot - 1; i >= start; i--)
 					}
 				}
 			}
-			System.out.println("ea debug: wordStart=" + wordStart);
-			System.out.println("ea debug: dot=" + dot);
 			String word = line.substring(wordStart - start,dot
 				- start);
-			System.out.println("ea debug: word=" + word);
 			// loop through lines in file looking for previous
 			// occurance of word
 			for(int i = lineNo - 1; i >= 0; i--)
 			{
-				System.out.println("ea debug: checking #" + i);
 				lineElement = map.getElement(i);
 				int lineStart = lineElement.getStartOffset();
 				int lineLen = lineElement.getEndOffset()
 					- lineStart;
 				line = buffer.getText(lineStart, lineLen);
-				System.out.println("ea debug: checking " +
-					line);
 				int index = line.indexOf(word);
 				if(index != -1)
 				{
-					System.out.println("ea debug: ok");
 					int wordEnd = lineLen;
 loop2:					for(int j = index; j < lineLen; j++)
 					{
@@ -101,8 +93,6 @@ loop2:					for(int j = index; j < lineLen; j++)
 							}
 						}
 					}
-					System.out.println("ea debug: wordEnd="
-						+ wordEnd);
 					view.getTextArea().replaceSelection(
 						line.substring(index +
 							word.length(),

@@ -50,11 +50,12 @@ implements ActionListener
 	private JRadioButton newlineMac;
 	private JComboBox font;
 	private JComboBox fontSize;
-	private JRadioButton off;
+	/*private JRadioButton off;
 	private JRadioButton charWrap;
-	private JRadioButton wordWrap;
+	private JRadioButton wordWrap;*/
 	private JTextField tabSize;
 	private JCheckBox autoindent;
+	private JCheckBox syntax;
 	private JTextField top;
 	private JTextField left;
 	private JTextField bottom;
@@ -253,6 +254,7 @@ implements ActionListener
 		content.add(fontSize);
 		constraints.gridx = 0;
 		constraints.gridy = 1;
+		/*
 		label = new JLabel(jEdit.props.getProperty(
 			"options.editing.wrap"),SwingConstants.RIGHT);
 		layout.setConstraints(label,constraints);
@@ -281,7 +283,7 @@ implements ActionListener
 		layout.setConstraints(wordWrap,constraints);
 		content.add(wordWrap);
 		constraints.gridx = 0;
-		constraints.gridy = 2;
+		constraints.gridy = 2;*/
 		label = new JLabel(jEdit.props.getProperty(
 			"options.editing.tabsize"),SwingConstants.RIGHT);
 		layout.setConstraints(label,constraints);
@@ -292,13 +294,19 @@ implements ActionListener
 		layout.setConstraints(tabSize,constraints);
 		content.add(tabSize);
 		constraints.gridx = 2;
-		constraints.gridwidth = constraints.REMAINDER;
 		autoindent = new JCheckBox(jEdit.props.getProperty(
 			"options.editing.autoindent"));
 		autoindent.getModel().setSelected("on".equals(jEdit.props
 			.getProperty("view.autoindent")));
 		layout.setConstraints(autoindent,constraints);
 		content.add(autoindent);
+		constraints.gridx = 3;
+		syntax = new JCheckBox(jEdit.props.getProperty(
+			"options.editing.syntax"));
+		syntax.getModel().setSelected("on".equals(jEdit.props
+			.getProperty("buffer.syntax")));
+		layout.setConstraints(syntax,constraints);
+		content.add(syntax);
 		return content;
 	}
 	
@@ -378,16 +386,18 @@ implements ActionListener
 			jEdit.props.put("view.font",font.getSelectedItem());
 			jEdit.props.put("view.fontsize",fontSize
 				.getSelectedItem());
-			String wrap;
+			/*String wrap;
 			if(charWrap.getModel().isSelected())
 				wrap = "char";
 			else if(wordWrap.getModel().isSelected())
 				wrap = "word";
 			else
 				wrap = "off";
-			jEdit.props.put("view.linewrap",wrap);
+			jEdit.props.put("view.linewrap",wrap);*/
 			jEdit.props.put("buffer.tabsize",tabSize.getText());
 			jEdit.props.put("view.autoindent",autoindent
+				.getModel().isSelected() ? "on" : "off");
+			jEdit.props.put("buffer.syntax",syntax
 				.getModel().isSelected() ? "on" : "off");
 			jEdit.props.put("buffer.margin.top",top.getText());
 			jEdit.props.put("buffer.margin.left",left.getText());

@@ -36,35 +36,26 @@ public class SyntaxView extends PlainView
 	
 	protected void drawLine(int lineIndex, Graphics g, int x, int y)
 	{
-		//try
-		//{
-			Buffer buffer = (Buffer)getDocument();
-			Hashtable colors = buffer.getColors();
-			if(buffer.getTokenMarker() == null)
-				super.drawLine(lineIndex,g,x,y);
-			else
+		Buffer buffer = (Buffer)getDocument();
+		Hashtable colors = buffer.getColors();
+		if(buffer.getTokenMarker() == null)
+			super.drawLine(lineIndex,g,x,y);
+		else
+		{
+			Enumeration enum = buffer.markTokens(lineIndex);
+			while(enum.hasMoreElements())
 			{
-				Enumeration enum = buffer.markTokens(
-					lineIndex);
-				while(enum.hasMoreElements())
-				{
-					JSToken token = (JSToken)enum
-						.nextElement();
-					Object id = token.id;
-					if(id == null)
-						id = "default";
-					String sequence = token.sequence;
-					Color color = (Color)colors.get(id);
-					g.setColor(color == null ?
-						Color.black : color);
-					g.drawString(sequence,x,y);
-					x += metrics.stringWidth(sequence);
-				}
+				JSToken token = (JSToken)enum.nextElement();
+				Object id = token.id;
+				if(id == null)
+					id = "default";
+				String sequence = token.sequence;
+				Color color = (Color)colors.get(id);
+				g.setColor(color == null ?
+					Color.black : color);
+				g.drawString(sequence,x,y);
+				x += metrics.stringWidth(sequence);
 			}
-		//}
-		//catch(BadLocationException bl)
-		//{
-		//	bl.printStackTrace();
-		//}
+		}
 	}
 }
