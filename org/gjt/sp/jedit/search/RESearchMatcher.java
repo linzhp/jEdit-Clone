@@ -29,87 +29,19 @@ import gnu.regexp.*;
 public class RESearchMatcher implements SearchMatcher
 {
 	/**
-	 * AWK regexp syntax.
-	 */
-	public static final String AWK = "awk";
-	
-	/**
-	 * ED regexp syntax.
-	 */
-	public static final String ED = "ed";
-	
-	/**
-	 * EGREP regexp syntax.
-	 */
-	public static final String EGREP = "egrep";
-	
-	/**
-	 * EMACS regexp syntax.
-	 */
-	public static final String EMACS = "emacs";
-	
-	/**
-	 * GREP regexp syntax.
-	 */
-	public static final String GREP = "grep";
-	
-	/**
-	 * PERL4 regexp syntax.
-	 */
-	public static final String PERL4 = "perl4";
-	
-	/**
-	 * PERL5 regexp syntax.
-	 */
-	public static final String PERL5 = "perl5";
-	
-	/**
-	 * SED regexp syntax.
-	 */
-	public static final String SED = "sed";
-
-	/**
-	 * The values that can be passed to the <code>setSyntax()</code>
-	 * method.
-	 */
-	public static final String[] SYNTAX_LIST = { SearchAndReplace.NONE,
-		AWK, ED, EGREP, EMACS, GREP, PERL4, PERL5, SED };
-
-	/**
 	 * Creates a new regular expression string matcher.
 	 * @param search The search string
 	 * @param replace The replacement string
 	 * @param ignoreCase True if the matcher should be case insensitive,
 	 * false otherwise
-	 * @param syntax The regular expression syntax
 	 */
 	public RESearchMatcher(String search, String replace,
-		boolean ignoreCase, String _syntax)
+		boolean ignoreCase)
 	{
-		RESyntax syntax;
-		if(AWK.equals(_syntax))
-			syntax = RESyntax.RE_SYNTAX_AWK;
-		else if(ED.equals(_syntax))
-			syntax = RESyntax.RE_SYNTAX_ED;
-		else if(EGREP.equals(_syntax))
-			syntax = RESyntax.RE_SYNTAX_EGREP;
-		else if(EMACS.equals(_syntax))
-			syntax = RESyntax.RE_SYNTAX_EMACS;
-		else if(GREP.equals(_syntax))
-			syntax = RESyntax.RE_SYNTAX_GREP;
-		else if(SED.equals(_syntax))
-			syntax = RESyntax.RE_SYNTAX_SED;
-		else if(PERL4.equals(_syntax))
-			syntax = RESyntax.RE_SYNTAX_PERL4;
-		else if(PERL5.equals(_syntax))
-			syntax = RESyntax.RE_SYNTAX_PERL5;
-		else
-			throw new IllegalArgumentException("Invalid syntax");
-
 		try
 		{
 			re = new RE(search,(ignoreCase ? RE.REG_ICASE : 0)
-				| RE.REG_MULTILINE,syntax);
+				| RE.REG_MULTILINE,RESyntax.RE_SYNTAX_PERL5);
 		}
 		catch(REException e)
 		{
@@ -155,6 +87,9 @@ public class RESearchMatcher implements SearchMatcher
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.2  1999/05/30 01:28:43  sp
+ * Minor search and replace updates
+ *
  * Revision 1.1  1999/05/29 08:06:56  sp
  * Search and replace overhaul
  *

@@ -27,14 +27,11 @@ import org.gjt.sp.jedit.*;
 /**
  * Class that implements regular expression and literal search within
  * jEdit buffers.
+ * @author Slava Pestov
+ * @version $Id$
  */
 public class SearchAndReplace
 {
-	/**
-	 * Literal search regexp syntax
-	 */
-	public static final String NONE = "none";
-
 	/**
 	 * Sets the current search string.
 	 * @param search The new search string
@@ -93,24 +90,23 @@ public class SearchAndReplace
 	}
 
 	/**
-	 * Sets the regular expression syntax.
-	 * @param syntax The regular expression syntax, or null if a literal
-	 * search is to be performed
+	 * Sets the state of the regular expression flag.
+	 * @param regexp True if regular expression searches should be
+	 * performed
 	 */
-	public static void setSyntax(String syntax)
+	public static void setRegexp(boolean regexp)
 	{
-		SearchAndReplace.syntax = syntax;
+		SearchAndReplace.regexp = regexp;
 		matcher = null;
 	}
 
 	/**
-	 * Returns the regular expression syntax.
-	 * @return The regular expression syntax, or null if literal
-	 * searches are to be performed
+	 * Returns the state of the regular expression flag.
+	 * @return True if regular expression searches should be performed
 	 */
-	public static String getSyntax()
+	public static boolean getRegexp()
 	{
-		return syntax;
+		return regexp;
 	}
 
 	/**
@@ -124,10 +120,10 @@ public class SearchAndReplace
 		if(search == null || "".equals(search))
 			return null;
 
-		if(syntax == null || NONE.equals(syntax))
-			return new LiteralSearchMatcher(search,replace,ignoreCase);
+		if(regexp)
+			return new RESearchMatcher(search,replace,ignoreCase);
 		else
-			return new RESearchMatcher(search,replace,ignoreCase,syntax);
+			return new LiteralSearchMatcher(search,replace,ignoreCase);
 	}
 
 	/**
@@ -296,9 +292,7 @@ public class SearchAndReplace
 	{
 		search = jEdit.getProperty("search.find.value");
 		replace = jEdit.getProperty("search.replace.value");
-		syntax = jEdit.getProperty("search.syntax.value");
-		if("".equals(syntax))
-			syntax = null;
+		regexp = "on".equals(jEdit.getProperty("search.regexp.toggle"));
 		ignoreCase = "on".equals(jEdit.getProperty("search.ignoreCase.toggle"));
 	}
 
@@ -313,14 +307,14 @@ public class SearchAndReplace
 			: replace));
 		jEdit.setProperty("search.ignoreCase.toggle",
 			ignoreCase ? "on" : "off");
-		jEdit.setProperty("search.regexp.value",(syntax == null ? ""
-			: syntax));
+		jEdit.setProperty("search.regexp.toggle",
+			ignoreCase ? "on" : "off");
 	}
 		
 	// private members
 	private static String search;
 	private static String replace;
-	private static String syntax;
+	private static boolean regexp;
 	private static boolean ignoreCase;
 	private static SearchMatcher matcher;
 }
@@ -328,6 +322,9 @@ public class SearchAndReplace
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.3  1999/05/30 01:28:43  sp
+ * Minor search and replace updates
+ *
  * Revision 1.2  1999/05/29 08:06:56  sp
  * Search and replace overhaul
  *

@@ -415,8 +415,7 @@ search.find=Find:\
 search.replace=Replace With:\ 
 search.keepDialog=Keep Dialog 
 search.ignoreCase=Ignore Case
-search.regexp=RegExp Syntax:\ 
-search.regexp.value=perl5
+search.regexp=Regular Expression 
 search.findBtn=Find
 search.replaceSelection=Replace in Selection
 search.replaceSelection.mnemonic=s
@@ -432,7 +431,6 @@ keepsearching.message=No more matches were found. Continue search from\n\
 hypersearch.title=HyperSearch
 hypersearch.find=Search For:\ 
 hypersearch.findBtn=Find All
-hypersearch.ignoreCase=Ignore Case
 
 # Search and replace error dialog
 searcherror.title=Search and Replace Error

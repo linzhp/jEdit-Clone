@@ -16,6 +16,8 @@
 <li>Search and replace overhaul:
 <ul>
 <li>Replace command is gone, use Replace in Selection instead
+<li>The regular expression syntax can no longer be set; it is always
+Perl5 now
 <li>Literal search is now supported
 </ul>
 </ul>
@@ -23,8 +25,9 @@
 <h2>Enhancements</h2>
 
 <ul>
-<li>WWW Browser commands unbundled into a `WWW Browser' plugin
-<li>Console unbundled into a `Console' plugin
+<li>WWW Browser commands unbundled into a `WWW Browser' plugin (with
+more features)
+<li>Console unbundled into a `Console' plugin (with more features)
 <li>Rot13 and Reverse rolled into Mike Dillon's TextTools plugin
 <li>(all these plugins are downloadable from
 &lt;http://www.icg-online.de/jedit/&gt;.)
@@ -40,9 +43,6 @@ changed to MiscUtilities.createWhiteSpace(int length, int tabSize). To use
 soft tabs, 0 should be passed as as `tabSize'.
 <li>GUIUtilities.message/error/input/inputProperty() methods changed to
 take a Frame as a parameter, instead of a JFrame
-<li>View events are no longer fired when the current error changes:
-ViewEvent.CURRENT_ERROR_CHANGED, ViewListener.currentErrorChanged() have
-been removed
 <li>Because the console is no longer part of jEdit, and instead a plugin,
 other plugins that use it will have to be changed
 <li>Any code using jEdit's search and replace code will have to be

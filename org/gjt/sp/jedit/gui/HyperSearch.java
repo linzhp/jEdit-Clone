@@ -59,14 +59,10 @@ public class HyperSearch extends JDialog
 
 		panel = new JPanel();
 		ignoreCase = new JCheckBox(jEdit.getProperty(
-			"search.ignoreCase"),
-			"on".equals(jEdit.getProperty("search.ignoreCase.toggle")));
-		panel.add(ignoreCase);
-		panel.add(new JLabel(jEdit.getProperty("search.regexp")));
-		regexpSyntax = new JComboBox(RESearchMatcher.SYNTAX_LIST);
-		regexpSyntax.setSelectedItem(jEdit.getProperty("search"
-			+ ".regexp.value"));
-		panel.add(regexpSyntax);
+			"search.ignoreCase"),SearchAndReplace.getIgnoreCase());
+		regexp = new JCheckBox(jEdit.getProperty(
+			"search.regexp"),SearchAndReplace.getRegexp());
+		panel.add(regexp);
 		findBtn = new JButton(jEdit.getProperty("hypersearch.findBtn"));
 		panel.add(findBtn);
 		getRootPane().setDefaultButton(findBtn);
@@ -105,7 +101,7 @@ public class HyperSearch extends JDialog
 		find.addCurrentToHistory();
 		SearchAndReplace.setSearchString(find.getText());
 		SearchAndReplace.setIgnoreCase(ignoreCase.getModel().isSelected());
-		SearchAndReplace.setSyntax((String)regexpSyntax.getSelectedItem());
+		SearchAndReplace.setRegexp(regexp.getModel().isSelected());
 		GUIUtilities.saveGeometry(this,"hypersearch");
 	}
 	
@@ -120,7 +116,7 @@ public class HyperSearch extends JDialog
 	private Buffer buffer;
 	private HistoryTextField find;
 	private JCheckBox ignoreCase;
-	private JComboBox regexpSyntax;
+	private JCheckBox regexp;
 	private JButton findBtn;
 	private JButton close;
 	private JList results;
@@ -246,6 +242,9 @@ public class HyperSearch extends JDialog
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.32  1999/05/30 01:28:43  sp
+ * Minor search and replace updates
+ *
  * Revision 1.31  1999/05/29 08:06:56  sp
  * Search and replace overhaul
  *
@@ -278,11 +277,5 @@ public class HyperSearch extends JDialog
  * Revision 1.22  1999/03/20 04:52:55  sp
  * Buffer-specific options panel finished, attempt at fixing OS/2 caret bug, code
  * cleanups
- *
- * Revision 1.21  1999/03/19 08:32:22  sp
- * Added a status bar to views, Escape key now works in dialog boxes
- *
- * Revision 1.20  1999/03/19 07:12:11  sp
- * JOptionPane changes, did a fromdos of the source
  *
  */
