@@ -1,0 +1,49 @@
+JEDIT CLIENT/SERVER
+
+1. Introduction
+---------------
+Using jEdit's client/server features, it is possible to have only instance of
+jEdit running at any time, and use the jOpen utility to instruct that instance
+to open files. This saves memory and makes the buffer list global.
+
+2. The Server Side
+------------------
+The server is run by the main jEdit application. It listens for connections and
+opens the appropriate files. jEdit will only start the server if given the
+-server= command line parameter. The equals sign must be followed by the name
+of the file where the port number will be stored. For example:
+	jedit -server=~/.jedit-server
+NOTE: If you're using the jedit shell script or the jedit.bat batch file to
+start jEdit, the server is started automatically with a default port file. 
+
+3. The Client Side
+------------------
+The jOpen application is the client. It connects to the jEdit server and sends
+it the list of files to open. It must be given at -portfile= option. The equals
+sign must be followed by the name of the file where the port number is stored.
+For example:
+	jopen -portfile=~/.jedit-server <files to open>
+NOTE: If you're using the jopen shell script or the jopen.bat batch file to
+start jOpen, the -portfile= option isn't necessary.
+
+4. Security
+-----------
+The server accepts connections from any host, so anybody in the world can open
+files on your desktop. However, the port is only stored on the local host, so a
+remote attacker would have to guess it, and even if they do guess the port,
+they can't go much damage - only opening files.
+
+5. Protocol
+-----------
+When the server starts, it finds an unused port and binds a socket to it. It
+stores the port number in the specified port file. It waits for connections.
+When a connection is made, it opens a new view, reads a new-line separated list
+of filenames, and opens them.
+
+The client connects to the port stored in the port file, and sends the list of
+files, separated by newlines.
+
+The port file stores the port number as text.
+
+-- Slava Pestov
+<slava_pestov@geocities.com>

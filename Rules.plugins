@@ -1,0 +1,11 @@
+# Rules.plugins
+# Version: 1.0
+# Last Modified: 980926
+
+SLAVA_JARS_DIR=$(SLAVA_SHARE_DIR)/jars
+include ../../Rules.make
+java.class:
+	javac -classpath ../../src:$CLASSPATH $<
+jar-install:
+	mkdirhier $(SLAVA_JARS_DIR)
+	cp $(jar) $(SLAVA_JARS_DIR)

@@ -1,0 +1,50 @@
+JEDIT INSTALLATION INSTRUCTIONS
+
+1. General
+----------
+jEdit requires a Java VM and Sun's Java Foundation Classes. A Java VM for
+Solaris, Windows 95/NT and the MacOS can be found at <http://java.sun.com>.
+A Linux version is available at <http://java.blackdown.org>. JFC can be
+downloaded from <http://java.sun.com>.
+
+2. Unix & Clones
+----------------
+Use the supplied Makefile. If you want to recompile the source, type `make' at
+a shell prompt in the jEdit directory. Then log in as root and `make install'.
+
+By default, everything will be installed under /opt/slava. If you want to
+install jEdit elsewhere, edit the Make.rules file.
+
+Once it's installed, you'll have to add /opt/slava/bin to your PATH. On bourne
+compatible shells (sh, jsh, ash, bash, zsh) the command to do this is
+	PATH=$PATH:/opt/slava/bin;export PATH
+Or on C shells (csh, tcsh)
+	setenv PATH $PATH:/opt/slava/bin
+You might want to add this command to your .profile (bourne shell) or
+.csh.login (C shell) if you don't want to type this every time you log in.
+
+Finally, type `jedit' to start jEdit or `jopen' to open files in a running
+instance of jEdit.
+
+3. Windows 95/NT
+----------------
+Use the makeit.bat batch file to compile it if necessary and
+ the installit.bat
+batch file to install it. By default, everything will be
+ installed under
+C:\Program Files\jEdit. If you don't like this, edit the top
+ level installit.bat
+file.
+
+Once it's installed, run C:\Program Files\jEdit\jedit.bat to start jEdit or
+C:\Program Files\jEdit\jopen.bat to open files in a running instance of jEdit.
+
+4. MacOS
+--------
+No idea whatsoever... sorry, I don't have access to a modern Mac. Try
+ compiling
+all the Java files and running the jEdit class as a stand alone
+ application.
+
+-- Slava Pestov
+<slava_pestov@geocities.com>

@@ -1,0 +1,6 @@
+JEDIT KNOWN BUGS
+
+- some null pointer conditions might not be handled well
+
+-- Slava Pestov
+<slava_pestov@geocities.com>

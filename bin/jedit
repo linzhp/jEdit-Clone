@@ -1,0 +1,34 @@
+#!/bin/sh
+
+if [ "$JAVA" = "" ]
+then
+    JAVA="java"
+fi
+
+if [ "$JEDIT_HOME" = "" ]
+then
+    JEDIT_HOME=/opt/slava/share/jedit-1.00
+fi
+
+if [ "$JEDIT_HELPDIR" = "" ]
+then
+    JEDIT_HELPDIR=/opt/slava/doc/jedit-1.00
+fi
+
+JEDIT="-plugindir=$JEDIT_HOME/jars -plugindir=$HOME/.jedit-jars \
+    -helpdir=$JEDIT_HELPDIR $JEDIT -server=$HOME/.jedit-server$DISPLAY"
+
+for a in "$@"
+do
+    if ja=`expr "$a" : '-J\(..*\)'`
+    then 
+	JEDIT_J="$JEDIT_J $ja"
+    else 
+	JEDIT="$JEDIT $a"
+    fi
+done
+
+export CLASSPATH="$JEDIT_HOME/jedit.jar:$CLASSPATH"
+export JEDIT_J="$JEDIT_J jEdit"
+
+exec $JAVA $JEDIT_J $JEDIT

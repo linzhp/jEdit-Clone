@@ -1,0 +1,28 @@
+#!/bin/sh
+
+if [ "$JAVA" = "" ]
+then
+    JAVA="java"
+fi
+
+if [ "$JEDIT_HOME" = "" ]
+then
+    JEDIT_HOME=/opt/slava/share/jedit-1.00
+fi
+
+JOPEN="$JOPEN -portfile=$HOME/.jedit-server$DISPLAY"
+
+for a in "$@"
+do
+    if ja=`expr "$a" : '-J\(..*\)'`
+    then 
+	JOPEN_J="$JOPEN_J $ja"
+    else 
+	JOPEN="$JOPEN $a"
+    fi
+done
+
+export CLASSPATH="$JEDIT_HOME/jedit.jar:$CLASSPATH"
+export JOPEN_J="$JOPEN_J jOpen"
+
+exec $JAVA $JOPEN_J $JOPEN

@@ -1,0 +1,18 @@
+JEDIT README
+
+This is a pre-release version of jEdit. jEdit is a text editor written in Java.
+It uses the Java Foundation Classes from Sun.
+
+This version loads plugins and files, and can do simple text editing. However,
+more advanced features such as search and replace aren't working yet.
+
+There are installation instructions in INSTALL and some preliminary docs in
+doc/.
+
+If you write a plugin, send it to me and I'll include it in the next version of
+jEdit.
+
+Have fun!
+
+-- Slava Pestov
+<slava_pestov@geocities.com>

@@ -1,0 +1,107 @@
+JEDIT MENU CONFIGURATION
+
+1. Introduction
+---------------
+jEdit stores it's menus in property files (see props.txt). This has a number of
+advantages to compiling them into the program:
+- They're easier to modify.
+- One can make JARs that add support for other languages.
+- One can make JARs that add support for other key bindings, eg Emacs.
+
+2. Menubar Definition
+---------------------
+When a module wants to load a property-based menubar, it calls the
+jEdit.loadMenubar(View view, String name) method. The method does the
+following:
+- It loads the property `name'. This is assumed to be a while space separated
+  list of menu names.
+- It creates an empty menubar.
+- It calls loadMenu() for each of the menus specified and adds them to the
+  menubar.
+- It returns the menubar.
+
+3. Menu Definition
+------------------
+The loadMenu(View view, String name) method is usually called by loadMenubar(),
+but it can be called manually to load popup menus, etc. It does the following:
+- It loads the property `name'. This is assumed to be a while space separated
+  list of menu item names.
+- It creates an empty menu whose label is the value of the property
+  `name'.label.
+- It adds a separator to the menu if a menu item is '-', otherwise it calls
+  loadMenuItem(). It then adds the separator/menu/menu item to the menu.
+- It returns the menu.
+
+4. Menu Item Definition
+-----------------------
+The loadMenuItem(View view, String name) method is usually called by
+loadMenu(), but it can be called manually for on-the-fly menu creation, etc. If
+`name' starts with '%', it loads the menu whose name is `name', *NOT* including
+the '%'. Otherwise, it creates a menu item whose label is the value of the
+property `name'.label and whose shortcut is the value of the property
+`name'.shortcut. Shortcuts are parsed as follows:
+- An 'A' character adds ALT to the shortcut's modifier mask.
+- An 'C' character adds CONTROL to the shortcut's modifier mask.
+- An 'M' character adds META to the shortcut's modifier mask. This is probably
+  the right alt key.
+- An 'S' character adds SHIFT to the shortcut's modifier mask.
+- The last character that is not an uppercase A, C, M or S is the key.
+
+5. Commands
+-----------
+When a menu item is selected, the command with the menu item's name (NOT the
+label) is executed. For more information on commands, see commands.txt.
+
+6. Dynamic Menus
+----------------
+jEdit automatically generates some menus that you can insert in your menubar.
+jEdit currently supports the following dynamic menus:
+- `plugins': a list of installed plugins
+- `buffers': a list of opened buffers
+- `open_recent': a list of recently opened files
+- `goto_marker': a list of markers, with each menuitem bound to goto_marker
+- `clear_marker': a list of markers, with each menuitem bound to clear_marker
+  
+Note: A dynamic menu can only be included once in each menubar.
+
+7. Example Menubar Definition
+-----------------------------
+This is a simple menu bar definition. So if you didn't understand the above
+description, this will help. If you want a more complex one, take a look at the
+jEdit properties file.
+###
+app_mbar=file edit window help
+file=new open close - save save_as - exit
+file.label=File
+new.label=New
+new.shortcut=An ### Alt-N
+open.label=Open
+open.shortcut=Ao
+close.label=Close
+close.shortcut=Aw
+save.label=Save
+save.shortcut=As
+save_as.label=Save As...
+save_as.shortcut=ASs ### Alt-Shift-S
+exit.label=Exit
+exit.shortcut=Aq
+edit=undo redo - cut copy paste clear select_all
+edit.label=Edit
+undo.label=Undo
+undo.shortcut=Cz ### Control-z
+redo.label=Redo
+redo.shortcut=CSz ### Control-Shift-z
+cut.label=Cut
+cut.shortcut=Cx
+copy.label=Copy
+copy.shortcut=Cc
+paste.label=Paste
+paste.shortcut=Cv
+clear.label=Clear
+clear.shortcut=CSx
+select_all.label=Select All
+select_all.shortcut=Ca
+###
+
+-- Slava Pestov
+<slava_pestov@geocities.com>
