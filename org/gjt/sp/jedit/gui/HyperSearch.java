@@ -89,6 +89,7 @@ implements ActionListener, KeyListener, ListSelectionListener, WindowListener
 		findBtn.addActionListener(this);
 		close.addActionListener(this);
 		show();
+		find.requestFocus();
 	}
 	
 	public void save()

@@ -64,7 +64,7 @@ buffer.make=make
 
 # Colors
 buffer.colors.comment1=red
-buffer.colors.comment2=red
+buffer.colors.comment2=#990033
 buffer.colors.keyword1=blue
 buffer.colors.keyword2=magenta
 buffer.colors.keyword3=green

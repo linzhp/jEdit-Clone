@@ -1,6 +1,6 @@
 /*
  * SearchAndReplace.java - Search and replace dialog
- * Copyright (C) 1998 Slava Pestov
+ * Copyright (C) 1998, 1999 Slava Pestov
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -33,6 +33,7 @@ implements ActionListener, KeyListener, WindowListener
 	private JCheckBox ignoreCase;
 	private JComboBox regexpSyntax;
 	private JButton findBtn;
+	private JButton replaceSelection;
 	private JButton replaceAll;
 	private JButton cancel;
 	
@@ -52,7 +53,13 @@ implements ActionListener, KeyListener, WindowListener
 		regexpSyntax.setSelectedItem(jEdit.getProperty("search"
 			+ ".regexp.value"));
 		findBtn = new JButton(jEdit.getProperty("search.findBtn"));
+		replaceSelection = new JButton(jEdit.getProperty("search"
+			+ ".replaceSelection"));
+		replaceSelection.setMnemonic(jEdit.getProperty("search"
+			+ ".replaceSelection.mnemonic").charAt(0));
 		replaceAll = new JButton(jEdit.getProperty("search.replaceAll"));
+		replaceAll.setMnemonic(jEdit.getProperty("search.replaceAll"
+			+ ".mnemonic").charAt(0));
 		cancel = new JButton(jEdit.getProperty("search.cancel"));
 		getContentPane().setLayout(new BorderLayout());
 		JPanel panel = new JPanel();
@@ -89,6 +96,7 @@ implements ActionListener, KeyListener, WindowListener
 		getContentPane().add("Center",panel);
 		panel = new JPanel();
 		panel.add(findBtn);
+		panel.add(replaceSelection);
 		panel.add(replaceAll);
 		panel.add(cancel);
 		getRootPane().setDefaultButton(findBtn);
@@ -103,9 +111,11 @@ implements ActionListener, KeyListener, WindowListener
 		addKeyListener(this);
 		addWindowListener(this);
 		findBtn.addActionListener(this);
+		replaceSelection.addActionListener(this);
 		replaceAll.addActionListener(this);
 		cancel.addActionListener(this);
 		show();
+		find.requestFocus();
 	}
 	
 	public void save()
@@ -129,9 +139,19 @@ implements ActionListener, KeyListener, WindowListener
 			if(view.getBuffer().find(view,false))
 				dispose();
 		}
+		else if(source == replaceSelection)
+		{
+			if(view.getBuffer().replaceAll(view,
+				view.getTextArea().getSelectionStart(),
+				view.getTextArea().getSelectionEnd()))
+				dispose();
+			else
+				getToolkit().beep();
+		}
 		else if(source == replaceAll)
 		{
-			if(view.getBuffer().replaceAll(view))
+			if(view.getBuffer().replaceAll(view,0,
+				view.getBuffer().getLength()))
 				dispose();
 			else
 				getToolkit().beep();

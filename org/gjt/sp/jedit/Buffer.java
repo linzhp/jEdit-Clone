@@ -150,10 +150,12 @@ implements DocumentListener, UndoableEditListener
 	 * Replaces all occurances of the search string with the replacement
 	 * string.
 	 * @param view The view
+	 * @param index The index where to start the search
+	 * @param length The end offset of the search
 	 * @return True if the replace operation was successful, false
 	 * if no matches were found
 	 */
-	public boolean replaceAll(View view)
+	public boolean replaceAll(View view, int index, int length)
 	{
 		if(!view.getTextArea().isEditable())
 			return false;
@@ -169,9 +171,8 @@ implements DocumentListener, UndoableEditListener
 				return false;
 			}
 			REMatch match;
-			int index = 0;
 			while((match = regexp.getMatch(getText(index,
-				getLength() - index))) != null)
+				length - index))) != null)
 			{
 				int start = match.getStartIndex() + index;
 				int len = match.getEndIndex() - match
@@ -323,7 +324,6 @@ implements DocumentListener, UndoableEditListener
 				updateBufferMenus();
 			}
 			modTime = file.lastModified();
-			BrowserEngine.saveNotify(this);
 			return true;
 		}
 		catch(IOException io)

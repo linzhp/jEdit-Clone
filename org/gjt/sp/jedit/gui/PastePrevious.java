@@ -69,6 +69,7 @@ implements ActionListener, KeyListener
 		setLocation((screen.width - getSize().width) / 2,
 			(screen.height - getSize().height) / 2);
 		show();
+		clips.requestFocus();
 	}
 
 	public void actionPerformed(ActionEvent evt)

@@ -1,6 +1,6 @@
 /*
- * replace_all.java
- * Copyright (C) 1998, 1999 Slava Pestov
+ * save_all.java - Action
+ * Copyright (C) 1999 Slava Pestov
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -19,22 +19,24 @@
 
 package org.gjt.sp.jedit.actions;
 
-import javax.swing.text.BadLocationException;
 import java.awt.event.ActionEvent;
+import java.util.Enumeration;
 import org.gjt.sp.jedit.*;
 
-public class replace_all extends EditAction
+public class save_all extends EditAction
 {
-	public replace_all()
+	public save_all()
 	{
-		super("replace-all");
+		super("save-all");
 	}
-	
+
 	public void actionPerformed(ActionEvent evt)
 	{
 		View view = getView(evt);
-		if(!view.getBuffer().replaceAll(view,0,view.getBuffer()
-			.getLength()))
-			view.getToolkit().beep();
+		Enumeration buffers = jEdit.getBuffers();
+		while(buffers.hasMoreElements())
+		{
+			((Buffer)buffers.nextElement()).save(view,null);
+		}
 	}
 }

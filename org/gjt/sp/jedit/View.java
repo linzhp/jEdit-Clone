@@ -639,7 +639,7 @@ implements CaretListener, KeyListener, WindowListener
 		Object[] args = { new Integer((dot - start) + 1),
 			new Integer(currLine + 1),
 			new Integer(numLines),
-			new Integer((currLine * 100) / numLines) };
+			new Integer(((currLine + 1) * 100) / numLines) };
 		lineNumber.setText(jEdit.getProperty("view.lineNumber",args));
 		if(textArea.getSelectionStart() == textArea.getSelectionEnd())
 			textArea.setHighlightedLine(start,end);

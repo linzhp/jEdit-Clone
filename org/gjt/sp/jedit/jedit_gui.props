@@ -25,6 +25,7 @@ file=new-file \
      save \
      save-as \
      save-url \
+     save-all \
      - \
      send \
      print \
@@ -43,6 +44,7 @@ close-view.label=Close Vie$w
 save.label=S$ave
 save-as.label=Sa$ve As...
 save-url.label=Save to UR$L...
+save-all.label=Save All Buffers
 send.label=Sen$d...
 print.label=$Print...
 exit.label=E$xit
@@ -215,24 +217,28 @@ search=find \
        - \
        replace \
        replace-next \
+       replace-in-selection \
        replace-all \
        - \
        hypersearch \
        - \
        goto-line \
+       select-line-range \
        - \
        set-marker \
        %clear-marker \
        %goto-marker
 search.label=$Search
 find.label=$Find...
-find-next.label=Find $Next
+find-next.label=Fin$d Next
 find-selection.label=F$ind Selection
 replace.label=$Replace
 replace-next.label=Re$place & Find Next
+replace-in-selection.label=Replace in Selecti$on
 replace-all.label=Replace $All
 hypersearch.label=H$yperSearch...
 goto-line.label=Go to $Line...
+select-line-range.label=Select Li$ne Range...
 set-marker.label=Set $Marker...
 clear-marker.label=$Clear Marker
 goto-marker.label=$Go to Marker
@@ -392,7 +398,10 @@ search.ignoreCase=Ignore Case
 search.regexp=RegExp Syntax:\ 
 search.regexp.value=perl5
 search.findBtn=Find
+search.replaceSelection=Replace in Selection
+search.replaceSelection.mnemonic=s
 search.replaceAll=Replace All
+search.replaceAll.mnemonic=r
 search.cancel=Cancel
 
 # Keep searching dialog
@@ -436,13 +445,23 @@ output.title=Command Output
 # {0} - command
 # {1} - date
 output.caption=Output of {0} at {1}:\ 
-output.done=+++ Command finished.
+
+# Compile error dialog
+error.title=Compiler Error
 
 # File changed on disk dialog
 filechanged.title=File Changed on Disk
 filechanged.message=The file {0}\n\
 	has been modified on disk by another program. Are you sure\n\
 	you want to continue saving it?
+
+# Select line range
+selectlinerange.title=Select Line Range
+selectlinerange.caption=Select line range:
+selectlinerange.start=Start line:\ 
+selectlinerange.end=End line:\ 
+selectlinerange.ok=OK
+selectlinerange.cancel=Cancel
 
 # Options dialog
 options.title=Options
@@ -485,7 +504,8 @@ options.colors1.selectionColor=Selection color:\
 options.colors1.lineHighlightColor=Line highlight color:\ 
 options.colors1.bracketHighlightColor=Bracket highlight color:\ 
 options.colors2.label=Colors (Syntax)
-options.colors2.commentColor=Comment color:\ 
+options.colors2.comment1Color=Comment 1 color:\ 
+options.colors2.comment2Color=Comment 2 color:\ 
 options.colors2.literalColor=Literal color:\ 
 options.colors2.labelColor=Label color:\ 
 options.colors2.keyword1Color=Keyword 1 color:\ 

@@ -46,16 +46,17 @@ loop:		for(int i = offset; i < length; i++)
 			case '\\':
 				backslash = !backslash;
 				break;
-			
+			// SP I made this a boolean expression, like you said
 			case '*':
-				if(token == Token.COMMENT1 && length - i >= 1)
+				if((token == Token.COMMENT1 || token == Token.COMMENT2)
+					&& length - i > 1)
 				{
 					backslash = false;
 					if(length - i > 1 && line.array[i+1] == '/')
 					{
-						token = null;
 						i++;
-						addToken((i+1) - lastOffset,Token.COMMENT1);
+						addToken((i+1) - lastOffset,token);
+						token = null;
 						lastOffset = i + 1;
 					}
 					break;
@@ -104,17 +105,22 @@ loop:		for(int i = offset; i < length; i++)
 				break;
 			case '/':
 				backslash = false;
-				if(token == null && length - i >= 2)
+				if(token == null && length - i > 1)
 				{
 					switch(line.array[i+1])
 					{
 					case '*':
-						token = Token.COMMENT1;
-						addToken(i - lastOffset,null);
+						addToken(i - lastOffset,token);
 						lastOffset = i;
-						i++;
+						// SP:
+						// the token == null check was not needed
+						// since it is already done above.
+						if(length - i > 2 && line.array[i+2] == '*')
+							token = Token.COMMENT2;
+						else
+							token = Token.COMMENT1;
 						break;
-					case '/':
+                        		case '/':
 						addToken(i - lastOffset,token);
 						addToken(length - i,Token.COMMENT1);
 						lastOffset = length;

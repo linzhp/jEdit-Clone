@@ -45,7 +45,7 @@ public class jEdit
 	 * The date when a change was last made to the source code,
 	 * in <code>YYYYMMDD</code> format.
 	 */
-	public static final String BUILD = "19990203";
+	public static final String BUILD = "19990205";
 
 	/**
 	 * AWK regexp syntax.
@@ -337,8 +337,10 @@ public class jEdit
 		addAction(new org.gjt.sp.jedit.actions.redo());
 		addAction(new org.gjt.sp.jedit.actions.replace());
 		addAction(new org.gjt.sp.jedit.actions.replace_all());
+		addAction(new org.gjt.sp.jedit.actions.replace_in_selection());
 		addAction(new org.gjt.sp.jedit.actions.replace_next());
 		addAction(new org.gjt.sp.jedit.actions.save());
+		addAction(new org.gjt.sp.jedit.actions.save_all());
 		addAction(new org.gjt.sp.jedit.actions.save_as());
 		addAction(new org.gjt.sp.jedit.actions.save_url());
 		addAction(new org.gjt.sp.jedit.actions.scroll_line());
@@ -346,6 +348,7 @@ public class jEdit
 		addAction(new org.gjt.sp.jedit.actions.select_anchor());
 		addAction(new org.gjt.sp.jedit.actions.select_block());
 		addAction(new org.gjt.sp.jedit.actions.select_buffer());
+		addAction(new org.gjt.sp.jedit.actions.select_line_range());
 		addAction(new org.gjt.sp.jedit.actions.select_mode());
 		addAction(new org.gjt.sp.jedit.actions.select_next_paragraph());
 		addAction(new org.gjt.sp.jedit.actions.select_no_indent());
@@ -842,7 +845,6 @@ public class jEdit
 					error.openNotify(buffer);
 			}
 		}
-		BrowserEngine.openNotify(buffer);
 		return buffer;
 	}
 
@@ -892,7 +894,6 @@ public class jEdit
 					error.closeNotify();
 			}
 		}
-		BrowserEngine.closeNotify(buffer);
 		return true;
 	}
 

@@ -39,21 +39,42 @@ public class Colors2OptionPane extends ColorsOptionPane
 		cons.fill = GridBagConstraints.BOTH;
 		cons.weightx = 1.0f;
 		JLabel label = new JLabel(jEdit.getProperty(
-			"options.colors2.commentColor"),SwingConstants.RIGHT);
+			"options.colors2.comment1Color"),SwingConstants.RIGHT);
 		layout.setConstraints(label,cons);
 		add(label);
 		cons.gridx = 3;
 		cons.gridwidth = 1;
-		commentColor = createColorButton("buffer.colors.comment1");
-		layout.setConstraints(commentColor,cons);
-		add(commentColor);
+		comment1Color = createColorButton("buffer.colors.comment1");
+		layout.setConstraints(comment1Color,cons);
+		add(comment1Color);
 
+		// [CHANGED] JL
+		// This adds a sixth syntax color choice for color pane.
+		// Just a copy&paste from the above. Label looks for property
+		// "options.colors2.javadocColor" which doesn't exist but should
+		// probably contain the label for this button. ColorButton is
+		// created for reference javadocColor and loads the color for
+		// comment2 from "buffer.colors.comment2".
+
+		// SP: I changed the `color' button above to `color1' and
+		// changed this to `color2'
 		cons.gridx = 0;
 		cons.gridy = 1;
 		cons.gridwidth = 3;
-		cons.gridheight = 1;
-		cons.fill = GridBagConstraints.BOTH;
-		cons.weightx = 1.0f;
+		label = new JLabel(jEdit.getProperty(
+		    "options.colors2.comment2Color"),SwingConstants.RIGHT);
+		layout.setConstraints(label,cons);
+		add(label);
+		cons.gridx = 3;
+		cons.gridwidth = 1;
+		comment2Color = createColorButton("buffer.colors.comment2");
+		layout.setConstraints(comment2Color,cons);
+		add(comment2Color);
+		// [CHANGED] end changes
+
+		cons.gridx = 0;
+		cons.gridy = 2;
+		cons.gridwidth = 3;
 		label = new JLabel(jEdit.getProperty(
 			"options.colors2.literalColor"),SwingConstants.RIGHT);
 		layout.setConstraints(label,cons);
@@ -65,11 +86,8 @@ public class Colors2OptionPane extends ColorsOptionPane
 		add(literalColor);
 
 		cons.gridx = 0;
-		cons.gridy = 2;
+		cons.gridy = 3;
 		cons.gridwidth = 3;
-		cons.gridheight = 1;
-		cons.fill = GridBagConstraints.BOTH;
-		cons.weightx = 1.0f;
 		label = new JLabel(jEdit.getProperty(
 			"options.colors2.labelColor"),SwingConstants.RIGHT);
 		layout.setConstraints(label,cons);
@@ -81,11 +99,8 @@ public class Colors2OptionPane extends ColorsOptionPane
 		add(labelColor);
 
 		cons.gridx = 0;
-		cons.gridy = 3;
+		cons.gridy = 4;
 		cons.gridwidth = 3;
-		cons.gridheight = 1;
-		cons.fill = GridBagConstraints.BOTH;
-		cons.weightx = 1.0f;
 		label = new JLabel(jEdit.getProperty(
 			"options.colors2.keyword1Color"),SwingConstants.RIGHT);
 		layout.setConstraints(label,cons);
@@ -97,11 +112,8 @@ public class Colors2OptionPane extends ColorsOptionPane
 		add(keyword1Color);
 
 		cons.gridx = 0;
-		cons.gridy = 4;
+		cons.gridy = 5;
 		cons.gridwidth = 3;
-		cons.gridheight = 1;
-		cons.fill = GridBagConstraints.BOTH;
-		cons.weightx = 1.0f;
 		label = new JLabel(jEdit.getProperty(
 			"options.colors2.keyword2Color"),SwingConstants.RIGHT);
 		layout.setConstraints(label,cons);
@@ -113,11 +125,8 @@ public class Colors2OptionPane extends ColorsOptionPane
 		add(keyword2Color);
 
 		cons.gridx = 0;
-		cons.gridy = 5;
+		cons.gridy = 6;
 		cons.gridwidth = 3;
-		cons.gridheight = 1;
-		cons.fill = GridBagConstraints.BOTH;
-		cons.weightx = 1.0f;
 		label = new JLabel(jEdit.getProperty(
 			"options.colors2.keyword3Color"),SwingConstants.RIGHT);
 		layout.setConstraints(label,cons);
@@ -131,8 +140,9 @@ public class Colors2OptionPane extends ColorsOptionPane
 
 	public void save()
 	{
-		saveColorButton("buffer.colors.comment1",commentColor);
-		saveColorButton("buffer.colors.comment2",commentColor);
+		saveColorButton("buffer.colors.comment1",comment1Color);
+		// [CHANGED] JL -- saves comment2 color from javadocColorButton
+		saveColorButton("buffer.colors.comment2",comment2Color);
 		saveColorButton("buffer.colors.literal1",literalColor);
 		saveColorButton("buffer.colors.literal2",literalColor);
 		saveColorButton("buffer.colors.label",labelColor);
@@ -142,7 +152,8 @@ public class Colors2OptionPane extends ColorsOptionPane
 	}
 
 	// private members
-	private JButton commentColor;
+	private JButton comment1Color;
+	private JButton comment2Color;  // [CHANGED] JL -- button for javadocs
 	private JButton literalColor;
 	private JButton labelColor;
 	private JButton keyword1Color;

@@ -1,6 +1,6 @@
 /*
  * print.java
- * Copyright (C) 1998 Slava Pestov
+ * Copyright (C) 1998, 1999 Slava Pestov
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -44,7 +44,7 @@ public class print extends EditAction
 		if(job == null)
 			return;
 		int topMargin;
-		final int leftMargin;
+		int leftMargin;
 		int bottomMargin;
 		int rightMargin;
 		int ppi = job.getPageResolution();
@@ -90,11 +90,12 @@ public class print extends EditAction
 		final int _tabSize = buffer.getTabSize() *
 			textArea.getToolkit().getFontMetrics(textArea.getFont())
 			.charWidth('m');
+		final float _leftMargin = leftMargin; // ARG stupid Sun
 		SyntaxView syntaxView = new SyntaxView(map) {
 			public float nextTabStop(float x, int tabOffset)
 			{
-				return ((((int)x - leftMargin) / _tabSize + 1)
-					* _tabSize) + leftMargin;
+				return ((((int)x - _leftMargin) / _tabSize + 1)
+					* _tabSize) + _leftMargin;
 			}
 
 			public Color getDefaultColor()

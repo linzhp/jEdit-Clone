@@ -21,8 +21,9 @@ execute.shortcut		C+e C+e
 format.shortcut			C+e C+f
 replace-next.shortcut		C+e C+g
 select-no-indent.shortcut	C+e C+i
+scroll-line.shortcut		C+e C+j
 block-comment.shortcut		C+e C+k
-scroll-line.shortcut		C+e C+l
+select-line-range.shortcut	C+e C+l
 set-marker.shortcut		C+e C+m
 new-view.shortcut		C+e C+n
 open-url.shortcut		C+e C+o
@@ -35,6 +36,7 @@ untab.shortcut			C+e C+u
 paste-previous.shortcut		C+e C+v
 close-view.shortcut		C+e C+w
 exchange-anchor.shortcut	C+e C+x
+replace-in-selection.shortcut	C+e C+y
 prev-error.shortcut		C+e C+[
 next-error.shortcut		C+e C+]
 find.shortcut			C+f

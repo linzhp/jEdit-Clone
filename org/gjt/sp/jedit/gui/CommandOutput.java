@@ -52,6 +52,7 @@ implements KeyListener
 
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		addKeyListener(this);
+		output.addKeyListener(this);
 
 		Dimension screen = getToolkit().getScreenSize();
 		pack();
@@ -265,7 +266,6 @@ implements KeyListener
 				Object[] args = { io.getMessage() };
 				jEdit.error((View)getParent(),"ioerror",args);
 			}
-			addOutput(jEdit.getProperty("output.done"));
 
 			// Update error list menus
 			Enumeration views = jEdit.getViews();
