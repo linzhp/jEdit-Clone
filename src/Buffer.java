@@ -17,10 +17,12 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+import com.sun.java.swing.JOptionPane;
 import com.sun.java.swing.event.DocumentEvent;
 import com.sun.java.swing.event.DocumentListener;
 import com.sun.java.swing.event.UndoableEditEvent;
 import com.sun.java.swing.event.UndoableEditListener;
+import com.sun.java.swing.preview.JFileChooser;
 import com.sun.java.swing.text.BadLocationException;
 import com.sun.java.swing.text.Element;
 import com.sun.java.swing.text.PlainDocument;
@@ -32,6 +34,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.InputStreamReader;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.Writer;
@@ -61,7 +64,14 @@ implements DocumentListener, UndoableEditListener
 		newFile = !load;
 		setPath(name);
 		if(load)
+		{
+			if(autosaveFile.exists())
+			{
+				Object[] args = { autosaveFile.getPath() };
+				jEdit.message(view,"autosaveexists",args);
+			}
 			load(view);
+		}
 		addDocumentListener(this);
 		addUndoableEditListener(this);
 	}
@@ -90,7 +100,6 @@ implements DocumentListener, UndoableEditListener
 					null);
 			}
 			in.close();
-			
 			newFile = false;
 		}
 		catch(FileNotFoundException fnf)
@@ -120,21 +129,75 @@ implements DocumentListener, UndoableEditListener
 		}
 	}
 
-	public void save(View view)
+	public boolean save(View view)
 	{
+		return save(view,null);
+	}
+
+	public boolean save(View view, String path)
+	{
+		if(path == null && !newFile)
+			path = this.path;
+		else if(newFile || "/as".equals(path))
+		{
+			JFileChooser fileChooser = new JFileChooser();
+			if(view != null)
+			{
+				File fileN = view.getBuffer().getFile();
+				String parent = fileN.getParent();
+				if(parent != null)
+					fileChooser.setCurrentDirectory(
+						new File(parent));
+				fileChooser.setSelectedFile(fileN);
+			}
+			fileChooser.setDialogTitle(jEdit.props
+				.getProperty("savefile.title"));
+			int retVal = fileChooser.showSaveDialog(view);
+			if(retVal == JFileChooser.APPROVE_OPTION)
+			{
+				path = fileChooser.getSelectedFile().getPath();
+				setPath(path);
+			}
+			else
+				return false;
+		}
+		else if(path.equals("/url"))
+		{
+			path = (String)JOptionPane.showInputDialog(view,
+				jEdit.props.getProperty("saveurl.message"),
+				jEdit.props.getProperty("saveurl.title"),
+				JOptionPane.QUESTION_MESSAGE,
+				null,
+				null,
+				jEdit.props.getProperty("lasturl"));
+			if(path != null)
+			{
+				jEdit.props.put("lasturl",path);
+				setPath(path);
+			}
+		}
 		backup();
 		try
 		{
-			save(new FileWriter(file));
+			if(url != null)
+			{
+				URLConnection connection = url.openConnection();
+				save(new OutputStreamWriter(connection
+					.getOutputStream()));
+			}
+			else
+				save(new FileWriter(file));
 			dirty = newFile = false;
 			autosaveFile.delete();
+			updateStatus();
+			return true;
 		}
 		catch(Exception e)
 		{
 			Object[] args = { getPath(), e.toString() };
 			jEdit.error(view,"ioerror",args);
 		}
-		updateStatus();
+		return false;
 	}
 
 	private void save(Writer out)
@@ -213,11 +276,16 @@ implements DocumentListener, UndoableEditListener
 	
 	public void setPath(String path)
 	{
+		url = null;
 		try
 		{
 			url = new URL(path);
 			this.path = path;
-			name = path;
+			name = url.getFile();
+			if(name.length() == 0)
+				name = url.getHost();
+			file = new File(name);
+			name = file.getName();
 		}
 		catch(MalformedURLException mu)
 		{

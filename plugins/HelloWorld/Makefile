@@ -5,4 +5,4 @@ jar=HelloWorld.jar
 resources=Cmd_HelloWorld.class HelloWorld.props
 all: $(jar)
 install: jar-install
-include ../../Rules.plugins
+include ../../Rules.make

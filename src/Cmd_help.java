@@ -21,11 +21,12 @@ import java.util.Hashtable;
 
 public class Cmd_help implements Command
 {
-	public void init(Hashtable args)
+	public Object init(Hashtable args)
 	{
+		return Boolean.TRUE;
 	}
 
-	public void exec(Hashtable args)
+	public Object exec(Hashtable args)
 	{
 		String arg = (String)args.get(ARG);
 		if(arg == null)
@@ -35,6 +36,8 @@ public class Cmd_help implements Command
 		{
 			jEdit.buffers.openBuffer(view,jEdit.props
 				.getProperty("helpdir") + arg);
+			return Boolean.TRUE;
 		}
+		return Boolean.FALSE;
 	}
 }

@@ -21,14 +21,16 @@ import java.util.Hashtable;
 
 public class Cmd_about implements Command
 {
-	public void init(Hashtable args)
+	public Object init(Hashtable args)
 	{
+		return Boolean.TRUE;
 	}
 
-	public void exec(Hashtable args)
+	public Object exec(Hashtable args)
 	{
 		View view = (View)args.get(VIEW);
 		Object[] _args = { jEdit.VERSION, jEdit.BUILD };
 		jEdit.message(view,"about",_args);
+		return Boolean.TRUE;
 	}
 }

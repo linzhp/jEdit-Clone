@@ -36,10 +36,11 @@ import com.sun.java.swing.UIManager;
 public class jEdit
 {
 	public static final String VERSION = "0.2";
-	public static final String BUILD = "19980927";
+	public static final String BUILD = "19980928";
 	public static final PropsMgr props = new PropsMgr();
 	public static final CommandMgr cmds = new CommandMgr();
 	public static final BufferMgr buffers = new BufferMgr();
+	private static File portFile;
 	private static Server server;
 	private static Autosave autosave;
 	
@@ -71,7 +72,7 @@ public class jEdit
 	{
 		boolean endOpts = false;
 		boolean noUsrProps = false;
-		File portFile = new File(System.getProperty("user.home"),
+		portFile = new File(System.getProperty("user.home"),
 			props.getProperty("server.portfile",".jedit-server"));
 		for(int i = 0; i < args.length; i++)
 		{
@@ -106,7 +107,13 @@ public class jEdit
 		}
 		props.loadSystemProps();
 		if(!noUsrProps)
-			props.loadUserProps();
+			props.loadUserProps();	
+		propertiesChanged();
+		buffers.openBuffers(args);
+	}
+
+	public static void propertiesChanged()
+	{
 		String lf = props.getProperty("lf","xp");
 		try
 		{
@@ -124,14 +131,17 @@ public class jEdit
 			System.err.println("Error loading L&F!");
 			ex.printStackTrace();
 		}
-		buffers.loadRecent();
-		buffers.openBuffers(args);
+		if(server != null)
+			server.stopServer();
+		if(autosave != null)
+			autosave.stop();
 		if("on".equals(props.getProperty("server")))
 			server = new Server(portFile);
 		if("on".equals(props.getProperty("autosave")))
 			autosave = new Autosave();
+		buffers.loadRecent();
 	}
-
+	
 	public static JMenuBar loadMenubar(View view, String name)
 	{
 		Vector vector = new Vector();

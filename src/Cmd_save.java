@@ -24,50 +24,21 @@ import java.util.Hashtable;
 
 public class Cmd_save implements Command
 {
-	public void init(Hashtable args)
+	public Object init(Hashtable args)
 	{
+		return Boolean.TRUE;
 	}
 
-	public void exec(Hashtable args)
+	public Object exec(Hashtable args)
 	{
 		String arg = (String)args.get(ARG);
 		View view = (View)args.get(VIEW);
 		if(view == null)
-			return;
-		Buffer buffer = view.getBuffer();
-		if(arg == null && !buffer.isNewFile())
-			arg = buffer.getPath();
-		else if(buffer.isNewFile() || "/as".equals(arg))
+			return Boolean.FALSE;
+		else
 		{
-			JFileChooser fileChooser = new JFileChooser();
-			String parent = view.getBuffer().getFile().getParent();
-			if(parent != null)
-				fileChooser.setCurrentDirectory(
-					new File(parent));
-			fileChooser.setDialogTitle(jEdit.props
-				.getProperty("savefile.title"));
-			int retVal = fileChooser.showSaveDialog(view);
-			if(retVal == JFileChooser.APPROVE_OPTION)
-				arg = fileChooser.getSelectedFile().getPath();
-			else
-				return;
-		}
-		else if(arg.equals("/url"))
-		{
-			arg = (String)JOptionPane.showInputDialog(view,
-				jEdit.props.getProperty("saveurl.message"),
-				jEdit.props.getProperty("saveurl.title"),
-				JOptionPane.QUESTION_MESSAGE,
-				null,
-				null,
-				jEdit.props.getProperty("lasturl"));
-			if(arg != null)
-				jEdit.props.put("lasturl",arg);
-		}
-		if(arg != null)
-		{
-			buffer.setPath(arg);
-			buffer.save(view);
+			view.getBuffer().save(view,arg);
+			return Boolean.TRUE;
 		}
 	}
 }

@@ -21,14 +21,20 @@ import java.util.Hashtable;
 
 public class Cmd_new_view implements Command
 {
-	public void init(Hashtable args)
+	public Object init(Hashtable args)
 	{
+		return Boolean.FALSE;
 	}
 
-	public void exec(Hashtable args)
+	public Object exec(Hashtable args)
 	{
 		View view = (View)args.get(VIEW);
-		if(view != null)
+		if(view == null)
+			return Boolean.FALSE;
+		else
+		{
 			jEdit.buffers.newView(view);
+			return Boolean.TRUE;
+		}
 	}
 }

@@ -23,6 +23,6 @@ public interface Command
 {
 	public static final String ARG = "arg";
 	public static final String VIEW = "view";
-	public abstract void init(Hashtable args);
-	public abstract void exec(Hashtable args);
+	public abstract Object init(Hashtable args);
+	public abstract Object exec(Hashtable args);
 }

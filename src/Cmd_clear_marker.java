@@ -23,16 +23,17 @@ import java.util.Hashtable;
 
 public class Cmd_clear_marker implements Command
 {
-	public void init(Hashtable args)
+	public Object init(Hashtable args)
 	{
+		return Boolean.TRUE;
 	}
 
-	public void exec(Hashtable args)
+	public Object exec(Hashtable args)
 	{
 		String arg = (String)args.get(ARG);
 		View view = (View)args.get(VIEW);
 		if(view == null)
-			return;
+			return Boolean.FALSE;
 		JTextArea textArea = view.getTextArea();
 		try
 		{
@@ -53,5 +54,6 @@ public class Cmd_clear_marker implements Command
 			throw new IllegalArgumentException("Aiee!!! Text area"
 				+ " out of sync");
 		}
+		return Boolean.TRUE;
 	}
 }

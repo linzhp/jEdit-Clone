@@ -21,12 +21,14 @@ import java.util.Hashtable;
 
 public class Cmd_exit implements Command
 {
-	public void init(Hashtable args)
+	public Object init(Hashtable args)
 	{
+		return Boolean.TRUE;
 	}
 
-	public void exec(Hashtable args)
+	public Object exec(Hashtable args)
 	{
 		jEdit.exit((View)args.get(VIEW));
+		return Boolean.FALSE;
 	}
 }

@@ -78,11 +78,15 @@ public class CommandMgr extends ClassLoader
 		String entryName = entry.getName();
 		if(entryName.endsWith(".class"))
 		{
-			byte[] cls = new byte[(int)entry.getSize()];
-			// COLOSTOMY BAG!!!
-			int c = 0, i = 0;
-			while((c = in.read()) != -1)
-				cls[i++] = (byte)c;
+			int len = (int)entry.getSize();
+			byte[] cls = new byte[len];
+			int c = 0;
+			while(len >= 0)
+			{
+				in.read(cls,c,Math.min(1024,len));
+				c += 1024;
+				len -= 1024;
+			}
 			String clsName = fileToClass(entryName);
 			classes.put(clsName,cls);
 			if(clsName.startsWith("Cmd_"))
@@ -128,7 +132,7 @@ public class CommandMgr extends ClassLoader
 		return null;
 	}
 
-	public void execCommand(View view, String cmd)
+	public Object execCommand(View view, String cmd)
 	{
 		Hashtable args = new Hashtable();
 		int index = cmd.indexOf('@');
@@ -142,7 +146,7 @@ public class CommandMgr extends ClassLoader
 		if(command == null)
 			throw new IllegalArgumentException("Aiee!!! Invalid"
 				+ " command " + cmd);
-		command.exec(args);
+		return command.exec(args);
 	}
 
 	public Enumeration getPlugins()

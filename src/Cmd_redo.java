@@ -22,11 +22,12 @@ import java.util.Hashtable;
 
 public class Cmd_redo implements Command
 {
-	public void init(Hashtable args)
+	public Object init(Hashtable args)
 	{
+		return Boolean.TRUE;
 	}
 
-	public void exec(Hashtable args)
+	public Object exec(Hashtable args)
 	{
 		View view = (View)args.get(VIEW);
 		if(view != null)
@@ -34,11 +35,13 @@ public class Cmd_redo implements Command
 			try
 			{
 				view.getBuffer().getUndo().redo();
+				return Boolean.TRUE;
 			}
 			catch(CannotRedoException e)
 			{
 				view.getToolkit().beep();
 			}
 		}
+		return Boolean.FALSE;
 	}
 }

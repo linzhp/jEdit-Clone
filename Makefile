@@ -1,16 +1,19 @@
 # Makefile
-# Version: 1.0
-
-subdirs = src plugins doc bin
-all: subdirs
-install: subdirs-install
+all:
+	@make -C src
+	@make -C plugins
+install:
+	@make -C src install
+	@make -C plugins install
+	@make -C doc install
+	@make -C bin install
 clean:
 	find -name \*~ -exec rm {} \;
 	find -name \*.bak -exec rm {} \;
 	find -name \#\*\# -exec rm {} \;
 	find -name .\*.swp -exec rm {} \;
+realclean: clean
 	find -name \*.class -exec rm {} \;
-realclean:
 	find -name \*.jar -exec rm {} \;
 zip: all clean todos
 	(cd ..; zip -qr9 jEdit-`date +%Y%m%d`.zip jEdit)

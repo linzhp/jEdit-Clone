@@ -1,6 +1,4 @@
 # Makefile
-# Version: 1.0
-
 resources=jEdit.class \
 	jOpen.class \
 	Autosave.class \
@@ -13,10 +11,10 @@ resources=jEdit.class \
 	Server.class \
 	View.class \
 	Cmd_about.class \
-	Cmd_close_file.class \
-	Cmd_close_view.class \
 	Cmd_clear.class \
 	Cmd_clear_marker.class \
+	Cmd_close_file.class \
+	Cmd_close_view.class \
 	Cmd_copy.class \
 	Cmd_cut.class \
 	Cmd_exit.class \

@@ -21,14 +21,20 @@ import java.util.Hashtable;
 
 public class Cmd_close_view implements Command
 {
-	public void init(Hashtable args)
+	public Object init(Hashtable args)
 	{
+		return Boolean.TRUE;
 	}
 
-	public void exec(Hashtable args)
+	public Object exec(Hashtable args)
 	{
 		View view = (View)args.get(VIEW);
-		if(view != null)
+		if(view == null)
+			return Boolean.FALSE;
+		else
+		{
 			jEdit.buffers.closeView(view);
+			return Boolean.TRUE;
+		}
 	}
 }

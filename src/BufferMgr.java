@@ -18,6 +18,7 @@
  */
 
 import com.sun.java.swing.JOptionPane;
+import com.sun.java.swing.preview.JFileChooser;
 import java.io.File;
 import java.io.IOException;
 import java.util.Enumeration;
@@ -49,6 +50,7 @@ public class BufferMgr
 		{
 			maxRecent = 8;
 		}
+		recent.removeAllElements();
 		for(int i = 0; i < maxRecent; i++)
 		{
 			String file = jEdit.props.getProperty("recent." + i);
@@ -94,19 +96,46 @@ public class BufferMgr
 
 	public Buffer openBuffer(View view, String name, boolean load)
 	{
-		String path = name;
-		try
+		if(name == null)
 		{
-			path = new File(name).getCanonicalPath();
+			JFileChooser fileChooser = new JFileChooser();
+			if(view != null)
+			{
+				String parent = view.getBuffer().getFile()
+					.getParent();
+				if(parent != null)
+					fileChooser.setCurrentDirectory(
+						new File(parent));
+			}
+			fileChooser.setDialogTitle(jEdit.props
+				.getProperty("openfile.title"));
+			int retVal = fileChooser.showOpenDialog(view);
+			if(retVal == JFileChooser.APPROVE_OPTION)
+			{
+				name = fileChooser.getSelectedFile().getPath();
+			}
+			else
+				return null;
 		}
-		catch(IOException io)
+		else if(name.equals("/url"))
 		{
+			name = (String)JOptionPane.showInputDialog(view,
+				jEdit.props.getProperty("openurl.message"),
+				jEdit.props.getProperty("openurl.title"),
+				JOptionPane.QUESTION_MESSAGE,
+				null,
+				null,
+				jEdit.props.getProperty("lasturl"));
+			if(name == null)
+				return null;
+			else
+				jEdit.props.put("lasturl",name);
 		}
 		Enumeration enum = getBuffers();
 		while(enum.hasMoreElements())
 		{
 			Buffer buffer = (Buffer)enum.nextElement();
-			if(buffer.getPath().equals(path))
+			if(buffer.getPath().equals(name))
 			{
 				if(view != null)
 					view.setBuffer(buffer);
@@ -160,14 +189,13 @@ public class BufferMgr
 				JOptionPane.YES_NO_CANCEL_OPTION,
 				JOptionPane.WARNING_MESSAGE);
 			if(result == JOptionPane.YES_OPTION)
-			// COLOSTOMY BAG!!!
-			// should incorporate Cmd_save functionality into
-			// Buffer.save()
-				jEdit.cmds.execCommand(view,"save");
+			{
+				if(!buffer.save(view))
+					return false;
+			}
 			else if(result == JOptionPane.CANCEL_OPTION)
 				return false;
 		}	
-		
 		buffers.removeElement(buffer);
 		if(buffers.isEmpty())
 			jEdit.exit(view);

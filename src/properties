@@ -14,7 +14,7 @@ autosave=on
 # Autosave is off
 #autosave=off
 # Autosave interval (in seconds)
-autosave.interval=60
+autosave.interval=30
 
 ### Number of backups to make (0 = no backups)
 backups=1
@@ -44,6 +44,34 @@ maxrecent=8
 ### Name for untitled files
 # {0} - the number of the file
 untitled=Untitled {0}
+
+### Editor window
+# Normally, [xywh] is calculated to center the window on the screen.
+# Override this only if you don't like this behaviour.
+#editor.x=100
+#editor.y=100
+#editor.w=600
+#editor.h=400
+
+### Editor font
+editor.font=Monospaced
+editor.fontsize=12
+# This can be 0 for plain text, 1 for bold, 2 for italic or 3 for bold italic
+editor.fontstyle=0
+
+### Tab width
+editor.tabsize=8
+
+### Line wrap policy
+editor.linewrap=off
+# Wrap at character
+#editor.linewrap=char
+# Wrap at word
+#editor.linewrap=word
+
+### Auto indent
+editor.autoindent=on
+#editor.autoindent=off
 
 ### About dialog
 about.title=About jEdit
@@ -97,17 +125,12 @@ notsaved.title=File Not Saved
 # {0} - file name
 notsaved.message=Save changes to {0}?
 
-### Editor window
-# Normally, [xywh] is calculated to center the window on the screen.
-# Override this only if you don't like this behaviour.
-#editor.x=100
-#editor.y=100
-#editor.w=600
-#editor.h=400
-editor.font=Monospaced
-editor.fontsize=12
-# This can be 0 for plain text, 1 for bold, 2 for italic or 3 for bold italic
-editor.fontstyle=0
+### Autosave file exists dialog
+autosaveexists.title=Autosave File Exists
+# {0} - autosave file name
+autosaveexists.message=An autosave file {0} was found. This probably means\n\
+	that jEdit crashed before you had a chance to save. If you do not\n\
+	need the old unsaved information, you can delete this file.
 
 ### Status bar
 # {0} - the file name

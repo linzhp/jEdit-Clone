@@ -30,6 +30,7 @@ import com.sun.java.swing.KeyStroke;
 import com.sun.java.swing.event.CaretEvent;
 import com.sun.java.swing.event.CaretListener;
 import com.sun.java.swing.text.BadLocationException;
+import com.sun.java.swing.text.Element;
 import com.sun.java.swing.text.DefaultEditorKit;
 import com.sun.java.swing.text.JTextComponent;
 import com.sun.java.swing.text.Keymap;
@@ -38,7 +39,7 @@ import java.awt.Font;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.InputEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
@@ -46,7 +47,7 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 
 public class View extends JFrame
-implements ActionListener, CaretListener, WindowListener
+implements ActionListener, KeyListener, CaretListener, WindowListener
 {	
 	private JMenu plugins;
 	private JMenu buffers;
@@ -56,6 +57,7 @@ implements ActionListener, CaretListener, WindowListener
 	private Hashtable dynamicMenus;
 	private JTextArea textArea;
 	private JLabel status;
+	private boolean autoindent;
 	private int lastLine;
 	private JMenuBar menuBar;
 	private Buffer buffer;
@@ -80,37 +82,14 @@ implements ActionListener, CaretListener, WindowListener
 		else
 			setBuffer(view.getBuffer());
 		textArea.addCaretListener(this);
+		textArea.addKeyListener(this);
 		updateStatus();
 		updatePluginsMenu();
 		updateBuffersMenu();
-		updateOpenRecentMenu();
 		updateMarkerMenus();
 		menuBar = jEdit.loadMenubar(this,"editor_mbar");
 		setJMenuBar(menuBar);
-		String family = jEdit.props.getProperty("editor.font",
-			"Monospaced");
-		int size, style;
-		try
-		{
-			size = Integer.parseInt(jEdit.props
-				.getProperty("editor.fontsize"));
-		}
-		catch(NumberFormatException e)
-		{
-			size = 12;
-		}
-		try
-		{
-			style = Integer.parseInt(jEdit.props
-				.getProperty("editor.fontstyle"));
-		}
-		catch(NumberFormatException e)
-		{
-			style = 0;
-		}
-		Font font = new Font(family,style,size);
-		textArea.setFont(font);
-		status.setFont(font);
+		propertiesChanged();
 		getContentPane().add("Center",new JScrollPane(textArea));
 		getContentPane().add("South",status);
 		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
@@ -126,7 +105,6 @@ implements ActionListener, CaretListener, WindowListener
 		{
 			x = screen.width / 2 - 300;
 		}
-
 		try
 		{
 			y = Integer.parseInt(jEdit.props
@@ -160,6 +138,56 @@ implements ActionListener, CaretListener, WindowListener
 		show();
 	}
 
+	public void propertiesChanged()
+	{
+		String family = jEdit.props.getProperty("editor.font",
+			"Monospaced");
+		int size, style;
+		try
+		{
+			size = Integer.parseInt(jEdit.props
+				.getProperty("editor.fontsize"));
+		}
+		catch(NumberFormatException e)
+		{
+			size = 12;
+		}
+		try
+		{
+			style = Integer.parseInt(jEdit.props
+				.getProperty("editor.fontstyle"));
+		}
+		catch(NumberFormatException e)
+		{
+			style = 0;
+		}
+		Font font = new Font(family,style,size);
+		textArea.setFont(font);
+		status.setFont(font);
+		try
+		{
+			textArea.setTabSize(Integer.parseInt(jEdit.props
+				.getProperty("editor.tabsize")));
+		}
+		catch(Exception e)
+		{
+		}
+		String linewrap = jEdit.props.getProperty("editor.linewrap");
+		if("word".equals(linewrap))
+		{
+			textArea.setLineWrap(true);
+			textArea.setWrapStyleWord(true);
+		}
+		else if("char".equals(linewrap))
+		{
+			textArea.setLineWrap(true);
+			textArea.setWrapStyleWord(false);
+		}
+		autoindent = "on".equals(jEdit.props.getProperty(
+			"editor.autoindent"));
+		updateOpenRecentMenu();
+	}
+	
 	public void updatePluginsMenu()
 	{
 		plugins.removeAll();
@@ -314,8 +342,7 @@ implements ActionListener, CaretListener, WindowListener
 		else
 			this.buffer = buffer;
 		textArea.setDocument(this.buffer);
-		updateBuffersMenu(); // COLOSTOMY BAG!!!
-		/* need to select right menu item, not rebuild whole menu */
+		updateBuffersMenu();
 		updateStatus(true);
 	}
 
@@ -333,6 +360,53 @@ implements ActionListener, CaretListener, WindowListener
 	{
 		updateStatus(evt.getDot(),false);
 	}
+
+	public void keyPressed(KeyEvent evt)
+	{
+		// COLOSTOMY BAG
+		// this needs to be rewritten totally
+		if(evt.getKeyCode() == KeyEvent.VK_ENTER && autoindent)
+		{
+			try
+			{
+				int caret = textArea.getCaretPosition();
+				Element map = getBuffer()
+					.getDefaultRootElement();
+				Element lineElement = map.getElement(map
+					.getElementIndex(caret));
+				int start = lineElement.getStartOffset();
+				char[] line = buffer.getText(start,
+					lineElement.getEndOffset() - start)
+					.toCharArray();
+				int i = 0;
+loop:				for(i = 0; i < line.length; i++)
+				{
+					char c = line[i];
+					switch(c)
+					{
+					case ' ':
+					case '\t':
+					case '#':
+					case '%':
+					case '-':
+					break;
+					default:
+					break loop;
+					}
+				}
+				buffer.insertString(caret,"\n".concat(
+					new String(line,0,i)),null);
+				evt.consume();
+			}
+			catch(BadLocationException bl)
+			{
+				bl.printStackTrace();
+			}
+		}
+	}
+
+	public void keyTyped(KeyEvent evt) {}
+	public void keyReleased(KeyEvent evt) {}
 	
 	public void windowOpened(WindowEvent evt) {}
 	

@@ -37,7 +37,7 @@ public class Autosave extends Thread
 		}
 		catch(NumberFormatException nf)
 		{
-			interval = 60;
+			interval = 30;
 		}
 		if(interval == 0)
 			return;
