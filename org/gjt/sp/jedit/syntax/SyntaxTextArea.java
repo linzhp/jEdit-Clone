@@ -43,7 +43,11 @@ public class SyntaxTextArea extends JEditorPane
 
 	public Dimension getMinimumSize()
 	{
-		return getPreferredSize();
+		FontMetrics fm = getToolkit().getFontMetrics(getFont());
+		Dimension d = new Dimension();
+		d.width = fm.charWidth('m') * columns;
+		d.height = fm.getHeight() * rows;
+		return d;
 	}
 
 	// private members

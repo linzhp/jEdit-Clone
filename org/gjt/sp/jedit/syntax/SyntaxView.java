@@ -36,24 +36,16 @@ public class SyntaxView extends PlainView
 	
 	protected void drawLine(int lineIndex, Graphics g, int x, int y)
 	{
-		try
-		{
+		//try
+		//{
 			Buffer buffer = (Buffer)getDocument();
 			Hashtable colors = buffer.getColors();
-			int tabSize = buffer.getTabSize();
-			Element lineElement = getElement()
-				.getElement(lineIndex);
-			int start = lineElement.getStartOffset();
-			int end = lineElement.getEndOffset();
-			String line = jEdit.untab(tabSize,buffer
-				.getText(start,end - start));
-			JSTokenMarker tokenMarker = buffer.getTokenMarker();
-			if(tokenMarker == null)
+			if(buffer.getTokenMarker() == null)
 				super.drawLine(lineIndex,g,x,y);
 			else
 			{
-				Enumeration enum = tokenMarker.markTokens(line,
-					lineIndex,true);
+				Enumeration enum = buffer.markTokens(
+					lineIndex);
 				while(enum.hasMoreElements())
 				{
 					JSToken token = (JSToken)enum
@@ -69,10 +61,10 @@ public class SyntaxView extends PlainView
 					x += metrics.stringWidth(sequence);
 				}
 			}
-		}
-		catch(BadLocationException bl)
-		{
-			bl.printStackTrace();
-		}
+		//}
+		//catch(BadLocationException bl)
+		//{
+		//	bl.printStackTrace();
+		//}
 	}
 }

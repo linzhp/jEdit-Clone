@@ -1,5 +1,5 @@
 /*
- * java.java - Java editing mode
+ * java_mode.java - Java editing mode
  * Copyright (C) 1998 Slava Pestov
  *
  * This program is free software; you can redistribute it and/or
@@ -23,11 +23,11 @@ import com.sun.java.swing.text.Element;
 import jstyle.*;
 import org.gjt.sp.jedit.*;
 
-public class java implements Mode
+public class java_mode implements Mode
 {
 	private JSLineBeautifier beautifier;
 	
-	public java()
+	public java_mode()
 	{
 		beautifier = new jstyle.JSLineBeautifier();
 	}
@@ -68,6 +68,8 @@ public class java implements Mode
 			int len = lineElement.getEndOffset() - offset - 1;
 			buffer.remove(offset,len);
 			buffer.insertString(offset,line,null);
+			view.getTextArea().setCaretPosition(caret + (line
+				.length() - len));
 		}
 		catch (Exception e) {
 			e.printStackTrace();

@@ -562,6 +562,47 @@ loop:		for(int i = 0; i < map.getElementCount(); i++)
 	}
 	
 	/**
+	 * Marks the specified line up into tokens.
+	 * @param lineIndex The line number
+	 */
+	public Enumeration markTokens(int lineIndex)
+	{
+		if(tokenMarker == null)
+			return null;
+		Element map = getDefaultRootElement();
+		try
+		{
+			//boolean next = false;
+			// this is painfully slow because of JScrollPane bugs,
+			// so we're just going to have to put up with
+			// inaccurate colorizing for now :(
+			/*for(int i = oldLineIndex + 1; i < lineIndex; i++)
+			{
+				Element lineElement = map.getElement(i);
+				int start = lineElement.getStartOffset();
+				String line = getText(start,lineElement
+					.getEndOffset() - start);
+				tokenMarker.markTokens(line,lineIndex,next);
+				next = true;
+				// FIXME this doesn't work
+				//if(!tokenMarker.isNextLineRequested())
+				//	break;
+			}*/
+			Element lineElement = map.getElement(lineIndex);
+			int start = lineElement.getStartOffset();
+			String line = jEdit.untab(getTabSize(),getText(start,
+				lineElement.getEndOffset() - start - 1));
+			boolean next = (lineIndex - oldLineIndex == 1);
+			oldLineIndex = lineIndex;
+			return tokenMarker.markTokens(line,lineIndex,next);
+		}
+		catch(BadLocationException bl)
+		{
+			return null;
+		}
+	}
+	
+	/**
 	 * Loads the colors used for syntax colorizing from the properties.
 	 * <p>
 	 * The colors are stored in the property as a white space separated
@@ -709,11 +750,35 @@ loop:		for(int i = 0; i < map.getElementCount(); i++)
 	public void insertUpdate(DocumentEvent evt)
 	{
 		dirty();
+		/*if(tokenMarker == null)
+			return;
+		DocumentEvent.ElementChange ch = evt.getChange(
+			getDefaultRootElement());
+		if(ch == null)
+			return;
+		int line = ch.getIndex();
+		Element[] children = ch.getChildrenAdded();
+		if(children == null)
+			return;
+		for(int i = line; i < children.length; i++)
+			tokenMarker.insertLine(i);*/
 	}
 
 	public void removeUpdate(DocumentEvent evt)
 	{
 		dirty();
+		/*if(tokenMarker == null)
+			return;
+		DocumentEvent.ElementChange ch = evt.getChange(
+			getDefaultRootElement());
+		if(ch == null)
+			return;
+		int line = ch.getIndex();
+		Element[] children = ch.getChildrenRemoved();
+		if(children == null)
+			return;
+		for(int i = line; i < children.length; i++)
+			tokenMarker.deleteLine(line);*/
 	}
 
 	public void changedUpdate(DocumentEvent evt)
@@ -793,6 +858,7 @@ loop:		for(int i = 0; i < map.getElementCount(); i++)
 	private Vector markers;
 	private int[] caretInfo;
 	private JSTokenMarker tokenMarker;
+	private int oldLineIndex;
 	private Hashtable colors;
 
 	private void load()
@@ -1125,11 +1191,14 @@ loop:		for(int i = 0; i < map.getElementCount(); i++)
 
 	private void setPath(String parent, String path)
 	{
+		// absolute pathnames
 		if(path.startsWith(File.separator))
 			parent = null;
+		// windows pathnames, eg C:\document
 		else if(path.length() >= 3 && path.charAt(1) == ':'
 			&& path.charAt(2) == '\\')
 			parent = null;
+		// relative pathnames
 		else if(parent == null)
 			parent = System.getProperty("user.dir");
 		url = null;
@@ -1159,18 +1228,18 @@ loop:		for(int i = 0; i < map.getElementCount(); i++)
 			name = file.getName();
 			markersFile = new File(file.getParent(),'.' + name
 				+ ".marks");
-			if(newFile)
+			// sledgehammer fix
+			/*if(newFile)
 				this.path = name;
 			else
+			{*/
+			try
 			{
-				try
-				{
-					this.path = file.getCanonicalPath();
-				}
-				catch(IOException io)
-				{
-					this.path = file.getPath();
-				}
+				this.path = file.getCanonicalPath();
+			}
+			catch(IOException io)
+			{
+				this.path = file.getPath();
 			}
 		}
 		autosaveFile = new File(file.getParent(),'#' + name + '#');
