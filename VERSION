@@ -1,6 +1,6 @@
-VERSION INFORMATION (VERSION, last modified 8 Oct 1998)
+VERSION INFORMATION (VERSION, last modified 9 Oct 1998)
 
-CURRENT VERSION: 0.9
+CURRENT VERSION: 1.0pre1
 
 -- To Do Before 1.1:
 - Word wrap when printing
@@ -11,6 +11,19 @@ CURRENT VERSION: 0.9
 - Debug
 - Optimise
 - Improve documentation
+
+-- Version 1.0pre1:
+- File loading and saving in Windows fixed
+- Windows batch files fixed (*THIS* time, they should really work!)
+- Changed to use the AWT file dialog. I will switch back to the Swing file
+  dialog as soon as Swing 1.1 final is out
+- Open recent fixed
+- Autoindent with selection fixed
+- Replace All quirk fixed
+- URL marker loading fixed
+- Plugin compilation under Windows fixed (Again)
+- Minor property updates
+- Minor documentation updates
 
 -- Version 0.9:
 - jOpen's broken behaviour fixed

@@ -257,7 +257,7 @@ implements ActionListener, KeyListener, CaretListener, WindowListener
 		{
 			String name = (String)enum.nextElement();
 			JMenuItem menuItem = new JMenuItem(name);
-			menuItem.setActionCommand("open@".concat(name));
+			menuItem.setActionCommand("open_file@".concat(name));
 			menuItem.addActionListener(this);
 			openRecent.add(menuItem);
 		}
@@ -427,8 +427,8 @@ loop:				for(i = 0; i < line.length; i++)
 					}
 				}
 				i = Math.min(i,caret - start);
-				buffer.insertString(caret,"\n".concat(
-					new String(line,0,i)),null);
+				textArea.replaceSelection("\n".concat(
+					new String(line,0,i)));
 				evt.consume();
 			}
 			catch(BadLocationException bl)

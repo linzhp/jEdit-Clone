@@ -1,4 +1,4 @@
-HELP INDEX (index.txt, last modified 8 Oct 1998)
+HELP INDEX (index.txt, last modified 9 Oct 1998)
 
 If you're viewing this file with jEdit, you can open a topic by double
 clicking its name and pressing CS-o - that is, `o' while holding down the
@@ -7,13 +7,12 @@ Control and Shift keys. Most help files have markers. Check out the
 
 General
 -------
-README          Basic information about jEdit
+README          General information about jEdit
 COPYING         The GNU General Public License
 VERSION         Version history, known bugs and to do list
 
 Using jEdit
 -----------
-installing.txt  Installing jEdit
 starting.txt    Getting started with jEdit
 menus.txt       A description of jEdit's menus and how to customize them
 shortcuts.txt   A `cheat sheet' of jEdit's shortcuts

@@ -197,7 +197,7 @@ Start jEdit. A message such as this should be printed:
 	Loading plugin /home/slava/.jedit-jars/SimplePlugin.jar
 	Hello from SimplePlugin.init()!
 
-The plugin should also appear in the Plugins menu. Test it. It should output
+The plugin should also appear in the Plugins menu. Select it. It should output
 `Hello from SimplePlugin.exec()!' and replace the current selection with
 `hello!!!'.
 

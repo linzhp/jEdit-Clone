@@ -1,4 +1,4 @@
-GETTING STARTED WITH JEDIT (starting.txt, last modified 8 Oct 1998)
+GETTING STARTED WITH JEDIT (starting.txt, last modified 9 Oct 1998)
 
 Contents
 --------
@@ -61,12 +61,6 @@ as an option:
 	jedit -- -file-who's-name-starts-with-dash
 
 The -- indicates the end of options. No more options after it are interpreted.
-
-CAVEAT: If you give jOpen a relative pathname, it will be resolved relative to
-jEdit's working directory, not jOpen's. For example, if jEdit was started from
-/home/bob/Work, and jOpen is invoked with argument `filename' from the
-directory /home/bob/Play, jEdit will try to open /home/bob/Work/filename, not
-/home/bob/Play/filename as expected.
 
 1.1. Unix & Clones
 ------------------

@@ -18,7 +18,7 @@
  */
 
 import com.sun.java.swing.JOptionPane;
-import com.sun.java.swing.preview.JFileChooser;
+import java.awt.FileDialog;
 import java.io.File;
 import java.io.IOException;
 import java.util.Enumeration;
@@ -106,22 +106,18 @@ public class BufferMgr
 	
 	public Buffer openFile(View view)
 	{
-		JFileChooser fileChooser = new JFileChooser();
-		if(view != null)
-		{
-			String parent = view.getBuffer().getFile().getParent();
-			if(parent != null)
-				fileChooser.setCurrentDirectory(
-					new File(parent));
-		}
-		fileChooser.setDialogTitle(jEdit.props
-			.getProperty("openfile.title"));
-		int retVal = fileChooser.showOpenDialog(view);
-		if(retVal == JFileChooser.APPROVE_OPTION)
-			return openFile(view,null,fileChooser.getSelectedFile()
-				.getPath(),false,true);
-		else
+		FileDialog fileDialog = new FileDialog(view,jEdit.props
+			.getProperty("openfile.title"),FileDialog.LOAD);
+		String parent = view.getBuffer().getFile().getParent();
+		if(parent != null)
+			fileDialog.setDirectory(parent);
+		fileDialog.show();
+		String file = fileDialog.getFile();
+		if(file == null)
 			return null;
+		else
+			return openFile(view,null,fileDialog.getDirectory()
+				+ file,false,true);
 	}
 
 	public Buffer openFile(String path)

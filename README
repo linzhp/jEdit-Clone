@@ -1,9 +1,26 @@
-JEDIT README (README, last modified 8 Oct 1998)
+JEDIT README (README, last modified 9 Oct 1998)
 
+Contents
+--------
+1. About jEdit
+2. Installing jEdit
+2.1 Unix
+2.2 Windows 95, 98 and NT
+2.3 MacOS
+3. Getting Started
+
+1. About jEdit
+--------------
 jEdit is a text editor written in Java. I wrote it to learn more about JFC
 programming. This is a pre-release version. See the VERSION file to see what
 remains to be done.
 
+jEdit is released under the GNU General Public License, read the enclosed
+COPYING file for more information. Basically, you can share jEdit and modify it
+all you want, but you must give away your modifications under the same terms.
+
+2. Installing jEdit
+-------------------
 jEdit requires a Java 1.1 compatible runtime and Sun's Java Foundation Classes
 version 1.0.x. jEdit does NOT currently run with Swing 1.1beta3 or higher. When
 1.1 is finished, I'll port jEdit, but in the meantime, use 1.0.x or 1.1beta2.
@@ -13,13 +30,29 @@ A Java runtime for Solaris and Windows can be found at
 <http://java.blackdown.org>. The JFC can be obtained from
 <http://java.sun.com/products/jfc/index.html>.
 
-To get started with jEdit, I suggest you take a look at doc/index.txt. You
-might also want to take a look at the contents of the etc/ directory, it
-contains some useful goodies.
+2.1. Unix
+---------
+Use the supplied Makefile. Log in as root and `make install' in the jEdit
+directory. If for some reason you want to recompile the source, do a `make'
+before the `make install'.
 
-jEdit is under the GNU General Public License, read the enclosed COPYING file
-for more information. Basically, you can share jEdit and modify it all you
-want, but you must give away your modifications under the same terms.
+By default, everything will be installed under /opt/slava. If you want to
+install jEdit elsewhere, edit the Make.rules file.
+
+2.2. Windows 95, 98 and NT
+--------------------------
+Use the makeit.bat batch file to compile it if necessary and the installit.bat
+batch file to install it. By default, everything will be installed under
+C:\Program Files\jEdit. If you don't like this, edit installit.bat file.
+
+2.3. MacOS
+----------
+Could someone with MRJ tell me more about how MRJ handles standalones?
+
+3. Getting Started
+------------------
+To get started with jEdit, I suggest you take a look at doc/index.txt. Also,
+check out the etc/ directory, it contains some useful goodies.
 
 Have fun!
 

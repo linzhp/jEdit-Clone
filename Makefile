@@ -27,12 +27,11 @@ clean:
 	find -name \*.class -exec rm {} \;
 realclean: clean
 	find -name \*.jar -exec rm {} \;
-alpha:
-	(cd ..; zip -qr9 jEdit-`date +%Y%m%d`.zip jEdit)
-beta:
+zip: clean
+	find -name \*.bat -exec todos {} \;
+	find -type f -exec md5sum {} \; > MANIFEST
 	(cd ..; zip -qr9 jEdit-`grep "CURRENT VERSION:" jEdit/VERSION|\
 		awk '{print $$3}'`.zip jEdit)
-zip: all clean todos alpha beta
-todos:
-	find -name \*.bat -exec todos {} \;
+	(cd ..; tar cfz jEdit-`grep "CURRENT VERSION:" jEdit/VERSION|\
+		awk '{print $$3}'`.tgz jEdit)
 include Rules.make

@@ -3,13 +3,11 @@ files=../README \
 	../COPYING \
 	../VERSION \
 	index.txt \
-	installing.txt \
 	starting.txt \
 	shortcuts.txt \
 	menus.txt \
 	props.txt \
 	plugins.txt \
-	.installing.txt.marks \
 	.starting.txt.marks \
 	.menus.txt.marks \
 	.props.txt.marks \

@@ -23,7 +23,6 @@ import com.sun.java.swing.event.DocumentEvent;
 import com.sun.java.swing.event.DocumentListener;
 import com.sun.java.swing.event.UndoableEditEvent;
 import com.sun.java.swing.event.UndoableEditListener;
-import com.sun.java.swing.preview.JFileChooser;
 import com.sun.java.swing.text.BadLocationException;
 import com.sun.java.swing.text.Element;
 import com.sun.java.swing.text.PlainDocument;
@@ -31,6 +30,7 @@ import com.sun.java.swing.undo.UndoManager;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.FileDialog;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.PrintJob;
@@ -305,8 +305,19 @@ implements DocumentListener, UndoableEditListener
 
 	public void replaceAll(View view)
 	{
-		while(findNext(view))
-			replace(view);
+		String findStr = jEdit.props.getProperty("lastfind");
+		String replaceStr = jEdit.props.getProperty("lastreplace");
+		JTextArea textArea = view.getTextArea();
+		if(findStr == null || replaceStr == null || "".equals(findStr))
+		{
+			view.getToolkit().beep();
+			return;
+		}
+		else
+		{
+			while(find(view,findStr,false))
+				textArea.replaceSelection(replaceStr);
+		}
 	}
 	
 	public void hypersearch(View view)
@@ -337,26 +348,19 @@ implements DocumentListener, UndoableEditListener
 	
 	public boolean saveAs(View view)
 	{
-		JFileChooser fileChooser = new JFileChooser();
-		if(view != null)
-		{
-			File fileN = view.getBuffer().getFile();
-			String parent = fileN.getParent();
-			if(parent != null)
-				fileChooser.setCurrentDirectory(
-					new File(parent));
-			fileChooser.setSelectedFile(fileN);
-		}
-		fileChooser.setDialogTitle(jEdit.props
-			.getProperty("savefile.title"));
-		int retVal = fileChooser.showSaveDialog(view);
-		if(retVal == JFileChooser.APPROVE_OPTION)
-		{
-			path = fileChooser.getSelectedFile().getPath();
-			return save(view,path);
-		}
-		else
+		FileDialog fileDialog = new FileDialog(view,jEdit.props
+			.getProperty("savefile.title"),FileDialog.LOAD);
+		String parent = getFile().getParent();
+		if(parent != null)
+			fileDialog.setDirectory(parent);
+		fileDialog.setFile(name);
+		fileDialog.show();
+		String file = fileDialog.getFile();
+		if(file == null)
 			return false;
+		else
+			return save(view,fileDialog.getDirectory() + file);
+		
 	}
 
 	public boolean saveToURL(View view)
@@ -648,6 +652,9 @@ loop:		for(int i = 0; i < map.getElementCount(); i++)
 	{
 		if(path.startsWith(File.separator))
 			parent = null;
+		else if(path.length() >= 3 && path.charAt(1) == ':'
+			&& path.charAt(2) == '\\')
+			parent = null;
 		else if(parent == null)
 			parent = System.getProperty("user.dir");
 		this.path = path;
@@ -664,7 +671,9 @@ loop:		for(int i = 0; i < map.getElementCount(); i++)
 				file = new File(name);
 			else
 				file = new File(parent,name);
-			markersUrl = new URL(url,'.' + name + ".marks");
+			System.out.println(name);
+			markersUrl = new URL(url,'.' + new File(name)
+				.getName() + ".marks");
 			name = file.getName();
 		}
 		catch(MalformedURLException mu)
@@ -673,7 +682,14 @@ loop:		for(int i = 0; i < map.getElementCount(); i++)
 				file = new File(path);
 			else
 				file = new File(parent,path);
-			path = file.getPath();
+			try
+			{
+				path = file.getCanonicalPath();
+			}
+			catch(IOException io)
+			{
+				path = file.getPath();
+			}
 			name = file.getName();
 			markersFile = new File(file.getParent(),'.' + name
 				+ ".marks");

@@ -82,7 +82,7 @@ about.title=About jEdit
 about.message=jEdit version {0} build {1}, Copyright (C) 1998 Slava Pestov.\n\
 	jEdit comes with ABSOLUTELY NO WARRANTY. This is free software,\n\
 	and you are welcome to redistribute it under certain conditions;\n\
-	see `Help->Copying' for details.
+	see Help->Copying for details.
 
 ### IO Error dialog
 # {0} - the error message
@@ -136,9 +136,9 @@ notsaved.message=Save changes to {0}?
 ### Autosave file exists dialog
 autosaveexists.title=Autosave File Exists
 # {0} - autosave file name
-autosaveexists.message=An autosave file {0} was found. This probably means\n\
-	that jEdit crashed before you had a chance to save. If you do not\n\
-	need the old unsaved information, you can delete this file.
+autosaveexists.message=An autosave file {0} was found.\n\
+	This probably means that jEdit crashed before you could save.\n\
+	Open it to see your unsaved data.
 
 ### Search and replace dialog
 search.title=Search And Replace
@@ -280,15 +280,13 @@ hypersearch.shortcut=CS-h
 plugins.label=Plugins
 no_plugins.label=No Plugins
 buffers.label=Buffers
-help=about help - help@README help@COPYING help@VERSION - \
-	help@installing.txt help@starting.txt help@menus.txt \
-	help@shortcuts.txt help@props.txt help@plugins.txt
+help=about help - help@README help@COPYING help@VERSION - help@starting.txt \
+	help@menus.txt help@shortcuts.txt help@props.txt help@plugins.txt
 help.label=Help
 about.label=About jEdit...
 help@README.label=Readme
 help@COPYING.label=Copying
 help@VERSION.label=Version Info
-help@installing.txt.label=Installation
 help@starting.txt.label=Getting Started
 help@menus.txt.label=Menus
 help@shortcuts.txt.label=Shortcuts

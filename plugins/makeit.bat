@@ -1,3 +1,4 @@
+set CLASSPATH=..\..\src\;%CLASSPATH%
 cd HelloWorld
 call makeit.bat
 cd ..\InsertDate

@@ -26,8 +26,8 @@ import java.net.Socket;
 
 public class jOpen
 {
-	public static final String VERSION = "0.9";
-	public static final String BUILD = "19981008";
+	public static final String VERSION = "1.0pre1";
+	public static final String BUILD = "19981009";
 	
 	public static void usage()
 	{
