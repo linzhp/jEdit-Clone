@@ -40,14 +40,14 @@ public class DocIndexURLConnection extends URLConnection
 
 		String textFileEntry = jEdit.getProperty("docindex.general.entry");
 		String[] textFiles = docDir.list();
-		String[] args = new String[2];
+		String[] args = new String[1];
 
 		for(int i = 0; i < textFiles.length; i++)
 		{
 			if(textFiles[i].toUpperCase().endsWith(".TXT"))
 			{
-				args[0] = docDir.getPath();
-				args[1] = textFiles[i];
+				args[0] = "\"file:" + docDir.getPath()
+					+ File.separator + textFiles[i] + "\"";
 				buf.append(MessageFormat.format(textFileEntry,args));
 			}
 		}
@@ -55,12 +55,21 @@ public class DocIndexURLConnection extends URLConnection
 		// Books
 		buf.append(jEdit.getProperty("docindex.books"));
 
-		args = new String[1];
-		args[0] = docDir.getPath();
-		if(new File(docDir,"jeditdocs").exists())
+		String path = docDir.getPath() + File.separator
+			+ "jeditdocs" + File.separator + "index.html";
+		if(new File(path).exists())
+		{
+			args[0] = "\"file:" + path + "\"";
 			buf.append(jEdit.getProperty("docindex.books.jeditdocs",args));
-		if(new File(docDir,"api").exists())
+		}
+
+		path = docDir.getPath() + File.separator
+			+ "api" + File.separator + "packages.html";
+		if(new File(path).exists())
+		{
+			args[0] = "\"file:" + path + "\"";
 			buf.append(jEdit.getProperty("docindex.books.api",args));
+		}
 
 		// Plugins
 		buf.append(jEdit.getProperty("docindex.plugins"));
@@ -73,11 +82,14 @@ public class DocIndexURLConnection extends URLConnection
 		args = new String[4];
 		for(int i = 0; i < plugins.length; i++)
 		{
-			EditPlugin plugin = plugins[i];
-			String clazz = (plugin instanceof Plugin.Wrapper
-				? ((Plugin.Wrapper)plugin).getPlugin()
-				.getClass().getName()
-				: plugin.getClass().getName());
+			EditPlugin _plugin = plugins[i];
+			Object plugin;
+			if(_plugin instanceof Plugin.Wrapper)
+				plugin = ((Plugin.Wrapper)_plugin).getPlugin();
+			else
+				plugin = _plugin;
+
+			String clazz = plugin.getClass().getName();
 
 			args[0] = jEdit.getProperty("plugin." + clazz
 				+ ".name");
