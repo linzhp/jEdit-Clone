@@ -9,11 +9,12 @@ install:
 	@make -C bin install
 clean:
 	find -name \*~ -exec rm {} \;
+	find -name .\*~ -exec rm {} \;
 	find -name \*.bak -exec rm {} \;
 	find -name \#\*\# -exec rm {} \;
 	find -name .\*.swp -exec rm {} \;
-realclean: clean
 	find -name \*.class -exec rm {} \;
+realclean: clean
 	find -name \*.jar -exec rm {} \;
 zip: all clean todos
 	(cd ..; zip -qr9 jEdit-`date +%Y%m%d`.zip jEdit)

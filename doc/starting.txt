@@ -4,7 +4,6 @@ Contents
 --------
 1. Starting jEdit
 2. Platform Specific Notes
-3. jEdit Initialization
 
 1. Starting jEdit
 -----------------
@@ -55,7 +54,7 @@ as an option:
 The -- indicates the end of options. No more options after it are interpreted.
 
 CAVEAT: If you give jOpen a relative pathname, it will be resolved relative to
-jEdit's working directory, now jOpen's. For example, if jEdit was started from
+jEdit's working directory, not jOpen's. For example, if jEdit was started from
 /home/bob/Work, and jOpen is invoked with argument `filename' from the directory
 /home/bob/Play, jEdit will try to open /home/bob/Work/filename, not
 /home/bob/Play/filename as expected.
@@ -111,3 +110,4 @@ jOpen will have to be started with these options:
 
 -- Slava Pestov
 <slava_pestov@geocities.com>
+

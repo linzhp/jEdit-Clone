@@ -50,7 +50,7 @@ do this:
 
 	jar xf <path to jedit.jar>/jedit.jar properties
 
-Then you can copy the properties taht you want to change to your user properties
+Then you can copy the properties that you want to change to your user properties
 file.
 
 -- Slava Pestov

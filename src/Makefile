@@ -7,6 +7,7 @@ resources=jEdit.class \
 	Command.class \
 	CommandMgr.class \
 	Marker.class \
+	Options.class \
 	PropsMgr.class \
 	Server.class \
 	View.class \
@@ -26,6 +27,7 @@ resources=jEdit.class \
 	Cmd_open_file.class \
 	Cmd_open_selection.class \
 	Cmd_open_url.class \
+	Cmd_options.class \
 	Cmd_paste.class \
 	Cmd_print.class \
 	Cmd_redo.class \

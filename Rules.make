@@ -15,4 +15,4 @@ jar-install:
 	mkdirhier $(SLAVA_JARS_DIR)
 	cp $(jar) $(SLAVA_JARS_DIR)
 $(jar): $(resources)
-	jar cf $(jar) $(resources)
+	jar cf0 $(jar) $(resources)

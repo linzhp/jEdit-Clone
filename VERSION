@@ -1,27 +1,29 @@
-VERSION INFORMATION (VERSION, last modified 30 Sep 1998)
+VERSION INFORMATION (VERSION, last modified 1 Oct 1998)
 
 -- To Do:
 - Search and replace
-- Printing
 - Options dialog
 - Better documentation
-- Persistent markers
 - Make code thread safe
+- Word wrap isn't done when printing
+
+-- Version 0.4:
+- Lots of bug fixes
+- Improved error handling
+- Open selection command
+- Persistent markers
+- Printing
+- Automated installation of PIF and kdelnk files
+- More plugins
+- More documentation
 
 -- Version 0.3:
-- Fixed save to url with new file bug
-- save and open commands split into save, save_as, save_url, open and open_url
-- save() and openFile() methods split into save(), saveAs(), saveToURL(),
-  openURL() and openFile().
-- Commands cleaned up
-- Renamed open/newBuffer() to open/newFile()
-- open_selection command
-- Files are opened relative the current file's directory
+- Lots of bug fixes
+- File loading and saving cleaned up
 - More documentation
-- By default, views are 80 columns wide
-- Obscure erros are handled better
 
--- Version 0.2 - change log started
+-- Version 0.2:
+- Change log started
 
 -- Slava Pestov
 <slava_pestov@geocities.com>

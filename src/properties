@@ -143,6 +143,40 @@ autosaveexists.message=An autosave file {0} was found. This probably means\n\
 	that jEdit crashed before you had a chance to save. If you do not\n\
 	need the old unsaved information, you can delete this file.
 
+### Options dialog
+options.title=Options
+options.lf=Look And Feel
+options.lf.metal=Metal
+options.lf.motif=Motif
+options.lf.windows=Windows
+options.opening=Opening Files
+options.opening.server=Start jEdit Server
+options.opening.maxrecent=Number of recent files:\ 
+options.saving=Saving Files
+options.saving.autosave=Autosave interval (seconds, 0 = off):
+options.saving.backups=Max number of backups (0 = off):
+options.saving.newline=End of line character:\ 
+options.saving.newline.unix=Unix (\\n)
+options.saving.newline.windows=Windows (\\r\\n)
+options.saving.newline.mac=MacOS (\\r)
+options.editing=Editing Files
+options.editing.autoindent=Auto indent
+options.editing.linewrap=Line wrap:\ 
+options.editing.linewrap.off=Off
+options.editing.linewrap.char=Character
+options.editing.linewrap.word=Word
+options.editing.tabsize=Tab Size:
+options.editing.font=Font:
+options.editing.font.bold=Bold
+options.editing.font.italic=Italic
+options.printing=Print Margins (Inches)
+options.printing.left=Left:\ 
+options.printing.right=Right:\ 
+options.printing.top=Top:\ 
+options.printing.bottom=Bottom:\ 
+options.ok=OK
+options.cancel=Cancel
+
 ### Status bar
 # {0} - the file name
 # {1} - 1 if the file is not on disk
@@ -185,7 +219,7 @@ exit.label=Exit
 exit.shortcut=C-q
 edit=undo redo - cut copy paste clear select_all - find find_next \
 	find_selection replace replace_all goto_line - set_marker \
-	%clear_marker %goto_marker
+	%clear_marker %goto_marker - options
 edit.label=Edit
 undo.label=Undo
 undo.shortcut=C-z
@@ -218,6 +252,7 @@ set_marker.shortcut=C-m
 clear_marker.label=Clear Marker
 goto_marker.label=Go To Marker
 no_markers.label=No Markers Defined
+options.label=Options...
 plugins.label=Plugins
 no_plugins.label=No Plugins
 buffers.label=Buffers

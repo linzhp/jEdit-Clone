@@ -2,12 +2,13 @@ JEDIT MENUS (menus.txt, last modified 30 Sep 1998)
 
 Contents
 --------
-1. File Menu
-2. Edit Menu
-3. Plugins Menu
-4. Buffers Menu
-5. Help Menu
-6. Customising Menus
+1. Format
+2. File Menu
+3. Edit Menu
+4. Plugins Menu
+5. Buffers Menu
+6. Help Menu
+7. Customizing Menus
 
 1. Format
 ---------
@@ -24,7 +25,7 @@ S - shift
 A - alt
 M - meta (on PC keyboards, right alt)
 
-1. File Menu
+2. File Menu
 ------------
 - New File (new_file) (C-n)
 Creates a new, untitled file
@@ -49,8 +50,9 @@ with the `maxrecent' property.
 
 - Close File (close_file) (C-w)
 Closes the file in the current view, and exits jEdit if there are no more open
-files. If the file has unsaved data, a dialog box will appear asking if it should
-be saved first.
+files. If the file has unsaved data, a dialog box will appear asking if it
+should
+ be saved first.
 
 - Close View (close_view) (CS-w)
 Closes the current view, and exists jEdit if there are no more open views.
@@ -76,7 +78,7 @@ Prints the current file.
 - Exit (exit) (C-q)
 Exits jEdit, asking if any unsaved files should be saved first.
 
-2. Edit Menu
+3. Edit Menu
 ------------
 
 - Undo (undo) (C-z)
@@ -118,21 +120,21 @@ it.
 A submenu with a lsit of currently defined markers. Selecting one will go to
 it.
 
-3. Plugins Menu
+4. Plugins Menu
 ---------------
 This menu contains one entry for each plugin you have installed.
 
-4. Buffers Menu
+5. Buffers Menu
 ---------------
 This menu contains one entry for each open file. The current file will have a
 marker next to it.
 
-5. Help Menu
+6. Help Menu
 ------------
 This menu contains a list of help files. A description of each one is for can
 be found by selecting `Help Index'.
 
-6. Customising Menus
+6. Customizing Menus
 --------------------
 If you don't like jEdit's default menus, it is possible to change them. This
 involves changing properties, so read props.txt first.

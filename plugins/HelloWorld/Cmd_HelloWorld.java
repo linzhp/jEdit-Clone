@@ -23,12 +23,12 @@ public class Cmd_HelloWorld implements Command
 {
 	public Object init(Hashtable args)
 	{
-		return Boolean.TRUE;
+		return null;
 	}
 
 	public Object exec(Hashtable args)
 	{
-		System.out.println("Hello World!");
-		return Boolean.TRUE;
+		jEdit.message((View)args.get(VIEW),"HelloWorld",new Object[0]);
+		return null;
 	}
 }

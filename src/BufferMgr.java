@@ -194,7 +194,7 @@ public class BufferMgr
 					return false;
 			}
 			else if(result == JOptionPane.NO_OPTION)
-				buffer.autosave();
+				buffer.getAutosaveFile().delete();
 			else if(result == JOptionPane.CANCEL_OPTION)
 				return false;
 		}	

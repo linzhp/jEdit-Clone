@@ -341,6 +341,7 @@ implements ActionListener, KeyListener, CaretListener, WindowListener
 			this.buffer = buffer;
 		textArea.setDocument(this.buffer);
 		updateBuffersMenu();
+		updateMarkerMenus();
 		updateStatus(true);
 	}
 

@@ -1,5 +1,5 @@
 /*
- * Cmd_set_marker.java - Command
+ * Cmd_WordCount.java - Simple plugin
  * Copyright (C) 1998 Slava Pestov
  *
  * This program is free software; you can redistribute it and/or
@@ -17,12 +17,10 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-import com.sun.java.swing.JOptionPane;
 import com.sun.java.swing.JTextArea;
-import com.sun.java.swing.text.BadLocationException;
 import java.util.Hashtable;
 
-public class Cmd_set_marker implements Command
+public class Cmd_WordCount implements Command
 {
 	public Object init(Hashtable args)
 	{
@@ -31,35 +29,50 @@ public class Cmd_set_marker implements Command
 
 	public Object exec(Hashtable args)
 	{
-		String arg = (String)args.get(ARG);
 		View view = (View)args.get(VIEW);
-		if(view == null)
-			return null;
-		JTextArea textArea = view.getTextArea();
-		try
+		if(view != null)
 		{
-			if(arg == null)
-			{
-				arg = (String)JOptionPane.showInputDialog(view,
-					jEdit.props.getProperty(
-					"setmarker.message"),
-					jEdit.props.getProperty(
-					"setmarker.title"),
-					JOptionPane.QUESTION_MESSAGE,
-					null,
-					null,
-					textArea.getSelectedText());
-			}
-			if(arg != null)
-			{
-				view.getBuffer().addMarker(arg,textArea
-					.getSelectionStart(),textArea
-					.getSelectionEnd());
-			}
-		}
-		catch(BadLocationException bl)
-		{
+			JTextArea textArea = view.getTextArea();
+			String selection = textArea.getSelectedText();
+			if(selection != null)
+				wordCount(view,selection);
+			else
+				wordCount(view,textArea.getText());
 		}
 		return null;
+	}
+
+	private void wordCount(View view, String text)
+	{
+		char[] chars = text.toCharArray();
+		int characters = chars.length;
+		int words;
+		if(characters == 0)
+			words = 0;
+		else
+			words = 1;
+		int lines = 1;
+		boolean word = false;
+		for(int i = 0; i < chars.length; i++)
+		{
+			switch(chars[i])
+			{
+			case '\r': case '\n':
+				lines++;
+			case ' ': case '\t':
+				if(word)
+				{
+					words++;
+					word = false;
+				}
+				break;
+			default:
+				word = true;
+				break;
+			}
+		}
+		Object[] args = { new Integer(characters), new Integer(words),
+			new Integer(lines) };
+		jEdit.message(view,"WordCount",args);
 	}
 }

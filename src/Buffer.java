@@ -18,6 +18,7 @@
  */
 
 import com.sun.java.swing.JOptionPane;
+import com.sun.java.swing.JTextArea;
 import com.sun.java.swing.event.DocumentEvent;
 import com.sun.java.swing.event.DocumentListener;
 import com.sun.java.swing.event.UndoableEditEvent;
@@ -27,7 +28,11 @@ import com.sun.java.swing.text.BadLocationException;
 import com.sun.java.swing.text.Element;
 import com.sun.java.swing.text.PlainDocument;
 import com.sun.java.swing.undo.UndoManager;
+import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.PrintJob;
 import java.awt.Toolkit;
 import java.io.BufferedReader;
@@ -52,9 +57,12 @@ implements DocumentListener, UndoableEditListener
 {
 	private File file;
 	private File autosaveFile;
+	private File markersFile;
 	private URL url;
+	private URL markersUrl;
 	private String name;
 	private String path;
+	private boolean init;
 	private boolean newFile;
 	private boolean dirty;
 	private UndoManager undo;
@@ -65,6 +73,7 @@ implements DocumentListener, UndoableEditListener
 		undo = new UndoManager();
 		markers = new Vector();
 		newFile = !load;
+		init = true;
 		String parent = null;
 		if(view != null)
 			parent = view.getBuffer().getFile().getParent();
@@ -77,9 +86,13 @@ implements DocumentListener, UndoableEditListener
 				jEdit.message(view,"autosaveexists",args);
 			}
 			load(view);
+			loadMarkers();
 		}
 		addDocumentListener(this);
 		addUndoableEditListener(this);
+		init = false;
+		updateStatus();
+		updateMarkers();
 	}
 
 	private void load(View view)
@@ -89,15 +102,9 @@ implements DocumentListener, UndoableEditListener
 			Reader in;
 			URLConnection connection = null;
 			if(url != null)
-			{
-				connection = url.openConnection();
-				in = new InputStreamReader(
-					connection.getInputStream());
-			}
+				in = new InputStreamReader(url.openStream());
 			else
-			{
 				in = new FileReader(file);
-			}
 			char[] buff = new char[4096];
 			int n;
 			while ((n = in.read(buff, 0, buff.length)) != -1)
@@ -123,7 +130,86 @@ implements DocumentListener, UndoableEditListener
 			Object[] args = { bl.toString() };
 			jEdit.error(view,"error",args);
 		}
-		updateStatus();
+	}
+
+	private void loadMarkers()
+	{
+		try
+		{
+			Reader in;
+			if(url != null)
+				in = new InputStreamReader(markersUrl.
+					openStream());
+			else
+				in = new FileReader(markersFile);
+			StringBuffer buf = new StringBuffer();
+			int c;
+			boolean eof = false;
+			String name = null;
+			int start = -1;
+			int end = -1;
+			for(;;)
+			{
+				if(eof)
+					break;
+				switch(c = in.read())
+				{
+				case -1:
+					eof = true;
+				case ';': case '\n': case '\r':
+					if(buf.length() == 0)
+						continue;
+					String str = buf.toString();
+					buf.setLength(0);
+					if(name == null)
+						name = str;
+					else if(start == -1)
+					{
+						try
+						{
+							start = Integer
+								.parseInt(str);
+						}
+						catch(NumberFormatException nf)
+						{
+							System.err.println(
+								"Invalid"
+								+ " start: "
+								+ str);
+							start = 0;
+						}
+					}
+					else if(end == -1)
+					{
+						try
+						{
+							end = Integer
+								.parseInt(str);
+						}
+						catch(NumberFormatException nf)
+						{
+							System.err.println(
+								"Invalid"
+								+ " end: "
+								+ str);
+							end = 0;
+						}
+						addMarker(name,start,end);
+						name = null;
+						start = -1;
+						end = -1;
+					}
+					break;
+				default:
+					buf.append((char)c);
+					break;
+				}
+			}
+			in.close();
+		}
+		catch(Exception e)
+		{
+		}
 	}
 
 	public synchronized void autosave()
@@ -203,9 +289,15 @@ implements DocumentListener, UndoableEditListener
 				URLConnection connection = url.openConnection();
 				save(new OutputStreamWriter(connection
 					.getOutputStream()));
+				connection = markersUrl.openConnection();
+				saveMarkers(new OutputStreamWriter(connection
+					.getOutputStream()));
 			}
 			else
+			{
 				save(new FileWriter(file));
+				saveMarkers(new FileWriter(markersFile));
+			}
 			dirty = newFile = false;
 			autosaveFile.delete();
 			updateStatus();
@@ -231,14 +323,34 @@ implements DocumentListener, UndoableEditListener
 			System.getProperty("line.separator"));
 		BufferedReader in = new BufferedReader(new StringReader(
 			getText(0,getLength())));
-		String line;
-		while((line = in.readLine()) != null)
+		Element map = getDefaultRootElement();
+		for(int i = 0; i < map.getElementCount(); i++)
 		{
-			out.write(line);
+			Element line = map.getElement(i);
+			int start = line.getStartOffset();
+			out.write(getText(start,line.getEndOffset() - start
+				- 1));
 			out.write(newline);
 		}
 		out.close();
 		in.close();
+	}
+
+	private void saveMarkers(Writer out)
+		throws IOException
+	{
+		Enumeration enum = getMarkers();
+		while(enum.hasMoreElements())
+		{
+			Marker marker = (Marker)enum.nextElement();
+			out.write(marker.getName());
+			out.write(';');
+			out.write(String.valueOf(marker.getStart()));
+			out.write(';');
+			out.write(String.valueOf(marker.getEnd()));
+			out.write('\n');
+		}
+		out.close();
 	}
 
 	private void backup()
@@ -333,14 +445,90 @@ implements DocumentListener, UndoableEditListener
 		{
 			rightMargin = leftMargin;
 		}
-		System.out.println("t=" + topMargin + ",l=" + leftMargin
-			+ ",b=" + bottomMargin + ",r=" + rightMargin);
+		String header;
+		if(url != null)
+			header = "jEdit: " + url;
+		else
+			header = "jEdit: " + getPath();
+		Element map = getDefaultRootElement();
+		JTextArea textArea = view.getTextArea();
+		Graphics gfx = null;
+		Font font = textArea.getFont();
+		int fontHeight = font.getSize();
+		int tabSize = view.getTextArea().getTabSize();
+		Dimension pageDimension = job.getPageDimension();
+		int pageWidth = pageDimension.width;
+		int pageHeight = pageDimension.height;
+		int y = 0;
+loop:		for(int i = 0; i < map.getElementCount(); i++)
+		{
+			if(gfx == null)
+			{
+				gfx = job.getGraphics();
+				gfx.setFont(font);
+				FontMetrics fm = gfx.getFontMetrics();
+				gfx.setColor(Color.lightGray);
+				gfx.fillRect(leftMargin,topMargin,pageWidth
+					- leftMargin - rightMargin,
+					  fm.getMaxAscent()
+					  + fm.getMaxDescent()
+					  + fm.getLeading());
+				gfx.setColor(Color.black);
+				y = topMargin + fontHeight;
+				gfx.drawString(header,leftMargin,y);
+				y += fontHeight;
+			}
+			Element line = map.getElement(i);
+			try
+			{
+				int start = line.getStartOffset();
+				gfx.drawString(untab(tabSize,getText(start,line
+					.getEndOffset() - start - 1)),
+					leftMargin,y += fontHeight);
+			}
+			catch(BadLocationException bl)
+			{
+				Object [] arg = { bl.toString() };
+				jEdit.error(view,"error",arg);
+			}
+			if((y > pageHeight - bottomMargin) ||
+				(i == map.getElementCount() - 1))
+			{
+				gfx.dispose();
+				gfx = null;
+			}
+		}
 		job.end();
 	}
 
+	private String untab(int tabSize, String in)
+	{
+		StringBuffer buf = new StringBuffer();
+		for(int i = 0; i < in.length(); i++)
+		{
+			switch(in.charAt(i))
+			{
+			case '\t':
+				int count = tabSize - (i % tabSize);
+				while(count-- >= 0)
+					buf.append(' ');
+				break;
+			default:
+				buf.append(in.charAt(i));
+				break;
+			}
+		}
+		return buf.toString();
+	}
+	
 	public File getFile()
 	{
 		return file;
+	}
+
+	public File getAutosaveFile()
+	{
+		return autosaveFile;
 	}
 
 	public String getName()
@@ -371,6 +559,7 @@ implements DocumentListener, UndoableEditListener
 			if(name.startsWith(File.separator))
 				parent = "";
 			file = new File(parent,name);
+			markersUrl = new URL(url,'.' + name + ".marks");
 			name = file.getName();
 		}
 		catch(MalformedURLException mu)
@@ -389,6 +578,7 @@ implements DocumentListener, UndoableEditListener
 			name = file.getName();
 		}
 		autosaveFile = new File(file.getParent(),'#' + name + '#');
+		markersFile = new File(file.getParent(),'.' + name + ".marks");
 	}
 	
 	public boolean isNewFile()
@@ -414,6 +604,8 @@ implements DocumentListener, UndoableEditListener
 	public void addMarker(String name, int start, int end)
 		throws BadLocationException
 	{
+		dirty = !init;
+		name = name.replace(';',' ');
 		Marker markerN = new Marker(name,createPosition(start),
 			createPosition(end));
 		for(int i = 0; i < markers.size(); i++)
@@ -426,7 +618,8 @@ implements DocumentListener, UndoableEditListener
 			}
 		}
 		markers.addElement(markerN);
-		updateMarkers();
+		if(!init)
+			updateMarkers();
 	}
 
 	public int[] getMarker(String name)
@@ -448,6 +641,7 @@ implements DocumentListener, UndoableEditListener
 
 	public void removeMarker(String name)
 	{
+		dirty = !init;
 		for(int i = 0; i < markers.size(); i++)
 		{
 			Marker marker = (Marker)markers.elementAt(i);
@@ -467,10 +661,22 @@ implements DocumentListener, UndoableEditListener
 		{
 			View view = (View)enum.nextElement();
 			if(view.getBuffer() == this)
+			{
+				view.updateStatus(true);
 				view.updateMarkerMenus();
+			}
 		}
 	}
 
+	private void dirty()
+	{
+		if(!dirty)
+		{
+			dirty = !init;
+			updateStatus();
+		}
+	}
+	
 	public void undoableEditHappened(UndoableEditEvent evt)
 	{
 		undo.addEdit(evt.getEdit());
@@ -478,28 +684,16 @@ implements DocumentListener, UndoableEditListener
 
 	public void insertUpdate(DocumentEvent evt)
 	{
-		if(!dirty)
-		{
-			dirty = true;
-			updateStatus();
-		}
+		dirty();
 	}
 
 	public void removeUpdate(DocumentEvent evt)
 	{
-		if(!dirty)
-		{
-			dirty = true;
-			updateStatus();
-		}
+		dirty();	
 	}
 
 	public void changedUpdate(DocumentEvent evt)
 	{
-		if(!dirty)
-		{
-			dirty = true;
-			updateStatus();
-		}
+		dirty();
 	}
 }

@@ -6,9 +6,10 @@ copy src\jedit.jar %DIRECTORY%
 cd plugins
 call .\installit
 cd ..
-copy bin\jedit.bat %DIRECTORY%
-copy bin\jopen.bat %DIRECTORY%
+copy bin\*.bat %DIRECTORY%
+copy etc\*.pif %DIRECTORY%
 copy doc\*.txt %DIRECTORY%\doc
+copy doc\*.marks %DIRECTORY%\doc
 copy README %DIRECTORY%\doc
 copy COPYING %DIRECTORY%\doc
 copy VERSION %DIRECTORY%\doc
