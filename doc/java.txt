@@ -1,0 +1,15 @@
+JAVA EDIT MODE (java.txt, last modified 21 Nov 1998)
+
+The Java mode overrides the Tab key behaviour to indent the line using
+Tal Davidson's <tald@md2.huji.ac.il> jStyle filters.
+
+The Java mode's internal name is `java', and it is the name that can be used
+as the value of the `mode' buffer-local property.
+
+The Java mode uses the following buffer-local properties:
+- `tabSize' - the tab size
+- `ib' - if set, extra indentation will be added to brackets
+- `fs' - if set, case statements will not be given extra indentation
+
+-- Slava Pestov
+<slava_pestov@geocities.com>

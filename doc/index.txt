@@ -1,4 +1,4 @@
-HELP INDEX (index.txt, last modified 8 Nov 1998)
+HELP INDEX (index.txt, last modified 18 Nov 1998)
 
 This is the online documentation for jEdit 1.1. It is far from being complete.
 If you would like to contribute, e-mail me at <slava_pestov@geocities.com>.
@@ -14,12 +14,14 @@ General
 -------
 COPYING.txt     The GNU General Public License
 README.txt      General information about jEdit
-NEWS.txt	Changes between jEdit 1.0 and 1.1
-VERSION.txt     Version history, known bugs and to do list
+NEWS.txt        Changes between jEdit 1.1 and 1.2
+ONEWS.txt       Changes between jEdit 1.0 and 1.1
+VERSION.txt     Version history and to do list
 
 Using jEdit
 -----------
 starting.txt    Getting started with jEdit
+editing.txt     Advanced text editing with jEdit
 menus.txt       A description of jEdit's menus and how to customize them
 shortcuts.txt   An automatically generated file of jEdit's keyboard shortcuts
 regexp.txt      Information about regular expressions. Read this to make full
@@ -28,6 +30,11 @@ props.txt       Information about property files and how to change them
 plugins.txt     Information plugins, and how to install, use and
                 write them
 security.txt    jEdit server security notes
+
+Edit Modes
+----------
+autoindent.txt  Auto indent edit mode documentation
+java.txt        Java edit mode documentation
 
 -- Slava Pestov
 <slava_pestov@geocities.com>

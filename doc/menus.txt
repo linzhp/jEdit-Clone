@@ -1,4 +1,4 @@
-JEDIT MENUS (menus.txt, last modified 7 Nov 1998)
+JEDIT MENUS (menus.txt, last modified 21 Nov 1998)
 
 Contents
 --------
@@ -49,6 +49,14 @@ Opens the file named by the selected text.
 
 - Open Recent (%open_recent)
 A menu of recently opened files and URLs.
+
+-- SEPARATOR --
+
+- Open Selection in Netscape (netscape_open_sel)
+Opens the currently selected URL in Netscape.
+
+- Open in Netscape (netscape_open_url)
+Opens the current URL in Netscape.
 
 -- SEPARATOR --
 
@@ -128,6 +136,11 @@ Converts the current selection to upper case.
 
 - Insert Date (insert_date)
 Inserts the current date.
+
+- Expand Abbreviation (expand_abbrev) (C-/)
+Locates the previous occurance of the current word and completes it. For
+example, if you type `jE' and push C-/, you will get `jEdit', assuming that
+it appears previously in the file. (Similar to the Meta-/ command in emacs).
 
 -- SEPARATOR --
 

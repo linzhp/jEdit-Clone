@@ -5,6 +5,8 @@
 - Open URL (open_url) (C-u)
 - Open Selection (open_selection) (CS-o)
 - Open Recent (%open_recent)
+- Open Selection in Netscape (netscape_open_sel)
+- Open in Netscape (netscape_open_url)
 - Close File (close_file) (C-w)
 - Close View (close_view) (CS-w)
 - Save (save) (C-s)

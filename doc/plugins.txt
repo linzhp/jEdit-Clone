@@ -1,4 +1,4 @@
-JEDIT PLUGINS (plugins.txt, last modified 14 Nov 1998)
+JEDIT PLUGINS (plugins.txt, last modified 17 Nov 1998)
 
 Contents
 --------
@@ -28,7 +28,7 @@ directory and the user plugin directory. Plugins in the system directory
 can be used by all users on the system. Plugins in a user's plugin directory
 can only be used by the respective user.
 
-On Unix, the system plugin directory is /opt/slava/share/jedit-1.1.2/jars,
+On Unix, the system plugin directory is /opt/slava/share/jedit-1.2final/jars,
 Each user has a plugin directory in $HOME/.jedit-jars.
 
 On Windows 95 and 98, the system plugin directory is
@@ -42,8 +42,8 @@ Windows 95/98, but each user has a plugin directory in %HOME%\.jedit-jars.
 ----------------
 Once a plugin is installed, jEdit will say so during startup.
 
-	Loading plugin /opt/slava/share/jedit-1.1.2/jars/reverse.jar
-	Loading plugin /opt/slava/share/jedit-1.1.2/jars/rot13.jar
+	Loading plugin /opt/slava/share/jedit-1.2final/jars/reverse.jar
+	Loading plugin /opt/slava/share/jedit-1.2final/jars/rot13.jar
 
 If all goes well during startup, the plugins should also appear in the 
 `Plugins' menu. If a newly installed plugin doesn't appear to be loaded, check
@@ -64,9 +64,9 @@ jEdit property manager automatically.
 Class entries have a .class extension. The jEdit command manager loads any
 classes in a plugin automatically.
 
-Classes which implement the `Command' interface and have a name prefixed with
-`Cmd_' are added to the plugins menu. To find out how to give the plugin's
-menu item a label, see menus.txt.
+Classes which implement the `Command' interface and are in the
+`org.gjt.sp.jedit.cmd' package are added to the plugins menu. To find out how
+to give the plugin's menu item a label, see menus.txt.
 
 The Command interface defines the following method:
 
@@ -80,11 +80,11 @@ The Command interface defines the following method:
 
 A public constructor which accepts no parameters must also be defined.
 
-Classes which implement the `Mode' interface and have a name prefixed with
-`Mode_' are added to the modes menu. The mode's name should be defined in the
-`modename.<class name without Mode_ prefix>' property. To create an extension
-to mode name mapping, define a property named `mode.<file extension>' with the
-mode name as the value.
+Classes which implement the `Mode' interface and are in the
+`org.gjt.sp.jedit.mode' package are added to the modes menu. The mode's name
+should be defined in the `modename.<class name without Mode_ prefix>' property.
+To create an extension to mode name mapping, define a property named
+`mode.<file extension>' with the mode name as the value.
 
 The Mode interface defines the following method:
 
@@ -108,18 +108,16 @@ You will need a java compiler and the jar tool to follow this example.
 
 5.1 Create the Source File
 --------------------------
-Create a file, Cmd_SimplePlugin.java, with the following in it:
+Create a file, SimplePlugin.java in the org.gjt.sp.jedit.cmd package, with the
+following in it:
 
 // Simple jEdit plugin
+package org.gjt.sp.jedit.cmd;
 import java.util.Hashtable;
+import org.gjt.sp.jedit.*;
 
-public class Cmd_SimplePlugin implements Command
+public class SimplePlugin implements Command
 {
-	// Constructor
-	public Cmd_SimplePlugin
-	{
-	}
-	
 	// Called when plugin is executed
 	public void exec(Buffer buffer, View view, String arg, Hashtable args)
 	{
@@ -128,27 +126,27 @@ public class Cmd_SimplePlugin implements Command
 	}
 }
 
-// End of Cmd_SimplePlugin.java
+// End of SimplePlugin.java
 
 5.2 Compile the Source File
 ---------------------------
 Use the javac compiler to compile the source file. On Unix, do:
 
-	javac -classpath $CLASSPATH:/opt/slava/share/jedit-1.1.2/jedit.jar \
-		Cmd_SimplePlugin.java
+	javac -classpath $CLASSPATH:/opt/slava/share/jedit-1.2final/jedit.jar \
+		org/gjt/sp/jedit/cmd/SimplePlugin.java
 
 On Windows 95 98 and NT, do:
 
 	javac -classpath "%CLASSPATH%;C:\Program Files\jEdit\jedit.jar" \
-		Cmd_SimplePlugin.java
+		org\gjt\sp\jedit\cmd\SimplePlugin.java
 
 The `-classpath' option tells javac where to look for jEdit's classes.
 An error such as this during compilation means that the classpath is wrong:
 
-	Cmd_SimplePlugin.java:4: Interface Command of class SimplePlugin
-		not found.
-	public class Cmd_SimplePlugin implements Command
-	                                         ^
+	org/gjt/sp/jedit/cmd/SimplePlugin.java:4: Interface Command of class
+		SimplePlugin not found.
+	public class SimplePlugin implements Command
+	                                     ^
 	1 error
 
 If all goes well, go onto the next step.
@@ -168,7 +166,8 @@ SimplePlugin.label=Simple Plugin
 -----------------------
 Use the jar tool to create the JAR file:
 
-	jar cf0 SimplePlugin.jar Cmd_SimplePlugin.class SimplePlugin.props
+	jar cf0 SimplePlugin.jar org/gjt/sp/jedit/cmd/SimplePlugin.class \
+		SimplePlugin.props
 
 Note that the first parameter is c-f-zero, not c-f-capital-o.
 

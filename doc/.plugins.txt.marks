@@ -1,0 +1,11 @@
+1. Introduction;294;309
+2. Installing Plugins;476;497
+3. Using Plugins;1262;1278
+4. Developing Plugins;1849;1870
+5. Creating a Simple Plugin;2978;3883
+5.1 Create the Source File;4068;4094
+5.2 Compile the Source File;4628;4655
+5.3 Create the Properties File;5385;5415
+5.4 Create the JAR File;5683;5706
+5.5 Install it;6007;6021
+5.5 Test it;6345;6356

@@ -1,4 +1,4 @@
-JEDIT PROPERTY MANAGER (props.txt, last modified 14 Nov 1998)
+JEDIT PROPERTY MANAGER (props.txt, last modified 16 Nov 1998)
 
 Contents
 --------
@@ -14,7 +14,7 @@ them easier to modify. For more information about menus, see menus.txt.
 2. Startup
 ----------
 jEdit loads the following property files on startup:
-- The default property file, `/opt/slava/share/jedit-1.1.2/jedit.props' on
+- The default property file, `/opt/slava/share/jedit-1.2final/jedit.props' on
   Unix and `C:\Program Files\jEdit\jedit.props' on Windows.
 - The user's property file, unless the -nousrprops switch is specified on the
   command line. By default, this is $HOME/.jedit-props on Unix,
@@ -27,6 +27,8 @@ jEdit loads the following property files on startup:
 Property files are in the standard Java property format. Generally, they look
 like this:
 
+# This is a comment
+# Comments are ignored by the property parser
 opt1=value
 opt2=value2
 module.opt1=some value

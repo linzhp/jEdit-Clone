@@ -1,4 +1,4 @@
-GETTING STARTED WITH JEDIT (starting.txt, last modified 13 Nov 1998)
+GETTING STARTED WITH JEDIT (starting.txt, last modified 17 Nov 1998)
 
 Contents
 --------
@@ -9,10 +9,6 @@ Contents
 2. Opening Files
 3. Saving Files
 4. Editing Files
-5. Markers
-6. Search And Replace
-7. Edit Modes
-8. Customising jEdit
 
 1. Starting jEdit
 -----------------
@@ -24,12 +20,6 @@ You can instruct jEdit to open a file and move the caret to a specified
 marker like this:
 
 	jedit <filename 1>#<marker 1> <filename 2>#<marker 2>
-
-Or if another instance of jEdit is already running, jOpen can be used to open
-files in it:
-
-	jopen <filename 1> <filename 2>...
-	jopen <filename 1>#<marker 1> <filename 2>#<marker 2>...
 
 jEdit can also be started with no arguments:
 
@@ -47,13 +37,6 @@ A number of options can be given to jEdit:
 	-portfile=<file>: Write server port to <file>
 	-readonly: Open files read only
 
-jOpen accepts these options:
-
-	-version: Print jOpen version and exit
-	-usage: Print command line usage
-	-portfile=<file>: Read server port from <file>
-	-readonly: Open files read only
-
 If you want to open a file whose name starts with a dash (-), you must place
 the -- argument before it in the command line to stop it from being interpreted
 as an option:
@@ -62,10 +45,15 @@ as an option:
 
 The -- indicates the end of options. No more options after it are interpreted.
 
+NOTE: To save on memory usage, jEdit checks if another instance of it is
+already running when it starts. If it is, is tells that instance to open the
+specified files, and exits. If you don't like this, add the -noserver switch
+to the jEdit command line.
+
 1.1. Unix & Clones
 ------------------
-You need to set the PATH variable to point to the directory with the jedit and
-jopen scripts so that the shell can locate them. The default location is
+You need to set the PATH variable to point to the directory with the jedit
+script so that the shell can locate them. The default location is
 /opt/slava/bin. If you're using a Bourne shell (sh, ash, jsh, bash, zsh) the
 command to add /opt/slava/bin to the PATH is:
 
@@ -79,6 +67,15 @@ It is advisable to place these commands in the .profile script (Bourne shell)
 or the .csh.login script (C shell) so that the PATH will be set every time you
 log in.
 
+To pass options to the Java virtual machine, put them in the JEDIT_J
+enviroment variable. With a Bourne shell, the command is:
+
+	set JEDIT_J=<options>; export JEDIT_J
+
+If you're using a C shell the equivalent is:
+
+	setenv JEDIT_J <options>
+
 1.2. Windows 95 and 98
 ----------------------
 If you want to use jEdit from the command line, you must add its directory to
@@ -89,6 +86,11 @@ to add that directory to the PATH is:
 
 It is advisable to place this command in your C:\AUTOEXEC.BAT so that it's
 executed every time the computer starts up.
+
+To pass options to the Java virtual machine, put them in the JEDIT_J
+enviroment variable, like this:
+
+	set JEDIT_J=<options>
 
 1.3. Windows NT
 ---------------
@@ -171,51 +173,6 @@ If you've ever used an editor such as nedit on Unix, Notepad on Windows
 or SimpleText on the Mac you'll feel right at home in jEdit. jEdit works in
 much the same way as the above editors. The menu item shortcuts are similar
 as well.
-
-5. Markers
-----------
-Most other editors can set `markers' in the text, and go to those markers.
-jEdit's markers, however are saved across editing sessions and can have
-names of any length. Markers are set with the `Edit->Set Marker' command,
-cleared with `Edit->Clear Marker' and jumped to with `Edit->Go To Marker'.
-
-6. Search And Replace
----------------------
-Like most editors, jEdit supports regular expression search and replace. See
-regexp.txt for details on regexp syntax.
-
-7. Edit Modes
--------------
-An editing mode defines a set of characteristics for editing files with a
-certain format. jEdit comes with a plain text and a auto indent mode.
-jEdit looks at the file's extension to determine which editing mode to use.
-The mode can also be changed manually by selecting it from the `Edit->Mode'
-menu.
-
-In the plain text mode, the Tab key does what it does in other editors -
-it inserts a Tab.
-
-In the auto indent mode, the Tab key copies all white space from the start of
-the previous line to the start of the current one. For example, if your
-document looks like this:
-
-	This is line one
-	    This is line two, with several spaces at the start
-	This is line three
-
-Pressing Tab while the caret is on line three will make it look like this:
-
-	This is line one
-	    This is line two, with several spaces at the start
-	    This is line three
-
-Very useful for editing source code.
-
-8. Customising jEdit
---------------------
-Simple settings such as the font, print margins, word wrap and many
-miscallanous options can be changed in the `Edit->Options' dialog. See
-menus.txt and props.txt for information about customising menus and strings.
 
 -- Slava Pestov
 <slava_pestov@geocities.com>
