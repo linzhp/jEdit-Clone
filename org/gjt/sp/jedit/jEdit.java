@@ -31,7 +31,7 @@ import java.text.MessageFormat;
 import java.util.zip.*;
 import java.util.*;
 import org.gjt.sp.jedit.event.*;
-import org.gjt.sp.jedit.gui.*;
+import org.gjt.sp.jedit.gui.HistoryModel;
 import org.gjt.sp.jedit.remote.impl.RemoteEditorImpl;
 import org.gjt.sp.jedit.remote.*;
 import org.gjt.sp.jedit.search.SearchAndReplace;
@@ -362,6 +362,9 @@ public class jEdit
 		{
 			maxRecent = 8;
 		}
+
+		fireEditorEvent(new EditorEvent(EditorEvent.PROPERTIES_CHANGED,
+			null,null));
 	}
 
 	/**
@@ -1064,9 +1067,6 @@ public class jEdit
 			"org.gjt.sp.jedit.proto|" +
 			System.getProperty("java.protocol.handler.pkgs",""));
 
-		// Add PROPERTIES_CHANGED listener
-		addEditorListener(new EditorHandler());
-
 		// Determine installation directory
 		jEditHome = System.getProperty("jedit.home");
 		if(jEditHome == null)
@@ -1176,7 +1176,6 @@ public class jEdit
 		addAction(new org.gjt.sp.jedit.actions.cut());
 		addAction(new org.gjt.sp.jedit.actions.delete_end_line());
 		addAction(new org.gjt.sp.jedit.actions.delete_line());
-		addAction(new org.gjt.sp.jedit.actions.delete_no_indent());
 		addAction(new org.gjt.sp.jedit.actions.delete_paragraph());
 		addAction(new org.gjt.sp.jedit.actions.delete_start_line());
 		addAction(new org.gjt.sp.jedit.actions.exchange_anchor());
@@ -1232,7 +1231,6 @@ public class jEdit
 		addAction(new org.gjt.sp.jedit.actions.select_buffer());
 		addAction(new org.gjt.sp.jedit.actions.select_line_range());
 		addAction(new org.gjt.sp.jedit.actions.select_next_paragraph());
-		addAction(new org.gjt.sp.jedit.actions.select_no_indent());
 		addAction(new org.gjt.sp.jedit.actions.select_prev_paragraph());
 		addAction(new org.gjt.sp.jedit.actions.send());
 		addAction(new org.gjt.sp.jedit.actions.set_anchor());
@@ -1504,14 +1502,6 @@ public class jEdit
 		return true;
 	}
 
-	private static class EditorHandler extends EditorAdapter
-	{
-		public void propertiesChanged(EditorEvent evt)
-		{
-			jEdit.propertiesChanged();
-		}
-	}
-
 	private static class Autosave extends Thread
 	{
 		Autosave()
@@ -1559,6 +1549,10 @@ public class jEdit
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.120  1999/07/05 04:38:39  sp
+ * Massive batch of changes... bug fixes, also new text component is in place.
+ * Have fun
+ *
  * Revision 1.119  1999/06/23 08:02:14  sp
  * Text area updates
  *
@@ -1592,26 +1586,5 @@ public class jEdit
  *
  * Revision 1.110  1999/06/05 07:17:08	sp
  * Cascading makefiles, HyperSearch tweak, doc updates
- *
- * Revision 1.109  1999/06/03 08:24:12	sp
- * Fixing broken CVS
- *
- * Revision 1.110  1999/05/31 08:11:10	sp
- * Syntax coloring updates, expand abbrev bug fix
- *
- * Revision 1.109  1999/05/31 04:38:51	sp
- * Syntax optimizations, HyperSearch for Selection added (Mike Dillon)
- *
- * Revision 1.108  1999/05/30 04:57:15	sp
- * Perl mode started
- *
- * Revision 1.107  1999/05/29 08:06:56	sp
- * Search and replace overhaul
- *
- * Revision 1.106  1999/05/27 03:09:22	sp
- * Console unbundled
- *
- * Revision 1.105  1999/05/27 00:02:50	sp
- * Documentation updates, minor tweaks for WWW browser command unbundling
  *
  */

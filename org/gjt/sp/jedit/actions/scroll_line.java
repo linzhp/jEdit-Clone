@@ -22,7 +22,7 @@ package org.gjt.sp.jedit.actions;
 import javax.swing.text.Element;
 import java.awt.event.ActionEvent;
 import java.awt.Rectangle;
-import org.gjt.sp.jedit.gui.JEditTextArea;
+import org.gjt.sp.jedit.textarea.JEditTextArea;
 import org.gjt.sp.jedit.*;
 
 public class scroll_line extends EditAction
@@ -36,17 +36,11 @@ public class scroll_line extends EditAction
 	{
 		View view = getView(evt);
 		JEditTextArea textArea = view.getTextArea();
-		Element map = view.getBuffer().getDefaultRootElement();
-		int startLine = map.getElementIndex(textArea.getSelectionStart());
-		int endLine = map.getElementIndex(textArea.getSelectionEnd()) + 1;
-		int height = textArea.getToolkit().getFontMetrics(textArea
-			.getFont()).getHeight();
-		int scrollHeight = ((endLine - startLine) + 1) * height;
-		int viewHeight = view.getSize().height;
-		Rectangle rect = new Rectangle(0,startLine * height
-			- ((viewHeight - scrollHeight) / 2),0,viewHeight);
-		rect.height = Math.min(viewHeight,textArea.getSize().height
-			- rect.y);
-		textArea.scrollRectToVisible(rect);
+
+		int line = textArea.getCaretLine();
+		int offset = textArea.offsetToX(textArea.getCaretLine(),
+			textArea.getCaretPosition() - textArea
+			.getLineStartOffset(textArea.getCaretLine()));
+		textArea.scrollTo(line,offset);
 	}
 }

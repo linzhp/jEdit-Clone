@@ -49,11 +49,20 @@ public class PatchTokenMarker extends TokenMarker
 		}
 		return Token.NULL;
 	}
+
+	public boolean supportsMultilineTokens()
+	{
+		return false;
+	}
 }
 
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.6  1999/07/05 04:38:39  sp
+ * Massive batch of changes... bug fixes, also new text component is in place.
+ * Have fun
+ *
  * Revision 1.5  1999/06/05 00:22:58  sp
  * LGPL'd syntax package
  *

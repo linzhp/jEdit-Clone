@@ -83,18 +83,6 @@ buffer.margin.right=0.5
 # Syntax colorizing
 buffer.syntax=on
 
-# Syntax styles
-buffer.style.comment1=style:i
-buffer.style.comment2=color:#990033 style:i
-buffer.style.keyword1=style:b
-buffer.style.keyword2=color:magenta
-buffer.style.keyword3=color:#009600
-buffer.style.label=color:#990033 style:b
-buffer.style.literal1=color:#650099
-buffer.style.literal2=color:#650099 style:b
-buffer.style.operator=style:b
-buffer.style.invalid=color:red style:b
-
 ###
 ### VIEW SETTINGS
 ###
@@ -124,7 +112,11 @@ view.lineHighlightColor=#e0e0e0
 
 # Bracket highlighting
 view.bracketHighlight=on
-view.bracketHighlightColor=#ffaaaa
+view.bracketHighlightColor=black
+
+# EOL markers
+view.eolMarkers=on
+view.eolMarkerColor=#009999
 
 # Caret color
 view.caretColor=red
@@ -132,14 +124,26 @@ view.caretColor=red
 # Selection color
 view.selectionColor=#ccccff
 
-# Caret blink rate
-view.caretBlinkRate=500
+# Caret blinking
+view.caretBlink=on
 
 # Block caret
 view.blockCaret=off
 
 # Electric borders
 view.electricBorders=3
+
+# Syntax styles
+view.style.comment1=style:i
+view.style.comment2=color:#990033 style:i
+view.style.keyword1=style:b
+view.style.keyword2=color:magenta
+view.style.keyword3=color:#009600
+view.style.label=color:#990033 style:b
+view.style.literal1=color:#650099
+view.style.literal2=color:#650099 style:b
+view.style.operator=style:b
+view.style.invalid=color:red style:b
 
 ###
 ### EDIT MODES

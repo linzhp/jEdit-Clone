@@ -310,15 +310,8 @@ public class HyperSearch extends JDialog
 			int start = result.start.getOffset();
 			int end = result.end.getOffset();
 
-			if(view.getBuffer() == buffer)
-			{
-				view.getTextArea().select(start,end);
-			}
-			else
-			{
-				buffer.setCaretInfo(start,end);
-				view.setBuffer(buffer);
-			}
+			view.setBuffer(buffer);
+			view.getTextArea().select(start,end);
 		}
 	}
 }
@@ -326,6 +319,10 @@ public class HyperSearch extends JDialog
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.36  1999/07/05 04:38:39  sp
+ * Massive batch of changes... bug fixes, also new text component is in place.
+ * Have fun
+ *
  * Revision 1.35  1999/06/09 07:28:10  sp
  * Multifile search and replace tweaks, removed console.html
  *
@@ -363,8 +360,5 @@ public class HyperSearch extends JDialog
  * Revision 1.26  1999/04/02 03:21:09  sp
  * Added manifest file, common strings such as OK, etc are no longer duplicated
  * many times in jedit_gui.props
- *
- * Revision 1.25  1999/04/02 02:39:46  sp
- * Updated docs, console fix, getDefaultSyntaxColors() method, hypersearch update
  *
  */

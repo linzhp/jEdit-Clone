@@ -9,6 +9,7 @@ all:
 		org.gjt.sp.jedit.event \
 		org.gjt.sp.jedit.remote \
 		org.gjt.sp.jedit.search \
-		org.gjt.sp.jedit.syntax
+		org.gjt.sp.jedit.syntax \
+		org.gjt.sp.jedit.textarea
 
 include Rules.make

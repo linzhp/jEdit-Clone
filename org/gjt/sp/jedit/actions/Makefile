@@ -16,7 +16,6 @@ classes=org/gjt/sp/jedit/actions/about.class \
 	org/gjt/sp/jedit/actions/cut.class \
 	org/gjt/sp/jedit/actions/delete_end_line.class \
 	org/gjt/sp/jedit/actions/delete_line.class \
-	org/gjt/sp/jedit/actions/delete_no_indent.class \
 	org/gjt/sp/jedit/actions/delete_paragraph.class \
 	org/gjt/sp/jedit/actions/delete_start_line.class \
 	org/gjt/sp/jedit/actions/exchange_anchor.class \
@@ -72,7 +71,6 @@ classes=org/gjt/sp/jedit/actions/about.class \
 	org/gjt/sp/jedit/actions/select_buffer.class \
 	org/gjt/sp/jedit/actions/select_line_range.class \
 	org/gjt/sp/jedit/actions/select_next_paragraph.class \
-	org/gjt/sp/jedit/actions/select_no_indent.class \
 	org/gjt/sp/jedit/actions/select_prev_paragraph.class \
 	org/gjt/sp/jedit/actions/send.class \
 	org/gjt/sp/jedit/actions/set_anchor.class \
@@ -87,7 +85,7 @@ classes=org/gjt/sp/jedit/actions/about.class \
 	org/gjt/sp/jedit/actions/wing_comment.class \
 	org/gjt/sp/jedit/actions/word_count.class
 
-others='org/gjt/sp/jedit/actions/print$$PrintSyntaxView.class'
+others=
 
 all: $(classes)
 	echo $(classes) $(others) >> .resources

@@ -47,7 +47,7 @@ public class format extends EditAction
 			maxLineLength = 72;
 		String text = view.getTextArea().getSelectedText();
 		if(text != null)
-			view.getTextArea().replaceSelection(doFormat(text,
+			view.getTextArea().setSelectedText(doFormat(text,
 				maxLineLength));
 		else
 		{

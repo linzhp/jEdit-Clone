@@ -20,7 +20,7 @@
 package org.gjt.sp.jedit.actions;
 
 import java.awt.event.ActionEvent;
-import org.gjt.sp.jedit.gui.JEditTextArea;
+import org.gjt.sp.jedit.textarea.JEditTextArea;
 import org.gjt.sp.jedit.*;
 
 public class to_upper extends EditAction
@@ -36,7 +36,7 @@ public class to_upper extends EditAction
 		JEditTextArea textArea = view.getTextArea();
 		String selection = textArea.getSelectedText();
 		if(selection != null)
-			textArea.replaceSelection(selection.toUpperCase());
+			textArea.setSelectedText(selection.toUpperCase());
 		else
 			view.getToolkit().beep();
 	}

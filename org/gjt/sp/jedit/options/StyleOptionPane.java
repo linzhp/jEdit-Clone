@@ -163,7 +163,7 @@ class ColorTableModel extends AbstractTableModel
 
 	ColorTableModel()
 	{
-		colorChoices = new Vector(6);
+		colorChoices = new Vector(7);
 		addColorChoice("options.styles.bgColor","view.bgColor");
 		addColorChoice("options.styles.fgColor","view.fgColor");
 		addColorChoice("options.styles.caretColor","view.caretColor");
@@ -173,6 +173,8 @@ class ColorTableModel extends AbstractTableModel
 			"view.lineHighlightColor");
 		addColorChoice("options.styles.bracketHighlightColor",
 			"view.bracketHighlightColor");
+		addColorChoice("options.styles.eolMarkerColor",
+			"view.eolMarkerColor");
 	}
 
 	public int getColumnCount()
@@ -298,16 +300,16 @@ class StyleTableModel extends AbstractTableModel
 	StyleTableModel()
 	{
 		styleChoices = new Vector(10);
-		addStyleChoice("options.styles.comment1Style","buffer.style.comment1");
-		addStyleChoice("options.styles.comment2Style","buffer.style.comment2");
-		addStyleChoice("options.styles.literal1Style","buffer.style.literal1");
-		addStyleChoice("options.styles.literal2Style","buffer.style.literal2");
-		addStyleChoice("options.styles.labelStyle","buffer.style.label");
-		addStyleChoice("options.styles.keyword1Style","buffer.style.keyword1");
-		addStyleChoice("options.styles.keyword2Style","buffer.style.keyword2");
-		addStyleChoice("options.styles.keyword3Style","buffer.style.keyword3");
-		addStyleChoice("options.styles.operatorStyle","buffer.style.operator");
-		addStyleChoice("options.styles.invalidStyle","buffer.style.invalid");
+		addStyleChoice("options.styles.comment1Style","view.style.comment1");
+		addStyleChoice("options.styles.comment2Style","view.style.comment2");
+		addStyleChoice("options.styles.literal1Style","view.style.literal1");
+		addStyleChoice("options.styles.literal2Style","view.style.literal2");
+		addStyleChoice("options.styles.labelStyle","view.style.label");
+		addStyleChoice("options.styles.keyword1Style","view.style.keyword1");
+		addStyleChoice("options.styles.keyword2Style","view.style.keyword2");
+		addStyleChoice("options.styles.keyword3Style","view.style.keyword3");
+		addStyleChoice("options.styles.operatorStyle","view.style.operator");
+		addStyleChoice("options.styles.invalidStyle","view.style.invalid");
 	}
 
 	public int getColumnCount()
@@ -538,6 +540,10 @@ implements ActionListener, KeyListener
 /**
  * ChangeLog:
  * $Log$
+ * Revision 1.3  1999/07/05 04:38:39  sp
+ * Massive batch of changes... bug fixes, also new text component is in place.
+ * Have fun
+ *
  * Revision 1.2  1999/06/16 03:29:59  sp
  * Added <title> tags to docs, configuration data is now stored in a
  * ~/.jedit directory, style option pane finished

@@ -1,6 +1,6 @@
 /*
  * paste.java
- * Copyright (C) 1998 Slava Pestov
+ * Copyright (C) 1998, 1999 Slava Pestov
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -19,7 +19,10 @@
 
 package org.gjt.sp.jedit.actions;
 
+import java.awt.datatransfer.*;
 import java.awt.event.ActionEvent;
+import org.gjt.sp.jedit.gui.HistoryModel;
+import org.gjt.sp.jedit.textarea.JEditTextArea;
 import org.gjt.sp.jedit.*;
 
 public class paste extends EditAction
@@ -31,6 +34,36 @@ public class paste extends EditAction
 	
 	public void actionPerformed(ActionEvent evt)
 	{
-		getView(evt).getTextArea().paste();
+		JEditTextArea textArea = getView(evt).getTextArea();
+
+		if(textArea.isEditable())
+		{
+			Clipboard clipboard = textArea.getToolkit()
+				.getSystemClipboard();
+			Transferable content = clipboard.getContents(this);
+
+	        	if(content != null)
+	        	{
+		        	try
+	                	{
+					String text = (String)content
+						.getTransferData(
+						DataFlavor.stringFlavor);
+					HistoryModel.getModel("clipboard")
+						.addItem(text);
+
+					// The MacOS MRJ doesn't convert
+					// \r to \n, so do it here
+					textArea.setSelectedText(
+						text.replace('\r','\n'));
+					return;
+				}
+				catch(Exception e)
+				{
+				}
+			}
+		}
+
+		textArea.getToolkit().beep();
 	}
 }

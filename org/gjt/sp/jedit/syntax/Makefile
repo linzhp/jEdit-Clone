@@ -19,26 +19,15 @@ classes=org/gjt/sp/jedit/syntax/BatchFileTokenMarker.class \
 	org/gjt/sp/jedit/syntax/ShellScriptTokenMarker.class \
 	org/gjt/sp/jedit/syntax/SQLTokenMarker.class \
 	org/gjt/sp/jedit/syntax/SyntaxDocument.class \
-	org/gjt/sp/jedit/syntax/SyntaxEditorKit.class \
 	org/gjt/sp/jedit/syntax/SyntaxStyle.class \
-	org/gjt/sp/jedit/syntax/SyntaxTextArea.class \
 	org/gjt/sp/jedit/syntax/SyntaxUtilities.class \
-	org/gjt/sp/jedit/syntax/SyntaxView.class \
 	org/gjt/sp/jedit/syntax/TeXTokenMarker.class \
 	org/gjt/sp/jedit/syntax/Token.class \
 	org/gjt/sp/jedit/syntax/TokenMarker.class \
 	org/gjt/sp/jedit/syntax/TSQLTokenMarker.class
 
-others='org/gjt/sp/jedit/syntax/DefaultSyntaxDocument$$DocumentHandler.class' \
-	'org/gjt/sp/jedit/syntax/KeywordMap$$Keyword.class' \
-	'org/gjt/sp/jedit/syntax/TokenMarker$$LineInfo.class' \
-	'org/gjt/sp/jedit/syntax/SyntaxTextArea$$BracketHighlighter.class' \
-	'org/gjt/sp/jedit/syntax/SyntaxTextArea$$CurrentLineHighlighter.class' \
-	'org/gjt/sp/jedit/syntax/SyntaxTextArea$$CaretHandler.class' \
-	'org/gjt/sp/jedit/syntax/SyntaxTextArea$$DefaultKeyTypedAction.class' \
-	'org/gjt/sp/jedit/syntax/SyntaxTextArea$$InsertKeyAction.class' \
-	'org/gjt/sp/jedit/syntax/SyntaxTextArea$$SyntaxCaret.class' \
-	'org/gjt/sp/jedit/syntax/SyntaxTextArea$$SyntaxSafeScroller.class'
+others='org/gjt/sp/jedit/syntax/KeywordMap$$Keyword.class' \
+	'org/gjt/sp/jedit/syntax/TokenMarker$$LineInfo.class'
 
 all: $(classes)
 	echo $(classes) $(others) >> .resources

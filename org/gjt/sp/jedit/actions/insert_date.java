@@ -32,6 +32,6 @@ public class insert_date extends EditAction
 	
 	public void actionPerformed(ActionEvent evt)
 	{
-		getView(evt).getTextArea().replaceSelection(new Date().toString());
+		getView(evt).getTextArea().setSelectedText(new Date().toString());
 	}
 }

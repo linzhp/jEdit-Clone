@@ -93,6 +93,13 @@ public class EditorOptionPane extends OptionPane
 			.getProperty("view.bracketHighlight")));
 		addComponent(bracketHighlight);
 
+		/* EOL markers */
+		eolMarkers = new JCheckBox(jEdit.getProperty("options.editor"
+			+ ".eolMarkers"));
+		eolMarkers.getModel().setSelected("on".equals(jEdit
+			.getProperty("view.eolMarkers")));
+		addComponent(eolMarkers);
+
 		/* Syntax colorizing */
 		syntax = new JCheckBox(jEdit.getProperty("options.editor"
 			+ ".syntax"));
@@ -124,8 +131,8 @@ public class EditorOptionPane extends OptionPane
 		/* Blinking caret */
 		blinkCaret = new JCheckBox(jEdit.getProperty("options.editor"
 			+ ".blinkCaret"));
-		blinkCaret.getModel().setSelected(!"0".equals(jEdit.getProperty(
-			"view.caretBlinkRate")));
+		blinkCaret.getModel().setSelected("on".equals(jEdit.getProperty(
+			"view.caretBlinks")));
 		addComponent(blinkCaret);
 
 		/* Block caret */
@@ -157,14 +164,16 @@ public class EditorOptionPane extends OptionPane
 			.isSelected() ? "on" : "off");
 		jEdit.setProperty("view.bracketHighlight",bracketHighlight.getModel()
 			.isSelected() ? "on" : "off");
+		jEdit.setProperty("view.eolMarkers",eolMarkers.getModel()
+			.isSelected() ? "on" : "off");
 		jEdit.setProperty("buffer.syntax",syntax.getModel().isSelected()
 			? "on" : "off");
 		jEdit.setProperty("buffer.indentOnTab",indentOnTab.getModel()
 			.isSelected() ? "on" : "off");
 		jEdit.setProperty("buffer.indentOnEnter",indentOnEnter.getModel()
 			.isSelected() ? "on" : "off");
-		jEdit.setProperty("view.caretBlinkRate",blinkCaret.getModel()
-			.isSelected() ? "500" : "0");
+		jEdit.setProperty("view.caretBlinks",blinkCaret.getModel()
+			.isSelected() ? "on" : "off");
 		jEdit.setProperty("view.blockCaret",blockCaret.getModel()
 			.isSelected() ? "on" : "off");
 		jEdit.setProperty("view.electricBorders",electricBorders.getModel()
@@ -182,6 +191,7 @@ public class EditorOptionPane extends OptionPane
 	private JComboBox tabSize;
 	private JCheckBox lineHighlight;
 	private JCheckBox bracketHighlight;
+	private JCheckBox eolMarkers;
 	private JCheckBox syntax;
 	private JCheckBox indentOnTab;
 	private JCheckBox indentOnEnter;

@@ -22,7 +22,7 @@ package org.gjt.sp.jedit.search;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Element;
 import javax.swing.JOptionPane;
-import org.gjt.sp.jedit.gui.JEditTextArea;
+import org.gjt.sp.jedit.textarea.JEditTextArea;
 import org.gjt.sp.jedit.*;
 
 /**
@@ -239,17 +239,9 @@ loop:			for(;;)
 		int[] match = matcher.nextMatch(text);
 		if(match != null)
 		{
-			if(view.getBuffer() == buffer)
-			{
-				view.getTextArea().select(start + match[0],
+			view.setBuffer(buffer);
+			view.getTextArea().select(start + match[0],
 					start + match[1]);
-			}
-			else
-			{
-				buffer.setCaretInfo(start + match[0],
-					start + match[1]);
-				view.setBuffer(buffer);
-			}
 			return true;
 		}
 		else
@@ -408,6 +400,10 @@ loop:			for(;;)
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.9  1999/07/05 04:38:39  sp
+ * Massive batch of changes... bug fixes, also new text component is in place.
+ * Have fun
+ *
  * Revision 1.8  1999/06/12 02:30:27  sp
  * Find next can now perform multifile searches, multifile-search command added,
  * new style option pane

@@ -124,7 +124,7 @@ implements ActionListener, KeyListener, MouseListener
 		if(selected != -1)
 		{
 			String clip = clipHistory.getItem(selected);
-			view.getTextArea().replaceSelection(clip);
+			view.getTextArea().setSelectedText(clip);
 		}
 		dispose();
 	}

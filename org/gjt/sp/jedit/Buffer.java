@@ -30,7 +30,6 @@ import java.net.*;
 import java.util.*;
 import java.util.zip.*;
 import org.gjt.sp.jedit.event.*;
-import org.gjt.sp.jedit.gui.JEditTextArea;
 import org.gjt.sp.jedit.syntax.*;
 
 /**
@@ -426,7 +425,7 @@ public class Buffer extends DefaultSyntaxDocument
 		/* This protects against stupid people (like me)
 		 * doing stuff like buffer.setMode(jEdit.getMode(...)); */
 		if(mode == null)
-			throw new NullPointerException("You suck!!!");
+			throw new NullPointerException("Mode must be non-null");
 		if(this.mode == mode)
 			return;
 
@@ -448,7 +447,6 @@ public class Buffer extends DefaultSyntaxDocument
 		mode.enter(this);
 
 		setTokenMarker(mode.createTokenMarker());
-		loadStyles();
 
 		for(int i = 0; i < views.length; i++)
 		{
@@ -973,38 +971,6 @@ loop:		for(int i = 0; i < markers.size(); i++)
 		}
 	}
 
-	private void loadStyles()
-	{
-		try
-		{
-			styles[Token.COMMENT1] = GUIUtilities.parseStyle(
-				(String)getProperty("style.comment1"));
-			styles[Token.COMMENT2] = GUIUtilities.parseStyle(
-				(String)getProperty("style.comment2"));
-			styles[Token.KEYWORD1] = GUIUtilities.parseStyle(
-				(String)getProperty("style.keyword1"));
-			styles[Token.KEYWORD2] = GUIUtilities.parseStyle(
-				(String)getProperty("style.keyword2"));
-			styles[Token.KEYWORD3] = GUIUtilities.parseStyle(
-				(String)getProperty("style.keyword3"));
-			styles[Token.LABEL] = GUIUtilities.parseStyle(
-				(String)getProperty("style.label"));
-			styles[Token.LITERAL1] = GUIUtilities.parseStyle(
-				(String)getProperty("style.literal1"));
-			styles[Token.LITERAL2] = GUIUtilities.parseStyle(
-				(String)getProperty("style.literal2"));
-			styles[Token.OPERATOR] = GUIUtilities.parseStyle(
-				(String)getProperty("style.operator"));
-			styles[Token.INVALID] = GUIUtilities.parseStyle(
-				(String)getProperty("style.invalid"));
-		}
-		catch(Exception e)
-		{
-			System.out.println("Error loading syntax styles:");
-			e.printStackTrace();
-		}
-	}
-
 	private void processProperty(String prop)
 	{
 		StringBuffer buf = new StringBuffer();
@@ -1313,7 +1279,6 @@ loop:		for(int i = 0; i < markers.size(); i++)
 		public void propertiesChanged(EditorEvent evt)
 		{
 			Buffer.this.propertiesChanged();
-			loadStyles();
 		}
 	}
 
@@ -1351,6 +1316,10 @@ loop:		for(int i = 0; i < markers.size(); i++)
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.89  1999/07/05 04:38:39  sp
+ * Massive batch of changes... bug fixes, also new text component is in place.
+ * Have fun
+ *
  * Revision 1.88  1999/06/22 06:14:39  sp
  * RMI updates, text area updates, flag to disable geometry saving
  *

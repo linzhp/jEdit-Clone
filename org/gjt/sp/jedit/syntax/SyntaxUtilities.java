@@ -23,9 +23,8 @@ import javax.swing.text.*;
 import java.awt.Color;
 
 /**
- * Class with several segment and bracket matching functions used by
- * jEdit's syntax colorizing subsystem. It also provides a way to get
- * the default color table.
+ * Class with several utility functions used by jEdit's syntax colorizing
+ * subsystem.
  *
  * @author Slava Pestov
  * @version $Id$
@@ -45,7 +44,7 @@ public class SyntaxUtilities
 	{
 		int length = offset + match.length();
 		char[] textArray = text.array;
-		if(length > textArray.length)
+		if(length > text.offset + text.count)
 			return false;
 		for(int i = offset, j = 0; i < length; i++, j++)
 		{
@@ -75,7 +74,7 @@ public class SyntaxUtilities
 	{
 		int length = offset + match.length;
 		char[] textArray = text.array;
-		if(length > textArray.length)
+		if(length > text.offset + text.count)
 			return false;
 		for(int i = offset, j = 0; i < length; i++, j++)
 		{
@@ -90,95 +89,6 @@ public class SyntaxUtilities
 				return false;
 		}
 		return true;
-	}
-
-	/**
-	 * Finds the previous instance of an opening bracket in the buffer.
-	 * The closing bracket is needed as well to handle nested brackets
-	 * properly.
-	 * @param doc The document to search in
-	 * @param dot The starting position
-	 * @param openBracket The opening bracket
-	 * @param closeBracket The closing bracket
-	 * @exception BadLocationException if `dot' is out of range
-	 */
-	public static int locateBracketBackward(Document doc, int dot,
-		char openBracket, char closeBracket)
-		throws BadLocationException
-	{
-		int count;
-		Element map = doc.getDefaultRootElement();
-
-		// check current line
-		int lineNo = map.getElementIndex(dot);
-		Element lineElement = map.getElement(lineNo);
-		int start = lineElement.getStartOffset();
-		int offset = scanBackwardLine(doc.getText(start,dot - start),
-			openBracket,closeBracket,0);
-		count = -offset - 1;
-		if(offset >= 0)
-			return start + offset;
-
-		// check previous lines
-		for(int i = lineNo - 1; i >= 0; i--)
-		{
-			lineElement = map.getElement(i);
-			start = lineElement.getStartOffset();
-			offset = scanBackwardLine(doc.getText(start,
-				lineElement.getEndOffset() - start),
-				openBracket,closeBracket,count);
-			count = -offset - 1;
-			if(offset >= 0)
-				return start + offset;
-		}
-
-		// not found
-		return -1;
-	}
-
-	/**
-	 * Finds the next instance of a closing bracket in the buffer.
-	 * The opening bracket is needed as well to handle nested brackets
-	 * properly.
-	 * @param doc The document to search in
-	 * @param dot The starting position
-	 * @param openBracket The opening bracket
-	 * @param closeBracket The closing bracket
-	 * @exception BadLocationException if `dot' is out of range
-	 */
-	public static int locateBracketForward(Document doc, int dot,
-		char openBracket, char closeBracket)
-		throws BadLocationException
-	{
-		int count;
-		Element map = doc.getDefaultRootElement();
-
-		// check current line
-		int lineNo = map.getElementIndex(dot);
-		Element lineElement = map.getElement(lineNo);
-		int start = lineElement.getStartOffset();
-		int end = lineElement.getEndOffset();
-		int offset = scanForwardLine(doc.getText(dot + 1,end - (dot + 1)),
-			openBracket,closeBracket,0);
-		count = -offset - 1;
-		if(offset >= 0)
-			return dot + offset + 1;
-
-		// check following lines
-		for(int i = lineNo + 1; i < map.getElementCount(); i++)
-		{
-			lineElement = map.getElement(i);
-			start = lineElement.getStartOffset();
-			offset = scanForwardLine(doc.getText(start,
-				lineElement.getEndOffset() - start),
-				openBracket,closeBracket,count);
-			count = -offset - 1;
-			if(offset >= 0)
-				return start + offset;
-		}
-
-		// not found
-		return -1;
 	}
 
 	/**
@@ -206,51 +116,15 @@ public class SyntaxUtilities
 
 	// private members
 	private SyntaxUtilities() {}
-
-	// the return value is as follows:
-	// >= 0: offset in line where bracket was found
-	// < 0: -1 - count
-	private static int scanBackwardLine(String line, char openBracket,
-		char closeBracket, int count)
-	{
-		for(int i = line.length() - 1; i >= 0; i--)
-		{
-			char c = line.charAt(i);
-			if(c == closeBracket)
-				count++;
-			else if(c == openBracket)
-			{
-				if(--count < 0)
-					return i;
-			}
-		}
-		return -1 - count;
-	}
-
-	// the return value is as follows:
-	// >= 0: offset in line where bracket was found
-	// < 0: -1 - count
-	private static int scanForwardLine(String line, char openBracket,
-		char closeBracket, int count)
-	{
-		for(int i = 0; i < line.length(); i++)
-		{
-			char c = line.charAt(i);
-			if(c == openBracket)
-				count++;
-			else if(c == closeBracket)
-			{
-				if(--count < 0)
-					return i;
-			}
-		}
-		return -1 - count;
-	}
 }
 
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.7  1999/07/05 04:38:39  sp
+ * Massive batch of changes... bug fixes, also new text component is in place.
+ * Have fun
+ *
  * Revision 1.6  1999/06/07 06:36:32  sp
  * Syntax `styling' (bold/italic tokens) added,
  * plugin options dialog for plugin option panes

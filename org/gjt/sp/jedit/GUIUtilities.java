@@ -189,19 +189,8 @@ public class GUIUtilities
 				+ name);
 			return null;
 		}
-		if(keyStroke != null && keyStroke.length() != 0)
-		{
-			index = keyStroke.indexOf(' ');
-			if(index == -1)
-				view.addKeyBinding(parseKeyStroke(keyStroke),
-					name);
-			else
-				view.addKeyBinding(parseKeyStroke(keyStroke
-					.substring(0,index)),parseKeyStroke(
-					keyStroke.substring(index+1)),name);
-		}
-		index = label.indexOf('$');
 
+		index = label.indexOf('$');
                 if(index != -1 && label.length() - index > 1)
 		{
 			mi = new EnhancedMenuItem(label.substring(0,index)
@@ -218,69 +207,6 @@ public class GUIUtilities
 			mi.addActionListener(a);
 		mi.setActionCommand(arg);
 		return mi;
-	}
-
-	/**
-	 * Converts a string to a keystroke. The string should be of the
-	 * form <i>modifiers</i>+<i>shortcut</i> where <i>modifiers</i>
-	 * is any combination of A for Alt, C for Control, S for Shift
-	 * or M for Meta, and <i>shortcut</i> is either a single character,
-	 * or a keycode name from the <code>KeyEvent</code> class, without
-	 * the <code>VK_</code> prefix.
-	 * @param keyStroke A string description of the key stroke
-	 */
-	public static KeyStroke parseKeyStroke(String keyStroke)
-	{
-		if(keyStroke == null)
-			return null;
-		int modifiers = 0;
-		int ch = '\0';
-		int index = keyStroke.indexOf('+');
-		if(index != -1)
-		{
-			for(int i = 0; i < index; i++)
-			{
-				switch(Character.toUpperCase(keyStroke
-					.charAt(i)))
-				{
-				case 'A':
-					modifiers |= InputEvent.ALT_MASK;
-					break;
-				case 'C':
-					modifiers |= InputEvent.CTRL_MASK;
-					break;
-				case 'M':
-					modifiers |= InputEvent.META_MASK;
-					break;
-				case 'S':
-					modifiers |= InputEvent.SHIFT_MASK;
-					break;
-				}
-			}
-		}
-		String key = keyStroke.substring(index + 1);
-		if(key.length() == 1)
-			ch = Character.toUpperCase(key.charAt(0));
-		else if(key.length() == 0)
-		{
-			System.err.println("Invalid key stroke: " + keyStroke);
-			return null;
-		}
-		else
-		{
-			try
-			{
-				ch = KeyEvent.class.getField("VK_".concat(key))
-					.getInt(null);
-			}
-			catch(Exception e)
-			{
-				System.err.println("Invalid key stroke: "
-					+ keyStroke);
-				return null;
-			}
-		}		
-		return KeyStroke.getKeyStroke(ch,modifiers);
 	}
 
 	/**
@@ -686,6 +612,10 @@ public class GUIUtilities
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.25  1999/07/05 04:38:39  sp
+ * Massive batch of changes... bug fixes, also new text component is in place.
+ * Have fun
+ *
  * Revision 1.24  1999/06/22 06:14:39  sp
  * RMI updates, text area updates, flag to disable geometry saving
  *
@@ -717,23 +647,5 @@ public class GUIUtilities
  *
  * Revision 1.15  1999/03/26 04:14:45  sp
  * EnhancedMenuItem tinkering, fixed compile error, fixed backup bug
- *
- * Revision 1.14  1999/03/21 08:37:15  sp
- * Slimmer action system, history text field update
- *
- * Revision 1.13  1999/03/20 01:55:42  sp
- * New color option pane, fixed search & replace bug
- *
- * Revision 1.12  1999/03/20 00:26:48  sp
- * Console fix, backed out new JOptionPane code, updated tips
- *
- * Revision 1.11  1999/03/19 07:12:10  sp
- * JOptionPane changes, did a fromdos of the source
- *
- * Revision 1.10  1999/03/12 23:51:00  sp
- * Console updates, uncomment removed cos it's too buggy, cvs log tags added
- *
- * Revision 1.9  1999/03/12 07:54:47  sp
- * More Javadoc updates
  *
  */

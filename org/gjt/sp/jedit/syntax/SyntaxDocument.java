@@ -22,16 +22,15 @@ import javax.swing.text.Document;
 
 /**
  * The interface a document must implement to be colorizable by the
- * <code>SyntaxEditorKit</code>.<p>
+ * jEdit text area component.<p>
  *
  * @author Slava Pestov
  * @version $Id$
  *
  * @see org.gjt.sp.jedit.syntax.DefaultSyntaxDocument
- * @see org.gjt.sp.jedit.syntax.SyntaxEditorKit
- * @see org.gjt.sp.jedit.syntax.SyntaxStyle
  * @see org.gjt.sp.jedit.syntax.TokenMarker
  * @see org.gjt.sp.jedit.syntax.Token
+ * @see org.gjt.sp.jedit.textarea.JEditTextArea
  */
 public interface SyntaxDocument extends Document
 {
@@ -49,21 +48,6 @@ public interface SyntaxDocument extends Document
 	 * @param tm The new token marker
 	 */
 	public void setTokenMarker(TokenMarker tm);
-
-	/**
-	 * Returns the style array that maps token identifiers to
-	 * <code>SyntaxStyle</code> objects. Each index in the
-	 * array is a token type.
-	 */
-	public SyntaxStyle[] getStyles();
-
-	/**
-	 * Sets the style array that maps token identifiers to
-	 * <code>SyntaxStyle</code> ojects. May throw an exception
-	 * if this is not supported for this type of document.
-	 * @param styles The new style list
-	 */
-	public void setStyles(SyntaxStyle[] styles);
 
 	/**
 	 * Reparses the document, by passing all lines to the token
@@ -85,6 +69,10 @@ public interface SyntaxDocument extends Document
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.8  1999/07/05 04:38:39  sp
+ * Massive batch of changes... bug fixes, also new text component is in place.
+ * Have fun
+ *
  * Revision 1.7  1999/06/07 06:36:32  sp
  * Syntax `styling' (bold/italic tokens) added,
  * plugin options dialog for plugin option panes

@@ -11,7 +11,7 @@
 <li><a href=#intro>Introduction</a>
 <li><a href=#over>Overview</a>
 <li><a href=#extending>Writing New TokenMarkers</a>
-<li><a href=#using>Using jEdit's Syntax Colorizing in Other Applications</a>
+<li><a href=#using>Using jEdit's Text Component in Other Applications</a>
 </ul>
 
 <a name=intro>
@@ -66,59 +66,17 @@ token markers are CTokenMarker.java and PerlTokenMarker.java - they use
 region matching, keyword maps, and many other useful techniques.
 
 <a name=using>
-<h1>Using jEdit's Syntax Colorizing in Other Applications</h1>
+<h1>Using jEdit's Text Component in Other Applications</h1>
 </a>
 
 jEdit's syntax colorizing component can be embedded in other applications.
-The easiest way to describe how this is done is with a live code
-example:
+See the documentation for the
+<a href=../api/org.gjt.sp.jedit.textarea.JEditTextArea.html>JEditTextArea</a>
+class for details.<p>
 
-<pre>
-<font color=red>/* Create a new SyntaxTextArea */
-SyntaxTextArea textArea = <font color=blue>new</font> SyntaxTextArea();
-
-<font color=red>/* Enable bracket highlighting (optional) */</font>
-textArea.setBracketHighlight(<font color=blue>true</font>);
-
-<font color=red>/* Give it a token marker */</font>
-textArea.setTokenMarker(<font color=blue>new</font> JavaTokenMarker());
-
-<font color=red>/* This can also be done in the following manner:
-DefaultSyntaxDocument document =
-	(DefaultSyntaxDocument)textArea.getDocument();
-document.setTokenMarker(new JavaTokenMarker());
-*/</font>
-</pre>
-
-Basically, it boils down to creating an
-<a href=../api/org.gjt.sp.jedit.syntax.SyntaxTextArea.html>
-org.gjt.sp.jedit.syntax.SyntaxTextArea</a> instance
-and setting the appropriate properties of it's document.<p>
-
-After the text (if any) is first loaded into the document, the
-<code>tokenizeLines()</code> method should be called:
-
-<pre>
-textArea.tokenizeLines();
-</pre>
-
-or
-
-<pre>
-document.tokenizeLines();
-</pre>
-
-This step isn't strictly necessary, but without it long
-multiline statements might get colorized wrong.<p>
-
-By default, <code>SyntaxTextArea</code> uses an
-<a href=../api/org.gjt.sp.jedit.syntax.DefaultSyntaxDocument.html>
-org.gjt.sp.jedit.syntax.DefaultSyntaxDocument</a> as it's document.
-In some situations, <code>DefaultSyntaxDocument</code> is not
-appropriate - the lower level
-<a href=../api/org.gjt.sp.jedit.syntax.SyntaxDocument.html>
-org.gjt.sp.jedit.syntax.SyntaxDocument</a> interface can be used
-instead.
+When including the text component with your applications, make sure you do
+not violate the <a href=../copying-lib.html>GNU Lesser General Public
+License</a>, under which the text component is released.
 
 </body>
 </html>

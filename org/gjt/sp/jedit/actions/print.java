@@ -25,8 +25,6 @@ import javax.swing.text.PlainView;
 import java.awt.event.ActionEvent;
 import java.awt.*;
 import org.gjt.sp.jedit.*;
-import org.gjt.sp.jedit.gui.JEditTextArea;
-import org.gjt.sp.jedit.syntax.SyntaxView;
 
 public class print extends EditAction
 {
@@ -37,6 +35,7 @@ public class print extends EditAction
 	
 	public void actionPerformed(ActionEvent evt)
 	{
+		/*
 		View view = getView(evt);
 		Buffer buffer = view.getBuffer();
 
@@ -132,30 +131,6 @@ public class print extends EditAction
 			}
 		}
 
-		job.end();
-	}
-
-	class PrintSyntaxView extends SyntaxView
-	{
-		private int leftMargin;
-		private int tabSize;
-
-		PrintSyntaxView(Element elem, int leftMargin, int tabSize)
-		{
-			super(elem);
-			this.leftMargin = leftMargin;
-			this.tabSize = tabSize;
-		}
-
-		public float nextTabStop(float x, int tabOffset)
-		{
-			return ((((int)x - leftMargin) / tabSize + 1)
-				* tabSize) + leftMargin;
-		}
-
-		public Color getDefaultColor()
-		{
-			return Color.black;
-		}
+		job.end();*/
 	}
 }

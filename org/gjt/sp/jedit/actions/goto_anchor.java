@@ -21,7 +21,7 @@ package org.gjt.sp.jedit.actions;
 
 import java.awt.event.ActionEvent;
 import org.gjt.sp.jedit.*;
-import org.gjt.sp.jedit.gui.JEditTextArea;
+import org.gjt.sp.jedit.textarea.JEditTextArea;
 
 public class goto_anchor extends EditAction
 {

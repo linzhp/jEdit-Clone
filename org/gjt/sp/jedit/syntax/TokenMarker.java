@@ -49,11 +49,16 @@ public abstract class TokenMarker
 		lastToken = null;
 
 		LineInfo info = lineInfo[lineIndex];
+		LineInfo prev;
+		if(lineIndex == 0)
+			prev = null;
+		else
+			prev = lineInfo[lineIndex - 1];
+
 		byte oldToken = info.token;
 
-		byte token = markTokensImpl((lineIndex == 0 ?
-			Token.NULL : lineInfo[lineIndex -1].token),
-			line,lineIndex);
+		byte token = markTokensImpl(prev == null ?
+			Token.NULL : prev.token,line,lineIndex);
 
 		info.token = token;
 		nextLineRequested = (oldToken != token);
@@ -82,6 +87,20 @@ public abstract class TokenMarker
 	 */
 	protected abstract byte markTokensImpl(byte token, Segment line,
 		int lineIndex);
+
+	/**
+	 * Returns if the token marker supports tokens that span multiple
+	 * lines. If this is true, the object using this token marker is
+	 * required to pass all lines in the document to the
+	 * <code>markTokens()</code> method (in turn).<p>
+	 *
+	 * The default implementation returns true; it should be overridden
+	 * to return false on simpler token markers for increased speed.
+	 */
+	public boolean supportsMultilineTokens()
+	{
+		return true;
+	}
 
 	/**
 	 * Informs the token marker that lines have been inserted into
@@ -273,6 +292,10 @@ public abstract class TokenMarker
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.26  1999/07/05 04:38:39  sp
+ * Massive batch of changes... bug fixes, also new text component is in place.
+ * Have fun
+ *
  * Revision 1.25  1999/06/06 05:05:25  sp
  * Search and replace tweaks, Perl/Shell Script mode updates
  *

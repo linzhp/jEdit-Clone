@@ -20,6 +20,7 @@
 package org.gjt.sp.jedit.actions;
 
 import java.awt.event.ActionEvent;
+import org.gjt.sp.jedit.textarea.JEditTextArea;
 import org.gjt.sp.jedit.*;
 
 public class cut extends EditAction
@@ -31,6 +32,10 @@ public class cut extends EditAction
 	
 	public void actionPerformed(ActionEvent evt)
 	{
-		getView(evt).getTextArea().cut();
+		JEditTextArea textArea = getView(evt).getTextArea();
+		if(textArea.isEditable())
+			textArea.cut();
+		else
+			textArea.getToolkit().beep();
 	}
 }

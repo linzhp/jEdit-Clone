@@ -20,12 +20,29 @@
 <ul>
 <li>The text component has been completely rewritten:
 <ul>
+<li>No more problems with files &gt; 2000 lines
+<li>Overwrite mode now works on Windows JDK 1.2
 <li>It is faster than the old Swing-based component
 <li>It can optionally display end-of-line markers
-<li>No more problems with files &gt; 2000 lines
+<li>It supports Brief-like HOME/END behaviour: press HOME once, and it
+goes to the start of the line, press it twice it goes to the first visible
+line, press it three times it goes to the beginning of the document
+<li>It supports CodeWarrior-like double-click behaviour: double clicking on
+a bracket will select the code block delimited by that bracket
+<li>Double clicks now treat `.' as a word separator, unlike the old Swing
+based code (which was very annoying when editing Java source)
+<li>The up/down arrows now behave better
 </ul>
 <li>It is now possible to disable window geometry saving. While this should
 be enabled in most situations, it causes problems with some JVMs
+</ul>
+
+<h2>API Changes</h2>
+
+<ul>
+<li>Because of the text component rewrite, most code that manipulates text will
+have to be changed
+<li>getText() removed from RemoteBuffer interface (for security)
 </ul>
 
 <h2>Enhancements</h2>
@@ -37,7 +54,6 @@ separately
 <li>More detailed RMI docs included
 <li>It is no longer necessary to start rmiregistry with a -classpath
 parameter pointing to jEdit's JAR file
-<li>Removed getText() from RemoteBuffer interface
 </ul>
 
 <h2>Bug Fixes</h2>
@@ -46,6 +62,9 @@ parameter pointing to jEdit's JAR file
 <li>Buffer.java, View.java and PerlTokenMarker.java didn't compile with javac
 <li>Shell script and Makefile mode had minor problems coloring
 multiline string literals
+<li>Pasting text now works correctly with the MacOS MRJ
+<li>SyntaxUtilities.regionMatches() had a minor problem, some syntax modes
+were affected
 </ul>
 
 <a name=17pre4>

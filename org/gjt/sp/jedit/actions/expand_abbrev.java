@@ -22,6 +22,7 @@ package org.gjt.sp.jedit.actions;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Element;
 import java.awt.event.ActionEvent;
+import org.gjt.sp.jedit.textarea.JEditTextArea;
 import org.gjt.sp.jedit.*;
 
 public class expand_abbrev extends EditAction
@@ -35,17 +36,20 @@ public class expand_abbrev extends EditAction
 	{
 		View view = getView(evt);
 		Buffer buffer = view.getBuffer();
+		JEditTextArea textArea = view.getTextArea();
+
 		String separators = (String)buffer.getProperty("noWordSep");
-		int dot = view.getTextArea().getSelectionStart();
-		Element map = buffer.getDefaultRootElement();
-		int lineNo = map.getElementIndex(dot);
-		Element lineElement = map.getElement(lineNo);
-		int start = lineElement.getStartOffset();
-		int len = lineElement.getEndOffset() - start - 1;
+		int dot = textArea.getSelectionStart();
+		int lineNo = textArea.getSelectionStartLine();	
+		int start = textArea.getLineStartOffset(lineNo);
+		int len = textArea.getLineEndOffset(lineNo) - start - 1;
+
 		String line;
+
 		try
 		{
 			line = buffer.getText(start,len); // chop newline
+
 			// scan backwards to find word
 			int wordStart = start;
 loop:			for(int i = dot - 1; i >= start; i--)
@@ -78,14 +82,13 @@ loop:			for(int i = dot - 1; i >= start; i--)
 			// occurance of word
 			for(int i = lineNo; i >= 0; i--)
 			{
-				lineElement = map.getElement(i);
-				int lineStart = lineElement.getStartOffset();
+				int lineStart = textArea.getLineStartOffset(i);
 				int lineLen;
 				if(i == lineNo)
 					lineLen = wordStart - lineStart;
 				else
 				{
-					lineLen = lineElement.getEndOffset()
+					lineLen = textArea.getLineEndOffset(i)
 						- lineStart - 1;
 				}
 				line = buffer.getText(lineStart, lineLen);
@@ -112,10 +115,9 @@ loop2:					for(int j = index + 1; j < lineLen; j++)
 							}
 						}
 					}
-					view.getTextArea().replaceSelection(
+					textArea.setSelectedText(
 						line.substring(index +
-							word.length(),
-							wordEnd));
+						word.length(),wordEnd));
 					return;
 				}
 			}

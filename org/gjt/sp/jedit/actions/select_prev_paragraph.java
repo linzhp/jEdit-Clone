@@ -23,7 +23,7 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.Element;
 import java.awt.event.ActionEvent;
 import org.gjt.sp.jedit.*;
-import org.gjt.sp.jedit.gui.JEditTextArea;
+import org.gjt.sp.jedit.textarea.JEditTextArea;
 
 public class select_prev_paragraph extends EditAction
 {

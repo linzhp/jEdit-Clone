@@ -188,21 +188,16 @@ exchange-anchor.label=Exchange Anchor and Caret
 
 ### Line menu
 line=goto-end-indent \
-     select-no-indent \
      - \
      delete-line \
-     delete-no-indent \
      delete-start-line \
      delete-end-line \
-     - \
      join-lines \
      - \
      scroll-line
 line.label=Line Operations
 goto-end-indent.label=Go to End of Indent
-select-no-indent.label=Select Line No Indent
 delete-line.label=Delete Line
-delete-no-indent.label=Delete Line No Indent
 delete-start-line.label=Delete to Start of Line
 delete-end-line.label=Delete to End of Line
 join-lines.label=Join Lines
@@ -515,6 +510,7 @@ options.editor.fontsize=Text font size:\
 options.editor.tabSize=Tab width:\ 
 options.editor.lineHighlight=Current line highlighting
 options.editor.bracketHighlight=Bracket highlighting
+options.editor.eolMarkers=EOL markers
 options.editor.syntax=Highlight syntax tokens
 options.editor.indentOnTab=Indent line when Tab key is pressed
 options.editor.indentOnEnter=Indent line when Enter key is pressed
@@ -534,6 +530,7 @@ options.styles.caretColor=Caret
 options.styles.selectionColor=Selection
 options.styles.lineHighlightColor=Line highlight
 options.styles.bracketHighlightColor=Bracket highlight
+options.styles.eolMarkerColor=EOL markers
 options.styles.comment1Style=Comment 1
 options.styles.comment2Style=Comment 2
 options.styles.literal1Style=String literal

@@ -115,11 +115,20 @@ loop:		for(int i = offset; i < length; i++)
 		}
 		return Token.NULL;
 	}
+
+	public boolean supportsMultilineTokens()
+	{
+		return false;
+	}
 }
 
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.18  1999/07/05 04:38:39  sp
+ * Massive batch of changes... bug fixes, also new text component is in place.
+ * Have fun
+ *
  * Revision 1.17  1999/06/20 02:15:45  sp
  * Syntax coloring optimizations
  *

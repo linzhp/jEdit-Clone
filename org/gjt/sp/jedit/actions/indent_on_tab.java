@@ -22,7 +22,7 @@ package org.gjt.sp.jedit.actions;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Element;
 import java.awt.event.ActionEvent;
-import org.gjt.sp.jedit.gui.JEditTextArea;
+import org.gjt.sp.jedit.textarea.JEditTextArea;
 import org.gjt.sp.jedit.*;
 
 public class indent_on_tab extends EditAction
@@ -59,7 +59,7 @@ public class indent_on_tab extends EditAction
 					.getStartOffset(),selStart -
 					lineElement.getStartOffset());
 
-				textArea.replaceSelection(createSoftTab(line,
+				textArea.setSelectedText(createSoftTab(line,
 					buffer.getTabSize()));
 			}
 			catch(BadLocationException bl)
@@ -68,7 +68,7 @@ public class indent_on_tab extends EditAction
 			}
                 }
                 else
-                        textArea.replaceSelection("\t");
+                        textArea.setSelectedText("\t");
         }
 
 	private String createSoftTab(String line, int tabSize)

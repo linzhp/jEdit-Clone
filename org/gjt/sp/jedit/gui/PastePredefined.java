@@ -200,7 +200,7 @@ implements ActionListener, KeyListener, MouseListener
 	{
 		int index = clips.getSelectedIndex();
 		if(index != -1)
-			view.getTextArea().replaceSelection((String)
+			view.getTextArea().setSelectedText((String)
 				clipVector.elementAt(index));
 		dispose();
 	}

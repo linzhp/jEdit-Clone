@@ -31,6 +31,6 @@ public class clear extends EditAction
 	
 	public void actionPerformed(ActionEvent evt)
 	{
-		getView(evt).getTextArea().replaceSelection("");
+		getView(evt).getTextArea().setSelectedText("");
 	}
 }

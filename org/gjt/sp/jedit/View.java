@@ -28,7 +28,9 @@ import java.awt.event.*;
 import java.io.File;
 import java.util.*;
 import org.gjt.sp.jedit.event.*;
-import org.gjt.sp.jedit.gui.*;
+import org.gjt.sp.jedit.syntax.SyntaxStyle;
+import org.gjt.sp.jedit.syntax.Token;
+import org.gjt.sp.jedit.textarea.*;
 
 /**
  * A window that edits buffers. There is no public constructor in the
@@ -94,46 +96,48 @@ public class View extends JFrame
 			style = Font.PLAIN;
 		}
 		Font font = new Font(family,style,size);
-		textArea.setFont(font);
-		textArea.setLineHighlight("on".equals(jEdit.getProperty(
+
+		TextAreaPainter painter = textArea.getPainter();
+
+		painter.setFont(font);
+		painter.setLineHighlightEnabled("on".equals(jEdit.getProperty(
 			"view.lineHighlight")));
-		textArea.setLineHighlightColor(GUIUtilities.parseColor(
+		painter.setLineHighlightColor(GUIUtilities.parseColor(
 			jEdit.getProperty("view.lineHighlightColor")));
-		textArea.setBracketHighlight("on".equals(jEdit.getProperty(
+		painter.setBracketHighlightEnabled("on".equals(jEdit.getProperty(
 			"view.bracketHighlight")));
-		textArea.setBracketHighlightColor(GUIUtilities.parseColor(
+		painter.setBracketHighlightColor(GUIUtilities.parseColor(
 			jEdit.getProperty("view.bracketHighlightColor")));
-		textArea.setCaretColor(GUIUtilities.parseColor(
+		painter.setEOLMarkerEnabled("on".equals(jEdit.getProperty(
+			"view.eolMarkers")));
+		painter.setEOLMarkerColor(GUIUtilities.parseColor(
+			jEdit.getProperty("view.eolMarkerColor")));
+		painter.setCaretColor(GUIUtilities.parseColor(
 			jEdit.getProperty("view.caretColor")));
-		textArea.setSelectionColor(GUIUtilities.parseColor(
+		painter.setSelectionColor(GUIUtilities.parseColor(
 			jEdit.getProperty("view.selectionColor")));
-		textArea.setBackground(GUIUtilities.parseColor(
+		painter.setBackground(GUIUtilities.parseColor(
 			jEdit.getProperty("view.bgColor")));
-		textArea.setForeground(GUIUtilities.parseColor(
+		painter.setForeground(GUIUtilities.parseColor(
 			jEdit.getProperty("view.fgColor")));
-		textArea.setBlockCaret("on".equals(jEdit.getProperty(
+		painter.setBlockCaretEnabled("on".equals(jEdit.getProperty(
 			"view.blockCaret")));
+
+		textArea.setCaretBlinkEnabled("on".equals(jEdit.getProperty(
+			"view.caretBlink")));
 		try
 		{
-			textArea.getCaret().setBlinkRate(Integer.parseInt(jEdit
-				.getProperty("view.caretBlinkRate")));
-		}
-		catch(NumberFormatException nf)
-		{
-			textArea.getCaret().setBlinkRate(0);
-		}
-		try
-		{
-			textArea.setElectricBorders(Integer.parseInt(jEdit
+			textArea.setElectricScroll(Integer.parseInt(jEdit
 				.getProperty("view.electricBorders")));
 		}
 		catch(NumberFormatException nf)
 		{
-			textArea.setElectricBorders(0);
+			textArea.setElectricScroll(0);
 		}
-		updateOpenRecentMenu();
 
-		textArea.updateHighlighters();
+		loadStyles();
+
+		updateOpenRecentMenu();
 	}
 	
 	/**
@@ -270,12 +274,10 @@ public class View extends JFrame
 	{
 		int dot = textArea.getCaretPosition();
 
-		Element map = buffer.getDefaultRootElement();
-		int currLine = map.getElementIndex(dot);
-		Element lineElement = map.getElement(currLine);
-		int start = lineElement.getStartOffset();
-		int end = lineElement.getEndOffset();
-		int numLines = map.getElementCount();
+		int currLine = textArea.getCaretLine();
+		int start = textArea.getLineStartOffset(currLine);
+		int numLines = textArea.getLineCount();
+
 		Object[] args = { new Integer((dot - start) + 1),
 			new Integer(currLine + 1),
 			new Integer(numLines),
@@ -329,7 +331,11 @@ public class View extends JFrame
 				mode.leaveView(this);
 		}
 		this.buffer = buffer;
+
 		textArea.setDocument(buffer);
+		textArea.select(buffer.getSavedSelStart(),
+			buffer.getSavedSelEnd());
+
 		updateMarkerMenus();
 		updateTitle();
 		updateLineNumber();
@@ -360,9 +366,7 @@ public class View extends JFrame
 	 */
 	public void focusOnTextArea()
 	{
-		/* Focus on the scroll pane */
-		javax.swing.FocusManager.getCurrentManager().focusNextComponent(
-			textArea.getParent());
+		textArea.requestFocus();
 	}
 
 	/**
@@ -406,34 +410,6 @@ public class View extends JFrame
 	{
 		buffer.setCaretInfo(textArea.getSelectionStart(),
 			textArea.getSelectionEnd());
-	}
-
-	/**
-	 * Adds a key binding to this view.
-	 * @param key The key stroke
-	 * @param cmd The action command
-	 */
-	public void addKeyBinding(KeyStroke key1, String cmd)
-	{
-		bindings.put(key1,cmd);
-	}
-
-	/**
-	 * Adds a multi-keystroke key binding to this view.
-	 * @param key1 The first key stroke
-	 * @param key2 The second key stroke
-	 * @param cmd The action command
-	 */
-	public void addKeyBinding(KeyStroke key1, KeyStroke key2,
-		String cmd)
-	{
-		Object o = bindings.get(key1);
-		if(!(o instanceof Hashtable))
-		{
-			o = new Hashtable();
-			bindings.put(key1,o);
-		}
-		((Hashtable)o).put(key2,cmd);
 	}
 
 	/**
@@ -516,12 +492,6 @@ public class View extends JFrame
 			bufferArray[i].addBufferListener(bufferListener);
 		}
 
-		// Register indentation keys
-		addKeyBinding(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER,0),
-			"indent-on-enter");
-                addKeyBinding(KeyStroke.getKeyStroke(KeyEvent.VK_TAB,0),
-			"indent-on-tab");
-
 		lineNumber = new JLabel();
 		lineNumber.setBorder(new EmptyBorder(0,10,0,0)); // ten pixel border on left
 		String tip;
@@ -559,19 +529,21 @@ public class View extends JFrame
 		bottomToolBars = new Box(BoxLayout.Y_AXIS);
 
 		textArea = new JEditTextArea();
-		textArea.setContextMenu(GUIUtilities.loadPopupMenu(this,
-			"view.context"));
-		scroller = new JScrollPane(textArea,ScrollPaneConstants
-			.VERTICAL_SCROLLBAR_ALWAYS,ScrollPaneConstants
-			.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-		
+		//textArea.setContextMenu(GUIUtilities.loadPopupMenu(this,
+		//	"view.context"));
+
+		// Register key bindings
+		InputHandler inputHandler = textArea.getInputHandler();
+		EditAction[] actions = jEdit.getActions();
+		for(int i = 0; i < actions.length; i++)
+		{
+			String binding = jEdit.getProperty(actions[i]
+				.getName() + ".shortcut");
+			if(binding != null)
+				inputHandler.addKeyBinding(binding,actions[i]);
+		}
+
 		propertiesChanged();
-
-		FontMetrics fm = getToolkit().getFontMetrics(textArea
-			.getFont());
-
-		scroller.setPreferredSize(new Dimension(81 * fm.charWidth('m'),
-			26 * fm.getHeight()));
 
 		if(buffer == null)
 			setBuffer(bufferArray[bufferArray.length - 1]);
@@ -579,15 +551,7 @@ public class View extends JFrame
 			setBuffer(buffer);
 
 		getContentPane().add(BorderLayout.NORTH,topToolBars);
-		org.gjt.sp.jedit.textarea.JEditTextArea ta =
-			new org.gjt.sp.jedit.textarea.JEditTextArea(80,25);		
-		ta.getModel().setDocument(getBuffer());
-		textArea.setPreferredSize(ta.getPreferredSize());
-JTabbedPane tabs = new JTabbedPane();
-tabs.addTab("New text area",ta);
-tabs.addTab("Old text area",scroller);
-		getContentPane().add(BorderLayout.CENTER,tabs);
-//		getContentPane().add(BorderLayout.CENTER,scroller);
+		getContentPane().add(BorderLayout.CENTER,textArea);
 
 		JPanel panel = new JPanel(new BorderLayout());
 		panel.add(BorderLayout.CENTER,bottomToolBars);
@@ -611,9 +575,7 @@ tabs.addTab("Old text area",scroller);
 
 		updateLineNumber();
 
-		textArea.addKeyListener(new KeyHandler());
 		textArea.addCaretListener(new CaretHandler());
-		addKeyListener(new KeyHandler());
 		addWindowListener(new WindowHandler());
 		
 		show();
@@ -674,65 +636,39 @@ tabs.addTab("Old text area",scroller);
 	private EditorListener editorListener;
 	private boolean closed;
 
-	private void handleKeyEvent(KeyEvent evt)
+	private void loadStyles()
 	{
-		int keyCode = evt.getKeyCode();
-		int modifiers = evt.getModifiers();
-		if((modifiers & ~InputEvent.SHIFT_MASK) != 0
-			|| evt.isActionKey()
-			|| keyCode == KeyEvent.VK_TAB
-			|| keyCode == KeyEvent.VK_ENTER)
+		try
 		{
-			KeyStroke keyStroke = KeyStroke.getKeyStroke(keyCode,
-				modifiers);
-			Object o = currentPrefix.get(keyStroke);
-			if(o == null && currentPrefix != bindings)
-			{
-				getToolkit().beep();
-				currentPrefix = bindings;
-				evt.consume();
-				return;
-			}
-			else if(o instanceof String)
-			{
-				String s = (String)o;
-				int index = s.indexOf('@');
-				String cmd;
-				if(index != -1)
-				{
-					cmd = s.substring(index+1);
-					s = s.substring(0,index);
-				}
-				else
-					cmd = null;
-				EditAction action = jEdit.getAction(s);
-				if(action == null)
-				{
-					System.out.println("Invalid key"
-						+ " binding: " + s);
-					currentPrefix = bindings;
-					evt.consume();
-					return;
-				}
-				jEdit.getAction(s).actionPerformed(
-					new ActionEvent(this,
-					ActionEvent.ACTION_PERFORMED,cmd));
-				currentPrefix = bindings;
-				evt.consume();
-				return;
-			}
-			else if(o instanceof Hashtable)
-			{
-				currentPrefix = (Hashtable)o;
-				evt.consume();
-				return;
-			}
+			SyntaxStyle[] styles = new SyntaxStyle[Token.ID_COUNT];
+
+			styles[Token.COMMENT1] = GUIUtilities.parseStyle(
+				jEdit.getProperty("view.style.comment1"));
+			styles[Token.COMMENT2] = GUIUtilities.parseStyle(
+				jEdit.getProperty("view.style.comment2"));
+			styles[Token.KEYWORD1] = GUIUtilities.parseStyle(
+				jEdit.getProperty("view.style.keyword1"));
+			styles[Token.KEYWORD2] = GUIUtilities.parseStyle(
+				jEdit.getProperty("view.style.keyword2"));
+			styles[Token.KEYWORD3] = GUIUtilities.parseStyle(
+				jEdit.getProperty("view.style.keyword3"));
+			styles[Token.LABEL] = GUIUtilities.parseStyle(
+				jEdit.getProperty("view.style.label"));
+			styles[Token.LITERAL1] = GUIUtilities.parseStyle(
+				jEdit.getProperty("view.style.literal1"));
+			styles[Token.LITERAL2] = GUIUtilities.parseStyle(
+				jEdit.getProperty("view.style.literal2"));
+			styles[Token.OPERATOR] = GUIUtilities.parseStyle(
+				jEdit.getProperty("view.style.operator"));
+			styles[Token.INVALID] = GUIUtilities.parseStyle(
+				jEdit.getProperty("view.style.invalid"));
+
+			textArea.getPainter().setStyles(styles);
 		}
-		else if(keyCode != KeyEvent.VK_SHIFT
-			&& keyCode != KeyEvent.VK_CONTROL
-			&& keyCode != KeyEvent.VK_ALT)
+		catch(Exception e)
 		{
-			currentPrefix = bindings;
+			System.out.println("Error loading syntax styles:");
+			e.printStackTrace();
 		}
 	}
 
@@ -755,7 +691,10 @@ tabs.addTab("Old text area",scroller);
 		public void bufferModeChanged(BufferEvent evt)
 		{
 			if(evt.getBuffer() == buffer)
+			{
+				textArea.getPainter().invalidateOffscreen();
 				textArea.repaint();
+			}
 		}
 	}
 
@@ -799,14 +738,6 @@ tabs.addTab("Old text area",scroller);
 		}
 	}
 
-	class KeyHandler extends KeyAdapter
-	{
-		public void keyPressed(KeyEvent evt)
-		{
-			handleKeyEvent(evt);
-		}
-	}
-
 	class WindowHandler extends WindowAdapter
 	{
 		public void windowClosing(WindowEvent evt)
@@ -819,6 +750,10 @@ tabs.addTab("Old text area",scroller);
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.84  1999/07/05 04:38:39  sp
+ * Massive batch of changes... bug fixes, also new text component is in place.
+ * Have fun
+ *
  * Revision 1.83  1999/06/27 04:53:16  sp
  * Text selection implemented in text area, assorted bug fixes
  *

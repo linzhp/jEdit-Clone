@@ -22,7 +22,7 @@ package org.gjt.sp.jedit.actions;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Element;
 import java.awt.event.ActionEvent;
-import org.gjt.sp.jedit.syntax.SyntaxUtilities;
+import org.gjt.sp.jedit.textarea.*;
 import org.gjt.sp.jedit.*;
 
 public class locate_bracket extends EditAction
@@ -36,6 +36,8 @@ public class locate_bracket extends EditAction
 	{
 		View view = getView(evt);
 		Buffer buffer = view.getBuffer();
+		JEditTextArea textArea = view.getTextArea();
+
 		String openBrackets = (String)buffer
 			.getProperty("openBrackets");
 		String closeBrackets = (String)buffer
@@ -45,7 +47,7 @@ public class locate_bracket extends EditAction
 			view.getToolkit().beep();
 			return;
 		}
-		int dot = view.getTextArea().getCaretPosition();
+		int dot = textArea.getCaretPosition();
 		if(dot != 0)
 			dot--;
 		char bracket;
@@ -56,13 +58,16 @@ public class locate_bracket extends EditAction
 			if(index != -1)
 			{
 				char closeBracket = closeBrackets.charAt(index);
-				int offset = SyntaxUtilities.locateBracketForward(
+				int[] match = TextUtilities.locateBracketForward(
 					buffer,dot,bracket,closeBracket);
-				if(offset == -1)
+				if(match == null)
 					view.getToolkit().beep();
 				else
-					view.getTextArea().setCaretPosition(
-						offset + 1);
+				{
+					int offset = textArea.getLineStartOffset(match[0])
+						+ match[1];
+					textArea.setCaretPosition(offset + 1);
+				}
 				return;
 			}
 			else
@@ -74,13 +79,16 @@ public class locate_bracket extends EditAction
 					return;
 				}
 				char openBracket = openBrackets.charAt(index);
-				int offset = SyntaxUtilities.locateBracketBackward(
+				int[] match = TextUtilities.locateBracketBackward(
 					buffer,dot,openBracket,bracket);
-				if(offset == -1)
+				if(match == null)
 					view.getToolkit().beep();
 				else
-					view.getTextArea().setCaretPosition(
-						offset + 1);
+				{
+					int offset = textArea.getLineStartOffset(match[0])
+						+ match[1];
+					textArea.setCaretPosition(offset + 1);
+				}
 			}
 		}
 		catch(BadLocationException bl)

@@ -18,7 +18,6 @@ classes=org/gjt/sp/jedit/jEdit.class \
 	org/gjt/sp/jedit/View.class
 
 others='org/gjt/sp/jedit/jEdit$$Autosave.class' \
-	'org/gjt/sp/jedit/jEdit$$EditorHandler.class' \
 	'org/gjt/sp/jedit/Buffer$$BufferProps.class' \
 	'org/gjt/sp/jedit/Buffer$$DocumentHandler.class' \
 	'org/gjt/sp/jedit/Buffer$$EditorHandler.class' \
@@ -26,7 +25,6 @@ others='org/gjt/sp/jedit/jEdit$$Autosave.class' \
 	'org/gjt/sp/jedit/View$$BufferHandler.class' \
 	'org/gjt/sp/jedit/View$$EditorHandler.class' \
 	'org/gjt/sp/jedit/View$$CaretHandler.class' \
-	'org/gjt/sp/jedit/View$$KeyHandler.class' \
 	'org/gjt/sp/jedit/View$$WindowHandler.class' \
 	org/gjt/sp/jedit/jedit.props \
 	org/gjt/sp/jedit/jedit_gui.props \

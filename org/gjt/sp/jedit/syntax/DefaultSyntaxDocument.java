@@ -34,15 +34,6 @@ public class DefaultSyntaxDocument extends PlainDocument
 implements SyntaxDocument
 {
 	/**
-	 * Creates a new <code>DefaultSyntaxDocument</code> instance.
-	 */
-	public DefaultSyntaxDocument()
-	{
-		styles = SyntaxUtilities.getDefaultSyntaxStyles();
-		addDocumentListener(new DocumentHandler());
-	}
-
-	/**
 	 * Returns the token marker that is to be used to split lines
 	 * of this document up into tokens. May return null if this
 	 * document is not to be colorized.
@@ -69,26 +60,6 @@ implements SyntaxDocument
 	}
 
 	/**
-	 * Returns the style array that maps token identifiers to
-	 * <code>SyntaxStyle</code> objects.
-	 */
-	public SyntaxStyle[] getStyles()
-	{
-		return styles;
-	}
-
-	/**
-	 * Sets the style array that maps token identifiers to
-	 * <code>SyntaxStyle</code> objects. May throw an exception
-	 * if this is not supported for this type of document.
-	 * @param styles The new style list
-	 */
-	public void setStyles(SyntaxStyle[] styles)
-	{
-		this.styles = styles;
-	}
-
-	/**
 	 * Reparses the document, by passing all lines to the token
 	 * marker. This should be called after the document is first
 	 * loaded.
@@ -107,7 +78,7 @@ implements SyntaxDocument
 	 */
 	public void tokenizeLines(int start, int len)
 	{
-		if(tokenMarker == null)
+		if(tokenMarker == null || !tokenMarker.supportsMultilineTokens())
 			return;
 
 		Segment lineSegment = new Segment();
@@ -133,50 +104,59 @@ implements SyntaxDocument
 
 	// protected members
 	protected TokenMarker tokenMarker;
-	protected SyntaxStyle[] styles;
 
 	/**
-	 * An implementation of <code>DocumentListener</code> that
-	 * inserts and deletes lines from the token marker's state.
+	 * We overwrite this method to update the token marker
+	 * state immediately so that any event listeners get a
+	 * consistent token marker.
 	 */
-	public class DocumentHandler
-	implements DocumentListener
+	protected void fireInsertUpdate(DocumentEvent evt)
 	{
-		public void insertUpdate(DocumentEvent evt)
+		if(tokenMarker != null)
 		{
-			if(tokenMarker == null)
-				return;
 			DocumentEvent.ElementChange ch = evt.getChange(
 				getDefaultRootElement());
-			if(ch == null)
-				return;
-			tokenMarker.insertLines(ch.getIndex() + 1,
-				ch.getChildrenAdded().length -
-				ch.getChildrenRemoved().length);
+			if(ch != null)
+			{
+				tokenMarker.insertLines(ch.getIndex() + 1,
+					ch.getChildrenAdded().length -
+					ch.getChildrenRemoved().length);
+			}
 		}
+
+		super.fireInsertUpdate(evt);
+	}
 	
-		public void removeUpdate(DocumentEvent evt)
+	/**
+	 * We overwrite this method to update the token marker
+	 * state immediately so that any event listeners get a
+	 * consistent token marker.
+	 */
+	protected void fireRemoveUpdate(DocumentEvent evt)
+	{
+		if(tokenMarker != null)
 		{
-			if(tokenMarker == null)
-				return;
 			DocumentEvent.ElementChange ch = evt.getChange(
 				getDefaultRootElement());
-			if(ch == null)
-				return;
-			tokenMarker.deleteLines(ch.getIndex() + 1,
-				ch.getChildrenRemoved().length -
-				ch.getChildrenAdded().length);
+			if(ch != null)
+			{
+				tokenMarker.deleteLines(ch.getIndex() + 1,
+					ch.getChildrenRemoved().length -
+					ch.getChildrenAdded().length);
+			}
 		}
-	
-		public void changedUpdate(DocumentEvent evt)
-		{
-		}
+
+		super.fireRemoveUpdate(evt);
 	}
 }
 
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.8  1999/07/05 04:38:39  sp
+ * Massive batch of changes... bug fixes, also new text component is in place.
+ * Have fun
+ *
  * Revision 1.7  1999/06/22 06:14:39  sp
  * RMI updates, text area updates, flag to disable geometry saving
  *

@@ -60,9 +60,8 @@ implements ActionListener, KeyListener, WindowListener
 		while(enum.hasMoreElements())
 			((OptionPane)enum.nextElement()).save();
 
-		jEdit.fireEditorEvent(new EditorEvent(EditorEvent
-			.PROPERTIES_CHANGED,null,null));
-
+		/* This will fire the PROPERTITES_CHANGED event */
+		jEdit.propertiesChanged();
 		dispose();
 	}
 
@@ -124,6 +123,10 @@ implements ActionListener, KeyListener, WindowListener
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.2  1999/07/05 04:38:39  sp
+ * Massive batch of changes... bug fixes, also new text component is in place.
+ * Have fun
+ *
  * Revision 1.1  1999/06/07 06:36:32  sp
  * Syntax `styling' (bold/italic tokens) added,
  * plugin options dialog for plugin option panes

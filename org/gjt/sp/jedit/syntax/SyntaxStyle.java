@@ -18,9 +18,7 @@
  */
 package org.gjt.sp.jedit.syntax;
 
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Font;
+import java.awt.*;
 import java.util.StringTokenizer;
 
 /**
@@ -88,6 +86,26 @@ public class SyntaxStyle
 	}
 
 	/**
+	 * Returns the font metrics for the styled font.
+	 */
+	public FontMetrics getFontMetrics(Font font)
+	{
+		if(font == null)
+			throw new NullPointerException("font param must not"
+				+ " be null");
+		if(font.equals(lastFont) && fontMetrics != null)
+			return fontMetrics;
+		lastFont = font;
+		lastStyledFont = new Font(font.getFamily(),
+			(bold ? Font.BOLD : 0)
+			| (italics ? Font.ITALIC : 0),
+			font.getSize());
+		fontMetrics = Toolkit.getDefaultToolkit().getFontMetrics(
+			lastStyledFont);
+		return fontMetrics;
+	}
+
+	/**
 	 * Sets the foreground color and font of the specified graphics
 	 * context to that specified in this style.
 	 * @param gfx The graphics context
@@ -116,4 +134,5 @@ public class SyntaxStyle
 	private boolean bold;
 	private Font lastFont;
 	private Font lastStyledFont;
+	private FontMetrics fontMetrics;
 }

@@ -19,7 +19,6 @@
 <tr>
 <td>1.7pre3</td><td>Released</td>
 </tr>
-
 <tr>
 <td>1.7pre4</td><td>Released</td>
 </tr>
@@ -28,29 +27,26 @@
 <td>1.7pre5</td>
 <td>To do:
 <ul>
-<li>New text component. To reach next stage:
+<li>New text component:
 <ul>
 <li>Bugs:
 <ul>
-<li>Focus handling doesn't work
+<li>Printing doesn't work
+<li>Context menu doesn't work
+<li>Horizontal scrolling to the right doesn't work
+<li>Array index out of bounds in offsetToX()?
 </ul>
-<li>Features/Optimizations:
+<li>Features:
 <ul>
-<li>Line is tokenized THREE TIMES if it is painted and the caret is on it
-<li>Fire caret events
-<li>Add double click handler
-<li>Handle key events
-<li>Send mouse events to the input handler
-<li>Get initial defaults from a TextAreaDefaults class
+<li>Add text area actions to key binding editor
+<li>Javadocs for text area classes
+<li>Update documentation for new text area
+<li>Write TextArea.setDefaults(), then View.getTextAreaDefaults(),
+then do it quicker in propertiesChanged()
+<li>Scrap electric scroll, instead do emacs-style jump scroll
 </ul>
-<li>After all of the above is done, make this the default text component
 </ul>
-<li>Color picker is shown twice in colors &amp; styles
-<li>RMI and startup process is not thread-safe. Instead of creating lots of
-inner classes and passing to invokeLater(), code a
-MiscUtilities.invokeLater(Class clazz, String method, Object object,
-Object[] args) method.
-<li>Multi-file find next is severely broken
+<li>Use Swing EventListenerList to fire events
 </ul>
 </td>
 </tr>
@@ -60,8 +56,13 @@ Object[] args) method.
 <td>To do:
 <ul>
 <li>Faster literal search
-<li>MacOS clipboard workaround (Patrick is coding this)
-<li>Finish Perl mode (brackets in matches, multiline matches)
+<li>Multi-file find next is severely broken
+<li>Finish Perl mode (multiline matches)
+<li>Color picker is shown twice in colors &amp; styles (Swing bug)
+<li>RMI and startup process is not thread-safe. Instead of creating lots of
+inner classes and passing to invokeLater(), code a
+MiscUtilities.invokeLater(Class clazz, String method, Object object,
+Object[] args) method.
 <li>Rewrite token markers to use PerlTokenMarker-like structure<p>
 <b>PARTLY DONE: need to do C, HTML, TeX</b><br>
 <b>Mike D should do TSQL</b>
@@ -73,6 +74,11 @@ Object[] args) method.
 <td>1.8 and beyond</td>
 <td>To do:
 <ul>
+<li>Currently, jEdit has three very similar bracket matching routines
+(locate-bracket action, JEditTextArea.updateBracketHighlight(),
+JEditTextArea.MouseHandler.doDoubleClick()). They should be merged into
+a single TextUtilities.getMatchingBracket(), and the lower half
+TextUtilities.locateBracket{Forward,Backward} should be rewritten/scrapped
 <li>Embeddability
 <li>Folding
 <li>Menu bar overhaul (EnhancedMenu/Bar classes, support getMenuByName(),

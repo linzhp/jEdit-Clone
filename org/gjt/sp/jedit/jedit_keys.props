@@ -63,6 +63,8 @@ close-view.shortcut=C+e C+w
 exchange-anchor.shortcut=C+e C+x
 
 # Other keys
+indent-on-tab.shortcut=TAB
+indent-on-enter.shortcut=ENTER
 select-block.shortcut=C+[
 locate-bracket.shortcut=C+]
 prev-paragraph.shortcut=C+UP
