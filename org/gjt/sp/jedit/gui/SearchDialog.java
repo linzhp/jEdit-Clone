@@ -1,5 +1,5 @@
 /*
- * SearchAndReplace.java - Search and replace dialog
+ * SearchDialog.java - Search and replace dialog
  * Copyright (C) 1998, 1999 Slava Pestov
  *
  * This program is free software; you can redistribute it and/or
@@ -22,6 +22,7 @@ package org.gjt.sp.jedit.gui;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import org.gjt.sp.jedit.search.*;
 import org.gjt.sp.jedit.*;
 
 /**
@@ -29,12 +30,14 @@ import org.gjt.sp.jedit.*;
  * @author Slava Pestov
  * @version $Id$
  */
-public class SearchAndReplace extends JDialog
+public class SearchDialog extends JDialog
 {
-	public SearchAndReplace(View view, String defaultFind)
+	public SearchDialog(View view, String defaultFind)
 	{
 		super(view,jEdit.getProperty("search.title"),false);
 		this.view = view;
+
+		fileset = SearchAndReplace.getSearchFileSet();
 
 		find = new HistoryTextField("find");
 		find.setText(defaultFind);
@@ -44,12 +47,14 @@ public class SearchAndReplace extends JDialog
 			"search.keepDialog"),"on".equals(jEdit.getProperty(
 			"search.keepDialog.toggle")));
 		ignoreCase = new JCheckBox(jEdit.getProperty(
-			"search.ignoreCase"),
-			"on".equals(jEdit.getProperty("search."
-				+ "ignoreCase.toggle")));
-		regexpSyntax = new JComboBox(MiscUtilities.SYNTAX_LIST);
-		regexpSyntax.setSelectedItem(jEdit.getProperty("search"
-			+ ".regexp.value"));
+			"search.ignoreCase"),SearchAndReplace.getIgnoreCase());
+		regexp = new JCheckBox(jEdit.getProperty(
+			"search.regexp"),SearchAndReplace.getRegexp());
+		multifile = new JCheckBox();
+		multifile.getModel().setSelected(!(fileset
+			instanceof CurrentBufferSet));
+		multifileBtn = new JButton(jEdit.getProperty(
+			"search.multifile"));
 		findBtn = new JButton(jEdit.getProperty("search.findBtn"));
 		replaceSelection = new JButton(jEdit.getProperty("search"
 			+ ".replaceSelection"));
@@ -92,8 +97,9 @@ public class SearchAndReplace extends JDialog
 		panel = new JPanel();
 		panel.add(keepDialog);
 		panel.add(ignoreCase);
-		panel.add(new JLabel(jEdit.getProperty("search.regexp")));
-		panel.add(regexpSyntax);
+		panel.add(regexp);
+		panel.add(multifile);
+		panel.add(multifileBtn);
 		getContentPane().add(BorderLayout.CENTER,panel);
 		panel = new JPanel();
 		panel.add(findBtn);
@@ -112,6 +118,8 @@ public class SearchAndReplace extends JDialog
 		replace.addKeyListener(keyListener);
 
 		ActionHandler actionListener = new ActionHandler();
+		multifile.addActionListener(actionListener);
+		multifileBtn.addActionListener(actionListener);
 		findBtn.addActionListener(actionListener);
 		replaceSelection.addActionListener(actionListener);
 		replaceAll.addActionListener(actionListener);
@@ -126,11 +134,14 @@ public class SearchAndReplace extends JDialog
 
         // private members
 	private View view;
+	private SearchFileSet fileset;
 	private HistoryTextField find;
 	private HistoryTextField replace;
 	private JCheckBox keepDialog;
 	private JCheckBox ignoreCase;
-	private JComboBox regexpSyntax;
+	private JCheckBox regexp;
+	private JCheckBox multifile;
+	private JButton multifileBtn;
 	private JButton findBtn;
 	private JButton replaceSelection;
 	private JButton replaceAll;
@@ -139,15 +150,14 @@ public class SearchAndReplace extends JDialog
 	private void save()
 	{
 		find.addCurrentToHistory();
-		jEdit.setProperty("search.find.value",find.getText());
+		SearchAndReplace.setSearchString(find.getText());
 		replace.addCurrentToHistory();
-		jEdit.setProperty("search.replace.value",replace.getText());
+		SearchAndReplace.setReplaceString(replace.getText());
 		jEdit.setProperty("search.keepDialog.toggle",keepDialog
 			.getModel().isSelected() ? "on" : "off");
-		jEdit.setProperty("search.ignoreCase.toggle",ignoreCase
-			.getModel().isSelected() ? "on" : "off");
-		jEdit.setProperty("search.regexp.value",(String)regexpSyntax
-			.getSelectedItem());
+		SearchAndReplace.setIgnoreCase(ignoreCase.getModel().isSelected());
+		SearchAndReplace.setRegexp(regexp.getModel().isSelected());
+		SearchAndReplace.setSearchFileSet(fileset);
 		GUIUtilities.saveGeometry(this,"search");
 	}
 
@@ -158,18 +168,33 @@ public class SearchAndReplace extends JDialog
 		dispose();
 	}
 
+	private void showMultiFileDialog()
+	{
+		SearchFileSet fs = new MultiFileSearchDialog(
+			view,fileset).getSearchFileSet();
+		if(fs != null)
+		{
+			fileset = fs;
+		}
+		multifile.getModel().setSelected(!(
+			fileset instanceof CurrentBufferSet));
+	}
+
 	class ActionHandler implements ActionListener
 	{
 		public void actionPerformed(ActionEvent evt)
 		{
 			Object source = evt.getSource();
+			Buffer buffer = view.getBuffer();
 			if(source == cancel)
 				dispose();
 			else if(source == findBtn)
 			{
 				save();
-				if(view.getBuffer().find(view,false))
+				if(SearchAndReplace.find(view,buffer,false))
 					disposeOrKeepDialog();
+				else
+					view.getToolkit().beep();
 			}
 			else if(source == replaceSelection)
 			{
@@ -178,8 +203,8 @@ public class SearchAndReplace extends JDialog
 					.getSelectionStart();
 				int selEnd = view.getTextArea()
 					.getSelectionEnd();
-				if(view.getBuffer().replaceAll(view,selStart,
-					selEnd))
+				if(SearchAndReplace.replace(view,buffer,
+					selStart,selEnd))
 				{
 					/* workaround for weird Position.Bias
 					 * behaviour */
@@ -193,11 +218,21 @@ public class SearchAndReplace extends JDialog
 			else if(source == replaceAll)
 			{
 				save();
-				if(view.getBuffer().replaceAll(view,0,
-					view.getBuffer().getLength()))
+				if(SearchAndReplace.replaceAll(view))
 					disposeOrKeepDialog();
 				else
 					getToolkit().beep();
+			}
+			else if(source == multifileBtn)
+			{
+				showMultiFileDialog();
+			}
+			else if(source == multifile)
+			{
+				if(multifile.getModel().isSelected())
+					showMultiFileDialog();
+				else
+					fileset = new CurrentBufferSet();
 			}
 		}
 	}
@@ -209,7 +244,8 @@ public class SearchAndReplace extends JDialog
 			if(evt.getKeyCode() == KeyEvent.VK_ENTER)
 			{
 				save();
-				if(view.getBuffer().find(view,false))
+				if(SearchAndReplace.find(view,view.getBuffer(),
+					false))
 					disposeOrKeepDialog();
 			}
 			else if(evt.getKeyCode() == KeyEvent.VK_ESCAPE)
@@ -223,40 +259,10 @@ public class SearchAndReplace extends JDialog
 /*
  * ChangeLog:
  * $Log$
- * Revision 1.29  1999/05/09 03:50:17  sp
- * HistoryTextField is now a text field again
+ * Revision 1.1  1999/06/03 08:40:03  sp
+ * More cvs fixing
  *
- * Revision 1.28  1999/04/23 22:37:55  sp
- * Tips updated, TokenMarker.LineInfo is public now
- *
- * Revision 1.27  1999/04/23 07:35:11  sp
- * History engine reworking (shared history models, history saved to
- * .jedit-history)
- *
- * Revision 1.26  1999/04/19 05:44:34  sp
- * GUI updates
- *
- * Revision 1.25  1999/04/07 05:01:26  sp
- * Search and replace tweak, UI tweaks
- *
- * Revision 1.24  1999/04/02 03:21:09  sp
- * Added manifest file, common strings such as OK, etc are no longer duplicated
- * many times in jedit_gui.props
- *
- * Revision 1.23  1999/03/20 05:23:32  sp
- * Code cleanups
- *
- * Revision 1.22  1999/03/20 04:52:55  sp
- * Buffer-specific options panel finished, attempt at fixing OS/2 caret bug, code
- * cleanups
- *
- * Revision 1.21  1999/03/19 08:32:22  sp
- * Added a status bar to views, Escape key now works in dialog boxes
- *
- * Revision 1.20  1999/03/19 07:12:11  sp
- * JOptionPane changes, did a fromdos of the source
- *
- * Revision 1.19  1999/03/17 05:32:52  sp
- * Event system bug fix, history text field updates (but it still doesn't work), code cleanups, lots of banging head against wall
+ * Revision 1.1  1999/05/31 04:42:38  sp
+ * oops #2
  *
  */

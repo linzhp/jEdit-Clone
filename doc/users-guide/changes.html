@@ -10,11 +10,32 @@
 <h1>Version 1.7pre2</h1>
 </a>
 
+<h2>New Features</h2>
+
+<ul>
+<li>Perl mode added (slightly flimsy, might be slow)
+<li>Multifile search and replace started
+(only `Replace All' and HyperSearch use the multifile code right now)
+<li>`HyperSearch For Selection' command added (Mike Dillon)
+</ul>
+
+<h2>Enhancements</h2>
+
+<ul>
+<li>Minor syntax coloring optimizations
+</ul>
+
 <h2>Bug Fixes</h2>
 
 <ul>
 <li>Removed debugging message from shell script mode
 <li>Property file mode didn't support commenting
+<li>HyperSearch didn't have an `ignore case' toggle
+<li>Expand abbreviation only worked when the caret was on the end of the line
+<li>Saving an `Untitled' file didn't update the `Buffers' menu properly
+<li>Autosave didn't work *at all* - it has been broken since some 1.6 release
+<li>The state of the regular expression toggle wasn't saved properly
+(Mike Dillon)
 </ul>
 
 <a name=17pre1>
