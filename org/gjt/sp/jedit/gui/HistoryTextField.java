@@ -31,7 +31,7 @@ public class HistoryTextField extends JTextField implements KeyListener
 		super(width);
 		this.name = name;
 		history = new String[100];
-		historyPos = 1;
+		//historyPos = 1;
 		String line;
 		int i = 0;
 		while((line = jEdit.getProperty("history." + name + "." + i)) != null)

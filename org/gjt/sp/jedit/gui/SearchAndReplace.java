@@ -30,6 +30,7 @@ implements ActionListener, KeyListener, WindowListener
 	private View view;
 	private HistoryTextField find;
 	private HistoryTextField replace;
+	private JCheckBox keepDialog;
 	private JCheckBox ignoreCase;
 	private JComboBox regexpSyntax;
 	private JButton findBtn;
@@ -50,6 +51,9 @@ implements ActionListener, KeyListener, WindowListener
 
 		find = new HistoryTextField("find",30);
 		replace = new HistoryTextField("replace",30);
+		keepDialog = new JCheckBox(jEdit.getProperty(
+			"search.keepDialog"),"on".equals(jEdit.getProperty(
+			"search.keepDialog.toggle")));
 		ignoreCase = new JCheckBox(jEdit.getProperty(
 			"search.ignoreCase"),
 			"on".equals(jEdit.getProperty("search."
@@ -95,6 +99,7 @@ implements ActionListener, KeyListener, WindowListener
 		panel.add(replace);
 		getContentPane().add("North",panel);
 		panel = new JPanel();
+		panel.add(keepDialog);
 		panel.add(ignoreCase);
 		panel.add(new JLabel(jEdit.getProperty("search.regexp")));
 		panel.add(regexpSyntax);
@@ -127,6 +132,8 @@ implements ActionListener, KeyListener, WindowListener
 	{
 		find.save();
 		replace.save();
+		jEdit.setProperty("search.keepDialog.toggle",keepDialog
+			.getModel().isSelected() ? "on" : "off");
 		jEdit.setProperty("search.ignoreCase.toggle",ignoreCase
 			.getModel().isSelected() ? "on" : "off");
 		jEdit.setProperty("search.regexp.value",(String)regexpSyntax
@@ -142,12 +149,12 @@ implements ActionListener, KeyListener, WindowListener
 		else if(source == findBtn)
 		{
 			if(view.getBuffer().find(view,false))
-				dispose();
+				_dispose();
 		}
 		else if(source == replaceSelection)
 		{
 			if(view.getBuffer().replaceAll(view,selStart,selEnd))
-				dispose();
+				_dispose();
 			else
 				getToolkit().beep();
 		}
@@ -155,10 +162,17 @@ implements ActionListener, KeyListener, WindowListener
 		{
 			if(view.getBuffer().replaceAll(view,0,
 				view.getBuffer().getLength()))
-				dispose();
+				_dispose();
 			else
 				getToolkit().beep();
 		}
+	}
+
+	public void _dispose()
+	{
+		if(keepDialog.getModel().isSelected())
+			return;
+		dispose();
 	}
 
 	public void keyPressed(KeyEvent evt)

@@ -419,6 +419,7 @@ autosaveexists.message=An autosave file {0} was found.\n\
 search.title=Search And Replace
 search.find=Find:\ 
 search.replace=Replace With:\ 
+search.keepDialog=Keep Dialog 
 search.ignoreCase=Ignore Case
 search.regexp=RegExp Syntax:\ 
 search.regexp.value=perl5
