@@ -43,8 +43,6 @@ public class ShellScriptTokenMarker extends TokenMarker
 			&& lineInfo[lineIndex - 1].obj != null)
 		{
 			String str = (String)lineInfo[lineIndex - 1].obj;
-			if(str != null)
-				System.out.println(str.length() + ":" + line.count);
 			if(str != null && str.length() == line.count
 				&& SyntaxUtilities.regionMatches(false,line,
 				offset,str))
@@ -241,6 +239,9 @@ loop:		for(int i = offset; i < length; i++)
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.13  1999/05/30 04:57:15  sp
+ * Perl mode started
+ *
  * Revision 1.12  1999/05/03 04:28:01  sp
  * Syntax colorizing bug fixing, console bug fix for Swing 1.1.1
  *

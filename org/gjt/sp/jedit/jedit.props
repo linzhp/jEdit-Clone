@@ -230,9 +230,15 @@ mode.patch.name=Patch/DIFF
 mode.extension.diff=patch
 mode.extension.patch=patch
 
+# Perl mode
+mode.perl.name=Perl
+mode.perl.blockComment=#
+mode.extension.pl=perl
+mode.firstline.#!/usr/bin/perl=perl
+
 # Props mode
 mode.props.name=Properties/INI
-mode.patch.blockComment=#
+mode.props.blockComment=#
 mode.extension.props=props
 mode.extension.properties=props
 mode.extension.ini=props

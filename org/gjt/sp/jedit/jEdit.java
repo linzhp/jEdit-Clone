@@ -43,7 +43,7 @@ public class jEdit
 	 */
 	public static String getVersion()
 	{
-		return "1.7pre1";
+		return "1.7pre2";
 	}
 
 	/**
@@ -53,7 +53,7 @@ public class jEdit
 	public static String getBuild()
 	{
 		// (major) (minor) (<99 = preX, 99 = final) (bug fix)
-		return "01.07.01.00";
+		return "01.07.02.00";
 	}
 
 	/**
@@ -1032,6 +1032,7 @@ public class jEdit
 		addMode(new org.gjt.sp.jedit.mode.latex());
 		addMode(new org.gjt.sp.jedit.mode.makefile());
 		addMode(new org.gjt.sp.jedit.mode.patch());
+		addMode(new org.gjt.sp.jedit.mode.perl());
 		addMode(new org.gjt.sp.jedit.mode.props());
 		addMode(new org.gjt.sp.jedit.mode.sh());
 		addMode(new org.gjt.sp.jedit.mode.tex());
@@ -1528,6 +1529,9 @@ public class jEdit
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.108  1999/05/30 04:57:15  sp
+ * Perl mode started
+ *
  * Revision 1.107  1999/05/29 08:06:56  sp
  * Search and replace overhaul
  *
