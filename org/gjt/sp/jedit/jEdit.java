@@ -41,7 +41,7 @@ public class jEdit
 	/**
 	 * The jEdit version.
 	 */
-	public static final String VERSION = "1.5pre2";
+	public static final String VERSION = "1.5pre3";
 	
 	/**
 	 * The date when a change was last made to the source code,
@@ -1576,6 +1576,9 @@ public class jEdit
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.55  1999/03/20 01:55:42  sp
+ * New color option pane, fixed search & replace bug
+ *
  * Revision 1.54  1999/03/20 00:26:48  sp
  * Console fix, backed out new JOptionPane code, updated tips
  *

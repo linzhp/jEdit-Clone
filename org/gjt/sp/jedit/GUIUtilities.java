@@ -547,6 +547,18 @@ public class GUIUtilities
 	}
 
 	/**
+	 * Converts a color object to its hex value. The hex value
+	 * prefixed is with `#', for example `#ff0088'.
+	 * @param c The color object
+	 */
+	public static String getColorHexString(Color c)
+	{
+		String colString = Integer.toHexString(c.getRGB() & 0xffffff);
+		return "#000000".substring(0,7 - colString.length()).concat(colString);
+	}
+
+
+	/**
 	 * Loads a windows's geometry from the properties.
 	 * The geometry is loaded from the <code><i>name</i>.x</code>,
 	 * <code><i>name</i>.y</code>, <code><i>name</i>.width</code> and
@@ -613,6 +625,9 @@ public class GUIUtilities
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.13  1999/03/20 01:55:42  sp
+ * New color option pane, fixed search & replace bug
+ *
  * Revision 1.12  1999/03/20 00:26:48  sp
  * Console fix, backed out new JOptionPane code, updated tips
  *

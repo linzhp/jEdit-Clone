@@ -38,8 +38,7 @@ implements ActionListener, KeyListener, WindowListener
 		tabs = new JTabbedPane();
 		addOptionPane(new GeneralOptionPane());
 		addOptionPane(new EditorOptionPane());
-		addOptionPane(new Colors1OptionPane());
-		addOptionPane(new Colors2OptionPane());
+		addOptionPane(new ColorTableOptionPane());
 		getContentPane().add("Center",tabs);
 		JPanel buttons = new JPanel();
 		ok = new JButton(jEdit.getProperty("options.ok"));
