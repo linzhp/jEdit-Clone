@@ -82,9 +82,9 @@ public class CCTokenMarker extends CTokenMarker
 			ccKeywords.add("operator", Token.KEYWORD3);
 			ccKeywords.add("or", Token.KEYWORD3);
 			ccKeywords.add("or_eq", Token.KEYWORD3);
-			ccKeywords.add("private", Token.LABEL);
-			ccKeywords.add("protected", Token.LABEL);
-			ccKeywords.add("public", Token.LABEL);
+			ccKeywords.add("private", Token.KEYWORD1);
+			ccKeywords.add("protected", Token.KEYWORD1);
+			ccKeywords.add("public", Token.KEYWORD1);
 			ccKeywords.add("register", Token.KEYWORD1);
 			ccKeywords.add("reinterpret_cast", Token.KEYWORD3);
 			ccKeywords.add("return", Token.KEYWORD1);      //
@@ -127,6 +127,9 @@ public class CCTokenMarker extends CTokenMarker
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.4  1999/05/14 04:56:15  sp
+ * Docs updated, default: fix in C/C++/Java mode, full path in title bar toggle
+ *
  * Revision 1.3  1999/04/22 06:03:26  sp
  * Syntax colorizing change
  *

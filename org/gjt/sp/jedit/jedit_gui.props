@@ -536,6 +536,7 @@ options.general.saveDesktop=Save session on exit
 options.general.server=Enable jEdit server
 options.general.showTips=Show hints in status bar
 options.general.showToolbar=Show toolbar
+options.general.showFullPath=Show full path of buffers in title bar
 options.editor.label=Editor
 options.editor.defaultMode=Default edit mode:\ 
 options.editor.font=Text font:\ 

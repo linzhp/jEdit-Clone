@@ -108,6 +108,9 @@ view.showTips=on
 # Show toolbar? (on/off)
 view.showToolbar=on
 
+# Show full path in title bar? (on/off)
+view.showFullPath=off
+
 # Font
 view.font=Monospaced
 view.fontsize=14

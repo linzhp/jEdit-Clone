@@ -69,15 +69,6 @@ loop:		for(int i = offset; i < length; i++)
 					}
 					break;
 				}
-			case ':':
-				backslash = false;
-				if(token == Token.NULL && lastKeyword == offset)
-				{
-					addToken((i+1) - lastOffset,Token.LABEL);
-					lastOffset = i + 1;
-					lastKeyword = lastOffset;
-				}
-				break;
 			case '#':
 				backslash = false;
 				if(cpp && token == Token.NULL)
@@ -149,6 +140,15 @@ loop:		for(int i = offset; i < length; i++)
 					lastKeyword = lastOffset;
 				}
 				break;
+			case ':':
+				if(token == Token.NULL && lastKeyword == offset)
+				{
+					backslash = false;
+					addToken((i+1) - lastOffset,Token.LABEL);
+					lastOffset = i + 1;
+					lastKeyword = lastOffset;
+					break;
+				}
 			default:
 				backslash = false;
 				if(token == Token.NULL && c != '_' &&
@@ -256,6 +256,9 @@ loop:		for(int i = offset; i < length; i++)
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.27  1999/05/14 04:56:15  sp
+ * Docs updated, default: fix in C/C++/Java mode, full path in title bar toggle
+ *
  * Revision 1.26  1999/05/11 09:05:10  sp
  * New version1.6.html file, some other stuff perhaps
  *

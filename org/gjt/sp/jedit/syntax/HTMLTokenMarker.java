@@ -70,6 +70,14 @@ loop:		for(int i = offset; i < length; i++)
 						break;
 					}
 				}
+			case ':':
+				if(token == JAVASCRIPT && lastKeyword == offset)
+				{
+					backslash = false;
+					addToken((i+1) - lastOffset,Token.LABEL);
+					lastOffset = i + 1;
+					break;
+				}
 			case '.': case ',': case ' ': case '\t':
 			case '(': case ')': case '[': case ']':
 			case '{': case '}':
@@ -143,14 +151,6 @@ loop:		for(int i = offset; i < length; i++)
 					token = Token.KEYWORD2;
 					addToken(i - lastOffset,Token.NULL);
 					lastOffset = i;
-				}
-				break;
-			case ':':
-				backslash = false;
-				if(token == JAVASCRIPT && lastKeyword == offset)
-				{
-					addToken((i+1) - lastOffset,Token.LABEL);
-					lastOffset = i + 1;
 				}
 				break;
 			case '/':
@@ -249,6 +249,9 @@ loop:		for(int i = offset; i < length; i++)
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.26  1999/05/14 04:56:15  sp
+ * Docs updated, default: fix in C/C++/Java mode, full path in title bar toggle
+ *
  * Revision 1.25  1999/05/11 09:05:10  sp
  * New version1.6.html file, some other stuff perhaps
  *

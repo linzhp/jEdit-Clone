@@ -140,6 +140,13 @@ public class GeneralOptionPane extends OptionPane
 		showToolbar.getModel().setSelected("on".equals(jEdit.getProperty(
 			"view.showToolbar")));
 		addComponent(showToolbar);
+
+		/* Show full path */
+		showFullPath = new JCheckBox(jEdit.getProperty(
+			"options.general.showFullPath"));
+		showFullPath.getModel().setSelected("on".equals(jEdit.getProperty(
+			"view.showFullPath")));
+		addComponent(showFullPath);
 	}
 
 	public void save()
@@ -184,6 +191,8 @@ public class GeneralOptionPane extends OptionPane
 			.isSelected() ? "on" : "off");
 		jEdit.setProperty("view.showToolbar",showToolbar.getModel()
 			.isSelected() ? "on" : "off");
+		jEdit.setProperty("view.showFullPath",showFullPath.getModel()
+			.isSelected() ? "on" : "off");
 	}
 
 	// private members
@@ -201,4 +210,5 @@ public class GeneralOptionPane extends OptionPane
 	private JCheckBox server;
 	private JCheckBox showTips;
 	private JCheckBox showToolbar;
+	private JCheckBox showFullPath;
 }

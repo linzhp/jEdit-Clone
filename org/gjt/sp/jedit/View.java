@@ -70,6 +70,8 @@ public class View extends JFrame
 			validate();
 		}
 
+		showFullPath = "on".equals(jEdit.getProperty("view.showFullPath"));
+
 		String family = jEdit.getProperty("view.font");
 		int size;
 		try
@@ -288,7 +290,8 @@ public class View extends JFrame
 	 */
 	public void updateTitle()
 	{
-		Object[] args = { buffer.getName(),
+		Object[] args = { (showFullPath ? buffer.getPath() :
+			buffer.getName()),
 			new Integer(buffer.isReadOnly() ? 1 : 0),
 			new Integer(buffer.isDirty() ? 1: 0)};
 		setTitle(jEdit.getProperty("view.title",args));
@@ -699,6 +702,7 @@ public class View extends JFrame
 	private JLabel hintBar;
 	private Buffer buffer;
 	private boolean showTip;
+	private boolean showFullPath;
 	private EventMulticaster multicaster;
 	private BufferListener bufferListener;
 	private EditorListener editorListener;
@@ -848,6 +852,9 @@ public class View extends JFrame
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.72  1999/05/14 04:56:15  sp
+ * Docs updated, default: fix in C/C++/Java mode, full path in title bar toggle
+ *
  * Revision 1.71  1999/05/08 00:13:00  sp
  * Splash screen change, minor documentation update, toolbar API fix
  *
@@ -878,17 +885,5 @@ public class View extends JFrame
  *
  * Revision 1.62  1999/04/20 06:38:26  sp
  * jEdit.addPluginMenu() method added
- *
- * Revision 1.61  1999/04/19 05:47:35  sp
- * ladies and gentlemen, 1.6pre1
- *
- * Revision 1.60  1999/04/08 04:44:51  sp
- * New _setBuffer method in View class, new addTab method in Console class
- *
- * Revision 1.59  1999/04/07 05:01:26  sp
- * Search and replace tweak, UI tweaks
- *
- * Revision 1.58  1999/04/01 04:13:00  sp
- * Bug fixing for 1.5final
  *
  */
