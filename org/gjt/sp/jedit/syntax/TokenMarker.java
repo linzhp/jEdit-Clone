@@ -223,7 +223,7 @@ public abstract class TokenMarker
 	/**
 	 * Inner class for storing information about tokenized lines.
 	 */
-	protected class LineInfo
+	public class LineInfo
 	{
 		/**
 		 * Creates a new LineInfo object.
@@ -252,6 +252,9 @@ public abstract class TokenMarker
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.16  1999/04/23 22:37:55  sp
+ * Tips updated, TokenMarker.LineInfo is public now
+ *
  * Revision 1.15  1999/04/23 05:06:43  sp
  * TokenMarker.markTokens bug fix
  *

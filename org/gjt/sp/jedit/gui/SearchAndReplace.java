@@ -181,10 +181,19 @@ public class SearchAndReplace extends JDialog
 			else if(source == replaceSelection)
 			{
 				save();
-				if(view.getBuffer().replaceAll(view,
-					view.getTextArea().getSelectionStart(),
-					view.getTextArea().getSelectionEnd()))
+				int selStart = view.getTextArea()
+					.getSelectionStart();
+				int selEnd = view.getTextArea()
+					.getSelectionEnd();
+				if(view.getBuffer().replaceAll(view,selStart,
+					selEnd))
+				{
+					/* workaround for weird Position.Bias
+					 * behaviour */
+					view.getTextArea().setSelectionStart(
+						selStart);
 					disposeOrKeepDialog();
+				}
 				else
 					getToolkit().beep();
 			}
@@ -215,6 +224,9 @@ public class SearchAndReplace extends JDialog
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.28  1999/04/23 22:37:55  sp
+ * Tips updated, TokenMarker.LineInfo is public now
+ *
  * Revision 1.27  1999/04/23 07:35:11  sp
  * History engine reworking (shared history models, history saved to
  * .jedit-history)

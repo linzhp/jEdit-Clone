@@ -32,9 +32,14 @@ public class replace_in_selection extends EditAction
 	public void actionPerformed(ActionEvent evt)
 	{
 		View view = getView(evt);
-		if(!view.getBuffer().replaceAll(view,
-			view.getTextArea().getSelectionStart(),
-			view.getTextArea().getSelectionEnd()))
+		int selStart = view.getTextArea().getSelectionStart();
+		int selEnd = view.getTextArea().getSelectionEnd();
+		if(view.getBuffer().replaceAll(view,selStart,selEnd))
+		{
+			/* workaround for weird Position.Bias behaviour */
+			view.getTextArea().setSelectionStart(selStart);
+		}
+		else
 		{
 			view.getToolkit().beep();
 		}

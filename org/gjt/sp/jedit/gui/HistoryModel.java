@@ -149,7 +149,7 @@ public class HistoryModel extends DefaultComboBoxModel
 
 				out.write('[');
 				out.write(model.getName());
-				out.write("\n");
+				out.write("]\n");
 
 				for(int i = 0; i < model.getSize(); i++)
 				{
