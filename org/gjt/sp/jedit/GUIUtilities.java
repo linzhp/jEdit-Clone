@@ -456,46 +456,6 @@ public class GUIUtilities
 	}
 
 	/**
-	 * Displays an input dialog box and returns any text the user entered.
-	 * The title of the dialog is fetched from
-	 * the <code><i>name</i>.title</code> property. The message is fetched
-	 * from the <code><i>name</i>.message</code> property.
-	 * @param frame The frame to display the dialog for
-	 * @param name The name of the dialog
-	 * @param history The name of the history list to use
-	 * @param def The text that appears by default
-	 */
-/*
-	public static String input(JFrame frame, String name, String history,
-		String def)
-	{
-		HistoryTextField textField = new HistoryTextField(history);
-		textField.setSelectedItem(def);
-		Object[] message = { jEdit.getProperty(name.concat(".message")),
-			textField };
-
-		JOptionPane pane = new JOptionPane(message,
-			JOptionPane.QUESTION_MESSAGE,
-			JOptionPane.OK_CANCEL_OPTION);
-		pane.selectInitialValue();
-
-		JDialog dialog = pane.createDialog(frame,
-			jEdit.getProperty(name.concat(".title")));
-		dialog.show();
-
-		Object retVal = pane.getValue();
-
-		if(retVal instanceof Integer &&
-			((Integer)retVal).intValue() == JOptionPane.OK_OPTION)
-		{
-			textField.save();
-			return (String)textField.getSelectedItem();
-		}
-		else
-			return null;
-	}
-*/
-	/**
 	 * Converts a color name to a color object. The name must either be
 	 * a known string, such as `red', `green', etc (complete list is in
 	 * the <code>java.awt.Color</code> class) or a hex color value
@@ -626,6 +586,9 @@ public class GUIUtilities
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.16  1999/04/24 01:55:28  sp
+ * MiscUtilities.constructPath() bug fixed, event system bug(s) fix
+ *
  * Revision 1.15  1999/03/26 04:14:45  sp
  * EnhancedMenuItem tinkering, fixed compile error, fixed backup bug
  *

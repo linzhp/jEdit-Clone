@@ -119,9 +119,7 @@ public class MiscUtilities
 		if(path.startsWith(File.separator))
 			return canonPath(path);
 		// windows pathnames, eg C:\document
-		else if(path.length() >= 3 && path.charAt(1) == ':'
-			&& (path.charAt(2) == '\\'
-			|| path.charAt(2) == '/'))
+		else if(path.length() >= 3 && path.charAt(1) == ':')
 			return canonPath(path);
 		// relative pathnames
 		else if(parent == null)
@@ -267,6 +265,9 @@ loop:		for(int i = 0; i < str.length(); i++)
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.9  1999/04/24 01:55:28  sp
+ * MiscUtilities.constructPath() bug fixed, event system bug(s) fix
+ *
  * Revision 1.8  1999/04/23 07:35:10  sp
  * History engine reworking (shared history models, history saved to
  * .jedit-history)

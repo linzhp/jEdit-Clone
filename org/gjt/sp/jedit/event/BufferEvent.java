@@ -58,7 +58,7 @@ public class BufferEvent extends AbstractEditorEvent
 	/**
 	 * The last event id that denotes a buffer event.
 	 */
-	public static final int BUFFER_LAST = BUFFER_FIRST + 3;
+	public static final int BUFFER_LAST = BUFFER_FIRST + 2;
 
 	/**
 	 * Creates a new buffer event.
@@ -130,6 +130,9 @@ public class BufferEvent extends AbstractEditorEvent
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.6  1999/04/24 01:55:28  sp
+ * MiscUtilities.constructPath() bug fixed, event system bug(s) fix
+ *
  * Revision 1.5  1999/03/20 04:52:55  sp
  * Buffer-specific options panel finished, attempt at fixing OS/2 caret bug, code
  * cleanups

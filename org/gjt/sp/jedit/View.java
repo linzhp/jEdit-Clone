@@ -481,8 +481,17 @@ public class View extends JFrame
 
 		bindings = new Hashtable();
 		currentPrefix = bindings;
-		
-                // Register indentation keys
+
+		jEdit.addEditorListener(editorListener = new EditorHandler());
+		bufferListener = new BufferHandler();
+
+		Buffer[] bufferArray = jEdit.getBuffers();
+		for(int i = 0; i < bufferArray.length; i++)
+		{
+			bufferArray[i].addBufferListener(bufferListener);
+		}
+
+		// Register indentation keys
 		addKeyBinding(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER,0),
 			"indent-on-enter");
                 addKeyBinding(KeyStroke.getKeyStroke(KeyEvent.VK_TAB,0),
@@ -530,14 +539,8 @@ public class View extends JFrame
 
 		propertiesChanged();
 
-		FontMetrics fm = getToolkit().getFontMetrics(textArea
-			.getFont());
-
 		if(buffer == null)
-		{
-			Buffer[] buffers = jEdit.getBuffers();
-			setBuffer(buffers[buffers.length - 1]);
-		}
+			setBuffer(bufferArray[bufferArray.length - 1]);
 		else
 			setBuffer(buffer);
 
@@ -546,6 +549,10 @@ public class View extends JFrame
 		splitter = new JSplitPane(JSplitPane.VERTICAL_SPLIT,
 			console,scroller);
 		splitter.setOneTouchExpandable(true);
+
+		FontMetrics fm = getToolkit().getFontMetrics(textArea
+			.getFont());
+
 		splitter.setPreferredSize(new Dimension(81 * fm.charWidth('m'),
 			26 * fm.getHeight()));
 
@@ -580,13 +587,6 @@ public class View extends JFrame
 
 		updateLineNumber();
 
-		bufferListener = new BufferHandler();
-
-		Buffer[] bufferArray = jEdit.getBuffers();
-		for(int i = 0; i < bufferArray.length; i++)
-			bufferArray[i].addBufferListener(bufferListener);
-
-		jEdit.addEditorListener(editorListener = new EditorHandler());
 		textArea.addKeyListener(new KeyHandler());
 		textArea.addCaretListener(new CaretHandler());
 		addKeyListener(new KeyHandler());
@@ -622,11 +622,11 @@ public class View extends JFrame
 
 		saveCaretInfo();
 
+		jEdit.removeEditorListener(editorListener);
+
 		Buffer[] bufferArray = jEdit.getBuffers();
 		for(int i = 0; i < bufferArray.length; i++)
 			bufferArray[i].removeBufferListener(bufferListener);
-
-		jEdit.removeEditorListener(editorListener);
 	}
 
 	// private members
@@ -678,7 +678,7 @@ public class View extends JFrame
 		public void bufferCreated(EditorEvent evt)
 		{
 			updateBuffersMenu();
-
+			
 			evt.getBuffer().addBufferListener(bufferListener);
 		}
 	
@@ -791,6 +791,9 @@ public class View extends JFrame
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.65  1999/04/24 01:55:28  sp
+ * MiscUtilities.constructPath() bug fixed, event system bug(s) fix
+ *
  * Revision 1.64  1999/04/23 07:35:10  sp
  * History engine reworking (shared history models, history saved to
  * .jedit-history)

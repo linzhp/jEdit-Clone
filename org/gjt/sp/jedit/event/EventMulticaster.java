@@ -50,7 +50,14 @@ public class EventMulticaster
 	 */
 	public void addListener(EventListener listener)
 	{
-		removeListener(listener);
+		EventMulticaster mx = this;
+		while(mx != null)
+		{
+			if(mx.listener == listener)
+				return;
+			mx = mx.next;
+		}
+
 		if(this.listener == null)
 			this.listener = listener;
 		else
@@ -102,7 +109,7 @@ public class EventMulticaster
 	public String toString()
 	{
 		return getClass().getName() + "[listener=" + listener +
-			(next == null ? "]" : next.toString());
+			(next == null ? "]" : "]\n" + next.toString());
 	}
 
 	// private members
@@ -120,6 +127,9 @@ public class EventMulticaster
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.4  1999/04/24 01:55:28  sp
+ * MiscUtilities.constructPath() bug fixed, event system bug(s) fix
+ *
  * Revision 1.3  1999/03/16 04:34:46  sp
  * HistoryTextField updates, moved generate-text to a plugin, fixed spelling mistake in EditAction Javadocs
  *
