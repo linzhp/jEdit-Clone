@@ -1,6 +1,6 @@
 /*
  * Buffer.java - jEdit buffer
- * Copyright (C) 1998 Slava Pestov
+ * Copyright (C) 1998, 1999 Slava Pestov
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -555,11 +555,6 @@ implements DocumentListener, UndoableEditListener
 		if(this.mode != null)
 			this.mode.leave(this);
 		this.mode = mode;
-		if(!init)
-		{
-			updateStatus();
-			updateBufferMenus();
-		}
 		if(mode == null)
 		{
 			tokenMarker = null;
@@ -570,6 +565,8 @@ implements DocumentListener, UndoableEditListener
 			colors.clear();
 			mode.enter(this);
 		}
+		updateStatus();
+		updateBufferMenus();
 	}
 
 	/**
@@ -593,7 +590,21 @@ implements DocumentListener, UndoableEditListener
 			if(mode != null)
 				setMode(mode);
 			else
-				setMode(null);
+			{
+				Element lineElement = getDefaultRootElement()
+					.getElement(0);
+				int start = lineElement.getStartOffset();
+				try
+				{
+					String line = getText(start,lineElement
+						.getEndOffset() - start - 1);
+					setMode(jEdit.getMode(jEdit.getProperty(
+						"mode.firstline." + line)));
+				}
+				catch(BadLocationException bl)
+				{
+				}
+			}
 		}
 	}
 
@@ -915,9 +926,7 @@ implements DocumentListener, UndoableEditListener
 		if(userMode != null)
 			setMode(jEdit.getMode(userMode));
 		else
-		{
 			setMode();
-		}
 		addDocumentListener(this);
 		addUndoableEditListener(this);
 		updateMarkers();
@@ -980,15 +989,7 @@ implements DocumentListener, UndoableEditListener
 			{
 				buf.append(line);
 				buf.append('\n');
-				if(count++ == 0)
-				{
-					if(mode == null)
-					{
-						setMode(jEdit.getMode(jEdit.getProperty(
-							"mode.firstline." + line)));
-					}
-				}
-				if(count < 10)
+				if(count++ < 10)
 				{
 					int index = line.indexOf("(:");
 					if(index == -1)

@@ -284,6 +284,8 @@ public class SyntaxTextArea extends JEditorPane
 			/* we do this even if the text area is read only,
 			 * otherwise stuff like line and bracket highlighting
 			 * will look weird without a caret */
+			/* There seems to be a bug in DefaultCaret.damage(),
+			 * causing the caret not to blink after this */
 			SyntaxCaret.this.setVisible(true);
 		}
 	}

@@ -91,7 +91,8 @@ implements CaretListener, KeyListener, WindowListener
 			textArea.setCaretBlinkRate(0);
 		}
 		updateOpenRecentMenu();
-		updateStatus(true);
+		if(buffer != null) /* ie, after startup */
+			updateStatus(true);
 	}
 	
 	/**
@@ -468,10 +469,6 @@ implements CaretListener, KeyListener, WindowListener
 			.VERTICAL_SCROLLBAR_ALWAYS,ScrollPaneConstants
 			.HORIZONTAL_SCROLLBAR_AS_NEEDED);	
 		status = new JLabel("Try our new product: soap! `It's fresh!'");
-		if(buffer == null)
-			setBuffer((Buffer)jEdit.getBuffers().nextElement());
-		else
-			setBuffer(buffer);
 		textArea.addKeyListener(this);
 		textArea.addCaretListener(this);
 		textArea.setBorder(null);
@@ -483,6 +480,10 @@ implements CaretListener, KeyListener, WindowListener
 		JViewport viewport = scroller.getViewport();
 		viewport.setPreferredSize(new Dimension(w * fm.charWidth('m'),
 			h * fm.getHeight()));
+		if(buffer == null)
+			setBuffer((Buffer)jEdit.getBuffers().nextElement());
+		else
+			setBuffer(buffer);
 		getContentPane().add("Center",scroller);
 		getContentPane().add("South",status);
 		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
@@ -588,7 +589,7 @@ implements CaretListener, KeyListener, WindowListener
 		}
 		catch(BadLocationException bl)
 		{
-			bl.printStackTrace();
+			//bl.printStackTrace();
 		}
 		if(lastLine == currLine && !force)
 			return;

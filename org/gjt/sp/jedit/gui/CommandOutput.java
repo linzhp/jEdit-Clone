@@ -72,7 +72,10 @@ implements KeyListener
 	{
 		if(evt.getKeyCode() == KeyEvent.VK_ESCAPE
 			|| evt.getKeyCode() == KeyEvent.VK_ENTER)
+		{
+			evt.consume();
 			dispose();
+		}
 	}
 
 	public void keyReleased(KeyEvent evt) {}
