@@ -515,6 +515,7 @@ options.general.autosave=Autosave frequency (seconds):\
 options.general.recent=Number of recent files:\ 
 options.general.clipHistory=Number of clippings in clip history:\ 
 options.general.backups=Number of backups when saving:\ 
+options.general.backupDirectory=Backup directory (none=current):\ 
 options.general.lineSeparator=Default line separator:\ 
 options.general.browser=WWW browser:\ 
 options.general.saveDesktop=Save session on exit

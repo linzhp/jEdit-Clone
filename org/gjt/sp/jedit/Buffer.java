@@ -1331,8 +1331,9 @@ loop:		for(int i = 0; i < markers.size(); i++)
 			// directory to save backups in.
 			String backupPath = jEdit.getProperty("backup.directory",
 					file.getParent());
-			backup = new File(backupPath + "" + file.getName()
-					+ (backups == 1 ? "~" : "~" + i + "~"));
+			backup = new File(backupPath + File.separator
+				+ file.getName()
+				+ (backups == 1 ? "~" : "~" + i + "~"));
 
 			if(backup.exists())
 			{
@@ -1499,6 +1500,9 @@ loop:		for(int i = 0; i < markers.size(); i++)
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.64  1999/03/24 09:33:22  sp
+ * Fixed backup.directory bug, updated options dialog, updated documentation
+ *
  * Revision 1.63  1999/03/24 05:45:27  sp
  * Juha Lidfors' backup directory patch, removed debugging messages from various locations, documentation updates
  *

@@ -81,12 +81,13 @@ org.gjt.sp.jedit.syntax.SyntaxEditorKit</a>, and setting it to edit an
 instance of <a href=api/org.gjt.sp.jedit.syntax.DefaultSyntaxDocument.html>
 org.gjt.sp.jedit.syntax.DefaultSyntaxDocument</a>.<p>
 
-<code>DefaultSyntaxDocument</code> is a subclass of <code>PlainDocument</code>,
+<code>DefaultSyntaxDocument</code> is a subclass of <code>PlainDocument</code>;
 sometimes, a different document type might be necessary (eg, when
-you need a <code>StyledDocument</code> to store various attributes about
-the text). In those situations, the more abstract
+you need a <code>StyledDocument</code> to be able to store various attributes
+with the text). In those situations, the document to be colorized should
+implement the more abstract
 <a href=api/org.gjt.sp.jedit.syntax.SyntaxDocument.html>SyntaxDocument</a>
-interface will have to be used.
+interface.
 
 </body>
 </html>
