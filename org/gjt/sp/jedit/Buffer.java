@@ -232,6 +232,8 @@ public class Buffer extends DefaultSyntaxDocument
 				File autosaveTmp = new File(autosaveFile
 					.getPath().concat("+tmp+#"));
 				save(new FileOutputStream(autosaveTmp));
+				/* workaround for JDK 1.2 bug */
+				autosaveFile.delete();
 				autosaveTmp.renameTo(autosaveFile);
 				/* XXX race alert if dirty() runs here */
 				adirty = false;
@@ -1427,6 +1429,9 @@ loop:		for(int i = 0; i < markers.size(); i++)
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.70  1999/04/02 00:39:19  sp
+ * Fixed console bug, syntax API changes, minor jEdit.java API change
+ *
  * Revision 1.69  1999/03/28 01:36:24  sp
  * Backup system overhauled, HistoryTextField updates
  *

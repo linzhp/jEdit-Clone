@@ -70,11 +70,30 @@ public interface SyntaxDocument extends Document
 	 * @param colors The new color dictionary
 	 */
 	public void setColors(Dictionary colors);
+
+	/**
+	 * Reparses the document, by passing all lines to the token
+	 * marker. This should be called after the document is first
+	 * loaded.
+	 */
+	public void tokenizeLines();
+
+	/**
+	 * Reparses the document, by passing the specified lines to the
+	 * token marker. This should be called after a large quantity of
+	 * text is first inserted.
+	 * @param start The first line to parse
+	 * @param len The number of lines, after the first one to parse
+	 */
+	public void tokenizeLines(int start, int len);
 }
 
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.3  1999/04/02 00:39:19  sp
+ * Fixed console bug, syntax API changes, minor jEdit.java API change
+ *
  * Revision 1.2  1999/03/22 04:20:01  sp
  * Syntax colorizing updates
  *

@@ -87,6 +87,8 @@ implements ActionListener, ListSelectionListener
 		{
 			// append .exe to command name on Windows and OS/2
 			int dotIndex = command.indexOf('.');
+			if(spaceIndex == -1)
+				spaceIndex = command.length();
 			if(dotIndex == -1 || dotIndex > spaceIndex)
 			{
 				command = command.substring(0,spaceIndex)
@@ -450,6 +452,9 @@ implements ActionListener, ListSelectionListener
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.19  1999/04/02 00:39:19  sp
+ * Fixed console bug, syntax API changes, minor jEdit.java API change
+ *
  * Revision 1.18  1999/04/01 04:13:00  sp
  * Bug fixing for 1.5final
  *

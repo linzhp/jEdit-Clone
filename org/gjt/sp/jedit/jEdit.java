@@ -41,13 +41,13 @@ public class jEdit
 	/**
 	 * The jEdit version.
 	 */
-	public static final String VERSION = "1.5final";
+	public static final String VERSION = "1.5.1";
 	
 	/**
 	 * The date when a change was last made to the source code,
 	 * in <code>YYYYMMDD</code> format.
 	 */
-	public static final String BUILD = "19990401";
+	public static final String BUILD = "19990402";
 
 	/**
 	 * AWK regexp syntax.
@@ -260,20 +260,15 @@ public class jEdit
 		try
 		{
 			loadProps(jEdit.class.getResourceAsStream(
-				"/org/gjt/sp/jedit/jedit.props"),
-				jEditHome + "jedit.props");
+				"/org/gjt/sp/jedit/jedit.props"));
 			loadProps(jEdit.class.getResourceAsStream(
-				"/org/gjt/sp/jedit/jedit_gui.props"),jEditHome
-				+ "jedit_gui.props");
+				"/org/gjt/sp/jedit/jedit_gui.props"));
 			loadProps(jEdit.class.getResourceAsStream(
-				"/org/gjt/sp/jedit/jedit_keys.props"),jEditHome
-				+ "jedit_keys.props");
+				"/org/gjt/sp/jedit/jedit_keys.props"));
 			loadProps(jEdit.class.getResourceAsStream(
-				"/org/gjt/sp/jedit/jedit_predef.props"),jEditHome
-				+ "jedit_predef.props");
+				"/org/gjt/sp/jedit/jedit_predef.props"));
 			loadProps(jEdit.class.getResourceAsStream(
-				"/org/gjt/sp/jedit/jedit_tips.props"),jEditHome
-				+ "jedit_tips.props");	
+				"/org/gjt/sp/jedit/jedit_tips.props"));	
 		}
 		catch(Exception e)
 		{
@@ -401,7 +396,7 @@ public class jEdit
 		{
 			try
 			{
-				loadProps(null,USER_PROPS);
+				loadProps(new FileInputStream(USER_PROPS));
 			}
 			catch(FileNotFoundException fnf)
 			{
@@ -480,18 +475,15 @@ public class jEdit
 	}
 
 	/**
-	 * Loads the properties from the specified input stream, or if it's
-	 * null, the specified file.
+	 * Loads the properties from the specified input stream. This
+	 * calls the <code>load()</code> method of the properties object
+	 * and closes the stream.
 	 * @param in The input stream
-	 * @param name The file name
-	 * @exception FileNotFoundException if the file could not be found
 	 * @exception IOException if an I/O error occured
 	 */
-	public static void loadProps(InputStream in, String name)
-		throws FileNotFoundException, IOException
+	public static void loadProps(InputStream in)
+		throws IOException
 	{
-		if(in == null)
-			in = new FileInputStream(name);
 		props.load(in);
 		in.close();
 	}
@@ -1525,6 +1517,9 @@ public class jEdit
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.67  1999/04/02 00:39:19  sp
+ * Fixed console bug, syntax API changes, minor jEdit.java API change
+ *
  * Revision 1.66  1999/04/01 04:27:07  sp
  * fixed silly jEdit.java bug
  *

@@ -4,6 +4,7 @@
 
 <ul>
 <li><a href=#todo>To Do</a>
+<li><a href=#151>Version 1.5.1</a>
 <li><a href=#15final>Version 1.5final</a>
 <li><a href=#15pre4>Version 1.5pre4</a>
 <li><a href=#15pre3>Version 1.5pre3</a>
@@ -23,6 +24,24 @@ all modes, so it's a bottleneck in some global method
 <li>DefaultSyntaxDocument calls insertLines() twice for each new line
 (Swing bug/limitation?)
 <li>HyperSearch should switch the view to the correct buffer, if necessary
+</ul>
+
+<a name=151>
+<h1>Version 1.5.1</h1>
+</a>
+
+<h2>Enhancements</h2>
+
+<ul>
+<li>Minor update to version1.5.html
+<li>API change: SyntaxDocument interface now includes tokenizeLines() methods
+<li>API change: jEdit.loadProps() behaves differently
+</ul>
+
+<h2>Bug Fixes</h2>
+
+<ul>
+<li>Fixed StringIndexOutOfBounds exception that could be thrown on Windows
 </ul>
 
 <a name=15final>
