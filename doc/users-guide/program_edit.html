@@ -8,7 +8,7 @@
 <li><a href=#bracket>Bracket Matching</a>
 <li><a href=#autoindent>Indentation</a>
 <li><a href=#colorizing>Syntax Colorizing</a>
-<li><a href=#comment>Commenting and Uncommenting</a>
+<li><a href=#comment>Commenting</a>
 </ul>
 
 <a name=intro>
@@ -67,17 +67,39 @@ specify the following in one of the first 10 lines of your Lisp file:
 :openIndentBrackets=(:closingIndentBrackets=):
 </code></blockquote>
 The above example doesn't demonstrate this, but multiple brackets can also
-be specified in both lists.
+be specified in both lists.<p>
+
+Auto indent's behaviour can be changed - for example, it can be set to
+indent on Enter instead of Tab. Also, it can be disabled.
+
+<ul>
+<li>To change auto indent behaviour on a global basis, see
+`Tools-&gt;Global Options-&gt;Editor'.
+<li>To change auto indent behaviour  for the current file for the duration
+of the current editing session only, see `Tools-&gt;Buffer Options'.
+<li>To change auto indent behaviour for the current file for future editing
+sessions, set the `indentOnTab' and `indentOnEnter' buffer-local properties by
+entering the following in one of the first 10 lines of the file:
+
+<blockquote><code>
+:indentOnTab=<i>flag</i>:indentOnEnter=<i>flag</i>:
+</code></blockquote>
+
+Of course replacing <i>flag</i> with either `on' or `off'.
+</ul>
 
 <h2>Changing the Tab Width</h2>
 
 The Tab width can be specified on either a global or file-by-file basis.
 <ul>
-<li>To set the tab width for all files edited within jEdit, specify the
-desired width in `Tools-&gt;Options-&gt;Editor'.
-<li>To set the tab width on a file-by-file basis, set the `tabSize'
-buffer-local property to the desired size, for example by putting the
-following in one of the first 10 lines of the file:
+<li>To set the tab width on a global basis, specify the
+desired width in `Tools-&gt;Global Options-&gt;Editor'.
+<li>To set the tab width for the current file for the duration of
+the current editing session only, specify the desired width in
+`Tools-&gt;Buffer Options'.
+<li>To set the tab width for the current file for future editing
+sessions, set the `tabSize' buffer-local property to the desired size
+by entering the following in one of the first 10 lines of the file:
 <blockquote><code>:tabSize=4:</code></blockquote>
 Of course replacing 4 with the desired tab size.<p>
 </ul>
@@ -87,10 +109,13 @@ Of course replacing 4 with the desired tab size.<p>
 If you prefer to use `soft' tabs - ie, multiple spaces inserted when
 you press Tab, you can do one of the following:
 <ul>
-<li>To enable soft tabs for all files edited within jEdit, specify so in
-`Tools-&gt;Options-&gt;Editor'.
-<li>To enable soft tabs on a file-by-file basis, set the `noTabs' buffer-local
-property to `yes', for example by putting the following in one of the first 10
+<li>To enable soft tabs on a global basis, see
+`Tools-&gt;Global Options-&gt;Editor'.
+<li>To enable soft tabs for the current file for the duration of the
+current editing session only, see `Tools-&gt;Buffer Options'.
+<li>To enable soft tabs for the current file for future editing sessions,
+set the `noTabs' buffer-local
+property to `yes', by entering the following in one of the first 10
 lines of the file:
 <blockquote><code>:noTabs=yes:</code></blockquote>
 </ul>
@@ -122,15 +147,31 @@ Syntax colorizing makes errors such as misplaced quotes, mispelt
 keywords, etc easier to see. It also makes complex program source
 easier to read.<p>
 
+Syntax colorizing can be enabled either on a global or file-by-file
+basis.
+
+<ul>
+<li>To set syntax colorizing on a global basis, see
+`Tools-&gt;Global Options-&gt;Editor'.
+<li>To set syntax colorizing for the current file for the duration of the
+current editing session only, see `Tools-&gt;Buffer Options'.
+<li>To set syntax colorizing for the current file for future editing sessions,
+set the `syntax' buffer-local
+property, by entering the following in one of the first 10
+lines of the file:
+<blockquote><code>:syntax=<i>flag</i>:</code></blockquote>
+Where flag is either `on' or `off'.
+</ul>
+
 <b>Hint:</b> syntax colorizing is performed when printing, too.
 
 <a name=comment>
-<h1>Commenting and Uncommenting</h1>
+<h1>Commenting</h1>
 </a>
 
 Most programming languages support comments, which are ignored by
 the language's compiler/interpreter. jEdit has the following commands for
-commenting and uncommenting text:
+commenting text:
 
 <ul>
 <li><b>Edit-&gt;Code Block Operations-&gt;Wing Comment</b> - surrounds the
@@ -160,8 +201,6 @@ of box commented Java code:
 	* System.out.println("Done.");
 	* System.exit(0); */
 </pre>
-<!--<li><b>Edit-&gt;Code Block Operations-&gt;Uncomment</b> - tries to remove
-any comment strings from the start and end of every line of the selection.-->
 </ul>
 
 The comment characters can be reassigned on a file-by-file basis by

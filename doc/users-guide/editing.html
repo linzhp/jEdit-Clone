@@ -58,7 +58,7 @@ A number of `switches' can also be passed to jEdit.
 	--: End of options<br>
 </code></blockquote>
 
-Because the `-' character is reserved for switches, you must enter the
+Because the `-' character is used for switches, you must enter the
 `--' parameter prior to any file names that start with `-'.
 
 <blockquote><code>jedit -- -filename</code></blockquote>
@@ -85,7 +85,7 @@ exact protocols available depend on the Java implementation - most support
 or URL specified by the currently selected text.
 <li><b>With the `File-&gt;Open Recent' menu. </b>- This menu displays
 the most recently opened files, 8 by default but this can be changed in
-`Tools-&gt;Options-&gt;General.
+`Tools-&gt;Options-&gt;General'.
 <li><b>With the `File-&gt;New File' command.</b> - This command creates an
 empty file named `Untitled-<i>n</i>' where <i>n</i> is the number of `Untitled'
 files open so far. The new file isn't actually created on disk until you save;
@@ -123,7 +123,7 @@ If jEdit crashes, there is still a good chance that you will be able
 to recover any unsaved changes.<p>
 
 Every 15 seconds (the interval can be changed in
-`Tools-&gt;Options-&gt;General') a copy of every open file with unsaved
+`Tools-&gt;Global Options-&gt;General') a copy of every open file with unsaved
 changes is written out to #<i>filename</i># where <i>filename</i> is the name
 of the file. If jEdit crashes (or you do a file listing in a directory
 which contains files open in jEdit) you will see these autosave files.<p>
@@ -143,7 +143,7 @@ saved. The result is that the backup always contains the file, as it was
 before you started editing it.<p>
 
 Multiple backups (named <i>filename</i>~1~, <i>filename</i>~2~,
-<i>filename</i>~3~ and so on) can be enabled `Tools-&gt;Options-&gt;General'.
+<i>filename</i>~3~ and so on) can be enabled `Tools-&gt;Global Options-&gt;General'.
 
 <a name=sendPrint>
 <h1>Sending and Printing Files</h1>

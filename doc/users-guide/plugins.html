@@ -7,6 +7,7 @@
 <li><a href=#plugins>Introduction</a>
 <li><a href=#installing>Installing Plugins</a>
 <li><a href=#using>Using Plugins</a>
+<li><a href=#help>Getting Help For Plugins</a>
 </ul>
 
 <a name=plugins>
@@ -37,8 +38,9 @@ Files\jEdit\jars. The user plugin directory is %JAVAHOME%\.jedit-jars.<p>
 
 On Windows NT, the system plugin directory is the same as that on
 Windows 95/98, but each user has a plugin directory in
-%HOME%\.jedit-jars.
-<p>
+%HOMEDIR%\.jedit-jars.
+
+
 <a name=using>
 <h1>Using Plugins</h1>
 </a><p>
@@ -47,7 +49,7 @@ Once a plugin is installed, jEdit will say so during startup.
 
 <blockquote><code>
 	Scanning JAR file: /home/slava/.jedit-jars/rot13.jar
-	-- loaded plugin: rot13
+	-- loaded plugin: Rot13Plugin
 </code></blockquote>
 
 If all goes well during startup, the plugins should also appear in the
@@ -56,6 +58,16 @@ If all goes well during startup, the plugins should also appear in the
 jEdit comes with several plugins that convert accented characters to HTML
 entities and vice versa, reverse text, and rot13 text. They are installed
 when jEdit is installed.
+
+<a name=help>
+<h1>Getting Help For Plugins</h1>
+</a>
+
+Well-behaved plugins should have an entry in
+Help-&gt;Plugins Help Contents. It should contain
+information about the plugin's use. You can jump to the plugin
+documentation directly by clicking <a href=jeditplugins:>
+here</a>.
 
 </body>
 </html>

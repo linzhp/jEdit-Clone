@@ -1,17 +1,15 @@
 <html>
 <head>
-<title>jEdit Plugin Development</title>
+<title>General Information</title>
 </head>
 <body>
-<h1>jEdit Plugin Development</h1>
-
-Before reading this document, you should be familiar with the
-<a href=plugins.html>jEdit Plugins</a> help topic.
+<h1>General Information</h1>
 
 <ul>
 <li><a href=#intro>Introduction</a>
 <li><a href=#jar>Contents of JAR Files</a>
 <li><a href=#plugin>Plugin Interface</a>
+<li><a href=#props>Plugin Properties</a>
 </ul>
 
 <a name=intro>
@@ -29,7 +27,7 @@ loads the contents of the JAR files.
 Any files whose names end with .props found in the JAR file are loaded into
 the jEdit property table, and their contents can be accessed with the
 <code>jEdit.getProperty()</code> method. See the
-<a href=api/org.gjt.sp.jedit.jEdit.html>org.gjt.sp.jedit.jEdit</a>
+<a href=../api/org.gjt.sp.jedit.jEdit.html>org.gjt.sp.jedit.jEdit</a>
 class for details.<p>
 
 Class files whose names end with `Plugin' (eg, Rot13Plugin) are loaded,
@@ -41,24 +39,41 @@ only when they're referenced by another class.
 </a>
 
 The only type of class file loaded immediately is that which implements
-the <a href=api/org.gjt.sp.jedit.Plugin.html>org.gjt.sp.jedit.Plugin</a>
+the <a href=../api/org.gjt.sp.jedit.Plugin.html>org.gjt.sp.jedit.Plugin</a>
 interface - therefore an implementation must be provided to load any
 other actions and modes supplied with the plugin.<p>
 
 Due to the way the class loader works, the names of Plugin implementations
 must end with `Plugin'.<p>
 
-The <code>getName()</code> method isn't currently used, by a meaningful
-value should be returned for future compatibility.<p>
-
 In the <code>start()</code> method, one would usually register any actions
 and modes with jEdit via the <code>jEdit.addPluginAction()</code> and
 <code>jEdit.addMode()</code> methods. See the
-<a href=api/org.gjt.sp.jedit.jEdit.html>org.gjt.sp.jedit.jEdit</a>
+<a href=../api/org.gjt.sp.jedit.jEdit.html>org.gjt.sp.jedit.jEdit</a>
 class for details.<p>
 
 The <code>stop()</code> method should do what is appropriate on exiting,
 for example deleting any temporary files created by the plugin.
 
+<a name=props>
+<h1>Plugin Properties</h1>
+</a>
+
+The following properties are used by jEdit (currently, by the
+help system only):
+
+<ul>
+<li><code>plugin.<i>plugin class</i>.name</code> - human readable/localised
+name
+<li><code>plugin.<i>plugin class</i>.author</code> - the author of the
+plugin
+<li><code>plugin.<i>plugin class</i>.version</code> - plugin version
+<li><code>plugin.<i>plugin class</i>.docs</code> - name of HTML file,
+relative to root directory of JAR, where documentation for this plugin
+is stored
+</ul>
+
+All of these properties must be defined for the plugin to have an entry
+in the help system.
 </body>
 </html>

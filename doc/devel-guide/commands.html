@@ -12,11 +12,11 @@
 </a>
 
 To write a jEdit command, an implementation of the
-<a href=api/org.gjt.sp.jedit.EditAction.html>org.gjt.sp.jedit.EditAction</a>
+<a href=../api/org.gjt.sp.jedit.EditAction.html>org.gjt.sp.jedit.EditAction</a>
 class must be provided, and an instance of the command must be added to
 jEdit's command list with either the <code>addAction()</code> or
 <code>addPluginAction()</code> method of the
-<a href=api/org.gjt.sp.jedit.jEdit.html>org.gjt.sp.jedit.jEdit</a>
+<a href=../api/org.gjt.sp.jedit.jEdit.html>org.gjt.sp.jedit.jEdit</a>
 class.<p>
 
 The difference between the two methods is that <code>addAction</code>
@@ -25,7 +25,7 @@ doesn't list the action in the `Tools-&gt;Plugins' menu, while
 should be used in most circumstances.<p>
 
 Commands should be registered in the <code>start()</code> method of
-the plugin - see the <a href=plugin_general.html>jEdit Plugin
+the plugin - see the <a href=general.html>jEdit Plugin
 Development</a> help topic for details.
 
 <b>XXX - not finished</b>

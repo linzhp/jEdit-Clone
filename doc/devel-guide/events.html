@@ -22,7 +22,9 @@
 
 In order to allow various components to communicate without having
 knowledge of each other's internals, jEdit has an event system, much like
-that of the AWT.
+that of the Java AWT toolkit. The event system consists of various
+<i>event sources</i> which fire event objects at any registered
+<i>event listeners</i>.
 
 <a name=over>
 <h1>Overview</h1>
@@ -33,21 +35,21 @@ event type it can fire:
 
 <ul>
 <li><code>add<i>Type</i>Listener(<i>Type</i>Listener listener)</code> -
-adds a listener for events of type <i>Type</i> to that object
+adds a listener for events of type <i>Type</i> to that event source
 <li><code>remove<i>Type</i>Listener(<i>Type</i>Listener listener)</code> -
-removes a listener for events of type <i>Type</i> from that object
+removes a listener for events of type <i>Type</i> from that event source
 <li><code>fire<i>Type</i>Event(<i>Type</i>Event evt)</code> - fires the
 specified event to all registered listeners
 </ul>
 
 An <i>event</i> is an object that carries various pieces of information,
 such as the event subtype, the time when the event was fired, and what
-objects, if any, were involved. All jEdit events extend the
-<a href=api/org.gjt.sp.jedit.event.AbstractEditorEvent.html>
+other objects, if any, were involved. All jEdit events extend the
+<a href=../api/org.gjt.sp.jedit.event.AbstractEditorEvent.html>
 org.gjt.sp.jedit.event.AbstractEditorEvent</a> class.<p>
 
 A <i>listener</i> is an interface that defines one method for each event
-subtype. All jEdit listeners extend the
+subtype. All jEdit listeners implement the
 <code>java.util.EventListener</code> interface.<p>
 
 An <i>adapter</i> is a special type of listener. It is a class that
@@ -79,22 +81,22 @@ of the following:
 The following methods relate to editor events:
 
 <ul>
-<li><a href=api/org.gjt.sp.jedit.jEdit.html#addEditorListener(org.gjt.sp.jedit.event.EditorListener)>
+<li><a href=../api/org.gjt.sp.jedit.jEdit.html#addEditorListener(org.gjt.sp.jedit.event.EditorListener)>
 jEdit.addEditorListener()</a>
-<li><a href=api/org.gjt.sp.jedit.jEdit.html#removeEditorListener(org.gjt.sp.jedit.event.EditorListener)>
+<li><a href=../api/org.gjt.sp.jedit.jEdit.html#removeEditorListener(org.gjt.sp.jedit.event.EditorListener)>
 jEdit.removeEditorListener()</a>
-<li><a href=api/org.gjt.sp.jedit.jEdit.html#fireEditorEvent(org.gjt.sp.jedit.event.EditorEvent)>
+<li><a href=../api/org.gjt.sp.jedit.jEdit.html#fireEditorEvent(org.gjt.sp.jedit.event.EditorEvent)>
 jEdit.fireEditorEvent()</a> (not normally used)
 </ul>
 
 The following classes and interfaces relate to editor events:
 
 <ul>
-<li><a href=api/org.gjt.sp.jedit.event.EditorEvent.html>
+<li><a href=../api/org.gjt.sp.jedit.event.EditorEvent.html>
 EditorEvent</a>
-<li><a href=api/org.gjt.sp.jedit.event.EditorListener.html>
+<li><a href=../api/org.gjt.sp.jedit.event.EditorListener.html>
 EditorListener</a>
-<li><a href=api/org.gjt.sp.jedit.event.EditorAdapter.html>
+<li><a href=../api/org.gjt.sp.jedit.event.EditorAdapter.html>
 EditorAdapter</a>
 </ul>
 
@@ -108,29 +110,28 @@ are used to notify listeners of the following:
 <ul>
 <li>The dirty flag being set and cleared (buffer being modified and saved)
 <li>Markers being added and removed
-<li>The line separator being changed
 <li>The edit mode being changed
 </ul>
 
 The following methods relate to buffer events:
 
 <ul>
-<li><a href=api/org.gjt.sp.jedit.Buffer.html#addBufferListener(org.gjt.sp.jedit.event.BufferListener)>
+<li><a href=../api/org.gjt.sp.jedit.Buffer.html#addBufferListener(org.gjt.sp.jedit.event.BufferListener)>
 Buffer.addBufferListener()</a>
-<li><a href=api/org.gjt.sp.jedit.Buffer.html#removeBufferListener(org.gjt.sp.jedit.event.BufferListener)>
+<li><a href=../api/org.gjt.sp.jedit.Buffer.html#removeBufferListener(org.gjt.sp.jedit.event.BufferListener)>
 Buffer.removeBufferListener()</a>
-<li><a href=api/org.gjt.sp.jedit.Buffer.html#fireBufferEvent(org.gjt.sp.jedit.event.BufferEvent)>
+<li><a href=../api/org.gjt.sp.jedit.Buffer.html#fireBufferEvent(org.gjt.sp.jedit.event.BufferEvent)>
 Buffer.fireBufferEvent()</a> (not normally used)
 </ul>
 
 The following classes and interfaces relate to buffer events:
 
 <ul>
-<li><a href=api/org.gjt.sp.jedit.event.BufferEvent.html>
+<li><a href=../api/org.gjt.sp.jedit.event.BufferEvent.html>
 BufferEvent</a>
-<li><a href=api/org.gjt.sp.jedit.event.BufferListener.html>
+<li><a href=../api/org.gjt.sp.jedit.event.BufferListener.html>
 BufferListener</a>
-<li><a href=api/org.gjt.sp.jedit.event.BufferAdapter.html>
+<li><a href=../api/org.gjt.sp.jedit.event.BufferAdapter.html>
 BufferAdapter</a>
 </ul>
 
@@ -149,22 +150,22 @@ used to notify listeners of the following:
 The following methods relate to view events:
 
 <ul>
-<li><a href=api/org.gjt.sp.jedit.View.html#addViewListener(org.gjt.sp.jedit.event.ViewListener)>
+<li><a href=../api/org.gjt.sp.jedit.View.html#addViewListener(org.gjt.sp.jedit.event.ViewListener)>
 View.addViewListener()</a>
-<li><a href=api/org.gjt.sp.jedit.View.html#removeViewListener(org.gjt.sp.jedit.event.ViewListener)>
+<li><a href=../api/org.gjt.sp.jedit.View.html#removeViewListener(org.gjt.sp.jedit.event.ViewListener)>
 View.removeViewListener()</a>
-<li><a href=api/org.gjt.sp.jedit.View.html#fireViewEvent(org.gjt.sp.jedit.event.ViewEvent)>
+<li><a href=../api/org.gjt.sp.jedit.View.html#fireViewEvent(org.gjt.sp.jedit.event.ViewEvent)>
 View.fireViewEvent()</a> (not normally used)
 </ul>
 
 The following classes and interfaces relate to view events:
 
 <ul>
-<li><a href=api/org.gjt.sp.jedit.event.ViewEvent.html>
+<li><a href=../api/org.gjt.sp.jedit.event.ViewEvent.html>
 ViewEvent</a>
-<li><a href=api/org.gjt.sp.jedit.event.ViewListener.html>
+<li><a href=../api/org.gjt.sp.jedit.event.ViewListener.html>
 ViewListener</a>
-<li><a href=api/org.gjt.sp.jedit.event.ViewAdapter.html>
+<li><a href=../api/org.gjt.sp.jedit.event.ViewAdapter.html>
 ViewAdapter</a>
 </ul>
 
@@ -173,7 +174,7 @@ ViewAdapter</a>
 </a>
 
 The
-<a href=api/org.gjt.sp.jedit.event.EventMulticaster.html>EventMulticaster</a>
+<a href=../api/org.gjt.sp.jedit.event.EventMulticaster.html>EventMulticaster</a>
 class is the core of the jEdit event system. It manages lists of event
 listeners and fires events at them. If you wish to implement your own event
 source and/or event type, this class is the easiest way to do so. It implements

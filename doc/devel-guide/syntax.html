@@ -25,22 +25,22 @@ system.
 <h1>Overview</h1>
 </a>
 
-jEdit's syntax colorizing system is composed of several layers. At the
+jEdit's syntax colorizing system is composed of several components. At the
 lowest level is an instance of
-<a href=api/org.gjt.sp.jedit.syntax.TokenMarker.html>
+<a href=../api/org.gjt.sp.jedit.syntax.TokenMarker.html>
 org.gjt.sp.jedit.syntax.TokenMarker</a>, which parses lines of text and
 returns a linked list of tokens, each token containing a token type and
 length.<p>
 
-Further up is the <a href=api/org.gjt.sp.jedit.syntax.SyntaxView.html>
+Further up is the <a href=../api/org.gjt.sp.jedit.syntax.SyntaxView.html>
 org.gjt.sp.jedit.syntax.SyntaxView</a> class, which paints tokenized
 lines.<p>
 
-The <a href=api/org.gjt.sp.jedit.syntax.SyntaxEditorKit.html>
+The <a href=../api/org.gjt.sp.jedit.syntax.SyntaxEditorKit.html>
 org.gjt.sp.jedit.syntax.SyntaxEditorKit</a> creates instances of
-the <code>SyntaxView</code> class.
+the <code>SyntaxView</code> class.<p>
 
-Finally, the <a href=api/org.gjt.sp.jedit.syntax.SyntaxTextArea.html>
+Finally, the <a href=../api/org.gjt.sp.jedit.syntax.SyntaxTextArea.html>
 org.gjt.sp.jedit.syntax.SyntaxTextArea</a> class provides an easy
 way t use the above, along with bracket matching and a number of other
 useful features.
@@ -51,14 +51,14 @@ useful features.
 
 Extending jEdit's syntax colorizing system is actually quite easy.
 One needs to implement a subclass of the
-<a href=api/org.gjt.sp.jedit.syntax.TokenMarker.html>
+<a href=../api/org.gjt.sp.jedit.syntax.TokenMarker.html>
 org.gjt.sp.jedit.syntax.TokenMarker</a> class.<p>
 
 Once a token marker exists, an implementation of
-<a href=api/org.gjt.sp.jedit.syntax.Mode.html>
+<a href=../api/org.gjt.sp.jedit.syntax.Mode.html>
 org.gjt.sp.jedit.syntax.Mode</a> needs to be provided, that returns
 a new instance of the token marker in the <code>createTokenMarker</code>
-method.
+method.<p>
 
 Because there are many tricks you can use when writing token markers,
 studying the source to one can be a great help. The two most complicated
@@ -74,24 +74,22 @@ The easiest way to describe how this is done is with a live code
 example:
 
 <pre>
+<font color=red>/* Create a new SyntaxTextArea */
 SyntaxTextArea textArea = <font color=blue>new</font> SyntaxTextArea();
 
 <font color=red>/* Enable bracket highlighting (optional) */</font>
 textArea.setBracketHighlight(<font color=blue>true</font>);
 
-<font color=red>/* Fetch it's document */</font>
+<font color=red>/* Fetch the text area's document */</font>
 DefaultSyntaxDocument document =
 	(DefaultSyntaxDocument)textArea.getDocument();
 
 <font color=red>/* Give it a token marker */</font>
 document.setTokenMarker(<font color=blue>new</font> JavaTokenMarker());
-
-<font color=red>/* Give it a color table */</font>
-document.setColors(SyntaxUtilities.getDefaultSyntaxColors());
 </pre>
 
 Basically, it boils down to creating an
-<a href=api/org.gjt.sp.jedit.syntax.SyntaxTextArea.html>
+<a href=../api/org.gjt.sp.jedit.syntax.SyntaxTextArea.html>
 org.gjt.sp.jedit.syntax.SyntaxTextArea</a> instance
 and setting the appropriate properties of it's document.<p>
 
@@ -106,11 +104,11 @@ This step isn't strictly necessary, but without it long
 multiline statements might get colorized wrong.<p>
 
 By default, <code>SyntaxTextArea</code> uses an
-<a href=api/org.gjt.sp.jedit.syntax.DefaultSyntaxDocument.html>
+<a href=../api/org.gjt.sp.jedit.syntax.DefaultSyntaxDocument.html>
 org.gjt.sp.jedit.syntax.DefaultSyntaxDocument</a> as it's document.
 In some situations, <code>DefaultSyntaxDocument</code> is not
 appropriate - the lower level
-<a href=api/org.gjt.sp.jedit.syntax.SyntaxDocument.html>
+<a href=../api/org.gjt.sp.jedit.syntax.SyntaxDocument.html>
 org.gjt.sp.jedit.syntax.SyntaxDocument</a> interface can be used
 instead.
 

@@ -33,7 +33,7 @@ cuts down on memory usage because there is only one instance of jEdit open
 at any one time.
 
 The server can be disabled either on a `one-time' basis with the
-`-noserver' switch, or permanently in `Tools-&gt;Options-&gt;General'.
+`-noserver' switch, or permanently in `Tools-&gt;Global Options-&gt;General'.
 
 <a name=desktop>
 <h1>Session Management</h1>
@@ -44,7 +44,7 @@ to the properties, so that the next time jEdit is started with no
 command line parameters, it can reopen those files.<p>
 
 Session management can be disabled either on a `one-time' basis with the
-`-nodesktop' switch, or permanently in `Tools-&gt;Options-&gt;General'.
+`-nodesktop' switch, or permanently in `Tools-&gt;Global Options-&gt;General'.
 
 <a name=lineSep>
 <h1>Line Separator Characters</h1>
@@ -55,10 +55,10 @@ characters. On Windows, it is CRLF (\r\n), on MacOS it is CR (\r) and on Unix,
 LF (\n). jEdit opens and saves files with all three line separators.<p>
 
 For existing files, jEdit uses the line separator from that file when saving.
-It can be changed on a file-by-file basis by selecting it from the
-`File-&gt;Line Separator' menu
+It can be changed on a file-by-file basis by selecting it in
+`Tools-&gt;Buffer Options' menu
 The line separator for new files can be specified in
-`Tools-&gt;Options-&gt;General'.
+`Tools-&gt;Global Options-&gt;General'.
 
 <a name=modes>
 <h1>Edit Modes</h1>
@@ -71,8 +71,8 @@ comment strings, and so on.<p>
 
 To determine which edit mode to use for a file, jEdit looks at the file
 name, file extension, and first line of the file. The mode can also be
-specified `manually'; either for the current session by selecting it
-from the `Tools-&gt;Mode' menu, or permanently by entering the following
+specified `manually'; either for the current session by specifying it in
+`Tools-&gt;Buffer Options', or permanently by entering the following
 in one of the first 10 lines of the file whose edit mode you want to
 set:
 <blockquote><code>:mode=sh:</code></blockquote>
@@ -93,14 +93,8 @@ test.BAT will all be edited with the Batch File mode.
 </tr>
 
 <tr>
-<td>Text</td> <td>none</td> <td></td> <td>Automatically selected
+<td>Text</td> <td>text</td> <td></td> <td>Automatically selected
 for files without a specific edit mode.</td>
-</tr>
-
-<tr>
-<td>Auto Indent</td> <td>autoindent</td> <td></td>
-<td>Implements semi-intelligent
-indentation. Most other modes subclass this one.</td>
 </tr>
 
 <tr>
@@ -130,7 +124,7 @@ or `.cxx'.</td> <td>For editing C++ source.</td>
 </tr>
 
 <tr>
-<td>Java</td> <td>java_mode</td> <td>Files with extension `.java'.</td>
+<td>Java</td> <td>java</td> <td>Files with extension `.java'.</td>
 <td>For editing Java source.</td>
 </tr>
 
