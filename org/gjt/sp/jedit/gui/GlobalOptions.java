@@ -53,7 +53,7 @@ implements ActionListener, KeyListener, WindowListener
 		cancel = new JButton(jEdit.getProperty("options.cancel"));
 		cancel.addActionListener(this);
 		buttons.add(cancel);
-		getContentPane().add(BorderLayout.CENTER,buttons);
+		getContentPane().add(BorderLayout.SOUTH,buttons);
 		addKeyListener(this);
 		addWindowListener(this);
 		Dimension screen = getToolkit().getScreenSize();
@@ -132,6 +132,9 @@ implements ActionListener, KeyListener, WindowListener
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.4  1999/03/21 01:07:27  sp
+ * Fixed stupid bug in global options
+ *
  * Revision 1.3  1999/03/20 05:23:32  sp
  * Code cleanups
  *
