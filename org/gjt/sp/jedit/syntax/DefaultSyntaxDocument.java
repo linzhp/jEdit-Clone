@@ -20,7 +20,7 @@ package org.gjt.sp.jedit.syntax;
 
 import javax.swing.event.*;
 import javax.swing.text.*;
-import java.util.*;
+import java.awt.Color;
 
 /**
  * A simple implementation of <code>SyntaxDocument</code>. It also takes
@@ -39,8 +39,8 @@ implements SyntaxDocument
 	 */
 	public DefaultSyntaxDocument()
 	{
-		colors = new Hashtable();
-		addDocumentListener(new SyntaxDocumentListener());
+		colors = SyntaxUtilities.getDefaultSyntaxColors();
+		addDocumentListener(new DocumentHandler());
 	}
 
 	/**
@@ -70,21 +70,21 @@ implements SyntaxDocument
 	}
 
 	/**
-	 * Returns the dictionary that maps token identifiers to
+	 * Returns the color array that maps token identifiers to
 	 * <code>java.awt.Color</code> objects.
 	 */
-	public Dictionary getColors()
+	public Color[] getColors()
 	{
 		return colors;
 	}
 
 	/**
-	 * Sets the dictionary that maps token identifiers to
+	 * Sets the color array that maps token identifiers to
 	 * <code>java.awt.Color</code> ojects. May throw an exception
 	 * if this is not supported for this type of document.
-	 * @param colors The new color dictionary
+	 * @param colors The new color list
 	 */
-	public void setColors(Dictionary colors)
+	public void setColors(Color[] colors)
 	{
 		this.colors = colors;
 	}
@@ -134,13 +134,13 @@ implements SyntaxDocument
 
 	// protected members
 	protected TokenMarker tokenMarker;
-	protected Dictionary colors;
+	protected Color[] colors;
 
 	/**
 	 * An implementation of <code>DocumentListener</code> that
 	 * inserts and deletes lines from the token marker's state.
 	 */
-	public class SyntaxDocumentListener
+	public class DocumentHandler
 	implements DocumentListener
 	{
 		public void insertUpdate(DocumentEvent evt)
@@ -151,11 +151,9 @@ implements SyntaxDocument
 				getDefaultRootElement());
 			if(ch == null)
 				return;
-			Element[] children = ch.getChildrenAdded();
-			if(children == null)
-				return;
 			tokenMarker.insertLines(ch.getIndex() + 1,
-				children.length - 1);
+				ch.getChildrenAdded().length -
+				ch.getChildrenRemoved().length);
 		}
 	
 		public void removeUpdate(DocumentEvent evt)
@@ -170,7 +168,8 @@ implements SyntaxDocument
 			if(children == null)
 				return;
 			tokenMarker.deleteLines(ch.getIndex() + 1,
-				children.length - 1);
+				ch.getChildrenRemoved().length -
+				ch.getChildrenAdded().length);
 		}
 	
 		public void changedUpdate(DocumentEvent evt)
@@ -182,6 +181,9 @@ implements SyntaxDocument
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.3  1999/04/19 05:38:20  sp
+ * Syntax API changes
+ *
  * Revision 1.2  1999/03/29 06:30:25  sp
  * Documentation updates, fixed bug in DefaultSyntaxDocument, fixed bug in
  * goto-line

@@ -28,15 +28,15 @@ import javax.swing.text.Segment;
  */
 public class HTMLTokenMarker extends TokenMarker
 {
+	public static final byte JAVASCRIPT = Token.INTERNAL_FIRST;
+
 	public HTMLTokenMarker()
 	{
 		keywords = JavaScriptTokenMarker.getKeywords();
 	}
 
-	public Token markTokens(Segment line, int lineIndex)
+	public byte markTokensImpl(byte token, Segment line, int lineIndex)
 	{
-		lastToken = null;
-		String token = lineIndex == 0 ? null : lineInfo[lineIndex - 1];
 		boolean backslash = false;
 		int offset = line.offset;
 		int lastOffset = offset;
@@ -52,7 +52,7 @@ loop:		for(int i = offset; i < length; i++)
 			case ';':
 				if(token == Token.KEYWORD2)
 				{
-					token = null;
+					token = Token.NULL;
 					addToken((i+1) - lastOffset,Token.KEYWORD2);
 					lastOffset = i + 1;
 					break;
@@ -63,7 +63,7 @@ loop:		for(int i = offset; i < length; i++)
 					if(length - i > 1 && line.array[i+1] == '/')
 					{
 						backslash = false;
-						token = Token.ALTTXT;
+						token = JAVASCRIPT;
 						i++;
 						addToken((i+1) - lastOffset,Token.COMMENT2);
 						lastOffset = i + 1;
@@ -74,14 +74,15 @@ loop:		for(int i = offset; i < length; i++)
 			case '(': case ')': case '[': case ']':
 			case '{': case '}':
 				backslash = false;
-				if(token == Token.ALTTXT)
+				if(token == JAVASCRIPT)
 				{
 					int len = i - lastKeyword;
-					String id = keywords.lookup(line,lastKeyword,len);
-					if(id != null)
+					byte id = keywords.lookup(line,lastKeyword,len);
+					if(id != Token.NULL)
 					{
 						if(lastKeyword != lastOffset)
-							addToken(lastKeyword - lastOffset,null);
+							addToken(lastKeyword - lastOffset,
+								Token.NULL);
 						addToken(len,id);
 						lastOffset = i;
 					}
@@ -90,23 +91,23 @@ loop:		for(int i = offset; i < length; i++)
 				break;
 			case '<':
 				backslash = false;
-				if(token == null)
+				if(token == Token.NULL)
 				{
 					if(SyntaxUtilities.regionMatches(false,
 						line,i,"<!--"))
 						token = Token.COMMENT1;
 					else
 						token = Token.KEYWORD1;
-					addToken(i - lastOffset,null);
+					addToken(i - lastOffset,Token.NULL);
 					lastOffset = i;
 				}
-				else if(token == Token.ALTTXT)
+				else if(token == JAVASCRIPT)
 				{
 					if(SyntaxUtilities.regionMatches(true,
 						line,i,"</SCRIPT>"))
 					{
 						token = Token.KEYWORD1;
-						addToken(i - lastOffset,null);
+						addToken(i - lastOffset,Token.NULL);
 						lastOffset = i;
 					}
 				}
@@ -117,9 +118,9 @@ loop:		for(int i = offset; i < length; i++)
 				{
 					if(SyntaxUtilities.regionMatches(true,line,
 						lastOffset,"<SCRIPT"))
-						token = Token.ALTTXT;
+						token = JAVASCRIPT;
 					else
-						token = null;
+						token = Token.NULL;
 					addToken((i+1) - lastOffset,Token.KEYWORD1);
 					lastOffset = i + 1;
 				}
@@ -128,7 +129,7 @@ loop:		for(int i = offset; i < length; i++)
 					if(SyntaxUtilities.regionMatches(false,line,
 						i - 2,"-->"))
 					{
-						token = null;
+						token = Token.NULL;
 						addToken((i+1) - lastOffset,
 							 Token.COMMENT1);
 						lastOffset = i + 1;
@@ -137,16 +138,16 @@ loop:		for(int i = offset; i < length; i++)
 				break;
 			case '&':
 				backslash = false;
-				if(token == null)
+				if(token == Token.NULL)
 				{
 					token = Token.KEYWORD2;
-					addToken(i - lastOffset,null);
+					addToken(i - lastOffset,Token.NULL);
 					lastOffset = i;
 				}
 				break;
 			case ':':
 				backslash = false;
-				if(token == Token.ALTTXT && lastKeyword == offset)
+				if(token == JAVASCRIPT && lastKeyword == offset)
 				{
 					addToken((i+1) - lastOffset,Token.LABEL);
 					lastOffset = i + 1;
@@ -154,13 +155,13 @@ loop:		for(int i = offset; i < length; i++)
 				break;
 			case '/':
 				backslash = false;
-				if(token == Token.ALTTXT && length - i > 1)
+				if(token == JAVASCRIPT && length - i > 1)
 				{
 					switch(line.array[i+1])
 					{
 					case '*':
 						token = Token.COMMENT2;
-						addToken(i - lastOffset,Token.ALTTXT);
+						addToken(i - lastOffset,JAVASCRIPT);
 						lastOffset = i;
 						i++;
 						break;
@@ -175,15 +176,15 @@ loop:		for(int i = offset; i < length; i++)
 			case '"':
 				if(backslash)
 					backslash = false;
-				else if(token == Token.ALTTXT)
+				else if(token == JAVASCRIPT)
 				{
 					token = Token.LITERAL1;
-					addToken(i - lastOffset,Token.ALTTXT);
+					addToken(i - lastOffset,JAVASCRIPT);
 					lastOffset = i;
 				}
 				else if(token == Token.LITERAL1)
 				{
-					token = Token.ALTTXT;
+					token = JAVASCRIPT;
 					addToken((i+1) - lastOffset,Token.LITERAL1);
 					lastOffset = i + 1;
 				}
@@ -191,15 +192,15 @@ loop:		for(int i = offset; i < length; i++)
 			case '\'':
 				if(backslash)
 					backslash = false;
-				else if(token == Token.ALTTXT)
+				else if(token == JAVASCRIPT)
 				{
 					token = Token.LITERAL2;
-					addToken(i - lastOffset,Token.ALTTXT);
+					addToken(i - lastOffset,JAVASCRIPT);
 					lastOffset = i;
 				}
 				else if(token == Token.LITERAL2)
 				{
-					token = Token.ALTTXT;
+					token = JAVASCRIPT;
 					addToken((i+1) - lastOffset,Token.LITERAL2);
 					lastOffset = i + 1;
 				}
@@ -209,14 +210,14 @@ loop:		for(int i = offset; i < length; i++)
 				break;
 			}
 		}
-		if(token == Token.ALTTXT)
+		if(token == JAVASCRIPT)
 		{
 			int len = length - lastKeyword;
-			String id = keywords.lookup(line,lastKeyword,len);
-			if(id != null)
+			byte id = keywords.lookup(line,lastKeyword,len);
+			if(id != Token.NULL)
 			{
 				if(lastKeyword != lastOffset)
-					addToken(lastKeyword - lastOffset,null);
+					addToken(lastKeyword - lastOffset,Token.NULL);
 				addToken(len,id);
 				lastOffset = length;
 			}
@@ -228,21 +229,14 @@ loop:		for(int i = offset; i < length; i++)
 			{
 				addToken(length - lastOffset,Token.INVALID);
 				if(token == Token.KEYWORD2)
-					token = null;
+					token = Token.NULL;
 				else
-					token = Token.ALTTXT;
+					token = JAVASCRIPT;
 			}
 			else
 				addToken(length - lastOffset,token);
 		}
-		lineInfo[lineIndex] = token;
-		if(lastToken != null)
-		{
-			lastToken.nextValid = false;
-			return firstToken;
-		}
-		else
-			return null;
+		return token;
 	}
 
 	// private members
@@ -252,6 +246,9 @@ loop:		for(int i = offset; i < length; i++)
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.22  1999/04/19 05:38:20  sp
+ * Syntax API changes
+ *
  * Revision 1.21  1999/03/13 08:50:39  sp
  * Syntax colorizing updates and cleanups, general code reorganizations
  *

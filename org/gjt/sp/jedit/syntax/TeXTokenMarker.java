@@ -29,13 +29,11 @@ import javax.swing.text.Segment;
 public class TeXTokenMarker extends TokenMarker
 {
 	// public members
-	public static final String BDFORMULA = "_bdformula";
-	public static final String EDFORMULA = "_edformula";
+	public static final byte BDFORMULA = Token.INTERNAL_FIRST;
+	public static final byte EDFORMULA = (byte)(Token.INTERNAL_FIRST + 1);
 	
-	public Token markTokens(Segment line, int lineIndex)
+	public byte markTokensImpl(byte token, Segment line, int lineIndex)
 	{
-		lastToken = null;
-		String token = lineIndex == 0 ? null : lineInfo[lineIndex - 1];
 		int offset = line.offset;
 		int lastOffset = offset;
 		int length = line.count + offset;
@@ -65,7 +63,7 @@ loop:		for(int i = offset; i < length; i++)
 					addToken((i+1) - lastOffset,token);
 					lastOffset = i+1;
 					if(token == Token.KEYWORD1)
-						token = null;
+						token = Token.NULL;
 					continue;
 				}
 				else
@@ -78,7 +76,7 @@ loop:		for(int i = offset; i < length; i++)
 						token = Token.KEYWORD2;
 					addToken(i - lastOffset,token);
 					if(token == Token.KEYWORD1)
-						token = null;
+						token = Token.NULL;
 					lastOffset = i;
 				}
 			}
@@ -96,19 +94,19 @@ loop:		for(int i = offset; i < length; i++)
 				break loop;
 			case '\\':
 				backslash = true;
-				if(token == null)
+				if(token == Token.NULL)
 				{
 					token = Token.KEYWORD1;
-					addToken(i - lastOffset,null);
+					addToken(i - lastOffset,Token.NULL);
 					lastOffset = i;
 				}
 				break;
 			case '$':
 				backslash = false;
-				if(token == null) // singe $
+				if(token == Token.NULL) // singe $
 				{
 					token = Token.KEYWORD2;
-					addToken(i - lastOffset,null);
+					addToken(i - lastOffset,Token.NULL);
 					lastOffset = i;
 				}
 				else if(token == Token.KEYWORD1) // \...$
@@ -124,7 +122,7 @@ loop:		for(int i = offset; i < length; i++)
 						token = BDFORMULA;
 						break;
 					}
-					token = null;
+					token = Token.NULL;
 					addToken((i+1) - lastOffset,Token.KEYWORD2);
 					lastOffset = i + 1;
 				}
@@ -134,7 +132,7 @@ loop:		for(int i = offset; i < length; i++)
 				}
 				else if(token == EDFORMULA) // $$aaa$$
 				{
-					token = null;
+					token = Token.NULL;
 					addToken((i+1) - lastOffset,Token.KEYWORD2);
 					lastOffset = i + 1;
 				}
@@ -145,20 +143,16 @@ loop:		for(int i = offset; i < length; i++)
 			addToken(length - lastOffset,token == BDFORMULA
 				|| token == EDFORMULA ? Token.KEYWORD2 :
 				token);
-		lineInfo[lineIndex] = (token != Token.KEYWORD1 ? token : null);
-		if(lastToken != null)
-		{
-			lastToken.nextValid = false;
-			return firstToken;
-		}
-		else
-			return null;
+		return (token != Token.KEYWORD1 ? token : Token.NULL);
 	}
 }
 
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.13  1999/04/19 05:38:20  sp
+ * Syntax API changes
+ *
  * Revision 1.12  1999/04/01 04:13:00  sp
  * Bug fixing for 1.5final
  *

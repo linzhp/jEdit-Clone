@@ -1,6 +1,6 @@
 /*
  * Token.java - Generic token
- * Copyright (C) 1998 Slava Pestov
+ * Copyright (C) 1998, 1999 Slava Pestov
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,12 +20,10 @@ package org.gjt.sp.jedit.syntax;
 
 /**
  * A linked list of tokens. Each token has three fields - a token
- * identifier, which is a string that can be looked up in the
- * dictionary returned by <code>SyntaxDocument.getColors()</code>
+ * identifier, which is a byte value that can be looked up in the
+ * array returned by <code>SyntaxDocument.getColors()</code>
  * to get a color value, a length value which is the length of the
- * token in the text, and a pointer to the next token in the list,
- * which may or may not be valid, depending on the value of the
- * <code>nextValid</code> flag.
+ * token in the text, and a pointer to the next token in the list.
  *
  * @author Slava Pestov
  * @version $Id$
@@ -33,75 +31,96 @@ package org.gjt.sp.jedit.syntax;
 public class Token
 {
 	/**
-	 * Alternate text token id. This will be rendered in the
-	 * same color as normal text. It is provided for internal
-	 * use by token markers (eg, HTML mode uses it to mark
-	 * JavaScripts)
+	 * Normal text token id. This should be used to mark
+	 * normal text.
 	 */
-	public static final String ALTTXT = "alt";
+	public static final byte NULL = 0;
 
 	/**
 	 * Comment 1 token id. This can be used to mark a comment.
 	 */
-	public static final String COMMENT1 = "comment1";
+	public static final byte COMMENT1 = 1;
 
 	/**
 	 * Comment 2 token id. This can be used to mark a comment.
 	 */
-	public static final String COMMENT2 = "comment2";
+	public static final byte COMMENT2 = 2;
 
 	
 	/**
 	 * Literal 1 token id. This can be used to mark a string
 	 * literal (eg, C mode uses this to mark "..." literals)
 	 */
-	public static final String LITERAL1 = "literal1";
+	public static final byte LITERAL1 = 3;
 
 	/**
 	 * Literal 2 token id. This can be used to mark a string
 	 * literal (eg, C mode uses this to mark '...' literals)
 	 */
-	public static final String LITERAL2 = "literal2";
+	public static final byte LITERAL2 = 4;
 
 	/**
 	 * Label token id. This can be used to mark labels
 	 * (eg, C mode uses this to mark ...: sequences)
 	 */
-	public static final String LABEL = "label";
+	public static final byte LABEL = 5;
 
 	/**
 	 * Keyword 1 token id. This can be used to mark a
 	 * keyword. This should be used for general language
 	 * constructs.
 	 */
-	public static final String KEYWORD1 = "keyword1";
+	public static final byte KEYWORD1 = 6;
 
 	/**
 	 * Keyword 2 token id. This can be used to mark a
 	 * keyword. This should be used for preprocessor
 	 * commands, or variables.
 	 */
-	public static final String KEYWORD2 = "keyword2";
+	public static final byte KEYWORD2 = 7;
 
 	/**
 	 * Keyword 3 token id. This can be used to mark a
 	 * keyword. This should be used for data types.
 	 */
-	public static final String KEYWORD3 = "keyword3";
+	public static final byte KEYWORD3 = 8;
 
 	/**
 	 * Operator token id. This can be used to mark an
 	 * operator. (eg, SQL mode marks +, -, etc with this
 	 * token type)
 	 */
-	public static final String OPERATOR = "operator";
+	public static final byte OPERATOR = 9;
 
 	/**
 	 * Invalid token id. This can be used to mark invalid
 	 * or incomplete tokens, so the user can easily spot
 	 * syntax errors.
 	 */
-	public static final String INVALID = "invalid";
+	public static final byte INVALID = 10;
+
+	/**
+	 * The total number of defined token ids.
+	 */
+	public static final byte ID_COUNT = 11;
+
+	/**
+	 * The first id that can be used for internal state
+	 * in a token marker.
+	 */
+	public static final byte INTERNAL_FIRST = 100;
+
+	/**
+	 * The last id that can be used for internal state
+	 * in a token marker.
+	 */
+	public static final byte INTERNAL_LAST = 126;
+
+	/**
+	 * The token type, that along with a length of 0
+	 * marks the end of the token list.
+	 */
+	public static final byte END = 127;
 
 	/**
 	 * The length of this token.
@@ -111,7 +130,7 @@ public class Token
 	/**
 	 * The id of this token.
 	 */
-	public String id;
+	public byte id;
 
 	/**
 	 * The next token in the linked list.
@@ -119,16 +138,11 @@ public class Token
 	public Token next;
 
 	/**
-	 * Set to true if the next token is valid, false otherwise.
-	 */
-	public boolean nextValid;
-
-	/**
 	 * Creates a new token.
 	 * @param length The length of the token
 	 * @param id The id of the token
 	 */
-	public Token(int length, String id)
+	public Token(int length, byte id)
 	{
 		this.length = length;
 		this.id = id;
@@ -139,14 +153,16 @@ public class Token
 	 */
 	public String toString()
 	{
-		return id + "[length=" + length + (nextValid ? ",nextValid]"
-						   : "nextInvalid]");
+		return "[id=" + id + ",length=" + length + "]";
 	}
 }
 
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.9  1999/04/19 05:38:20  sp
+ * Syntax API changes
+ *
  * Revision 1.8  1999/04/01 04:13:00  sp
  * Bug fixing for 1.5final
  *

@@ -56,10 +56,10 @@ public class KeywordMap
 	 * @param offset The offset of the substring within the text segment
 	 * @param length The length of the substring
 	 */
-	public String lookup(Segment text, int offset, int length)
+	public byte lookup(Segment text, int offset, int length)
 	{
 		if(length == 0)
-			return null;
+			return Token.NULL;
 		Keyword k = map[getSegmentMapKey(text, offset, length)];
 		while(k != null)
 		{
@@ -73,7 +73,7 @@ public class KeywordMap
 				return k.id;
 			k = k.next;
 		}
-		return null;
+		return Token.NULL;
 	}
 
 	/**
@@ -81,7 +81,7 @@ public class KeywordMap
 	 * @param keyword The key
 	 * @Param id The value
 	 */
-	public void add(String keyword, String id)
+	public void add(String keyword, byte id)
 	{
 		int key = getStringMapKey(keyword);
 		map[key] = new Keyword(keyword.toCharArray(),id,map[key]);
@@ -126,7 +126,7 @@ public class KeywordMap
 	// private members
 	class Keyword
 	{
-		public Keyword(char[] keyword, String id, Keyword next)
+		public Keyword(char[] keyword, byte id, Keyword next)
 		{
 			this.keyword = keyword;
 			this.id = id;
@@ -134,7 +134,7 @@ public class KeywordMap
 		}
 
 		public char[] keyword;
-		public String id;
+		public byte id;
 		public Keyword next;
 	}
 
@@ -145,6 +145,9 @@ public class KeywordMap
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.13  1999/04/19 05:38:20  sp
+ * Syntax API changes
+ *
  * Revision 1.12  1999/04/07 05:22:46  sp
  * Buffer options bug fix, keyword map API change (get/setIgnoreCase() methods)
  *

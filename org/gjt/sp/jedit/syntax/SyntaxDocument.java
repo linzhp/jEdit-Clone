@@ -19,23 +19,21 @@
 package org.gjt.sp.jedit.syntax;
 
 import javax.swing.text.Document;
-import java.util.Dictionary;
+import java.awt.Color;
 
 /**
  * The interface a document must implement to be colorizable by the
  * <code>SyntaxEditorKit</code>. It defines two methods, one that returns
  * the <code>TokenMarker</code> that will split a line into a list of
- * tokens, and a method that returns a dictionary that maps identification
+ * tokens, and a method that returns a color array that maps identification
  * tags returned by the token marker into <code>Color</code> objects. The
  * possible token identifiers are defined as static fields in the
  * <code>Token</code> class.<p>
  *
- * For a sample implementation of this interface, see
- * {@link org.gjt.sp.jedit.syntax.DefaultSyntaxDocument}.
- *
  * @author Slava Pestov
  * @version $Id$
  *
+ * @see org.gjt.sp.jedit.syntax.DefaultSyntaxDocument
  * @see org.gjt.sp.jedit.syntax.SyntaxEditorKit
  * @see org.gjt.sp.jedit.syntax.TokenMarker
  * @see org.gjt.sp.jedit.syntax.Token
@@ -58,18 +56,19 @@ public interface SyntaxDocument extends Document
 	public void setTokenMarker(TokenMarker tm);
 
 	/**
-	 * Returns the dictionary that maps token identifiers to
-	 * <code>java.awt.Color</code> objects.
+	 * Returns the color array that maps token identifiers to
+	 * <code>java.awt.Color</code> objects. Each index in the
+	 * array is a token type.
 	 */
-	public Dictionary getColors();
+	public Color[] getColors();
 
 	/**
 	 * Sets the dictionary that maps token identifiers to
 	 * <code>java.awt.Color</code> ojects. May throw an exception
 	 * if this is not supported for this type of document.
-	 * @param colors The new color dictionary
+	 * @param colors The new color list
 	 */
-	public void setColors(Dictionary colors);
+	public void setColors(Color[] colors);
 
 	/**
 	 * Reparses the document, by passing all lines to the token
@@ -91,6 +90,12 @@ public interface SyntaxDocument extends Document
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.4  1999/04/19 05:38:20  sp
+ * Syntax API changes
+ *
+ * Revision 1.3  1999/04/02 00:39:19  sp
+ * Fixed console bug, syntax API changes, minor jEdit.java API change
+ *
  * Revision 1.2  1999/03/22 04:20:01  sp
  * Syntax colorizing updates
  *

@@ -29,12 +29,7 @@ import java.util.*;
  * For performance reasons, the linked list of tokens is reused after each
  * line is tokenized. Therefore, the return value of <code>markTokens</code>
  * should only be used for immediate painting. Notably, it cannot be
- * cached.<p>
- *
- * <b>Note:</b> when using the token marker in your own code, you
- * <b>must</b> call <code>insertLines()</code> with the total number
- * of lines in the document to be tokenized, otherwise various problems
- * will occur. This should only be done once per document.
+ * cached.
  *
  * @author Slava Pestov
  * @version $Id$
@@ -44,18 +39,44 @@ import java.util.*;
 public abstract class TokenMarker
 {
 	/**
-	 * An abstract method that is called to split a line up into
-	 * tokens.
-	 * <p>
-	 * At the start of this method, <code>lastToken</code> should
-	 * be set to null so that <code>addToken()</code> is aware that
-	 * a new line is being tokenized. At the end, <code>firstToken</code>
-	 * should be returned. Tokens can be added to the list with
-	 * <code>addToken()</code>.
+	 * A wrapper for the lower-level <code>markTokensImpl</code> method
+	 * that is called to split a line up into tokens.
 	 * @param line The line
 	 * @param lineIndex The line number
 	 */
-	public abstract Token markTokens(Segment line, int lineIndex);
+	public Token markTokens(Segment line, int lineIndex)
+	{
+		lastToken = null;
+
+		byte token = (lineIndex == 0 ? Token.NULL
+			: lineInfo[lineIndex - 1]);
+		token = markTokensImpl(token,line,lineIndex);
+
+		lineInfo[lineIndex] = token;
+		addToken(0,Token.END);
+
+		return firstToken;
+	}
+
+	/**
+	 * An abstract method that splits a line up into tokens. It
+	 * should parse the line, and call <code>addToken()</code> to
+	 * add syntax tokens to the token list. Then, it should return
+	 * the initial token type for the next line.<p>
+	 *
+	 * For example if the current line contains the start of a 
+	 * multiline comment that doesn't end on that line, this method
+	 * should return the comment token type so that it continues on
+	 * the next line.
+	 *
+	 * @param token The initial token type for this line
+	 * @param line The line to be tokenized
+	 * @param lineIndex The index of the line in the document,
+	 * starting at 0
+	 * @return The initial token type for the next line
+	 */
+	protected abstract byte markTokensImpl(byte token, Segment line,
+		int lineIndex);
 
 	/**
 	 * Informs the token marker that lines have been inserted into
@@ -111,7 +132,7 @@ public abstract class TokenMarker
 	 * shrunk automatically by the <code>insertLines()</code> and
 	 * <code>deleteLines()</code> methods.
 	 */
-	protected String[] lineInfo;
+	protected byte[] lineInfo;
 
 	/**
 	 * The length of the <code>lineInfo</code> array.
@@ -141,10 +162,10 @@ public abstract class TokenMarker
 	protected void ensureCapacity(int index)
 	{
 		if(lineInfo == null)
-			lineInfo = new String[index + 1];
+			lineInfo = new byte[index + 1];
 		else if(lineInfo.length <= index)
 		{
-			String[] lineInfoN = new String[(index + 1) * 2];
+			byte[] lineInfoN = new byte[(index + 1) * 2];
 			System.arraycopy(lineInfo,0,lineInfoN,0,
 					 lineInfo.length);
 			lineInfo = lineInfoN;
@@ -156,7 +177,7 @@ public abstract class TokenMarker
 	 * @param length The length of the token
 	 * @param id The id of the token
 	 */
-	protected void addToken(int length, String id)
+	protected void addToken(int length, byte id)
 	{
 		if(firstToken == null)
 		{
@@ -172,12 +193,10 @@ public abstract class TokenMarker
 		else if(lastToken.next == null)
 		{
 			lastToken.next = new Token(length,id);
-			lastToken.nextValid = true;
 			lastToken = lastToken.next;
 		}
 		else
 		{
-			lastToken.nextValid = true;
 			lastToken = lastToken.next;
 			lastToken.length = length;
 			lastToken.id = id;
@@ -188,6 +207,9 @@ public abstract class TokenMarker
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.13  1999/04/19 05:38:20  sp
+ * Syntax API changes
+ *
  * Revision 1.12  1999/03/15 03:40:23  sp
  * Search and replace updates, TSQL mode/token marker updates
  *

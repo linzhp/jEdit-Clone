@@ -28,10 +28,8 @@ import javax.swing.text.Segment;
  */
 public class BatchFileTokenMarker extends TokenMarker
 {
-	public Token markTokens(Segment line, int lineIndex)
+	public byte markTokensImpl(byte token, Segment line, int lineIndex)
 	{
-		lastToken = null;
-		String token = null;
 		int offset = line.offset;
 		int lastOffset = offset;
 		int length = line.count + offset;
@@ -40,9 +38,9 @@ loop:		for(int i = offset; i < length; i++)
 			switch(line.array[i])
 			{
 			case '%':
-				if(token == null)
+				if(token == Token.NULL)
 				{
-					addToken(i - lastOffset,null);
+					addToken(i - lastOffset,Token.NULL);
 					lastOffset = i;
 					if(length - i <= 3 || line.array[i+2]
 					   == ' ')
@@ -56,29 +54,29 @@ loop:		for(int i = offset; i < length; i++)
 				}
 				else if(token == Token.KEYWORD2)
 				{
-					token = null;
+					token = Token.NULL;
 					addToken((i+1) - lastOffset,Token.KEYWORD2);
 					lastOffset = i + 1;
 				}
 				break;
 			case '"':
-				if(token == null)
+				if(token == Token.NULL)
 				{
 					token = Token.LITERAL1;
-					addToken(i - lastOffset,null);
+					addToken(i - lastOffset,Token.NULL);
 					lastOffset = i;
 				}
 				else if(token == Token.LITERAL1)
 				{
-					token = null;
+					token = Token.NULL;
 					addToken((i+1) - lastOffset,Token.LITERAL1);
 					lastOffset = i + 1;
 				}
 				break;
 			case '=':
-				if(token == null && lastOffset == offset)
+				if(token == Token.NULL && lastOffset == offset)
 				{
-					addToken(i - lastOffset,null);
+					addToken(i - lastOffset,Token.NULL);
 					lastOffset = i;
 				}
 				break;
@@ -102,7 +100,7 @@ loop:		for(int i = offset; i < length; i++)
 						lastOffset = length;
 						break loop;
 					}
-					else if(token == null)
+					else if(token == Token.NULL)
 					{
 						addToken(i - lastOffset,
 							 Token.KEYWORD1);
@@ -114,25 +112,22 @@ loop:		for(int i = offset; i < length; i++)
 		}
 		if(lastOffset != length)
 		{
-			if(token != null)
+			if(token != Token.NULL)
 				token = Token.INVALID;
 			else if(lastOffset == offset)
 				token = Token.KEYWORD1;
 			addToken(length - lastOffset,token);
 		}
-		if(lastToken != null)
-		{
-			lastToken.nextValid = false;
-			return firstToken;
-		}
-		else
-			return null;
+		return Token.NULL;
 	}
 }
 
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.14  1999/04/19 05:38:20  sp
+ * Syntax API changes
+ *
  * Revision 1.13  1999/03/26 05:13:04  sp
  * Enhanced menu item updates
  *

@@ -29,10 +29,8 @@ import javax.swing.text.Segment;
 public class MakefileTokenMarker extends TokenMarker
 {
 	// public members
-	public Token markTokens(Segment line, int lineIndex)
+	public byte markTokensImpl(byte token, Segment line, int lineIndex)
 	{
-		lastToken = null;
-		String token = lineIndex == 0 ? null : lineInfo[lineIndex - 1];
 		int offset = line.offset;
 		int lastOffset = offset;
 		int length = line.count + offset;
@@ -46,7 +44,7 @@ loop:		for(int i = offset; i < length; i++)
 				break;
 			case ':': case '=': case ' ':
 				backslash = false;
-				if(token == null && lastOffset == offset)
+				if(token == Token.NULL && lastOffset == offset)
 				{
 					addToken((i+1) - lastOffset,Token.KEYWORD1);
 					lastOffset = i + 1;
@@ -55,18 +53,18 @@ loop:		for(int i = offset; i < length; i++)
 			case '\t':
 				// silly hack
 				backslash = false;
-				if(token == null && lastOffset == offset)
+				if(token == Token.NULL && lastOffset == offset)
 				{
-					addToken((i+1) - lastOffset,null);
+					addToken((i+1) - lastOffset,Token.NULL);
 					lastOffset = i + 1;
 				}
 				break;
 			case '#':
 				if(backslash)
 					backslash = false;
-				else if(token == null)
+				else if(token == Token.NULL)
 				{
-					addToken(i - lastOffset,null);
+					addToken(i - lastOffset,Token.NULL);
 					addToken(length - i,Token.COMMENT1);
 					lastOffset = length;
 					break loop;
@@ -75,9 +73,9 @@ loop:		for(int i = offset; i < length; i++)
 			case '$':
 				if(backslash)
 					backslash = false;
-				else if(token == null && lastOffset != offset)
+				else if(token == Token.NULL && lastOffset != offset)
 				{
-					addToken(i - lastOffset,null);
+					addToken(i - lastOffset,Token.NULL);
 					lastOffset = i;
 					if(length - i > 1)
 	 				{
@@ -97,7 +95,7 @@ loop:		for(int i = offset; i < length; i++)
 				backslash = false;
 				if(token == Token.KEYWORD2)
 				{
-					token = null;
+					token = Token.NULL;
 					addToken((i+1) - lastOffset,Token.KEYWORD2);
 					lastOffset = i + 1;
 				}
@@ -108,15 +106,15 @@ loop:		for(int i = offset; i < length; i++)
 					backslash = false;
 					break;
 				}
-				if(token == null)
+				if(token == Token.NULL)
 				{
 					token = Token.LITERAL1;
-					addToken(i - lastOffset,null);
+					addToken(i - lastOffset,Token.NULL);
 					lastOffset = i;
 				}
 				else if(token == Token.LITERAL1)
 				{
-					token = null;
+					token = Token.NULL;
 					addToken((i+1) - lastOffset,Token.LITERAL1);
 					lastOffset = i + 1;
 				}
@@ -127,15 +125,15 @@ loop:		for(int i = offset; i < length; i++)
 					backslash = false;
 					break;
 				}
-				if(token == null)
+				if(token == Token.NULL)
 				{
 					token = Token.LITERAL2;
-					addToken(i - lastOffset,null);
+					addToken(i - lastOffset,Token.NULL);
 					lastOffset = i;
 				}
 				else if(token == Token.LITERAL2)
 				{
-					token = null;
+					token = Token.NULL;
 					addToken((i+1) - lastOffset,Token.LITERAL2);
 					lastOffset = i + 1;
 				}
@@ -147,10 +145,10 @@ loop:		for(int i = offset; i < length; i++)
 		}
 		if(lastOffset != length)
 		{
-			if(token != null && token != Token.KEYWORD2)
+			if(token != Token.NULL && token != Token.KEYWORD2)
 			{
 				addToken(length - lastOffset,Token.INVALID);
-				token = null;
+				token = Token.NULL;
 			}
 			else
 			{
@@ -158,20 +156,16 @@ loop:		for(int i = offset; i < length; i++)
 					 Token.KEYWORD1 : token);
 			}
 		}
-		lineInfo[lineIndex] = (token == Token.LITERAL1 || token == Token.LITERAL2 ?
-			token : null);
-		if(lastToken != null)
-		{
-			lastToken.nextValid = false;
-			return firstToken;
-		}
-		else
-			return null;
+		return (token == Token.LITERAL1 || token == Token.LITERAL2 ?
+			token : Token.NULL);
 	}
 }
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.12  1999/04/19 05:38:20  sp
+ * Syntax API changes
+ *
  * Revision 1.11  1999/03/13 00:09:07  sp
  * Console updates, uncomment removed cos it's too buggy, cvs log tags added
  *

@@ -29,12 +29,10 @@ import javax.swing.text.Segment;
 public class ShellScriptTokenMarker extends TokenMarker
 {
 	// public members
-	public static final String LVARIABLE = "lvariable";
+	public static final byte LVARIABLE = Token.INTERNAL_FIRST;
 
-	public Token markTokens(Segment line, int lineIndex)
+	public byte markTokensImpl(byte token, Segment line, int lineIndex)
 	{
-		lastToken = null;
-		String token = lineIndex == 0 ? null : lineInfo[lineIndex - 1];
 		byte cmdState = 0; // 0 = space before command, 1 = inside
 				// command, 2 = after command
 		int offset = line.offset;
@@ -49,7 +47,7 @@ loop:		for(int i = offset; i < length; i++)
 				backslash = false;
 				if(!Character.isLetterOrDigit(c) && c != '_')
 				{
-					token = null;
+					token = Token.NULL;
 					if(i != offset && line.array[i-1] == '$')
 					{
 						addToken((i+1) - lastOffset,
@@ -68,7 +66,7 @@ loop:		for(int i = offset; i < length; i++)
 			else if(token == LVARIABLE && c == '}')
 			{
 				backslash = false;
-				token = null;
+				token = Token.NULL;
 				addToken((i+1) - lastOffset,Token.KEYWORD2);
 				lastOffset = i + 1;
 			}
@@ -79,7 +77,7 @@ loop:		for(int i = offset; i < length; i++)
 				break;
 			case ' ': case '\t': case '(': case ')':
 				backslash = false;
-				if(token == null && cmdState == 1/*insideCmd*/)
+				if(token == Token.NULL && cmdState == 1/*insideCmd*/)
 				{
 					addToken(i - lastOffset,Token.KEYWORD1);
 					lastOffset = i;
@@ -88,9 +86,9 @@ loop:		for(int i = offset; i < length; i++)
 				break;
 			case '=':
 				backslash = false;
-				if(token == null && cmdState == 1/*insideCmd*/)
+				if(token == Token.NULL && cmdState == 1/*insideCmd*/)
 				{
-					addToken(i - lastOffset,null);
+					addToken(i - lastOffset,Token.NULL);
 					lastOffset = i;
 					cmdState = 2; /*afterCmd*/
 				}
@@ -104,9 +102,9 @@ loop:		for(int i = offset; i < length; i++)
 			case '#':
 				if(backslash)
 					backslash = false;
-				else if(token == null)
+				else if(token == Token.NULL)
 				{
-					addToken(i - lastOffset,null);
+					addToken(i - lastOffset,Token.NULL);
 					addToken(length - i,Token.COMMENT1);
 					lastOffset = length;
 					break loop;
@@ -115,7 +113,7 @@ loop:		for(int i = offset; i < length; i++)
 			case '$':
 				if(backslash)
 					backslash = false;
-				else if(token == null)
+				else if(token == Token.NULL)
 				{
 					if(length - i >= 2)
 					{
@@ -133,7 +131,7 @@ loop:		for(int i = offset; i < length; i++)
 					}
 					else
 						token = Token.KEYWORD2;
-					addToken(i - lastOffset,null);
+					addToken(i - lastOffset,Token.NULL);
 					cmdState = 2; /*afterCmd*/
 					lastOffset = i;
 				}
@@ -141,16 +139,16 @@ loop:		for(int i = offset; i < length; i++)
 			case '"':
 				if(backslash)
 					backslash = false;
-				else if(token == null)
+				else if(token == Token.NULL)
 				{
 					token = Token.LITERAL1;
-					addToken(i - lastOffset,null);
+					addToken(i - lastOffset,Token.NULL);
 					cmdState = 2; /*afterCmd*/
 					lastOffset = i;
 				}
 				else if(token == Token.LITERAL1)
 				{
-					token = null;
+					token = Token.NULL;
 					addToken((i+1) - lastOffset,Token.LITERAL1);
 					cmdState = 2; /*afterCmd*/
 					lastOffset = i + 1;
@@ -159,16 +157,16 @@ loop:		for(int i = offset; i < length; i++)
 			case '\'':
 				if(backslash)
 					backslash = false;
-				else if(token == null)
+				else if(token == Token.NULL)
 				{
 					token = Token.LITERAL2;
-					addToken(i - lastOffset,null);
+					addToken(i - lastOffset,Token.NULL);
 					cmdState = 2; /*afterCmd*/
 					lastOffset = i;
 				}
 				else if(token == Token.LITERAL2)
 				{
-					token = null;
+					token = Token.NULL;
 					addToken((i+1) - lastOffset,Token.LITERAL2);
 					cmdState = 2; /*afterCmd*/
 					lastOffset = i + 1;
@@ -190,25 +188,21 @@ loop:		for(int i = offset; i < length; i++)
 		}
 		if(lastOffset != length)
 		{
-			if(token == null && cmdState == 1)
+			if(token == Token.NULL && cmdState == 1)
 				token = Token.KEYWORD1;
 			addToken(length - lastOffset,token);
 		}
-		lineInfo[lineIndex] = (token == Token.LITERAL2 || token == Token.LITERAL1
-			? token : null);
-		if(lastToken != null)
-		{
-			lastToken.nextValid = false;
-			return firstToken;
-		}
-		else
-			return null;
+		return (token == Token.LITERAL2 || token == Token.LITERAL1
+			? token : Token.NULL);
 	}
 }
 
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.9  1999/04/19 05:38:20  sp
+ * Syntax API changes
+ *
  * Revision 1.8  1999/03/12 23:51:00  sp
  * Console updates, uncomment removed cos it's too buggy, cvs log tags added
  *

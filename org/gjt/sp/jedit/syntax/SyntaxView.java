@@ -104,28 +104,32 @@ public class SyntaxView extends PlainView
 			}
 			else
 			{
-				Dictionary colors = syntaxDocument.getColors();
+				Color[] colors = syntaxDocument.getColors();
 				Token tokens = tokenMarker.markTokens(line,
 					lineIndex);
 				int offset = 0;
-				for(; tokens != null; tokens = tokens.next)
+				for(;;)
 				{
+					byte id = tokens.id;
+					if(id == Token.END)
+						break;
+
 					int length = tokens.length;
 					Color color;
-					String id = tokens.id;
-					if(id == null)
+					if(id == Token.NULL)
 						color = def;
 					else
-						color = (Color)colors.get(id);
+						color = colors[id];
 					g.setColor(color == null ?
 						   def : color);
+
 				   	line.count = length;
 					x = Utilities.drawTabbedText(line,x,
 						   y,g,this,offset);
 					line.offset += length;
 					offset += length;
-					if(!tokens.nextValid)
-						break;
+
+					tokens = tokens.next;
 				}
 			}
 		}
@@ -149,6 +153,9 @@ public class SyntaxView extends PlainView
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.17  1999/04/19 05:38:20  sp
+ * Syntax API changes
+ *
  * Revision 1.16  1999/03/13 08:50:39  sp
  * Syntax colorizing updates and cleanups, general code reorganizations
  *

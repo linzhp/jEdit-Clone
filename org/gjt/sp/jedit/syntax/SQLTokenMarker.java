@@ -42,10 +42,8 @@ public class SQLTokenMarker extends TokenMarker
 		isTSQL = tsql;
 	}
 
-	public Token markTokens(Segment line, int lineIndex)
+	public byte markTokensImpl(byte token, Segment line, int lineIndex)
 	{
-		lastToken = null;
-		String token = lineIndex == 0 ? null : lineInfo[lineIndex - 1];
 		offset = lastOffset = lastKeyword = line.offset;
 		length = line.count + offset;
 
@@ -57,12 +55,12 @@ loop:
 			case '*':
 				if(token == Token.COMMENT1 && length - i >= 1 && line.array[i+1] == '/')
 				{
-					token = null;
+					token = Token.NULL;
 					i++;
 					addToken((i + 1) - lastOffset,Token.COMMENT1);
 					lastOffset = i + 1;
 				}
-				else if (token == null)
+				else if (token == Token.NULL)
 				{
 					searchBack(line, i);
 					addToken(1,Token.OPERATOR);
@@ -70,7 +68,7 @@ loop:
 				}
 				break;
 			case '[':
-				if(token == null)
+				if(token == Token.NULL)
 				{
 					searchBack(line, i);
 					token = Token.LITERAL1;
@@ -81,41 +79,41 @@ loop:
 			case ']':
 				if(token == Token.LITERAL1 && literalChar == '[')
 				{
-					token = null;
+					token = Token.NULL;
 					literalChar = 0;
 					addToken((i + 1) - lastOffset,Token.LITERAL1);
 					lastOffset = i + 1;
 				}
 				break;
 			case '.': case ',': case '(': case ')':
-				if (token == null) {
+				if (token == Token.NULL) {
 					searchBack(line, i);
-					addToken(1, null);
+					addToken(1, Token.NULL);
 					lastOffset = i + 1;
 				}
 				break;
 			case '+': case '%': case '&': case '|': case '^':
 			case '~': case '<': case '>': case '=':
-				if (token == null) {
+				if (token == Token.NULL) {
 					searchBack(line, i);
 					addToken(1,Token.OPERATOR);
 					lastOffset = i + 1;
 				}
 				break;
 			case ' ': case '\t':
-				if (token == null) {
+				if (token == Token.NULL) {
 					searchBack(line, i, false);
 				}
 				break;
 			case ':':
-				if(token == null)
+				if(token == Token.NULL)
 				{
 					addToken((i+1) - lastOffset,Token.LABEL);
 					lastOffset = i + 1;
 				}
 				break;
 			case '/':
-				if(token == null)
+				if(token == Token.NULL)
 				{
 					if (length - i >= 2 && line.array[i + 1] == '*')
 					{
@@ -133,7 +131,7 @@ loop:
 				}
 				break;
 			case '-':
-				if(token == null)
+				if(token == Token.NULL)
 				{
 					if (length - i >= 2 && line.array[i+1] == '-')
 					{
@@ -151,7 +149,7 @@ loop:
 				}
 				break;
 			case '!':
-				if(isTSQL && token == null && length - i >= 2 &&
+				if(isTSQL && token == Token.NULL && length - i >= 2 &&
 				(line.array[i+1] == '=' || line.array[i+1] == '<' || line.array[i+1] == '>'))
 				{
 					searchBack(line, i);
@@ -160,16 +158,16 @@ loop:
 				}
 				break;
 			case '"': case '\'':
-				if(token == null)
+				if(token == Token.NULL)
 				{
 					token = Token.LITERAL1;
 					literalChar = line.array[i];
-					addToken(i - lastOffset,null);
+					addToken(i - lastOffset,Token.NULL);
 					lastOffset = i;
 				}
 				else if(token == Token.LITERAL1 && literalChar == line.array[i])
 				{
-					token = null;
+					token = Token.NULL;
 					literalChar = 0;
 					addToken((i + 1) - lastOffset,Token.LITERAL1);
 					lastOffset = i + 1;
@@ -179,18 +177,11 @@ loop:
 				break;
 			}
 		}
-		if(token == null)
+		if(token == Token.NULL)
 			searchBack(line, length, false);
 		if(lastOffset != length)
 			addToken(length - lastOffset,token);
-		lineInfo[lineIndex] = token;
-		if(lastToken != null)
-		{
-			lastToken.nextValid = false;
-			return firstToken;
-		}
-		else
-			return null;
+		return token;
 	}
 
 	// protected members
@@ -208,23 +199,26 @@ loop:
 	private void searchBack(Segment line, int pos, boolean padNull)
 	{
 		int len = pos - lastKeyword;
-		String id = keywords.lookup(line,lastKeyword,len);
-		if(id != null)
+		byte id = keywords.lookup(line,lastKeyword,len);
+		if(id != Token.NULL)
 		{
 			if(lastKeyword != lastOffset)
-				addToken(lastKeyword - lastOffset,null);
+				addToken(lastKeyword - lastOffset,Token.NULL);
 			addToken(len,id);
 			lastOffset = pos;
 		}
 		lastKeyword = pos + 1;
 		if (padNull && lastOffset < pos)
-			addToken(pos - lastOffset, null);
+			addToken(pos - lastOffset, Token.NULL);
 	}
 }
 
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.6  1999/04/19 05:38:20  sp
+ * Syntax API changes
+ *
  * Revision 1.5  1999/03/15 03:40:23  sp
  * Search and replace updates, TSQL mode/token marker updates
  *

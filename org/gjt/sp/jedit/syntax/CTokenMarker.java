@@ -39,10 +39,8 @@ public class CTokenMarker extends TokenMarker
 		this.keywords = keywords;
 	}
 
-	public Token markTokens(Segment line, int lineIndex)
+	public byte markTokensImpl(byte token, Segment line, int lineIndex)
 	{
-		lastToken = null;
-		String token = lineIndex == 0 ? null : lineInfo[lineIndex - 1];
 		int offset = line.offset;
 		int lastOffset = offset;
 		int lastKeyword = offset;
@@ -65,7 +63,7 @@ loop:		for(int i = offset; i < length; i++)
 					{
 						i++;
 						addToken((i+1) - lastOffset,token);
-						token = null;
+						token = Token.NULL;
 						lastOffset = i + 1;
 						lastKeyword = lastOffset;
 					}
@@ -73,7 +71,7 @@ loop:		for(int i = offset; i < length; i++)
 				}
 			case ':':
 				backslash = false;
-				if(token == null && lastKeyword == offset)
+				if(token == Token.NULL && lastKeyword == offset)
 				{
 					addToken((i+1) - lastOffset,Token.LABEL);
 					lastOffset = i + 1;
@@ -82,10 +80,10 @@ loop:		for(int i = offset; i < length; i++)
 				break;
 			case '#':
 				backslash = false;
-				if(cpp & token == null)
+				if(cpp & token == Token.NULL)
 				{
 					token = Token.KEYWORD2;
-					addToken(i - lastOffset,null);
+					addToken(i - lastOffset,Token.NULL);
 					addToken(length - i,Token.KEYWORD2);
 					lastOffset = length;
 					break loop;
@@ -93,7 +91,7 @@ loop:		for(int i = offset; i < length; i++)
 				break;
 			case '/':
 				backslash = false;
-				if(token == null && length - i > 1)
+				if(token == Token.NULL && length - i > 1)
 				{
 					switch(line.array[i+1])
 					{
@@ -118,16 +116,16 @@ loop:		for(int i = offset; i < length; i++)
 			case '"':
 				if(backslash)
 					backslash = false;
-				else if(token == null)
+				else if(token == Token.NULL)
 				{
 					token = Token.LITERAL1;
-					addToken(i - lastOffset,null);
+					addToken(i - lastOffset,Token.NULL);
 					lastOffset = i;
 					lastKeyword = lastOffset;
 				}
 				else if(token == Token.LITERAL1)
 				{
-					token = null;
+					token = Token.NULL;
 					addToken((i+1) - lastOffset,Token.LITERAL1);
 					lastOffset = i + 1;
 					lastKeyword = lastOffset;
@@ -136,16 +134,16 @@ loop:		for(int i = offset; i < length; i++)
 			case '\'':
 				if(backslash)
 					backslash = false;
-				else if(token == null)
+				else if(token == Token.NULL)
 				{
 					token = Token.LITERAL2;
-					addToken(i - lastOffset,null);
+					addToken(i - lastOffset,Token.NULL);
 					lastOffset = i;
 					lastKeyword = lastOffset;
 				}
 				else if(token == Token.LITERAL2)
 				{
-					token = null;
+					token = Token.NULL;
 					addToken((i+1) - lastOffset,Token.LITERAL2);
 					lastOffset = i + 1;
 					lastKeyword = lastOffset;
@@ -153,15 +151,15 @@ loop:		for(int i = offset; i < length; i++)
 				break;
 			default:
 				backslash = false;
-				if(token == null && c != '_' &&
+				if(token == Token.NULL && c != '_' &&
 					!Character.isLetter(c))
 				{
 					int len = i - lastKeyword;
-					String id = keywords.lookup(line,lastKeyword,len);
-					if(id != null)
+					byte id = keywords.lookup(line,lastKeyword,len);
+					if(id != Token.NULL)
 					{
 						if(lastKeyword != lastOffset)
-							addToken(lastKeyword - lastOffset,null);
+							addToken(lastKeyword - lastOffset,Token.NULL);
 						addToken(len,id);
 						lastOffset = i;
 					}
@@ -170,14 +168,14 @@ loop:		for(int i = offset; i < length; i++)
 				break;
 			}
 		}
-		if(token == null)
+		if(token == Token.NULL)
 		{
 			int len = length - lastKeyword;
-			String id = keywords.lookup(line,lastKeyword,len);
-			if(id != null)
+			byte id = keywords.lookup(line,lastKeyword,len);
+			if(id != Token.NULL)
 			{
 				if(lastKeyword != lastOffset)
-					addToken(lastKeyword - lastOffset,null);
+					addToken(lastKeyword - lastOffset,Token.NULL);
 				addToken(len,id);
 				lastOffset = length;
 			}
@@ -187,21 +185,14 @@ loop:		for(int i = offset; i < length; i++)
 			if(token == Token.LITERAL1 || token == Token.LITERAL2)
 			{
 				addToken(length - lastOffset,Token.INVALID);
-				token = null;
+				token = Token.NULL;
 			}
 			else
 				addToken(length - lastOffset,token);
 		}
 		if(token == Token.KEYWORD2 && !backslash)
-			token = null;
-		lineInfo[lineIndex] = token;
-		if(lastToken != null)
-		{
-			lastToken.nextValid = false;
-			return firstToken;
-		}
-		else
-			return null;
+			token = Token.NULL;
+		return token;
 	}
 
 	public static KeywordMap getKeywords()
@@ -265,6 +256,9 @@ loop:		for(int i = offset; i < length; i++)
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.24  1999/04/19 05:38:20  sp
+ * Syntax API changes
+ *
  * Revision 1.23  1999/03/13 08:50:39  sp
  * Syntax colorizing updates and cleanups, general code reorganizations
  *

@@ -28,11 +28,10 @@ import javax.swing.text.Segment;
  */
 public class PatchTokenMarker extends TokenMarker
 {
-	public Token markTokens(Segment line, int lineIndex)
+	public byte markTokensImpl(byte token, Segment line, int lineIndex)
 	{
-		lastToken = null;
 		if(line.count == 0)
-			return null;
+			return Token.NULL;
 		switch(line.array[line.offset])
 		{
 		case '+': case '>':
@@ -45,17 +44,19 @@ public class PatchTokenMarker extends TokenMarker
 			addToken(line.count,Token.KEYWORD3);
 			break;
 	        default:
-			addToken(line.count,null);
+			addToken(line.count,Token.NULL);
 			break;
 		}
-		lastToken.nextValid = false;
-		return firstToken;
+		return Token.NULL;
 	}
 }
 
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.3  1999/04/19 05:38:20  sp
+ * Syntax API changes
+ *
  * Revision 1.2  1999/03/12 23:51:00  sp
  * Console updates, uncomment removed cos it's too buggy, cvs log tags added
  *

@@ -62,7 +62,7 @@ public class SyntaxTextArea extends JEditorPane
 		bracketHighlightColor = new Color(0xffaaaa);
 		lineSegment = new Segment();
 
-		addCaretListener(new SyntaxCaretListener());
+		addCaretListener(new CaretHandler());
 	}
 
 	/**
@@ -479,7 +479,7 @@ public class SyntaxTextArea extends JEditorPane
 		}
 	}
 
-	class SyntaxCaretListener implements CaretListener
+	class CaretHandler implements CaretListener
 	{
 		public void caretUpdate(CaretEvent evt)
 		{
@@ -491,6 +491,9 @@ public class SyntaxTextArea extends JEditorPane
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.17  1999/04/19 05:38:20  sp
+ * Syntax API changes
+ *
  * Revision 1.16  1999/04/01 04:13:00  sp
  * Bug fixing for 1.5final
  *

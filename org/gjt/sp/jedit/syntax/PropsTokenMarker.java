@@ -30,10 +30,10 @@ import org.gjt.sp.jedit.jEdit;
  */
 public class PropsTokenMarker extends TokenMarker
 {
-	public Token markTokens(Segment line, int lineIndex)
+	public static final byte VALUE = Token.INTERNAL_FIRST;
+
+	public byte markTokensImpl(byte token, Segment line, int lineIndex)
 	{
-		lastToken = null;
-		String token = null;
 		int offset = line.offset;
 		int lastOffset = offset;
 		int length = line.count + offset;
@@ -42,7 +42,7 @@ loop:		for(int i = offset; i < length; i++)
 			switch(line.array[i])
 			{
 			case '#': case ';':
-				if(i == offset && token == null)
+				if(i == offset && token == Token.NULL)
 				{
 					addToken(line.count,Token.COMMENT1);
 					lastOffset = length;
@@ -50,26 +50,26 @@ loop:		for(int i = offset; i < length; i++)
 				}
 				break;
 			case '[':
-				if(i == offset && token == null)
+				if(i == offset && token == Token.NULL)
 				{
 					token = Token.KEYWORD2;
-					addToken(i - lastOffset,null);
+					addToken(i - lastOffset,Token.NULL);
 					lastOffset = i;
 				}
 				break;
 			case ']':
 				if(token == Token.KEYWORD2)
 				{
-					token = null;
+					token = Token.NULL;
 					addToken((i+1) - lastOffset,
 						Token.KEYWORD2);
 					lastOffset = (i+1);
 				}
 				break;
 			case '=':
-				if(token == null)
+				if(token == Token.NULL)
 				{
-					token = Token.ALTTXT; // Can't have [...] after =
+					token = VALUE; // Can't have [...] after =
 					addToken(i - lastOffset,Token.KEYWORD1);
 					lastOffset = i;
 				}
@@ -77,20 +77,17 @@ loop:		for(int i = offset; i < length; i++)
 			}
 		}
 		if(lastOffset != length)
-			addToken(length - lastOffset,null);
-		if(lastToken != null)
-		{
-			lastToken.nextValid = false;
-			return firstToken;
-		}
-		else
-			return null;
+			addToken(length - lastOffset,Token.NULL);
+		return Token.NULL;
 	}
 }
 
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.3  1999/04/19 05:38:20  sp
+ * Syntax API changes
+ *
  * Revision 1.2  1999/03/12 23:51:00  sp
  * Console updates, uncomment removed cos it's too buggy, cvs log tags added
  *
