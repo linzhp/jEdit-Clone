@@ -188,10 +188,7 @@ public class jEdit
 			HistoryModel.loadHistory(historyFile);
 
 		// Start plugins
-		for(int i = 0; i < plugins.size(); i++)
-		{
-			((Plugin)plugins.elementAt(i)).start();
-		}
+		JARClassLoader.initPlugins();
 
 		// Load files specified on the command line
 		Buffer buffer = null;
@@ -361,25 +358,24 @@ public class jEdit
 				new JARClassLoader(directory + File.separator
 					+ plugin);
 			}
-			catch(Throwable e)
+			catch(IOException io)
 			{
-				System.err.println("-- error loading plugin: "
+				System.err.println(" -- error loading plugin: "
 					+ plugins[i]);
-				e.printStackTrace();
+				io.printStackTrace();
 			}
 		}
 	}
 
 	/**
-	 * Registers a plugin with the editor. For the plugin to work
-	 * properly, it's <code>start()</code> method must be called
-	 * as well.
-	 * @param plugin The plugin
+	 * Registers a plugin with the editor. This will also call
+	 * the <code>start()</code> method of the plugin.
 	 * @see org.gjt.sp.jedit.Plugin#start()
 	 */
 	public static void addPlugin(Plugin plugin)
 	{
 		plugins.addElement(plugin);
+		plugin.start();
 	}
 
 	/**
@@ -1523,6 +1519,9 @@ public class jEdit
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.95  1999/05/06 07:16:14  sp
+ * Plugins can use classes from other loaded plugins
+ *
  * Revision 1.94  1999/05/06 05:16:17  sp
  * Syntax text are compile fix, FAQ updated
  *
@@ -1556,18 +1555,5 @@ public class jEdit
  *
  * Revision 1.84  1999/04/25 07:23:36  sp
  * Documentation updates, reload bug fix, console bug fix
- *
- * Revision 1.83  1999/04/25 03:39:37  sp
- * Documentation updates, console updates, history text field updates
- *
- * Revision 1.82  1999/04/24 07:34:46  sp
- * Documentation updates
- *
- * Revision 1.81  1999/04/23 07:35:10  sp
- * History engine reworking (shared history models, history saved to
- * .jedit-history)
- *
- * Revision 1.80  1999/04/23 05:02:25  sp
- * new LineInfo[] array in TokenMarker
  *
  */

@@ -33,15 +33,13 @@ import java.util.zip.*;
 public class JARClassLoader extends ClassLoader
 {
 	public JARClassLoader(String path)
-		throws Exception, Exception
+		throws IOException
 	{
+		classLoaders.addElement(this);
+
 		System.out.println("Scanning JAR file: " + path);
 
 		zipFile = new ZipFile(path);
-
-		// We defer the loading so that when plugins are started,
-		// all properties are already present
-		Vector pluginClasses = new Vector();
 
 		Enumeration entires = zipFile.entries();
 		while(entires.hasMoreElements())
@@ -58,25 +56,17 @@ public class JARClassLoader extends ClassLoader
 					pluginClasses.addElement(name);
 			}
 		}
-
-		// Do deferred loading
-		Enumeration enum = pluginClasses.elements();
-		while(enum.hasMoreElements())
-		{
-			loadPluginClass((String)enum.nextElement());
-		}
 	}
 
 	public void loadPluginClass(String name)
 		throws Exception
 	{
-		Class clazz = loadClass(MiscUtilities.fileToClass(name));
+		Class clazz = loadClass(MiscUtilities.fileToClass(name),false);
 		if(Plugin.class.isAssignableFrom(clazz))
 		{
 			Plugin plugin = (Plugin)clazz.newInstance();
-			pluginName = plugin.getClass().getName();
 			System.out.println(" -- loaded plugin: " +
-				pluginName);
+				clazz.getName());
 			jEdit.addPlugin(plugin);
 		}
 	}
@@ -84,19 +74,126 @@ public class JARClassLoader extends ClassLoader
 	public Class loadClass(String clazz, boolean resolveIt)
 		throws ClassNotFoundException
 	{
+		return loadClassFromZip(clazz,resolveIt,true);
+	}
+
+	public InputStream getResourceAsStream(String name)
+	{
+		try
+		{
+			ZipEntry entry = zipFile.getEntry(name);
+			if(entry == null)
+				return getSystemResourceAsStream(name);
+			else
+				return zipFile.getInputStream(entry);
+		}
+		catch(IOException io)
+		{
+			System.err.println("I/O error:");
+			io.printStackTrace();
+
+			return null;
+		}
+	}
+
+	public URL getResource(String name)
+	{
+		try
+		{
+			return new URL(getResourceAsPath(name));
+		}
+		catch(MalformedURLException mu)
+		{
+			return null;
+		}
+	}
+
+	public String getResourceAsPath(String name)
+	{
+		return "jeditresource:" + MiscUtilities.fileToClass(
+			(String)pluginClasses.elementAt(0)) + "/" + name;
+	}
+
+	public static void initPlugins()
+	{
+		for(int i = 0; i < classLoaders.size(); i++)
+		{
+			JARClassLoader classLoader = (JARClassLoader)
+				classLoaders.elementAt(i);
+			classLoader.loadAllPlugins();
+		}
+	}
+
+	// private members
+
+	/* Loading of plugin classes is deferred until all JARs
+	 * are loaded - this is necessary because a plugin might
+	 * depend on classes stored in other JARs. */
+	private static Vector classLoaders = new Vector();
+	private Vector pluginClasses = new Vector();
+
+	private ZipFile zipFile;
+
+	private void loadAllPlugins()
+	{
+		for(int i = 0; i < pluginClasses.size(); i++)
+		{
+			String name = (String)pluginClasses.elementAt(i);
+			try
+			{
+				loadPluginClass(name);
+			}
+			catch(Throwable t)
+			{
+				System.out.println(" -- error initializing"
+					+ " plugin: " + name);
+				t.printStackTrace();
+			}
+		}
+	}
+
+	private Class findOtherClass(String clazz, boolean resolveIt)
+		throws ClassNotFoundException
+	{
+		for(int i = 0; i < classLoaders.size(); i++)
+		{
+			JARClassLoader loader = (JARClassLoader)
+				classLoaders.elementAt(i);
+			Class cls = loader.loadClassFromZip(clazz,resolveIt,
+				false);
+			if(cls != null)
+				return cls;
+		}
+
+		/* Doesn't exist in any other plugin, look in system classes */
+		return findSystemClass(clazz);
+	}
+
+	private Class loadClassFromZip(String clazz, boolean resolveIt,
+		boolean doDepencies)
+		throws ClassNotFoundException
+	{
 		String name = MiscUtilities.classToFile(clazz);
 
 		Class cls = findLoadedClass(name);
 		if(cls != null)
+		{
+			if(resolveIt)
+				resolveClass(cls);
 			return cls;
+		}
 
 		try
 		{
 			ZipEntry entry = zipFile.getEntry(name);
 
-			// XXX: do dependency search in other JAR files
 			if(entry == null)
-				return findSystemClass(clazz);
+			{
+				if(doDepencies)
+					return findOtherClass(clazz,resolveIt);
+				else
+					return null;
+			}
 
 			InputStream in = zipFile.getInputStream(entry);
 
@@ -132,50 +229,14 @@ public class JARClassLoader extends ClassLoader
 			throw new ClassNotFoundException(clazz);
 		}
 	}
-
-	public InputStream getResourceAsStream(String name)
-	{
-		try
-		{
-			return zipFile.getInputStream(
-				zipFile.getEntry(name));
-		}
-		catch(IOException io)
-		{
-			return getSystemResourceAsStream(name);
-		}
-	}
-
-	public URL getResource(String name)
-	{
-		try
-		{
-			return new URL(getResourceAsPath(name));
-		}
-		catch(MalformedURLException mu)
-		{
-			return null;
-		}
-	}
-
-	public String getResourceAsPath(String name)
-	{
-		return "jeditresource:" + pluginName + "/" + name;
-	}
-
-	// private members
-	private ZipFile zipFile;
-
-	/* This is the name of the last plugin loaded. It is used
-	 * to create resource URLs (the resource URL handler looks
-	 * up the JAR loader by plugin name)
-	 */
-	private String pluginName;
 }
 
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.6  1999/05/06 07:16:14  sp
+ * Plugins can use classes from other loaded plugins
+ *
  * Revision 1.5  1999/04/27 06:53:38  sp
  * JARClassLoader updates, shell script token marker update, token marker compiles
  * now
