@@ -557,12 +557,11 @@ implements DocumentListener, UndoableEditListener
 		if(mode == null)
 		{
 			tokenMarker = null;
-			colors.clear();
 		}
 		else
 		{
 			setTokenMarker(mode.createTokenMarker());
-			loadColors(mode.getClass().getName().substring(22));
+			colors.clear();
 			mode.enter(this);
 		}
 	}
@@ -586,34 +585,6 @@ implements DocumentListener, UndoableEditListener
 	{
 		this.tokenMarker = tokenMarker;
 		tokenizeLines();
-	}
-
-	/**
-	 * Loads the colors used for syntax colorizing from the properties.
-	 * <p>
-	 * The colors are stored in the property as a white space separated
-	 * list of <i>name</i>@<i>value</i> pairs. <i>name</i> is mode
-	 * specific, <i>value</i> is the name of a predefined color in
-	 * the <code>java.awt.Color</code> class.
-	 * @param name The name of the property to load the colors from
-	 */
-	public void loadColors(String name)
-	{
-		colors.clear();
-		String prop = jEdit.getProperty("mode." + name + ".colors");
-		if(prop == null)
-			return;
-		StringTokenizer st = new StringTokenizer(prop);
-		while(st.hasMoreTokens())
-		{
-			String color = st.nextToken();
-			int index = color.indexOf('@');
-			if(index == -1)
-				continue;
-			String id = color.substring(0,index);
-			color = color.substring(index + 1);
-			colors.put(id,jEdit.parseColor(color));
-		}
 	}
 
 	/**
@@ -755,6 +726,7 @@ implements DocumentListener, UndoableEditListener
 	 */
 	public void propertiesChanged()
 	{
+		// this isn't necessary, and it's broken too
 		/*try
 		{
 			Object oldSize = getProperty(tabSizeAttribute);
@@ -768,6 +740,9 @@ implements DocumentListener, UndoableEditListener
 		catch(NumberFormatException nf)
 		{
 		}*/
+
+		// reset the color cache
+		colors.clear();
 	}
 	
 	/**

@@ -265,7 +265,7 @@ public class SyntaxTextArea extends JEditorPane
 			/* we do this even if the text area is read only,
 			 * otherwise stuff like line and bracket highlighting
 			 * will look weird without a caret */
-			SyntaxTextArea.SyntaxCaret.this.setVisible(true);
+			SyntaxCaret.this.setVisible(true);
 		}
 	}
 

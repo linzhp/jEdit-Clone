@@ -65,6 +65,7 @@ public class SyntaxView extends PlainView
 	 */
 	public void drawLine(int lineIndex, Graphics g, int x, int y)
 	{
+		Color def = getDefaultColor();
 		Buffer buffer = (Buffer)getDocument();
 		FontMetrics metrics = g.getFontMetrics();
 		Hashtable colors = buffer.getColors();
@@ -78,7 +79,7 @@ public class SyntaxView extends PlainView
 			buffer.getText(start,end - (start + 1),line);
 			if(tokenMarker == null)
 			{
-				g.setColor(Color.black);
+				g.setColor(def);
 				Utilities.drawTabbedText(line,x,y,g,this,0);
 			}
 			else
@@ -92,11 +93,11 @@ public class SyntaxView extends PlainView
 					Color color;
 					String id = tokens.id;
 					if(id == null)
-						color = Color.black;
+						color = def;
 					else
 						color = (Color)colors.get(id);
 					g.setColor(color == null ?
-						   Color.black : color);
+						   def : color);
 				   	line.count = length;
 					x = Utilities.drawTabbedText(line,x,
 						   y,g,this,offset);
@@ -112,6 +113,12 @@ public class SyntaxView extends PlainView
 			// shouldn't happen
 			bl.printStackTrace();
 		}
+	}
+
+	// protected members
+	protected Color getDefaultColor()
+	{
+		return getContainer().getForeground();
 	}
 
 	// private members

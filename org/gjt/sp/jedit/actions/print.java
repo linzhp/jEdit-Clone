@@ -96,6 +96,11 @@ public class print extends EditAction
 				return ((((int)x - leftMargin) / _tabSize + 1)
 					* _tabSize) + leftMargin;
 			}
+
+			public Color getDefaultColor()
+			{
+				return Color.black;
+			}
 		};
 		Graphics gfx = null;
 		Font font = textArea.getFont();

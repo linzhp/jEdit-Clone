@@ -6,7 +6,7 @@
 ###
 ### MENUBAR
 ###
-view.mbar=buffers file edit search tools mode plugins help
+view.mbar=buffers file edit search tools help
 
 ### Buffers menu
 buffers.label=$Buffers
@@ -185,24 +185,23 @@ tools=execute \
       - \
       word-count \
       - \
-      options
+      options \
+      - \
+      %mode \
+      %plugins
 tools.label=$Tools
 execute.label=$Execute Command...
 pipe-selection.label=$Pipe Selection Through Command...
 compile.label=$Compile...
 make.label=$Make...
-next-error.label=$Next Error
-prev-error.label=$Previous Error
-list-errors.label=List $Errors...
-list-messages.label=List $Messages...
 word-count.label=$Word Count...
 options.label=$Options...
 
 ### Mode menu
-mode.label=$Mode
+mode.label=Mo$de
 
 ### Plugins menu
-plugins.label=$Plugins
+plugins.label=P$lugins
 no-plugins.label=No Plugins
 
 ### Help menu
@@ -441,6 +440,22 @@ options.editor.bracketHighlight=Bracket highlighting
 options.editor.syntax=Syntax colorizing
 options.editor.autoIndent=Auto indent
 options.editor.blinkCaret=Blinking caret
-options.colors.label=Colors
+options.colors1.label=Colors (General)
+options.colors1.bgColor=View background:\ 
+options.colors1.fgColor=View foreground:\ 
+options.colors1.caretColor=Caret color:\ 
+options.colors1.selectionColor=Selection color:\ 
+options.colors1.lineHighlightColor=Line highlight color:\ 
+options.colors1.bracketHighlightColor=Bracket highlight color:\ 
+options.colors2.label=Colors (Syntax)
+options.colors2.commentColor=Comment color:\ 
+options.colors2.literalColor=Literal color:\ 
+options.colors2.labelColor=Label color:\ 
+options.colors2.keyword1Color=Keyword 1 color:\ 
+options.colors2.keyword2Color=Keyword 2 color:\ 
+options.colors2.keyword3Color=Keyword 3 color:\ 
 options.ok=OK
 options.cancel=Cancel
+
+# Color chooser, used by options.colors[12]
+colorChooser.title=Pick a Color

@@ -1,5 +1,5 @@
 /*
- * ColorsOptionPane.java - Colors options panel
+ * ColorsOptionPane.java - Abstract colors options panel
  * Copyright (C) 1998, 1999 Slava Pestov
  *
  * This program is free software; you can redistribute it and/or
@@ -21,33 +21,43 @@ package org.gjt.sp.jedit.options;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.*;
+import org.gjt.sp.jedit.jEdit;
 
-public class ColorsOptionPane extends OptionPane
+public abstract class ColorsOptionPane extends OptionPane
+implements ActionListener
 {
-	public ColorsOptionPane()
+	public ColorsOptionPane(String name)
 	{
-		super("colors");
-		GridBagLayout layout = new GridBagLayout();
-		setLayout(layout);
-		GridBagConstraints cons = new GridBagConstraints();
-		cons.gridx = cons.gridy = 0;
-		cons.gridwidth = 3;
-		cons.gridheight = 1;
-		cons.fill = GridBagConstraints.BOTH;
-		cons.weightx = 1.0f;
-
-		// how do? -- label, button attach button listener
+		super(name);
 	}
 
-	public void save()
+	public void actionPerformed(ActionEvent evt)
 	{
+		Object source = evt.getSource();
+		if(source instanceof JButton)
+		{
+			JButton button = (JButton)source;
+			Color color = JColorChooser.showDialog(this,
+				jEdit.getProperty("colorChooser.title"),
+				button.getBackground());
+			if(color != null)
+				button.setBackground(color);
+		}
 	}
 
-	// private members
-	private Color backgroundColor;
-	private Color foregroundColor;
-	private Color lineHighlightColor;
-	private Color bracketHighlightColor;
-	private Color caretColor;
-	private Color selectionColor;
+	// protected members
+	protected JButton createColorButton(String property)
+	{
+		JButton button = new JButton("    ");
+		button.setBackground(jEdit.parseColor(jEdit.getProperty(property)));
+		button.addActionListener(this);
+		return button;
+	}
+
+	protected void saveColorButton(String property, JButton button)
+	{
+		int value = (button.getBackground().getRGB() & 0xffffff);
+		jEdit.setProperty(property,'#' + Integer.toHexString(value));
+	}
 }

@@ -42,7 +42,28 @@ implements CaretListener, KeyListener, WindowListener
 	public void propertiesChanged()
 	{
 		SwingUtilities.updateComponentTreeUI(this);
-		Font font = jEdit.getFont();
+		String family = jEdit.getProperty("view.font");
+		int size;
+		try
+		{
+			size = Integer.parseInt(jEdit.getProperty(
+				"view.fontsize"));
+		}
+		catch(NumberFormatException nf)
+		{
+			size = 12;
+		}
+		int style;
+		String styleStr = jEdit.getProperty("view.fontstyle");
+		if("bold".equals(styleStr))
+			style = Font.BOLD;
+		else if("italic".equals(styleStr))
+			style = Font.ITALIC;
+		else if("boldItalic".equals(styleStr))
+			style = (Font.BOLD | Font.ITALIC);
+		else
+			style = Font.PLAIN;
+		Font font = new Font(family,style,size);
 		textArea.setFont(font);
 		status.setFont(font);
 		textArea.setLineHighlight("on".equals(jEdit.getProperty(
@@ -55,6 +76,12 @@ implements CaretListener, KeyListener, WindowListener
 			.getProperty("view.bracketHighlightColor")));
 		textArea.setCaretColor(jEdit.parseColor(jEdit
 			.getProperty("view.caretColor")));
+		textArea.setSelectionColor(jEdit.parseColor(jEdit
+			.getProperty("view.selectionColor")));
+		textArea.setBackground(jEdit.parseColor(jEdit
+			.getProperty("view.bgColor")));
+		textArea.setForeground(jEdit.parseColor(jEdit
+			.getProperty("view.fgColor")));
 		try
 		{
 			textArea.setCaretBlinkRate(Integer.parseInt(jEdit

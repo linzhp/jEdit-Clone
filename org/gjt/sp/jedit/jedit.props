@@ -60,7 +60,6 @@ buffer.syntax=on
 buffer.make=make -k
 
 # Colors
-buffer.colors.alttxt=black
 buffer.colors.comment1=red
 buffer.colors.comment2=red
 buffer.colors.keyword1=blue
@@ -81,6 +80,12 @@ view.geometry.h=30
 # Font
 view.font=Monospaced
 view.fontsize=12
+# Possible values: plain, bold, boldItalic
+view.fontstyle=plain
+
+# Background and foreground colors
+view.bgColor=white
+view.fgColor=black
 
 # Line highlighting
 view.lineHighlight=on
@@ -92,6 +97,9 @@ view.bracketHighlightColor=#ffaaaa
 
 # Caret color
 view.caretColor=red
+
+# Selection color
+view.selectionColor=#ccccff
 
 # Caret blink rate
 view.caretBlinkRate=500
