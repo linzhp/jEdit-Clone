@@ -29,6 +29,9 @@
 <h2>Enhancements</h2>
 
 <ul>
+<li>API change: View.setBuffer() now updates the buffer menu, so
+View.updateBuffersMenu() shouldn't be called anymore
+<li>API change: new Console.addTab() method to add a tab to the console
 <li>Minor documentation updates
 <li>New <code>SyntaxUtilities.getDefaultSyntaxColors()</code> method returns
 default syntax color dictionary
@@ -46,6 +49,7 @@ default syntax color dictionary
 <ul>
 <li>URLs weren't opened by the console
 <li>HyperSearch would have problems if the view's buffer was changed
+<li>Fixed possible slowdown when colorizing JavaScripts in HTML mode
 </ul>
 
 <a name=151>
