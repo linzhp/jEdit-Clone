@@ -32,6 +32,19 @@
 <b>PARTLY DONE: need to do C, HTML, TeX</b><br>
 <b>Mike D should do TSQL</b>
 <li>New text component
+<ul>
+<li>Stage 1 - read only, scrolling - <b>NEARLY DONE, need to fix bg color</b>
+<li>Stage 2 - read only, model listens for document events, repaints
+correct line range
+<li>Stage 3 - read only, various optimizations - only repaint changed
+lines, JScrollPane-like blit optimization
+<li>Stage 4 - read/write, caret position maintained, model to view/vice versa
+translation, keyTyped events passed to the document
+<li>Stage 5 - read/write, input handler implemented, caret bias implemented,
+etc
+<li>Stage 6 - input handler, actions implemented
+<li>Stage 7 - integrated into jEdit, actions changed to support this
+</ul>
 </ul>
 </td>
 </tr>

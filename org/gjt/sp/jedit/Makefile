@@ -47,6 +47,7 @@ subdirs:
 	$(MAKE) -f org/gjt/sp/jedit/remote/Makefile
 	$(MAKE) -f org/gjt/sp/jedit/search/Makefile
 	$(MAKE) -f org/gjt/sp/jedit/syntax/Makefile
+	$(MAKE) -f org/gjt/sp/jedit/textarea/Makefile
 	$(MAKE) -f org/gjt/sp/jedit/toolbar/Makefile
 
 include Rules.make

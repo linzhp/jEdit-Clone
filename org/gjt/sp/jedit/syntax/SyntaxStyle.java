@@ -77,7 +77,7 @@ public class SyntaxStyle
 		if(font == null)
 			throw new NullPointerException("font param must not"
 				+ " be null");
-		if(font == lastFont)
+		if(font.equals(lastFont))
 			return lastStyledFont;
 		lastFont = font;
 		lastStyledFont = new Font(font.getFamily(),
@@ -96,10 +96,8 @@ public class SyntaxStyle
 	public void setGraphicsFlags(Graphics gfx, Font font)
 	{
 		Font _font = getStyledFont(font);
-		if(gfx.getFont() != _font)
-			gfx.setFont(_font);
-		if(gfx.getColor() != color)
-			gfx.setColor(color);
+		gfx.setFont(_font);
+		gfx.setColor(color);
 	}
 
 	/**

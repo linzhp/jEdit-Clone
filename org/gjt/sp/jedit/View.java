@@ -579,7 +579,11 @@ public class View extends JFrame
 			setBuffer(buffer);
 
 		getContentPane().add(BorderLayout.NORTH,topToolBars);
-		getContentPane().add(BorderLayout.CENTER,scroller);
+		org.gjt.sp.jedit.textarea.JEditTextArea ta =
+			new org.gjt.sp.jedit.textarea.JEditTextArea(80,25);
+		ta.getModel().setDocument(getBuffer());
+		getContentPane().add(BorderLayout.CENTER,ta);
+//		getContentPane().add(BorderLayout.CENTER,scroller);
 
 		JPanel panel = new JPanel(new BorderLayout());
 		panel.add(BorderLayout.CENTER,bottomToolBars);
@@ -811,6 +815,9 @@ public class View extends JFrame
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.80  1999/06/20 07:00:59  sp
+ * Text component rewrite started
+ *
  * Revision 1.79  1999/06/20 02:15:45  sp
  * Syntax coloring optimizations
  *
