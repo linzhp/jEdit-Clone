@@ -263,7 +263,7 @@ public class JARClassLoader extends ClassLoader
 	{
 		String name = MiscUtilities.classToFile(clazz);
 
-		Class cls = findLoadedClass(name);
+		Class cls = findLoadedClass(clazz);
 		if(cls != null)
 		{
 			if(resolveIt)
@@ -301,7 +301,7 @@ public class JARClassLoader extends ClassLoader
 					throw new ClassNotFoundException(clazz);
 				}
 			}
-			
+
 			cls = defineClass(clazz,data,0,data.length);
 
 			if(resolveIt)
@@ -322,6 +322,9 @@ public class JARClassLoader extends ClassLoader
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.9  1999/05/13 05:38:11  sp
+ * JARClassLoader bug fix
+ *
  * Revision 1.8  1999/05/08 06:37:21  sp
  * jEdit.VERSION/BUILD becomes jEdit.getVersion()/getBuild(), plugin dependencies
  *
