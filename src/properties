@@ -43,7 +43,7 @@ maxrecent=8
 
 ### Name for untitled files
 # {0} - the number of the file
-untitled=Untitled {0}
+untitled=Untitled-{0}
 
 ### Editor window
 # Normally, [xywh] is calculated to center the window on the screen.
@@ -218,8 +218,8 @@ print.shortcut=C-p
 exit.label=Exit
 exit.shortcut=C-q
 edit=undo redo - cut copy paste clear select_all - find find_next \
-	find_selection replace replace_all goto_line - set_marker \
-	%clear_marker %goto_marker - options
+	find_selection replace replace_next replace_all goto_line - \
+	set_marker %clear_marker %goto_marker - options
 edit.label=Edit
 undo.label=Undo
 undo.shortcut=C-z
@@ -243,6 +243,8 @@ find_selection.label=Find Selection
 find_selection.shortcut=C-h
 replace.label=Replace
 replace.shortcut=C-r
+replace_next.label=Replace & Find Next
+replace_next.shortcut=CS-g
 replace_all.label=Replace All
 replace_all.shortcut=CS-r
 goto_line.label=Go To Line...

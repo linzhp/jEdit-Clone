@@ -74,7 +74,7 @@ implements DocumentListener, UndoableEditListener
 		markers = new Vector();
 		newFile = !load;
 		init = true;
-		String parent = null;
+		String parent = "";
 		if(view != null)
 			parent = view.getBuffer().getFile().getParent();
 		setPath(parent,name);
@@ -212,7 +212,7 @@ implements DocumentListener, UndoableEditListener
 		}
 	}
 
-	public synchronized void autosave()
+	public void autosave()
 	{
 		if(dirty)
 		{
@@ -222,6 +222,8 @@ implements DocumentListener, UndoableEditListener
 			}
 			catch(Exception e)
 			{
+				System.err.println("Error during autosave:");
+				e.printStackTrace();
 			}
 		}
 	}
@@ -281,6 +283,7 @@ implements DocumentListener, UndoableEditListener
 			else
 				path = this.path;
 		}
+		setPath(path);
 		backup();
 		try
 		{
@@ -290,13 +293,16 @@ implements DocumentListener, UndoableEditListener
 				save(new OutputStreamWriter(connection
 					.getOutputStream()));
 				connection = markersUrl.openConnection();
-				saveMarkers(new OutputStreamWriter(connection
-					.getOutputStream()));
+				if(!markers.isEmpty())
+					saveMarkers(new OutputStreamWriter(
+					connection.getOutputStream()));
 			}
 			else
 			{
 				save(new FileWriter(file));
-				saveMarkers(new FileWriter(markersFile));
+				if(!markers.isEmpty())
+					saveMarkers(new FileWriter(
+					markersFile));
 			}
 			dirty = newFile = false;
 			autosaveFile.delete();
@@ -324,13 +330,14 @@ implements DocumentListener, UndoableEditListener
 		BufferedReader in = new BufferedReader(new StringReader(
 			getText(0,getLength())));
 		Element map = getDefaultRootElement();
-		for(int i = 0; i < map.getElementCount(); i++)
+		for(int i = 0; i < map.getElementCount();)
 		{
 			Element line = map.getElement(i);
 			int start = line.getStartOffset();
 			out.write(getText(start,line.getEndOffset() - start
 				- 1));
-			out.write(newline);
+			if(++i != map.getElementCount())
+				out.write(newline);
 		}
 		out.close();
 		in.close();
@@ -548,6 +555,13 @@ loop:		for(int i = 0; i < map.getElementCount(); i++)
 
 	public void setPath(String parent, String path)
 	{
+		try
+		{
+			parent = new File(parent).getCanonicalPath();
+		}
+		catch(IOException io)
+		{
+		}
 		url = null;
 		try
 		{

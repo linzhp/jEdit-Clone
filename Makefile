@@ -7,6 +7,17 @@ install:
 	@make -C plugins install
 	@make -C doc install
 	@make -C bin install
+	@echo
+	@echo "Type 'make kde' to install KDE applnks for jEdit and jOpen."
+	@echo
+kde:
+	@(echo "Where is KDE located? [/opt/kde]";\
+	read kdedir;\
+	if [ "$$kdedir" = "" ];\
+	then\
+	kdedir=/opt/kde;\
+	fi;\
+	cp etc/*.kdelnk $$kdedir/share/applnk/Applications;)
 clean:
 	find -name \*~ -exec rm {} \;
 	find -name .\*~ -exec rm {} \;
@@ -22,9 +33,4 @@ tgz: all clean todos
 	(cd ..; tar cfz jEdit-`date +%Y%m%d`.tgz jEdit)
 todos:
 	find -name \*.bat -exec todos {} \;
-	find -name \*.java -exec todos {} \;
-	find -name \*.txt -exec todos {} \;
-	todos README
-	todos COPYING
-	todos VERSION
 include Rules.make

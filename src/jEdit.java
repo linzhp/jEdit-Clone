@@ -35,8 +35,8 @@ import com.sun.java.swing.UIManager;
 
 public class jEdit
 {
-	public static final String VERSION = "0.4";
-	public static final String BUILD = "19980901";
+	public static final String VERSION = "0.5";
+	public static final String BUILD = "19980902";
 	public static final PropsMgr props = new PropsMgr();
 	public static final CommandMgr cmds = new CommandMgr();
 	public static final BufferMgr buffers = new BufferMgr();
@@ -54,10 +54,7 @@ public class jEdit
 		System.err.println("    -usage: Print this message and exit");
 		System.err.println("    -nousrprops: Don't load user"
 			+ " properties");
-		System.err.println("    -helpdir=<path>: Documentation"
-			+ " directory");
-		System.err.println("    -plugindir=<path>: Plugin directory");
-		System.err.println("    -server=<file>: Write server port to"
+		System.err.println("    -portfile=<file>: Write server port to"
 			+ " <file>");
 		System.exit(1);
 	}
@@ -74,6 +71,7 @@ public class jEdit
 		boolean noUsrProps = false;
 		portFile = new File(System.getProperty("user.home"),
 			props.getProperty("server.portfile",".jedit-server"));
+		String jeditHome = System.getProperty("jedit.home",".");
 		for(int i = 0; i < args.length; i++)
 		{
 			String arg = args[i];
@@ -87,14 +85,8 @@ public class jEdit
 					version();
 				else if(arg.equals("-nousrprops"))
 					noUsrProps = true;
-				else if(arg.startsWith("-helpdir="))
-					props.setDefault("helpdir",arg
-						.substring(9)
-						+ File.separator);
-				else if(arg.startsWith("-plugindir="))
-					cmds.loadPlugins(arg.substring(11));
-				else if(arg.startsWith("-server="))
-					portFile = new File(arg.substring(8));
+				else if(arg.startsWith("-portfile="))
+					portFile = new File(arg.substring(10));
 				else
 				{
 					System.err.println("Unknown option: "
@@ -105,6 +97,10 @@ public class jEdit
 				args[i] = null;
 			}
 		}
+		cmds.loadPlugins(jeditHome + File.separator + "jars");
+		cmds.loadPlugins(System.getProperty("user.home") +
+			File.separator + ".jedit-jars");
+		props.setDefault("helpdir",jeditHome + File.separator + "doc");
 		props.loadSystemProps();
 		if(!noUsrProps)
 			props.loadUserProps();	

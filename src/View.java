@@ -76,7 +76,7 @@ implements ActionListener, KeyListener, CaretListener, WindowListener
 		dynamicMenus.put("goto_marker",gotoMarker = jEdit
 			.loadMenu(this,"goto_marker"));
 		textArea = new JTextArea(40,80);
-		status = new JLabel();
+		status = new JLabel("Hello world");
 		if(view == null)
 			setBuffer(null);
 		else
@@ -93,8 +93,8 @@ implements ActionListener, KeyListener, CaretListener, WindowListener
 		propertiesChanged();
 		getContentPane().add("Center",new JScrollPane(textArea));
 		getContentPane().add("South",status);
-		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 		pack();
+		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 		addWindowListener(this);
 		Dimension screen = getToolkit().getScreenSize();
 		int x,y,w = getSize().width,h = getSize().height;	

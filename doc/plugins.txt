@@ -33,9 +33,6 @@ $JAVAHOME\.jedit-jars.
 On Windows NT, the system plugin directory is the same as that on
 Windows 95/98, but each user has a plugin directory in $HOME\.jedit-jars.
 
-Additional directories can be added to the search path with the -plugindir=
-command line option, see starting.txt for details.
-
 3. Using Plugins
 ----------------
 Once a plugin is installed, jEdit will say so during startup.
@@ -213,4 +210,3 @@ The plugin should also appear in the Plugins menu. Test it. It should output
 
 -- Slava Pestov
 <slava_pestov@geocities.com>
-

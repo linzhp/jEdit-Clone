@@ -1,8 +1,9 @@
-HELP INDEX (index.txt, last modified 29 Sep 1998)
+HELP INDEX (index.txt, last modified 2 Oct 1998)
 
 If you're viewing this file with jEdit, you can open a file by double clicking
 on its name and pressing CS-o - that is pressing `o' while holding down the
-Control and Shift keys.
+Control and Shift keys. Also, most help files have defined markers. Check out
+the `Edit->Go To Marker' menu.
 
 General
 -------
@@ -12,8 +13,8 @@ VERSION         Version history, known bugs and to do list
 
 Using jEdit
 -----------
-installing.txt  Instructions for installing jEdit
-starting.txt    Instructions for starting jEdit
+installing.txt  Installing jEdit
+starting.txt    Getting started with jEdit
 menus.txt       A description of jEdit's menus and how to customize them
 props.txt       A description of property files and how to change them
 plugins.txt     A description of jEdit plugins, and how to install, use and
@@ -21,4 +22,3 @@ plugins.txt     A description of jEdit plugins, and how to install, use and
 
 -- Slava Pestov
 <slava_pestov@geocities.com>
-

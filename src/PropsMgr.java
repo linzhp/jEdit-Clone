@@ -40,7 +40,7 @@ public class PropsMgr extends Properties
 	public void loadSystemProps()
 	{
 		if(!loadProps(getClass().getResourceAsStream("/properties"),
-			"default properties",true))
+			"properties",true))
 			System.exit(1);
 	}
 

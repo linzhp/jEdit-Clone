@@ -17,6 +17,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+import java.io.File;
 import java.util.Hashtable;
 
 public class Cmd_help implements Command
@@ -33,7 +34,7 @@ public class Cmd_help implements Command
 			arg = "index.txt";
 		View view = (View)args.get(VIEW);
 		jEdit.buffers.openFile(view,jEdit.props.getProperty("helpdir")
-			+ arg);
+			+ File.separator + arg);
 		return null;
 	}
 }

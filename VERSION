@@ -1,4 +1,4 @@
-VERSION INFORMATION (VERSION, last modified 1 Oct 1998)
+VERSION INFORMATION (VERSION, last modified 2 Oct 1998)
 
 -- To Do:
 - Search and replace
@@ -6,6 +6,13 @@ VERSION INFORMATION (VERSION, last modified 1 Oct 1998)
 - Better documentation
 - Make code thread safe
 - Word wrap isn't done when printing
+- Swing seems to like putting ^Ms in random places in the text, on my JDK at
+  least. Anyone know how I can fix this?
+
+-- Version 0.5:
+- Lots of bug fixes
+- Simplified shell scripts and batch files
+- More documentaion
 
 -- Version 0.4:
 - Lots of bug fixes

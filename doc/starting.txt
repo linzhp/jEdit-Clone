@@ -1,9 +1,17 @@
-STARTING JEDIT (starting.txt, last modified 29 Sep 1998)
+GETTING STARTED WITH JEDIT (starting.txt, last modified 2 Oct 1998)
 
 Contents
 --------
 1. Starting jEdit
-2. Platform Specific Notes
+1.2. Unix And Unix-workalikes
+1.3. Windows 95 and 98
+1.4. Windows NT
+1.5. MacOS
+2. Opening Files
+3. Autosave and backups
+4. Views
+5. Editing Files
+6. Advanced Features
 
 1. Starting jEdit
 -----------------
@@ -28,12 +36,7 @@ A number of options can also be given to jEdit:
 	-version: Print jEdit version and exit
 	-usage: Print a command line usage
 	-nousrprops: Don't load user properties
-	-helpdir=<dir>: Documentation directory
-	-plugindir=<dir>: Plugin directory
-	-server=<file>: Write server port to <file>
-
-If jEdit is started with the jedit shell script or the jedit.bat batch file,
--helpdir, -plugindir and -server are set automatically.
+	-portfile=<file>: Write server port to <file>
 
 jOpen also accepts certain options:
 
@@ -41,9 +44,6 @@ jOpen also accepts certain options:
 	-usage: Print command line usage
 	-server=<hostname>: jEdit server to connect to
 	-portfile=<file>: File with server port
-
-If jOpen is started with the jopen shell script or the jopen.bat batch file,
--portfile is set automatically.
 
 If you want to open a file whose name starts with a dash (-), you must place
 the -- argument before it in the command line to stop it from being interpreted
@@ -55,14 +55,12 @@ The -- indicates the end of options. No more options after it are interpreted.
 
 CAVEAT: If you give jOpen a relative pathname, it will be resolved relative to
 jEdit's working directory, not jOpen's. For example, if jEdit was started from
-/home/bob/Work, and jOpen is invoked with argument `filename' from the directory
-/home/bob/Play, jEdit will try to open /home/bob/Work/filename, not
+/home/bob/Work, and jOpen is invoked with argument `filename' from the
+directory /home/bob/Play, jEdit will try to open /home/bob/Work/filename, not
 /home/bob/Play/filename as expected.
 
-2. Platform Specific Notes
---------------------------
-Unix and clones:
-
+1.2. Unix
+---------
 You need to set the PATH variable to point to the directory with the jedit and
 jedit shell scripts so that the shell can locate them. The default location is
 /opt/slava/bin. If you're using a Bourne shell (sh, ash, jsh, bash, zsh) The
@@ -78,8 +76,8 @@ It is advisable to place these commands in the .profile script (Bourne shell)
 or the .csh.login script (C shell) so that the PATH will be set every time you
 log in.
 
-Windows 95 and 98:
-
+1.3. Windows 95 and 98
+----------------------
 If you want to use jEdit from the command line, you must add it's directory to
 the PATH. By default, jEdit is installed in C:\Program Files\jEdit. The command
 to add that directory to the PATH is:
@@ -89,25 +87,93 @@ to add that directory to the PATH is:
 It is advisable to place this command in your C:\AUTOEXEC.BAT so that it's
 executed every time the computer starts up.
 
-Windows NT:
-
+1.4. Windows NT
+---------------
 The PATH is set in the System control panel in Windows NT. The default
 installation directory is the same as that in Windows 95/98.
 
-Other Platforms:
+1.5. MacOS
+----------
+Could someone with MRJ tell me more about it's standalone application handling?
 
-On systems without a DOS or Unix style shell such as the Mac, jEdit will have
-to be started manually with the following options:
+2. Opening Files
+----------------
+Within jEdit, files can be opened for editing in one of three ways:
 
-	-plugindir=<dir>: One of these for each directory with plugins
-	-helpdir=<dir>: The doc directory in the jEdit distribution
-	-server=<file>: Some file, in a temporary directory perhaps
+- With the `File->Open File' command, which shows a file selection dialog.
+- With the `File->Open URL' command, which lets you type in a path name or URL.
+- With the `File->New File' command, which creates a blank, untitled file.
 
-jOpen will have to be started with these options:
+A new buffer is created for each file, and the file's contents are loaded
+into it. The original file remains unchanged until you save it.
 
-	-portfile=<file>: The same filename specified in the -server option to
-	jEdit
+3. Saving Files
+---------------
+Files can be saved back to disk in one of three ways:
+
+- With the `File->Save' command, which saves the file immediately.
+- With the `File->Save As' command, which shows a file selection dialog,
+  allowing a diffirent name for the file to be chosen.
+- With the `File->Save To URL' command, which lets you type in a path name or
+  URL to save the file to.
+
+4. Autosave and Backups
+-----------------------
+jEdit has two features which protect against stupid things that the computer
+or the user might do.
+
+The autosave feature protects against computer crashes. It saves currently
+edited files at fixed intervals, 30 seconds by default. When a file is
+autosaved, its name is prefixed and suffixed with `#' characters - for
+example, if you were editing the file `HelloWorld.java', it would be
+autosaved to `#HelloWorld.java#'. If jEdit crashes during an editing session,
+you can open the autosave file, and if it contains important information,
+overwrite the original file with it.
+
+The backup feature protects against the user's mistakes. When you save a
+file, a tilde (`~') is added to the name of the original version before the
+new version is saved - for example, if you made some changes to
+`HelloWorld.java' and saved them, the original version, before the changes,
+would be called `HelloWorld.java~'. If you make some changes that you didn't
+like, you can revert to the last saved version by opening the backup file
+and overwriting the new version with it.
+
+5. Views
+--------
+Files are edited inside views. Each view can only edit one file at once, but
+there can be any number of views. More than one view can edit the same file -
+changes made in one view automatically appear in the others.
+
+The `File->New View' command creates a new view, set to the edit the same
+file as the current one.
+
+The `File->Close View' command closes the current view and exits jEdit if
+there aren't open ones left.
+
+The Buffers menu can be used to select which file the current view should be
+editing.
+
+6. Editing Files
+----------------
+If you've ever used an editor such as kedit on Unix, Notepad on Windows
+or SimpleText on the Mac you'll feel right at home in jEdit. jEdit's
+commands work similarly as in the above editors. The menu item shortcuts are
+also very similar.
+
+7. Advanced Features
+--------------------
+jEdit also has a number of features that many other editors lack.
+
+Most other editors can set `markers' in the text, and go to those markers.
+jEdit's markers, however are persistent across editing sessions and can have
+names of any length. Markers are set the `Edit->Set Marker', cleared with
+`Edit->Clear Marker' and jumped to with `Edit->Go To Marker'.
+
+The `File->Open Selection' command can uses the current selection as the
+name of a file to open. This is useful in help files, for example.
+
+The `File->Open URL' and `File->Save To URL' commands enable jEdit to edit
+files on the Internet.
 
 -- Slava Pestov
 <slava_pestov@geocities.com>
-
