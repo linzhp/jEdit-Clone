@@ -46,7 +46,7 @@ public class jEdit
 	 * The date when a change was last made to the source code,
 	 * in <code>YYYYMMDD</code> format.
 	 */
-	public static final String BUILD = "19990420";
+	public static final String BUILD = "19990421";
 
 	/**
 	 * The user properties file.
@@ -1227,7 +1227,9 @@ public class jEdit
 				Buffer buffer = openFile(null,null,path,readOnly,
 					false);
 				buffer.setCaretInfo(selStart,selEnd);
-				buffer.setMode(getMode(mode));
+				Mode m = getMode(mode);
+				if(m != null)
+					buffer.setMode(m);
 				if(current)
 					b = buffer;
 				i++;
@@ -1519,6 +1521,9 @@ public class jEdit
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.74  1999/04/21 06:13:26  sp
+ * Fixed bug in loadDesktop(), added idiot-proofing to Buffer.setMode()
+ *
  * Revision 1.73  1999/04/20 06:38:26  sp
  * jEdit.addPluginMenu() method added
  *

@@ -573,6 +573,10 @@ public class Buffer extends DefaultSyntaxDocument
 	 */
 	public void setMode(Mode mode)
 	{
+		/* This protects against stupid people (like me)
+		 * doing stuff like buffer.setMode(jEdit.getMode(...)); */
+		if(mode == null)
+			throw new NullPointerException("You suck!!!");
 		if(this.mode == mode)
 			return;
 
@@ -1453,6 +1457,9 @@ loop:		for(int i = 0; i < markers.size(); i++)
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.73  1999/04/21 06:13:26  sp
+ * Fixed bug in loadDesktop(), added idiot-proofing to Buffer.setMode()
+ *
  * Revision 1.72  1999/04/20 06:38:26  sp
  * jEdit.addPluginMenu() method added
  *
