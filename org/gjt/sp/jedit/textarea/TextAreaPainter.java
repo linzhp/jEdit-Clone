@@ -56,7 +56,11 @@ public class TextAreaPainter extends Component implements TabExpander
 		setCaretColor(Color.red);
 		setSelectionColor(new Color(0xccccff));
 		setLineHighlightColor(new Color(0xe0e0e0));
-		setLineHighlight(true);
+		setLineHighlightEnabled(true);
+		setBracketHighlightColor(new Color(0x009999));
+		setBracketHighlightEnabled(true);
+		setEOLMarkerColor(new Color(0x009999));
+		setEOLMarkerEnabled(true);
 	}
 
 	public SyntaxStyle[] getStyles()
@@ -99,26 +103,66 @@ public class TextAreaPainter extends Component implements TabExpander
 		this.lineHighlightColor = lineHighlightColor;
 	}
 
-	public boolean getLineHighlight()
+	public boolean isLineHighlightEnabled()
 	{
 		return lineHighlight;
 	}
 
-	public void setLineHighlight(boolean lineHighlight)
+	public void setLineHighlightEnabled(boolean lineHighlight)
 	{
 		this.lineHighlight = lineHighlight;
 		invalidateCurrentLine();
 	}
 
-	public boolean getBlockCaret()
+	public Color getBracketHighlightColor()
+	{
+		return bracketHighlightColor;
+	}
+
+	public void setBracketHighlightColor(Color bracketHighlightColor)
+	{
+		this.bracketHighlightColor = bracketHighlightColor;
+	}
+
+	public boolean isBracketHighlightEnabled()
+	{
+		return bracketHighlight;
+	}
+
+	public void setBracketHighlightEnabled(boolean bracketHighlight)
+	{
+		this.bracketHighlight = bracketHighlight;
+	}
+
+	public boolean isBlockCaretEnabled()
 	{
 		return blockCaret;
 	}
 
-	public void setBlockCaret(boolean blockCaret)
+	public void setBlockCaretEnabled(boolean blockCaret)
 	{
 		this.blockCaret = blockCaret;
 		invalidateCurrentLine();
+	}
+
+	public Color getEOLMarkerColor()
+	{
+		return eolMarkerColor;
+	}
+
+	public void setEOLMarkerColor(Color eolMarkerColor)
+	{
+		this.eolMarkerColor = eolMarkerColor;
+	}
+
+	public boolean isEOLMarkerEnabled()
+	{
+		return eolMarkers;
+	}
+
+	public void setEOLMarkerEnabled(boolean eolMarkers)
+	{
+		this.eolMarkers = eolMarkers;
 	}
 
 	public FontMetrics getFontMetrics()
@@ -274,12 +318,15 @@ public class TextAreaPainter extends Component implements TabExpander
 	protected Color caretColor;
 	protected Color selectionColor;
 	protected Color lineHighlightColor;
+	protected Color bracketHighlightColor;
+	protected Color eolMarkerColor;
 
 	protected boolean blockCaret;
 	protected boolean lineHighlight;
+	protected boolean bracketHighlight;
+	protected boolean eolMarkers;
 	protected int cols;
 	protected int rows;
-
 	
 	protected int tabSize;
 	protected Graphics offGfx;
@@ -344,8 +391,7 @@ public class TextAreaPainter extends Component implements TabExpander
 				
 		gfx.setFont(defaultFont);
 
-		if(currentLineIndex < 0
-			|| currentLineIndex >= model.getLineCount())
+		if(currentLineIndex < 0 || currentLineIndex >= model.getLineCount())
 		{
 			gfx.setColor(defaultColor);
 			gfx.drawString("~",0,y + model.getLineHeight());
@@ -358,7 +404,10 @@ public class TextAreaPainter extends Component implements TabExpander
 		// draw the highlights
 		if(currentLineIndex >= model.getSelectionStartLine()
 			&& currentLineIndex <= model.getSelectionEndLine())
-			paintHighlight(model,gfx,y);
+			paintLineHighlight(model,gfx,y);
+
+		if(bracketHighlight && currentLineIndex == model.getBracketLine())
+			paintBracketHighlight(model,gfx,y);
 
 		gfx.setColor(defaultColor);
 
@@ -397,7 +446,12 @@ public class TextAreaPainter extends Component implements TabExpander
 	protected void paintPlainLine(TextAreaModel model, Graphics gfx,
 		Font defaultFont, Color defaultColor, int x, int y)
 	{
-		Utilities.drawTabbedText(currentLine,x,y,gfx,this,0);
+		x = Utilities.drawTabbedText(currentLine,x,y,gfx,this,0);
+		if(eolMarkers)
+		{
+			gfx.setColor(eolMarkerColor);
+			gfx.drawString(".",x,y);
+		}
 	}
 
 	protected void paintSyntaxLine(TextAreaModel model, Graphics gfx,
@@ -428,9 +482,14 @@ public class TextAreaPainter extends Component implements TabExpander
 
 			currentLineTokens = currentLineTokens.next;
 		}
+		if(eolMarkers)
+		{
+			gfx.setColor(eolMarkerColor);
+			gfx.drawString(".",x,y);
+		}
 	}
 
-	protected void paintHighlight(TextAreaModel model, Graphics gfx, int y)
+	protected void paintLineHighlight(TextAreaModel model, Graphics gfx, int y)
 	{
 		FontMetrics fm = getFontMetrics();
 		int height = fm.getHeight();
@@ -484,7 +543,7 @@ public class TextAreaPainter extends Component implements TabExpander
 			gfx.fillRect(x1,y,x2 - x1,height);
 		}
 
-		if(textArea.getCaretVisible()
+		if(textArea.isCaretVisible()
 			&& currentLineIndex == model.getCaretLine())
 		{
 			int offset = model.getCaretPosition() 
@@ -496,11 +555,28 @@ public class TextAreaPainter extends Component implements TabExpander
 			gfx.fillRect(caretX,y,caretWidth,height);
 		}
 	}
+
+	public void paintBracketHighlight(TextAreaModel model, Graphics gfx, int y)
+	{
+		int position = model.getBracketPosition();
+		if(position == -1)
+			return;
+		FontMetrics fm = getFontMetrics();
+		y += fm.getLeading() + fm.getMaxDescent();
+		int x = model.offsetToX(model.getBracketLine(),position);
+		gfx.setColor(bracketHighlightColor);
+		gfx.drawRect(x,y,fm.charWidth(model.getBracketCharacter()) - 1,
+			fm.getHeight() - 1);
+	}
 }
 
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.7  1999/06/29 09:01:24  sp
+ * Text area now does bracket matching, eol markers, also xToOffset() and
+ * offsetToX() now work better
+ *
  * Revision 1.6  1999/06/28 09:17:20  sp
  * Perl mode javac compile fix, text area hacking
  *

@@ -18,6 +18,12 @@
 <h2>New Features</h2>
 
 <ul>
+<li>The text component has been completely rewritten:
+<ul>
+<li>It is faster than the old Swing-based component
+<li>It can optionally display end-of-line markers
+<li>No more problems with files &gt; 2000 lines
+</ul>
 <li>It is now possible to disable window geometry saving. While this should
 be enabled in most situations, it causes problems with some JVMs
 </ul>
@@ -37,7 +43,7 @@ parameter pointing to jEdit's JAR file
 <h2>Bug Fixes</h2>
 
 <ul>
-<li>Buffer.java and View.java didn't compile with javac
+<li>Buffer.java, View.java and PerlTokenMarker.java didn't compile with javac
 <li>Shell script and Makefile mode had minor problems coloring
 multiline string literals
 </ul>
@@ -82,8 +88,6 @@ deleted because they are only used by obsolete versions of jEdit
 buffers
 <li>Buffers and views are now stored in a link list; some of jEdit's
 internals are now a little cleaner
-<li>Multiple files can now be selected and opened in the `Open File'
-dialog
 </ul>
 
 <h2>Bug Fixes</h2>

@@ -56,7 +56,7 @@ public class JEditTextArea extends Container
 		addFocusListener(new FocusHandler());
 
 		setCaretVisible(true);
-		setCaretBlinks(true);
+		setCaretBlinkEnabled(true);
 		setElectricScroll(3);
 	}
 
@@ -80,7 +80,7 @@ public class JEditTextArea extends Container
 	/**
 	 * Returns true if the caret is blinking, false otherwise.
 	 */
-	public boolean getCaretBlinks()
+	public boolean isCaretBlinkEnabled()
 	{
 		return caretBlinks;
 	}
@@ -89,21 +89,11 @@ public class JEditTextArea extends Container
 	 * Toggles caret blinking.
 	 * @param caretBlinks True if the caret should blink, false otherwise
 	 */
-	public void setCaretBlinks(boolean caretBlinks)
+	public void setCaretBlinkEnabled(boolean caretBlinks)
 	{
 		this.caretBlinks = caretBlinks;
-		if(caretBlinks)
-		{
-			if(caretTimer == null)
-				caretTimer = new Timer(500,new CaretBlinker());
-			if(!caretTimer.isRunning())
-				caretTimer.start();
-		}
-		else
-		{
-			caretTimer.stop();
+		if(!caretBlinks)
 			blink = false;
-		}
 
 		painter.invalidateCurrentLine();
 	}
@@ -111,7 +101,7 @@ public class JEditTextArea extends Container
 	/**
 	 * Returns true if the caret is visible, false otherwise.
 	 */
-	public boolean getCaretVisible()
+	public boolean isCaretVisible()
 	{
 		return (!caretBlinks || blink) && caretVisible;
 	}
@@ -245,7 +235,6 @@ public class JEditTextArea extends Container
 		this.horizontalOffset = horizontalOffset;
 		horizontal.setValue(-horizontalOffset);
 		painter.invalidateLineRange(firstLine,firstLine + visibleLines);
-		painter.repaint();
 	}
 
 	/**
@@ -263,10 +252,12 @@ public class JEditTextArea extends Container
 			return true;
 		}
 
+		boolean returnValue = false;
+
 		if(line - electricScroll < firstLine)
 		{
 			setFirstLine(Math.max(0,line - electricScroll));
-			return true;
+			returnValue = true;
 		}
 		else if(line + electricScroll > firstLine + visibleLines)
 		{
@@ -277,21 +268,44 @@ public class JEditTextArea extends Container
 			if(newline + visibleLines >= lines)
 				newline = lines - visibleLines;
 			setFirstLine(newline);
-			return true;
+			returnValue = true;
 		}
-		else
-			return false;
+
+		int x = model.offsetToX(line,offset);
+
+		if(x < horizontalOffset)
+		{
+			setHorizontalOffset(x);
+			returnValue = true;
+		}
+		else if(x > horizontalOffset + painter.getSize().width)
+		{
+			setHorizontalOffset(painter.getFontMetrics().charWidth('w')
+				- (x - painter.getSize().width));
+			returnValue = true;
+		}
+
+		return returnValue;
+	}
+
+	public void removeNotify()
+	{
+		super.removeNotify();
+		if(focusedComponent == this)
+			focusedComponent = null;
 	}
 
 	// protected members
 	protected static String CENTER = "center";
 	protected static String RIGHT = "right";
 	protected static String BOTTOM = "bottom";
+
+	protected static JEditTextArea focusedComponent;
 	
 	protected TextAreaPainter painter;
 	protected TextAreaModel model;
 
-	protected Timer caretTimer;
+	protected static Timer caretTimer;
 	protected boolean caretBlinks;
 	protected boolean caretVisible;
 	protected boolean blink;
@@ -385,11 +399,12 @@ public class JEditTextArea extends Container
 		private Component bottom;
 	}
 
-	class CaretBlinker implements ActionListener
+	static class CaretBlinker implements ActionListener
 	{
 		public void actionPerformed(ActionEvent evt)
 		{
-			blinkCaret();
+			if(focusedComponent != null)
+				focusedComponent.blinkCaret();
 		}
 	}
 
@@ -418,46 +433,37 @@ public class JEditTextArea extends Container
 			visibleLines = newVisibleLines;
 			updateScrollBars();
 		}
-
-		public void componentShown(ComponentEvent evt)
-		{
-			caretTimer.start();
-		}
-
-		public void componentHidden(ComponentEvent evt)
-		{
-			caretTimer.stop();
-		}
 	}
 
 	class FocusHandler implements FocusListener
 	{
 		public void focusGained(FocusEvent evt)
 		{
-			System.out.println("HELLO");
+			System.out.println("focus gained");
 			setCaretVisible(true);
+			focusedComponent = JEditTextArea.this;
 		}
 
 		public void focusLost(FocusEvent evt)
 		{
-			System.out.println("HI!!!");
+			System.out.println("focus lost");
 			setCaretVisible(false);
+			focusedComponent = null;
 		}
 	}
 
 	class MouseHandler extends MouseAdapter
 	{
-		public void mouseClicked(MouseEvent evt)
+		public void mousePressed(MouseEvent evt)
 		{
+			int offset = model.xyToOffset(evt.getX(),evt.getY());
 			switch(evt.getClickCount())
 			{
 			case 1:
-				int offset = model.xyToOffset(evt.getX(),evt.getY());
 				if((evt.getModifiers() & InputEvent.SHIFT_MASK) != 0)
 					model.setSelectionEnd(offset);
 				else
 					model.setCaretPosition(offset);
-				break;
 			case 2:
 				break;
 			case 3:
@@ -468,24 +474,13 @@ public class JEditTextArea extends Container
 				break;
 			}
 		}
-
-		public void mousePressed(MouseEvent evt)
-		{
-			int offset = model.xyToOffset(evt.getX(),evt.getY());
-			if((evt.getModifiers() & InputEvent.SHIFT_MASK) != 0)
-				model.setSelectionEnd(offset);
-			else
-				model.setCaretPosition(offset);
-		}
 	}
 
 	class MouseMotionHandler extends MouseMotionAdapter
 	{
 		public void mouseDragged(MouseEvent evt)
 		{
-			int line = model.yToLine(evt.getY());
-			int start = model.getLineStartOffset(line);
-			int offset = start + model.xToOffset(line,evt.getX());
+			int offset = model.xyToOffset(evt.getX(),evt.getY());
 
 			int mark = model.getMarkPosition();
 
@@ -501,11 +496,21 @@ public class JEditTextArea extends Container
 			}
 		}
 	}
+
+	static
+	{
+		caretTimer = new Timer(500,new CaretBlinker());
+		caretTimer.start();
+	}
 }
 
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.7  1999/06/29 09:01:24  sp
+ * Text area now does bracket matching, eol markers, also xToOffset() and
+ * offsetToX() now work better
+ *
  * Revision 1.6  1999/06/28 09:17:20  sp
  * Perl mode javac compile fix, text area hacking
  *

@@ -32,23 +32,27 @@
 <ul>
 <li>Bugs:
 <ul>
-<li>Focus and component handling doesn't work
-<li>Blinking caret needs to be cleaned up
-<li>X translation with syntax coloring is shoddy (when dragging mouse)
-<li>Model.yToLine() is shoddy
+<li>Scrolling to the left and up doesn't work when dragging
+<li>Focus handling doesn't work
+<li>xToOffset() doesn't work when horizontalOffset != 0
 </ul>
-<li>Features:
+<li>Features/Optimizations:
 <ul>
-<li>Fire caretEvents
-<li>Bracket highlighting
+<li>Line is tokenized THREE TIMES if it is painted and the caret is on it
+<li>Fire caret events
 <li>Add double click handler
-<li>Add horizontal scrolling support to scrollTo()
 <li>Auto scroll
-<li>Selection start/end should float when text is added/removed
+<li>Handle key events
+<li>Send mouse events to the input handler
 </ul>
-<li>After all of the above is done, make this the default text component,
-and add key event handling
+<li>After all of the above is done, make this the default text component
 </ul>
+<li>Color picker is shown twice in colors &amp; styles
+<li>RMI and startup process is not thread-safe. Instead of creating lots of
+inner classes and passing to invokeLater(), code a
+MiscUtilities.invokeLater(Class clazz, String method, Object object,
+Object[] args) method.
+<li>Multi-file find next is severely broken
 </ul>
 </td>
 </tr>
@@ -57,13 +61,8 @@ and add key event handling
 <td>1.7pre6</td>
 <td>To do:
 <ul>
-<li>RMI and startup process is not thread-safe. Instead of creating lots of
-inner classes and passing to invokeLater(), code a
-MiscUtilities.invokeLater(Class clazz, String method, Object object,
-Object[] args) method.
 <li>Faster literal search
 <li>MacOS clipboard workaround (Patrick is coding this)
-<li>Multi-file find next is severely broken
 <li>Finish Perl mode (brackets in matches, multiline matches)
 <li>Rewrite token markers to use PerlTokenMarker-like structure<p>
 <b>PARTLY DONE: need to do C, HTML, TeX</b><br>
@@ -88,6 +87,7 @@ also support loading menus for stuff other than views)
 <li>Drop support for Swing &lt; 1.1 (removeAll() hack, maybe others)
 <li>Eventually, drop support for JDK 1.1 and add drag and drop, remove
 deprecates, change RMI to CORBA, add im/bidi support, etc
+<li>Use ALE to code GUI?
 </ul>
 
 </body>

@@ -41,6 +41,8 @@ public class TextAreaModel
 		this.textArea = textArea;
 		documentHandler = new DocumentHandler();
 		setDocument(document);
+
+		bracketLine = bracketPosition = -1;
 	}
 
 	public int getLineHeight()
@@ -52,13 +54,12 @@ public class TextAreaModel
 	{
 		FontMetrics fm = textArea.getPainter().getFontMetrics();
 		return (line - textArea.getFirstLine()) * fm.getHeight()
-			- fm.getLeading() - fm.getMaxDescent();
+			- (fm.getLeading() + fm.getMaxDescent());
 	}
 
 	public int yToLine(int y)
 	{
 		FontMetrics fm = textArea.getPainter().getFontMetrics();
-		y += fm.getLeading() + fm.getMaxDescent();
 		int height = fm.getHeight();
 		return Math.max(0,Math.min(getLineCount() - 1,
 			y / height + textArea.getFirstLine()));
@@ -90,9 +91,8 @@ public class TextAreaModel
 		if(tokenMarker == null)
 		{
 			lineSegment.count = offset;
-			int x = Utilities.getTabbedTextWidth(lineSegment,
+			returnValue = Utilities.getTabbedTextWidth(lineSegment,
 				fm,0,painter,0);
-			returnValue = x;
 		}
 		/* If syntax coloring is enabled, we have to do this because
 		 * tokens can vary in width */
@@ -103,7 +103,6 @@ public class TextAreaModel
 			Token tokens = tokenMarker.markTokens(lineSegment,line);
 
 			int x = 0;
-			int index = 0;
 			Toolkit toolkit = painter.getToolkit();
 			Font defaultFont = painter.getFont();
 			SyntaxStyle[] styles = painter.getStyles();
@@ -127,21 +126,19 @@ public class TextAreaModel
 
 				int length = tokens.length;
 
-				if(offset < index + length)
+				if(offset + segmentOffset < lineSegment.offset + length)
 				{
-					lineSegment.count = offset - index;
+					lineSegment.count = offset - (lineSegment.offset - segmentOffset);
 					returnValue = x + Utilities.getTabbedTextWidth(
-						lineSegment,fm,x,painter,segmentOffset + index);
+						lineSegment,fm,x,painter,0);
 					break;
 				}
 				else
 				{
 					lineSegment.count = length;
 					x += Utilities.getTabbedTextWidth(
-						lineSegment,fm,x,painter,
-						lineSegment.offset + index);
+						lineSegment,fm,x,painter,0);
 					lineSegment.offset += length;
-					index += length;
 				}
 				tokens = tokens.next;
 			}
@@ -163,15 +160,16 @@ public class TextAreaModel
 		TextAreaPainter painter = textArea.getPainter();
 		FontMetrics fm = painter.getFontMetrics();
 		Segment lineSegment = painter.currentLine;
-		char[] segmentArray = lineSegment.array;
-		int segmentOffset = lineSegment.offset;
-		int segmentCount = lineSegment.count;
 			
 		if(painter.currentLineIndex != line)
 		{
 			getLineText(line,lineSegment);
 			painter.currentLineIndex = line;
 		}
+
+		char[] segmentArray = lineSegment.array;
+		int segmentOffset = lineSegment.offset;
+		int segmentCount = lineSegment.count;
 
 		if(tokenMarker == null)
 		{
@@ -186,8 +184,16 @@ public class TextAreaModel
 				else
 					charWidth = fm.charWidth(c);
 
-				if(x - charWidth / 2 < width)
-					return i;
+				if(painter.isBlockCaretEnabled())
+				{
+					if(x + charWidth / 2 <= width)
+						return i;
+				}
+				else
+				{
+					if(x - charWidth / 2 <= width)
+						return i;
+				}
 
 				width += charWidth;
 			}
@@ -234,7 +240,7 @@ public class TextAreaModel
 					else
 						charWidth = fm.charWidth(c);
 	
-					if(x - charWidth / 2 < width)
+					if(x - charWidth / 2 <= width)
 						return offset + i;
 	
 					width += charWidth;
@@ -409,20 +415,30 @@ public class TextAreaModel
 		int newStartLine = getLineOfOffset(newStart);
 		int newEndLine = getLineOfOffset(newEnd);
 
-		textArea.getPainter()._invalidateLineRange(
-			Math.min(selectionStartLine,newStartLine),
-			Math.max(selectionEndLine,newEndLine));
+		TextAreaPainter painter = textArea.getPainter();
 
-		int line = (newBias ? newStartLine : newEndLine);
-		int lineStart = getLineStartOffset(line);
-		if(!textArea.scrollTo(line,(newBias ? newStart : newEnd) - start))
-			textArea.getPainter().repaint();
+		if(painter.isBracketHighlightEnabled())
+		{
+			if(bracketLine != -1)
+				painter._invalidateLineRange(bracketLine,bracketLine);
+			updateBracketHighlight(end);
+			if(bracketLine != -1)
+				painter._invalidateLineRange(bracketLine,bracketLine);
+		}
+
+		painter._invalidateLineRange(selectionStartLine,selectionEndLine);
+		painter._invalidateLineRange(newStartLine,newEndLine);
 
 		selectionStart = newStart;
 		selectionEnd = newEnd;
 		selectionStartLine = newStartLine;
 		selectionEndLine = newEndLine;
 		biasLeft = newBias;
+
+		int line = (newBias ? newStartLine : newEndLine);
+		int lineStart = getLineStartOffset(line);
+		if(!textArea.scrollTo(line,end - lineStart))
+			textArea.getPainter().repaint();
 	}
 
 	public int getCaretPosition()
@@ -460,6 +476,21 @@ public class TextAreaModel
 		this.biasLeft = biasLeft;
 	}
 
+	public int getBracketPosition()
+	{
+		return bracketPosition;
+	}
+
+	public int getBracketLine()
+	{
+		return bracketLine;
+	}
+
+	public char getBracketCharacter()
+	{
+		return bracket;
+	}
+
 	// protected members
 	protected JEditTextArea textArea;
 	protected SyntaxDocument document;
@@ -471,7 +502,76 @@ public class TextAreaModel
 	protected int selectionEndLine;
 	protected boolean biasLeft;
 
-	protected void updateDisplay(DocumentEvent evt)
+	protected int bracketPosition;
+	protected int bracketLine;
+	protected char bracket;
+
+	protected void updateBracketHighlight(int newCaretPosition)
+	{
+		Document doc = getDocument();
+		try
+		{
+			if(newCaretPosition != 0)
+			{
+				newCaretPosition--;
+				Segment lineSegment = textArea.getPainter().currentLine;
+				getText(newCaretPosition,1,lineSegment);
+				char ch = lineSegment.array[lineSegment.offset];
+				int[] match;
+				switch(ch)
+				{
+				case '(':
+					match = TextUtilities.locateBracketForward(
+						doc,newCaretPosition,'(',')');
+					bracket = ')';
+					break;
+				case ')':
+					match = TextUtilities.locateBracketBackward(
+						doc,newCaretPosition,'(',')');
+					bracket = '(';
+					break;
+				case '[':
+					match = TextUtilities.locateBracketForward(
+						doc,newCaretPosition,'[',']');
+					bracket = ']';
+					break;
+				case ']':
+					match = TextUtilities.locateBracketBackward(
+						doc,newCaretPosition,'[',']');
+					bracket = '[';
+					break;
+				case '{':
+					match = TextUtilities.locateBracketForward(
+						doc,newCaretPosition,'{','}');
+					bracket = '}';
+					break;
+				case '}':
+					match = TextUtilities.locateBracketBackward(
+						doc,newCaretPosition,'{','}');
+					bracket = '{';
+					break;
+				default:
+					match = null;
+					bracket = '\0';
+					break;
+				}
+				if(match != null)
+				{
+					bracketLine = match[0];
+					bracketPosition = match[1];
+					return;
+				}
+			}
+		}
+		catch(BadLocationException bl)
+		{
+			//bl.printStackTrace();
+		}
+
+		bracketLine = bracketPosition = -1;
+	}
+
+	protected void documentChanged(DocumentEvent evt)
 	{
 		DocumentEvent.ElementChange ch = evt.getChange(
 			document.getDefaultRootElement());
@@ -486,11 +586,14 @@ public class TextAreaModel
 				ch.getChildrenRemoved().length;
 
 		if(count == 0)
-			painter.invalidateCurrentLine();
+		{
+			int line = getLineOfOffset(evt.getOffset());
+			painter._invalidateLineRange(line,line);
+		}
 		else
 		{
 			int index = ch.getIndex();
-			painter.invalidateLineRange(index,
+			painter._invalidateLineRange(index,
 				document.getDefaultRootElement()
 				.getElementCount());
 			textArea.updateScrollBars();
@@ -501,12 +604,46 @@ public class TextAreaModel
 	{
 		public void insertUpdate(DocumentEvent evt)
 		{
-			updateDisplay(evt);
+			documentChanged(evt);
+
+			int offset = evt.getOffset();
+			int length = evt.getLength();
+
+			int newStart;
+			int newEnd;
+
+			if(selectionStart >= offset)
+				newStart = selectionStart + length;
+			else
+				newStart = selectionStart;
+			if(selectionEnd >= offset)
+				newEnd = selectionEnd + length;
+			else
+				newEnd = selectionEnd;
+
+			select(newStart,newEnd);
 		}
 	
 		public void removeUpdate(DocumentEvent evt)
 		{
-			updateDisplay(evt);
+			documentChanged(evt);
+
+			int offset = evt.getOffset();
+			int length = evt.getLength();
+
+			int newStart;
+			int newEnd;
+
+			if(selectionStart >= offset)
+				newStart = selectionStart - length;
+			else
+				newStart = selectionStart;
+			if(selectionEnd >= offset)
+				newEnd = selectionEnd - length;
+			else
+				newEnd = selectionEnd;
+
+			select(newStart,newEnd);
 		}
 
 		public void changedUpdate(DocumentEvent evt)
@@ -518,6 +655,10 @@ public class TextAreaModel
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.7  1999/06/29 09:01:24  sp
+ * Text area now does bracket matching, eol markers, also xToOffset() and
+ * offsetToX() now work better
+ *
  * Revision 1.6  1999/06/28 09:17:20  sp
  * Perl mode javac compile fix, text area hacking
  *
