@@ -1,6 +1,6 @@
 /*
- * help.java - jEdit help file mode
- * Copyright (C) 1998 Slava Pestov
+ * exchange_anchor.java
+ * Copyright (C) 1999 Slava Pestov
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -17,24 +17,30 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-package org.gjt.sp.jedit.mode;
+package org.gjt.sp.jedit.actions;
 
-import org.gjt.sp.jedit.syntax.*;
+import java.awt.event.ActionEvent;
 import org.gjt.sp.jedit.*;
+import org.gjt.sp.jedit.gui.SyntaxTextArea;
 
-public class help implements Mode
+public class exchange_anchor extends EditAction
 {
-	public void enter(Buffer buffer) {}
-	
-	public boolean indentLine(Buffer buffer, View view, int dot)
+	public exchange_anchor()
 	{
-		return false;
+		super("exchange-anchor");
 	}
 	
-	public TokenMarker createTokenMarker()
+	public void actionPerformed(ActionEvent evt)
 	{
-		return new HelpTokenMarker();
+		View view = getView(evt);
+		int pos = view.getBuffer().getAnchor();
+		int caretPos = view.getTextArea().getCaretPosition();
+		if(pos != -1)
+		{
+			view.getTextArea().setCaretPosition(pos);
+			view.getBuffer().setAnchor(caretPos);
+		}
+		else
+			view.getToolkit().beep();
 	}
-
-	public void leave(Buffer buffer) {}
 }

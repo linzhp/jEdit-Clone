@@ -1,8 +1,8 @@
 /*
- * select_next_line.java
- * Copyright (C) 1998 Slava Pestov
+ * wing_comment.java
+ * Copyright (C) 1999 Slava Pestov
  *
- * This program is free software; you can redistribute it and/or
+ * This	free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or any later version.
@@ -19,16 +19,17 @@
 
 package org.gjt.sp.jedit.actions;
 
+import javax.swing.text.BadLocationException;
 import javax.swing.text.Element;
 import java.awt.event.ActionEvent;
-import org.gjt.sp.jedit.*;
 import org.gjt.sp.jedit.gui.SyntaxTextArea;
+import org.gjt.sp.jedit.*;
 
-public class select_next_line extends EditAction
+public class wing_comment extends EditAction
 {
-	public select_next_line()
+	public wing_comment()
 	{
-		super("select-next-line");
+		super("wing-comment");
 	}
 
 	public void actionPerformed(ActionEvent evt)
@@ -36,11 +37,24 @@ public class select_next_line extends EditAction
 		View view = getView(evt);
 		SyntaxTextArea textArea = view.getTextArea();
 		Buffer buffer = view.getBuffer();
-		Element map = buffer.getDefaultRootElement();
-		Element lineElement = map.getElement(map.getElementIndex(
-			textArea.getSelectionEnd()));
-		textArea.select(Math.min(lineElement.getStartOffset(),
-			textArea.getSelectionStart()),
-			lineElement.getEndOffset());
+		String commentStart = (String)buffer.getProperty("commentStart") + ' ';
+		String commentEnd = ' ' + (String)buffer.getProperty("commentEnd");
+		if(commentStart == null || commentEnd == null)
+		{
+			view.getToolkit().beep();
+			return;
+		}
+		buffer.beginCompoundEdit();
+		try
+		{
+			buffer.insertString(textArea.getSelectionStart(),
+				commentStart,null);
+			buffer.insertString(textArea.getSelectionEnd(),
+				commentEnd,null);
+		}
+		catch(BadLocationException bl)
+		{
+		}
+		buffer.endCompoundEdit();
 	}
 }

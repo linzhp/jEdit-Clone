@@ -1,8 +1,8 @@
 /*
- * locate_paragraph.java
- * Copyright (C) 1998 Slava Pestov
+ * block_comment.java
+ * Copyright (C) 1999 Slava Pestov
  *
- * This program is free software; you can redistribute it and/or
+ * This	free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or any later version.
@@ -22,46 +22,46 @@ package org.gjt.sp.jedit.actions;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Element;
 import java.awt.event.ActionEvent;
+import org.gjt.sp.jedit.gui.SyntaxTextArea;
 import org.gjt.sp.jedit.*;
 
-public class locate_paragraph extends EditAction
+public class block_comment extends EditAction
 {
-	public locate_paragraph()
+	public block_comment()
 	{
-		super("locate-paragraph");
+		super("block-comment");
 	}
-	
+
 	public void actionPerformed(ActionEvent evt)
 	{
 		View view = getView(evt);
+		SyntaxTextArea textArea = view.getTextArea();
 		Buffer buffer = view.getBuffer();
-		int dot = view.getTextArea().getCaretPosition();
+		String comment = (String)view.getBuffer()
+			.getProperty("blockComment") + ' ';
+		int selectionStart = textArea.getSelectionStart();
+		int selectionEnd = textArea.getSelectionEnd();
 		Element map = buffer.getDefaultRootElement();
-		int lineNo = map.getElementIndex(dot);
-		int start = 0;
-		int end = buffer.getLength();
-		// scan backward, looking for zero-length element
-		for(int i = lineNo; i >= 0; i--)
+		int startLine = map.getElementIndex(selectionStart);
+		int endLine = map.getElementIndex(selectionEnd);
+		if(comment == null)
 		{
-			Element line = map.getElement(i);
-			int elemStart = line.getStartOffset();
-			if(elemStart + 1 == line.getEndOffset())
+			view.getToolkit().beep();
+			return;
+		}
+		buffer.beginCompoundEdit();
+		try
+		{
+			buffer.insertString(selectionStart,comment,null);
+			for(int i = startLine + 1; i <= endLine; i++)
 			{
-				start = elemStart;
-				break;
+				buffer.insertString(map.getElement(i)
+					.getStartOffset(),comment,null);
 			}
 		}
-		// scan forward, loowing for zero-length element
-		for(int i = lineNo + 1; i < map.getElementCount(); i++)
+		catch(BadLocationException bl)
 		{
-			Element line = map.getElement(i);
-			int elemStart = line.getStartOffset();
-			if(elemStart + 1 == line.getEndOffset())
-			{
-				end = elemStart;
-				break;
-			}
 		}
-		view.getTextArea().select(start,end);
+		buffer.endCompoundEdit();
 	}
 }
