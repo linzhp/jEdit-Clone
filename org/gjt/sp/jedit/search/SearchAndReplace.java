@@ -165,6 +165,7 @@ public class SearchAndReplace
 	 */
 	public static boolean find(View view)
 	{
+		boolean repeat = false;
 		Buffer buffer = null;
 
 		SearchMatcher matcher = getSearchMatcher();
@@ -176,18 +177,20 @@ public class SearchAndReplace
 
 		try
 		{
-loop:			while(true)
+loop:			for(;;)
 			{
-				while((buffer = fileset.getNextBuffer(view,buffer)) != null)
+				while((buffer = (repeat ? fileset.getFirstBuffer(view)
+					: fileset.getNextBuffer(view,buffer))) != null)
 				{
 					int start;
-					if(view.getBuffer() == buffer)
+					if(view.getBuffer() == buffer && !repeat)
 						start = view.getTextArea()
 							.getSelectionEnd();
 					else
 						start = 0;
 					if(find(view,buffer,start))
 						return true;
+					repeat = false;
 				}
 
 				int result = JOptionPane.showConfirmDialog(view,
@@ -195,13 +198,14 @@ loop:			while(true)
 					jEdit.getProperty("keepsearching.title"),
 					JOptionPane.YES_NO_OPTION,
 					JOptionPane.QUESTION_MESSAGE);
-				if(result != JOptionPane.YES_OPTION)
-					return false;
-				else
+				if(result == JOptionPane.YES_OPTION)
 				{
 					// start search from beginning
 					buffer = null;
+					repeat = true;
 				}
+				else
+					return false;
 			}
 		}
 		catch(Exception e)
@@ -410,6 +414,9 @@ loop:			while(true)
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.7  1999/06/09 07:28:10  sp
+ * Multifile search and replace tweaks, removed console.html
+ *
  * Revision 1.6  1999/06/09 05:22:11  sp
  * Find next now supports multi-file searching, minor Perl mode tweak
  *

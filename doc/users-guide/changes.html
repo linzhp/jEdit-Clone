@@ -19,7 +19,7 @@
 as well as colors
 <li>Plugin option panes are now displayed in a separate
 `File-&gt;Plugin Options' dialog box
-<li>`Find Next' now searches in all open buffers
+<li>`Find Next' now supports multi-file searching
 </ul>
 
 <h2>Enhancements</h2>
@@ -45,6 +45,11 @@ selected, rather than the entire line
 <li>Perl mode now colorizes much better
 <li>Plugins now run when jEdit was loaded with a non-standard class loader
 (Patrick Beard &lt;beard@netscape.com&gt;)
+<li>If you select `Search in Selected Buffers' in the find dialog, but don't
+select any buffers, jEdit will default to searching in the current buffer
+<li>The geometry of the find and HyperSearch dialogs wasn't being saved
+<li>Removed doc/users-guide/console.html file (the console is now a
+plugin, seprate from jEdit)
 </ul>
 
 <a name=17pre2>

@@ -35,7 +35,8 @@ public class BufferListSet implements SearchFileSet
 	 */
 	public BufferListSet(Object[] buffers)
 	{
-		this.buffers = buffers;
+		this.buffers = new Buffer[buffers.length];
+		System.arraycopy(buffers,0,this.buffers,0,buffers.length);
 	}
 
 	/**
@@ -44,16 +45,8 @@ public class BufferListSet implements SearchFileSet
 	 */
 	public Buffer[] getSearchBuffers(View view)
 	{
-		Vector _buffers = new Vector();
-		for(int i = 0; i < buffers.length; i++)
-		{
-			Buffer buffer = (Buffer)buffers[i];
-			if(!buffer.isClosed())
-				_buffers.addElement(buffer);
-		}
-		Buffer[] bufferArray = new Buffer[_buffers.size()];
-		_buffers.copyInto(bufferArray);
-		return bufferArray;
+		updateBufferList();
+		return buffers;
 	}
 
 	/**
@@ -63,15 +56,60 @@ public class BufferListSet implements SearchFileSet
 	 */
 	public Buffer getNextBuffer(View view, Buffer buffer)
 	{
-		throw new InternalError("find-next not supported for "
-			+ "this file set");
+		updateBufferList();
+		if(buffer == null)
+			return buffers[0];
+		else
+		{
+			for(int i = 0; i < buffers.length; i++)
+			{
+				if(buffers[i] == buffer)
+				{
+					if(buffers.length - i > 1)
+						return buffers[i+1];
+					else
+						break;
+				}
+			}
+		}
+		return null;
 	}
 
-	private Object[] buffers;
+	/**
+	 * Returns the first buffer to search.
+	 * @param view The view performing the search
+	 */
+	public Buffer getFirstBuffer(View view)
+	{
+		updateBufferList();
+		return buffers[0];
+	}
+
+	private Buffer[] buffers;
+
+	private void updateBufferList()
+	{
+		Vector _buffers = new Vector();
+		for(int i = 0; i < buffers.length; i++)
+		{
+			Buffer buffer = buffers[i];
+			if(!buffer.isClosed())
+				_buffers.addElement(buffer);
+		}
+		if(_buffers.size() != buffers.length)
+		{
+			Buffer[] bufferArray = new Buffer[_buffers.size()];
+			_buffers.copyInto(bufferArray);
+			buffers = bufferArray;
+		}
+	}
 }
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.3  1999/06/09 07:28:10  sp
+ * Multifile search and replace tweaks, removed console.html
+ *
  * Revision 1.2  1999/06/09 05:22:11  sp
  * Find next now supports multi-file searching, minor Perl mode tweak
  *

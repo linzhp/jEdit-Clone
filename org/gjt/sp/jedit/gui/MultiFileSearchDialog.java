@@ -66,6 +66,7 @@ public class MultiFileSearchDialog extends JDialog
 		getContentPane().add(BorderLayout.NORTH,panel);
 
 		bufferList = new JList(jEdit.getBuffers());
+		ListModel bufferListModel = bufferList.getModel();
 		bufferList.setSelectionMode(ListSelectionModel
 			.MULTIPLE_INTERVAL_SELECTION);
 		if(fileset instanceof BufferListSet)
@@ -74,7 +75,12 @@ public class MultiFileSearchDialog extends JDialog
 			Buffer[] buffers = fileset.getSearchBuffers(view);
 			for(int i = 0; i < buffers.length; i++)
 			{
-				bufferList.setSelectedValue(buffers[i],false);
+				Buffer buffer = buffers[i];
+				for(int j = 0; j < bufferListModel.getSize(); j++)
+				{
+					if(bufferListModel.getElementAt(j) == buffer)
+						bufferList.addSelectionInterval(j,j);
+				}
 			}
 		}
 		else
@@ -119,8 +125,13 @@ public class MultiFileSearchDialog extends JDialog
 		else if(all.getModel().isSelected())
 			return new AllBufferSet();
 		else if(selected.getModel().isSelected())
-			return new BufferListSet(bufferList.getSelectedValues());
-
+		{
+			Object[] buffers = bufferList.getSelectedValues();
+			if(buffers == null || buffers.length == 0)
+				return new CurrentBufferSet();
+			else
+				return new BufferListSet(buffers);
+		}
 		return null;
 	}
 

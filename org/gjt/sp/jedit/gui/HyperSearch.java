@@ -117,12 +117,12 @@ public class HyperSearch extends JDialog
 		SearchAndReplace.setIgnoreCase(ignoreCase.getModel().isSelected());
 		SearchAndReplace.setRegexp(regexp.getModel().isSelected());
 		SearchAndReplace.setSearchFileSet(fileset);
-		GUIUtilities.saveGeometry(this,"hypersearch");
 	}
 	
 	public void dispose()
 	{
 		jEdit.removeEditorListener(editorListener);
+		GUIUtilities.saveGeometry(this,"hypersearch");
 		super.dispose();
 	}
 
@@ -326,6 +326,9 @@ public class HyperSearch extends JDialog
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.35  1999/06/09 07:28:10  sp
+ * Multifile search and replace tweaks, removed console.html
+ *
  * Revision 1.34  1999/06/05 07:17:08  sp
  * Cascading makefiles, HyperSearch tweak, doc updates
  *

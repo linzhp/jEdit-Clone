@@ -23,7 +23,8 @@ This is what needs to be done as soon as possible:
 <li>Faster literal search
 <li>Add style editing capability to ColorTableOptionPane
 <li>Style syntax is too slow
-<li>BufferListSet - find next
+<li>!!! if a clip starts with &lt;html&gt;, Paste Previous/Predefined act
+weird (how to turn of Swing's auto html?)
 </ul>
 
 <a name=medterm>
@@ -62,13 +63,6 @@ inside that application.<p>
 This way, jEdit will provide support for running inside another
 application. An AppOwner or similar interface will provide
 support for exiting, fetching properties, and so on.
-
-<li>jEdit as a component inside another application.<p>
-This way, an application will be able to add a view or similar to
-it's component hierarchy. This will require views to be
-modularized and separated out into distinct components. The
-action system will need to be overhauled as well, since the
-current getView()/getBuffer() system is limited.
 </ul>
 
 <li>Help viewer should support bookmarks.<p>

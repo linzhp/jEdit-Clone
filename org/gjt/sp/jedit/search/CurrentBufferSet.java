@@ -51,10 +51,22 @@ public class CurrentBufferSet implements SearchFileSet
 		else
 			return null;
 	}
+
+	/**
+	 * Returns the first buffer to search.
+	 * @param view The view performing the search
+	 */
+	public Buffer getFirstBuffer(View view)
+	{
+		return view.getBuffer();
+	}
 }
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.3  1999/06/09 07:28:10  sp
+ * Multifile search and replace tweaks, removed console.html
+ *
  * Revision 1.2  1999/06/09 05:22:11  sp
  * Find next now supports multi-file searching, minor Perl mode tweak
  *

@@ -132,6 +132,12 @@ public class SearchDialog extends JDialog
 		find.requestFocus();
 	}
 
+	public void dispose()
+	{
+		GUIUtilities.saveGeometry(this,"search");
+		super.dispose();
+	}
+
         // private members
 	private View view;
 	private SearchFileSet fileset;
@@ -158,7 +164,6 @@ public class SearchDialog extends JDialog
 		SearchAndReplace.setIgnoreCase(ignoreCase.getModel().isSelected());
 		SearchAndReplace.setRegexp(regexp.getModel().isSelected());
 		SearchAndReplace.setSearchFileSet(fileset);
-		GUIUtilities.saveGeometry(this,"search");
 	}
 
 	private void disposeOrKeepDialog()
@@ -258,6 +263,9 @@ public class SearchDialog extends JDialog
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.3  1999/06/09 07:28:10  sp
+ * Multifile search and replace tweaks, removed console.html
+ *
  * Revision 1.2  1999/06/09 05:22:11  sp
  * Find next now supports multi-file searching, minor Perl mode tweak
  *
