@@ -28,12 +28,12 @@ import org.gjt.sp.jedit.TextUtilities;
  * text substrings without the overhead of creating a new string object.
  * <p>
  * This class is used by <code>CTokenMarker</code> to map keywords to ids.
- * @see org.gjt.sp.jedit.syntax.CTokenMarker
+ *
+ * @author Slava Pestov
+ * @version $Id$
  */
 public class KeywordMap
 {
-	// public members
-
 	/**
 	 * Creates a new <code>KeywordMap</code>.
 	 * @param ignoreCase True if keys are case insensitive

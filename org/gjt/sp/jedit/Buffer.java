@@ -1553,3 +1553,11 @@ loop:		for(int i = 0; i < markers.size(); i++)
 		}
 	}
 }
+
+/*
+ * ChangeLog:
+ * $Log$
+ * Revision 1.57  1999/03/12 23:51:00  sp
+ * Console updates, uncomment removed cos it's too buggy, cvs log tags added
+ *
+ */

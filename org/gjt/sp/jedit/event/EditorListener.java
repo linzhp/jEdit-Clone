@@ -23,6 +23,9 @@ import org.gjt.sp.jedit.*;
 
 /**
  * The editor event listener interface.
+ *
+ * @author Slava Pestov
+ * @version $Id$
  */
 public interface EditorListener extends AbstractEditorListener
 {
@@ -60,3 +63,11 @@ public interface EditorListener extends AbstractEditorListener
 	 */
 	public void propertiesChanged(EditorEvent evt);
 }
+
+/*
+ * ChangeLog:
+ * $Log$
+ * Revision 1.3  1999/03/12 23:51:00  sp
+ * Console updates, uncomment removed cos it's too buggy, cvs log tags added
+ *
+ */

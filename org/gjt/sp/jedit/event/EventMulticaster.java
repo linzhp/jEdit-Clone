@@ -29,6 +29,9 @@ package org.gjt.sp.jedit.event;
  * that can receive that event type. Several different listener types 
  * can be registered with each multicaster - events will only be
  * forwarded to those that understand that event type.
+ *
+ * @author Slava Pestov
+ * @version $Id$
  */
 public class EventMulticaster
 {
@@ -111,3 +114,11 @@ public class EventMulticaster
 		this.next = next;
 	}
 }
+
+/*
+ * ChangeLog:
+ * $Log$
+ * Revision 1.2  1999/03/12 23:51:00  sp
+ * Console updates, uncomment removed cos it's too buggy, cvs log tags added
+ *
+ */

@@ -23,6 +23,9 @@ import org.gjt.sp.jedit.*;
 
 /**
  * The view event listener interface.
+ *
+ * @author Slava Pestov
+ * @version $Id$
  */
 public interface ViewListener extends AbstractEditorListener
 {
@@ -36,3 +39,11 @@ public interface ViewListener extends AbstractEditorListener
 	 */
 	public void viewBufferChanged(ViewEvent evt);
 }
+
+/*
+ * ChangeLog:
+ * $Log$
+ * Revision 1.3  1999/03/12 23:51:00  sp
+ * Console updates, uncomment removed cos it's too buggy, cvs log tags added
+ *
+ */

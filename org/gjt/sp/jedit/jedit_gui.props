@@ -202,9 +202,7 @@ block=select-block \
       - \
       wing-comment \
       box-comment \
-      block-comment \
-      - \
-      uncomment
+      block-comment
 block.label=Code Block Operations
 select-block.label=Select Code Block
 shift-left.label=Shift Indent Left
@@ -212,7 +210,6 @@ shift-right.label=Shift Indent Right
 wing-comment.label=Wing Comment
 box-comment.label=Box Comment
 block-comment.label=Block Comment
-uncomment.label=Uncomment
 
 ### Tools menu
 tools=word-count \

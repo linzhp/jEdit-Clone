@@ -47,7 +47,7 @@ public class jEdit
 	 * The date when a change was last made to the source code,
 	 * in <code>YYYYMMDD</code> format.
 	 */
-	public static final String BUILD = "19990312";
+	public static final String BUILD = "19990313";
 
 	/**
 	 * AWK regexp syntax.
@@ -392,7 +392,6 @@ public class jEdit
 		addAction(new org.gjt.sp.jedit.actions.toggle_console());
 		addAction(new org.gjt.sp.jedit.actions.to_lower());
 		addAction(new org.gjt.sp.jedit.actions.to_upper());
-		addAction(new org.gjt.sp.jedit.actions.uncomment());
 		addAction(new org.gjt.sp.jedit.actions.undo());
 		addAction(new org.gjt.sp.jedit.actions.untab());
 		addAction(new org.gjt.sp.jedit.actions.wing_comment());
@@ -1560,3 +1559,11 @@ public class jEdit
 		}
 	}
 }
+
+/*
+ * ChangeLog:
+ * $Log$
+ * Revision 1.44  1999/03/12 23:51:00  sp
+ * Console updates, uncomment removed cos it's too buggy, cvs log tags added
+ *
+ */

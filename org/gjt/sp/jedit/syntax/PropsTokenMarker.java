@@ -22,6 +22,12 @@ import javax.swing.text.Segment;
 import org.gjt.sp.jedit.mode.javascript;
 import org.gjt.sp.jedit.jEdit;
 
+/**
+ * Java properties/DOS INI token marker.
+ *
+ * @author Slava Pestov
+ * @version $Id$
+ */
 public class PropsTokenMarker extends TokenMarker
 {
 	public Token markTokens(Segment line, int lineIndex)
@@ -81,3 +87,11 @@ loop:		for(int i = offset; i < length; i++)
 			return null;
 	}
 }
+
+/*
+ * ChangeLog:
+ * $Log$
+ * Revision 1.2  1999/03/12 23:51:00  sp
+ * Console updates, uncomment removed cos it's too buggy, cvs log tags added
+ *
+ */

@@ -25,7 +25,9 @@ import org.gjt.sp.jedit.jEdit;
 
 /**
  * An editor kit that creates syntax colorizing views for elements.
- * @see org.gjt.sp.jedit.syntax.SyntaxView
+ *
+ * @author Slava Pestov
+ * @version $Id$
  */
 public class SyntaxEditorKit extends DefaultEditorKit implements ViewFactory
 {
@@ -63,3 +65,11 @@ public class SyntaxEditorKit extends DefaultEditorKit implements ViewFactory
 			jEdit.getActions());
 	}
 }
+
+/*
+ * ChangeLog:
+ * $Log$
+ * Revision 1.5  1999/03/12 23:51:00  sp
+ * Console updates, uncomment removed cos it's too buggy, cvs log tags added
+ *
+ */

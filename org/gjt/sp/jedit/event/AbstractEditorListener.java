@@ -23,7 +23,18 @@ import java.util.EventListener;
 
 /**
  * The superclass of all jEdit event listeners.
+ *
+ * @author Slava Pestov
+ * @version $Id$
  */
 public abstract interface AbstractEditorListener extends EventListener
 {
 }
+
+/*
+ * ChangeLog:
+ * $Log$
+ * Revision 1.2  1999/03/12 23:51:00  sp
+ * Console updates, uncomment removed cos it's too buggy, cvs log tags added
+ *
+ */

@@ -25,6 +25,9 @@ import org.gjt.sp.jedit.*;
  * The event fired when a buffer's state changes. Note that changes to
  * the dirty flag are fired as <code>EditorEvent</code>s, because they
  * require global graphical buffer lists to be rebuilt.
+ *
+ * @author Slava Pestov
+ * @version $Id$
  */
 public class BufferEvent extends AbstractEditorEvent
 {
@@ -122,3 +125,11 @@ public class BufferEvent extends AbstractEditorEvent
 	// protected members
 	protected Buffer buffer;
 }
+
+/*
+ * ChangeLog:
+ * $Log$
+ * Revision 1.2  1999/03/12 23:51:00  sp
+ * Console updates, uncomment removed cos it's too buggy, cvs log tags added
+ *
+ */

@@ -38,6 +38,9 @@ import org.gjt.sp.jedit.gui.EnhancedMenuItem;
  * <li>Converting string representations of colors to color objects
  * <li>Loading and saving window geometry from the properties
  * </ul>
+ *
+ * @author Slava Pestov
+ * @version $Id$
  */
 public class GUIUtilities
 {
@@ -570,6 +573,9 @@ public class GUIUtilities
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.10  1999/03/12 23:51:00  sp
+ * Console updates, uncomment removed cos it's too buggy, cvs log tags added
+ *
  * Revision 1.9  1999/03/12 07:54:47  sp
  * More Javadoc updates
  *

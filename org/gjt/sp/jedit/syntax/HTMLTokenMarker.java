@@ -22,6 +22,12 @@ import javax.swing.text.Segment;
 import org.gjt.sp.jedit.mode.javascript;
 import org.gjt.sp.jedit.TextUtilities;
 
+/**
+ * HTML token marker.
+ *
+ * @author Slava Pestov
+ * @version $Id$
+ */
 public class HTMLTokenMarker extends TokenMarker
 {
 	// public members
@@ -245,3 +251,11 @@ loop:		for(int i = offset; i < length; i++)
 	// private members
 	private KeywordMap keywords;
 }
+
+/*
+ * ChangeLog:
+ * $Log$
+ * Revision 1.20  1999/03/12 23:51:00  sp
+ * Console updates, uncomment removed cos it's too buggy, cvs log tags added
+ *
+ */

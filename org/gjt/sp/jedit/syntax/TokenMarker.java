@@ -30,7 +30,9 @@ import java.util.*;
  * line is tokenized. Therefore, the <code>Token.nextValid</code> flag is
  * necessary - a token instance might exist, but it might not actually be
  * valid.
- * @see org.gjt.sp.jedit.Token
+ *
+ * @author Slava Pestov
+ * @version $Id$
  */
 public abstract class TokenMarker
 {
@@ -181,3 +183,11 @@ public abstract class TokenMarker
 		}
 	}
 }
+
+/*
+ * ChangeLog:
+ * $Log$
+ * Revision 1.7  1999/03/12 23:51:00  sp
+ * Console updates, uncomment removed cos it's too buggy, cvs log tags added
+ *
+ */

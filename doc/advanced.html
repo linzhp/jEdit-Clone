@@ -271,10 +271,11 @@ the toolbar, or by invoking `Tools-&gt;Show/Hide Console'.<p>
 
 The console consists of a command text field, an output
 tab that lists the output of each command, and an errors tab that lists any
-parsed errors.<p>
+parsed errors. Pressing enter in the command field will execute the
+currently entered command.<p>
 
-While a command is running, jEdit attempts to parse any errors. Currently,
-jEdit parses the following error formats:
+While a command is running, jEdit attempts to parse any errors it outputs.
+Currently, jEdit parses the following error formats:
 <ul>
 <li>Generic format used by many compilers and utilities:
 <blockquote><code>file name:line number:error message</code></blockquote>

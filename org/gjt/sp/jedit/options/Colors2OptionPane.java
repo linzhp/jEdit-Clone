@@ -47,17 +47,6 @@ public class Colors2OptionPane extends ColorsOptionPane
 		comment1Color = createColorButton("buffer.colors.comment1");
 		layout.setConstraints(comment1Color,cons);
 		add(comment1Color);
-
-		// [CHANGED] JL
-		// This adds a sixth syntax color choice for color pane.
-		// Just a copy&paste from the above. Label looks for property
-		// "options.colors2.javadocColor" which doesn't exist but should
-		// probably contain the label for this button. ColorButton is
-		// created for reference javadocColor and loads the color for
-		// comment2 from "buffer.colors.comment2".
-
-		// SP: I changed the `color' button above to `color1' and
-		// changed this to `color2'
 		cons.gridx = 0;
 		cons.gridy = 1;
 		cons.gridwidth = 3;

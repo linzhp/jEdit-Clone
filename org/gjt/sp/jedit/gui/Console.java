@@ -36,6 +36,10 @@ implements ActionListener, ListSelectionListener
 	{
 		super(new BorderLayout());
 
+		String osName = System.getProperty("os.name");
+		appendEXE = (osName.indexOf("Windows") != -1 ||
+			osName.indexOf("OS/2") != -1);
+
 		this.view = view;
 
 		JPanel panel = new JPanel(new BorderLayout());
@@ -67,6 +71,18 @@ implements ActionListener, ListSelectionListener
 		output.append("> ");
 		output.append(command);
 		output.append("\n");
+
+		if(appendEXE)
+		{
+			// append .exe to command name on Windows and OS/2
+			int dotIndex = command.indexOf('.');
+			int spaceIndex = command.indexOf(' ');
+			if(dotIndex == -1 || dotIndex > spaceIndex)
+			{
+				command = command.substring(0,spaceIndex)
+					+ ".exe" + command.substring(spaceIndex);
+			}
+		}
 		
 		if(errors != null)
 		{
@@ -94,6 +110,17 @@ implements ActionListener, ListSelectionListener
 		}
 		stdout = new StdoutThread();
 		stderr = new StderrThread();
+	}
+
+	public void stop()
+	{
+		if(process != null)
+		{
+			stdout.stop();
+			stderr.stop();
+			//process.destroy(); // Keep running
+			process = null;
+		}
 	}
 
 	/**
@@ -181,6 +208,8 @@ implements ActionListener, ListSelectionListener
 	}
 
 	// private members
+	private boolean appendEXE;
+
 	private HistoryTextField cmd;
 	private JTextArea output;
 	private JList errorList;
@@ -202,17 +231,6 @@ implements ActionListener, ListSelectionListener
 	private String file;
 	private int lineNo;
 	private String error;
-
-	private void stop()
-	{
-		if(process != null)
-		{
-			stdout.stop();
-			stderr.stop();
-			process.destroy();
-			process = null;
-		}
-	}
 
 	private synchronized void addOutput(final String msg)
 	{
@@ -393,3 +411,11 @@ implements ActionListener, ListSelectionListener
 		}
 	}
 }
+
+/*
+ * ChangeLog:
+ * $Log$
+ * Revision 1.9  1999/03/12 23:51:00  sp
+ * Console updates, uncomment removed cos it's too buggy, cvs log tags added
+ *
+ */

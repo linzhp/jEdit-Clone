@@ -25,6 +25,9 @@ import org.gjt.sp.jedit.*;
  * An implementation of ViewListener with all empty methods. It can be
  * subclassed instead of ViewListener so that empty stubs for unused
  * methods are not necessary.
+ *
+ * @author Slava Pestov
+ * @version $Id$
  */
 public abstract class ViewAdapter extends AbstractEditorAdapter
 implements ViewListener
@@ -39,3 +42,11 @@ implements ViewListener
 	 */
 	public void viewBufferChanged(ViewEvent evt) {}
 }
+
+/*
+ * ChangeLog:
+ * $Log$
+ * Revision 1.2  1999/03/12 23:51:00  sp
+ * Console updates, uncomment removed cos it's too buggy, cvs log tags added
+ *
+ */

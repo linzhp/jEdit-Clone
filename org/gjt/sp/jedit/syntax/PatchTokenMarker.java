@@ -20,6 +20,12 @@ package org.gjt.sp.jedit.syntax;
 
 import javax.swing.text.Segment;
 
+/**
+ * Patch/diff token marker.
+ *
+ * @author Slava Pestov
+ * @version $Id$
+ */
 public class PatchTokenMarker extends TokenMarker
 {
 	public Token markTokens(Segment line, int lineIndex)
@@ -46,3 +52,11 @@ public class PatchTokenMarker extends TokenMarker
 		return firstToken;
 	}
 }
+
+/*
+ * ChangeLog:
+ * $Log$
+ * Revision 1.2  1999/03/12 23:51:00  sp
+ * Console updates, uncomment removed cos it's too buggy, cvs log tags added
+ *
+ */

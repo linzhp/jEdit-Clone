@@ -25,6 +25,9 @@ import org.gjt.sp.jedit.*;
  * An implementation of EditorListener with all empty methods. It can be
  * subclassed instead of EditorListener so that empty stubs for unused
  * methods are not necessary.
+ *
+ * @author Slava Pestov
+ * @version $Id$
  */
 public abstract class EditorAdapter extends AbstractEditorAdapter
 implements EditorListener
@@ -63,3 +66,11 @@ implements EditorListener
 	 */
 	public void propertiesChanged(EditorEvent evt) {}
 }
+
+/*
+ * ChangeLog:
+ * $Log$
+ * Revision 1.2  1999/03/12 23:51:00  sp
+ * Console updates, uncomment removed cos it's too buggy, cvs log tags added
+ *
+ */

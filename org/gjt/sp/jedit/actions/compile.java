@@ -51,19 +51,6 @@ public class compile extends EditAction
 				return;
 		}
 
-		if(compiler != null && System.getProperty("os.name")
-			.indexOf("Windows") != -1)
-		{
-			// append .exe to command name on Windows
-			int dotIndex = compiler.indexOf('.');
-			int spaceIndex = compiler.indexOf(' ');
-			if(dotIndex == -1 || dotIndex > spaceIndex)
-			{
-				compiler = compiler.substring(0,spaceIndex)
-					+ ".exe" + compiler.substring(spaceIndex);
-			}
-		}
-
 		StringBuffer buf = new StringBuffer();
 
 		if(compiler != null)

@@ -23,6 +23,9 @@ import org.gjt.sp.jedit.*;
 
 /**
  * The buffer event listener interface.
+ *
+ * @author Slava Pestov
+ * @version $Id$
  */
 public interface BufferListener extends AbstractEditorListener
 {
@@ -41,3 +44,11 @@ public interface BufferListener extends AbstractEditorListener
 	 */
 	public void bufferModeChanged(BufferEvent evt);
 }
+
+/*
+ * ChangeLog:
+ * $Log$
+ * Revision 1.2  1999/03/12 23:51:00  sp
+ * Console updates, uncomment removed cos it's too buggy, cvs log tags added
+ *
+ */

@@ -33,6 +33,9 @@ package org.gjt.sp.jedit.event;
  *
  * Each event carries an event type value, which is an integer, and a
  * timestamp, which is the time the event was fired.
+ *
+ * @author Slava Pestov
+ * @version $Id$
  */
 public abstract class AbstractEditorEvent
 {
@@ -83,3 +86,11 @@ public abstract class AbstractEditorEvent
 		timestamp = System.currentTimeMillis();
 	}
 }
+
+/*
+ * ChangeLog:
+ * $Log$
+ * Revision 1.2  1999/03/12 23:51:00  sp
+ * Console updates, uncomment removed cos it's too buggy, cvs log tags added
+ *
+ */

@@ -25,6 +25,9 @@ import org.gjt.sp.jedit.*;
  * The event fired when a view or buffer is created or closed.
  * Each editor event carries the buffer or view involved, along with
  * the event type and timestamp.
+ *
+ * @author Slava Pestov
+ * @version $Id$
  */
 public class EditorEvent extends AbstractEditorEvent
 {
@@ -173,3 +176,11 @@ public class EditorEvent extends AbstractEditorEvent
 	protected View view;
 	protected Buffer buffer;
 }
+
+/*
+ * ChangeLog:
+ * $Log$
+ * Revision 1.4  1999/03/12 23:51:00  sp
+ * Console updates, uncomment removed cos it's too buggy, cvs log tags added
+ *
+ */

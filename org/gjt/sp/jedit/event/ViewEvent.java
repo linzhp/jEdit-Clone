@@ -23,6 +23,9 @@ import org.gjt.sp.jedit.*;
 
 /**
  * The event fired when a view's state changes.
+ *
+ * @author Slava Pestov
+ * @version $Id$
  */
 public class ViewEvent extends AbstractEditorEvent
 {
@@ -124,3 +127,11 @@ public class ViewEvent extends AbstractEditorEvent
 	protected View view;
 	protected Buffer buffer;
 }
+
+/*
+ * ChangeLog:
+ * $Log$
+ * Revision 1.2  1999/03/12 23:51:00  sp
+ * Console updates, uncomment removed cos it's too buggy, cvs log tags added
+ *
+ */

@@ -28,8 +28,9 @@ import org.gjt.sp.jedit.Buffer;
 /**
  * A Swing view implementation that colorizes text with a
  * <code>TokenMarker</code>.
- * @see org.gjt.sp.jedit.Buffer
- * @see org.gjt.sp.jedit.syntax.TokenMarker
+ *
+ * @author Slava Pestov
+ * @version $Id$
  */
 public class SyntaxView extends PlainView
 {
@@ -124,3 +125,11 @@ public class SyntaxView extends PlainView
 	// private members
 	private Segment line;
 }
+
+/*
+ * ChangeLog:
+ * $Log$
+ * Revision 1.15  1999/03/12 23:51:00  sp
+ * Console updates, uncomment removed cos it's too buggy, cvs log tags added
+ *
+ */

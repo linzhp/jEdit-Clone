@@ -20,6 +20,12 @@ package org.gjt.sp.jedit.syntax;
 
 import javax.swing.text.Segment;
 
+/**
+ * C/C++/Java/JavaScript token marker.
+ *
+ * @author Slava Pestov
+ * @version $Id$
+ */
 public class CTokenMarker extends TokenMarker
 {
 	// public members
@@ -198,3 +204,11 @@ loop:		for(int i = offset; i < length; i++)
 	private boolean cpp;
 	private KeywordMap keywords;
 }
+
+/*
+ * ChangeLog:
+ * $Log$
+ * Revision 1.21  1999/03/12 23:51:00  sp
+ * Console updates, uncomment removed cos it's too buggy, cvs log tags added
+ *
+ */

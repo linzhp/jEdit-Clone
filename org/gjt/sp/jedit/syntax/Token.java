@@ -20,7 +20,9 @@ package org.gjt.sp.jedit.syntax;
 
 /**
  * A linked list of tokens.
- * @see org.gjt.sp.jedit.syntax.TokenMarker
+ *
+ * @author Slava Pestov
+ * @version $Id$
  */
 public class Token
 {
@@ -123,3 +125,11 @@ public class Token
 						   : "nextInvalid]");
 	}
 }
+
+/*
+ * ChangeLog:
+ * $Log$
+ * Revision 1.6  1999/03/12 23:51:00  sp
+ * Console updates, uncomment removed cos it's too buggy, cvs log tags added
+ *
+ */

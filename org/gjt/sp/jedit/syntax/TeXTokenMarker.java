@@ -21,6 +21,12 @@ package org.gjt.sp.jedit.syntax;
 import javax.swing.text.Segment;
 import org.gjt.sp.jedit.jEdit;
 
+/**
+ * TeX token marker.
+ *
+ * @author Slava Pestov
+ * @version $Id$
+ */
 public class TeXTokenMarker extends TokenMarker
 {
 	// public members
@@ -150,3 +156,11 @@ loop:		for(int i = offset; i < length; i++)
 			return null;
 	}
 }
+
+/*
+ * ChangeLog:
+ * $Log$
+ * Revision 1.9  1999/03/12 23:51:00  sp
+ * Console updates, uncomment removed cos it's too buggy, cvs log tags added
+ *
+ */

@@ -21,6 +21,12 @@ package org.gjt.sp.jedit.syntax;
 import javax.swing.text.Segment;
 import org.gjt.sp.jedit.TextUtilities;
 
+/**
+ * Batch file token marker.
+ *
+ * @author Slava Pestov
+ * @version $Id$
+ */
 public class BatchFileTokenMarker extends TokenMarker
 {
 	public Token markTokens(Segment line, int lineIndex)
@@ -124,3 +130,11 @@ loop:		for(int i = line.offset; i < length; i++)
 			return null;
 	}
 }
+
+/*
+ * ChangeLog:
+ * $Log$
+ * Revision 1.10  1999/03/12 23:51:00  sp
+ * Console updates, uncomment removed cos it's too buggy, cvs log tags added
+ *
+ */

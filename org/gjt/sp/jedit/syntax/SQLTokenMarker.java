@@ -20,6 +20,12 @@ package org.gjt.sp.jedit.syntax;
 
 import javax.swing.text.Segment;
 
+/**
+ * SQL token marker.
+ *
+ * @author Slava Pestov
+ * @version $Id$
+ */
 public class SQLTokenMarker extends TokenMarker
 {
 	private int offset, lastOffset, lastKeyword, length;
@@ -215,3 +221,11 @@ loop:
 			addToken(pos - lastOffset, null);
 	}
 }
+
+/*
+ * ChangeLog:
+ * $Log$
+ * Revision 1.3  1999/03/12 23:51:00  sp
+ * Console updates, uncomment removed cos it's too buggy, cvs log tags added
+ *
+ */

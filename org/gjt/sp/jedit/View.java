@@ -632,12 +632,15 @@ public class View extends JFrame
 	void close()
 	{
 		GUIUtilities.saveGeometry(this,"view");
+
 		int location = splitter.getDividerLocation();
 		if(location > splitter.getHeight()
 			- splitter.getDividerSize() - 15)
 			location = splitter.getLastDividerLocation();
 		jEdit.setProperty("view.divider",String.valueOf(location));
+
 		console.getCommandField().save();
+		console.stop();
 
 		buffer.removeBufferListener(bufferListener);
 		jEdit.removeEditorListener(editorListener);
@@ -873,3 +876,11 @@ public class View extends JFrame
 		}
 	}
 }
+
+/*
+ * ChangeLog:
+ * $Log$
+ * Revision 1.44  1999/03/12 23:51:00  sp
+ * Console updates, uncomment removed cos it's too buggy, cvs log tags added
+ *
+ */
