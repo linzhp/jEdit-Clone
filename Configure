@@ -14,7 +14,7 @@ rulesOut()
 }
 
 # Print message
-VERSION=1.2final
+VERSION=1.3final
 echo ">> Configuring jEdit $VERSION"
 echo
 
@@ -26,7 +26,7 @@ trap error 15
 
 # Create rules file
 RULES=Rules.make
-exec 7>/dev/null 8>$RULES
+exec 8>$RULES
 rulesOut "# Created by Configure on `date`"
 rulesOut ".SUFFIXES: .java .class"
 rulesOut '../$(jar): $(resources)'

@@ -1,0 +1,6 @@
+#!/bin/sh
+
+# Netscape/Mozilla remote helper app for jEdit
+# (C) 1999 by Slava Pestov <sp@gjt.org>
+
+netscape -remote openURL\($1\) || netscape $1

@@ -39,13 +39,13 @@ public class jEdit
 	/**
 	 * The jEdit version.
 	 */
-	public static final String VERSION = "1.3pre5";
+	public static final String VERSION = "1.3final";
 	
 	/**
 	 * The date when a change was last made to the source code,
 	 * in <code>YYYYMMDD</code> format.
 	 */
-	public static final String BUILD = "19990115";
+	public static final String BUILD = "19990116";
 
 	/**
 	 * AWK regexp syntax.

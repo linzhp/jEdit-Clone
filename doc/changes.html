@@ -1,50 +1,44 @@
 <html>
 <body>
 <h1>Version History</h1>
-<a href=#todo>To Do</a><br>
+<a href=#13final>Version 1.3final</a><br>
 <a href=#13pre5>Version 1.3pre5</a><br>
 <a href=#13pre4>Version 1.3pre4</a><br>
 <a href=#13pre3>Version 1.3pre3</a><br>
 <a href=#13pre2>Version 1.3pre2</a><br>
 <a href=#13pre1>Version 1.3pre1</a><br>
 
-<a name=todo>
-<h1>To Do</h1>
+<a name=13final>
+<h1>Version 1.3final</h1>
 </a>
 
-<h2>Pending Features</h2>
+<h1>Enhancements</h1>
 
 <ul>
-<li>Compiler error list
-<li>Intelligent auto indent
-<li>Printing from help viewer
+<li>Minor documentation updates
+<li>`Tabs to Spaces' and `Spaces to Tabs' commands now have keyboard
+shortcuts
 </ul>
 
-<h2>Pending Enhancements</h2>
-
-<ul>
-<li>Write JMenuItem subclass that displays key binding in the right place
-<li>Hand cursor should be displayed when mouse is over a link in the
-help system
-</ul>
-
-<h2>Pending Bugs</h2>
-
-<ul>
-<li>Strings like /**/int/**/ aren't colorized correctly by CTokenMarker
-<li>Caret doesn't blink after buffer change
-<li>Relative path calculations broken with URLs (since this only affects
-`Open Selection', is it really important?
-</ul>
 
 <a name=13pre5>
 <h1>Version 1.3pre5</h1>
+</a>
 
 <h2>New Features</h2>
 
 <ul>
 <li>Plugin documentation added
 <li>`Shift Indent Left' and `Shift Indent Right' commands added
+</ul>
+
+<h2>Enhancements</h2>
+
+<ul>
+<li>`Save to URL' now defaults to the current file's path, rather
+than the last entered URL
+<li>Removed the Plugin interface, we have a flag the the EditAction
+constructor instead
 </ul>
 
 <h2>Bug Fixes</h2>
@@ -56,6 +50,7 @@ non-existent files
 <li>First buffer opened by desktop has wrong scroll/caret position
 <li>Auto indent doesn't work properly with tab sizes other than 8
 <li>Removed debug message from `Spaces to Tabs' command
+<li>Locate bracket didn't work in text mode
 </ul>
 
 <a name=13pre4>

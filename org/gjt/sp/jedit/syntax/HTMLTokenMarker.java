@@ -54,6 +54,19 @@ loop:		for(int i = offset; i < length; i++)
 					lastOffset = i + 1;
 					break;
 				}
+			case '*':
+				if(token == Token.COMMENT2 && length - i >= 1)
+				{
+					if(length - i > 1 && line.array[i+1] == '/')
+					{
+						backslash = false;
+						token = Token.ALTTXT;
+						i++;
+						addToken((i+1) - lastOffset,Token.COMMENT2);
+						lastOffset = i + 1;
+						break;
+					}
+				}
 			case '.': case ',': case ' ': case '\t':
 			case '(': case ')': case '[': case ']':
 				backslash = false;
@@ -157,19 +170,6 @@ loop:		for(int i = offset; i < length; i++)
 						addToken(length - i,Token.COMMENT2);
 						lastOffset = length;
 						break loop;
-					}
-				}
-				break;
-			case '*':
-				backslash = false;
-				if(token == Token.COMMENT2 && length - i >= 1)
-				{
-					if(length - i > 1 && line.array[i+1] == '/')
-					{
-						token = Token.ALTTXT;
-						i++;
-						addToken((i+1) - lastOffset,Token.COMMENT2);
-						lastOffset = i + 1;
 					}
 				}
 				break;

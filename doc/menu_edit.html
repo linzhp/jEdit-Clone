@@ -96,12 +96,12 @@ ignoring any leading white space.</td>
 
 <tr>
 <td>Delete to Start of Line</td> <td>C+d C+s</td> <td>Deletes from the
-caret position the the start of the current line.</td>
+start of the current line to thecaret position.</td>
 </tr>
 
 <tr>
 <td>Delete to End of Line</td> <td>C+d C+f</td> <td>Deletes from the
-caret position the the end of the current line.</td>
+caret position the end of the current line.</td>
 </tr>
 
 <tr>
@@ -168,7 +168,8 @@ in programming languages.</td>
 </tr>
 
 <tr>
-<td>Shift Indent Left</td> <td>A+LEFT</td> <td>Removes one level of
+<td><a name=shift-left>
+Shift Indent Left</a></td> <td>A+LEFT</td> <td>Removes one level of
 indentation from the start of every line in the selection, or the
 current line if the selection is empty. Tabs will not be used if the
 `noTabs' buffer-local property is set - see the
@@ -177,7 +178,8 @@ help topic for details.</td>
 </tr>
 
 <tr>
-<td>Shift Indent Right</td> <td>A+RIGHT</td> <td>Adds one level of
+<td><a name=shift-right>
+Shift Indent Right</a></td> <td>A+RIGHT</td> <td>Adds one level of
 indentation to the start of every line in the selection, or the
 current line if the selection is empty. Tabs will not be used if the
 `noTabs' buffer-local property is set - see the
@@ -207,20 +209,20 @@ to lower case.</td>
 <tr>
 <td>
 <a name=format>Format
-</a></td> <td>C+e C+f</td> <td>Formats of the selection, or the whole
-document if the selection is empty, by removing duplicate spaces and splitting
+</a></td> <td>C+e C+f</td> <td>Formats the selection (or the whole
+document if the selection is empty) by removing duplicate spaces and splitting
 long lines. The maximum line length is specified in the `maxLineLen' buffer
 property - see the <a href=using.html#buffer-props>Buffer-Local Properties</a>
 help topic for details.</td>
 </tr>
 
 <tr>
-<td>Spaces to Tabs</td> <td></td> <td>Converts consecutive spaces in the
+<td>Spaces to Tabs</td> <td>C+e C+t</td> <td>Converts consecutive spaces in the
 selection, or the current line if the selection is empty, to tab characters.</td>
 </tr>
 
 <tr>
-<td>Tabs to Spaces</td> <td></td> <td>Converts tab characters in the
+<td>Tabs to Spaces</td> <td>C+e C+u</td> <td>Converts tab characters in the
 selection, or the current line if the selection is empty, to spaces.</td>
 </tr>
 
@@ -244,7 +246,7 @@ help topic for details.</td>
 <td>
 <a name=locate-bracket>Locate Bracket
 </a></td> <td>C+]</td> <td>Locates the bracket matching the
-one before the caret and moves the caret position to it. The list of opening
+one before the caret and moves the caret to it. The list of opening
 brackets is specified in the `openBrackets' property, the list of closing
 brackets in `closeBrackets'. See the <a href=using.html#buffer-props>
 Buffer-Local Properties</a> help topic for details.</td>

@@ -1,6 +1,6 @@
 /*
- * rot13.java - Simple plugin
- * Copyright (C) 1998 Slava Pestov
+ * reverse.java - Simple plugin
+ * Copyright (C) 1998, 1999 Slava Pestov
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -17,36 +17,26 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-package org.gjt.sp.jedit.cmd;
-
-import java.util.Hashtable;
-import org.gjt.sp.jedit.syntax.SyntaxTextArea;
+import java.awt.event.ActionEvent;
+import org.gjt.sp.jedit.gui.SyntaxTextArea;
 import org.gjt.sp.jedit.*;
 
-public class rot13 implements Command
+public class reverse extends EditAction
 {
-	public void exec(Buffer buffer, View view, String arg, Hashtable args)
+	public reverse()
 	{
+		super("reverse",true);
+	}
+	
+	public void actionPerformed(ActionEvent evt)
+	{
+		View view = getView(evt);
 		SyntaxTextArea textArea = view.getTextArea();
 		String selection = textArea.getSelectedText();
 		if(selection != null)
-			textArea.replaceSelection(doRot13(selection));
+			textArea.replaceSelection(new StringBuffer(selection)
+				.reverse().toString());
 		else
 			view.getToolkit().beep();
-	}
-
-	private String doRot13(String str)
-	{
-		char[] chars = str.toCharArray();
-		for(int i = 0; i < chars.length; i++)
-		{
-			char c = chars[i];
-			if(c >= 'a' && c <= 'z')
-				c = (char)('a' + ((c - 'a') + 13) % 26);
-			else if(c >= 'A' && c <= 'Z')
-				c = (char)('A' + ((c - 'A') + 13) % 26);
-			chars[i] = c;
-		}
-		return new String(chars);
 	}
 }

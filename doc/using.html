@@ -19,8 +19,7 @@ files like this:
 <blockquote><code>jedit &lt;file1&gt; &lt;file2&gt;...</code></blockquote>
 
 If the file name contains a hash (#) the remainder of the file name
-after the hash character is the name of a marker that will be jumped to
-in the opened file.<p>
+after the hash character is the name of a marker that will be jumped to.<p>
 
 A number of `switches' can also be passed to jEdit.
 
@@ -39,7 +38,7 @@ A number of `switches' can also be passed to jEdit.
 </code></blockquote>
 
 Because the `-' character is reserved for switches, you must enter the
-`--' parameter prior to any files whose names start with `-'.
+`--' parameter prior to any file names that start with `-'.
 
 <blockquote><code>jedit -- -filename</code></blockquote>
 
@@ -54,9 +53,9 @@ session, or if the `save desktop' feature is disabled, a blank
 
 When jEdit is first started, it creates a new server thread that listens
 on a free TCP/IP socket. Subsequent invocations of jEdit connect to that
-socket and inform it of any files that are to be opened, and the thread
-opens those files. This technique cuts down on memory usage because
-there is only one instance of jEdit open at any one time.<p>
+socket and inform it of any files that are to be opened. This technique
+cuts down on memory usage because there is only one instance of jEdit open
+at any one time.<p>
 
 The server can be disabled either on a `one-time' basis with the
 `-noserver' switch, or permanently in the
@@ -67,7 +66,8 @@ The server can be disabled either on a `one-time' basis with the
 </a>
 
 When jEdit exits it saves the list of open files to the `desktop' file,
-so that the next time jEdit is started, it can reopen those files.<p>
+so that the next time jEdit is started with no command line parameters,
+it can reopen those files.<p>
 
 The desktop can be disabled either on a `one-time' basis with the
 `-nodesktop' switch, or permanently in the
@@ -132,10 +132,10 @@ box.</td>
 <tr>
 <td>noTabs</td> <td>In edit modes with automatic indentation (all the edit
 modes included with jEdit except for Text) if set to `yes', Tab characters
-will not b eused, and an equivalent number of spaces will
-be inserted instead. The <a href=menu_edit.html>Shift Indent Left</a> and
-<a href=menu_edit.html>Shift Indent Right</a> commands use this property
-as well.
+will not be used, and an equivalent number of spaces will
+be inserted instead. The <a href=menu_edit.html#shift-left>Shift Indent Left
+</a> and <a href=menu_edit.html#shift-right>Shift Indent Right</a> commands
+use this property as well.
 </td>
 </tr>
 
@@ -186,7 +186,7 @@ The elements, from left to right, are:
 otherwise.
 <li>(**) Changed flag. If the current file has been changed since it was
 last saved, this is **, -- otherwise.
-<li>(HTML) The current file's edit mode. |XXX edit modes|
+<li>(HTML) The current file's edit mode.
 <li>(Line 32/53 60%) The current line number and the total number of
 lines in the file. The percentage is the ratio of the two.
 </ul>

@@ -1003,6 +1003,7 @@ implements DocumentListener, UndoableEditListener
                         if(buf.length() != 0 && buf.charAt(buf.length() - 1)
                            == '\n')
 				buf.setLength(buf.length() - 1);
+			remove(0,getLength());
 			insertString(0,buf.toString(),null);
 			newFile = false;
 		}

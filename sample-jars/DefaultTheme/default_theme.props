@@ -1,0 +1,25 @@
+### Default theme, (C) 1999 Slava Pestov
+
+###
+### With all this hype about `theme-ability', I decided to
+### write a couple of plugins for jEdit that implement some
+### color schemes. This is the default theme.
+###
+
+# Syntax colors
+buffer.colors.comment1=red
+buffer.colors.comment2=red
+buffer.colors.keyword1=blue
+buffer.colors.keyword2=magenta
+buffer.colors.keyword3=green
+buffer.colors.label=#8888ff
+buffer.colors.literal1=gray
+buffer.colors.literal2=gray
+
+# Misc colors
+view.bgColor=white
+view.fgColor=black
+view.lineHighlightColor=#e0e0e0
+view.bracketHighlightColor=#ffaaaa
+view.caretColor=red
+view.selectionColor=#ccccff

@@ -4,7 +4,6 @@ Comment[C]=jEdit text editor
 SwallowExec=
 SwallowTitle=
 BinaryPattern=jedit;
-Name[C]=jEdit text editor
 Name[C]=jEdit
 MimeType=
 Exec=jedit -- %f
