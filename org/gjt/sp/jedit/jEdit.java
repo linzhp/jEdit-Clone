@@ -45,7 +45,7 @@ public class jEdit
 	 * The date when a change was last made to the source code,
 	 * in <code>YYYYMMDD</code> format.
 	 */
-	public static final String BUILD = "19990210";
+	public static final String BUILD = "19990211";
 
 	/**
 	 * AWK regexp syntax.

@@ -293,7 +293,7 @@ about.message=jEdit {0} build {1}, Copyright (C) 1998, 1999 Slava Pestov.\n\
 	Java heap space: (free/total) {6}/{7}Kb\n\
 	\n\
 	This is free software, and you are welcome to redistribute it under\n\
-	certain conditions; see Help->Copying for details.\n\
+	certain conditions; see Help->Help Contents->Copying for details.\n\
 	\n\
 	gnu.regexp (C) Free Software Foundation\n\
 	<http://www.cacas.org/java/gnu/regexp/>.\n\

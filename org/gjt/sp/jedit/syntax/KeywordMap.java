@@ -54,7 +54,7 @@ public class KeywordMap
 		if(length == 0)
 			return null;
 		char key = text.array[offset];
-		Keyword k = map[key % 26];
+		Keyword k = map[Character.toUpperCase(key) % 26];
 		while(k != null)
 		{
 			String keyword = k.keyword;
@@ -77,7 +77,7 @@ public class KeywordMap
 	 */
 	public void add(String keyword, String id)
 	{
-		int key = keyword.charAt(0) % 26;
+		int key = Character.toUpperCase(keyword.charAt(0)) % 26;
 		map[key] = new Keyword(keyword,id,map[key]);
 	}
 
