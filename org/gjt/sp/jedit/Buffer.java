@@ -637,7 +637,7 @@ public class Buffer extends DefaultSyntaxDocument
 		else
 		{
 			setTokenMarker(mode.createTokenMarker());
-			((Hashtable)colors).clear(); // XXX
+			((Hashtable)getColors()).clear(); // XXX
 			mode.enter(this);
 		}
 
@@ -922,7 +922,7 @@ loop:		for(int i = 0; i < markers.size(); i++)
 		putProperty("i18n",Boolean.FALSE);
 		undo = new UndoManager();
 		markers = new Vector();
-		colors = new ColorList();
+		setColors(new ColorList());
 		multicaster = new EventMulticaster();
 		addDocumentListener(new BufferDocumentListener());
 		setPath();
@@ -1342,7 +1342,8 @@ loop:		for(int i = 0; i < markers.size(); i++)
 				else
 				{
 					backup.renameTo(new File(backupPath 
-							+ "" + file.getName() + "~"
+							+ File.separator
+							+ file.getName() + "~"
 							+ (i + 1) + "~"));
 				}
 			}
@@ -1461,7 +1462,7 @@ loop:		for(int i = 0; i < markers.size(); i++)
 	{
 		public void propertiesChanged(EditorEvent evt)
 		{
-			((Hashtable)colors).clear();
+			((Hashtable)getColors()).clear();
 		}
 	}
 
@@ -1500,6 +1501,9 @@ loop:		for(int i = 0; i < markers.size(); i++)
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.65  1999/03/26 04:14:45  sp
+ * EnhancedMenuItem tinkering, fixed compile error, fixed backup bug
+ *
  * Revision 1.64  1999/03/24 09:33:22  sp
  * Fixed backup.directory bug, updated options dialog, updated documentation
  *

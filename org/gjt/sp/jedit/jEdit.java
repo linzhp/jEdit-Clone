@@ -41,13 +41,13 @@ public class jEdit
 	/**
 	 * The jEdit version.
 	 */
-	public static final String VERSION = "1.5pre3";
+	public static final String VERSION = "1.5pre4";
 	
 	/**
 	 * The date when a change was last made to the source code,
 	 * in <code>YYYYMMDD</code> format.
 	 */
-	public static final String BUILD = "19990324";
+	public static final String BUILD = "19990325";
 
 	/**
 	 * AWK regexp syntax.
@@ -1518,6 +1518,9 @@ public class jEdit
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.61  1999/03/26 04:14:45  sp
+ * EnhancedMenuItem tinkering, fixed compile error, fixed backup bug
+ *
  * Revision 1.60  1999/03/24 09:33:22  sp
  * Fixed backup.directory bug, updated options dialog, updated documentation
  *

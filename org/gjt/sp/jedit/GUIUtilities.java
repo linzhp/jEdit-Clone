@@ -200,6 +200,7 @@ public class GUIUtilities
 					keyStroke.substring(index+1)),name);
 		}
 		index = label.indexOf('$');
+
                 if(index != -1 && label.length() - index > 1)
 		{
 			mi = new EnhancedMenuItem(label.substring(0,index)
@@ -625,6 +626,9 @@ public class GUIUtilities
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.15  1999/03/26 04:14:45  sp
+ * EnhancedMenuItem tinkering, fixed compile error, fixed backup bug
+ *
  * Revision 1.14  1999/03/21 08:37:15  sp
  * Slimmer action system, history text field update
  *

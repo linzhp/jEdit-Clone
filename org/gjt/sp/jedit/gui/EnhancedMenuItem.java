@@ -28,6 +28,14 @@ public class EnhancedMenuItem extends JMenuItem
 	{
 		super(label);
 		this.keyBinding = keyBinding;
+
+		acceleratorFont = UIManager
+			.getFont("MenuItem.acceleratorFont");
+		acceleratorForeground = UIManager
+			.getColor("MenuItem.acceleratorForeground");
+		acceleratorSelectionForeground = UIManager
+			.getColor("MenuItem.acceleratorSelectionForeground");
+		
 	}
 
 	public Dimension getPreferredSize()
@@ -35,7 +43,7 @@ public class EnhancedMenuItem extends JMenuItem
 		Dimension d = super.getPreferredSize();
 		if(keyBinding != null)
 		{
-			d.width += (getToolkit().getFontMetrics(getFont())
+			d.width += (getToolkit().getFontMetrics(acceleratorFont)
 				.stringWidth(keyBinding) + 30);
 		}
 		return d;
@@ -46,6 +54,10 @@ public class EnhancedMenuItem extends JMenuItem
 		super.paint(g);
 		if(keyBinding != null)
 		{
+			g.setFont(acceleratorFont);
+			g.setColor(getModel().isSelected() ?
+				acceleratorSelectionForeground :
+				acceleratorForeground);
 			FontMetrics fm = g.getFontMetrics();
 			Insets insets = getInsets();
 			g.drawString(keyBinding,getWidth() - (fm.stringWidth(
@@ -57,4 +69,7 @@ public class EnhancedMenuItem extends JMenuItem
 
 	// private members
 	private String keyBinding;
+	private Font acceleratorFont;
+	private Color acceleratorForeground;
+	private Color acceleratorSelectionForeground;
 }
