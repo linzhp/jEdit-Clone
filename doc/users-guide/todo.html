@@ -24,6 +24,13 @@ This is what needs to be done as soon as possible:
 <li>Finish StyleOptionPane
 <li>!!! if a clip starts with &lt;html&gt;, Paste Previous/Predefined act
 weird (how to turn of Swing's auto html?)
+<li>Multiple file selection in open file dialog
+<li>Clipboard doesn't work on mac
+<li>RMI: waitFor(Buffer/View)
+<li>RMI: security?
+<li>RMI: should the server notify the clients somehow that it's exiting?
+<li>RMI: class cast problems
+<li>RMI: add `accessException' crap to faq
 </ul>
 
 <a name=medterm>
@@ -50,25 +57,10 @@ messes up the display (and tokenizeLines() isn't appropriate in some
 situations)
 
 <li>Editor needs to be embeddable in other applications.<p>
-There are several levels of integration that should be looked into:
-
-<ul>
-<li>jEdit as an editing service for other applications.<p>
-This way, jEdit will still be a standalone application, but the
-server will be extended to support notification of buffers being
-closed and such. A simple client - a wrapper around the server
-should also be written.
-
-<li>jEdit as an editing service of other applications, running
-inside that application.<p>
-This way, jEdit will provide support for running inside another
+jEdit should provide support for running inside another
 application. An AppOwner or similar interface will provide
 support for exiting, fetching properties, and so on.
 </ul>
-
-<li>Help viewer should support bookmarks.<p>
-As more and more documentation is written, this becomes more of
-an issue.
 
 <li>Multi-line search patterns.<p>
 This sort of works with searching; but it would be hard to implement
@@ -98,7 +90,12 @@ a la Paste Predefined
 Since I don't like toolbars myself, this is better implemented as a plugin
 - with the new 1.6 toolbar API, it is very easy.
 
-<li>Folding.
+<li>Write custom text component, to overcome performance problems, and
+2000 line bug
+
+<li>Write costom document, to overcome load() bottleneck, etc
+
+<li>Folding - probably requires the above 2 items.
 
 <li>Integrate XMode.<p>
 Mike Dillon's XMode is a much better way of writing syntax

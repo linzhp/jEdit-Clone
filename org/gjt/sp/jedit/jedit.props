@@ -12,9 +12,6 @@
 #lf=com.sun.java.swing.plaf.windows.WindowsLookAndFeel
 lf=javax.swing.plaf.metal.MetalLookAndFeel
 
-# Server control
-server=on
-
 # Autosave interval in seconds, 0=off
 autosave=15
 

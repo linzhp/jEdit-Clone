@@ -5,7 +5,6 @@
 
 <ul>
 <li><a href=#intro>Introduction</a>
-<li><a href=#server>The jEdit Server</a>
 <li><a href=#desktop>Session Management</a>
 <li><a href=#history>History Text Fields</a>
 <li><a href=#lineSep>Line Separator Characters</a>
@@ -22,19 +21,6 @@
 This file outlines some of the more advanced features available in jEdit
 such as the server and desktop file, edit modes, the anchor and markers,
 various `advanced' commands and search and replace.
-
-<a name=server>
-<h1>The jEdit Server</h1>
-</a>
-
-When jEdit is first started, it creates a new server thread that listens
-on a free TCP/IP socket. Subsequent invocations of jEdit connect to that
-socket and inform it of any files that are to be opened. This technique
-cuts down on memory usage because there is only one instance of jEdit open
-at any one time.
-
-The server can be disabled either on a `one-time' basis with the
-`-noserver' switch, or permanently in `File-&gt;Global Options-&gt;General'.
 
 <a name=desktop>
 <h1>Session Management</h1>

@@ -26,11 +26,14 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import java.net.*;
+import java.rmi.*;
 import java.text.MessageFormat;
 import java.util.zip.*;
 import java.util.*;
 import org.gjt.sp.jedit.event.*;
 import org.gjt.sp.jedit.gui.*;
+import org.gjt.sp.jedit.remote.impl.RemoteEditorImpl;
+import org.gjt.sp.jedit.remote.*;
 import org.gjt.sp.jedit.search.SearchAndReplace;
 
 /**
@@ -73,7 +76,6 @@ public class jEdit
 		String userDir = System.getProperty("user.dir");
 		usrProps = userHome + File.separator + ".jedit-props";
 		historyFile = userHome + File.separator + ".jedit-history";
-		portFile = userHome + File.separator + ".jedit-server";
 		boolean desktop = true;
 		boolean showSplash = true;
 		int lineNo = -1;
@@ -101,8 +103,16 @@ public class jEdit
 					usrProps = null;
 				else if(arg.equals("-nohistory"))
 					historyFile = null;
-				else if(arg.equals("-noserver"))
-					portFile = null;
+				else if(arg.equals("-rmi"))
+				{
+					if(serverPath != null)
+						serverPath = "org.gjt.sp.jedit/RemoteEditor/" +
+						System.getProperty("user.name");
+				}
+				else if(arg.startsWith("-rmi="))
+					serverPath = arg.substring(5);
+				else if(arg.equals("-normi"))
+					serverPath = null;
 				else if(arg.equals("-nodesktop"))
 					desktop = false;
 				else if(arg.equals("-nosplash"))
@@ -111,8 +121,6 @@ public class jEdit
 					usrProps = arg.substring(10);
 				else if(arg.startsWith("-history="))
 					historyFile = arg.substring(9);
-				else if(arg.startsWith("-portfile="))
-					portFile = arg.substring(10);
 				else if(arg.equals("-readonly"))
 					readOnly = true;
 				else if(arg.startsWith("-+"))
@@ -137,50 +145,63 @@ public class jEdit
 			}
 		}
 
-		// Try to connect to the server
-		if(portFile != null && new File(portFile).exists())
+		// Try to connect to the RMI server
+		if(serverPath != null)
 		{
 			try
 			{
-				BufferedReader in = new BufferedReader(
-					new FileReader(portFile));
-				Socket socket = new Socket("localhost",
-					Integer.parseInt(in.readLine()));
-				DataOutputStream out = new DataOutputStream(
-					socket.getOutputStream());
-				out.writeBytes(in.readLine());
-				out.write('\n');
-				if(readOnly)
-					out.writeBytes("-readonly\n");
-				out.writeBytes("-cwd=" + userDir + "\n");
-				if(lineNo != -1)
-					out.writeBytes("-+" + lineNo + "\n");
-				boolean opened = false;
+				RemoteEditor editor = (RemoteEditor)Naming
+					.lookup(serverPath);
+				RemoteBuffer buf = null;
+	
 				for(int i = 0; i < args.length; i++)
 				{
-					if(args[i] == null)
+					String file = args[i];
+					if(file == null)
 						continue;
-					out.writeBytes(args[i]);
-					out.write('\n');
-					opened = true;
+					buf = editor.openFile(null,userDir,file,
+						readOnly,false);
 				}
-				if(!opened)
-					out.write('\n');
-				socket.close();
-				in.close();
+	
+				if(buf == null)
+					buf = editor.newFile(null);
+	
+				editor.newView(null,buf);
+	
+				// Clean up
+				editor = null;
+				buf = null;
+				System.runFinalization();
+				System.gc();
 				return;
+			}
+			catch(NotBoundException nb)
+			{
 			}
 			catch(Exception e)
 			{
-				System.out.println("jEdit: connection to server failed");
+				System.err.println("Error while contacting jEdit RMI"
+					+ " service:");
+				e.printStackTrace();
 			}
 		}
-
-		// Ok, server isn't running; start jEdit
 
 		// Show the kool splash screen
 		if(showSplash)
 			GUIUtilities.showSplashScreen();
+
+		// Install RMI security manager
+		try
+		{
+			if(serverPath != null)
+				System.setSecurityManager(new RMISecurityManager());
+		}
+		catch(Exception e)
+		{
+			System.err.println("Error installing RMI security manager:");
+			e.printStackTrace();
+			serverPath = null;
+		}
 
 		// Get things rolling
 		initMisc();
@@ -191,14 +212,15 @@ public class jEdit
 		initPlugins();
 		initUserProperties();
 		initPLAF();
-		propertiesChanged();
-		initRecent();
 		if(historyFile != null)
 			HistoryModel.loadHistory(historyFile);
 		SearchAndReplace.load();
 
 		// Start plugins
 		JARClassLoader.initPlugins();
+
+		propertiesChanged();
+		initRecent();
 
 		// Load files specified on the command line
 		Buffer buffer = null;
@@ -321,19 +343,57 @@ public class jEdit
 	 */
 	public static void propertiesChanged()
 	{
-		if(server != null)
-		{
-			server.stopServer();
-			server = null;
-		}
 		if(autosave != null)
 			autosave.interrupt();
 
-		if("on".equals(getProperty("server"))
-			&& portFile != null)
-			server = new Server();
-			
 		autosave = new Autosave();
+
+		if(serverPath != null)
+		{
+			if(remoteEditor == null)
+			{
+				try
+				{
+					remoteEditor = new RemoteEditorImpl();
+					Naming.bind(serverPath,remoteEditor);
+					System.out.println("Started RMI service on "
+						+ serverPath);
+				}
+				catch(AccessException a)
+				{
+					System.err.println("The RMI registry cannot"
+						+ " determine the local host.");
+					System.err.println("On Unix, try changing the"
+						+ "/etc/hosts file so that");
+					System.err.println("127.0.0.1 is mapped to this"
+						+ " machine's host name, and is aliased");
+					System.err.println("to localhost.");
+					
+				}
+				catch(Exception e)
+				{
+					System.err.println("Error starting RMI service "
+						+ serverPath + ":");
+					e.printStackTrace();
+					remoteEditor = null;
+				}
+			}
+		}
+		else if(remoteEditor != null)
+		{
+			try
+			{
+				Naming.unbind(serverPath);
+			}
+			catch(Exception e)
+			{
+				System.err.println("Error stopping RMI service "
+					+ serverPath + ":");
+				e.printStackTrace();
+			}
+			remoteEditor = null;
+		}
+
 		try
 		{
 			maxRecent = Integer.parseInt(getProperty(
@@ -836,7 +896,21 @@ public class jEdit
 			if(!_closeBuffer(view,(Buffer)buffers.elementAt(i)))
 				return;
 		}
-		
+
+		// Stop RMI service
+		if(remoteEditor != null)
+		{
+			try
+			{
+				Naming.unbind(serverPath);
+			}
+			catch(Exception e)
+			{
+				System.err.println("Error stopping RMI service:");
+				e.printStackTrace();
+			}
+		}
+
 		// Only save view properties here - save unregisters
 		// listeners, and we would have problems if the user
 		// closed a view but cancelled an unsaved buffer close
@@ -847,10 +921,6 @@ public class jEdit
 		{
 			((Plugin)plugins.elementAt(i)).stop();
 		}
-
-		// Stop the server
-		if(server != null)
-			server.stopServer();
 
 		// Save the recent file list
 		for(int i = 0; i < recent.size(); i++)
@@ -893,10 +963,10 @@ public class jEdit
 	private static String jEditHome;
 	private static String usrProps;
 	private static String historyFile;
-	private static String portFile;
+	private static String serverPath;
+	private static RemoteEditorImpl remoteEditor;
 	private static Properties defaultProps;
 	private static Properties props;
-	private static Server server;
 	private static Autosave autosave;
 	private static Hashtable actionHash;
 	private static EditAction[] actions;
@@ -925,15 +995,16 @@ public class jEdit
 		System.err.println("    -nousrprops: Don't load user"
 			+ " properties");
 		System.err.println("    -nohistory: Don't load history lists");
-		System.err.println("    -noserver: Don't start server");
+		System.err.println("    -normi: Don't start RMI service");
+		System.err.println("    -rmi: Start RMI service");
+		System.err.println("    -rmi=<path>: Start RMI service bound"
+			+ " to <path>");
 		System.err.println("    -nodesktop: Ignore saved desktop");
 		System.err.println("    -nosplash: Don't show splash screen");
 		System.err.println("    -usrprops=<file>: Read user properties"
 			+ " from <file>");
 		System.err.println("    -history=<file>: Load history list"
 			+ " from <file>");
-		System.err.println("    -portfile=<file>: Write server port to"
-			+ " <file>");
 		System.err.println("    -readonly: Open files read-only");
 		System.err.println("    -+<line>: Go to line number <line> of"
 			+ " opened file");
@@ -1349,188 +1420,14 @@ public class jEdit
 			}
 		}
 	}
-
-	private static class Server extends Thread
-	{
-		private ServerSocket server;
-		private long authInfo;
-
-		Server()
-		{
-			super("***jEdit server thread***");
-			setDaemon(true);
-			start();
-		}
-
-		public void run()
-		{
-			try
-			{
-				server = new ServerSocket(0);
-				int port = server.getLocalPort();
-			
-				Random random = new Random();
-				authInfo = Math.abs(random.nextLong());
-			
-				BufferedWriter out = new BufferedWriter(
-					new FileWriter(portFile));
-				out.write(String.valueOf(port));
-				out.write('\n');
-				out.write(String.valueOf(authInfo));
-				out.write('\n');
-				out.close();
-				for(;;)
-				{
-					Socket client = server.accept();
-					System.out.println("jEdit: connection from "
-						+ client.getInetAddress());
-					// Paranoid thread safety
-					// (We have a nasty DoS here if client
-					// opens connecton and never closes it,
-					// but it's not too catastrophic since
-					// the autosaver continues running)
-					SwingUtilities.invokeLater(new
-						ServerClientHandler(client,
-						authInfo));
-				}
-			}
-			catch(IOException io)
-			{
-				io.printStackTrace();
-			}
-		}
-
-		public void stopServer()
-		{
-			if(server == null)
-				return;
-			stop();
-			try
-			{
-				server.close();
-				server = null;
-			}
-			catch(IOException io)
-			{
-				io.printStackTrace();
-			}
-			new File(portFile).delete();
-		}
-	}
-
-	private static class ServerClientHandler implements Runnable
-	{
-		private Socket client;
-		private long authInfo;
-
-		ServerClientHandler(Socket client, long authInfo)
-		{
-			this.client = client;
-			this.authInfo = authInfo;
-		}
-
-		public void run()
-		{
-			View view = null;
-			String authString = null;
-			int lineNo = -1;
-			try
-			{
-				BufferedReader in = new BufferedReader(
-					new InputStreamReader(client
-					.getInputStream()));
-				authString = in.readLine();
-				long auth = Long.parseLong(authString);
-				if(auth != authInfo)
-				{
-					System.err.println("jEdit: wrong authorization key: "
-						+ auth);
-					client.close();
-					return;
-				}
-				String filename;
-				String cwd = "";
-				boolean endOpts = false;
-				boolean readOnly = false;
-				Buffer buffer = null;
-				while((filename = in.readLine()) != null)
-				{
-					if(filename.startsWith("-") && !endOpts)
-					{
-						if(filename.equals("--"))
-							endOpts = true;
-						else if(filename.equals(
-							"-readonly"))
-							readOnly = true;
-						else if(filename.startsWith(
-							"-cwd="))
-							cwd = filename.substring(5);
-						else if(filename.startsWith("-+"))
-						{
-							try
-							{
-								lineNo = Integer.parseInt(
-									filename.substring(2));
-							}
-							catch(NumberFormatException nf)
-							{
-							}
-						}
-					}
-					else
-					{
-						if(filename.length() == 0)
-							buffer = jEdit.newFile(null);
-						else
-							buffer = jEdit.openFile(
-								null,
-								cwd,filename,
-								readOnly,
-								false);
-					}
-				}
-				if(buffer != null)
-				{
-					if(lineNo != -1)
-					{
-						Element lineElement = buffer
-							.getDefaultRootElement()
-							.getElement(lineNo - 1);
-						if(lineElement != null)
-						{
-							buffer.setCaretInfo(lineElement
-								.getStartOffset(),
-								lineElement
-								.getStartOffset());
-						}
-					}
-					jEdit.newView(null,buffer);
-				}
-			}
-			catch(NumberFormatException nf)
-			{
-				System.err.println("jEdit: invalid authorization key: "
-					+ authString);
-			}
-			catch(Exception e)
-			{
-				e.printStackTrace();
-			}
-			try
-			{
-				client.close();
-			}
-			catch(IOException io)
-			{
-				io.printStackTrace();
-			}
-		}
-	}
 }
 
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.114  1999/06/14 08:21:07  sp
+ * Started rewriting `jEdit server' to use RMI (doesn't work yet)
+ *
  * Revision 1.113  1999/06/13 05:47:02  sp
  * Minor changes required for LatestVersion plugin
  *
@@ -1565,14 +1462,5 @@ public class jEdit
  *
  * Revision 1.105  1999/05/27 00:02:50  sp
  * Documentation updates, minor tweaks for WWW browser command unbundling
- *
- * Revision 1.104  1999/05/26 22:01:07  sp
- * Unbundling WWW Browser commands, documentation updates
- *
- * Revision 1.103  1999/05/26 04:46:03  sp
- * Minor API change, soft tabs fixed ,1.7pre1
- *
- * Revision 1.102  1999/05/22 08:33:53  sp
- * FAQ updates, mode selection tweak, patch mode update, javadoc updates, JDK 1.1.8 fix
  *
  */

@@ -13,6 +13,7 @@ others=doc/*.html \
 all:
 	-javadoc -J-mx24m -noindex -notree -d doc/api org.gjt.sp.jedit \
 		org.gjt.sp.jedit.event \
+		org.gjt.sp.jedit.remote \
 		org.gjt.sp.jedit.search \
 		org.gjt.sp.jedit.syntax
 	echo $(others) >> .resources

@@ -19,8 +19,6 @@ classes=org/gjt/sp/jedit/jEdit.class \
 
 others='org/gjt/sp/jedit/jEdit$$Autosave.class' \
 	'org/gjt/sp/jedit/jEdit$$EditorHandler.class' \
-	'org/gjt/sp/jedit/jEdit$$Server.class' \
-	'org/gjt/sp/jedit/jEdit$$ServerClientHandler.class' \
 	'org/gjt/sp/jedit/Buffer$$BufferProps.class' \
 	'org/gjt/sp/jedit/Buffer$$DocumentHandler.class' \
 	'org/gjt/sp/jedit/Buffer$$EditorHandler.class' \
@@ -46,6 +44,7 @@ subdirs:
 	$(MAKE) -f org/gjt/sp/jedit/mode/Makefile
 	$(MAKE) -f org/gjt/sp/jedit/options/Makefile
 	$(MAKE) -f org/gjt/sp/jedit/proto/Makefile
+	$(MAKE) -f org/gjt/sp/jedit/remote/Makefile
 	$(MAKE) -f org/gjt/sp/jedit/search/Makefile
 	$(MAKE) -f org/gjt/sp/jedit/syntax/Makefile
 	$(MAKE) -f org/gjt/sp/jedit/toolbar/Makefile
