@@ -81,6 +81,8 @@ implements CaretListener, KeyListener, WindowListener
 			.getProperty("view.bgColor")));
 		textArea.setForeground(jEdit.parseColor(jEdit
 			.getProperty("view.fgColor")));
+		textArea.setBlockCaret("on".equals(jEdit.getProperty(
+			"view.blockCaret")));
 		try
 		{
 			textArea.getCaret().setBlinkRate(Integer.parseInt(jEdit

@@ -173,6 +173,14 @@ public class EditorOptionPane extends OptionPane
 		add(blinkCaret);
 
 		cons.gridy = 11;
+		blockCaret = new JCheckBox(jEdit.getProperty("options.editor"
+			+ ".blockCaret"));
+		blockCaret.getModel().setSelected("on".equals(jEdit.getProperty(
+			"view.blockCaret")));
+		layout.setConstraints(blockCaret,cons);
+		add(blockCaret);
+
+		cons.gridy = 12;
 		electricBorders = new JCheckBox(jEdit.getProperty("options.editor"
 			+ ".electricBorders"));
 		electricBorders.getModel().setSelected(!"0".equals(jEdit.getProperty(
@@ -180,7 +188,7 @@ public class EditorOptionPane extends OptionPane
 		layout.setConstraints(electricBorders,cons);
 		add(electricBorders);
 
-		cons.gridy = 12;
+		cons.gridy = 13;
 		noTabs = new JCheckBox(jEdit.getProperty("options.editor"
 			+ ".noTabs"));
 		noTabs.getModel().setSelected("yes".equals(jEdit.getProperty(
@@ -208,6 +216,8 @@ public class EditorOptionPane extends OptionPane
 			.isSelected() ? "on" : "off");
 		jEdit.setProperty("view.caretBlinkRate",blinkCaret.getModel()
 			.isSelected() ? "500" : "0");
+		jEdit.setProperty("view.blockCaret",blockCaret.getModel()
+			.isSelected() ? "on" : "off");
 		jEdit.setProperty("view.electricBorders",electricBorders.getModel()
 			.isSelected() ? "4" : "0");
 		jEdit.setProperty("buffer.noTabs",noTabs.getModel()
@@ -226,6 +236,7 @@ public class EditorOptionPane extends OptionPane
 	private JCheckBox syntax;
 	private JCheckBox autoIndent;
 	private JCheckBox blinkCaret;
+	private JCheckBox blockCaret;
 	private JCheckBox electricBorders;
 	private JCheckBox noTabs;
 }

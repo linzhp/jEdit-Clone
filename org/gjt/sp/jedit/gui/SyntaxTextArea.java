@@ -187,6 +187,17 @@ public class SyntaxTextArea extends JEditorPane
 	}
 
 	/**
+	 * Sets the block caret flag. If set to true, a block caret
+	 * will be drawn.
+	 * @param block True if a block caret should be drawn, false
+	 * otherwise
+	 */
+	public void setBlockCaret(boolean block)
+	{
+		this.block = block;
+	}
+
+	/**
 	 * Copies the selected text to the clipboard, adding it to the
 	 * jEdit clip history.
 	 */
@@ -243,6 +254,7 @@ public class SyntaxTextArea extends JEditorPane
 	private Color bracketHighlightColor;
 	private Object bracketHighlightTag;
 	private int electricLines;
+	private boolean block;
 	private Segment lineSegment;
 
 	private class SyntaxCaret extends DefaultCaret
@@ -307,6 +319,39 @@ public class SyntaxTextArea extends JEditorPane
 					scrollRectToVisible(rect);
 				}
 			});
+		}
+
+		public void damage(Rectangle r)
+		{
+			if(r != null)
+			{
+				x = r.x - 1;
+				y = r.y - 1;
+				height = r.height + 2;
+				SyntaxCaret.this.repaint();
+			}
+		}
+				
+		public void paint(Graphics g)
+		{
+			if(getDot() != getMark() ||
+				!SyntaxCaret.this.isVisible())
+				return;
+			try
+			{
+				int dot = getDot();
+				getDocument().getText(dot,1,lineSegment);
+				Rectangle r = modelToView(dot);
+				width = g.getFontMetrics().charWidth('m') + 2;
+				r.width = block ? width - 2 : 0;
+				g.setColor(getCaretColor());
+				g.drawRect(r.x,r.y,r.width,r.height - 1);
+			}
+			catch(BadLocationException bl)
+			{
+				System.out.println("Caret fuckup:");
+				bl.printStackTrace();
+			}
 		}
 	}
 

@@ -112,12 +112,14 @@ view.selectionColor=#ccccff
 # Caret blink rate
 view.caretBlinkRate=500
 
+# Block caret
+view.blockCaret=on
+
 # Electric borders
 view.electricBorders=4
 
 # Auto indent
 view.autoindent=on
-#view.autoindent=off
 
 ###
 ### EDIT MODES

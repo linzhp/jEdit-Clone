@@ -494,6 +494,7 @@ options.editor.bracketHighlight=Bracket highlighting
 options.editor.syntax=Syntax colorizing
 options.editor.autoIndent=Auto indent
 options.editor.blinkCaret=Blinking caret
+options.editor.blockCaret=Block-shaped caret
 options.editor.electricBorders=Electric (auto scroll) borders
 options.editor.noTabs=Soft (emulated with spaces) tabs
 options.colors1.label=Colors (General)
