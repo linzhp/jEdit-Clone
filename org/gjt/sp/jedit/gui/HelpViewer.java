@@ -197,6 +197,12 @@ public class HelpViewer extends JFrame
 						gotoURL(url,true);
 				}
 			}
+			else if (evt.getEventType() == HyperlinkEvent.EventType.ENTERED) {
+				viewer.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+			}
+			else if (evt.getEventType() == HyperlinkEvent.EventType.EXITED) {
+				viewer.setCursor(Cursor.getDefaultCursor());
+			}
 		}
 	}
 }

@@ -187,6 +187,12 @@ public class jEdit
 		initRecent();
 		initClipHistory();
 
+		// Start plugins
+		for(int i = 0; i < plugins.size(); i++)
+		{
+			((Plugin)plugins.elementAt(i)).start();
+		}
+
 		// Load files specified on the command line
 		Buffer buffer = null;
 		for(int i = 0; i < args.length; i++)
@@ -212,12 +218,6 @@ public class jEdit
 		}
 		if(buffer == null)
 			buffer = newFile(null);
-
-		// Start plugins
-		for(int i = 0; i < plugins.size(); i++)
-		{
-			((Plugin)plugins.elementAt(i)).start();
-		}
 
 		// Create the view
 		newView(null,buffer);
@@ -1558,6 +1558,9 @@ public class jEdit
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.76  1999/04/22 04:41:41  sp
+ * Help viewer update (Juha Lindfors), splash screen & jEdit update (Mike Dillon)
+ *
  * Revision 1.75  1999/04/21 07:39:19  sp
  * FAQ added, plugins can now add panels to the options dialog
  *

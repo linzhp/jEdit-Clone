@@ -20,6 +20,7 @@
 package org.gjt.sp.jedit.gui;
 
 import javax.swing.*;
+import javax.swing.border.*;
 import java.awt.*;
 import java.net.URL;
 import org.gjt.sp.jedit.jEdit;
@@ -28,17 +29,23 @@ public class SplashScreen extends JWindow
 {
 	public SplashScreen()
 	{
-		getContentPane().setLayout(new BorderLayout());
+		JPanel splash = new JPanel(new BorderLayout());
 		URL url = getClass().getResource("/org/gjt/sp/jedit/jedit_logo.gif");
 		if(url != null)
 		{
-			getContentPane().add(BorderLayout.CENTER,
-				new JLabel(new ImageIcon(url)));
+			splash.add(new JLabel(new ImageIcon(url)),
+				BorderLayout.CENTER);
 		}
 		
-		getContentPane().add(BorderLayout.SOUTH,new JLabel("jEdit "
-			+ jEdit.VERSION + " build " + jEdit.BUILD,
-			SwingConstants.CENTER));
+		splash.add(new JLabel("jEdit " + jEdit.VERSION + " build " +
+			jEdit.BUILD, SwingConstants.CENTER), BorderLayout.SOUTH);
+		splash.setBorder(new CompoundBorder(
+			new SoftBevelBorder(BevelBorder.RAISED),
+			new CompoundBorder(new EmptyBorder(2,2,2,2),
+			new SoftBevelBorder(BevelBorder.LOWERED))));
+
+		setContentPane(splash);
+
 		Dimension screen = getToolkit().getScreenSize();
 		pack();
 		setLocation((screen.width - getSize().width) / 2,
