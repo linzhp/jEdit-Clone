@@ -14,8 +14,10 @@ classes=org/gjt/sp/jedit/gui/BufferOptions.class \
 	org/gjt/sp/jedit/gui/HyperSearch.class \
 	org/gjt/sp/jedit/gui/JEditTextArea.class \
 	org/gjt/sp/jedit/gui/MultiFileSearchDialog.class \
+	org/gjt/sp/jedit/gui/OptionsDialog.class \
 	org/gjt/sp/jedit/gui/PastePredefined.class \
 	org/gjt/sp/jedit/gui/PastePrevious.class \
+	org/gjt/sp/jedit/gui/PluginOptions.class \
 	org/gjt/sp/jedit/gui/SearchDialog.class \
 	org/gjt/sp/jedit/gui/SelectLineRange.class \
 	org/gjt/sp/jedit/gui/SendDialog.class \

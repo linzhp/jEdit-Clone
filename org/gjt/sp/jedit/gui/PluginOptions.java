@@ -1,5 +1,5 @@
 /*
- * GlobalOptions.java - Global options dialog
+ * PluginOptions.java - Plugin options dialog
  * Copyright (C) 1998, 1999 Slava Pestov
  *
  * This program is free software; you can redistribute it and/or
@@ -23,7 +23,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
-import org.gjt.sp.jedit.event.*;
 import org.gjt.sp.jedit.*;
 
 /**
@@ -31,16 +30,30 @@ import org.gjt.sp.jedit.*;
  * @author Slava Pestov
  * @version $Id$
  */
-public class GlobalOptions extends OptionsDialog
+public class PluginOptions extends OptionsDialog
 {
-	public GlobalOptions(View view)
+	public PluginOptions(View view)
 	{
-		super(view,jEdit.getProperty("options.title"));
+		super(view,jEdit.getProperty("plugin-options.title"));
 
-		addOptionPane(new org.gjt.sp.jedit.options.GeneralOptionPane());
-		addOptionPane(new org.gjt.sp.jedit.options.EditorOptionPane());
-		addOptionPane(new org.gjt.sp.jedit.options.KeyTableOptionPane());
-		addOptionPane(new org.gjt.sp.jedit.options.ColorTableOptionPane());
+		Class[] optionPanes = jEdit.getOptionPanes();
+		for(int i = 0; i < optionPanes.length; i++)
+		{
+			Class clazz = optionPanes[i];
+
+			try
+			{
+				OptionPane pane = (OptionPane)clazz
+					.newInstance();
+				addOptionPane(pane);
+			}
+			catch(Exception e)
+			{
+				System.out.println("Error creating option pane "
+					+ clazz.getName());
+				e.printStackTrace();
+			}
+		}
 
 		Dimension screen = getToolkit().getScreenSize();
 		pack();
@@ -54,28 +67,8 @@ public class GlobalOptions extends OptionsDialog
 /*
  * ChangeLog:
  * $Log$
- * Revision 1.7  1999/06/07 06:36:32  sp
+ * Revision 1.1  1999/06/07 06:36:32  sp
  * Syntax `styling' (bold/italic tokens) added,
  * plugin options dialog for plugin option panes
- *
- * Revision 1.6  1999/04/21 07:39:19  sp
- * FAQ added, plugins can now add panels to the options dialog
- *
- * Revision 1.5  1999/04/02 03:21:09  sp
- * Added manifest file, common strings such as OK, etc are no longer duplicated
- * many times in jedit_gui.props
- *
- * Revision 1.4  1999/03/21 01:07:27  sp
- * Fixed stupid bug in global options
- *
- * Revision 1.3  1999/03/20 05:23:32  sp
- * Code cleanups
- *
- * Revision 1.2  1999/03/20 04:52:55  sp
- * Buffer-specific options panel finished, attempt at fixing OS/2 caret bug, code
- * cleanups
- *
- * Revision 1.1  1999/03/20 02:07:59  sp
- * Starting work on buffer-specific options panel
  *
  */

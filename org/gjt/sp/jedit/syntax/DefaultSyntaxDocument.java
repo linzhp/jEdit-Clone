@@ -20,7 +20,6 @@ package org.gjt.sp.jedit.syntax;
 
 import javax.swing.event.*;
 import javax.swing.text.*;
-import java.awt.Color;
 
 /**
  * A simple implementation of <code>SyntaxDocument</code>. It takes
@@ -39,7 +38,7 @@ implements SyntaxDocument
 	 */
 	public DefaultSyntaxDocument()
 	{
-		colors = SyntaxUtilities.getDefaultSyntaxColors();
+		styles = SyntaxUtilities.getDefaultSyntaxStyles();
 		addDocumentListener(new DocumentHandler());
 	}
 
@@ -70,23 +69,23 @@ implements SyntaxDocument
 	}
 
 	/**
-	 * Returns the color array that maps token identifiers to
-	 * <code>java.awt.Color</code> objects.
+	 * Returns the style array that maps token identifiers to
+	 * <code>SyntaxStyle</code> objects.
 	 */
-	public Color[] getColors()
+	public SyntaxStyle[] getStyles()
 	{
-		return colors;
+		return styles;
 	}
 
 	/**
-	 * Sets the color array that maps token identifiers to
-	 * <code>java.awt.Color</code> ojects. May throw an exception
+	 * Sets the style array that maps token identifiers to
+	 * <code>SyntaxStyle</code> objects. May throw an exception
 	 * if this is not supported for this type of document.
-	 * @param colors The new color list
+	 * @param styles The new style list
 	 */
-	public void setColors(Color[] colors)
+	public void setStyles(SyntaxStyle[] styles)
 	{
-		this.colors = colors;
+		this.styles = styles;
 	}
 
 	/**
@@ -134,7 +133,7 @@ implements SyntaxDocument
 
 	// protected members
 	protected TokenMarker tokenMarker;
-	protected Color[] colors;
+	protected SyntaxStyle[] styles;
 
 	/**
 	 * An implementation of <code>DocumentListener</code> that
@@ -181,6 +180,10 @@ implements SyntaxDocument
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.6  1999/06/07 06:36:32  sp
+ * Syntax `styling' (bold/italic tokens) added,
+ * plugin options dialog for plugin option panes
+ *
  * Revision 1.5  1999/06/05 00:22:58  sp
  * LGPL'd syntax package
  *

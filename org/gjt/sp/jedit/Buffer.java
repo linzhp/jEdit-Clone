@@ -444,7 +444,7 @@ public class Buffer extends DefaultSyntaxDocument
 		mode.enter(this);
 
 		setTokenMarker(mode.createTokenMarker());
-		loadColors();
+		loadStyles();
 
 		for(int i = 0; i < views.length; i++)
 		{
@@ -938,28 +938,69 @@ loop:		for(int i = 0; i < markers.size(); i++)
 		}
 	}
 
-	private void loadColors()
+	private void loadStyles()
 	{
-		colors[Token.COMMENT1] = GUIUtilities.parseColor(
-			(String)getProperty("colors.comment1"));
-		colors[Token.COMMENT2] = GUIUtilities.parseColor(
-			(String)getProperty("colors.comment2"));
-		colors[Token.KEYWORD1] = GUIUtilities.parseColor(
-			(String)getProperty("colors.keyword1"));
-		colors[Token.KEYWORD2] = GUIUtilities.parseColor(
-			(String)getProperty("colors.keyword2"));
-		colors[Token.KEYWORD3] = GUIUtilities.parseColor(
-			(String)getProperty("colors.keyword3"));
-		colors[Token.LABEL] = GUIUtilities.parseColor(
-			(String)getProperty("colors.label"));
-		colors[Token.LITERAL1] = GUIUtilities.parseColor(
-			(String)getProperty("colors.literal1"));
-		colors[Token.LITERAL2] = GUIUtilities.parseColor(
-			(String)getProperty("colors.literal2"));
-		colors[Token.OPERATOR] = GUIUtilities.parseColor(
-			(String)getProperty("colors.operator"));
-		colors[Token.INVALID] = GUIUtilities.parseColor(
-			(String)getProperty("colors.invalid"));
+		try
+		{
+			styles[Token.COMMENT1] = parseStyle(
+				(String)getProperty("style.comment1"));
+			styles[Token.COMMENT2] = parseStyle(
+				(String)getProperty("style.comment2"));
+			styles[Token.KEYWORD1] = parseStyle(
+				(String)getProperty("style.keyword1"));
+			styles[Token.KEYWORD2] = parseStyle(
+				(String)getProperty("style.keyword2"));
+			styles[Token.KEYWORD3] = parseStyle(
+				(String)getProperty("style.keyword3"));
+			styles[Token.LABEL] = parseStyle(
+				(String)getProperty("style.label"));
+			styles[Token.LITERAL1] = parseStyle(
+				(String)getProperty("style.literal1"));
+			styles[Token.LITERAL2] = parseStyle(
+				(String)getProperty("style.literal2"));
+			styles[Token.OPERATOR] = parseStyle(
+				(String)getProperty("style.operator"));
+			styles[Token.INVALID] = parseStyle(
+				(String)getProperty("style.invalid"));
+		}
+		catch(Exception e)
+		{
+			System.out.println("Error loading syntax styles:");
+			e.printStackTrace();
+		}
+	}
+
+	private SyntaxStyle parseStyle(String str)
+	{
+		Color color = Color.black;
+		boolean italics = false;
+		boolean bold = false;
+		StringTokenizer st = new StringTokenizer(str);
+		while(st.hasMoreTokens())
+		{
+			String s = st.nextToken();
+			if(s.startsWith("color:"))
+			{
+				color = GUIUtilities.parseColor(s.substring(6));
+			}
+			else if(s.startsWith("style:"))
+			{
+				for(int i = 6; i < s.length(); i++)
+				{
+					if(s.charAt(i) == 'i')
+						italics = true;
+					else if(s.charAt(i) == 'b')
+						bold = true;
+					else
+						throw new IllegalArgumentException(
+							"Invalid style: " + s);
+				}
+			}
+			else
+				throw new IllegalArgumentException(
+					"Invalid directive: " + s);
+		}
+		return new SyntaxStyle(color,italics,bold);
 	}
 
 	private void processProperty(String prop)
@@ -1270,7 +1311,7 @@ loop:		for(int i = 0; i < markers.size(); i++)
 		public void propertiesChanged(EditorEvent evt)
 		{
 			Buffer.this.propertiesChanged();
-			loadColors();
+			loadStyles();
 		}
 	}
 
@@ -1309,6 +1350,10 @@ loop:		for(int i = 0; i < markers.size(); i++)
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.81  1999/06/07 06:36:32  sp
+ * Syntax `styling' (bold/italic tokens) added,
+ * plugin options dialog for plugin option panes
+ *
  * Revision 1.80  1999/06/05 00:42:04  sp
  * Expand abbreviation & buffer mode selection bugs fixed
  *

@@ -182,31 +182,30 @@ public class SyntaxUtilities
 	}
 
 	/**
-	 * Returns the default color table. This can be passed to the
-	 * <code>setColors()</code> method of <code>SyntaxDocument</code>
-	 * to use the default syntax colors.
+	 * Returns the default style table. This can be passed to the
+	 * <code>setStyles()</code> method of <code>SyntaxDocument</code>
+	 * to use the default syntax styles.
 	 */
-	public static Color[] getDefaultSyntaxColors()
+	public static SyntaxStyle[] getDefaultSyntaxStyles()
 	{
-		Color[] colors = new Color[Token.ID_COUNT];
+		SyntaxStyle[] styles = new SyntaxStyle[Token.ID_COUNT];
 
-		colors[Token.COMMENT1] = Color.red;
-		colors[Token.COMMENT2] = new Color(0x990033);
-		colors[Token.KEYWORD1] = Color.blue;
-		colors[Token.KEYWORD2] = Color.magenta;
-		colors[Token.KEYWORD3] = new Color(0x009600);
-		colors[Token.LITERAL1] = new Color(0x650099);
-		colors[Token.LITERAL2] = new Color(0x650099);
-		colors[Token.LABEL] = new Color(0xcc32ff);
-		colors[Token.OPERATOR] = Color.orange;
-		colors[Token.INVALID] = new Color(0xff9900);
+		styles[Token.COMMENT1] = new SyntaxStyle(Color.black,true,false);
+		styles[Token.COMMENT2] = new SyntaxStyle(new Color(0x990033),true,false);
+		styles[Token.KEYWORD1] = new SyntaxStyle(Color.black,false,true);
+		styles[Token.KEYWORD2] = new SyntaxStyle(Color.magenta,false,false);
+		styles[Token.KEYWORD3] = new SyntaxStyle(new Color(0x009600),false,false);
+		styles[Token.LITERAL1] = new SyntaxStyle(new Color(0x650099),false,false);
+		styles[Token.LITERAL2] = new SyntaxStyle(new Color(0x650099),false,true);
+		styles[Token.LABEL] = new SyntaxStyle(new Color(0x990033),false,true);
+		styles[Token.OPERATOR] = new SyntaxStyle(Color.black,false,true);
+		styles[Token.INVALID] = new SyntaxStyle(Color.red,false,true);
 
-		return colors;
+		return styles;
 	}
-      
+
 	// private members
 	private SyntaxUtilities() {}
-	private static Color[] COLORS;
 
 	// the return value is as follows:
 	// >= 0: offset in line where bracket was found
@@ -252,6 +251,10 @@ public class SyntaxUtilities
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.6  1999/06/07 06:36:32  sp
+ * Syntax `styling' (bold/italic tokens) added,
+ * plugin options dialog for plugin option panes
+ *
  * Revision 1.5  1999/06/05 00:22:58  sp
  * LGPL'd syntax package
  *

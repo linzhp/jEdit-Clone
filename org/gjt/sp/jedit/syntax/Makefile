@@ -20,6 +20,7 @@ classes=org/gjt/sp/jedit/syntax/BatchFileTokenMarker.class \
 	org/gjt/sp/jedit/syntax/SQLTokenMarker.class \
 	org/gjt/sp/jedit/syntax/SyntaxDocument.class \
 	org/gjt/sp/jedit/syntax/SyntaxEditorKit.class \
+	org/gjt/sp/jedit/syntax/SyntaxStyle.class \
 	org/gjt/sp/jedit/syntax/SyntaxTextArea.class \
 	org/gjt/sp/jedit/syntax/SyntaxUtilities.class \
 	org/gjt/sp/jedit/syntax/SyntaxView.class \

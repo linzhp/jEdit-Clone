@@ -1,5 +1,5 @@
 /*
- * about.java
+ * plugin_options.java
  * Copyright (C) 1998 Slava Pestov
  *
  * This program is free software; you can redistribute it and/or
@@ -20,21 +20,18 @@
 package org.gjt.sp.jedit.actions;
 
 import java.awt.event.ActionEvent;
-import org.gjt.sp.jedit.*;
+import org.gjt.sp.jedit.gui.PluginOptions;
+import org.gjt.sp.jedit.EditAction;
 
-public class about extends EditAction
+public class plugin_options extends EditAction
 {
-	public about()
+	public plugin_options()
 	{
-		super("about");
+		super("plugin-options");
 	}
 
 	public void actionPerformed(ActionEvent evt)
 	{
-		Object[] aboutArgs = { jEdit.getVersion(),
-			System.getProperty("java.version"),
-			System.getProperty("os.name"),
-			System.getProperty("os.version")};
-		GUIUtilities.message(getView(evt),"about",aboutArgs);
+		new PluginOptions(getView(evt));
 	}
 }

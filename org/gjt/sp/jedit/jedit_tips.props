@@ -97,4 +97,5 @@ tip.82=Pressing Insert toggles overwrite mode
 tip.83=Check out Help->Help Contents->Advanced Text Editing->History Text Fields
 tip.84=jEdit supports both literal and regular expression search & replace
 tip.85=jEdit supports multi file search and replace
-tip.count=86
+tip.86=Change plugin settings in File->Plugin Options
+tip.count=87

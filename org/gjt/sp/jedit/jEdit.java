@@ -1096,6 +1096,7 @@ public class jEdit
 		addAction(new org.gjt.sp.jedit.actions.paste_predefined());
 		addAction(new org.gjt.sp.jedit.actions.paste_previous());
 		addAction(new org.gjt.sp.jedit.actions.plugin_help());
+		addAction(new org.gjt.sp.jedit.actions.plugin_options());
 		addAction(new org.gjt.sp.jedit.actions.prev_buffer());
 		addAction(new org.gjt.sp.jedit.actions.prev_paragraph());
 		addAction(new org.gjt.sp.jedit.actions.print());
@@ -1137,11 +1138,6 @@ public class jEdit
 	private static void initOptions()
 	{
 		optionPanes = new Vector();
-
-		addOptionPane(org.gjt.sp.jedit.options.GeneralOptionPane.class);
-		addOptionPane(org.gjt.sp.jedit.options.EditorOptionPane.class);
-		addOptionPane(org.gjt.sp.jedit.options.KeyTableOptionPane.class);
-		addOptionPane(org.gjt.sp.jedit.options.ColorTableOptionPane.class);
 	}
 
 	/**
@@ -1532,6 +1528,10 @@ public class jEdit
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.111  1999/06/07 06:36:32  sp
+ * Syntax `styling' (bold/italic tokens) added,
+ * plugin options dialog for plugin option panes
+ *
  * Revision 1.110  1999/06/05 07:17:08  sp
  * Cascading makefiles, HyperSearch tweak, doc updates
  *

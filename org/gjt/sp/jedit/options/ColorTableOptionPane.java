@@ -53,16 +53,6 @@ public class ColorTableOptionPane extends OptionPane
 		saveColorChoice("view.selectionColor",i++);
 		saveColorChoice("view.lineHighlightColor",i++);
 		saveColorChoice("view.bracketHighlightColor",i++);
-		saveColorChoice("buffer.colors.comment1",i++);
-		saveColorChoice("buffer.colors.comment2",i++);
-		saveColorChoice("buffer.colors.literal1",i++);
-		saveColorChoice("buffer.colors.literal2",i++);
-		saveColorChoice("buffer.colors.label",i++);
-		saveColorChoice("buffer.colors.keyword1",i++);
-		saveColorChoice("buffer.colors.keyword2",i++);
-		saveColorChoice("buffer.colors.keyword3",i++);
-		saveColorChoice("buffer.colors.operator",i++);
-		saveColorChoice("buffer.colors.invalid",i++);
 	}
 
 	// ListSelectionListener implementation
@@ -150,37 +140,6 @@ public class ColorTableOptionPane extends OptionPane
 		types.addElement(jEdit.getProperty("options.colors.bracketHighlightColor"));
 		colors.addElement(ColorChoice.choiceForValue(
 			jEdit.getProperty("view.bracketHighlightColor")));
-		// syntax
-		types.addElement(jEdit.getProperty("options.colors.comment1Color"));
-		colors.addElement(ColorChoice.choiceForValue(
-			jEdit.getProperty("buffer.colors.comment1")));
-		types.addElement(jEdit.getProperty("options.colors.comment2Color"));
-		colors.addElement(ColorChoice.choiceForValue(
-			jEdit.getProperty("buffer.colors.comment2")));
-		types.addElement(jEdit.getProperty("options.colors.literal1Color"));
-		colors.addElement(ColorChoice.choiceForValue(
-			jEdit.getProperty("buffer.colors.literal1")));
-		types.addElement(jEdit.getProperty("options.colors.literal2Color"));
-		colors.addElement(ColorChoice.choiceForValue(
-			jEdit.getProperty("buffer.colors.literal2")));
-		types.addElement(jEdit.getProperty("options.colors.labelColor"));
-		colors.addElement(ColorChoice.choiceForValue(
-			jEdit.getProperty("buffer.colors.label")));
-		types.addElement(jEdit.getProperty("options.colors.keyword1Color"));
-		colors.addElement(ColorChoice.choiceForValue(
-			jEdit.getProperty("buffer.colors.keyword1")));
-		types.addElement(jEdit.getProperty("options.colors.keyword2Color"));
-		colors.addElement(ColorChoice.choiceForValue(
-			jEdit.getProperty("buffer.colors.keyword2")));
-		types.addElement(jEdit.getProperty("options.colors.keyword3Color"));
-		colors.addElement(ColorChoice.choiceForValue(
-			jEdit.getProperty("buffer.colors.keyword3")));
-		types.addElement(jEdit.getProperty("options.colors.operatorColor"));
-		colors.addElement(ColorChoice.choiceForValue(
-			jEdit.getProperty("buffer.colors.operator")));
-		types.addElement(jEdit.getProperty("options.colors.invalidColor"));
-		colors.addElement(ColorChoice.choiceForValue(
-			jEdit.getProperty("buffer.colors.invalid")));
 
 		return new ColorTableModel(types, colors);
 	}
@@ -525,6 +484,10 @@ class ColorChoice
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.11  1999/06/07 06:36:32  sp
+ * Syntax `styling' (bold/italic tokens) added,
+ * plugin options dialog for plugin option panes
+ *
  * Revision 1.10  1999/05/27 03:09:22  sp
  * Console unbundled
  *

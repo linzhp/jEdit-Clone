@@ -102,6 +102,7 @@ file=new-file \
      - \
      buffer-options \
      global-options \
+     plugin-options \
      - \
      exit
 file.label=$File
@@ -121,9 +122,10 @@ save-as.label=Sa$ve As...
 save-url.label=Save to URL...
 save-all.label=Save All Buffers
 send.label=Sen$d...
-print.label=Pri$nt...
-buffer-options.label=$Buffer Options...
-global-options.label=$Global Options...
+print.label=$Print...
+buffer-options.label=Buffer Options...
+global-options.label=Global Options...
+plugin-options.label=Plugin Options...
 exit.label=E$xit
 
 ### Edit menu
@@ -318,18 +320,17 @@ view.hintBar=Hint: {0}
 # {4} - OS version
 # {5} - OS architecture
 about.title=About jEdit
-about.message=jEdit version {0} build {1}\n\
-	jEdit was written by Slava Pestov with the help of several others;\n\
-	See Help->Help Contents->Introduction for a full list.\n\
+about.message=jEdit version {0} (JDK {1}, {2} {3})\n\
+	jEdit was written by Slava Pestov with the help of several others.\n\
+	See Help->Help Contents->Introduction for redistribution\n\
+	information and warranty disclamer.\n\
 	\n\
-	jEdit homepage: <http://www.gjt.org/~sp/jedit.html>.\n\
-	jEdit e-mail: <sp@gjt.org>.\n\
-	\n\
-	This is free software, and you are welcome to redistribute it under\n\
-	certain conditions; see Help->Help Contents->Introduction\n\
-	for details.\n\
-	\n\
-	Java {2} running on {3}/{5} {4}.
+	I would like to thank the following people:\n\
+	Mike Dillon - code contributor, plugin central maintainer\n\
+	Juha Lindfors - code contributor\n\
+	Nathan Tenney - FTP site\n\
+	... plus all the users, plugin authors, and people who sent me\n\
+	feedback.
 
 # IO Error dialog, {0}=the error message
 ioerror.title=I/O Error
@@ -539,6 +540,9 @@ options.keys.binding=Keyboard shortcut
 
 # Color chooser, used by options.colors
 colorChooser.title=Pick a Color
+
+# Plugin options dialog
+plugin-options.title=Plugin Options
 
 # Help viewer
 helpviewer.title=jEdit Help

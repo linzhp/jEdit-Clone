@@ -97,7 +97,7 @@ loop:		for(int i = offset; i < length; i++)
 					else
 					{
 						if(doKeyword(line,i,c))
-							continue;
+							break;
 						addToken(i - lastOffset,token);
 						addToken(length - i,Token.COMMENT1);
 						lastOffset = lastKeyword = length;
@@ -121,7 +121,7 @@ loop:		for(int i = offset; i < length; i++)
 					if(length - i > 1)
 					{
 						if(doKeyword(line,i,c))
-							continue;
+							break;
 						if(c == '&' && (array[i1] == '&'
 							|| Character.isWhitespace(
 							array[i1])))
@@ -140,7 +140,7 @@ loop:		for(int i = offset; i < length; i++)
 					else
 					{
 						if(doKeyword(line,i,c))
-							continue;
+							break;
 						addToken(i - lastOffset,token);
 						token = Token.LITERAL1;
 						lineInfo[lineIndex].obj = null;
@@ -152,7 +152,10 @@ loop:		for(int i = offset; i < length; i++)
 						backslash = false;
 					else
 					{
-						if(i != lastKeyword)
+						int oldLastKeyword = lastKeyword;
+						if(doKeyword(line,i,c))
+							break;
+						if(i != oldLastKeyword)
 							break;
 						addToken(i - lastOffset,token);
 						token = Token.LITERAL2;
@@ -165,7 +168,7 @@ loop:		for(int i = offset; i < length; i++)
 					else
 					{
 						if(doKeyword(line,i,c))
-							continue;
+							break;
 						addToken(i - lastOffset,token);
 						token = Token.OPERATOR;
 						lastOffset = lastKeyword = i;
@@ -177,7 +180,7 @@ loop:		for(int i = offset; i < length; i++)
 					else
 					{
 						if(doKeyword(line,i,c))
-							continue;
+							break;
 						if(length - i > 2 && array[i1] == '<'
 							&& !Character.isWhitespace(array[i+2]))
 						{
@@ -195,7 +198,7 @@ loop:		for(int i = offset; i < length; i++)
 				case ':':
 					backslash = false;
 					if(doKeyword(line,i,c))
-						continue;
+						break;
 					if(i == lastKeyword)
 						break;
 					addToken(i1 - lastOffset,Token.LABEL);
@@ -204,7 +207,7 @@ loop:		for(int i = offset; i < length; i++)
 				case '-':
 					backslash = false;
 					if(doKeyword(line,i,c))
-						continue;
+						break;
 					if(i != lastKeyword || length - i <= 1)
 						break;
 					switch(array[i1])
@@ -228,7 +231,7 @@ loop:		for(int i = offset; i < length; i++)
 					if(i == lastKeyword && length - i > 1)
 					{
 						if(doKeyword(line,i,c))
-							continue;
+							break;
 						backslash = false;
 						char ch = array[i1];
 						if(Character.isWhitespace(ch))
@@ -257,7 +260,7 @@ loop:		for(int i = offset; i < length; i++)
 					{
 						addToken(i1 - lastOffset,token);
 						lastOffset = lastKeyword = i1;
-						continue;
+						break;
 					}
 					else
 					{
@@ -276,7 +279,7 @@ loop:		for(int i = offset; i < length; i++)
 					{
 						if(Character.isWhitespace(matchChar)
 							&& !matchSpacesAllowed)
-							continue;
+							break;
 						else
 							matchChar = c;
 					}
@@ -305,7 +308,7 @@ loop:		for(int i = offset; i < length; i++)
 							break;
 						}
 						if(c != matchChar)
-							continue;
+							break;
 						if(token == S_TWO)
 						{
 							token = S_ONE;
@@ -691,6 +694,10 @@ loop:		for(int i = offset; i < length; i++)
 /**
  * ChangeLog:
  * $Log$
+ * Revision 1.6  1999/06/07 06:36:32  sp
+ * Syntax `styling' (bold/italic tokens) added,
+ * plugin options dialog for plugin option panes
+ *
  * Revision 1.5  1999/06/07 03:26:33  sp
  * Major Perl token marker updates
  *

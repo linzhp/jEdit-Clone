@@ -460,26 +460,26 @@ public class SyntaxTextArea extends JEditorPane
 	}
 
 	/**
-	 * Returns the color array that maps token identifiers to
-	 * <code>java.awt.Color</code> objects. Each index in the
+	 * Returns the style array that maps token identifiers to
+	 * <code>SyntaxStyle</code> objects. Each index in the
 	 * array is a token type. This simply delegates to the
 	 * text area's document.
 	 */
-	public Color[] getColors()
+	public SyntaxStyle[] getStyles()
 	{
-		return getSyntaxDocument().getColors();
+		return getSyntaxDocument().getStyles();
 	}
 
 	/**
-	 * Sets the color array that maps token identifiers to
-	 * <code>java.awt.Color</code> ojects. May throw an exception
+	 * Sets the style array that maps token identifiers to
+	 * <code>SyntaxStyle</code> ojects. May throw an exception
 	 * if this is not supported for this type of document. This
 	 * simply delegates to the text area's document.
-	 * @param colors The new color list
+	 * @param styles The new style list
 	 */
-	public void setColors(Color[] colors)
+	public void setStyles(SyntaxStyle[] styles)
 	{
-		getSyntaxDocument().setColors(colors);
+		getSyntaxDocument().setStyles(styles);
 	}
 
 	/**
@@ -747,6 +747,10 @@ public class SyntaxTextArea extends JEditorPane
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.29  1999/06/07 06:36:32  sp
+ * Syntax `styling' (bold/italic tokens) added,
+ * plugin options dialog for plugin option panes
+ *
  * Revision 1.28  1999/06/05 00:22:58  sp
  * LGPL'd syntax package
  *
@@ -776,11 +780,5 @@ public class SyntaxTextArea extends JEditorPane
  *
  * Revision 1.19  1999/04/28 04:10:40  sp
  * Overwrite/overstrike mode
- *
- * Revision 1.18  1999/04/22 05:31:17  sp
- * Documentation updates, minor SyntaxTextArea update
- *
- * Revision 1.17  1999/04/19 05:38:20  sp
- * Syntax API changes
  *
  */

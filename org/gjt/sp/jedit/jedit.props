@@ -83,17 +83,17 @@ buffer.margin.right=0.5
 # Syntax colorizing
 buffer.syntax=on
 
-# Syntax colors
-buffer.colors.comment1=red
-buffer.colors.comment2=#990033
-buffer.colors.keyword1=blue
-buffer.colors.keyword2=magenta
-buffer.colors.keyword3=#009600
-buffer.colors.label=#cc32ff
-buffer.colors.literal1=#650099
-buffer.colors.literal2=#650099
-buffer.colors.operator=#808080
-buffer.colors.invalid=#ff9900
+# Syntax styles
+buffer.style.comment1=style:i
+buffer.style.comment2=color:#990033 style:i
+buffer.style.keyword1=style:b
+buffer.style.keyword2=color:magenta
+buffer.style.keyword3=color:#009600
+buffer.style.label=color:#990033 style:b
+buffer.style.literal1=color:#650099
+buffer.style.literal2=color:#650099 style:b
+buffer.style.operator=style:b
+buffer.style.invalid=color:red style:b
 
 ###
 ### VIEW SETTINGS

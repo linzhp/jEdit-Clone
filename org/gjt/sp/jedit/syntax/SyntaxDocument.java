@@ -19,22 +19,17 @@
 package org.gjt.sp.jedit.syntax;
 
 import javax.swing.text.Document;
-import java.awt.Color;
 
 /**
  * The interface a document must implement to be colorizable by the
- * <code>SyntaxEditorKit</code>. It defines two methods, one that returns
- * the <code>TokenMarker</code> that will split a line into a list of
- * tokens, and a method that returns a color array that maps identification
- * tags returned by the token marker into <code>Color</code> objects. The
- * possible token identifiers are defined as static fields in the
- * <code>Token</code> class.<p>
+ * <code>SyntaxEditorKit</code>.<p>
  *
  * @author Slava Pestov
  * @version $Id$
  *
  * @see org.gjt.sp.jedit.syntax.DefaultSyntaxDocument
  * @see org.gjt.sp.jedit.syntax.SyntaxEditorKit
+ * @see org.gjt.sp.jedit.syntax.SyntaxStyle
  * @see org.gjt.sp.jedit.syntax.TokenMarker
  * @see org.gjt.sp.jedit.syntax.Token
  */
@@ -56,19 +51,19 @@ public interface SyntaxDocument extends Document
 	public void setTokenMarker(TokenMarker tm);
 
 	/**
-	 * Returns the color array that maps token identifiers to
-	 * <code>java.awt.Color</code> objects. Each index in the
+	 * Returns the style array that maps token identifiers to
+	 * <code>SyntaxStyle</code> objects. Each index in the
 	 * array is a token type.
 	 */
-	public Color[] getColors();
+	public SyntaxStyle[] getStyles();
 
 	/**
-	 * Sets the color array that maps token identifiers to
-	 * <code>java.awt.Color</code> ojects. May throw an exception
+	 * Sets the style array that maps token identifiers to
+	 * <code>SyntaxStyle</code> ojects. May throw an exception
 	 * if this is not supported for this type of document.
-	 * @param colors The new color list
+	 * @param styles The new style list
 	 */
-	public void setColors(Color[] colors);
+	public void setStyles(SyntaxStyle[] styles);
 
 	/**
 	 * Reparses the document, by passing all lines to the token
@@ -90,6 +85,10 @@ public interface SyntaxDocument extends Document
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.7  1999/06/07 06:36:32  sp
+ * Syntax `styling' (bold/italic tokens) added,
+ * plugin options dialog for plugin option panes
+ *
  * Revision 1.6  1999/06/05 00:22:58  sp
  * LGPL'd syntax package
  *

@@ -112,6 +112,11 @@ public class SyntaxView extends PlainView
 		return getContainer().getForeground();
 	}
 
+	protected Font getDefaultFont()
+	{
+		return getContainer().getFont();
+	}
+
 	// private members
 	private Segment line;
 	private Rectangle newRect;
@@ -120,7 +125,8 @@ public class SyntaxView extends PlainView
 		Graphics g, SyntaxDocument document, TokenMarker tokenMarker,
 		Color def)
 	{
-		Color[] colors = document.getColors();
+		Font defaultFont = getDefaultFont();
+		SyntaxStyle[] styles = document.getStyles();
 		Token tokens = tokenMarker.markTokens(line,lineIndex);
 		int offset = 0;
 		for(;;)
@@ -130,12 +136,15 @@ public class SyntaxView extends PlainView
 				break;
 
 			int length = tokens.length;
-			Color color;
 			if(id == Token.NULL)
-				color = def;
+			{
+				if(g.getColor() != def)
+					g.setColor(def);
+				if(g.getFont() != defaultFont)
+					g.setFont(defaultFont);
+			}
 			else
-				color = colors[id];
-			g.setColor(color == null ? def : color);
+				styles[id].setGraphicsFlags(g,defaultFont);
 
 			line.count = length;
 			x = Utilities.drawTabbedText(line,x,y,g,this,offset);
@@ -164,6 +173,10 @@ public class SyntaxView extends PlainView
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.24  1999/06/07 06:36:32  sp
+ * Syntax `styling' (bold/italic tokens) added,
+ * plugin options dialog for plugin option panes
+ *
  * Revision 1.23  1999/06/05 00:22:58  sp
  * LGPL'd syntax package
  *
