@@ -25,15 +25,6 @@ import org.gjt.sp.jedit.*;
 
 public class GeneralOptionPane extends OptionPane
 {
-	public static final String METAL = "javax.swing.plaf.metal"
-		+ ".MetalLookAndFeel";
-	public static final String MOTIF = "com.sun.java.swing.plaf.motif"
-		+ ".MotifLookAndFeel";
-	public static final String WINDOWS = "com.sun.java.swing.plaf.windows"
-		+ ".WindowsLookAndFeel";
-	public static final String MAC = "com.sun.java.swing.plaf.mac"
-		+ ".MacLookAndFeel";
-
 	public GeneralOptionPane()
 	{
 		super("general");
@@ -41,17 +32,20 @@ public class GeneralOptionPane extends OptionPane
 		/* Look and feel */
 		addComponent(new JLabel(jEdit.getProperty("options.general.lf.note")));
 
+		lfs = UIManager.getInstalledLookAndFeels();
+		String[] names = new String[lfs.length];
 		String lf = UIManager.getLookAndFeel().getClass().getName();
-		String[] lfs = { "Java", "Mac", "Motif", "Windows" };
-		lookAndFeel = new JComboBox(lfs);
-		if(METAL.equals(lf))
-			lookAndFeel.setSelectedIndex(0);
-		else if(MAC.equals(lf))
-			lookAndFeel.setSelectedIndex(1);
-		else if(MOTIF.equals(lf))
-			lookAndFeel.setSelectedIndex(2);
-		else if(WINDOWS.equals(lf))
-			lookAndFeel.setSelectedIndex(3);
+		int index = 0;
+		for(int i = 0; i < names.length; i++)
+		{
+			names[i] = lfs[i].getName();
+			if(lf.equals(lfs[i].getClass().getName()))
+				index = i;
+		}
+
+		lookAndFeel = new JComboBox(names);
+		lookAndFeel.setSelectedIndex(index);
+
 		addComponent(jEdit.getProperty("options.general.lf"),
 			lookAndFeel);
 
@@ -118,13 +112,6 @@ public class GeneralOptionPane extends OptionPane
 			"saveGeometry")));
 		addComponent(saveGeometry);
 
-		/* Show hints in status bar */
-		showTips = new JCheckBox(jEdit.getProperty(
-			"options.general.showTips"));
-		showTips.getModel().setSelected("on".equals(jEdit.getProperty(
-			"view.showTips")));
-		addComponent(showTips);
-
 		/* Show toolbar */
 		showToolbar = new JCheckBox(jEdit.getProperty(
 			"options.general.showToolbar"));
@@ -138,26 +125,11 @@ public class GeneralOptionPane extends OptionPane
 		showFullPath.getModel().setSelected("on".equals(jEdit.getProperty(
 			"view.showFullPath")));
 		addComponent(showFullPath);
-
-		/* Disable copyArea() */
-		copyAreaDisabled = new JCheckBox(jEdit.getProperty(
-			"options.general.copyAreaDisabled"));
-		copyAreaDisabled.getModel().setSelected("on".equals(jEdit.getProperty(
-			"view.copyAreaDisabled")));
-		addComponent(copyAreaDisabled);
 	}
 
 	public void save()
 	{
-		String lf = (String)lookAndFeel.getSelectedItem();
-		if("Java".equals(lf))
-			lf = METAL;
-		else if("Mac".equals(lf))
-			lf = MAC;
-		else if("Motif".equals(lf))
-			lf = MOTIF;
-		else if("Windows".equals(lf))
-			lf = WINDOWS;
+		String lf = lfs[lookAndFeel.getSelectedIndex()].getClass().getName();
 		jEdit.setProperty("lf",lf);
 		jEdit.setProperty("saveDesktop",saveDesktop.getModel()
 			.isSelected() ? "on" : "off");
@@ -184,17 +156,14 @@ public class GeneralOptionPane extends OptionPane
 			break;
 		}
 		jEdit.setProperty("buffer.lineSeparator",lineSep);
-		jEdit.setProperty("view.showTips",showTips.getModel()
-			.isSelected() ? "on" : "off");
 		jEdit.setProperty("view.showToolbar",showToolbar.getModel()
 			.isSelected() ? "on" : "off");
 		jEdit.setProperty("view.showFullPath",showFullPath.getModel()
 			.isSelected() ? "on" : "off");
-		jEdit.setProperty("view.copyAreaDisabled",copyAreaDisabled.getModel()
-			.isSelected() ? "on" : "off");
 	}
 
 	// private members
+	private UIManager.LookAndFeelInfo[] lfs;
 	private JComboBox lookAndFeel;
 	private JTextField recent;
 	private JTextField history;
@@ -206,8 +175,6 @@ public class GeneralOptionPane extends OptionPane
 	private JComboBox lineSeparator;
 	private JCheckBox saveDesktop;
 	private JCheckBox saveGeometry;
-	private JCheckBox showTips;
 	private JCheckBox showToolbar;
 	private JCheckBox showFullPath;
-	private JCheckBox copyAreaDisabled;
 }

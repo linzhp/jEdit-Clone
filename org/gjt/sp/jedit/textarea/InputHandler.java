@@ -54,4 +54,20 @@ public interface InputHandler extends KeyListener
 	 * Removes all key bindings from this input handler.
 	 */
 	public void removeAllKeyBindings();
+
+	/**
+	 * Grabs the next key typed event and invokes the specified
+	 * action with the key as a the action command. If the next
+	 * key is invalid then the action command will be
+	 * <code>InputHandler.GRAB_FAILED</code>.
+	 * @param action The action
+	 */
+	public void grabNextKeyStroke(ActionListener listener);
+
+	/**
+	 * Returns a copy of this input handler that shares the same
+	 * key bindings. Setting key bindings in the copy will also
+	 * set them in the original.
+	 */
+	public InputHandler copy();
 }

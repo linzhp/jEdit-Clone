@@ -30,228 +30,246 @@ public class HTMLTokenMarker extends TokenMarker
 {
 	public static final byte JAVASCRIPT = Token.INTERNAL_FIRST;
 
-	public HTMLTokenMarker()
+	public HTMLTokenMarker(boolean js)
 	{
+		this.js = js;
 		keywords = JavaScriptTokenMarker.getKeywords();
 	}
 
 	public byte markTokensImpl(byte token, Segment line, int lineIndex)
 	{
 		char[] array = line.array;
-		boolean backslash = false;
 		int offset = line.offset;
-		int lastOffset = offset;
-		int lastKeyword = offset;
+		lastOffset = offset;
+		lastKeyword = offset;
 		int length = line.count + offset;
+		boolean backslash = false;
+
 loop:		for(int i = offset; i < length; i++)
 		{
 			int i1 = (i+1);
 
-			switch(array[i])
+			char c = array[i];
+			if(c == '\\')
 			{
-			case '\\':
 				backslash = !backslash;
-				break;
-			case ';':
-				if(token == Token.KEYWORD2)
-				{
-					token = Token.NULL;
-					addToken(i1 - lastOffset,Token.KEYWORD2);
-					lastOffset = i1;
-					break;
-				}
-			case '*':
-				if(token == Token.COMMENT2 && length - i > 1)
-				{
-					if(length - i > 1 && array[i1] == '/')
-					{
-						backslash = false;
-						token = JAVASCRIPT;
-						i++;
-						addToken((i + 1) - lastOffset,Token.COMMENT2);
-						lastOffset = (i + 1);
-						break;
-					}
-				}
-			case ':':
-				if(token == JAVASCRIPT && lastKeyword == offset)
-				{
-					backslash = false;
-					addToken(i1 - lastOffset,Token.LABEL);
-					lastOffset = i1;
-					break;
-				}
-			case '.': case ',': case ' ': case '\t':
-			case '(': case ')': case '[': case ']':
-			case '{': case '}':
+				continue;
+			}
+
+			switch(token)
+			{
+			case Token.NULL: // HTML text
 				backslash = false;
-				if(token == JAVASCRIPT)
+				switch(c)
 				{
-					int len = i - lastKeyword;
-					byte id = keywords.lookup(line,lastKeyword,len);
-					if(id != Token.NULL)
-					{
-						if(lastKeyword != lastOffset)
-							addToken(lastKeyword - lastOffset,
-								Token.NULL);
-						addToken(len,id);
-						lastOffset = i;
-					}
-					lastKeyword = i1;
-				}
-				break;
-			case '<':
-				backslash = false;
-				if(token == Token.NULL)
-				{
+				case '<':
+					addToken(i - lastOffset,token);
+					lastOffset = lastKeyword = i;
 					if(SyntaxUtilities.regionMatches(false,
-						line,i,"<!--"))
+						line,i1,"!--"))
+					{
+						i += 3;
 						token = Token.COMMENT1;
-					else
-						token = Token.KEYWORD1;
-					addToken(i - lastOffset,Token.NULL);
-					lastOffset = i;
-				}
-				else if(token == JAVASCRIPT)
-				{
-					if(SyntaxUtilities.regionMatches(true,
-						line,i,"</SCRIPT>"))
-					{
-						token = Token.KEYWORD1;
-						addToken(i - lastOffset,Token.NULL);
-						lastOffset = i;
 					}
-				}
-				break;
-			case '>':
-				backslash = false;
-				if(token == Token.KEYWORD1)
-				{
-					if(SyntaxUtilities.regionMatches(true,line,
-						lastOffset,"<SCRIPT"))
+					else if(js && SyntaxUtilities.regionMatches(
+						true,line,i1,"script>"))
+					{
+						addToken(8,Token.KEYWORD1);
+						lastOffset = lastKeyword = (i += 8);
 						token = JAVASCRIPT;
+					}
 					else
-						token = Token.NULL;
-					addToken(i1 - lastOffset,Token.KEYWORD1);
-					lastOffset = i1;
-				}
-				else if(token == Token.COMMENT1)
-				{
-					if(SyntaxUtilities.regionMatches(false,line,
-						i - 2,"-->"))
 					{
-						token = Token.NULL;
-						addToken(i1 - lastOffset,
-							 Token.COMMENT1);
-						lastOffset = i1;
+						token = Token.KEYWORD1;
 					}
-				}
-				break;
-			case '&':
-				backslash = false;
-				if(token == Token.NULL)
-				{
+					break;
+				case '&':
+					addToken(i - lastOffset,token);
+					lastOffset = lastKeyword = i;
 					token = Token.KEYWORD2;
-					addToken(i - lastOffset,Token.NULL);
-					lastOffset = i;
+					break;
 				}
 				break;
-			case '/':
+			case Token.KEYWORD1: // Inside a tag
 				backslash = false;
-				if(token == JAVASCRIPT && length - i > 1)
+				if(c == '>')
 				{
-					switch(array[i1])
+					addToken(i1 - lastOffset,token);
+					lastOffset = lastKeyword = i1;
+					token = Token.NULL;
+				}
+				break;
+			case Token.KEYWORD2: // Inside an entity
+				backslash = false;
+				if(c == ';')
+				{
+					addToken(i1 - lastOffset,token);
+					lastOffset = lastKeyword = i1;
+					token = Token.NULL;
+					break;
+				}
+				break;
+			case Token.COMMENT1: // Inside a comment
+				backslash = false;
+				if(SyntaxUtilities.regionMatches(false,line,i,"-->"))
+				{
+					addToken((i += 3) - lastOffset,token);
+					lastOffset = lastKeyword = i;
+					token = Token.NULL;
+				}
+				break;
+			case JAVASCRIPT: // Inside a JavaScript
+				switch(c)
+				{
+				case '<':
+					backslash = false;
+					doKeyword(line,i,c);
+					if(SyntaxUtilities.regionMatches(true,
+						line,i1,"/script>"))
 					{
-					case '*':
-						token = Token.COMMENT2;
-						addToken(i - lastOffset,Token.NULL);
-						lastOffset = i;
-						i++;
-						break;
-					case '/':
-						addToken(i - lastOffset,Token.NULL);
-						addToken(length - i,Token.COMMENT2);
-						lastOffset = length;
-						break loop;
+						addToken(i - lastOffset,
+							Token.NULL);
+						addToken(9,Token.KEYWORD1);
+						lastOffset = lastKeyword = (i += 9);
+						token = Token.NULL;
 					}
+					break;
+				case '"':
+					if(backslash)
+						backslash = false;
+					else
+					{
+						doKeyword(line,i,c);
+						addToken(i - lastOffset,Token.NULL);
+						lastOffset = lastKeyword = i;
+						token = Token.LITERAL1;
+					}
+					break;
+				case '\'':
+					if(backslash)
+						backslash = false;
+					else
+					{
+						doKeyword(line,i,c);
+						addToken(i - lastOffset,Token.NULL);
+						lastOffset = lastKeyword = i;
+						token = Token.LITERAL2;
+					}
+					break;
+				case '/':
+					backslash = false;
+					doKeyword(line,i,c);
+					if(length - i > 1)
+					{
+						addToken(i - lastOffset,Token.NULL);
+						lastOffset = lastKeyword = i;
+						if(array[i1] == '/')
+						{
+							addToken(length - i,Token.COMMENT2);
+							lastOffset = lastKeyword = length;
+							break loop;
+						}
+						else if(array[i1] == '*')
+						{
+							token = Token.COMMENT2;
+						}
+					}
+					break;
+				default:					backslash = false;
+					if(!Character.isLetterOrDigit(c)
+						&& c != '_')
+						doKeyword(line,i,c);
+					break;
 				}
 				break;
-			case '"':
+			case Token.LITERAL1: // JavaScript "..."
 				if(backslash)
 					backslash = false;
-				else if(token == JAVASCRIPT)
+				else if(c == '"')
 				{
-					token = Token.LITERAL1;
-					addToken(i - lastOffset,Token.NULL);
-					lastOffset = i;
-				}
-				else if(token == Token.LITERAL1)
-				{
-					token = JAVASCRIPT;
 					addToken(i1 - lastOffset,Token.LITERAL1);
-					lastOffset = i1;
+					lastOffset = lastKeyword = i1;
+					token = JAVASCRIPT;
 				}
 				break;
-			case '\'':
+			case Token.LITERAL2: // JavaScript '...'
 				if(backslash)
 					backslash = false;
-				else if(token == JAVASCRIPT)
+				else if(c == '\'')
 				{
-					token = Token.LITERAL2;
-					addToken(i - lastOffset,Token.NULL);
-					lastOffset = i;
-				}
-				else if(token == Token.LITERAL2)
-				{
-					token = JAVASCRIPT;
 					addToken(i1 - lastOffset,Token.LITERAL1);
-					lastOffset = i1;
+					lastOffset = lastKeyword = i1;
+					token = JAVASCRIPT;
+				}
+				break;
+			case Token.COMMENT2: // Inside a JavaScript comment
+				backslash = false;
+				if(c == '*' && length - i > 1 && array[i1] == '/')
+				{
+					addToken((i+=2) - lastOffset,Token.COMMENT2);
+					lastOffset = lastKeyword = i;
+					token = JAVASCRIPT;
 				}
 				break;
 			default:
-				backslash = false;
-				break;
+				throw new InternalError("Invalid state: "
+					+ token);
 			}
 		}
-		if(token == JAVASCRIPT)
+
+		switch(token)
 		{
-			int len = length - lastKeyword;
-			byte id = keywords.lookup(line,lastKeyword,len);
-			if(id != Token.NULL)
-			{
-				if(lastKeyword != lastOffset)
-					addToken(lastKeyword - lastOffset,Token.NULL);
-				addToken(len,id);
-				lastOffset = length;
-			}
+		case Token.LITERAL1:
+		case Token.LITERAL2:
+			addToken(length - lastOffset,Token.INVALID);
+			token = JAVASCRIPT;
+			break;
+		case Token.KEYWORD2:
+			addToken(length - lastOffset,Token.INVALID);
+			token = Token.NULL;
+			break;
+		case JAVASCRIPT:
+			doKeyword(line,length,'\0');
+			addToken(length - lastOffset,Token.NULL);
+			break;
+		default:
+			addToken(length - lastOffset,token);
+			break;
 		}
-		if(lastOffset != length)
-		{
-			if(token == Token.LITERAL1 || token == Token.LITERAL2)
-			{
-				addToken(length - lastOffset,Token.INVALID);
-				token = JAVASCRIPT;
-			}
-			else if(token == Token.KEYWORD2)
-			{
-				addToken(length - lastOffset,Token.INVALID);
-				token = Token.NULL;
-			}
-			else if(token == JAVASCRIPT)
-				addToken(length - lastOffset,Token.NULL);
-			else
-				addToken(length - lastOffset,token);
-		}
+
 		return token;
 	}
 
 	// private members
 	private KeywordMap keywords;
+	private boolean js;
+	private int lastOffset;
+	private int lastKeyword;
+
+	private boolean doKeyword(Segment line, int i, char c)
+	{
+		int i1 = i+1;
+
+		int len = i - lastKeyword;
+		byte id = keywords.lookup(line,lastKeyword,len);
+		if(id != Token.NULL)
+		{
+			if(lastKeyword != lastOffset)
+				addToken(lastKeyword - lastOffset,Token.NULL);
+			addToken(len,id);
+			lastOffset = i;
+		}
+		lastKeyword = i1;
+		return false;
+	}
 }
 
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.30  1999/09/30 12:21:05  sp
+ * No net access for a month... so here's one big jEdit 2.1pre1
+ *
  * Revision 1.29  1999/07/16 23:45:49  sp
  * 1.7pre6 BugFree version
  *

@@ -26,7 +26,7 @@ import java.util.*;
 import org.gjt.sp.jedit.*;
 
 /**
- * The global (editor-wide) settings dialog.
+ * The plugin settings dialog.
  * @author Slava Pestov
  * @version $Id$
  */
@@ -36,24 +36,10 @@ public class PluginOptions extends OptionsDialog
 	{
 		super(view,jEdit.getProperty("plugin-options.title"));
 
-		Class[] optionPanes = jEdit.getOptionPanes();
-		for(int i = 0; i < optionPanes.length; i++)
-		{
-			Class clazz = optionPanes[i];
-
-			try
-			{
-				OptionPane pane = (OptionPane)clazz
-					.newInstance();
-				addOptionPane(pane);
-			}
-			catch(Exception e)
-			{
-				System.out.println("Error creating option pane "
-					+ clazz.getName());
-				e.printStackTrace();
-			}
-		}
+		// Query plugins for option panes
+		EditPlugin[] plugins = jEdit.getPlugins();
+		for(int i = 0; i < plugins.length; i++)
+			plugins[i].createOptionPanes(this);
 
 		GUIUtilities.hideWaitCursor(view);
 
@@ -69,6 +55,9 @@ public class PluginOptions extends OptionsDialog
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.3  1999/09/30 12:21:04  sp
+ * No net access for a month... so here's one big jEdit 2.1pre1
+ *
  * Revision 1.2  1999/07/16 23:45:49  sp
  * 1.7pre6 BugFree version
  *

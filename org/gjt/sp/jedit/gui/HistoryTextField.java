@@ -51,10 +51,15 @@ public class HistoryTextField extends JTextField
 		index = -1;
 	}
 
+	public HistoryModel getModel()
+	{
+		return historyModel;
+	}
+
 	// private members
-	HistoryModel historyModel;
-	String current;
-	int index;
+	private HistoryModel historyModel;
+	private String current;
+	private int index;
 
 	private void doBackwardSearch()
 	{
@@ -288,6 +293,9 @@ public class HistoryTextField extends JTextField
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.29  1999/09/30 12:21:04  sp
+ * No net access for a month... so here's one big jEdit 2.1pre1
+ *
  * Revision 1.28  1999/05/09 04:48:47  sp
  * Funky history menus
  *

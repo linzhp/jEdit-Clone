@@ -59,6 +59,9 @@ public class wing_comment extends EditAction
 		catch(BadLocationException bl)
 		{
 		}
-		buffer.endCompoundEdit();
+		finally
+		{
+			buffer.endCompoundEdit();
+		}
 	}
 }

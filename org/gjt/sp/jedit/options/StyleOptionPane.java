@@ -446,7 +446,7 @@ implements ActionListener, KeyListener
 		JPanel panel = new JPanel();
 		panel.add(italics = new JCheckBox(
 			jEdit.getProperty("styleEditor.italics")));
-		italics.getModel().setSelected(style.isItalics());
+		italics.getModel().setSelected(style.isItalic());
 		panel.add(bold = new JCheckBox(
 			jEdit.getProperty("styleEditor.bold")));
 		bold.getModel().setSelected(style.isBold());
@@ -539,6 +539,9 @@ implements ActionListener, KeyListener
 /**
  * ChangeLog:
  * $Log$
+ * Revision 1.6  1999/09/30 12:21:04  sp
+ * No net access for a month... so here's one big jEdit 2.1pre1
+ *
  * Revision 1.5  1999/07/16 23:45:49  sp
  * 1.7pre6 BugFree version
  *

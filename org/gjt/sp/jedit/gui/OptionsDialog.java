@@ -57,6 +57,13 @@ implements ActionListener, KeyListener, WindowListener
 		addWindowListener(this);
 	}
 	
+	public void addOptionPane(OptionPane pane)
+	{
+		tabs.addTab(jEdit.getProperty("options." + pane.getName()
+			+ ".label"),pane);
+		panes.addElement(pane);
+	}
+
 	public void ok()
 	{
 		Enumeration enum = panes.elements();
@@ -111,13 +118,6 @@ implements ActionListener, KeyListener, WindowListener
 	protected Vector panes;
 	protected JTabbedPane tabs;
 
-	protected void addOptionPane(OptionPane pane)
-	{
-		tabs.addTab(jEdit.getProperty("options." + pane.getName()
-			+ ".label"),pane);
-		panes.addElement(pane);
-	}
-
 	// private members
 	private JButton ok;
 	private JButton cancel;
@@ -126,6 +126,9 @@ implements ActionListener, KeyListener, WindowListener
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.4  1999/09/30 12:21:04  sp
+ * No net access for a month... so here's one big jEdit 2.1pre1
+ *
  * Revision 1.3  1999/07/16 23:45:49  sp
  * 1.7pre6 BugFree version
  *

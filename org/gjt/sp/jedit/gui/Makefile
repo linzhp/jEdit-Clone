@@ -20,7 +20,8 @@ classes=org/gjt/sp/jedit/gui/BufferOptions.class \
 	org/gjt/sp/jedit/gui/SearchDialog.class \
 	org/gjt/sp/jedit/gui/SelectLineRange.class \
 	org/gjt/sp/jedit/gui/SendDialog.class \
-	org/gjt/sp/jedit/gui/SplashScreen.class
+	org/gjt/sp/jedit/gui/SplashScreen.class \
+	org/gjt/sp/jedit/gui/ViewRegisters.class
 
 others='org/gjt/sp/jedit/gui/BufferOptions$$ActionHandler.class' \
 	'org/gjt/sp/jedit/gui/BufferOptions$$KeyHandler.class' \
@@ -37,10 +38,12 @@ others='org/gjt/sp/jedit/gui/BufferOptions$$ActionHandler.class' \
 	'org/gjt/sp/jedit/gui/HyperSearch$$SearchResult.class' \
 	'org/gjt/sp/jedit/gui/MultiFileSearchDialog$$ActionHandler.class' \
 	'org/gjt/sp/jedit/gui/MultiFileSearchDialog$$KeyHandler.class' \
+	'org/gjt/sp/jedit/gui/PastePrevious$$1.class' \
 	'org/gjt/sp/jedit/gui/SearchDialog$$ActionHandler.class' \
 	'org/gjt/sp/jedit/gui/SearchDialog$$KeyHandler.class' \
-	'org/gjt/sp/jedit/gui/SplashScreen$$1.class' \
-	'org/gjt/sp/jedit/gui/SplashScreen$$2.class'
+	'org/gjt/sp/jedit/gui/ViewRegisters$$ActionHandler.class' \
+	'org/gjt/sp/jedit/gui/ViewRegisters$$KeyHandler.class' \
+	'org/gjt/sp/jedit/gui/ViewRegisters$$MouseHandler.class'
 
 all: $(classes)
 	echo $(classes) $(others) >> .resources

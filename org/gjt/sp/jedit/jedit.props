@@ -7,11 +7,6 @@
 ### GLOBAL SETTINGS
 ###
 
-# Look and feel class
-#lf=com.sun.java.swing.plaf.motif.MotifLookAndFeel
-#lf=com.sun.java.swing.plaf.windows.WindowsLookAndFeel
-lf=javax.swing.plaf.metal.MetalLookAndFeel
-
 # Autosave interval in seconds, 0=off
 autosave=15
 
@@ -20,9 +15,6 @@ recent=8
 
 # Maximum number of elements in a history list
 history=25
-
-# Name for untitled files, {0} is the number open so far
-untitled=Untitled-{0}
 
 # Geometry saving toggle
 saveGeometry=on
@@ -41,6 +33,41 @@ backup.prefix=
 backup.suffix=~
 
 ###
+### FILENAME FILTERS
+###
+
+filefilters=on
+
+filefilter.0.name=Batch Files
+filefilter.0.re=.*\\.bat
+filefilter.1.name=C Source Files
+filefilter.1.re=.*\\.[ch]
+filefilter.2.name=C++ Source Files
+filefilter.2.re=.*\\.(cc|hh|cpp|cxx)
+filefilter.3.name=HTML Files
+filefilter.3.re=.*\\.(html|shtml|htm)
+filefilter.4.name=Java Source Files
+filefilter.4.re=.*\\.java
+filefilter.5.name=JavaScript Source Files
+filefilter.5.re=.*\\.js
+filefilter.6.name=Makefiles
+filefilter.6.re=(gnumakefile|makefile)
+filefilter.7.name=Patch/DIFF Files
+filefilter.7.re=.*\\.(diff|patch)
+filefilter.8.name=Perl Source Files
+filefilter.8.re=.*\\.p[lm]
+filefilter.9.name=Properties/INI Files
+filefilter.9.re=(properties|config\\.sys|.*\\.(props|properties|ini|kdelnk|reg))
+filefilter.10.name=Python Source Files
+filefilter.10.re=.*\\.py
+filefilter.11.name=Shell Scripts
+filefilter.11.re=.*\\.(sh|csh)
+filefilter.12.name=TeX Files
+filefilter.12.re=.*\\.(tex|sty|aux)
+filefilter.13.name=Transact-SQL Files
+filefilter.13.re=.*\\.sql
+
+###
 ### BUFFER SETTINGS
 ### These can also be specified as buffer-local properties
 ###
@@ -55,23 +82,18 @@ backup.suffix=~
 # Tab width
 buffer.tabSize=8
 
+# Soft tabs
+buffer.noTabs=no
+
 # Auto indent
 buffer.indentOnTab=on
 buffer.indentOnEnter=off
-
-# Brackets
-buffer.openBrackets=([{
-buffer.closeBrackets=)]}
 
 # Default edit mode
 buffer.defaultMode=text
 
 # Maximum line length (for Format command)
 buffer.maxLineLen=72
-
-# Non-alphabet characters that count as word characters anyway
-# (for Expand Abbreviation command)
-buffer.noWordSep=
 
 # Print margins (these cannot be set on a per-buffer basis currently.
 # Not much point fixing this though)
@@ -86,9 +108,6 @@ buffer.syntax=on
 ###
 ### VIEW SETTINGS
 ###
-
-# Show hints/tips? (on/off)
-view.showTips=on
 
 # Show toolbar? (on/off)
 view.showToolbar=on
@@ -144,9 +163,6 @@ view.style.literal1=color:#650099
 view.style.literal2=color:#650099 style:b
 view.style.operator=style:b
 view.style.invalid=color:red style:b
-
-# Don't use fast copyArea() for scrolling
-view.copyAreaDisabled=on
 
 ###
 ### EDIT MODES
@@ -256,7 +272,13 @@ mode.extension.kdelnk=props
 mode.extension.reg=props
 mode.filename.properties=props
 mode.filename.config.sys=props
-mode.filename..jedit-props=props
+
+# Python mode (written by Jonathan Revusky)
+mode.python.name=Python
+mode.python.blockComment=#
+mode.extension.py=python
+mode.firstline.#!/usr/bin/python=python
+mode.firstline.#!/usr/local/bin/python=python
 
 # Shell script mode
 mode.sh.name=Shell Script
@@ -286,8 +308,17 @@ mode.extension.aux=tex
 
 # Transact-SQL mode (written by Mike Dillon <mdillon@uclink4.berkeley.edu>)
 mode.tsql.name=Transact-SQL
-mode.extension.sql=tsql
 mode.tsql.commentStart=/*
 mode.tsql.commentEnd=*/
 mode.tsql.blockComment=--
 mode.tsql.boxComment=**
+mode.extension.sql=tsql
+
+# XML mode
+mode.xml.name=XML/SGML
+mode.xml.commentStart=<!--
+mode.xml.commentEnd=-->
+mode.extension.xml=xml
+mode.extension.sgm=xml
+mode.extension.sgml=xml
+mode.extension.dtd=xml

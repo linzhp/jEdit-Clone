@@ -35,7 +35,12 @@ public class PluginResURLConnection extends URLConnection
 		int index = file.indexOf('/',1);
 		if(index == -1)
 			throw new IOException("Invalid plugin resource URL");
-		int pluginIndex = Integer.parseInt(file.substring(1,index));
+		int start;
+		if(file.charAt(0) == '/')
+			start = 1;
+		else
+			start = 0;
+		int pluginIndex = Integer.parseInt(file.substring(start,index));
 		in = JARClassLoader.getClassLoader(pluginIndex)
 			.getResourceAsStream(file.substring(index + 1));
 	}

@@ -1,6 +1,6 @@
 /*
- * select_anchor.java
- * Copyright (C) 1998 Slava Pestov
+ * cut_string_register.java
+ * Copyright (C) 1999 Slava Pestov
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,33 +20,50 @@
 package org.gjt.sp.jedit.actions;
 
 import java.awt.event.ActionEvent;
+import org.gjt.sp.jedit.textarea.*;
 import org.gjt.sp.jedit.*;
-import org.gjt.sp.jedit.textarea.JEditTextArea;
 
-public class select_anchor extends EditAction
+public class cut_string_register extends EditAction
 {
-	public select_anchor()
+	public cut_string_register()
 	{
-		super("select-anchor");
+		super("cut-string-register");
 	}
 	
 	public void actionPerformed(ActionEvent evt)
 	{
 		View view = getView(evt);
 		JEditTextArea textArea = view.getTextArea();
-		int pos = view.getBuffer().getAnchor();
-		if(pos == -1)
+
+		if(!textArea.isEditable())
 		{
 			view.getToolkit().beep();
 			return;
 		}
-		int dot = textArea.getCaretPosition();
-		if(dot > pos)
+
+		String selection = textArea.getSelectedText();
+
+		if(selection == null)
+			return;
+
+		String actionCommand = evt.getActionCommand();
+		if(actionCommand == null || actionCommand.length() != 1)
 		{
-			int tmp = pos;
-			pos = dot;
-			dot = tmp;
+			view.showStatus(jEdit.getProperty("view.status.cut-string-register"));
+			textArea.getInputHandler().grabNextKeyStroke(this);
 		}
-		textArea.select(dot,pos);
+		else
+		{
+			view.showStatus(null);
+
+			char ch = actionCommand.charAt(0);
+			if(ch == '\0')
+			{
+				view.getToolkit().beep();
+				return;
+			}
+			Registers.setRegister(ch,new Registers.StringRegister(selection));
+			textArea.setSelectedText(null);
+		}
 	}
 }

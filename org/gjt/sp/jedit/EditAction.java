@@ -76,7 +76,7 @@ public abstract class EditAction implements ActionListener
 	/**
 	 * Returns the internal name of this action.
 	 */
-	public String getName()
+	public final String getName()
 	{
 		return name;
 	}
@@ -132,6 +132,9 @@ public abstract class EditAction implements ActionListener
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.11  1999/09/30 12:21:04  sp
+ * No net access for a month... so here's one big jEdit 2.1pre1
+ *
  * Revision 1.10  1999/05/22 08:33:53  sp
  * FAQ updates, mode selection tweak, patch mode update, javadoc updates, JDK 1.1.8 fix
  *

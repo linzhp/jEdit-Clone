@@ -36,20 +36,12 @@ import org.gjt.sp.jedit.textarea.*;
  * A window that edits buffers. There is no public constructor in the
  * View class. Views are created and destroyed by the <code>jEdit</code>
  * class.
- * @see Buffer
+ *
+ * @author Slava Pestov
+ * @version $Id$
  */
 public class View extends JFrame
 {
-	/**
-	 * Tool bar position at the top of the view.
-	 */
-	public static final int TOP = 0;
-
-	/**
-	 * Tool bar position at the bottom of the view.
-	 */
-	public static final int BOTTOM = 1;
-
 	/**
 	 * Reloads various settings from the properties.
 	 */
@@ -60,10 +52,7 @@ public class View extends JFrame
 			if(toolBar == null)
 				toolBar = GUIUtilities.loadToolBar("view.toolbar");
 			if(toolBar.getParent() == null)
-			{
-				addToolBar(TOP,toolBar);
-				validate();
-			}
+				addToolBar(toolBar);
 		}
 		else if(toolBar != null)
 		{
@@ -122,8 +111,6 @@ public class View extends JFrame
 			jEdit.getProperty("view.fgColor")));
 		painter.setBlockCaretEnabled("on".equals(jEdit.getProperty(
 			"view.blockCaret")));
-		painter.setCopyAreaBroken("on".equals(jEdit.getProperty(
-			"view.copyAreaDisabled")));
 
 		textArea.setCaretBlinkEnabled("on".equals(jEdit.getProperty(
 			"view.caretBlink")));
@@ -242,50 +229,37 @@ public class View extends JFrame
 		if(plugins.getMenuComponentCount() != 0)
 			plugins.removeAll();
 
-		String[] pluginMenus = jEdit.getPluginMenus();
-		EditAction[] pluginArray = jEdit.getPluginActions();
+		// Query plugins for menu items
+		Vector pluginMenus = new Vector();
+		Vector pluginMenuItems = new Vector();
 
-		if(pluginMenus.length == 0 && pluginArray.length == 0)
+		EditPlugin[] pluginArray = jEdit.getPlugins();
+		for(int i = 0; i < pluginArray.length; i++)
+			pluginArray[i].createMenuItems(this,pluginMenus,pluginMenuItems);
+
+		if(pluginMenus.isEmpty() && pluginMenuItems.isEmpty())
 		{
 			plugins.add(GUIUtilities.loadMenuItem(this,"no-plugins"));
 			return;
 		}
 
-		for(int i = 0; i < pluginMenus.length; i++)
-		{
-			String menu = pluginMenus[i];
-			plugins.add(GUIUtilities.loadMenu(this,menu));
-		}
+		for(int i = 0; i < pluginMenus.size(); i++)
+			plugins.add((JMenu)pluginMenus.elementAt(i));
 
-		if(pluginMenus.length != 0 && pluginArray.length != 0)
-		{
+		if(!pluginMenus.isEmpty() && !pluginMenuItems.isEmpty())
 			plugins.addSeparator();
-		}
 
-		for(int i = 0; i < pluginArray.length; i++)
-		{
-			String action = (String)pluginArray[i].getName();
-			JMenuItem mi = GUIUtilities.loadMenuItem(this,action);
-			plugins.add(mi);
-		}
+		for(int i = 0; i < pluginMenuItems.size(); i++)
+			plugins.add((JMenuItem)pluginMenuItems.elementAt(i));
 	}
 
 	/**
-	 * Updates the line number indicator.
+	 * Displays the specified string in the status area of this view.
+	 * @param str The string to display
 	 */
-	public void updateLineNumber()
+	public void showStatus(String str)
 	{
-		int dot = textArea.getCaretPosition();
-
-		int currLine = textArea.getCaretLine();
-		int start = textArea.getLineStartOffset(currLine);
-		int numLines = textArea.getLineCount();
-
-		Object[] args = { new Integer((dot - start) + 1),
-			new Integer(currLine + 1),
-			new Integer(numLines),
-			new Integer(((currLine + 1) * 100) / numLines) };
-		lineNumber.setText(jEdit.getProperty("view.lineNumber",args));
+		status.showStatus(str);
 	}
 
 	/**
@@ -340,10 +314,11 @@ public class View extends JFrame
 		int start = Math.min(buffer.getLength(),buffer.getSavedSelStart());
 		int end = Math.min(buffer.getLength(),buffer.getSavedSelEnd());
 		textArea.select(start,end);
+		textArea.setSelectionRectangular(buffer.isSelectionRectangular());
 
 		updateMarkerMenus();
 		updateTitle();
-		updateLineNumber();
+		status.repaint();
 
 		Mode mode = buffer.getMode();
 		if(mode != null)
@@ -383,16 +358,11 @@ public class View extends JFrame
 
 	/**
 	 * Adds a tool bar to this view.
-	 * @param pos The tool bar's position, either <code>TOP</code>
-	 * or <code>BOTTOM</code>.
 	 * @param toolBar The tool bar
 	 */
-	public void addToolBar(int pos, Component toolBar)
+	public void addToolBar(Component toolBar)
 	{
-		if(pos == TOP)
-			topToolBars.add(toolBar);
-		else if(pos == BOTTOM)
-			bottomToolBars.add(toolBar);
+		toolBars.add(toolBar);
 		invalidate();
 		validate();
 	}
@@ -403,8 +373,7 @@ public class View extends JFrame
 	 */
 	public void removeToolBar(Component toolBar)
 	{
-		topToolBars.remove(toolBar);
-		bottomToolBars.remove(toolBar);
+		toolBars.remove(toolBar);
 	}
 
 	/**
@@ -412,8 +381,10 @@ public class View extends JFrame
 	 */
 	public void saveCaretInfo()
 	{
-		buffer.setCaretInfo(textArea.getSelectionStart(),
-			textArea.getSelectionEnd());
+		buffer.setCaretInfo(
+			textArea.getSelectionStart(),
+			textArea.getSelectionEnd(),
+			textArea.isSelectionRectangular());
 	}
 
 	/**
@@ -474,9 +445,7 @@ public class View extends JFrame
 		clearMarker = GUIUtilities.loadMenu(this,"clear-marker");
 		gotoMarker = GUIUtilities.loadMenu(this,"goto-marker");
 		plugins = GUIUtilities.loadMenu(this,"plugins");
-
-		bindings = new Hashtable();
-		currentPrefix = bindings;
+		updatePluginsMenu();
 
 		jEdit.addEditorListener(editorListener = new EditorHandler());
 		bufferListener = new BufferHandler();
@@ -487,50 +456,21 @@ public class View extends JFrame
 			bufferArray[i].addBufferListener(bufferListener);
 		}
 
-		lineNumber = new JLabel();
-		lineNumber.setBorder(new EmptyBorder(0,10,0,0)); // ten pixel border on left
-		String tip;
-		if("on".equals(jEdit.getProperty("view.showTips")))
-		{
-			try
-			{
-				tip = jEdit.getProperty("tip." +
-					(Math.abs(new Random().nextInt()) %
-					Integer.parseInt(jEdit.getProperty(
-						"tip.count"))));
-			}
-			catch(Exception e)
-			{
-				tip = "Oops";
-			}
-
-			String[] args = { tip };
-			tip = jEdit.getProperty("view.hintBar",args);
-		}
-		else
-			tip = null;
-	
-		hintBar = new JLabel(tip);
-
-		JPanel status = new JPanel(new BorderLayout());
-		status.add(hintBar,BorderLayout.CENTER); // hintBar takes up whatever room there is
-		status.add(lineNumber,BorderLayout.EAST); // lineNumber is always full width (or the frame width)
-
-		updatePluginsMenu();
-
 		setJMenuBar(GUIUtilities.loadMenubar(this,"view.mbar"));
 
-		topToolBars = new Box(BoxLayout.Y_AXIS);
-		bottomToolBars = new Box(BoxLayout.Y_AXIS);
+		toolBars = new Box(BoxLayout.Y_AXIS);
 
 		textArea = new JEditTextArea();
+
+		// Add the line number display
+		textArea.add(JEditTextArea.LEFT_OF_SCROLLBAR,status = new StatusBar());
 
 		// Set up the right-click popup menu
 		textArea.setRightClickPopup(GUIUtilities
 			.loadPopupMenu(this,"view.context"));
 
-		// Set the input handler
-		textArea.setInputHandler(jEdit.getInputHandler());
+		textArea.setInputHandler(jEdit.getInputHandler().copy());
+		textArea.addCaretListener(new CaretHandler());
 
 		propertiesChanged();
 
@@ -539,35 +479,10 @@ public class View extends JFrame
 		else
 			setBuffer(buffer);
 
-		getContentPane().add(BorderLayout.NORTH,topToolBars);
+		getContentPane().add(BorderLayout.NORTH,toolBars);
 		getContentPane().add(BorderLayout.CENTER,textArea);
 
-		JPanel panel = new JPanel(new BorderLayout());
-		panel.add(BorderLayout.CENTER,bottomToolBars);
-		panel.add(BorderLayout.SOUTH,status);
-		getContentPane().add(BorderLayout.SOUTH,panel);
-
 		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
-		pack();
-		if(view != null)
-		{
-			setSize(view.getSize());
-			Point location = view.getLocation();
-			location.x += 20;
-			location.y += 20;
-			setLocation(location);
-		}
-		else
-		{
-			GUIUtilities.loadGeometry(this,"view");
-		}
-
-		updateLineNumber();
-
-		textArea.addCaretListener(new CaretHandler());
-		
-		show();
-		focusOnTextArea();
 	}
 
 	JMenu getMenu(String name)
@@ -601,28 +516,25 @@ public class View extends JFrame
 	// private members
 	private static int UID;
 
+	private Buffer buffer;
+	private boolean closed;
+
 	private JMenu buffers;
 	private JMenu openRecent;
 	private JMenu clearMarker;
 	private JMenu gotoMarker;
 	private JMenu plugins;
-	private JPopupMenu popup;
-	private Hashtable bindings;
-	private Hashtable currentPrefix;
-	private Box topToolBars;
-	private Box bottomToolBars;
+
+	private Box toolBars;
 	private Component toolBar;
-	private JScrollPane scroller;
 	private JEditTextArea textArea;
-	private JLabel lineNumber;
-	private JLabel hintBar;
-	private Buffer buffer;
-	private boolean showTip;
+	private StatusBar status;
+
 	private boolean showFullPath;
+
 	private EventListenerList listenerList;
 	private BufferListener bufferListener;
 	private EditorListener editorListener;
-	private boolean closed;
 
 	private void fireViewEvent(int id, Buffer buffer)
 	{
@@ -676,7 +588,7 @@ public class View extends JFrame
 	}
 
 	// event listeners
-	class BufferHandler implements BufferListener
+	class BufferHandler extends BufferAdapter
 	{
 		public void bufferDirtyChanged(BufferEvent evt)
 		{
@@ -690,14 +602,21 @@ public class View extends JFrame
 			if(evt.getBuffer() == buffer)
 				updateMarkerMenus();
 		}
-	
+
 		public void bufferModeChanged(BufferEvent evt)
 		{
 			if(evt.getBuffer() == buffer)
 			{
-				textArea.getPainter().invalidateOffscreen();
-				textArea.repaint();
+				textArea.getPainter().repaint();
 			}
+		}
+	}
+
+	class CaretHandler implements CaretListener
+	{
+		public void caretUpdate(CaretEvent evt)
+		{
+			status.repaint();
 		}
 	}
 
@@ -706,10 +625,9 @@ public class View extends JFrame
 		public void bufferCreated(EditorEvent evt)
 		{
 			updateBuffersMenu();
-			
 			evt.getBuffer().addBufferListener(bufferListener);
 		}
-	
+
 		public void bufferClosed(EditorEvent evt)
 		{
 			Buffer buf = evt.getBuffer();
@@ -726,18 +644,53 @@ public class View extends JFrame
 			updateOpenRecentMenu();
 			updateBuffersMenu();
 		}
-	
+
 		public void propertiesChanged(EditorEvent evt)
 		{
 			View.this.propertiesChanged();
 		}
 	}
 
-	class CaretHandler implements CaretListener
+	class StatusBar extends JComponent
 	{
-		public void caretUpdate(CaretEvent evt)
+		String status;
+
+		StatusBar()
 		{
-			updateLineNumber();
+			setDoubleBuffered(true);
+			setFont(UIManager.getFont("Label.font"));
+			setForeground(UIManager.getColor("Label.foreground"));
+			setBackground(UIManager.getColor("Label.background"));
+		}
+
+		void showStatus(String status)
+		{
+			this.status = status;
+			repaint();
+		}
+
+		public void paint(Graphics g)
+		{
+			FontMetrics fm = g.getFontMetrics();
+
+			int dot = textArea.getCaretPosition();
+
+			int currLine = textArea.getCaretLine();
+			int start = textArea.getLineStartOffset(currLine);
+			int numLines = textArea.getLineCount();
+
+			String status = (this.status != null ? this.status
+				: "col " + ((dot - start) + 1) + " line "
+				+ (currLine + 1) + "/"
+				+ numLines + " "
+				+ (((currLine + 1) * 100) / numLines) + "%");
+
+			g.drawString(status,0,(getHeight() + fm.getAscent()) / 2);
+		}
+
+		public Dimension getPreferredSize()
+		{
+			return new Dimension(200,0);
 		}
 	}
 }
@@ -745,6 +698,9 @@ public class View extends JFrame
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.88  1999/09/30 12:21:04  sp
+ * No net access for a month... so here's one big jEdit 2.1pre1
+ *
  * Revision 1.86  1999/07/16 23:45:49  sp
  * 1.7pre6 BugFree version
  *
@@ -777,41 +733,5 @@ public class View extends JFrame
  * Revision 1.77  1999/06/15 05:03:54  sp
  * RMI interface complete, save all hack, views & buffers are stored as a link
  * list now
- *
- * Revision 1.76  1999/05/28 02:00:25  sp
- * SyntaxView bug fix, faq update, MiscUtilities.isURL() method added
- *
- * Revision 1.75  1999/05/27 03:09:22  sp
- * Console unbundled
- *
- * Revision 1.74  1999/05/20 06:26:32  sp
- * Find selection update
- *
- * Revision 1.73  1999/05/18 07:26:40  sp
- * HelpViewer cursor tweak, minor view bug fix
- *
- * Revision 1.72  1999/05/14 04:56:15  sp
- * Docs updated, default: fix in C/C++/Java mode, full path in title bar toggle
- *
- * Revision 1.71  1999/05/08 00:13:00  sp
- * Splash screen change, minor documentation update, toolbar API fix
- *
- * Revision 1.70  1999/05/04 04:51:25  sp
- * Fixed HistoryTextField for Swing 1.1.1
- *
- * Revision 1.69  1999/05/03 08:28:14  sp
- * Documentation updates, key binding editor, syntax text area bug fix
- *
- * Revision 1.68  1999/05/03 04:28:01  sp
- * Syntax colorizing bug fixing, console bug fix for Swing 1.1.1
- *
- * Revision 1.67  1999/05/02 00:07:21  sp
- * Syntax system tweaks, console bugfix for Swing 1.1.1
- *
- * Revision 1.66  1999/04/25 03:39:37  sp
- * Documentation updates, console updates, history text field updates
- *
- * Revision 1.65  1999/04/24 01:55:28  sp
- * MiscUtilities.constructPath() bug fixed, event system bug(s) fix
  *
  */

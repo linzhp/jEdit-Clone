@@ -25,6 +25,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import java.net.Socket;
+import org.gjt.sp.jedit.textarea.JEditTextArea;
 import org.gjt.sp.jedit.jEdit;
 import org.gjt.sp.jedit.Buffer;
 import org.gjt.sp.jedit.GUIUtilities;
@@ -143,6 +144,8 @@ implements ActionListener, KeyListener, Runnable
 
 	public void run()
 	{
+		JEditTextArea textArea = view.getTextArea();
+
 		String smtp = this.smtp.getText();
 		String from = this.from.getText();
 		String to = this.to.getText();
@@ -245,48 +248,38 @@ implements ActionListener, KeyListener, Runnable
 			out.write(CRLF);
 			out.write("X-Mailer: jEdit " + jEdit.getVersion());
 			out.write(CRLF);
-			out.write("X-jEdit-Selection-Only: " +
-				selectionOnly);
 			out.write(CRLF);
 
 			Buffer buffer = view.getBuffer();
 			
-			int start, end, startLine, endLine;
+			int startLine, endLine;
 			if(selectionOnly)
 			{
-				start = view.getTextArea().getSelectionStart();
-				end = view.getTextArea().getSelectionEnd();
-				startLine = view.getTextArea().getSelectionStartLine();
-				endLine = view.getTextArea().getSelectionEndLine();
+				startLine = textArea.getSelectionStartLine();
+				endLine = textArea.getSelectionEndLine();
 			}
 			else
 			{
-				start = 0;
-				end = buffer.getLength();
 				startLine = 0;
-				endLine = buffer.getDefaultRootElement().getElementCount();
+				endLine = textArea.getLineCount() - 1;
 			}
 			
-			Element map = buffer.getDefaultRootElement();
-
 			for(int i = startLine; i <= endLine; i++)
 			{
-				Element lineElement = map.getElement(i);
-				int lineStart;
-				int lineEnd;
+				String line;
 
-				if(i == startLine)
-					lineStart = start;
+				if(selectionOnly)
+				{
+					int start = textArea.getSelectionStart(i);
+					int end = textArea.getSelectionEnd(i);
+
+					line = textArea.getText(start,end - start);
+				}
 				else
-					lineStart = lineElement.getStartOffset();
+				{
+					line = textArea.getLineText(i);
+				}
 
-				if(i == endLine)
-					lineEnd = end;
-				else
-					lineEnd = lineElement.getEndOffset() - 1;
-
-				String line = buffer.getText(lineStart,lineEnd
-					- lineStart);
 				if(line.equals("."))
 					line = "!"; // XXX use =nn code
 				out.write(line);
@@ -321,9 +314,6 @@ implements ActionListener, KeyListener, Runnable
 		catch(NumberFormatException nf)
 		{
 			GUIUtilities.error(view,"badport",new Object[0]);
-		}
-		catch(BadLocationException bl)
-		{
 		}
 
 		save();

@@ -49,11 +49,10 @@ public class select_block extends EditAction
 		char openBracket = '\0';
 		char closeBracket = '\0';
 
-		// We can't do the backward scan if start == 0, so just
-		// select the entire document
+		// We can't do the backward scan if start == 0
 		if(start == 0)
 		{
-			textArea.select(0,buffer.getLength());
+			view.getToolkit().beep();
 			return;
 		}
 
@@ -79,7 +78,10 @@ backward_scan:	while(--start > 0)
 
 		// Scan forward, matching that bracket
 		if(openBracket == '\0')
-			end = buffer.getLength();
+		{
+			view.getToolkit().beep();
+			return;
+		}
 		else
 		{
 forward_scan:		do

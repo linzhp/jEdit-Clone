@@ -1,6 +1,6 @@
 /*
  * tab.java
- * Copyright (C) 1998 Slava Pestov
+ * Copyright (C) 1998, 1999 Slava Pestov
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -35,37 +35,17 @@ public class tab extends EditAction
 	public void actionPerformed(ActionEvent evt)
 	{
 		View view = getView(evt);
-		Buffer buffer = view.getBuffer();
-		try
+		JEditTextArea textArea = view.getTextArea();
+
+		if(!textArea.isEditable() || textArea.getSelectionStart()
+			== textArea.getSelectionEnd())
 		{
-			JEditTextArea textArea = view.getTextArea();
-			if(!textArea.isEditable())
-			{
-				view.getToolkit().beep();
-				return;
-			}
-			int start = textArea.getSelectionStart();
-			int end = textArea.getSelectionEnd();
-			Element map = buffer.getDefaultRootElement();
-			Element lineElement = map.getElement(
-				textArea.getCaretLine());
-			int lineStart = lineElement.getStartOffset();
-			int lineEnd = lineElement.getEndOffset() - 1;
-			if(start == end)
-			{
-				start = lineStart;
-				end = lineEnd;
-			}
-			end -= start;
-			int tabSize = buffer.getTabSize();
-			String text = doTab(buffer.getText(start,end),
-				tabSize);
-			buffer.remove(start,end);
-			buffer.insertString(start,text,null);
+			view.getToolkit().beep();
+			return;
 		}
-		catch(BadLocationException bl)
-		{
-		}
+
+		textArea.setSelectedText(doTab(textArea.getSelectedText(),
+			view.getBuffer().getTabSize()));
 	}
 
 	private String doTab(String in, int tabSize)

@@ -1,5 +1,5 @@
 /*
- * Plugin.java - Interface all plugins must implement
+ * Plugin.java - Obsolete plugin interface
  * Copyright (C) 1999 Slava Pestov
  *
  * This program is free software; you can redistribute it and/or
@@ -19,6 +19,10 @@
 
 package org.gjt.sp.jedit;
 
+import java.util.Enumeration;
+import java.util.Vector;
+import org.gjt.sp.jedit.gui.OptionsDialog;
+
 /**
  * The interface between a plugin and jEdit. The job of this interface is
  * to register any actions and modes provided with the plugin, and do
@@ -33,6 +37,8 @@ package org.gjt.sp.jedit;
  *
  * @author Slava Pestov
  * @version $Id$
+ *
+ * @deprecated As of jEdit 2.1pre1, should use EditPlugin class instead
  */
 public interface Plugin
 {
@@ -45,4 +51,91 @@ public interface Plugin
 	 * Called when jEdit is exiting.
 	 */
 	public void stop();
+
+	// Converts old menu and option pane code (jEdit.addPluginAction(),
+	// jEdit.addPluginMenu(), jEdit.addOptionPane()) to new. Only one
+	// instance of this class exists, and it manages menus and option
+	// panes for all legacy plugins.
+	static class OldAPI extends EditPlugin
+	{
+		Vector pluginActions = new Vector();
+		Vector pluginMenus = new Vector();
+		Vector optionPanes = new Vector();
+
+		// Called by jEdit.addPluginAction
+		void addPluginAction(EditAction action)
+		{
+			pluginActions.addElement(action);
+		}
+
+		void addPluginMenu(String menu)
+		{
+			pluginMenus.addElement(menu);
+		}
+
+		void addOptionPane(Class clazz)
+		{
+			optionPanes.addElement(clazz);
+		}
+
+		public void createMenuItems(View view, Vector menus, Vector menuItems)
+		{
+			Enumeration menuEnum = pluginMenus.elements();
+			while(menuEnum.hasMoreElements())
+			{
+				menus.addElement(GUIUtilities.loadMenu(view,
+					(String)menuEnum.nextElement()));
+			}
+
+			Enumeration actionEnum = pluginActions.elements();
+			while(actionEnum.hasMoreElements())
+			{
+				menuItems.addElement(GUIUtilities.loadMenuItem(view,
+					((EditAction)actionEnum.nextElement())
+					.getName()));
+			}
+		}
+
+		public void createOptionPanes(OptionsDialog optionsDialog)
+		{
+			Enumeration optionPaneEnum = optionPanes.elements();
+			while(optionPaneEnum.hasMoreElements())
+			{
+				try
+				{
+					optionsDialog.addOptionPane((OptionPane)
+						((Class)optionPaneEnum.nextElement())
+						.newInstance());
+				}
+				catch(Exception e)
+				{
+					System.err.println(getClass().getName()
+						+ ": error creating option pane:");
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+
+	/**
+	 * When a plugin is loaded into jEdit 2.1pre1 or later, it is
+	 * wrapped in this class.
+	 */
+	public static class Wrapper extends EditPlugin
+	{
+		Wrapper(Plugin plugin) { this.plugin = plugin; }
+		public void start() { plugin.start(); }
+		public void stop() { plugin.stop(); }
+		String _getName() { return plugin.getClass().getName(); }
+
+		/**
+		 * Returns the underlying old API plugin.
+		 */
+		public Plugin getPlugin()
+		{
+			return plugin;
+		}
+
+		Plugin plugin;
+	}
 }

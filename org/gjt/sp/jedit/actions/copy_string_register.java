@@ -1,5 +1,5 @@
 /*
- * replace_in_selection.java - Action
+ * copy_string_register.java
  * Copyright (C) 1999 Slava Pestov
  *
  * This program is free software; you can redistribute it and/or
@@ -20,20 +20,42 @@
 package org.gjt.sp.jedit.actions;
 
 import java.awt.event.ActionEvent;
-import org.gjt.sp.jedit.search.SearchAndReplace;
+import org.gjt.sp.jedit.textarea.*;
 import org.gjt.sp.jedit.*;
 
-public class replace_in_selection extends EditAction
+public class copy_string_register extends EditAction
 {
-	public replace_in_selection()
+	public copy_string_register()
 	{
-		super("replace-in-selection");
+		super("copy-string-register");
 	}
-
+	
 	public void actionPerformed(ActionEvent evt)
 	{
 		View view = getView(evt);
-		Buffer buffer = view.getBuffer();
-		SearchAndReplace.replace(view);
+		JEditTextArea textArea = view.getTextArea();
+		String selection = textArea.getSelectedText();
+
+		if(selection == null)
+			return;
+
+		String actionCommand = evt.getActionCommand();
+		if(actionCommand == null || actionCommand.length() != 1)
+		{
+			view.showStatus(jEdit.getProperty("view.status.copy-string-register"));
+			textArea.getInputHandler().grabNextKeyStroke(this);
+		}
+		else
+		{
+			view.showStatus(null);
+
+			char ch = actionCommand.charAt(0);
+			if(ch == '\0')
+			{
+				view.getToolkit().beep();
+				return;
+			}
+			Registers.setRegister(ch,new Registers.StringRegister(selection));
+		}
 	}
 }

@@ -1,0 +1,96 @@
+/*
+ * EditPlugin.java - Interface all plugins must implement
+ * Copyright (C) 1999 Slava Pestov
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+
+package org.gjt.sp.jedit;
+
+import java.util.Vector;
+import org.gjt.sp.jedit.gui.OptionsDialog;
+
+/**
+ * The interface between jEdit and a plugin. Plugins provide implementations
+ * of this class to register any edit modes and actions they provide, and to
+ * add their commands the jEdit's menu bar.<p>
+ *
+ * This class obsoletes the <code>Plugin</code> interface from jEdit 2.0
+ * and earlier. Its main advantage over the old system is the more flexible
+ * menu bar setup code, and the fact that it is a class, rather than an
+ * interface, which means methods can be added without breaking existing
+ * plugins.
+ *
+ * @author Slava Pestov
+ * @version $Id$
+ * @since jEdit 2.1pre1
+ */
+public abstract class EditPlugin
+{
+	/**
+	 * Method called by jEdit to initialize the plugin.
+	 * Actions and edit modes should be registered here, along
+	 * with any initial event listeners.
+	 * @since jEdit 2.1pre1
+	 */
+	public void start() {}
+
+	/**
+	 * Method called by jEdit before exiting. Usually, nothing
+	 * needs to be done here.
+	 * @since jEdit 2.1pre1
+	 */
+	public void stop() {}
+
+	/**
+	 * Method called every time a view is created to set up the
+	 * Plugins menu. Menus and menu items should be loaded using the
+	 * methods in the GUIUtilities class, and added to the appropriate
+	 * lists.
+	 * @param view The view
+	 * @param menus Add submenus here
+	 * @param menuItems Add menuitems here
+	 *
+	 * @see GUIUtilities#loadMenu(View,String)
+	 * @see GUIUtilities#loadMenuItem(View,String)
+	 *
+	 * @since jEdit 2.1pre1
+	 */
+	public void createMenuItems(View view, Vector menus, Vector menuItems) {}
+
+	/**
+	 * Method called every time the plugin options dialog box is
+	 * displayed. Any option panes created by the plugin should be
+	 * added here.
+	 * @param optionsDialog The plugin options dialog box
+	 *
+	 * @see OptionPane
+	 * @see OptionsDialog#addOptionPane(OptionPane)
+	 *
+	 * @since jEdit 2.1pre1
+	 */
+	public void createOptionPanes(OptionsDialog optionsDialog) {}
+
+	// needed for old plugin API
+	String _getName() { return getClass().getName(); }
+}
+
+/*
+ * ChangeLog:
+ * $Log$
+ * Revision 1.1  1999/09/30 12:21:04  sp
+ * No net access for a month... so here's one big jEdit 2.1pre1
+ *
+ */

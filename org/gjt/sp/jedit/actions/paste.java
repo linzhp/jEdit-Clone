@@ -19,7 +19,6 @@
 
 package org.gjt.sp.jedit.actions;
 
-import java.awt.datatransfer.*;
 import java.awt.event.ActionEvent;
 import org.gjt.sp.jedit.gui.HistoryModel;
 import org.gjt.sp.jedit.textarea.JEditTextArea;
@@ -34,37 +33,23 @@ public class paste extends EditAction
 	
 	public void actionPerformed(ActionEvent evt)
 	{
-		JEditTextArea textArea = getView(evt).getTextArea();
+		View view = getView(evt);
+		JEditTextArea textArea = view.getTextArea();
 
-		if(textArea.isEditable())
+		if(!textArea.isEditable())
 		{
-			Clipboard clipboard = textArea.getToolkit()
-				.getSystemClipboard();
-			Transferable content = clipboard.getContents(this);
-
-	        	if(content != null)
-	        	{
-		        	try
-	                	{
-					String text = (String)content
-						.getTransferData(
-						DataFlavor.stringFlavor);
-					HistoryModel.getModel("clipboard")
-						.addItem(text);
-
-					// The MacOS MRJ doesn't convert
-					// \r to \n, so do it here
-					textArea.setSelectedText(
-						text.replace('\r','\n'));
-					return;
-				}
-				catch(Exception e)
-				{
-					textArea.getToolkit().beep();
-				}
-			}
+			view.getToolkit().beep();
+			return;
 		}
 
-		textArea.getToolkit().beep();
+		Registers.Register register = Registers.getRegister('$');
+		String selection = register.toString();
+		if(selection == null)
+		{
+			view.getToolkit().beep();
+			return;
+		}
+		textArea.setSelectedText(selection);
+		HistoryModel.getModel("clipboard").addItem(selection);
 	}
 }

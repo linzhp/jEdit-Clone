@@ -1,6 +1,6 @@
 /*
  * next_paragraph.java
- * Copyright (C) 1998 Slava Pestov
+ * Copyright (C) 1998, 1999 Slava Pestov
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -19,10 +19,9 @@
 
 package org.gjt.sp.jedit.actions;
 
-import javax.swing.text.Element;
 import java.awt.event.ActionEvent;
-import java.util.Date;
 import org.gjt.sp.jedit.*;
+import org.gjt.sp.jedit.textarea.JEditTextArea;
 
 public class next_paragraph extends EditAction
 {
@@ -35,15 +34,20 @@ public class next_paragraph extends EditAction
 	{
 		View view = getView(evt);
 		Buffer buffer = view.getBuffer();
-		Element map = buffer.getDefaultRootElement();
-		int lineNo = view.getTextArea().getCaretLine();
-		if(map.getElementCount() - lineNo <= 1)
+		JEditTextArea textArea = view.getTextArea();
+
+		int lineNo = textArea.getCaretLine();
+
+		for(int i = lineNo + 1; i < textArea.getLineCount(); i++)
 		{
-			view.getToolkit().beep();
-			return;
+			if(textArea.getLineLength(i) == 0)
+			{
+				textArea.setCaretPosition(textArea
+					.getLineStartOffset(i));
+				return;
+			}
 		}
-		int nextParagraph = buffer.locateParagraphEnd(lineNo);
-		view.getTextArea().setCaretPosition(
-			map.getElement(nextParagraph).getEndOffset() - 1);
+
+		textArea.setCaretPosition(textArea.getDocumentLength());
 	}
 }

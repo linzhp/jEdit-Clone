@@ -1,6 +1,6 @@
 /*
- * html.java - HTML editing mode
- * Copyright (C) 1998, 1999 Slava Pestov
+ * xml.java - XML/SGML editing mode
+ * Copyright (C) 1999 Slava Pestov
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -22,15 +22,15 @@ package org.gjt.sp.jedit.mode;
 import org.gjt.sp.jedit.syntax.*;
 import org.gjt.sp.jedit.*;
 
-public class html extends Mode
+public class xml extends Mode
 {
-	public html()
+	public xml()
 	{
-		super("html");
+		super("xml");
 	}
 	
 	public TokenMarker createTokenMarker()
 	{
-		return new HTMLTokenMarker(true);
+		return new HTMLTokenMarker(false);
 	}
 }

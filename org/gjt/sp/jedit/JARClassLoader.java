@@ -160,11 +160,11 @@ public class JARClassLoader extends ClassLoader
 		}
 
 		// Check if a plugin with the same name is already loaded
-		Plugin[] plugins = jEdit.getPlugins();
+		EditPlugin[] plugins = jEdit.getPlugins();
 
 		for(int i = 0; i < plugins.length; i++)
 		{
-			if(plugins[i].getClass().getName().equals(name))
+			if(plugins[i]._getName().equals(name))
 			{
 				String[] args = { name };
 				System.err.println(jEdit.getProperty(
@@ -181,15 +181,21 @@ public class JARClassLoader extends ClassLoader
 		// on an unresolved class
 		Class clazz = loadClass(name,true);
 		int modifiers = clazz.getModifiers();
-		if(Plugin.class.isAssignableFrom(clazz)
-			&& !Modifier.isInterface(modifiers)
+		if(!Modifier.isInterface(modifiers)
 			&& !Modifier.isAbstract(modifiers))
 		{
-			Plugin plugin = (Plugin)clazz.newInstance();
-			jEdit.addPlugin(plugin);
-
-			String[] args = { name };
-			System.out.println(jEdit.getProperty("jar.loaded",args));
+			if(EditPlugin.class.isAssignableFrom(clazz))
+			{
+				jEdit.addPlugin((EditPlugin)clazz.newInstance());
+				String[] args = { name };
+				System.out.println(jEdit.getProperty("jar.loaded",args));
+			}
+			else if(Plugin.class.isAssignableFrom(clazz))
+			{
+				jEdit.addPlugin((Plugin)clazz.newInstance());
+				String[] args = { name };
+				System.out.println(jEdit.getProperty("jar.loaded.old",args));
+			}
 		}
 	}
 
@@ -260,7 +266,7 @@ public class JARClassLoader extends ClassLoader
 			System.out.print(deps);
 		return ok;
 	}
-				
+
 	private Class findOtherClass(String clazz, boolean resolveIt)
 		throws ClassNotFoundException
 	{
@@ -348,6 +354,9 @@ public class JARClassLoader extends ClassLoader
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.15  1999/09/30 12:21:04  sp
+ * No net access for a month... so here's one big jEdit 2.1pre1
+ *
  * Revision 1.13  1999/08/21 01:48:18  sp
  * jEdit 2.0pre8
  *
@@ -375,18 +384,5 @@ public class JARClassLoader extends ClassLoader
  * Revision 1.5  1999/04/27 06:53:38  sp
  * JARClassLoader updates, shell script token marker update, token marker compiles
  * now
- *
- * Revision 1.4  1999/04/19 05:47:35  sp
- * ladies and gentlemen, 1.6pre1
- *
- * Revision 1.3  1999/04/02 00:39:19  sp
- * Fixed console bug, syntax API changes, minor jEdit.java API change
- *
- * Revision 1.2  1999/03/24 05:45:27  sp
- * Juha Lidfors' backup directory patch, removed debugging messages from various locations, documentation updates
- *
- * Revision 1.1  1999/03/21 07:53:14  sp
- * Plugin doc updates, action API change, new method in MiscUtilities, new class
- * loader, new plugin interface
  *
  */

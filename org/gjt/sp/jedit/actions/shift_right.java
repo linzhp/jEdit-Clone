@@ -72,6 +72,9 @@ public class shift_right extends EditAction
 		{
 			bl.printStackTrace();
 		}
-		buffer.endCompoundEdit();
+		finally
+		{
+			buffer.endCompoundEdit();
+		}
 	}
 }	

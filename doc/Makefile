@@ -9,14 +9,13 @@ all:
 	@echo "The following targets are supported:"
 	@echo "    api: rebuild the jEdit API documentation"
 	@echo "    htmldocs: generate nice HTML docs from the SGML source"
-	@echo "    dvidocs: generate TeX DVI docs from the SGML source"
-	@echo "    psdocs: generate PostScript docs from the SGML source"
+	@echo "    pdfdocs: generate PDF docs from the SGML source"
 	@echo
 	@echo "Rerun 'make' with one of the above parameters."
 	@echo
 	@exit 1
 
-api:
+apidocs:
 	-javadoc -J-mx24m -classpath $(CLASSPATH):.. -noindex -notree -d api \
 		org.gjt.sp.jedit \
 		org.gjt.sp.jedit.event \
@@ -27,12 +26,12 @@ api:
 htmldocs: create-index
 	sgmltools --dsssl-spec=dsssl/jedithtml.dsl --backend=html jeditdocs.sgml
 
-dvidocs: create-index
-	sh scripts/mk_eps.sh
-	sgmltools --dsssl-spec=dsssl/jeditprint.dsl --backend=dvi jeditdocs.sgml
-
-psdocs: dvidocs
-	dvips -o jeditdocs.ps jeditdocs.dvi
+pdfdocs: create-index
+	sh scripts/mk_png.sh
+	jade -d dsssl/jeditprint.dsl -t tex jeditdocs.sgml
+	pdftex "&jadetexpdf" jeditdocs.tex
+	pdftex "&jadetexpdf" jeditdocs.tex
+	pdftex "&jadetexpdf" jeditdocs.tex
 
 create-index:
 	touch index.sgml

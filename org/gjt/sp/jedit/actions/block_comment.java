@@ -48,8 +48,10 @@ public class block_comment extends EditAction
 		int selectionEnd = textArea.getSelectionEnd();
 		int startLine = textArea.getSelectionStartLine();
 		int endLine = textArea.getSelectionEndLine();
-		buffer.beginCompoundEdit();
 		Element map = buffer.getDefaultRootElement();
+
+		buffer.beginCompoundEdit();
+
 		try
 		{
 			buffer.insertString(selectionStart,comment,null);
@@ -62,8 +64,12 @@ public class block_comment extends EditAction
 		catch(BadLocationException bl)
 		{
 		}
+		finally
+		{
+			buffer.endCompoundEdit();
+		}
+
 		textArea.select(textArea.getCaretPosition(),
 			textArea.getCaretPosition());
-		buffer.endCompoundEdit();
 	}
 }

@@ -1,5 +1,5 @@
 /*
- * exchange_anchor.java
+ * set_filename_register.java
  * Copyright (C) 1999 Slava Pestov
  *
  * This program is free software; you can redistribute it and/or
@@ -20,27 +20,38 @@
 package org.gjt.sp.jedit.actions;
 
 import java.awt.event.ActionEvent;
+import org.gjt.sp.jedit.textarea.*;
 import org.gjt.sp.jedit.*;
-import org.gjt.sp.jedit.textarea.JEditTextArea;
 
-public class exchange_anchor extends EditAction
+public class set_filename_register extends EditAction
 {
-	public exchange_anchor()
+	public set_filename_register()
 	{
-		super("exchange-anchor");
+		super("set-filename-register");
 	}
 	
 	public void actionPerformed(ActionEvent evt)
 	{
 		View view = getView(evt);
-		int pos = view.getBuffer().getAnchor();
-		int caretPos = view.getTextArea().getCaretPosition();
-		if(pos != -1)
+
+		String actionCommand = evt.getActionCommand();
+		if(actionCommand == null || actionCommand.length() != 1)
 		{
-			view.getTextArea().setCaretPosition(pos);
-			view.getBuffer().setAnchor(caretPos);
+			view.showStatus(jEdit.getProperty("view.status.set-filename-register"));
+			view.getTextArea().getInputHandler().grabNextKeyStroke(this);
 		}
 		else
-			view.getToolkit().beep();
+		{
+			view.showStatus(null);
+
+			char ch = actionCommand.charAt(0);
+			if(ch == '\0')
+			{
+				view.getToolkit().beep();
+				return;
+			}
+			Registers.setRegister(ch,new Registers.StringRegister(
+				view.getBuffer().getPath()));
+		}
 	}
 }

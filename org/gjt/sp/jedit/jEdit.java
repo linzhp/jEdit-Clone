@@ -19,6 +19,7 @@
 
 package org.gjt.sp.jedit;
 
+import gnu.regexp.REException;
 import javax.swing.event.EventListenerList;
 import javax.swing.text.Element;
 import javax.swing.text.Segment;
@@ -61,7 +62,7 @@ public class jEdit
 	public static String getBuild()
 	{
 		// (major) (minor) (<99 = preX, 99 = final) (bug fix)
-		return "02.00.99.00";
+		return "02.01.01.00";
 	}
 
 	/**
@@ -83,7 +84,6 @@ public class jEdit
 			+ System.getProperty("user.name");
 		boolean desktop = true;
 		boolean showSplash = true;
-		int lineNo = -1;
 
 		for(int i = 0; i < args.length; i++)
 		{
@@ -128,17 +128,6 @@ public class jEdit
 					showSplash = false;
 				else if(arg.equals("-readonly"))
 					readOnly = true;
-				else if(arg.startsWith("-+"))
-				{
-					try
-					{
-						lineNo = Integer.parseInt(arg
-							.substring(2));
-					}
-					catch(NumberFormatException nf)
-					{
-					}
-				}
 				else
 				{
 					System.err.println("Unknown option: "
@@ -181,12 +170,7 @@ public class jEdit
 					buf = editor.newFile(null);
 
 				RemoteView view = editor.newView(null,buf);
-				if(lineNo != -1)
-				{
-					int pos = buf.getLineStartOffset(lineNo);
-					if(pos != -1)
-						view.setCaretPosition(pos);
-				}
+
 				if(wait)
 					editor.waitForClose(view);
 
@@ -225,7 +209,6 @@ public class jEdit
 		initSystemProperties();
 		initModes();
 		initActions();
-		initOptions();
 		initPlugins();
 		initUserProperties();
 		initPLAF();
@@ -249,16 +232,6 @@ public class jEdit
 			if(args[i] == null)
 				continue;
 			buffer = openFile(null,userDir,args[i],readOnly,false);
-			if(lineNo != -1)
-			{
-				Element lineElement = buffer.getDefaultRootElement()
-					.getElement(lineNo - 1);
-				if(lineElement != null)
-				{
-					buffer.setCaretInfo(lineElement.getStartOffset(),
-						lineElement.getStartOffset());
-				}
-			}
 		}
 		if(buffer == null)
 		{
@@ -343,8 +316,26 @@ public class jEdit
 	 */
 	public static final void setProperty(String name, String value)
 	{
-		props.put(name,value);
-
+		/* if value is null:
+		 * - if default is null, unset user prop
+		 * - else set user prop to ""
+		 * else
+		 * - if default equals value, ignore
+		 * - if default doesn't equal value, set user
+		 */
+		if(value == null || value.length() == 0)
+		{
+			String prop = (String)defaultProps.get(name);
+			if(prop == null || prop.length() == 0)
+				props.remove(name);
+			else
+				props.put(name,"");
+		}
+		else
+		{
+			if(!value.equals(getProperty(name)))
+				props.put(name,value);
+		}
 	}
 
 	/**
@@ -365,7 +356,10 @@ public class jEdit
 	 */
 	public static final void unsetProperty(String name)
 	{
-		props.remove(name);
+		if(defaultProps.get(name) != null)
+			props.put(name,"");
+		else
+			props.remove(name);
 	}
 
 	/**
@@ -373,20 +367,47 @@ public class jEdit
 	 */
 	public static void propertiesChanged()
 	{
+		// Auto save
 		if(autosave != null)
 			autosave.interrupt();
 
 		autosave = new Autosave();
 
+		// Recent files
 		try
 		{
-			maxRecent = Integer.parseInt(getProperty(
-				"recent"));
+			maxRecent = Integer.parseInt(getProperty("recent"));
 		}
 		catch(NumberFormatException nf)
 		{
 			maxRecent = 8;
 		}
+
+		// Load file filters
+		Vector _filters = new Vector();
+
+		int i = 0;
+		String name;
+
+		while((name = getProperty("filefilter." + i + ".name")) != null
+			&& name.length() != 0)
+		{
+			try
+			{
+				_filters.addElement(new REFileFilter(name,
+					jEdit.getProperty("filefilter." + i + ".re")));
+			}
+			catch(REException re)
+			{
+				System.err.println("Invalid file filter: " + i);
+				re.printStackTrace();
+			}
+
+			i++;
+		}
+
+		filters = new REFileFilter[_filters.size()];
+		_filters.copyInto(filters);
 
 		fireEditorEvent(EditorEvent.PROPERTIES_CHANGED,null,null);
 	}
@@ -428,26 +449,25 @@ public class jEdit
 	}
 
 	/**
-	 * Registers a plugin with the editor. This will also call
-	 * the <code>start()</code> method of the plugin.
-	 * @see org.gjt.sp.jedit.Plugin#start()
+	 * Adds a plugin to the editor.
+	 * @param plugin The plugin
 	 */
-	public static void addPlugin(Plugin plugin)
+	public static void addPlugin(EditPlugin plugin)
 	{
-		plugins.addElement(plugin);
 		plugin.start();
+		plugins.addElement(plugin);
 	}
 
 	/**
 	 * Returns a plugin by it's class name.
 	 * @param name The plugin to return
 	 */
-	public static Plugin getPlugin(String name)
+	public static EditPlugin getPlugin(String name)
 	{
 		for(int i = 0; i < plugins.size(); i++)
 		{
-			Plugin p = (Plugin)plugins.elementAt(i);
-			if(p.getClass().getName().equals(name))
+			EditPlugin p = (EditPlugin)plugins.elementAt(i);
+			if(p._getName().equals(name))
 				return p;
 		}
 
@@ -457,33 +477,11 @@ public class jEdit
 	/**
 	 * Returns an array of installed plugins.
 	 */
-	public static Plugin[] getPlugins()
+	public static EditPlugin[] getPlugins()
 	{
-		Plugin[] pluginArray = new Plugin[plugins.size()];
+		EditPlugin[] pluginArray = new EditPlugin[plugins.size()];
 		plugins.copyInto(pluginArray);
 		return pluginArray;
-	}
-
-	/**
-	 * Registers a plugin menu with the editor. The menu
-	 * resulting from the call to <code>GUIUtilities.loadMenu(menu)</code>
-	 * will be added to the plugins menu.
-	 * @param menu The menu's name
-	 * @see org.gjt.sp.jedit.GUIUtilities#loadMenu(org.gjt.sp.jedit.View,java.lang.String)
-	 */
-	public static void addPluginMenu(String menu)
-	{
-		pluginMenus.addElement(menu);
-	}
-
-	/**
-	 * Returns an array of registered plugin menus.
-	 */
-	public static String[] getPluginMenus()
-	{
-		String[] pluginMenuArray = new String[pluginMenus.size()];
-		pluginMenus.copyInto(pluginMenuArray);
-		return pluginMenuArray;
 	}
 
 	/**
@@ -492,23 +490,13 @@ public class jEdit
 	 */
 	public static void addAction(EditAction action)
 	{
-		actionHash.put(action.getName(),action);
+		String name = action.getName();
+		actionHash.put(name,action);
 
 		// Register key binding
-		String binding = getProperty(action.getName() + ".shortcut");
+		String binding = getProperty(name + ".shortcut");
 		if(binding != null)
 			inputHandler.addKeyBinding(binding,action);
-	}
-
-	/**
-	 * Registers an action with the editor and adds it to the plugin
-	 * action list (so it will appear in the plugins menu).
-	 * @param action The action
-	 */
-	public static void addPluginAction(EditAction action)
-	{
-		actionHash.put(action.getName(),action);
-		pluginActions.addElement(action);
 	}
 
 	/**
@@ -533,16 +521,6 @@ public class jEdit
 			actions[i++] = (EditAction)enum.nextElement();
 		}
 		return actions;
-	}
-
-	/**
-	 * Returns an array of installed plugin actions.
-	 */
-	public static EditAction[] getPluginActions()
-	{
-		EditAction[] array = new EditAction[pluginActions.size()];
-		pluginActions.copyInto(array);
-		return array;
 	}
 
 	/**
@@ -590,26 +568,11 @@ public class jEdit
 	}
 
 	/**
-	 * Registers an option pane with the editor.
-	 * @param clazz The option pane's class. This must be a
-	 * subclass of <code>OptionPane</code>.
-	 * @see org.gjt.sp.jedit.OptionPane
+	 * Returns the registered filename filters.
 	 */
-	public static void addOptionPane(Class clazz)
+	public static REFileFilter[] getFileFilters()
 	{
-		optionPanes.addElement(clazz);
-	}
-
-	/**
-	 * Returns an array of registered option pane classes.
-	 * These should be instantiated and cast to <code>OptionPane</code>
-	 * objects.
-	 */
-	public static Class[] getOptionPanes()
-	{
-		Class[] optionPaneArray = new Class[optionPanes.size()];
-		optionPanes.copyInto(optionPaneArray);
-		return optionPaneArray;
+		return filters;
 	}
 
 	/**
@@ -625,21 +588,13 @@ public class jEdit
 	{
 		if(view != null && parent == null)
 			parent = view.getBuffer().getFile().getParent();
+
 		int index = path.indexOf('#');
 		String marker = null;
 		if(index != -1)
 		{
 			marker = path.substring(index + 1);
 			path = path.substring(0,index);
-			// Handle openFile(#marker)
-			if(path.length() == 0)
-			{
-				if(view == null)
-					return null;
-				Buffer buffer = view.getBuffer();
-				gotoMarker(buffer,view,marker);
-				return buffer;
-			}
 		}
 
 		// Java doesn't currently support saving to file:// URLs,
@@ -665,8 +620,7 @@ public class jEdit
 				if(view != null)
 				{
 					if(marker != null)
-						gotoMarker(buffer,view,
-							marker);
+						gotoMarker(buffer,view,marker);
 					view.setBuffer(buffer);
 				}
 				return buffer;
@@ -685,7 +639,7 @@ public class jEdit
 		if(marker != null)
 			gotoMarker(buffer,null,marker);
 
-			if(view != null)
+		if(view != null)
 		{
 			view.setBuffer(buffer);
 
@@ -704,9 +658,27 @@ public class jEdit
 	 */
 	public static Buffer newFile(View view)
 	{
-		Object[] args = { new Integer(++untitledCount) };
-		return openFile(view,null,getProperty("untitled",
-			args),false,true);
+		// Find the highest Untitled-n file
+		int untitledCount = 0;
+		Buffer buffer = buffersFirst;
+		while(buffer != null)
+		{
+			if(buffer.getName().startsWith("Untitled-"))
+			{
+				try
+				{
+					untitledCount = Math.max(untitledCount,
+						Integer.parseInt(buffer.getName()
+						.substring(9)));
+				}
+				catch(NumberFormatException nf)
+				{
+				}
+			}
+			buffer = buffer.next;
+		}
+
+		return openFile(view,null,"Untitled-" + (untitledCount+1),false,true);
 	}
 
 	/**
@@ -720,19 +692,19 @@ public class jEdit
 	{
 		if(_closeBuffer(view,buffer))
 		{
-			if(buffersFirst == buffersLast)
-				exit(view);
-			else
-				removeBufferFromList(buffer);
+			removeBufferFromList(buffer);
+			buffer.getAutosaveFile().delete();
+			buffer.close();
+			fireEditorEvent(EditorEvent.BUFFER_CLOSED,view,buffer);
+
+			// Create a new file when the last is closed
+			if(buffersFirst == null && buffersLast == null)
+				newFile(view);
+
+			return true;
 		}
 		else
 			return false;
-
-		buffer.close();
-
-		fireEditorEvent(EditorEvent.BUFFER_CLOSED,view,buffer);
-
-		return true;
 	}
 
 	/**
@@ -811,12 +783,32 @@ public class jEdit
 		View newView = new View(view,buffer);
 		addViewToList(newView);
 
-		if(view != null)
-			GUIUtilities.hideWaitCursor(view);
+		fireEditorEvent(EditorEvent.VIEW_CREATED,newView,newView.getBuffer());
 
+		// Do this crap here so that the view is created
+		// and added to the list before it is shown
+		// (for the sake of plugins that add stuff to views)
+		newView.pack();
+
+		if(view != null)
+		{
+			newView.setSize(view.getSize());
+			Point location = view.getLocation();
+			location.x += 20;
+			location.y += 20;
+			newView.setLocation(location);
+
+			GUIUtilities.hideWaitCursor(view);
+		}
+		else
+		{
+			GUIUtilities.loadGeometry(newView,"view");
+		}
+
+		newView.show();
+		newView.focusOnTextArea();
 		newView.addWindowListener(windowHandler);
 
-		fireEditorEvent(EditorEvent.VIEW_CREATED,newView,buffer);
 		return newView;
 	}
 
@@ -946,6 +938,8 @@ public class jEdit
 					buffer.getMode().getName());
 				setProperty("desktop." + bufNum + ".readOnly",
 					buffer.isReadOnly() ? "yes" : "no");
+				setProperty("desktop." + bufNum + ".rectSelect",
+					buffer.isSelectionRectangular() ? "yes" : "no");
 				setProperty("desktop." + bufNum + ".current",
 					view.getBuffer() == buffer ? "yes" : "no");
 				setProperty("desktop." + bufNum + ".selStart",
@@ -964,6 +958,17 @@ public class jEdit
 		{
 			if(!_closeBuffer(view,buffer))
 				return;
+			buffer = buffer.next;
+		}
+
+		// Stop autosave thread
+		autosave.stop();
+
+		// Delete autosave files
+		buffer = buffersFirst;
+		while(buffer != null)
+		{
+			buffer.getAutosaveFile().delete();
 			buffer = buffer.next;
 		}
 
@@ -996,7 +1001,7 @@ public class jEdit
 		// Stop all plugins
 		for(int i = 0; i < plugins.size(); i++)
 		{
-			((Plugin)plugins.elementAt(i)).stop();
+			((EditPlugin)plugins.elementAt(i)).stop();
 		}
 
 		// Save the recent file list
@@ -1038,6 +1043,24 @@ public class jEdit
 		System.exit(0);
 	}
 
+	// package-private members
+
+	// View class needs to fire VIEW_CREATED editor events
+	static void fireEditorEvent(int id, View view, Buffer buffer)
+	{
+		EditorEvent evt = null;
+		Object[] listeners = listenerList.getListenerList();
+		for(int i = listeners.length - 2; i >= 0; i-= 2)
+		{
+			if(listeners[i] == EditorListener.class)
+			{
+				if(evt == null)
+					evt = new EditorEvent(id,view,buffer);
+				evt.fire((EditorListener)listeners[i+1]);
+			}
+		}
+	}
+
 	// private members
 	private static String jEditHome;
 	private static String settingsDirectory;
@@ -1048,14 +1071,11 @@ public class jEdit
 	private static Autosave autosave;
 	private static Hashtable actionHash;
 	private static Vector plugins;
-	private static Vector pluginMenus;
-	private static Vector pluginActions;
 	private static Vector modes;
-	private static Vector optionPanes;
-	private static int untitledCount;
 	private static Vector recent;
 	private static int maxRecent;
 	private static InputHandler inputHandler;
+	private static REFileFilter[] filters;
 	private static EventListenerList listenerList;
 	private static WindowHandler windowHandler;
 
@@ -1072,52 +1092,42 @@ public class jEdit
 	private static void usage()
 	{
 		System.err.println("Usage: jedit [<options>] [<files>]");
-		System.err.println("Valid options:");
+
+		System.err.println("Common options:");
+		System.err.println("	<filename>#<marker>: Positions caret"
+			+ " at marker <marker>");
+		System.err.println("	<filename>#+<line>: Positions caret"
+			+ " at line number <line>");
 		System.err.println("	--: End of options");
 		System.err.println("	-version: Print jEdit version and"
 			+ " exit");
 		System.err.println("	-usage: Print this message and exit");
-		System.err.println("	-nosettings: Don't load user-specific"
-			+ " settings");
-		System.err.println("	-settings=<path>: Load user-specific"
-			+ " settings from <path>");
 		System.err.println("	-normi: Don't start RMI service");
 		System.err.println("	-rmi: Start RMI service");
 		System.err.println("	-rmi=<path>: Start RMI service bound"
 			+ " to <path>");
-		System.err.println("	-wait: If connecting to another"
-			+ " running instance, wait until");
-		System.err.println("	the user closes the new view before"
-			+ " exiting");
-		System.err.println("	-quit: Quit the current instance using RMI");
+		System.err.println("	-readonly: Open files read-only");
+
+		System.err.println("Initial instance-only options:");
+		System.err.println("	-nosettings: Don't load user-specific"
+			+ " settings");
+		System.err.println("	-settings=<path>: Load user-specific"
+			+ " settings from <path>");
 		System.err.println("	-nodesktop: Ignore saved desktop");
 		System.err.println("	-nosplash: Don't show splash screen");
-		System.err.println("	-readonly: Open files read-only");
-		System.err.println("	-+<line>: Go to line number <line> of"
-			+ " opened file");
+
+		System.err.println("RMI client-only options:");
+		System.err.println("	-wait: Wait until the new view is"
+			+ " closed before exiting");
+		System.err.println("	-quit: Quit the current instance");
 		System.err.println();
+
 		System.err.println("Report bugs to Slava Pestov <sp@gjt.org>.");
 	}
 
 	private static void version()
 	{
-		System.err.println("jEdit " + getVersion() + " build " +
-			getBuild());
-	}
-
-	private static void fireEditorEvent(int id, View view, Buffer buffer)
-	{
-		EditorEvent evt = null;
-		Object[] listeners = listenerList.getListenerList();
-		for(int i = listeners.length - 2; i >= 0; i-= 2)
-		{
-			if(listeners[i] == EditorListener.class)
-			{
-				if(evt == null)
-					evt = new EditorEvent(id,view,buffer);
-				evt.fire((EditorListener)listeners[i+1]);
-			}
-		}
+		System.err.println("jEdit " + getVersion());
 	}
 
 	/**
@@ -1131,7 +1141,7 @@ public class jEdit
 		inputHandler = new DefaultInputHandler();
 		windowHandler = new WindowHandler();
 
-		// Add our protcols to java.net.URL's list
+		// Add our protocols to java.net.URL's list
 		System.getProperties().put("java.protocol.handler.pkgs",
 			"org.gjt.sp.jedit.proto|" +
 			System.getProperty("java.protocol.handler.pkgs",""));
@@ -1161,10 +1171,6 @@ public class jEdit
 			File _settingsDirectory = new File(settingsDirectory);
 			if(!_settingsDirectory.exists())
 				_settingsDirectory.mkdir();
-
-			File _jarsDirectory = new File(settingsDirectory,"jars");
-			if(!_jarsDirectory.exists())
-				_jarsDirectory.mkdir();
 		}
 	}
 
@@ -1183,8 +1189,6 @@ public class jEdit
 				"/org/gjt/sp/jedit/jedit_gui.props"));
 			loadProps(jEdit.class.getResourceAsStream(
 				"/org/gjt/sp/jedit/jedit_keys.props"));
-			loadProps(jEdit.class.getResourceAsStream(
-				"/org/gjt/sp/jedit/jedit_tips.props"));
 		}
 		catch(Exception e)
 		{
@@ -1193,7 +1197,6 @@ public class jEdit
 				+ "- jedit.props\n"
 				+ "- jedit_gui.props\n"
 				+ "- jedit_keys.props\n"
-				+ "- jedit_tips.props\n"
 				+ "Try reinstalling jEdit.");
 			System.exit(1);
 		}
@@ -1204,7 +1207,10 @@ public class jEdit
 	 */
 	private static void initModes()
 	{
-		modes = new Vector();
+		/* Try to guess the eventual size to avoid unnecessary
+		 * copying */
+		modes = new Vector(18 /* modes built into jEdit */
+			+ 10 /* give plugins some space */);
 
 		addMode(new org.gjt.sp.jedit.mode.text());
 		addMode(new org.gjt.sp.jedit.mode.amstex());
@@ -1219,9 +1225,11 @@ public class jEdit
 		addMode(new org.gjt.sp.jedit.mode.patch());
 		addMode(new org.gjt.sp.jedit.mode.perl());
 		addMode(new org.gjt.sp.jedit.mode.props());
+		addMode(new org.gjt.sp.jedit.mode.python());
 		addMode(new org.gjt.sp.jedit.mode.sh());
 		addMode(new org.gjt.sp.jedit.mode.tex());
 		addMode(new org.gjt.sp.jedit.mode.tsql());
+		addMode(new org.gjt.sp.jedit.mode.xml());
 	}
 
 	/**
@@ -1230,23 +1238,24 @@ public class jEdit
 	private static void initActions()
 	{
 		actionHash = new Hashtable();
-		pluginActions = new Vector();
 
 		addAction(new org.gjt.sp.jedit.actions.about());
+		addAction(new org.gjt.sp.jedit.actions.append_string_register());
 		addAction(new org.gjt.sp.jedit.actions.block_comment());
 		addAction(new org.gjt.sp.jedit.actions.box_comment());
 		addAction(new org.gjt.sp.jedit.actions.buffer_options());
-		addAction(new org.gjt.sp.jedit.actions.clear());
 		addAction(new org.gjt.sp.jedit.actions.clear_marker());
 		addAction(new org.gjt.sp.jedit.actions.close_file());
 		addAction(new org.gjt.sp.jedit.actions.close_view());
 		addAction(new org.gjt.sp.jedit.actions.copy());
+		addAction(new org.gjt.sp.jedit.actions.copy_string_register());
 		addAction(new org.gjt.sp.jedit.actions.cut());
+		addAction(new org.gjt.sp.jedit.actions.cut_string_register());
 		addAction(new org.gjt.sp.jedit.actions.delete_end_line());
 		addAction(new org.gjt.sp.jedit.actions.delete_line());
 		addAction(new org.gjt.sp.jedit.actions.delete_paragraph());
 		addAction(new org.gjt.sp.jedit.actions.delete_start_line());
-		addAction(new org.gjt.sp.jedit.actions.exchange_anchor());
+		addAction(new org.gjt.sp.jedit.actions.exchange_caret_register());
 		addAction(new org.gjt.sp.jedit.actions.exit());
 		addAction(new org.gjt.sp.jedit.actions.expand_abbrev());
 		addAction(new org.gjt.sp.jedit.actions.find());
@@ -1254,10 +1263,10 @@ public class jEdit
 		addAction(new org.gjt.sp.jedit.actions.find_selection());
 		addAction(new org.gjt.sp.jedit.actions.format());
 		addAction(new org.gjt.sp.jedit.actions.global_options());
-		addAction(new org.gjt.sp.jedit.actions.goto_anchor());
 		addAction(new org.gjt.sp.jedit.actions.goto_end_indent());
 		addAction(new org.gjt.sp.jedit.actions.goto_line());
 		addAction(new org.gjt.sp.jedit.actions.goto_marker());
+		addAction(new org.gjt.sp.jedit.actions.goto_register());
 		addAction(new org.gjt.sp.jedit.actions.help());
 		addAction(new org.gjt.sp.jedit.actions.hypersearch());
 		addAction(new org.gjt.sp.jedit.actions.hypersearch_selection());
@@ -1269,6 +1278,7 @@ public class jEdit
 		addAction(new org.gjt.sp.jedit.actions.multifile_search());
 		addAction(new org.gjt.sp.jedit.actions.new_file());
 		addAction(new org.gjt.sp.jedit.actions.new_view());
+		addAction(new org.gjt.sp.jedit.actions.next_bracket_exp());
 		addAction(new org.gjt.sp.jedit.actions.next_buffer());
 		addAction(new org.gjt.sp.jedit.actions.next_paragraph());
 		addAction(new org.gjt.sp.jedit.actions.open_file());
@@ -1278,7 +1288,9 @@ public class jEdit
 		addAction(new org.gjt.sp.jedit.actions.paste());
 		addAction(new org.gjt.sp.jedit.actions.paste_predefined());
 		addAction(new org.gjt.sp.jedit.actions.paste_previous());
+		addAction(new org.gjt.sp.jedit.actions.paste_string_register());
 		addAction(new org.gjt.sp.jedit.actions.plugin_options());
+		addAction(new org.gjt.sp.jedit.actions.prev_bracket_exp());
 		addAction(new org.gjt.sp.jedit.actions.prev_buffer());
 		addAction(new org.gjt.sp.jedit.actions.prev_paragraph());
 		addAction(new org.gjt.sp.jedit.actions.print());
@@ -1286,21 +1298,22 @@ public class jEdit
 		addAction(new org.gjt.sp.jedit.actions.reload());
 		addAction(new org.gjt.sp.jedit.actions.replace_all());
 		addAction(new org.gjt.sp.jedit.actions.replace_in_selection());
-		addAction(new org.gjt.sp.jedit.actions.replace_next());
 		addAction(new org.gjt.sp.jedit.actions.save());
 		addAction(new org.gjt.sp.jedit.actions.save_all());
 		addAction(new org.gjt.sp.jedit.actions.save_as());
 		addAction(new org.gjt.sp.jedit.actions.save_url());
 		addAction(new org.gjt.sp.jedit.actions.scroll_line());
 		addAction(new org.gjt.sp.jedit.actions.select_all());
-		addAction(new org.gjt.sp.jedit.actions.select_anchor());
 		addAction(new org.gjt.sp.jedit.actions.select_block());
 		addAction(new org.gjt.sp.jedit.actions.select_buffer());
+		addAction(new org.gjt.sp.jedit.actions.select_caret_register());
 		addAction(new org.gjt.sp.jedit.actions.select_line_range());
 		addAction(new org.gjt.sp.jedit.actions.select_next_paragraph());
+		addAction(new org.gjt.sp.jedit.actions.select_none());
 		addAction(new org.gjt.sp.jedit.actions.select_prev_paragraph());
+		addAction(new org.gjt.sp.jedit.actions.set_caret_register());
+		addAction(new org.gjt.sp.jedit.actions.set_filename_register());
 		addAction(new org.gjt.sp.jedit.actions.send());
-		addAction(new org.gjt.sp.jedit.actions.set_anchor());
 		addAction(new org.gjt.sp.jedit.actions.set_marker());
 		addAction(new org.gjt.sp.jedit.actions.shift_left());
 		addAction(new org.gjt.sp.jedit.actions.shift_right());
@@ -1309,16 +1322,9 @@ public class jEdit
 		addAction(new org.gjt.sp.jedit.actions.to_upper());
 		addAction(new org.gjt.sp.jedit.actions.undo());
 		addAction(new org.gjt.sp.jedit.actions.untab());
+		addAction(new org.gjt.sp.jedit.actions.view_registers());
 		addAction(new org.gjt.sp.jedit.actions.wing_comment());
 		addAction(new org.gjt.sp.jedit.actions.word_count());
-	}
-
-	/**
-	 * Initializes option panels.
-	 */
-	private static void initOptions()
-	{
-		optionPanes = new Vector();
 	}
 
 	/**
@@ -1327,10 +1333,14 @@ public class jEdit
 	private static void initPlugins()
 	{
 		plugins = new Vector();
-		pluginMenus = new Vector();
 		loadPlugins(jEditHome + "jars");
 		if(settingsDirectory != null)
-			loadPlugins(settingsDirectory + File.separator + "jars");
+		{
+			File jarsDirectory = new File(settingsDirectory,"jars");
+			if(!jarsDirectory.exists())
+				jarsDirectory.mkdir();
+			loadPlugins(jarsDirectory.getPath());
+		}
 	}
 
 	/**
@@ -1364,10 +1374,10 @@ public class jEdit
 	 */
 	private static void initPLAF()
 	{
-		String lf = props.getProperty("lf");
+		String lf = getProperty("lf");
 		try
 		{
-			if(lf != null)
+			if(lf != null && lf.length() != 0)
 				UIManager.setLookAndFeel(lf);
 		}
 		catch(Exception e)
@@ -1382,7 +1392,7 @@ public class jEdit
 	 */
 	private static void initRecent()
 	{
-		recent = new Vector();
+		recent = new Vector(maxRecent);
 
 		for(int i = 0; i < maxRecent; i++)
 		{
@@ -1473,9 +1483,11 @@ public class jEdit
 					"desktop." + i + ".selStart"));
 				int selEnd = Integer.parseInt(getProperty(
 					"desktop." + i + ".selEnd"));
+				boolean rectSelect = "yes".equals(getProperty(
+					"desktop." + i + ".rectSelect"));
 				Buffer buffer = openFile(null,null,path,readOnly,
 					false);
-				buffer.setCaretInfo(selStart,selEnd);
+				buffer.setCaretInfo(selStart,selEnd,rectSelect);
 				Mode m = getMode(mode);
 				if(m != null)
 					buffer.setMode(m);
@@ -1497,13 +1509,40 @@ public class jEdit
 	private static void gotoMarker(Buffer buffer, View view,
 		String marker)
 	{
-		Marker m = buffer.getMarker(marker);
-		if(m == null)
+		if(marker.length() == 0)
 			return;
+
+		int start, end;
+
+		// Handle line number
+		if(marker.charAt(0) == '+')
+		{
+			try
+			{
+				int line = Integer.parseInt(marker.substring(1));
+				Element lineElement = buffer.getDefaultRootElement()
+					.getElement(line + 1);
+				start = end = lineElement.getStartOffset();
+			}
+			catch(Exception e)
+			{
+				return;
+			}
+		}
+		// Handle marker
+		else
+		{
+			Marker m = buffer.getMarker(marker);
+			if(m == null)
+				return;
+			start = m.getStart();
+			end = m.getEnd();
+		}
+
 		if(view == null || view.getBuffer() != buffer)
-			buffer.setCaretInfo(m.getStart(),m.getEnd());
+			buffer.setCaretInfo(start,end,false);
 		else if(view != null)
-			view.getTextArea().select(m.getStart(),m.getEnd());
+			view.getTextArea().select(start,end);
 	}
 
 	private static void addBufferToList(Buffer buffer)
@@ -1520,13 +1559,31 @@ public class jEdit
 
 	private static void removeBufferFromList(Buffer buffer)
 	{
+		if(buffer == buffersFirst && buffer == buffersLast)
+		{
+			buffersFirst = buffersLast = null;
+			return;
+		}
+
 		if(buffer == buffersFirst)
+		{
 			buffersFirst = buffer.next;
+			buffer.next.prev = null;
+		}
 		else
+		{
 			buffer.prev.next = buffer.next;
+		}
 
 		if(buffer == buffersLast)
+		{
 			buffersLast = buffersLast.prev;
+			buffer.prev.next = null;
+		}
+		else
+		{
+			buffer.next.prev = buffer.prev;
+		}
 	}
 
 	private static void addViewToList(View view)
@@ -1544,12 +1601,24 @@ public class jEdit
 	private static void removeViewFromList(View view)
 	{
 		if(view == viewsFirst)
+		{
 			viewsFirst = view.next;
+			view.next.prev = null;
+		}
 		else
+		{
 			view.prev.next = view.next;
+		}
 
 		if(view == viewsLast)
+		{
 			viewsLast = viewsLast.prev;
+			view.prev.next = null;
+		}
+		else
+		{
+			view.next.prev = view.prev;
+		}
 	}
 
 	private static boolean _closeBuffer(View view, Buffer buffer)
@@ -1569,7 +1638,6 @@ public class jEdit
 			}
 			else if(result == JOptionPane.NO_OPTION)
 			{
-				buffer.getAutosaveFile().delete();
 				buffer.setDirty(false);
 			}
 			else
@@ -1639,11 +1707,91 @@ public class jEdit
 			closeView((View)evt.getSource());
 		}
 	}
+
+	////////
+	//////// BEGIN LEGACY API CODE
+	////////
+
+	private static Plugin.OldAPI oldAPI;
+
+	private static void initOldAPI()
+	{
+		if(oldAPI == null)
+		{
+			oldAPI = new Plugin.OldAPI();
+			addPlugin(oldAPI);
+			System.err.println("NOTE: One or more of your plugins"
+				+ " are using deprecated jEdit APIs.\n"
+				+ "Please obtain newer versions as the old"
+				+ " APIs will eventually be removed.");
+		}
+	}
+
+	/**
+	 * Registers an old API plugin with the editor. This will also call
+	 * the <code>start()</code> method of the plugin.
+	 * @see org.gjt.sp.jedit.Plugin#start()
+	 */
+	public static void addPlugin(Plugin plugin)
+	{
+		initOldAPI();
+		addPlugin(new Plugin.Wrapper(plugin));
+	}
+
+	/**
+	 * Registers a plugin menu with the editor. The menu
+	 * resulting from the call to <code>GUIUtilities.loadMenu(menu)</code>
+	 * will be added to the plugins menu.
+	 * @param menu The menu's name
+	 * @see org.gjt.sp.jedit.GUIUtilities#loadMenu(org.gjt.sp.jedit.View,java.lang.String)
+	 *
+	 * @deprecated As of jEdit 2.1pre1, use EditPlugin.createMenuItems()
+	 * instead
+	 */
+	public static void addPluginMenu(String menu)
+	{
+		initOldAPI();
+		oldAPI.addPluginMenu(menu);
+	}
+
+	/**
+	 * Registers an action with the editor and adds it to the plugin
+	 * action list (so it will appear in the plugins menu).
+	 * @param action The action
+	 *
+	 * @deprecated As of jEdit 2.1pre1, use EditPlugin.createMenuItems()
+	 * instead
+	 */
+	public static void addPluginAction(EditAction action)
+	{
+		addAction(action);
+
+		initOldAPI();
+		oldAPI.addPluginAction(action);
+	}
+
+	/**
+	 * Registers an option pane with the editor.
+	 * @param clazz The option pane's class. This must be a
+	 * subclass of <code>OptionPane</code>.
+	 * @see org.gjt.sp.jedit.OptionPane
+	 *
+	 * @deprecated As of jEdit 2.1pre1, use EditPlugin.createMenuItems()
+	 * instead
+	 */
+	public static void addOptionPane(Class clazz)
+	{
+		initOldAPI();
+		oldAPI.addOptionPane(clazz);
+	}
 }
 
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.127  1999/09/30 12:21:04  sp
+ * No net access for a month... so here's one big jEdit 2.1pre1
+ *
  * Revision 1.125  1999/08/21 01:48:18  sp
  * jEdit 2.0pre8
  *

@@ -30,8 +30,6 @@ import org.gjt.sp.jedit.*;
  */
 public abstract class BufferAdapter implements BufferListener
 {
-	
-
 	/**
 	 * Method invoked when a buffer's dirty flag changes.
 	 * This is invoked when a buffer is saved, or changed
@@ -48,11 +46,21 @@ public abstract class BufferAdapter implements BufferListener
 	 * Method invoked when a buffer's edit mode has changed.
 	 */
 	public void bufferModeChanged(BufferEvent evt) {}
+
+	/**
+	 * Method invoked when a buffer is being saved. It is called
+	 * before the save occurs, so it can be used to implement
+	 * on-save filters, and such.
+	 */
+	public void bufferSaving(BufferEvent evt) {}
 }
 
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.6  1999/09/30 12:21:04  sp
+ * No net access for a month... so here's one big jEdit 2.1pre1
+ *
  * Revision 1.5  1999/03/20 04:52:55  sp
  * Buffer-specific options panel finished, attempt at fixing OS/2 caret bug, code
  * cleanups

@@ -1,6 +1,6 @@
 /*
- * goto_anchor.java
- * Copyright (C) 1998 Slava Pestov
+ * view_register.java
+ * Copyright (C) 1999 Slava Pestov
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -12,7 +12,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
+ * You should have received a paste of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
@@ -20,24 +20,18 @@
 package org.gjt.sp.jedit.actions;
 
 import java.awt.event.ActionEvent;
-import org.gjt.sp.jedit.*;
-import org.gjt.sp.jedit.textarea.JEditTextArea;
+import org.gjt.sp.jedit.gui.ViewRegisters;
+import org.gjt.sp.jedit.EditAction;
 
-public class goto_anchor extends EditAction
+public class view_registers extends EditAction
 {
-	public goto_anchor()
+	public view_registers()
 	{
-		super("goto-anchor");
+		super("view-registers");
 	}
 	
 	public void actionPerformed(ActionEvent evt)
 	{
-		View view = getView(evt);
-		JEditTextArea textArea = view.getTextArea();
-		int pos = view.getBuffer().getAnchor();
-		if(pos != -1)
-			textArea.setCaretPosition(pos);
-		else
-			view.getToolkit().beep();
+		new ViewRegisters(getView(evt));
 	}
 }

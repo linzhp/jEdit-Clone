@@ -1,6 +1,6 @@
 /*
  * open_file.java
- * Copyright (C) 1998 Slava Pestov
+ * Copyright (C) 1999 Slava Pestov
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -35,16 +35,10 @@ public class open_file extends EditAction
 	public void actionPerformed(ActionEvent evt)
 	{
 		View view = getView(evt);
-		JFileChooser chooser = new JFileChooser(view.getBuffer()
-			.getFile().getParent());
-		chooser.setDialogType(JFileChooser.OPEN_DIALOG);
-		chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-		int retVal = chooser.showDialog(view,null);
-		if(retVal == JFileChooser.APPROVE_OPTION)
-		{
-			File file = chooser.getSelectedFile();
-			jEdit.openFile(view,null,file.getAbsolutePath(),
-				false,false);
-		}
+		String file = GUIUtilities.showFileDialog(view,view.getBuffer()
+			.getFile().getParent(),JFileChooser.OPEN_DIALOG);
+
+		if(file != null)
+			jEdit.openFile(view,null,file,false,false);
 	}
-}	
+}

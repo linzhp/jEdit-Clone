@@ -32,13 +32,13 @@ public class SyntaxStyle
 	/**
 	 * Creates a new SyntaxStyle.
 	 * @param color The text color
-	 * @param italics True if the text should be italics
+	 * @param italic True if the text should be italics
 	 * @param bold True if the text should be bold
 	 */
-	public SyntaxStyle(Color color, boolean italics, boolean bold)
+	public SyntaxStyle(Color color, boolean italic, boolean bold)
 	{
 		this.color = color;
-		this.italics = italics;
+		this.italic = italic;
 		this.bold = bold;
 	}
 
@@ -51,11 +51,19 @@ public class SyntaxStyle
 	}
 
 	/**
+	 * Returns true if no font styles are enabled.
+	 */
+	public boolean isPlain()
+	{
+		return !(bold || italic);
+	}
+
+	/**
 	 * Returns true if italics is enabled for this style.
 	 */
-	public boolean isItalics()
+	public boolean isItalic()
 	{
-		return italics;
+		return italic;
 	}
 
 	/**
@@ -80,7 +88,7 @@ public class SyntaxStyle
 		lastFont = font;
 		lastStyledFont = new Font(font.getFamily(),
 			(bold ? Font.BOLD : 0)
-			| (italics ? Font.ITALIC : 0),
+			| (italic ? Font.ITALIC : 0),
 			font.getSize());
 		return lastStyledFont;
 	}
@@ -98,7 +106,7 @@ public class SyntaxStyle
 		lastFont = font;
 		lastStyledFont = new Font(font.getFamily(),
 			(bold ? Font.BOLD : 0)
-			| (italics ? Font.ITALIC : 0),
+			| (italic ? Font.ITALIC : 0),
 			font.getSize());
 		fontMetrics = Toolkit.getDefaultToolkit().getFontMetrics(
 			lastStyledFont);
@@ -124,13 +132,13 @@ public class SyntaxStyle
 	public String toString()
 	{
 		return getClass().getName() + "[color=" + color +
-			(italics ? ",italics" : "") +
+			(italic ? ",italic" : "") +
 			(bold ? ",bold" : "") + "]";
 	}
 
 	// private members
 	private Color color;
-	private boolean italics;
+	private boolean italic;
 	private boolean bold;
 	private Font lastFont;
 	private Font lastStyledFont;

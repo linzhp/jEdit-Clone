@@ -63,6 +63,7 @@ public class DefaultInputHandler implements InputHandler
 	public static final ActionListener SELECT_PREV_LINE = new prev_line(true);
 	public static final ActionListener SELECT_PREV_PAGE = new prev_page(true);
 	public static final ActionListener SELECT_PREV_WORD = new prev_word(true);
+	public static final ActionListener TOGGLE_RECT = new toggle_rect();
 
 	public static final ActionListener[] ACTIONS = {
 		BACKSPACE, DELETE, END, SELECT_END, INSERT_BREAK,
@@ -70,7 +71,8 @@ public class DefaultInputHandler implements InputHandler
 		NEXT_PAGE, NEXT_WORD, SELECT_NEXT_CHAR, SELECT_NEXT_LINE,
 		SELECT_NEXT_PAGE, SELECT_NEXT_WORD, OVERWRITE, PREV_CHAR,
 		PREV_LINE, PREV_PAGE, PREV_WORD, SELECT_PREV_CHAR,
-		SELECT_PREV_LINE, SELECT_PREV_PAGE, SELECT_PREV_WORD };
+		SELECT_PREV_LINE, SELECT_PREV_PAGE, SELECT_PREV_WORD,
+		TOGGLE_RECT };
 
 	public static final String[] ACTION_NAMES = {
 		"backspace", "delete", "end", "select-end", "insert-break",
@@ -78,7 +80,7 @@ public class DefaultInputHandler implements InputHandler
 		"next-page", "next-word", "select-next-char", "select-next-line",
 		"select-next-page", "select-next-word", "overwrite", "prev-char",
 		"prev-line", "prev-page", "prev-word", "select-prev-char",
-		"select-prev-line", "select-prev-page", "select-prev-word" };
+		"select-prev-line", "select-prev-page", "select-prev-word", "toggle-rect" };
 
 	/**
 	 * Creates a new input handler with no key bindings defined.
@@ -100,6 +102,7 @@ public class DefaultInputHandler implements InputHandler
 		addKeyBinding("TAB",INSERT_TAB);
 
 		addKeyBinding("INSERT",OVERWRITE);
+		addKeyBinding("C+\\",TOGGLE_RECT);
 
 		addKeyBinding("HOME",HOME);
 		addKeyBinding("END",END);
@@ -181,6 +184,26 @@ public class DefaultInputHandler implements InputHandler
 	}
 
 	/**
+	 * Grabs the next key typed event and invokes the specified
+	 * action with the key as a the action command.
+	 * @param action The action
+	 */
+	public void grabNextKeyStroke(ActionListener listener)
+	{
+		grabAction = listener;
+	}
+
+	/**
+	 * Returns a copy of this input handler that shares the same
+	 * key bindings. Setting key bindings in the copy will also
+	 * set them in the original.
+	 */
+	public InputHandler copy()
+	{
+		return new DefaultInputHandler(this);
+	}
+
+	/**
 	 * Handle a key pressed event. This will look up the binding for
 	 * the key stroke and execute it.
 	 */
@@ -195,6 +218,15 @@ public class DefaultInputHandler implements InputHandler
 			|| keyCode == KeyEvent.VK_ENTER
 			|| keyCode == KeyEvent.VK_TAB)
 		{
+			if(grabAction != null)
+			{
+				grabAction.actionPerformed(new ActionEvent(
+					evt.getSource(),ActionEvent.ACTION_PERFORMED,
+					"\0",modifiers));
+				grabAction = null;
+				return;
+			}
+
 			KeyStroke keyStroke = KeyStroke.getKeyStroke(keyCode,
 				modifiers);
 			Object o = currentBindings.get(keyStroke);
@@ -259,14 +291,24 @@ public class DefaultInputHandler implements InputHandler
 		{
 			if(c >= 0x20 && c != 0x7f)
 			{
+				currentBindings = bindings;
+
 				JEditTextArea textArea = getTextArea(evt);
+
+				if(grabAction != null)
+				{
+					grabAction.actionPerformed(new ActionEvent(
+						textArea,ActionEvent.ACTION_PERFORMED,
+						String.valueOf(c)));
+					grabAction = null;
+					return;
+				}
+				
 				if(!textArea.isEditable())
 				{
 					textArea.getToolkit().beep();
 					return;
 				}
-
-				currentBindings = bindings;
 
 				textArea.overwriteSetSelectedText(String.valueOf(c));
 			}
@@ -369,6 +411,12 @@ public class DefaultInputHandler implements InputHandler
 	// private members
 	private Hashtable bindings;
 	private Hashtable currentBindings;
+	private ActionListener grabAction;
+
+	private DefaultInputHandler(DefaultInputHandler copy)
+	{
+		bindings = currentBindings = copy.bindings;
+	}
 
 	public static class backspace implements ActionListener
 	{
@@ -703,6 +751,8 @@ public class DefaultInputHandler implements InputHandler
 
 				String noWordSep = (String)textArea.getDocument()
 					.getProperty("noWordSep");
+				if(noWordSep == null)
+					noWordSep = "";
 				boolean selectNoLetter = (!Character
 					.isLetterOrDigit(ch)
 					&& noWordSep.indexOf(ch) == -1);
@@ -870,6 +920,8 @@ public class DefaultInputHandler implements InputHandler
 
 				String noWordSep = (String)textArea.getDocument()
 					.getProperty("noWordSep");
+				if(noWordSep == null)
+					noWordSep = "";
 				boolean selectNoLetter = (!Character
 					.isLetterOrDigit(ch)
 					&& noWordSep.indexOf(ch) == -1);
@@ -896,4 +948,22 @@ public class DefaultInputHandler implements InputHandler
 				textArea.setCaretPosition(lineStart + caret);
 		}
 	}
+
+	public static class toggle_rect implements ActionListener
+	{
+		public void actionPerformed(ActionEvent evt)
+		{
+			JEditTextArea textArea = getTextArea(evt);
+			textArea.setSelectionRectangular(
+				!textArea.isSelectionRectangular());
+		}
+	}
 }
+
+/*
+ * ChangeLog:
+ * $Log$
+ * Revision 1.6  1999/09/30 12:21:05  sp
+ * No net access for a month... so here's one big jEdit 2.1pre1
+ *
+ */

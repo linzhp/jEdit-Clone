@@ -1,6 +1,6 @@
 /*
- * replace_next.java
- * Copyright (C) 1998 Slava Pestov
+ * prev_bracket_exp.java
+ * Copyright (C) 1999 Slava Pestov
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,26 +20,33 @@
 package org.gjt.sp.jedit.actions;
 
 import java.awt.event.ActionEvent;
-import org.gjt.sp.jedit.search.SearchAndReplace;
+import org.gjt.sp.jedit.textarea.JEditTextArea;
 import org.gjt.sp.jedit.*;
 
-public class replace_next extends EditAction
+public class prev_bracket_exp extends EditAction
 {
-	public replace_next()
+	public prev_bracket_exp()
 	{
-		super("replace-next");
+		super("prev-bracket-exp");
 	}
 	
 	public void actionPerformed(ActionEvent evt)
 	{
 		View view = getView(evt);
-		Buffer buffer = view.getBuffer();
-		if(!view.getTextArea().isEditable())
+		JEditTextArea textArea = view.getTextArea();
+
+		String text = textArea.getText(0,textArea.getCaretPosition());
+
+loop:		for(int i = textArea.getCaretPosition() - 1; i >= 0; i--)
 		{
-			view.getToolkit().beep();
-			return;
+			switch(text.charAt(i))
+			{
+			case '(': case '[': case '{':
+				textArea.setCaretPosition(i);
+				return;
+			}
 		}
-		SearchAndReplace.replace(view,buffer);
-		SearchAndReplace.find(view);
+
+		view.getToolkit().beep();
 	}
 }

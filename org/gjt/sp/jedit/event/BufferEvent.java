@@ -56,9 +56,16 @@ public class BufferEvent extends AbstractEditorEvent
 	public static final int MODE_CHANGED = BUFFER_FIRST + 2;
 
 	/**
+	 * The return value of the <code>getID()</code> function when
+	 * a buffer is being saved. This event is fired <b>before</b>
+	 * the save occurs.
+	 */
+	public static final int BUFFER_SAVING = BUFFER_FIRST + 3;
+
+	/**
 	 * The last event id that denotes a buffer event.
 	 */
-	public static final int BUFFER_LAST = BUFFER_FIRST + 2;
+	public static final int BUFFER_LAST = BUFFER_FIRST + 3;
 
 	/**
 	 * Creates a new buffer event.
@@ -98,6 +105,9 @@ public class BufferEvent extends AbstractEditorEvent
 		case MODE_CHANGED:
 			l.bufferModeChanged(this);
 			break;
+		case BUFFER_SAVING:
+			l.bufferSaving(this);
+			break;
 		default:
 			// shouldn't happen
 			throw new InternalError();
@@ -108,6 +118,9 @@ public class BufferEvent extends AbstractEditorEvent
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.8  1999/09/30 12:21:04  sp
+ * No net access for a month... so here's one big jEdit 2.1pre1
+ *
  * Revision 1.7  1999/07/08 06:06:04  sp
  * Bug fixes and miscallaneous updates
  *

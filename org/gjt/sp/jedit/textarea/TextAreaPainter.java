@@ -1,5 +1,5 @@
 /*
- * TextAreaPainter.java - Performs double buffering and paints the text area
+ * TextAreaPainter.java - Paints the text area
  * Copyright (C) 1999 Slava Pestov
  *
  * This library is free software; you can redistribute it and/or
@@ -41,10 +41,12 @@ public class TextAreaPainter extends JComponent implements TabExpander
 	{
 		this.textArea = textArea;
 
+		setAutoscrolls(true);
+		setDoubleBuffered(true);
+		setOpaque(true);
+
 		currentLine = new Segment();
 		currentLineIndex = -1;
-
-		firstInvalid = lastInvalid = -1;
 
 		setCursor(Cursor.getPredefinedCursor(Cursor.TEXT_CURSOR));
 
@@ -52,6 +54,7 @@ public class TextAreaPainter extends JComponent implements TabExpander
 		setForeground(Color.black);
 		setBackground(Color.white);
 
+		blockCaret = defaults.blockCaret;
 		styles = defaults.styles;
 		cols = defaults.cols;
 		rows = defaults.rows;
@@ -63,8 +66,6 @@ public class TextAreaPainter extends JComponent implements TabExpander
 		bracketHighlight = defaults.bracketHighlight;
 		eolMarkerColor = defaults.eolMarkerColor;
 		eolMarkers = defaults.eolMarkers;
-
-		copyAreaBroken = defaults.copyAreaBroken;
 	}
 
 	/**
@@ -95,7 +96,6 @@ public class TextAreaPainter extends JComponent implements TabExpander
 	public final void setStyles(SyntaxStyle[] styles)
 	{
 		this.styles = styles;
-		invalidateOffscreen();
 		repaint();
 	}
 
@@ -247,7 +247,6 @@ public class TextAreaPainter extends JComponent implements TabExpander
 	public final void setEOLMarkerColor(Color eolMarkerColor)
 	{
 		this.eolMarkerColor = eolMarkerColor;
-		invalidateOffscreen();
 		repaint();
 	}
 
@@ -266,7 +265,6 @@ public class TextAreaPainter extends JComponent implements TabExpander
 	public final void setEOLMarkerEnabled(boolean eolMarkers)
 	{
 		this.eolMarkers = eolMarkers;
-		invalidateOffscreen();
 		repaint();
 	}
 
@@ -291,188 +289,75 @@ public class TextAreaPainter extends JComponent implements TabExpander
 	}
 
 	/**
-	 * Returns if the copyArea() should not be used.
-	 */
-	public boolean isCopyAreaBroken()
-	{
-		return copyAreaBroken;
-	}
-
-	/**
-	 * Disables the use of the copyArea() function (which is broken in
-	 * JDK 1.2).
-	 */
-	public void setCopyAreaBroken(boolean copyAreaBroken)
-	{
-		this.copyAreaBroken = copyAreaBroken;
-	}
-
-	/**
-	 * Queues a repaint of the changed lines only.
-	 */
-	public final void fastRepaint()
-	{
-		if(firstInvalid == -1 && lastInvalid == -1)
-			repaint();
-		else
-		{
-			repaint(0,textArea.lineToY(firstInvalid)
-				+ fm.getLeading() + fm.getMaxDescent(),
-				getWidth(),(lastInvalid - firstInvalid + 1)
-				* fm.getHeight());
-		}
-	}
-
-	/**
-	 * Paints any lines that changed since the last paint to the offscreen
-	 * graphics, then repaints the offscreen to the specified graphics
-	 * context.
+	 * Repaints the text.
 	 * @param g The graphics context
 	 */
-	public void update(Graphics g)
+	public void paint(Graphics gfx)
 	{
 		tabSize = fm.charWidth('w') * ((Integer)textArea
 			.getDocument().getProperty(
 			PlainDocument.tabSizeAttribute)).intValue();
 
-		// returns true if offscreen was created. When it's created,
-		// all lines, not just the invalid ones, need to be painted.
-		if(ensureOffscreenValid())
-		{
-			firstInvalid = textArea.getFirstLine();
-			lastInvalid = firstInvalid + textArea.getVisibleLines();
-		}
+		Rectangle clipRect = gfx.getClipBounds();
 
-		if(firstInvalid != -1 && lastInvalid != -1)
-		{
-			int lineCount;
-			try
-			{
-				if(firstInvalid == lastInvalid)
-				{
-					lineCount = offscreenRepaintLine(firstInvalid,
-						textArea.getHorizontalOffset());
-				}
-				else
-				{
-					lineCount = offscreenRepaintLineRange(
-						firstInvalid,lastInvalid);
-				}
-				if(lastInvalid - firstInvalid + 1 != lineCount)
-				{
-					// XXX stupid hack
-					Rectangle clip = g.getClipBounds();
-					if(!clip.equals(getBounds()))
-						repaint();
-				}
-			}
-			catch(Exception e)
-			{
-				System.err.println("Error repainting line"
-					+ " range {" + firstInvalid + ","
-					+ lastInvalid + "}:");
-				e.printStackTrace();
-			}
-			firstInvalid = lastInvalid = -1;
-		}
+		gfx.setColor(getBackground());
+		gfx.fillRect(clipRect.x,clipRect.y,clipRect.width,clipRect.height);
 
-		g.drawImage(offImg,0,0,null);
+		// We don't use yToLine() here because that method doesn't
+		// return lines past the end of the document
+		int height = fm.getHeight();
+		int firstLine = textArea.getFirstLine();
+		int firstInvalid = firstLine + clipRect.y / height;
+		// Because the clipRect's height is usually an even multiple
+		// of the font height, we subtract 1 from it, otherwise one
+		// too many lines will always be painted.
+		int lastInvalid = firstLine + (clipRect.y + clipRect.height - 1) / height;
+
+		try
+		{
+			TokenMarker tokenMarker = textArea.getDocument()
+				.getTokenMarker();
+			int x = textArea.getHorizontalOffset();
+
+			for(int line = firstInvalid; line <= lastInvalid; line++)
+			{
+				paintLine(gfx,tokenMarker,line,x);
+			}
+
+			if(tokenMarker != null && tokenMarker.isNextLineRequested())
+			{
+				int h = clipRect.y + clipRect.height;
+				repaint(0,h,getWidth(),getHeight() - h);
+			}
+		}
+		catch(Exception e)
+		{
+			System.err.println("Error repainting line"
+				+ " range {" + firstInvalid + ","
+				+ lastInvalid + "}:");
+			e.printStackTrace();
+		}
 	}
 
 	/**
-	 * Same as <code>update(g)</code>.
-	 */
-	public void paint(Graphics g)
-	{
-		update(g);
-	}
-
-	/**
-	 * Marks a line as needing a repaint, but doesn't actually repaint it
-	 * until <code>repaint()</code> is called manually.
+	 * Marks a line as needing a repaint.
 	 * @param line The line to invalidate
-	 */
-	public void _invalidateLine(int line)
-	{
-		int firstVisible = textArea.getFirstLine();
-		int lastVisible = firstVisible + textArea.getVisibleLines();
-
-		if(line < firstVisible || line > lastVisible)
-			return;
-
-		if(line >= firstInvalid && line <= lastInvalid)
-			return;
-
-		if(firstInvalid == -1 && lastInvalid == -1)
-			firstInvalid = lastInvalid = line;
-		else
-		{
-			firstInvalid = Math.min(line,firstInvalid);
-			lastInvalid = Math.max(line,lastInvalid);
-		}
-	}
-
-	/**
-	 * Repaints the specified line. This is equivalent to calling
-	 * <code>_invalidateLine()</code> and <code>repaint()</code>.
-	 * @param line The line
-	 * @see #_invalidateLine(int)
 	 */
 	public final void invalidateLine(int line)
 	{
-		_invalidateLine(line);
-		fastRepaint();
+		repaint(0,textArea.lineToY(line) + fm.getMaxDescent() + fm.getLeading(),
+			getWidth(),fm.getHeight());
 	}
 
 	/**
-	 * Marks a range of lines as needing a repaint, but doesn't actually
-	 * repaint them until <code>repaint()</code> is called.
+	 * Marks a range of lines as needing a repaint.
 	 * @param firstLine The first line to invalidate
 	 * @param lastLine The last line to invalidate
 	 */
-	public void _invalidateLineRange(int firstLine, int lastLine)
-	{
-		int firstVisible = textArea.getFirstLine();
-		int lastVisible = firstVisible + textArea.getVisibleLines();
-
-		if(firstLine > lastLine)
-		{
-			int tmp = firstLine;
-			firstLine = lastLine;
-			lastLine = tmp;
-		}
-
-		if(lastLine < firstVisible || firstLine > lastVisible)
-			return;
-
-		if(firstInvalid == -1 && lastInvalid == -1)
-		{
-			firstInvalid = firstLine;
-			lastInvalid = lastLine;
-		}
-		else
-		{
-			if(firstLine >= firstInvalid && lastLine <= lastInvalid)
-				return;
-
-			firstInvalid = Math.min(firstInvalid,firstLine);
-			lastInvalid = Math.max(lastInvalid,lastLine);
-		}
-
-		firstInvalid = Math.max(firstInvalid,firstVisible);
-		lastInvalid = Math.min(lastInvalid,lastVisible);
-	}
-
-	/**
-	 * Repaints the specified line range. This is equivalent to calling
-	 * <code>_invalidateLineRange()</code> then <code>repaint()</code>.
-	 * @param firstLine The first line to repaint
-	 * @param lastLine The last line to repaint
-	 */
 	public final void invalidateLineRange(int firstLine, int lastLine)
 	{
-		_invalidateLineRange(firstLine,lastLine);
-		fastRepaint();
+		repaint(0,textArea.lineToY(firstLine) + fm.getMaxDescent() + fm.getLeading(),
+			getWidth(),(lastLine - firstLine + 1) * fm.getHeight());
 	}
 
 	/**
@@ -482,56 +367,6 @@ public class TextAreaPainter extends JComponent implements TabExpander
 	{
 		invalidateLineRange(textArea.getSelectionStartLine(),
 			textArea.getSelectionEndLine());
-	}
-
-	/**
-	 * Simulates scrolling from <code>oldFirstLine</code> to
-	 * <code>newFirstLine</code> by shifting the offscreen graphics
-	 * and repainting any revealed lines. This should not be called
-	 * directly; use <code>JEditTextArea.setFirstLine()</code>
-	 * instead.
-	 * @param oldFirstLine The old first line
-	 * @param newFirstLine The new first line
-	 * @see org.gjt.sp.jedit.textarea.JEditTextArea#setFirstLine(int)
-	 */
-	public void scrollRepaint(int oldFirstLine, int newFirstLine)
-	{
-		if(offGfx == null)
-			return;
-
-		int visibleLines = textArea.getVisibleLines();
-
-		// No point doing this crap if the user scrolled by >= visibleLines
-		if(copyAreaBroken || oldFirstLine + visibleLines <= newFirstLine
-			|| newFirstLine + visibleLines <= oldFirstLine)
-		{
-			_invalidateLineRange(newFirstLine,newFirstLine + visibleLines + 1);
-		}
-		else
-		{
-			int y = fm.getHeight() * (oldFirstLine - newFirstLine);
-			offGfx.copyArea(0,0,offImg.getWidth(this),offImg.getHeight(this),0,y);
-
-			if(oldFirstLine < newFirstLine)
-			{
-				_invalidateLineRange(oldFirstLine + visibleLines - 1,
-					newFirstLine + visibleLines + 1);
-			}
-			else
-			{
-				_invalidateLineRange(newFirstLine, oldFirstLine);
-			}
-		}
-	}
-
-	/**
-	 * Invalidates the offscreen graphics context. This should not be called
-	 * directly.
-	 */
-	public final void invalidateOffscreen()
-	{
-		offImg = null;
-		offGfx = null;
 	}
 
 	/**
@@ -592,144 +427,87 @@ public class TextAreaPainter extends JComponent implements TabExpander
 	
 	protected int tabSize;
 	protected FontMetrics fm;
-	protected Graphics offGfx;
-	protected Image offImg;
 
-	protected int firstInvalid;
-	protected int lastInvalid;
-
-	protected static boolean copyAreaBroken;
-
-	protected boolean ensureOffscreenValid()
+	protected void paintLine(Graphics gfx, TokenMarker tokenMarker,
+		int line, int x)
 	{
-		if(offImg == null || offGfx == null)
-		{
-			offImg = textArea.createImage(getWidth(),getHeight());
-			offGfx = offImg.getGraphics();
-			return true;
-		}
-		else
-			return false;
-	}
-
-	protected int offscreenRepaintLineRange(int firstLine, int lastLine)
-	{
-		if(offGfx == null)
-			return 0;
-
-		int x = textArea.getHorizontalOffset();
-
-		int line;
-		for(line = firstLine; line <= lastLine;)
-		{
-			line += offscreenRepaintLine(line,x);
-		}
-
-		return line - firstLine;
-	}
-
-	protected int offscreenRepaintLine(int line, int x)
-	{
-		TokenMarker tokenMarker = textArea.getTokenMarker();
 		Font defaultFont = getFont();
 		Color defaultColor = getForeground();
-				
+
+		currentLineIndex = line;
 		int y = textArea.lineToY(line);
 
 		if(line < 0 || line >= textArea.getLineCount())
 		{
-			paintHighlight(line,y);
-			styles[Token.INVALID].setGraphicsFlags(offGfx,defaultFont);
-			offGfx.drawString("~",0,y + fm.getHeight());
-			return 1;
+			styles[Token.INVALID].setGraphicsFlags(gfx,defaultFont);
+			gfx.drawString("~",0,y + fm.getHeight());
 		}
-
-		if(tokenMarker == null)
+		else if(tokenMarker == null)
 		{
-			currentLineIndex = line;
-			paintPlainLine(line,defaultFont,defaultColor,x,y);
-			return 1;
+			paintPlainLine(gfx,line,defaultFont,defaultColor,x,y);
 		}
 		else
 		{
-			int count = 0;
-			int lastVisibleLine = Math.min(textArea.getLineCount(),
-				textArea.getFirstLine() + textArea.getVisibleLines());
-			do
-			{
-				currentLineIndex = line + count;
-				paintSyntaxLine(tokenMarker,currentLineIndex,
-					defaultFont,defaultColor,x,y);
-				y += fm.getHeight();
-
-				count++;
-			}
-			while(tokenMarker.isNextLineRequested()
-				&& line + count < lastVisibleLine);
-			return count;
+			paintSyntaxLine(gfx,tokenMarker,line,defaultFont,
+				defaultColor,x,y);
 		}
 	}
 
-	protected void paintPlainLine(int line, Font defaultFont,
+	protected void paintPlainLine(Graphics gfx, int line, Font defaultFont,
 		Color defaultColor, int x, int y)
 	{
-		paintHighlight(line,y);
+		paintHighlight(gfx,line,y);
 		textArea.getLineText(line,currentLine);
 
-		offGfx.setFont(defaultFont);
-		offGfx.setColor(defaultColor);
+		gfx.setFont(defaultFont);
+		gfx.setColor(defaultColor);
 
 		y += fm.getHeight();
-		x = Utilities.drawTabbedText(currentLine,x,y,offGfx,this,0);
+		x = Utilities.drawTabbedText(currentLine,x,y,gfx,this,0);
 
 		if(eolMarkers)
 		{
-			offGfx.setColor(eolMarkerColor);
-			offGfx.drawString(".",x,y);
+			gfx.setColor(eolMarkerColor);
+			gfx.drawString(".",x,y);
 		}
 	}
 
-	protected void paintSyntaxLine(TokenMarker tokenMarker, int line,
-		Font defaultFont, Color defaultColor, int x, int y)
+	protected void paintSyntaxLine(Graphics gfx, TokenMarker tokenMarker,
+		int line, Font defaultFont, Color defaultColor, int x, int y)
 	{
 		textArea.getLineText(currentLineIndex,currentLine);
 		currentLineTokens = tokenMarker.markTokens(currentLine,
 			currentLineIndex);
 
-		paintHighlight(line,y);
+		paintHighlight(gfx,line,y);
 
-		offGfx.setFont(defaultFont);
-		offGfx.setColor(defaultColor);
+		gfx.setFont(defaultFont);
+		gfx.setColor(defaultColor);
 		y += fm.getHeight();
 		x = SyntaxUtilities.paintSyntaxLine(currentLine,
-			currentLineTokens,styles,this,offGfx,x,y);
+			currentLineTokens,styles,this,gfx,x,y);
 
 		if(eolMarkers)
 		{
-			offGfx.setColor(eolMarkerColor);
-			offGfx.drawString(".",x,y);
+			gfx.setColor(eolMarkerColor);
+			gfx.drawString(".",x,y);
 		}
 	}
 
-	protected void paintHighlight(int line, int y)
+	protected void paintHighlight(Graphics gfx, int line, int y)
 	{
-		/* Clear the line's bounding rectangle */
-		int gap = fm.getMaxDescent() + fm.getLeading();
-		offGfx.setColor(getBackground());
-		offGfx.fillRect(0,y + gap,offImg.getWidth(this),fm.getHeight());
-
 		if(line >= textArea.getSelectionStartLine()
 			&& line <= textArea.getSelectionEndLine())
-			paintLineHighlight(line,y);
+			paintLineHighlight(gfx,line,y);
 
 		if(bracketHighlight && line == textArea.getBracketLine())
-			paintBracketHighlight(line,y);
+			paintBracketHighlight(gfx,line,y);
 
 		if(line == textArea.getCaretLine())
-			paintCaret(line,y);
+			paintCaret(gfx,line,y);
 	}
 
-	protected void paintLineHighlight(int line, int y)
+	protected void paintLineHighlight(Graphics gfx, int line, int y)
 	{
 		int height = fm.getHeight();
 		y += fm.getLeading() + fm.getMaxDescent();
@@ -741,20 +519,32 @@ public class TextAreaPainter extends JComponent implements TabExpander
 		{
 			if(lineHighlight)
 			{
-				offGfx.setColor(lineHighlightColor);
-				offGfx.fillRect(0,y,offImg.getWidth(this),height);
+				gfx.setColor(lineHighlightColor);
+				gfx.fillRect(0,y,getWidth(),height);
 			}
 		}
 		else
 		{
-			offGfx.setColor(selectionColor);
+			gfx.setColor(selectionColor);
 
 			int selectionStartLine = textArea.getSelectionStartLine();
 			int selectionEndLine = textArea.getSelectionEndLine();
 			int lineStart = textArea.getLineStartOffset(line);
 
 			int x1, x2;
-			if(selectionStartLine == selectionEndLine)
+			if(textArea.isSelectionRectangular())
+			{
+				int lineLen = textArea.getLineLength(line);
+				x1 = textArea.offsetToX(line,Math.min(lineLen,
+					selectionStart - textArea.getLineStartOffset(
+					selectionStartLine)));
+				x2 = textArea.offsetToX(line,Math.min(lineLen,
+					selectionEnd - textArea.getLineStartOffset(
+					selectionEndLine)));
+				if(x1 == x2)
+					x2++;
+			}
+			else if(selectionStartLine == selectionEndLine)
 			{
 				x1 = textArea.offsetToX(line,
 					selectionStart - lineStart);
@@ -765,7 +555,7 @@ public class TextAreaPainter extends JComponent implements TabExpander
 			{
 				x1 = textArea.offsetToX(line,
 					selectionStart - lineStart);
-				x2 = offImg.getWidth(this);
+				x2 = getWidth();
 			}
 			else if(line == selectionEndLine)
 			{
@@ -776,30 +566,32 @@ public class TextAreaPainter extends JComponent implements TabExpander
 			else
 			{
 				x1 = 0;
-				x2 = offImg.getWidth(this);
+				x2 = getWidth();
 			}
 
-			offGfx.fillRect(x1,y,x2 - x1,height);
+			// "inlined" min/max()
+			gfx.fillRect(x1 > x2 ? x2 : x1,y,x1 > x2 ?
+				(x1 - x2) : (x2 - x1),height);
 		}
 
 	}
 
-	protected void paintBracketHighlight(int line, int y)
+	protected void paintBracketHighlight(Graphics gfx, int line, int y)
 	{
 		int position = textArea.getBracketPosition();
 		if(position == -1)
 			return;
 		y += fm.getLeading() + fm.getMaxDescent();
 		int x = textArea.offsetToX(line,position);
-		offGfx.setColor(bracketHighlightColor);
+		gfx.setColor(bracketHighlightColor);
 		// Hack!!! Since there is no fast way to get the character
 		// from the bracket matching routine, we use ( since all
 		// brackets probably have the same width anyway
-		offGfx.drawRect(x,y,fm.charWidth('(') - 1,
+		gfx.drawRect(x,y,fm.charWidth('(') - 1,
 			fm.getHeight() - 1);
 	}
 
-	protected void paintCaret(int line, int y)
+	protected void paintCaret(Graphics gfx, int line, int y)
 	{
 		if(textArea.isCaretVisible())
 		{
@@ -812,16 +604,16 @@ public class TextAreaPainter extends JComponent implements TabExpander
 			y += fm.getLeading() + fm.getMaxDescent();
 			int height = fm.getHeight();
 			
-			offGfx.setColor(caretColor);
+			gfx.setColor(caretColor);
 
 			if(textArea.isOverwriteEnabled())
 			{
-				offGfx.fillRect(caretX,y + height - 1,
+				gfx.fillRect(caretX,y + height - 1,
 					caretWidth,1);
 			}
 			else
 			{
-				offGfx.drawRect(caretX,y,caretWidth - 1,height - 1);
+				gfx.drawRect(caretX,y,caretWidth - 1,height - 1);
 			}
 		}
 	}
@@ -830,6 +622,9 @@ public class TextAreaPainter extends JComponent implements TabExpander
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.15  1999/09/30 12:21:05  sp
+ * No net access for a month... so here's one big jEdit 2.1pre1
+ *
  * Revision 1.14  1999/08/21 01:48:18  sp
  * jEdit 2.0pre8
  *

@@ -1,6 +1,6 @@
 /*
- * select_next_paragraph.java
- * Copyright (C) 1998 Slava Pestov
+ * select_caret_register.java
+ * Copyright (C) 1999 Slava Pestov
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,35 +20,48 @@
 package org.gjt.sp.jedit.actions;
 
 import java.awt.event.ActionEvent;
+import org.gjt.sp.jedit.textarea.*;
 import org.gjt.sp.jedit.*;
-import org.gjt.sp.jedit.textarea.JEditTextArea;
 
-public class select_next_paragraph extends EditAction
+public class select_caret_register extends EditAction
 {
-	public select_next_paragraph()
+	public select_caret_register()
 	{
-		super("select-next-paragraph");
+		super("select-caret-register");
 	}
 	
 	public void actionPerformed(ActionEvent evt)
 	{
 		View view = getView(evt);
-		Buffer buffer = view.getBuffer();
 		JEditTextArea textArea = view.getTextArea();
 
-		int lineNo = textArea.getCaretLine();
-
-		for(int i = lineNo + 1; i < textArea.getLineCount(); i++)
+		String actionCommand = evt.getActionCommand();
+		if(actionCommand == null || actionCommand.length() != 1)
 		{
-			if(textArea.getLineLength(i) == 0)
+			view.showStatus(jEdit.getProperty("view.status.select-caret-register"));
+			textArea.getInputHandler().grabNextKeyStroke(this);
+		}
+		else
+		{
+			view.showStatus(null);
+
+			char ch = actionCommand.charAt(0);
+			if(ch == '\0')
 			{
-				textArea.select(textArea.getMarkPosition(),
-					textArea.getLineStartOffset(i));
+				view.getToolkit().beep();
 				return;
 			}
-		}
+			Registers.Register register = Registers.getRegister(ch);
 
-		textArea.select(textArea.getMarkPosition(),
-			textArea.getDocumentLength());
+			if(register instanceof Registers.CaretRegister)
+			{
+				Registers.CaretRegister caretReg
+					= (Registers.CaretRegister)register;
+				textArea.select(textArea.getCaretPosition(),
+					caretReg.getOffset());
+			}
+			else
+				view.getToolkit().beep();
+		}
 	}
 }

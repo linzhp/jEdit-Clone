@@ -1,6 +1,6 @@
 /*
- * clear.java
- * Copyright (C) 1998 Slava Pestov
+ * python.java - Python editing mode
+ * Copyright (C) 1999 Jonathan Revusky
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -17,20 +17,20 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-package org.gjt.sp.jedit.actions;
+package org.gjt.sp.jedit.mode;
 
-import java.awt.event.ActionEvent;
-import org.gjt.sp.jedit.*;
+import org.gjt.sp.jedit.syntax.*;
+import org.gjt.sp.jedit.Mode;
 
-public class clear extends EditAction
+public class python extends Mode
 {
-	public clear()
+	public python()
 	{
-		super("clear");
+		super("python");
 	}
 	
-	public void actionPerformed(ActionEvent evt)
+	public TokenMarker createTokenMarker()
 	{
-		getView(evt).getTextArea().setSelectedText("");
+		return new PythonTokenMarker();
 	}
 }

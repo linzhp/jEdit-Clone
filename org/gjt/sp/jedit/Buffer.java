@@ -37,7 +37,7 @@ import org.gjt.sp.jedit.syntax.*;
  * @author Slava Pestov
  * @version $Id$
  */
-public class Buffer extends DefaultSyntaxDocument
+public class Buffer extends SyntaxDocument
 {
 	/**
 	 * Size of I/O buffers.
@@ -98,18 +98,12 @@ public class Buffer extends DefaultSyntaxDocument
 	 */
 	public boolean saveAs(View view)
 	{
-		JFileChooser chooser = new JFileChooser(file.getParent());
-		chooser.setSelectedFile(file);
-		chooser.setDialogType(JFileChooser.SAVE_DIALOG);
-		chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-		int retVal = chooser.showDialog(view,null);
-		if(retVal == JFileChooser.APPROVE_OPTION)
-		{
-			File file = chooser.getSelectedFile();
-			if(file != null)
-				return save(view,file.getAbsolutePath());
-		}
-		return false;
+		String file = GUIUtilities.showFileDialog(view,getPath(),
+			JFileChooser.SAVE_DIALOG);
+		if(file != null)
+			return save(view,file);
+		else
+			return false;
 	}
 
 	/**
@@ -161,8 +155,11 @@ public class Buffer extends DefaultSyntaxDocument
 		}
 
 		// A save is definately going to occur; show the wait cursor
+		// and fire BUFFER_SAVING event
 		if(view != null)
 			GUIUtilities.showWaitCursor(view);
+
+		fireBufferEvent(BufferEvent.BUFFER_SAVING);
 
 		backup(saveFile);
 		try
@@ -238,9 +235,6 @@ public class Buffer extends DefaultSyntaxDocument
 
 		tokenizeLines();
 
-		// The anchor gets f*cked across reloads, so clear it
-		anchor = null;
-		
 		// Clear dirty flag
 		dirty = false;
 
@@ -251,47 +245,6 @@ public class Buffer extends DefaultSyntaxDocument
 		fireBufferEvent(BufferEvent.DIRTY_CHANGED);
 
 		init = false;
-	}
-
-	/**
-	 * Returns the line number where the paragraph of specified
-	 * location starts. Paragraphs are separated by double newlines.
-	 * @param lineNo The line number
-	 */
-	public int locateParagraphStart(int lineNo)
-	{
-		Element map = getDefaultRootElement();
-		for(int i = lineNo - 1; i >= 0; i--)
-		{
-			Element lineElement = map.getElement(i);
-			if(lineElement.getEndOffset() - lineElement
-				.getStartOffset() == 1)
-			{
-				return i;
-			}
-		}
-		return 0;
-	}
-
-	/**
-	 * Returns the line number where the paragraph of specified
-	 * location ends. Paragraphs are separated by double newlines.
-	 * @param lineNo The line number
-	 */
-	public int locateParagraphEnd(int lineNo)
-	{
-		Element map = getDefaultRootElement();
-		int lineCount = map.getElementCount();
-		for(int i = lineNo + 1; i < lineCount; i++)
-		{
-			Element lineElement = map.getElement(i);
-			if(lineElement.getEndOffset() - lineElement
-				.getStartOffset() == 1)
-			{
-				return i;
-			}
-		}
-		return lineCount - 1;
 	}
 
 	/**
@@ -495,7 +448,7 @@ public class Buffer extends DefaultSyntaxDocument
 				return;
 			}
 		}
-			
+
 		String nogzName = name.substring(0,name.length() -
 			(name.endsWith(".gz") ? 3 : 0)).toLowerCase();
 		Mode mode = jEdit.getMode(jEdit.getProperty(
@@ -634,30 +587,6 @@ loop:		for(int i = 0; i < markers.size(); i++)
 	}
 
 	/**
-	 * Moves the anchor to a new position.
-	 * @param pos The new anchor position
-	 */
-	public void setAnchor(int pos)
-	{
-		try
-		{
-			anchor = createPosition(pos);
-		}
-		catch(BadLocationException bl)
-		{
-			anchor = null;
-		}
-	}
-
-	/**
-	 * Returns the anchor position.
-	 */
-	public int getAnchor()
-	{
-		return (anchor == null ? -1 : anchor.getOffset());
-	}
-
-	/**
 	 * Returns the tab size.
 	 */
 	public int getTabSize()
@@ -669,23 +598,6 @@ loop:		for(int i = 0; i < markers.size(); i++)
 			return 8;
 	}
 	
-	/**
-	 * Sets the selection start and end that will be used
-	 * the next time this buffer is edited by a view. This will
-	 * have no effect on any views already editing that buffer;
-	 * <code>view.getTextArea().select()</code> should be used
-	 * in those situations.
-	 *
-	 * @param savedSelStart The selection start
-	 * @param savedSelEnd The selection end
-	 * @see org.gjt.sp.jedit.View#getTextArea()
-	 */
-	public final void setCaretInfo(int savedSelStart, int savedSelEnd)
-	{
-		this.savedSelStart = savedSelStart;
-		this.savedSelEnd = savedSelEnd;
-	}
-
 	/**
 	 * Returns the saved selection start.
 	 */
@@ -700,6 +612,14 @@ loop:		for(int i = 0; i < markers.size(); i++)
 	public final int getSavedSelEnd()
 	{
 		return savedSelEnd;
+	}
+
+	/**
+	 * Returns the saved rectangular selection flag.
+	 */
+	public final boolean isSelectionRectangular()
+	{
+		return rectSelect;
 	}
 
 	/**
@@ -768,7 +688,7 @@ loop:		for(int i = 0; i < markers.size(); i++)
 		undo = new UndoManager();
 		markers = new Vector();
 		addDocumentListener(new DocumentHandler());
-		
+
 		setPath();
 
 		// Set default mode
@@ -803,6 +723,14 @@ loop:		for(int i = 0; i < markers.size(); i++)
 		closed = true;
 	}
 
+	void setCaretInfo(int savedSelStart, int savedSelEnd,
+		boolean rectSelect)
+	{
+		this.savedSelStart = savedSelStart;
+		this.savedSelEnd = savedSelEnd;
+		this.rectSelect = rectSelect;
+	}
+
 	// private members
 	private static int UID;
 
@@ -827,9 +755,9 @@ loop:		for(int i = 0; i < markers.size(); i++)
 	private CompoundEdit compoundEdit;
 	private int compoundEditCount;
 	private Vector markers;
-	private Position anchor;
 	private int savedSelStart;
 	private int savedSelEnd;
+	private boolean rectSelect;
 	private EventListenerList listenerList;
 
 	private void fireBufferEvent(int id)
@@ -1343,6 +1271,9 @@ loop:		for(int i = 0; i < markers.size(); i++)
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.93  1999/09/30 12:21:04  sp
+ * No net access for a month... so here's one big jEdit 2.1pre1
+ *
  * Revision 1.92  1999/08/21 01:48:18  sp
  * jEdit 2.0pre8
  *

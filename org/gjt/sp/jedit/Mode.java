@@ -106,11 +106,11 @@ public abstract class Mode
 	 * and return true, or return false if a normal tab is to be inserted.
 	 * @param buffer The buffer where the tab key was pressed
 	 * @param view The view where the tab key was pressed
-	 * @param caret The caret position
+	 * @param line The line number to indent
 	 * @return true if the tab key event should be swallowed (ignored)
 	 * false if a real tab should be inserted
 	 */
-	public boolean indentLine(Buffer buffer, View view, int caret)
+	public boolean indentLine(Buffer buffer, View view, int lineIndex)
 	{
 		String openBrackets = (String)buffer.getProperty("indentOpenBrackets");
 		String closeBrackets = (String)buffer.getProperty("indentCloseBrackets");
@@ -122,16 +122,15 @@ public abstract class Mode
 		int tabSize = buffer.getTabSize();
 		boolean noTabs = "yes".equals(buffer.getProperty("noTabs"));
 		Element map = buffer.getDefaultRootElement();
-		int index = map.getElementIndex(caret);
-		if(index == 0)
+		if(lineIndex == 0)
 			return false;
-		Element lineElement = map.getElement(index);
+		Element lineElement = map.getElement(lineIndex);
 		Element prevLineElement = null;
 		int prevStart = 0;
 		int prevEnd = 0;
-		while(--index >= 0)
+		while(--lineIndex >= 0)
 		{
-			prevLineElement = map.getElement(index);
+			prevLineElement = map.getElement(lineIndex);
 			prevStart = prevLineElement.getStartOffset();
 			prevEnd = prevLineElement.getEndOffset();
 			if(prevEnd - prevStart > 1)
@@ -231,12 +230,14 @@ public abstract class Mode
 					break;
 				}
 			}
-							
+
 			prevLineIndent += (prevLineBrackets + lineBrackets)
 				* tabSize;
 
 			// Insert a tab if line already has correct indent
-			if(lineIndent >= prevLineIndent)
+			// However, we will do our indentation anyway if the
+			// line has a closing bracket on it
+			if(lineBrackets == 0 && lineIndent >= prevLineIndent)
 				return false;
 
 			// Do it
@@ -287,6 +288,9 @@ public abstract class Mode
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.12  1999/09/30 12:21:04  sp
+ * No net access for a month... so here's one big jEdit 2.1pre1
+ *
  * Revision 1.11  1999/05/26 04:46:03  sp
  * Minor API change, soft tabs fixed ,1.7pre1
  *

@@ -43,7 +43,7 @@ public class indent_on_tab extends EditAction
 
                 if(selStart == selEnd
 			&& "on".equals(buffer.getProperty("indentOnTab"))
-			&& mode.indentLine(buffer,view,selStart))
+			&& mode.indentLine(buffer,view,textArea.getSelectionStartLine()))
                 {
 				return;
                 }

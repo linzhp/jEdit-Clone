@@ -10,6 +10,9 @@
 common.ok=OK
 common.cancel=Cancel
 common.insert=Insert
+common.add=Add
+common.delete=Delete
+common.edit=Edit
 common.close=Close
 
 lineSep.unix=Unix (\\n)
@@ -27,6 +30,7 @@ jar.error.zip=Error loading class {0} from {1}
 jar.error.duplicateName=A plugin named {0} is already loaded
 jar.disabled=Disabled at user request: {0}
 jar.loaded=Loaded successfully: {0}
+jar.loaded.old=Loaded successfully USING OLD APIs: {0}
 jar.error.init=Initialization failed: {0}
 jar.error.deps=Dependency check failed: {0}\n\
 	The following is required to use this plugin:
@@ -64,19 +68,19 @@ help.icon=Help.gif
 ###
 ### CONTEXT MENU
 ###
-view.context=undo redo - cut copy paste paste-previous paste-predefined - \
-	set-anchor select-anchor exchange-anchor - \
-	delete-line join-lines scroll-line
+view.context=undo redo - cut copy paste - \
+	paste-previous paste-predefined view-registers - \
+	scroll-line
 
 ###
 ### MENUBAR
 ###
-view.mbar=buffers file edit search plugins help-menu
+view.mbar=buffers file edit registers search plugins help-menu
 
 ### Buffers menu
 buffers.label=$Buffers
-next-buffer.label=Open $Next Buffer
-prev-buffer.label=Open P$revious Buffer
+next-buffer.label=$Open Next Buffer
+prev-buffer.label=O$pen Previous Buffer
 
 ### File menu
 file=new-file \
@@ -112,7 +116,7 @@ new-view.label=New $View
 open-file.label=$Open File...
 open-url.label=Open $URL...
 open-selection.label=Open Sele$ction
-open-recent.label=Open $Recent
+open-recent.label=O$pen Recent
 no-recent.label=No Recent Files
 reload.label=Re$load
 close-file.label=$Close File
@@ -123,7 +127,7 @@ save-as.label=Sa$ve As...
 save-url.label=Save to URL...
 save-all.label=Save All Buffers
 send.label=Sen$d...
-print.label=$Print...
+print.label=Pr$int...
 buffer-options.label=Buffer Options...
 global-options.label=Global Options...
 plugin-options.label=Plugin Options...
@@ -136,10 +140,8 @@ edit=undo \
      cut \
      copy \
      paste \
-     paste-previous \
-     paste-predefined \
-     clear \
      select-all \
+     select-none \
      - \
      tab \
      untab \
@@ -150,91 +152,114 @@ edit=undo \
      insert-date \
      - \
      expand-abbrev \
-     locate-bracket \
      - \
-     %anchor \
+     goto-line \
+     select-line-range \
+     - \
      %line \
      %paragraph \
      %block
 edit.label=$Edit
 undo.label=$Undo
-redo.label=$Redo
+redo.label=Re$do
 cut.label=$Cut
 copy.label=C$opy
 paste.label=$Paste
-paste-previous.label=Paste Pre$vious...
-paste-predefined.label=Paste Pre$defined...
-clear.label=Clea$r
-select-all.label=Select $All
+select-all.label=Se$lect All
+select-none.label=Select $None
 tab.label=$Spaces to Tabs
-untab.label=$Tabs to Spaces
+untab.label=Ta$bs to Spaces
 to-lower.label=To $Lowercase
 to-upper.label=To $Uppercase
 format.label=F$ormat Text
 insert-date.label=$Insert Date
 expand-abbrev.label=E$xpand Abbreviation
-locate-bracket.label=$Locate Bracket
-
-### Anchor menu
-anchor=set-anchor \
-       goto-anchor \
-       select-anchor \
-       - \
-       exchange-anchor
-anchor.label=Anchor Operations
-set-anchor.label=Set Anchor
-goto-anchor.label=Go to Anchor
-select-anchor.label=Select to Anchor
-exchange-anchor.label=Exchange Anchor and Caret
+goto-line.label=Go $to Line...
+select-line-range.label=Select Line Ran$ge...
 
 ### Line menu
 line=goto-end-indent \
+     scroll-line \
      - \
      delete-line \
      delete-start-line \
      delete-end-line \
      join-lines \
      - \
-     scroll-line
-line.label=Line Operations
+     shift-left \
+     shift-right
+line.label=Lines
 goto-end-indent.label=Go to End of Indent
+scroll-line.label=Scroll to Current Line
 delete-line.label=Delete Line
 delete-start-line.label=Delete to Start of Line
 delete-end-line.label=Delete to End of Line
 join-lines.label=Join Lines
-scroll-line.label=Scroll to Current Line
+shift-left.label=Shift Indent Left
+shift-right.label=Shift Indent Right
 
 ### Paragraph menu
-paragraph=next-paragraph \
-          prev-paragraph \
+paragraph=prev-paragraph \
+	  next-paragraph \
 	  - \
-	  select-next-paragraph \
 	  select-prev-paragraph \
+	  select-next-paragraph \
 	  - \
 	  delete-paragraph
-paragraph.label=Paragraph Operations
-next-paragraph.label=Go to Next Paragraph
+paragraph.label=Paragraphs
 prev-paragraph.label=Go to Previous Paragraph
-select-next-paragraph.label=Select Next Paragraph
+next-paragraph.label=Go to Next Paragraph
 select-prev-paragraph.label=Select Previous Paragraph
+select-next-paragraph.label=Select Next Paragraph
 delete-paragraph.label=Delete Paragraph
 
 ### Block menu
 block=select-block \
+      locate-bracket \
       - \
-      shift-left \
-      shift-right \
+      prev-bracket-exp \
+      next-bracket-exp \
       - \
       wing-comment \
       box-comment \
       block-comment
-block.label=Code Block Operations
+block.label=Source Code
 select-block.label=Select Code Block
-shift-left.label=Shift Indent Left
-shift-right.label=Shift Indent Right
+locate-bracket.label=Locate Bracket
+prev-bracket-exp.label=Previous Bracket
+next-bracket-exp.label=Next Bracket
 wing-comment.label=Wing Comment
 box-comment.label=Box Comment
 block-comment.label=Block Comment
+
+### Registers menu
+registers=cut-string-register \
+          copy-string-register \
+	  append-string-register \
+	  paste-string-register \
+	  - \
+	  set-filename-register \
+	  set-caret-register \
+	  goto-register \
+	  select-caret-register \
+	  exchange-caret-register \
+	  - \
+	  paste-previous \
+          paste-predefined \
+	  view-registers
+registers.label=$Registers
+cut-string-register.label=$Cut to Register
+copy-string-register.label=C$opy to Register
+append-string-register.label=$Append to Register
+paste-string-register.label=$Paste Register
+set-filename-register.label=Save File$name to Register
+set-caret-register.label=Save $Caret to Register
+goto-register.label=$Go to Register
+select-caret-register.label=Se$lect to Register
+exchange-caret-register.label=S$wap Caret with Register
+paste-previous.label=Paste Pre$vious...
+paste-predefined.label=Pas$te Predefined...
+view-registers.label=$View Registers...
 
 ### Search menu
 search=find \
@@ -242,16 +267,12 @@ search=find \
        find-selection \
        - \
        replace-in-selection \
-       replace-next \
        replace-all \
        - \
        hypersearch \
        hypersearch-selection \
        - \
        multifile-search \
-       - \
-       goto-line \
-       select-line-range \
        - \
        set-marker \
        %clear-marker \
@@ -260,16 +281,13 @@ search.label=$Search
 find.label=$Find...
 find-next.label=Fin$d Next
 find-selection.label=F$ind Selection...
-replace-next.label=Replace & Find Ne$xt
-replace-in-selection.label=$Replace in Selection
+replace-in-selection.label=Re$place in Selection
 replace-all.label=Replace $All
 hypersearch.label=H$yperSearch...
 hypersearch-selection.label=Hy$perSearch for Selection...
 multifile-search.label=M$ultifile Search Settings...
-goto-line.label=Go to $Line...
-select-line-range.label=Select Li$ne Range...
 set-marker.label=Set $Marker...
-clear-marker.label=$Clear Marker
+clear-marker.label=Clear Mar$ker
 goto-marker.label=$Go to Marker
 no-markers.label=No Markers Defined
 
@@ -311,6 +329,7 @@ prev-line.label=Previous Line
 select-prev-line.label=Select Previous Line
 next-line.label=Next Line
 select-next-line.label=Select Next Line
+toggle-rect.label=Toggle Rectangle Select
 
 ###
 ### VIEW STUFF
@@ -322,16 +341,16 @@ select-next-line.label=Select Next Line
 # {2} - 1 if modified, 0 if saved
 view.title={0}{1,choice,0#|1# (read only)}{2,choice,0#|1# (modified)}
 
-# Line number bar
-# {0} - the current column number (dot - lineStart)
-# {1} - the current line number
-# {2} - the number of lines in the buffer
-# {3} - the percentage of the file displayed
-view.lineNumber={0} - {1}/{2} - {3}%
-
-# Hint bar
-# {0} - the hint of the day
-view.hintBar=Hint: {0}
+# Status messages
+view.status.cut-string-register=Cut to register?
+view.status.copy-string-register=Copy to register?
+view.status.append-string-register=Append to register?
+view.status.paste-string-register=Paste from register?
+view.status.set-filename-register=Save file name to register?
+view.status.set-caret-register=Save caret to register?
+view.status.goto-register=Go to register?
+view.status.select-caret-register=Select to register?
+view.status.exchange-caret-register=Swap caret with register?
 
 ###
 ### VARIOUS DIALOGS
@@ -358,7 +377,7 @@ about.message=jEdit version {0} (JDK {1}, {2} {3})\n\
 	optimization, so without syntax highlighting, jEdit would suck.\n\
 	\n\
 	- Mike Dillon - contributed code, maintains plugin central\n\
-	\n\
+	- Jonathan Revusky - contributed the Python mode\n\
 	- Nathan Tenney - donated some space on his FTP site\n\
 	\n\
 	... plus all the users, plugin authors, and people who sent me\n\
@@ -492,9 +511,6 @@ pasteprev.caption=Previous clippings:
 # Paste predefined dialog
 pastepredef.title=Paste Predefined
 pastepredef.caption=Predefined clippings:
-pastepredef.add=Add
-pastepredef.delete=Delete
-pastepredef.edit=Edit
 
 # Clipping editor dialog
 clipedit.title=Clipping Editor
@@ -510,6 +526,11 @@ selectlinerange.title=Select Line Range
 selectlinerange.caption=Select line range:
 selectlinerange.start=Start line:\ 
 selectlinerange.end=End line:\ 
+
+# View registers
+view-registers.title=Registers
+view-registers.caption=Defined registers:
+view-registers.view=View
 
 # Buffer options dialog
 buffer_options.title=Buffer Options
@@ -531,10 +552,8 @@ options.general.backupSuffix=Backup filename suffix:\
 options.general.lineSeparator=Default line separator:\ 
 options.general.saveDesktop=Save session on exit
 options.general.saveGeometry=Save window and dialog positions
-options.general.showTips=Show hints in status bar
 options.general.showToolbar=Show toolbar
 options.general.showFullPath=Show full path of buffers in title bar
-options.general.copyAreaDisabled=Don't use copyArea() for scrolling
 options.editor.label=Editor
 options.editor.defaultMode=Default edit mode:\ 
 options.editor.font=Text font:\ 
@@ -579,8 +598,13 @@ options.styles.keyword3Style=Keyword 3
 options.styles.operatorStyle=Operator
 options.styles.invalidStyle=Invalid token
 options.keys.label=Shortcuts
+options.keys.note=Restart jEdit for shortcut changes to take effect
 options.keys.name=Command
 options.keys.binding=Keyboard shortcut
+options.filters.label=File Filters
+options.filters.toggle=File filters in open and save dialogs
+options.filters.name=Name
+options.filters.re=Regular Expression
 
 # Color chooser, used by options.styles
 colorChooser.title=Pick a Color
@@ -604,13 +628,13 @@ helpviewer.forward=Forward
 helpviewer.home=Contents
 
 # Documentation protocol (jeditdocs:)
-docindex.header=<html><head><title>jEdit Documentation</title></head>\n\
-	<body><h1>jEdit Documentation</h1>
+docindex.header=<html><head><title>Documentation Index</title></head>\n\
+	<body><h1>Documentation Index</h1>
 
-docindex.general=<h2>Miscallaneous Documents</h2><ul>
+docindex.general=<h2>Miscellaneous</h2><ul>
 docindex.general.entry=<li><a href=file:{0}/{1}>{1}</a>
 
-docindex.books=</ul><h2>Online Books</h2><ul>
+docindex.books=</ul><h2>jEdit Documentation</h2><ul>
 docindex.books.jeditdocs=<li><a href=file:{0}/jeditdocs/index.html>jEdit User's Guide</a>
 docindex.books.api=<li><a href=file:{0}/api/packages.html>jEdit API Documentation</a>
 

@@ -19,6 +19,9 @@
 
 (define %admon-graphics% #f)
 
+;; Since we're producing PDF output, we need to use PNG images
+(define %graphic-default-extension% "png")
+
 ;; DocBook should have some sort of %img-dir% variable, but for now,
 ;; a stupid hack
 

@@ -1,5 +1,5 @@
 /*
- * indent_on_enter.java - Action
+ * next_bracket_exp.java
  * Copyright (C) 1999 Slava Pestov
  *
  * This program is free software; you can redistribute it and/or
@@ -23,29 +23,33 @@ import java.awt.event.ActionEvent;
 import org.gjt.sp.jedit.textarea.JEditTextArea;
 import org.gjt.sp.jedit.*;
 
-public class indent_on_enter extends EditAction
+public class next_bracket_exp extends EditAction
 {
-        public indent_on_enter()
-        {
-                super("indent-on-enter");
+	public next_bracket_exp()
+	{
+		super("next-bracket-exp");
 	}
+	
+	public void actionPerformed(ActionEvent evt)
+	{
+		View view = getView(evt);
+		JEditTextArea textArea = view.getTextArea();
 
-        public void actionPerformed(ActionEvent evt)
-        {
-                View view = getView(evt);
-                Buffer buffer = view.getBuffer();
-                JEditTextArea textArea = view.getTextArea();
+		int caret = textArea.getCaretPosition();
+		int docLength = textArea.getDocumentLength();
 
-		textArea.setSelectedText("\n");
+		String text = textArea.getText(caret,docLength - caret - 1);
 
-                Mode mode = buffer.getMode();
-		int selStart = textArea.getSelectionStart();
-		int selEnd = textArea.getSelectionEnd();
-
-                if(selStart == selEnd
-			&& "on".equals(buffer.getProperty("indentOnEnter")))
+loop:		for(int i = 0; i < text.length(); i++)
 		{
-			mode.indentLine(buffer,view,textArea.getCaretLine());
-                }
-        }
+			switch(text.charAt(i))
+			{
+			case ')': case ']': case '}':
+				textArea.setCaretPosition(caret + i + 1);
+				return;
+			}
+		}
+
+		view.getToolkit().beep();
+	}
 }

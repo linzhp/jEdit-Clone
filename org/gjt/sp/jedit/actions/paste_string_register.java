@@ -1,6 +1,6 @@
 /*
- * delete_paragraph.java
- * Copyright (C) 1998, 1999 Slava Pestov
+ * paste_string_register.java
+ * Copyright (C) 1999 Slava Pestov
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -19,16 +19,16 @@
 
 package org.gjt.sp.jedit.actions;
 
-import javax.swing.text.BadLocationException;
 import java.awt.event.ActionEvent;
+import org.gjt.sp.jedit.textarea.*;
+import org.gjt.sp.jedit.gui.HistoryModel;
 import org.gjt.sp.jedit.*;
-import org.gjt.sp.jedit.textarea.JEditTextArea;
 
-public class delete_paragraph extends EditAction
+public class paste_string_register extends EditAction
 {
-	public delete_paragraph()
+	public paste_string_register()
 	{
-		super("delete-paragraph");
+		super("paste-string-register");
 	}
 	
 	public void actionPerformed(ActionEvent evt)
@@ -42,35 +42,39 @@ public class delete_paragraph extends EditAction
 			return;
 		}
 
-		Buffer buffer = view.getBuffer();
-		int lineNo = textArea.getCaretLine();
-
-		int start = 0, end = textArea.getDocumentLength();
-
-		for(int i = lineNo - 1; i >= 0; i--)
+		String actionCommand = evt.getActionCommand();
+		if(actionCommand == null || actionCommand.length() != 1)
 		{
-			if(textArea.getLineLength(i) == 0)
+			view.showStatus(jEdit.getProperty("view.status.paste-string-register"));
+			textArea.getInputHandler().grabNextKeyStroke(this);
+		}
+		else
+		{
+			view.showStatus(null);
+
+			char ch = actionCommand.charAt(0);
+			if(ch == '\0')
 			{
-				start = textArea.getLineStartOffset(i);
-				break;
+				view.getToolkit().beep();
+				return;
 			}
-		}
-
-		for(int i = lineNo + 1; i < textArea.getLineCount(); i++)
-		{
-			if(textArea.getLineLength(i) == 0)
+			Registers.Register register = Registers.getRegister(ch);
+			if(register == null)
 			{
-				end = textArea.getLineStartOffset(i);
-				break;
+				view.getToolkit().beep();
+				return;
 			}
-		}
-
-		try
-		{
-			buffer.remove(start,end - start);
-		}
-		catch(BadLocationException bl)
-		{
+			else
+			{
+				String selection = register.toString();
+				if(selection == null)
+				{
+					view.getToolkit().beep();
+					return;
+				}
+				textArea.setSelectedText(selection);
+				HistoryModel.getModel("clipboard").addItem(selection);
+			}
 		}
 	}
 }

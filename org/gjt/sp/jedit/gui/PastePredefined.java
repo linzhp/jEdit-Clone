@@ -39,34 +39,40 @@ implements ActionListener, KeyListener, MouseListener
 			"pastepredef.caption")), BorderLayout.NORTH);
 
 		clipModel = new DefaultListModel();
-		clipVector = new Vector();
+
 		int i = 0;
 		for(;;)
 		{
 			String clip = jEdit.getProperty("clipPredefined." + i);
 			if(clip == null)
 				break;
-			clipVector.addElement(clip);
-			clipModel.addElement(truncString(clip));
+			clipModel.addElement(clip);
 			i++;
 		}
+
 		clips = new JList(clipModel);
-		clips.setVisibleRowCount(10);
+		clips.setVisibleRowCount(16);
+
 		clips.setFont(view.getTextArea().getPainter().getFont());
 		clips.addMouseListener(this);
-		content.add(new JScrollPane(clips), BorderLayout.CENTER);
+
+		JScrollPane scroller = new JScrollPane(clips);
+		Dimension dim = scroller.getPreferredSize();
+		scroller.setPreferredSize(new Dimension(640,dim.height));
+
+		content.add(scroller, BorderLayout.CENTER);
 
 		JPanel buttons = new JPanel();
 		insert = new JButton(jEdit.getProperty("common.insert"));
 		insert.addActionListener(this);
 		buttons.add(insert);
-		add = new JButton(jEdit.getProperty("pastepredef.add"));
+		add = new JButton(jEdit.getProperty("common.add"));
 		add.addActionListener(this);
 		buttons.add(add);
-		delete = new JButton(jEdit.getProperty("pastepredef.delete"));
+		delete = new JButton(jEdit.getProperty("common.delete"));
 		delete.addActionListener(this);
 		buttons.add(delete);
-		edit = new JButton(jEdit.getProperty("pastepredef.edit"));
+		edit = new JButton(jEdit.getProperty("common.edit"));
 		edit.addActionListener(this);
 		buttons.add(edit);
 		cancel = new JButton(jEdit.getProperty("common.cancel"));
@@ -88,12 +94,11 @@ implements ActionListener, KeyListener, MouseListener
 
 	public void dispose()
 	{
-		Enumeration enum = clipVector.elements();
 		int i = 0;
-		while(enum.hasMoreElements())
+		while(i < clipModel.getSize())
 		{
 			jEdit.setProperty("clipPredefined." + i,
-				(String)enum.nextElement());
+				(String)clipModel.getElementAt(i));
 			i++;
 		}
 		jEdit.unsetProperty("clipPredefined." + i);
@@ -110,33 +115,26 @@ implements ActionListener, KeyListener, MouseListener
 		}
 		else if(source == add)
 		{
-			String clip = new ClippingEditor(view,null).getText();
+			String clip = new ClippingEditor(view,null,false).getText();
 			if(clip != null)
-			{
-				clipVector.addElement(clip);
-				clipModel.addElement(truncString(clip));
-			}
+				clipModel.addElement(clip);
 		}
 		else if(source == delete)
 		{
 			int index = clips.getSelectedIndex();
 			if(index != -1)
-			{
-				clipVector.removeElementAt(index);
 				clipModel.removeElementAt(index);
-			}
 		}
 		else if(source == edit)
 		{
 			int index = clips.getSelectedIndex();
 			if(index != -1)
 			{
-				String clip = new ClippingEditor(view,(String)clipVector
-					.elementAt(index)).getText();
+				String clip = new ClippingEditor(view,(String)clipModel
+					.getElementAt(index),false).getText();
 				if(clip != null)
 				{
-					clipVector.setElementAt(clip,index);
-					clipModel.setElementAt(truncString(clip),index);
+					clipModel.setElementAt(clip,index);
 				}
 			}
 		}
@@ -175,33 +173,19 @@ implements ActionListener, KeyListener, MouseListener
 	// private members
 	private View view;
 	private JList clips;
-	// clipModel contains blah...blah versions, clipVector contains
-	// full versions
 	private DefaultListModel clipModel;
-	private Vector clipVector;
 	private JButton insert;
 	private JButton add;
 	private JButton delete;
 	private JButton edit;
 	private JButton cancel;
 
-	private String truncString(String str)
-	{
-		str = str.replace('\n',' ');
-		if(str.length() > 60)
-		{
-			str = str.substring(0,30) + " ... " + str.substring(
-				str.length() - 30);
-		}
-		return str;
-	}
-
 	private void doInsert()
 	{
 		int index = clips.getSelectedIndex();
 		if(index != -1)
 			view.getTextArea().setSelectedText((String)
-				clipVector.elementAt(index));
+				clipModel.getElementAt(index));
 		dispose();
 	}
 }

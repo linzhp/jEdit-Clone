@@ -1,5 +1,5 @@
 /*
- * scroll_line.java
+ * append_string_register.java
  * Copyright (C) 1999 Slava Pestov
  *
  * This program is free software; you can redistribute it and/or
@@ -19,26 +19,51 @@
 
 package org.gjt.sp.jedit.actions;
 
-import javax.swing.text.Element;
 import java.awt.event.ActionEvent;
-import java.awt.Rectangle;
-import org.gjt.sp.jedit.textarea.JEditTextArea;
+import org.gjt.sp.jedit.textarea.*;
 import org.gjt.sp.jedit.*;
 
-public class scroll_line extends EditAction
+public class append_string_register extends EditAction
 {
-	public scroll_line()
+	public append_string_register()
 	{
-		super("scroll-line");
+		super("append-string-register");
 	}
 	
 	public void actionPerformed(ActionEvent evt)
 	{
 		View view = getView(evt);
 		JEditTextArea textArea = view.getTextArea();
+		String selection = textArea.getSelectedText();
 
-		int line = textArea.getCaretLine();
-		textArea.setFirstLine(Math.max(0,line -
-			textArea.getVisibleLines() / 2));
+		if(selection == null)
+			return;
+
+		String actionCommand = evt.getActionCommand();
+		if(actionCommand == null || actionCommand.length() != 1)
+		{
+			view.showStatus(jEdit.getProperty("view.status.append-string-register"));
+			textArea.getInputHandler().grabNextKeyStroke(this);
+		}
+		else
+		{
+			view.showStatus(null);
+
+			char ch = actionCommand.charAt(0);
+			if(ch == '\0')
+			{
+				view.getToolkit().beep();
+				return;
+			}
+			Registers.Register register = Registers.getRegister(ch);
+
+			if(register == null || register.toString() == null)
+				Registers.setRegister(ch,new Registers.StringRegister(selection));
+			else
+			{
+				Registers.setRegister(ch,new Registers.StringRegister(register.toString()
+					+ selection));
+			}
+		}
 	}
 }

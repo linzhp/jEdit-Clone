@@ -34,28 +34,34 @@ implements ActionListener, KeyListener, MouseListener
 		this.view = view;
 		Container content = getContentPane();
 		clipHistory = HistoryModel.getModel("clipboard");
-		String[] abbrevClipHistory = new String[clipHistory.getSize()];
-		for(int i = 0; i < clipHistory.getSize(); i++)
-		{
-			String clip = (String)clipHistory.getItem(i);
-			clip = clip.replace('\n',' ');
-			if(clip.length() > 60)
+
+		clips = new JList(new AbstractListModel() {
+			public int getSize()
 			{
-				clip = clip.substring(0,30) + " ... "
-					+ clip.substring(clip.length() - 30);
+				return clipHistory.getSize();
 			}
-			abbrevClipHistory[i] = clip;
-		}
-		clips = new JList(abbrevClipHistory);
-		clips.setVisibleRowCount(10);
+
+			public Object getElementAt(int index)
+			{
+				return clipHistory.getItem(index);
+			}
+		});
+
+		clips.setVisibleRowCount(16);
 		clips.setFont(view.getTextArea().getPainter().getFont());
+
 		clips.addMouseListener(this);
 		insert = new JButton(jEdit.getProperty("common.insert"));
 		cancel = new JButton(jEdit.getProperty("common.cancel"));
 		content.setLayout(new BorderLayout());
 		content.add(new JLabel(jEdit.getProperty("pasteprev.caption")),
 			BorderLayout.NORTH);
-		content.add(new JScrollPane(clips), BorderLayout.CENTER);
+
+		JScrollPane scroller = new JScrollPane(clips);
+		Dimension dim = scroller.getPreferredSize();
+		scroller.setPreferredSize(new Dimension(640,dim.height));
+
+		content.add(scroller, BorderLayout.CENTER);
 		JPanel panel = new JPanel();
 		panel.add(insert);
 		panel.add(cancel);

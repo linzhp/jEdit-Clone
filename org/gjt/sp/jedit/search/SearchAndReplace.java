@@ -257,70 +257,21 @@ loop:			for(;;)
 	/**
 	 * Replaces the current selection with the replacement string.
 	 * @param view The view
-	 * @param buffer The buffer
 	 * @return True if the operation was successful, false otherwise
 	 */
-	public static boolean replace(View view, Buffer buffer)
+	public static boolean replace(View view)
 	{
 		JEditTextArea textArea = view.getTextArea();
+		// setSelectedText() clears these values, so save them
 		int selStart = textArea.getSelectionStart();
-		int selEnd = textArea.getSelectionEnd();
-		if(selStart == selEnd)
+		boolean rect = textArea.isSelectionRectangular();
+
+		if(selStart == textArea.getSelectionEnd())
 		{
 			view.getToolkit().beep();
 			return false;
 		}
-		boolean retVal = replace(view,buffer,selStart,selEnd);
-		textArea.setSelectionStart(selStart);
-		return retVal;
-	}
 
-	/**
-	 * Replaces all occurances of the search string with the replacement
-	 * string.
-	 */
-	public static boolean replaceAll(View view)
-	{
-		boolean retval = false;
-
-		// Show the wait cursor
-		if(view != null)
-			GUIUtilities.showWaitCursor(view);
-
-		Buffer[] buffers = fileset.getSearchBuffers(view);
-		for(int i = 0; i < buffers.length; i++)
-		{
-			Buffer buffer = buffers[i];
-			retval |= replace(view,buffer,0,buffer.getLength());
-		}
-
-		// Hide the wait cursor
-		if(view != null)
-			GUIUtilities.hideWaitCursor(view);
-
-		return retval;
-	}
-
-	/**
-	 * Replaces all occurances of the search string with the replacement
-	 * string.
-	 * @param view The view
-	 * @param buffer The buffer
-	 * @param start The index where to start the search
-	 * @param end The end offset of the search
-	 * @return True if the replace operation was successful, false
-	 * if no matches were found
-	 */
-	public static boolean replace(View view, Buffer buffer,
-		int start, int end)
-	{
-		if(!view.getTextArea().isEditable())
-		{
-			view.getToolkit().beep();
-			return false;
-		}
-		boolean found = false;
-		buffer.beginCompoundEdit();
 		try
 		{
 			SearchMatcher matcher = getSearchMatcher();
@@ -330,50 +281,114 @@ loop:			for(;;)
 				return false;
 			}
 
-			int[] match;
+			String replacement = matcher.substitute(textArea.getSelectedText());
+			if(replacement == null)
+				return false;
 
-			Element map = buffer.getDefaultRootElement();
-			int startLine = map.getElementIndex(start);
-			int endLine = map.getElementIndex(end);
-
-			for(int i = startLine; i <= endLine; i++)
-			{
-				Element lineElement = map.getElement(i);
-				int lineStart;
-				int lineEnd;
-
-				if(i == startLine)
-					lineStart = start;
-				else
-					lineStart = lineElement.getStartOffset();
-
-				if(i == endLine)
-					lineEnd = end;
-				else
-					lineEnd = lineElement.getEndOffset() - 1;
-
-				lineEnd -= lineStart;
-				String line = buffer.getText(lineStart,lineEnd);
-				String newLine = matcher.substitute(line);
-				if(newLine == null)
-					continue;
-				buffer.remove(lineStart,lineEnd);
-				buffer.insertString(lineStart,newLine,null);
-
-				end += (newLine.length() - lineEnd);
-				found = true;
-			}
+			textArea.setSelectedText(replacement);
+			textArea.setSelectionStart(selStart);
+			textArea.setSelectionRectangular(rect);
+			return true;
 		}
 		catch(Exception e)
 		{
 			e.printStackTrace();
-			found = false;
 			Object[] args = { e.getMessage() };
 			if(args[0] == null)
 				args[0] = e.toString();
 			GUIUtilities.error(view,"searcherror",args);
 		}
-		buffer.endCompoundEdit();
+
+		return false;
+	}
+
+	/**
+	 * Replaces all occurances of the search string with the replacement
+	 * string.
+	 */
+	public static boolean replaceAll(View view)
+	{
+		boolean retVal = false;
+
+		// Show the wait cursor
+		GUIUtilities.showWaitCursor(view);
+
+		try
+		{
+			Buffer[] buffers = fileset.getSearchBuffers(view);
+			for(int i = 0; i < buffers.length; i++)
+			{
+				Buffer buffer = buffers[i];
+				// Leave buffer in a consistent state if
+				// an error occurs
+				try
+				{
+					buffer.beginCompoundEdit();
+					retVal |= replaceAll(view,buffer);
+				}
+				finally
+				{
+					buffer.endCompoundEdit();
+				}
+			}
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+			Object[] args = { e.getMessage() };
+			if(args[0] == null)
+				args[0] = e.toString();
+			GUIUtilities.error(view,"searcherror",args);
+		}
+
+		// Hide the wait cursor
+		GUIUtilities.hideWaitCursor(view);
+
+		if(!retVal)
+			view.getToolkit().beep();
+
+		return retVal;
+	}
+
+	/**
+	 * Replaces all occurances of the search string with the replacement
+	 * string.
+	 * @param view The view
+	 * @param buffer The buffer
+	 * @return True if the replace operation was successful, false
+	 * if no matches were found
+	 */
+	public static boolean replaceAll(View view, Buffer buffer)
+		throws BadLocationException
+	{
+		if(!view.getTextArea().isEditable())
+			return false;
+
+		boolean found = false;
+
+		SearchMatcher matcher = getSearchMatcher();
+		if(matcher == null)
+			return false;
+
+		Element map = buffer.getDefaultRootElement();
+
+		for(int i = 0; i < map.getElementCount(); i++)
+		{
+			Element lineElement = map.getElement(i);
+			int lineStart = lineElement.getStartOffset();
+			int lineEnd = lineElement.getEndOffset()
+				- lineStart - 1;
+
+			String line = buffer.getText(lineStart,lineEnd);
+			String newLine = matcher.substitute(line);
+			if(newLine == null)
+				continue;
+			buffer.remove(lineStart,lineEnd);
+			buffer.insertString(lineStart,newLine,null);
+
+			found = true;
+		}
+
 		return found;
 	}
 
@@ -394,10 +409,8 @@ loop:			for(;;)
 	 */
 	public static void save()
 	{
-		jEdit.setProperty("search.find.value",(search == null ? ""
-			: search));
-		jEdit.setProperty("search.replace.value",(replace == null ? ""
-			: replace));
+		jEdit.setProperty("search.find.value",search);
+		jEdit.setProperty("search.replace.value",replace);
 		jEdit.setProperty("search.ignoreCase.toggle",
 			ignoreCase ? "on" : "off");
 		jEdit.setProperty("search.regexp.toggle",
@@ -416,6 +429,9 @@ loop:			for(;;)
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.12  1999/09/30 12:21:04  sp
+ * No net access for a month... so here's one big jEdit 2.1pre1
+ *
  * Revision 1.11  1999/07/16 23:45:49  sp
  * 1.7pre6 BugFree version
  *

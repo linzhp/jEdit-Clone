@@ -22,7 +22,7 @@ package org.gjt.sp.jedit;
 import java.io.*;
 
 /**
- * Class with several useful miscallaneous functions.<p>
+ * Class with several useful miscellaneous functions.<p>
  *
  * It provides methods for converting file names to class names, for
  * constructing path names, and for various indentation calculations.
@@ -47,7 +47,7 @@ public class MiscUtilities
 	}
 
 	/**
-	 * Converts a clas name to a file name. All periods are replaced
+	 * Converts a class name to a file name. All periods are replaced
 	 * with slashes and the '.class' extension is added.
 	 * @param name The class name
 	 */
@@ -214,6 +214,9 @@ loop:		for(int i = 0; i < str.length(); i++)
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.16  1999/09/30 12:21:04  sp
+ * No net access for a month... so here's one big jEdit 2.1pre1
+ *
  * Revision 1.14  1999/07/16 23:45:49  sp
  * 1.7pre6 BugFree version
  *

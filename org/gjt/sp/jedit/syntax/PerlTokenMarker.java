@@ -92,12 +92,12 @@ loop:		for(int i = offset; i < length; i++)
 				switch(c)
 				{
 				case '#':
+					if(doKeyword(line,i,c))
+						break;
 					if(backslash)
 						backslash = false;
 					else
 					{
-						if(doKeyword(line,i,c))
-							break;
 						addToken(i - lastOffset,token);
 						addToken(length - i,Token.COMMENT1);
 						lastOffset = lastKeyword = length;
@@ -118,10 +118,10 @@ loop:		for(int i = offset; i < length; i++)
 					break;
 				case '$': case '&': case '%': case '@':
 					backslash = false;
+					if(doKeyword(line,i,c))
+						break;
 					if(length - i > 1)
 					{
-						if(doKeyword(line,i,c))
-							break;
 						if(c == '&' && (array[i1] == '&'
 							|| Character.isWhitespace(
 							array[i1])))
@@ -135,12 +135,12 @@ loop:		for(int i = offset; i < length; i++)
 					}
 					break;
 				case '"':
+					if(doKeyword(line,i,c))
+						break;
 					if(backslash)
 						backslash = false;
 					else
 					{
-						if(doKeyword(line,i,c))
-							break;
 						addToken(i - lastOffset,token);
 						token = Token.LITERAL1;
 						lineInfo[lineIndex].obj = null;
@@ -163,24 +163,24 @@ loop:		for(int i = offset; i < length; i++)
 					}
 					break;
 				case '`':
+					if(doKeyword(line,i,c))
+						break;
 					if(backslash)
 						backslash = false;
 					else
 					{
-						if(doKeyword(line,i,c))
-							break;
 						addToken(i - lastOffset,token);
 						token = Token.OPERATOR;
 						lastOffset = lastKeyword = i;
 					}
 					break;
 				case '<':
+					if(doKeyword(line,i,c))
+						break;
 					if(backslash)
 						backslash = false;
 					else
 					{
-						if(doKeyword(line,i,c))
-							break;
 						if(length - i > 2 && array[i1] == '<'
 							&& !Character.isWhitespace(array[i+2]))
 						{
@@ -191,7 +191,7 @@ loop:		for(int i = offset; i < length; i++)
 							if(array[length - 1] == ';')
 								len--;
 							lineInfo[lineIndex].obj =
-								new String(array,i + 2,len);
+								createReadinString(array,i + 2,len);
 						}
 					}
 					break;
@@ -199,7 +199,10 @@ loop:		for(int i = offset; i < length; i++)
 					backslash = false;
 					if(doKeyword(line,i,c))
 						break;
-					if(i == lastKeyword)
+					// Doesn't pick up all labels,
+					// but at least doesn't mess up
+					// XXX::YYY
+					if(lastKeyword != 0)
 						break;
 					addToken(i1 - lastOffset,Token.LABEL);
 					lastOffset = lastKeyword = i1;
@@ -228,10 +231,10 @@ loop:		for(int i = offset; i < length; i++)
 					}
 					break;
 				case '/': case '?':
-					if(i == lastKeyword && length - i > 1)
+					if(doKeyword(line,i,c))
+						break;
+					if(length - i > 1)
 					{
-						if(doKeyword(line,i,c))
-							break;
 						backslash = false;
 						char ch = array[i1];
 						if(Character.isWhitespace(ch))
@@ -253,21 +256,31 @@ loop:		for(int i = offset; i < length; i++)
 				break;
 			case Token.KEYWORD2:
 				backslash = false;
+				// This test checks for an end-of-variable
+				// condition
 				if(!Character.isLetterOrDigit(c) && c != '_'
-					&& c != '#' && c != '\'' && c != ':')
+					&& c != '#' && c != '\'' && c != ':'
+					&& c != '&')
 				{
+					// If this is the first character
+					// of the variable name ($'aaa)
+					// ignore it
 					if(i != offset && array[i-1] == '$')
 					{
 						addToken(i1 - lastOffset,token);
 						lastOffset = lastKeyword = i1;
-						break;
 					}
+					// Otherwise, end of variable...
 					else
 					{
 						addToken(i - lastOffset,token);
 						lastOffset = lastKeyword = i;
+						// Wind back so that stuff
+						// like $hello$fred is picked
+						// up
+						i--;
+						token = Token.NULL;
 					}
-					token = Token.NULL;
 				}
 				break;
 			case S_ONE: case S_TWO:
@@ -346,8 +359,8 @@ loop:		for(int i = offset; i < length; i++)
 			case Token.LITERAL1:
 				if(backslash)
 					backslash = false;
-				else if(c == '$')
-					backslash = true;
+				/* else if(c == '$')
+					backslash = true; */
 				else if(c == '"')
 				{
 					addToken(i1 - lastOffset,token);
@@ -358,8 +371,8 @@ loop:		for(int i = offset; i < length; i++)
 			case Token.LITERAL2:
 				if(backslash)
 					backslash = false;
-				else if(c == '$')
-					backslash = true;
+				/* else if(c == '$')
+					backslash = true; */
 				else if(c == '\'')
 				{
 					addToken(i1 - lastOffset,Token.LITERAL1);
@@ -388,12 +401,12 @@ loop:		for(int i = offset; i < length; i++)
 
 		switch(token)
 		{
-		case Token.NULL:
-			addToken(length - lastOffset,token);
-			break;
 		case Token.KEYWORD2:
 			addToken(length - lastOffset,token);
 			token = Token.NULL;
+			break;
+		case Token.LITERAL2:
+			addToken(length - lastOffset,Token.LITERAL1);
 			break;
 		case S_END:
 			addToken(length - lastOffset,Token.LITERAL2);
@@ -458,6 +471,20 @@ loop:		for(int i = offset; i < length; i++)
 		}
 		lastKeyword = i1;
 		return false;
+	}
+
+	// Converts < EOF >, < 'EOF' >, etc to <EOF>
+	private String createReadinString(char[] array, int start, int len)
+	{
+		int off = 0;
+
+		while((off < len) && (!Character.isLetterOrDigit(array[start + off])))
+			off++;
+
+		while((off < len) && (!Character.isLetterOrDigit(array[start + len - 1])))
+			len--;
+
+		return new String(array,start + off,len);
 	}
 
 	private static KeywordMap perlKeywords;
@@ -697,6 +724,9 @@ loop:		for(int i = offset; i < length; i++)
 /**
  * ChangeLog:
  * $Log$
+ * Revision 1.9  1999/09/30 12:21:05  sp
+ * No net access for a month... so here's one big jEdit 2.1pre1
+ *
  * Revision 1.8  1999/06/28 09:17:20  sp
  * Perl mode javac compile fix, text area hacking
  *

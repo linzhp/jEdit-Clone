@@ -53,8 +53,10 @@ public class box_comment extends EditAction
 		int selectionEnd = textArea.getSelectionEnd();
 		int startLine = textArea.getSelectionStartLine();
 		int endLine = textArea.getSelectionEndLine();
-		buffer.beginCompoundEdit();
 		Element map = buffer.getDefaultRootElement();
+
+		buffer.beginCompoundEdit();
+
 		try
 		{
 			Element lineElement = map.getElement(startLine);
@@ -80,12 +82,16 @@ public class box_comment extends EditAction
 				- start));
 			buffer.insertString(Math.max(start + indent,textArea
 				.getSelectionEnd()),commentEnd,null);
-			textArea.select(textArea.getCaretPosition(),
-				textArea.getCaretPosition());
 		}
 		catch(BadLocationException bl)
 		{
 		}
-		buffer.endCompoundEdit();
+		finally
+		{
+			buffer.endCompoundEdit();
+		}
+
+		textArea.select(textArea.getCaretPosition(),
+			textArea.getCaretPosition());
 	}
 }

@@ -7,7 +7,6 @@
 classes=org/gjt/sp/jedit/syntax/BatchFileTokenMarker.class \
 	org/gjt/sp/jedit/syntax/CCTokenMarker.class \
 	org/gjt/sp/jedit/syntax/CTokenMarker.class \
-	org/gjt/sp/jedit/syntax/DefaultSyntaxDocument.class \
 	org/gjt/sp/jedit/syntax/HTMLTokenMarker.class \
 	org/gjt/sp/jedit/syntax/JavaScriptTokenMarker.class \
 	org/gjt/sp/jedit/syntax/JavaTokenMarker.class \
@@ -16,6 +15,7 @@ classes=org/gjt/sp/jedit/syntax/BatchFileTokenMarker.class \
 	org/gjt/sp/jedit/syntax/PatchTokenMarker.class \
 	org/gjt/sp/jedit/syntax/PerlTokenMarker.class \
 	org/gjt/sp/jedit/syntax/PropsTokenMarker.class \
+	org/gjt/sp/jedit/syntax/PythonTokenMarker.class \
 	org/gjt/sp/jedit/syntax/ShellScriptTokenMarker.class \
 	org/gjt/sp/jedit/syntax/SQLTokenMarker.class \
 	org/gjt/sp/jedit/syntax/SyntaxDocument.class \

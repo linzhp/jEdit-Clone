@@ -28,27 +28,31 @@ import org.gjt.sp.jedit.*;
 public class ClippingEditor extends JDialog
 implements ActionListener, KeyListener
 {
-	public ClippingEditor(View view, String text)
+	public ClippingEditor(View view, String text, boolean readOnly)
 	{
 		super(view,jEdit.getProperty("clipedit.title"),true);
-			
+
 		getContentPane().setLayout(new BorderLayout());
 
 		textArea = new JTextArea(text,8,50);
+		textArea.setEditable(!readOnly);
 		textArea.setFont(view.getTextArea().getFont());
 		getContentPane().add(BorderLayout.CENTER,
 			new JScrollPane(textArea));
-			
+
 		JPanel buttons = new JPanel();
 		ok = new JButton(jEdit.getProperty("common.ok"));
 		ok.addActionListener(this);
 		buttons.add(ok);
 		getRootPane().setDefaultButton(ok);
-		cancel = new JButton(jEdit.getProperty("common.cancel"));
-		cancel.addActionListener(this);
-		buttons.add(cancel);
+		if(!readOnly)
+		{
+			cancel = new JButton(jEdit.getProperty("common.cancel"));
+			cancel.addActionListener(this);
+			buttons.add(cancel);
+		}
 		getContentPane().add(BorderLayout.SOUTH,buttons);
-		
+
 		addKeyListener(this);
 
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);

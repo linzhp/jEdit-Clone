@@ -19,13 +19,14 @@
 
 package org.gjt.sp.jedit.textarea;
 
-import javax.swing.border.EtchedBorder;
 import javax.swing.event.*;
 import javax.swing.text.*;
 import javax.swing.*;
 import java.awt.datatransfer.*;
 import java.awt.event.*;
 import java.awt.*;
+import java.util.Enumeration;
+import java.util.Vector;
 import org.gjt.sp.jedit.syntax.*;
 
 /**
@@ -35,6 +36,13 @@ import org.gjt.sp.jedit.syntax.*;
  */
 public class JEditTextArea extends JComponent
 {
+	/**
+	 * Adding components with this name to the text area will place
+	 * them left of the horizontal scroll bar. In jEdit, the status
+	 * bar is added this way.
+	 */
+	public static String LEFT_OF_SCROLLBAR = "los";
+
 	/**
 	 * Creates a new JEditTextArea with the default settings.
 	 */
@@ -54,8 +62,6 @@ public class JEditTextArea extends JComponent
 
 		// Initialize some misc. stuff
 		painter = new TextAreaPainter(this,defaults);
-		AutoScroll scroller = new AutoScroll();
-		scrollTimer = new Timer(200,scroller);
 		documentHandler = new DocumentHandler();
 		listenerList = new EventListenerList();
 		caretEvent = new MutableCaretEvent();
@@ -64,7 +70,6 @@ public class JEditTextArea extends JComponent
 		blink = true;
 
 		// Initialize the GUI
-		setBorder(new EtchedBorder(EtchedBorder.LOWERED));
 		setLayout(new ScrollLayout());
 		add(CENTER,painter);
 		add(RIGHT,vertical = new JScrollBar(JScrollBar.VERTICAL));
@@ -75,7 +80,7 @@ public class JEditTextArea extends JComponent
 		horizontal.addAdjustmentListener(new AdjustHandler());
 		painter.addComponentListener(new ComponentHandler());
 		painter.addMouseListener(new MouseHandler());
-		painter.addMouseMotionListener(scroller);
+		painter.addMouseMotionListener(new DragHandler());
 		addFocusListener(new FocusHandler());
 
 		// Load the defaults
@@ -85,6 +90,8 @@ public class JEditTextArea extends JComponent
 		caretVisible = defaults.caretVisible;
 		caretBlinks = defaults.caretBlinks;
 		electricScroll = defaults.electricScroll;
+
+		popup = defaults.popup;
 
 		// We don't seem to get the initial focus event?
 		focusedComponent = this;
@@ -121,11 +128,6 @@ public class JEditTextArea extends JComponent
 	 */
 	public void setInputHandler(InputHandler inputHandler)
 	{
-		if(this.inputHandler != null)
-			removeKeyListener(this.inputHandler);
-		if(inputHandler != null)
-			addKeyListener(inputHandler);
-
 		this.inputHandler = inputHandler;
 	}
 
@@ -249,7 +251,6 @@ public class JEditTextArea extends JComponent
 		this.firstLine = firstLine;
 		if(firstLine != vertical.getValue())
 			updateScrollBars();
-		painter.scrollRepaint(oldFirstLine,firstLine);
 		painter.repaint();
 	}
 
@@ -273,8 +274,6 @@ public class JEditTextArea extends JComponent
 		int lineHeight = painter.getFontMetrics().getHeight();
 		int oldVisibleLines = visibleLines;
 		visibleLines = height / lineHeight;
-		painter.invalidateOffscreen();
-		painter.repaint();
 		updateScrollBars();
 	}
 
@@ -298,7 +297,6 @@ public class JEditTextArea extends JComponent
 		this.horizontalOffset = horizontalOffset;
 		if(horizontalOffset != horizontal.getValue())
 			updateScrollBars();
-		painter.invalidateLineRange(firstLine,firstLine + visibleLines);
 		painter.repaint();
 	}
 
@@ -312,13 +310,12 @@ public class JEditTextArea extends JComponent
 	public boolean setOrigin(int firstLine, int horizontalOffset)
 	{
 		boolean changed = false;
-		boolean fullRepaint = false;
 		int oldFirstLine = this.firstLine;
 
 		if(horizontalOffset != this.horizontalOffset)
 		{
 			this.horizontalOffset = horizontalOffset;
-			changed = fullRepaint = true;
+			changed = true;
 		}
 
 		if(firstLine != this.firstLine)
@@ -330,15 +327,6 @@ public class JEditTextArea extends JComponent
 		if(changed)
 		{
 			updateScrollBars();
-			if(fullRepaint)
-			{
-				painter._invalidateLineRange(firstLine,
-					firstLine + visibleLines);
-			}
-			else
-			{
-				painter.scrollRepaint(oldFirstLine,firstLine);
-			}
 			painter.repaint();
 		}
 
@@ -465,7 +453,8 @@ public class JEditTextArea extends JComponent
 		else
 		{
 			Token tokens;
-			if(painter.currentLineIndex == line)
+			if(painter.currentLineIndex == line
+				&& painter.currentLineTokens != null)
 				tokens = painter.currentLineTokens;
 			else
 			{
@@ -562,7 +551,8 @@ public class JEditTextArea extends JComponent
 		else
 		{
 			Token tokens;
-			if(painter.currentLineIndex == line)
+			if(painter.currentLineIndex == line && painter
+				.currentLineTokens != null)
 				tokens = painter.currentLineTokens;
 			else
 			{
@@ -655,7 +645,6 @@ public class JEditTextArea extends JComponent
 
 		select(0,0);
 		updateScrollBars();
-		painter.invalidateOffscreen();
 		painter.repaint();
 	}
 
@@ -850,6 +839,29 @@ public class JEditTextArea extends JComponent
 	}
 
 	/**
+	 * Returns the offset where the selection starts on the specified
+	 * line.
+	 */
+	public int getSelectionStart(int line)
+	{
+		if(line == selectionStartLine)
+			return selectionStart;
+		else if(rectSelect)
+		{
+			Element map = document.getDefaultRootElement();
+			int start = selectionStart - map.getElement(selectionStartLine)
+				.getStartOffset();
+
+			Element lineElement = map.getElement(line);
+			int lineStart = lineElement.getStartOffset();
+			int lineEnd = lineElement.getEndOffset() - 1;
+			return Math.min(lineEnd,lineStart + start);
+		}
+		else
+			return getLineStartOffset(line);
+	}
+
+	/**
 	 * Returns the selection start line.
 	 */
 	public final int getSelectionStartLine()
@@ -874,6 +886,29 @@ public class JEditTextArea extends JComponent
 	public final int getSelectionEnd()
 	{
 		return selectionEnd;
+	}
+
+	/**
+	 * Returns the offset where the selection ends on the specified
+	 * line.
+	 */
+	public int getSelectionEnd(int line)
+	{
+		if(line == selectionEndLine)
+			return selectionEnd;
+		else if(rectSelect)
+		{
+			Element map = document.getDefaultRootElement();
+			int end = selectionEnd - map.getElement(selectionEndLine)
+				.getStartOffset();
+
+			Element lineElement = map.getElement(line);
+			int lineStart = lineElement.getStartOffset();
+			int lineEnd = lineElement.getEndOffset() - 1;
+			return Math.min(lineEnd,lineStart + end);
+		}
+		else
+			return getLineEndOffset(line) - 1;
 	}
 
 	/**
@@ -951,6 +986,14 @@ public class JEditTextArea extends JComponent
 	}
 
 	/**
+	 * Moves the mark to the caret position.
+	 */
+	public final void selectNone()
+	{
+		select(getCaretPosition(),getCaretPosition());
+	}
+
+	/**
 	 * Selects from the start offset to the end offset. This is the
 	 * general selection method used by all other selecting methods.
 	 * The caret position will be start if start &lt; end, and end
@@ -994,14 +1037,14 @@ public class JEditTextArea extends JComponent
 			if(painter.isBracketHighlightEnabled())
 			{
 				if(bracketLine != -1)
-					painter._invalidateLine(bracketLine);
+					painter.invalidateLine(bracketLine);
 				updateBracketHighlight(end);
 				if(bracketLine != -1)
-					painter._invalidateLine(bracketLine);
+					painter.invalidateLine(bracketLine);
 			}
 
-			painter._invalidateLineRange(selectionStartLine,selectionEndLine);
-			painter._invalidateLineRange(newStartLine,newEndLine);
+			painter.invalidateLineRange(selectionStartLine,selectionEndLine);
+			painter.invalidateLineRange(newStartLine,newEndLine);
 
 			selectionStart = newStart;
 			selectionEnd = newEnd;
@@ -1017,11 +1060,14 @@ public class JEditTextArea extends JComponent
 		blink = true;
 		caretTimer.restart();
 
+		// Disable rectangle select if selection start = selection end
+		if(selectionStart == selectionEnd)
+			rectSelect = false;
+
 		// Clear the `magic' caret position used by up/down
 		magicCaret = -1;
 
-		if(!scrollToCaret())
-			painter.fastRepaint();
+		scrollToCaret();
 	}
 
 	/**
@@ -1031,8 +1077,51 @@ public class JEditTextArea extends JComponent
 	{
 		if(selectionStart == selectionEnd)
 			return null;
-		return getText(selectionStart,
-			selectionEnd - selectionStart);
+
+		if(rectSelect)
+		{
+			// Return each row of the selection on a new line
+
+			Element map = document.getDefaultRootElement();
+
+			int start = selectionStart - map.getElement(selectionStartLine)
+				.getStartOffset();
+			int end = selectionEnd - map.getElement(selectionEndLine)
+				.getStartOffset();
+
+			// Certain rectangles satisfy this condition...
+			if(end < start)
+			{
+				int tmp = end;
+				end = start;
+				start = tmp;
+			}
+
+			StringBuffer buf = new StringBuffer();
+			Segment seg = new Segment();
+
+			for(int i = selectionStartLine; i <= selectionEndLine; i++)
+			{
+				Element lineElement = map.getElement(i);
+				int lineStart = lineElement.getStartOffset();
+				int lineEnd = lineElement.getEndOffset() - 1;
+				int lineLen = lineEnd - lineStart;
+
+				getText(Math.min(lineStart + start,lineEnd),
+					Math.min(end - start,lineLen),seg);
+				buf.append(seg.array,seg.offset,seg.count);
+
+				if(i != selectionEndLine)
+					buf.append('\n');
+			}
+
+			return buf.toString();
+		}
+		else
+		{
+			return getText(selectionStart,
+				selectionEnd - selectionStart);
+		}
 	}
 
 	/**
@@ -1047,13 +1136,67 @@ public class JEditTextArea extends JComponent
 				+ " read only");
 		}
 
+		document.beginCompoundEdit();
+
 		try
 		{
-			document.remove(selectionStart,
-				selectionEnd - selectionStart);
-			document.insertString(selectionStart,
-				selectedText,null);
-			setCaretPosition(selectionEnd);
+			if(rectSelect)
+			{
+				Element map = document.getDefaultRootElement();
+
+				int start = selectionStart - map.getElement(selectionStartLine)
+					.getStartOffset();
+				int end = selectionEnd - map.getElement(selectionEndLine)
+					.getStartOffset();
+
+				// Certain rectangles satisfy this condition...
+				if(end < start)
+				{
+					int tmp = end;
+					end = start;
+					start = tmp;
+				}
+
+				int lastNewline = 0;
+				int currNewline = 0;
+
+				for(int i = selectionStartLine; i <= selectionEndLine; i++)
+				{
+					Element lineElement = map.getElement(i);
+					int lineStart = lineElement.getStartOffset();
+					int lineEnd = lineElement.getEndOffset() - 1;
+					int rectStart = Math.min(lineEnd,lineStart + start);
+
+					document.remove(rectStart,Math.min(lineEnd - rectStart,
+						end - start));
+
+					currNewline = selectedText.indexOf('\n',lastNewline);
+					if(currNewline == -1)
+						currNewline = selectedText.length();
+
+					document.insertString(rectStart,selectedText
+						.substring(lastNewline,currNewline),null);
+
+					lastNewline = Math.min(selectedText.length(),
+						currNewline + 1);
+				}
+
+				if(currNewline != selectedText.length())
+				{
+					int offset = map.getElement(selectionEndLine)
+						.getEndOffset() - 1;
+					document.insertString(offset,"\n",null);
+					document.insertString(offset + 1,selectedText
+						.substring(currNewline + 1),null);
+				}
+			}
+			else
+			{
+				document.remove(selectionStart,
+					selectionEnd - selectionStart);
+				document.insertString(selectionStart,
+					selectedText,null);
+			}
 		}
 		catch(BadLocationException bl)
 		{
@@ -1061,6 +1204,14 @@ public class JEditTextArea extends JComponent
 			throw new InternalError("Cannot replace"
 				+ " selection");
 		}
+		// No matter what happends... stops us from leaving document
+		// in a bad state
+		finally
+		{
+			document.endCompoundEdit();
+		}
+
+		setCaretPosition(selectionEnd);
 	}
 
 	/**
@@ -1143,6 +1294,8 @@ public class JEditTextArea extends JComponent
 			return;
 		}
 
+		document.beginCompoundEdit();
+
 		try
 		{
 			document.remove(caret,str.length());
@@ -1151,6 +1304,10 @@ public class JEditTextArea extends JComponent
 		catch(BadLocationException bl)
 		{
 			bl.printStackTrace();
+		}
+		finally
+		{
+			document.endCompoundEdit();
 		}
 	}
 
@@ -1170,6 +1327,25 @@ public class JEditTextArea extends JComponent
 	public final void setOverwriteEnabled(boolean overwrite)
 	{
 		this.overwrite = overwrite;
+		painter.invalidateSelectedLines();
+	}
+
+	/**
+	 * Returns true if the selection is rectangular, false otherwise.
+	 */
+	public final boolean isSelectionRectangular()
+	{
+		return rectSelect;
+	}
+
+	/**
+	 * Sets if the selection should be rectangular.
+	 * @param overwrite True if the selection should be rectangular,
+	 * false otherwise.
+	 */
+	public final void setSelectionRectangular(boolean rectSelect)
+	{
+		this.rectSelect = rectSelect;
 		painter.invalidateSelectedLines();
 	}
 
@@ -1265,16 +1441,36 @@ public class JEditTextArea extends JComponent
 
 	/**
 	 * Called by the AWT when this component is removed from it's parent.
-	 * This stops any autoscrolling and clears the currently focused
-	 * component.
+	 * This stops clears the currently focused component.
 	 */
 	public void removeNotify()
 	{
 		super.removeNotify();
 		if(focusedComponent == this)
 			focusedComponent = null;
-		if(scrollTimer.isRunning())
-			scrollTimer.stop();
+	}
+
+	/**
+	 * Forwards key events directly to the input handler.
+	 * This is slightly faster than using a KeyListener
+	 * because some Swing overhead is avoided.
+	 */
+	public void processKeyEvent(KeyEvent evt)
+	{
+		if(inputHandler == null)
+			return;
+		switch(evt.getID())
+		{
+		case KeyEvent.KEY_TYPED:
+			inputHandler.keyTyped(evt);
+			break;
+		case KeyEvent.KEY_PRESSED:
+			inputHandler.keyPressed(evt);
+			break;
+		case KeyEvent.KEY_RELEASED:
+			inputHandler.keyReleased(evt);
+			break;
+		}
 	}
 
 	// protected members
@@ -1288,8 +1484,6 @@ public class JEditTextArea extends JComponent
 	protected TextAreaPainter painter;
 
 	protected JPopupMenu popup;
-
-	protected Timer scrollTimer;
 
 	protected EventListenerList listenerList;
 	protected MutableCaretEvent caretEvent;
@@ -1327,6 +1521,7 @@ public class JEditTextArea extends JComponent
 
 	protected int magicCaret;
 	protected boolean overwrite;
+	protected boolean rectSelect;
 
 	protected void fireCaretEvent()
 	{
@@ -1382,13 +1577,12 @@ public class JEditTextArea extends JComponent
 		if(count == 0)
 		{
 			int line = getLineOfOffset(evt.getOffset());
-			painter._invalidateLine(line);
+			painter.invalidateLine(line);
 		}
 		else
 		{
 			int index = ch.getIndex();
-			painter._invalidateLineRange(index,Math.max(getLineCount(),
-				firstLine + visibleLines));
+			painter.invalidateLineRange(index,firstLine + visibleLines);
 			updateScrollBars();
 		}
 	}
@@ -1403,6 +1597,8 @@ public class JEditTextArea extends JComponent
 				right = comp;
 			else if(name.equals(BOTTOM))
 				bottom = comp;
+			else if(name.equals(LEFT_OF_SCROLLBAR))
+				leftOfScrollBar.addElement(comp);
 		}
 
 		public void removeLayoutComponent(Component comp)
@@ -1413,6 +1609,8 @@ public class JEditTextArea extends JComponent
 				right = null;
 			if(bottom == comp)
 				bottom = null;
+			else
+				leftOfScrollBar.removeElement(comp);
 		}
 
 		public Dimension preferredLayoutSize(Container parent)
@@ -1423,8 +1621,8 @@ public class JEditTextArea extends JComponent
 			dim.height = insets.top + insets.bottom;
 
 			Dimension centerPref = center.getPreferredSize();
-			dim.height += centerPref.height;
 			dim.width += centerPref.width;
+			dim.height += centerPref.height;
 			Dimension rightPref = right.getPreferredSize();
 			dim.width += rightPref.width;
 			Dimension bottomPref = bottom.getPreferredSize();
@@ -1441,8 +1639,8 @@ public class JEditTextArea extends JComponent
 			dim.height = insets.top + insets.bottom;
 
 			Dimension centerPref = center.getMinimumSize();
+			dim.width += centerPref.width; 
 			dim.height += centerPref.height;
-			dim.width += centerPref.width;
 			Dimension rightPref = right.getMinimumSize();
 			dim.width += rightPref.width;
 			Dimension bottomPref = bottom.getMinimumSize();
@@ -1454,7 +1652,7 @@ public class JEditTextArea extends JComponent
 		public void layoutContainer(Container parent)
 		{
 			Dimension size = parent.getSize();
-			Insets insets = getInsets();
+			Insets insets = parent.getInsets();
 			int itop = insets.top;
 			int ileft = insets.left;
 			int ibottom = insets.bottom;
@@ -1462,20 +1660,37 @@ public class JEditTextArea extends JComponent
 
 			int rightWidth = right.getPreferredSize().width;
 			int bottomHeight = bottom.getPreferredSize().height;
+			int centerWidth = size.width - rightWidth - ileft - iright;
+			int centerHeight = size.height - bottomHeight - itop - ibottom;
 
 			center.setBounds(
 				ileft,
 				itop,
-				size.width - rightWidth - ileft - iright,
-				size.height - bottomHeight - itop - ibottom);
+				centerWidth,
+				centerHeight);
+
 			right.setBounds(
-				size.width - rightWidth - iright,
+				ileft + centerWidth,
 				itop,
 				rightWidth,
-				size.height - bottomHeight - itop - ibottom);
+				centerHeight);
+
+			// Lay out all status components, in order
+			Enumeration status = leftOfScrollBar.elements();
+			while(status.hasMoreElements())
+			{
+				Component comp = (Component)status.nextElement();
+				Dimension dim = comp.getPreferredSize();
+				comp.setBounds(ileft,
+					itop + centerHeight,
+					dim.width,
+					bottomHeight);
+				ileft += dim.width;
+			}
+
 			bottom.setBounds(
 				ileft,
-				size.height - bottomHeight - ibottom,
+				itop + centerHeight,
 				size.width - rightWidth - ileft - iright,
 				bottomHeight);
 		}
@@ -1484,6 +1699,7 @@ public class JEditTextArea extends JComponent
 		private Component center;
 		private Component right;
 		private Component bottom;
+		private Vector leftOfScrollBar = new Vector();
 	}
 
 	static class CaretBlinker implements ActionListener
@@ -1494,29 +1710,6 @@ public class JEditTextArea extends JComponent
 				&& focusedComponent.hasFocus())
 				focusedComponent.blinkCaret();
 		}
-	}
-
-	class AutoScroll implements ActionListener, MouseMotionListener
-	{
-		private int x, y;
-
-		public void actionPerformed(ActionEvent evt)
-		{
-			select(getMarkPosition(),xyToOffset(x,y));
-		}
-
-		public void mouseDragged(MouseEvent evt)
-		{
-			if(popup != null && popup.isVisible())
-				return;
-
-			x = evt.getX();
-			y = evt.getY();
-			if(!scrollTimer.isRunning())
-				scrollTimer.start();
-		}
-			
-		public void mouseMoved(MouseEvent evt) {}
 	}
 
 	class MutableCaretEvent extends CaretEvent
@@ -1539,15 +1732,23 @@ public class JEditTextArea extends JComponent
 
 	class AdjustHandler implements AdjustmentListener
 	{
-		public void adjustmentValueChanged(AdjustmentEvent evt)
+		public void adjustmentValueChanged(final AdjustmentEvent evt)
 		{
 			if(!scrollBarsInitialized)
 				return;
 
-			if(evt.getAdjustable() == vertical)
-				setFirstLine(vertical.getValue());
-			else
-				setHorizontalOffset(-horizontal.getValue());
+			// If this is not done, mousePressed events accumilate
+			// and the result is that scrolling doesn't stop after
+			// the mouse is released
+			SwingUtilities.invokeLater(new Runnable() {
+				public void run()
+				{
+					if(evt.getAdjustable() == vertical)
+						setFirstLine(vertical.getValue());
+					else
+						setHorizontalOffset(-horizontal.getValue());
+				}
+			});
 		}
 	}
 
@@ -1569,30 +1770,21 @@ public class JEditTextArea extends JComponent
 			int offset = evt.getOffset();
 			int length = evt.getLength();
 
-			boolean repaint = true;
-
 			int newStart;
 			int newEnd;
 
-			if(selectionStart >= offset)
-			{
+			if(selectionStart > offset || (selectionStart 
+				== selectionEnd && selectionStart == offset))
 				newStart = selectionStart + length;
-				repaint = false;
-			}
 			else
 				newStart = selectionStart;
+
 			if(selectionEnd >= offset)
-			{
 				newEnd = selectionEnd + length;
-				repaint = false;
-			}
 			else
 				newEnd = selectionEnd;
 
 			select(newStart,newEnd);
-
-			if(repaint)
-				painter.fastRepaint();
 		}
 	
 		public void removeUpdate(DocumentEvent evt)
@@ -1601,8 +1793,6 @@ public class JEditTextArea extends JComponent
 
 			int offset = evt.getOffset();
 			int length = evt.getLength();
-
-			boolean repaint = true;
 
 			int newStart;
 			int newEnd;
@@ -1613,7 +1803,6 @@ public class JEditTextArea extends JComponent
 					newStart = selectionStart - length;
 				else
 					newStart = offset;
-				repaint = false;
 			}
 			else
 				newStart = selectionStart;
@@ -1624,20 +1813,31 @@ public class JEditTextArea extends JComponent
 					newEnd = selectionEnd - length;
 				else
 					newEnd = offset;
-				repaint = false;
 			}
 			else
 				newEnd = selectionEnd;
 
 			select(newStart,newEnd);
-
-			if(repaint)
-				painter.fastRepaint();
 		}
 
 		public void changedUpdate(DocumentEvent evt)
 		{
 		}
+	}
+
+	class DragHandler implements MouseMotionListener
+	{
+		public void mouseDragged(MouseEvent evt)
+		{
+			if(popup != null && popup.isVisible())
+				return;
+
+			setSelectionRectangular((evt.getModifiers()
+				& InputEvent.CTRL_MASK) != 0);
+			select(getMarkPosition(),xyToOffset(evt.getX(),evt.getY()));
+		}
+
+		public void mouseMoved(MouseEvent evt) {}
 	}
 
 	class FocusHandler implements FocusListener
@@ -1695,17 +1895,14 @@ public class JEditTextArea extends JComponent
 			}
 		}
 
-		public void mouseReleased(MouseEvent evt)
-		{
-			if(scrollTimer.isRunning())
-				scrollTimer.stop();
-		}
-
 		private void doSingleClick(MouseEvent evt, int line, 
 			int offset, int dot)
 		{
 			if((evt.getModifiers() & InputEvent.SHIFT_MASK) != 0)
+			{
+				rectSelect = (evt.getModifiers() & InputEvent.CTRL_MASK) != 0;
 				setSelectionEnd(dot);
+			}
 			else
 				setCaretPosition(dot);
 		}
@@ -1802,6 +1999,9 @@ public class JEditTextArea extends JComponent
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.19  1999/09/30 12:21:05  sp
+ * No net access for a month... so here's one big jEdit 2.1pre1
+ *
  * Revision 1.17  1999/08/21 01:48:18  sp
  * jEdit 2.0pre8
  *
@@ -1832,18 +2032,5 @@ public class JEditTextArea extends JComponent
  *
  * Revision 1.8  1999/06/30 05:01:55  sp
  * Lots of text area bug fixes and optimizations
- *
- * Revision 1.7  1999/06/29 09:01:24  sp
- * Text area now does bracket matching, eol markers, also xToOffset() and
- * offsetToX() now work better
- *
- * Revision 1.6  1999/06/28 09:17:20  sp
- * Perl mode javac compile fix, text area hacking
- *
- * Revision 1.5  1999/06/27 04:53:16  sp
- * Text selection implemented in text area, assorted bug fixes
- *
- * Revision 1.4  1999/06/25 06:54:08  sp
- * Text area updates
  *
  */

@@ -37,6 +37,8 @@ public class KeyTableOptionPane extends OptionPane
 	{
 		super("keys");
 		setLayout(new BorderLayout());
+		add(BorderLayout.NORTH,new JLabel(jEdit.getProperty("options"
+			+ ".keys.note")));
 		add(BorderLayout.CENTER,createKeyTableScroller());
 	}
 
@@ -159,22 +161,7 @@ class KeyTableModel extends AbstractTableModel
 		for(int i = 0; i < bindings.size(); i++)
 		{
 			KeyBinding binding = (KeyBinding)bindings.elementAt(i);
-			String name = binding.name;
-			String shortcut = binding.shortcut;
-			if(shortcut == null)
-			{
-				if(jEdit.getProperty(name + ".shortcut") != null)
-					jEdit.setProperty(name + ".shortcut","");
-			}
-			else
-			{
-				if(!shortcut.equals(jEdit.getProperty(
-					name + ".shortcut")))
-				{
-					jEdit.setProperty(name + ".shortcut",
-						shortcut);
-				}
-			}
+			jEdit.setProperty(binding.name + ".shortcut",binding.shortcut);
 		}
 	}
 
@@ -212,6 +199,9 @@ class KeyTableModel extends AbstractTableModel
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.4  1999/09/30 12:21:04  sp
+ * No net access for a month... so here's one big jEdit 2.1pre1
+ *
  * Revision 1.3  1999/07/16 23:45:49  sp
  * 1.7pre6 BugFree version
  *

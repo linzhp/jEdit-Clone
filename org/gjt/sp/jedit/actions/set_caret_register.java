@@ -1,6 +1,6 @@
 /*
- * set_anchor.java
- * Copyright (C) 1998 Slava Pestov
+ * set_caret_register.java
+ * Copyright (C) 1999 Slava Pestov
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,18 +20,39 @@
 package org.gjt.sp.jedit.actions;
 
 import java.awt.event.ActionEvent;
+import org.gjt.sp.jedit.textarea.*;
 import org.gjt.sp.jedit.*;
 
-public class set_anchor extends EditAction
+public class set_caret_register extends EditAction
 {
-	public set_anchor()
+	public set_caret_register()
 	{
-		super("set-anchor");
+		super("set-caret-register");
 	}
 	
 	public void actionPerformed(ActionEvent evt)
 	{
 		View view = getView(evt);
-		view.getBuffer().setAnchor(view.getTextArea().getCaretPosition());
+		JEditTextArea textArea = view.getTextArea();
+
+		String actionCommand = evt.getActionCommand();
+		if(actionCommand == null || actionCommand.length() != 1)
+		{
+			view.showStatus(jEdit.getProperty("view.status.set-caret-register"));
+			textArea.getInputHandler().grabNextKeyStroke(this);
+		}
+		else
+		{
+			view.showStatus(null);
+
+			char ch = actionCommand.charAt(0);
+			if(ch == '\0')
+			{
+				view.getToolkit().beep();
+				return;
+			}
+			Registers.setRegister(ch,new Registers.CaretRegister(
+				view.getBuffer(),textArea.getCaretPosition()));
+		}
 	}
 }

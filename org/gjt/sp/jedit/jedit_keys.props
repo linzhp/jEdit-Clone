@@ -10,6 +10,7 @@
 backspace.shortcut=BACK_SPACE
 delete.shortcut=DELETE
 overwrite.shortcut=INSERT
+toggle-rect.shortcut=C+\\
 home.shortcut=HOME
 end.shortcut=END
 select-home.shortcut=S+HOME
@@ -42,9 +43,9 @@ save-all.shortcut=F3
 send.shortcut=F4
 paste-previous.shortcut=F5
 paste-predefined.shortcut=F6
-hypersearch.shortcut=F7
-hypersearch-selection.shortcut=F8
-multifile-search.shortcut=F9
+view-registers.shortcut=F7
+hypersearch.shortcut=F8
+hypersearch-selection.shortcut=F9
 prev-buffer.shortcut=F11
 next-buffer.shortcut=F12
 
@@ -57,30 +58,32 @@ find-next.shortcut=C+g
 find-selection.shortcut=C+h
 goto-end-indent.shortcut=C+i
 join-lines.shortcut=C+j
-exchange-anchor.shortcut=C+k
+exchange-caret-register.shortcut=C+k
 goto-line.shortcut=C+l
 set-marker.shortcut=C+m
 new-file.shortcut=C+n
 open-file.shortcut=C+o
 print.shortcut=C+p
-redo.shortcut=C+r
 save.shortcut=C+s
-set-anchor.shortcut=C+t
-select-anchor.shortcut=C+u
+set-caret-register.shortcut=C+t
+select-caret-register.shortcut=C+u
 paste.shortcut=C+v
 close-file.shortcut=C+w
 cut.shortcut=C+x
-goto-anchor.shortcut=C+y
+goto-register.shortcut=C+y
 undo.shortcut=C+z
 
-# Multi key
+# C+d
 delete-line.shortcut=C+d C+d
 delete-paragraph.shortcut=C+d C+e
 delete-end-line.shortcut=C+d C+f
 delete-start-line.shortcut=C+d C+s
+
+# C+e
 replace-all.shortcut=C+e C+a
 box-comment.shortcut=C+e C+b
 wing-comment.shortcut=C+e C+c
+select-none.shortcut=C+e C+d
 format.shortcut=C+e C+f
 scroll-line.shortcut=C+e C+j
 block-comment.shortcut=C+e C+k
@@ -88,9 +91,20 @@ select-line-range.shortcut=C+e C+l
 new-view.shortcut=C+e C+n
 open-url.shortcut=C+e C+o
 exit.shortcut=C+e C+q
+open-selection.shortcut=C+e C+s
 tab.shortcut=C+e C+t
 untab.shortcut=C+e C+u
 close-view.shortcut=C+e C+w
+redo.shortcut=C+e C+z
+prev-bracket-exp.shortcut=C+e C+[
+next-bracket-exp.shortcut=C+e C+]
+
+# C+r
+append-string-register.shortcut=C+r C+a
+copy-string-register.shortcut=C+r C+c
+set-filename-register.shortcut=C+r C+f
+paste-string-register.shortcut=C+r C+v
+cut-string-register.shortcut=C+r C+x
 
 # Other keys
 indent-on-tab.shortcut=TAB

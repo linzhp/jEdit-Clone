@@ -22,6 +22,7 @@ package org.gjt.sp.jedit;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.File;
 import java.net.URL;
 import java.util.StringTokenizer;
 import org.gjt.sp.jedit.gui.*;
@@ -38,6 +39,7 @@ import org.gjt.sp.jedit.syntax.SyntaxStyle;
  * <li>Displaying various common dialog boxes
  * <li>Converting string representations of colors to color objects
  * <li>Loading and saving window geometry from the properties
+ * <li>Displaying file open and save dialog boxes
  * </ul>
  *
  * @author Slava Pestov
@@ -405,6 +407,37 @@ public class GUIUtilities
 	}
 
 	/**
+	 * Displays a file selection dialog box.
+	 * @param view The view
+	 * @param file The file to select by default
+	 * @param type The dialog type
+	 * @return The selected file
+	 */
+	public static String showFileDialog(View view, String file, int type)
+	{
+		JFileChooser chooser = new JFileChooser(file);
+		chooser.setDialogType(type);
+		chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+
+		if("on".equals(jEdit.getProperty("filefilters")))
+		{
+			REFileFilter[] filters = jEdit.getFileFilters();
+			for(int i = 0; i < filters.length; i++)
+			{
+				chooser.addChoosableFileFilter(filters[i]);
+			}
+	
+			chooser.setFileFilter(chooser.getAcceptAllFileFilter());
+		}
+
+		int retVal = chooser.showDialog(view,null);
+		if(retVal == JFileChooser.APPROVE_OPTION)
+			return chooser.getSelectedFile().getAbsolutePath();
+		else
+			return null;
+	}
+
+	/**
 	 * Converts a color name to a color object. The name must either be
 	 * a known string, such as `red', `green', etc (complete list is in
 	 * the <code>java.awt.Color</code> class) or a hex color value
@@ -476,7 +509,7 @@ public class GUIUtilities
 		throws IllegalArgumentException
 	{
 		Color color = Color.black;
-		boolean italics = false;
+		boolean italic = false;
 		boolean bold = false;
 		StringTokenizer st = new StringTokenizer(str);
 		while(st.hasMoreTokens())
@@ -491,7 +524,7 @@ public class GUIUtilities
 				for(int i = 6; i < s.length(); i++)
 				{
 					if(s.charAt(i) == 'i')
-						italics = true;
+						italic = true;
 					else if(s.charAt(i) == 'b')
 						bold = true;
 					else
@@ -503,7 +536,7 @@ public class GUIUtilities
 				throw new IllegalArgumentException(
 					"Invalid directive: " + s);
 		}
-		return new SyntaxStyle(color,italics,bold);
+		return new SyntaxStyle(color,italic,bold);
 	}
 
 	/**
@@ -512,9 +545,16 @@ public class GUIUtilities
 	 */
 	public static String getStyleString(SyntaxStyle style)
 	{
-		return "color:" + getColorHexString(style.getColor())
-			+ " style:" + (style.isItalics() ? "i" : "")
-			+ (style.isBold() ? "b" : "");
+		StringBuffer buf = new StringBuffer();
+
+		buf.append("color:" + getColorHexString(style.getColor()));
+		if(!style.isPlain())
+		{
+			buf.append(" style:" + (style.isItalic() ? "i" : "")
+				+ (style.isBold() ? "b" : ""));
+		}
+
+		return buf.toString();
 	}
 
 	/**
@@ -635,6 +675,9 @@ public class GUIUtilities
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.28  1999/09/30 12:21:04  sp
+ * No net access for a month... so here's one big jEdit 2.1pre1
+ *
  * Revision 1.27  1999/07/08 06:35:41  sp
  * 1.7pre5, yay
  *
@@ -667,14 +710,5 @@ public class GUIUtilities
  *
  * Revision 1.18  1999/05/04 04:51:25  sp
  * Fixed HistoryTextField for Swing 1.1.1
- *
- * Revision 1.17  1999/05/03 08:28:14  sp
- * Documentation updates, key binding editor, syntax text area bug fix
- *
- * Revision 1.16  1999/04/24 01:55:28  sp
- * MiscUtilities.constructPath() bug fixed, event system bug(s) fix
- *
- * Revision 1.15  1999/03/26 04:14:45  sp
- * EnhancedMenuItem tinkering, fixed compile error, fixed backup bug
  *
  */

@@ -16,10 +16,12 @@ classes=org/gjt/sp/jedit/mode/amstex.class \
 	org/gjt/sp/jedit/mode/patch.class \
 	org/gjt/sp/jedit/mode/perl.class \
 	org/gjt/sp/jedit/mode/props.class \
+	org/gjt/sp/jedit/mode/python.class \
 	org/gjt/sp/jedit/mode/sh.class \
 	org/gjt/sp/jedit/mode/tex.class \
 	org/gjt/sp/jedit/mode/text.class \
-	org/gjt/sp/jedit/mode/tsql.class
+	org/gjt/sp/jedit/mode/tsql.class \
+	org/gjt/sp/jedit/mode/xml.class
 
 others=
 

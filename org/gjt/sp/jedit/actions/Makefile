@@ -5,20 +5,22 @@
 #
 
 classes=org/gjt/sp/jedit/actions/about.class \
+	org/gjt/sp/jedit/actions/append_string_register.class \
 	org/gjt/sp/jedit/actions/block_comment.class \
 	org/gjt/sp/jedit/actions/box_comment.class \
 	org/gjt/sp/jedit/actions/buffer_options.class \
-	org/gjt/sp/jedit/actions/clear.class \
 	org/gjt/sp/jedit/actions/clear_marker.class \
 	org/gjt/sp/jedit/actions/close_file.class \
 	org/gjt/sp/jedit/actions/close_view.class \
 	org/gjt/sp/jedit/actions/copy.class \
+	org/gjt/sp/jedit/actions/copy_string_register.class \
 	org/gjt/sp/jedit/actions/cut.class \
+	org/gjt/sp/jedit/actions/cut_string_register.class \
 	org/gjt/sp/jedit/actions/delete_end_line.class \
 	org/gjt/sp/jedit/actions/delete_line.class \
 	org/gjt/sp/jedit/actions/delete_paragraph.class \
 	org/gjt/sp/jedit/actions/delete_start_line.class \
-	org/gjt/sp/jedit/actions/exchange_anchor.class \
+	org/gjt/sp/jedit/actions/exchange_caret_register.class \
 	org/gjt/sp/jedit/actions/exit.class \
 	org/gjt/sp/jedit/actions/expand_abbrev.class \
 	org/gjt/sp/jedit/actions/find.class \
@@ -26,10 +28,10 @@ classes=org/gjt/sp/jedit/actions/about.class \
 	org/gjt/sp/jedit/actions/find_selection.class \
 	org/gjt/sp/jedit/actions/format.class \
 	org/gjt/sp/jedit/actions/global_options.class \
-	org/gjt/sp/jedit/actions/goto_anchor.class \
 	org/gjt/sp/jedit/actions/goto_end_indent.class \
 	org/gjt/sp/jedit/actions/goto_line.class \
 	org/gjt/sp/jedit/actions/goto_marker.class \
+	org/gjt/sp/jedit/actions/goto_register.class \
 	org/gjt/sp/jedit/actions/help.class \
 	org/gjt/sp/jedit/actions/hypersearch.class \
 	org/gjt/sp/jedit/actions/hypersearch_selection.class \
@@ -41,6 +43,7 @@ classes=org/gjt/sp/jedit/actions/about.class \
 	org/gjt/sp/jedit/actions/multifile_search.class \
 	org/gjt/sp/jedit/actions/new_file.class \
 	org/gjt/sp/jedit/actions/new_view.class \
+	org/gjt/sp/jedit/actions/next_bracket_exp.class \
 	org/gjt/sp/jedit/actions/next_buffer.class \
 	org/gjt/sp/jedit/actions/next_paragraph.class \
 	org/gjt/sp/jedit/actions/open_file.class \
@@ -50,7 +53,9 @@ classes=org/gjt/sp/jedit/actions/about.class \
 	org/gjt/sp/jedit/actions/paste.class \
 	org/gjt/sp/jedit/actions/paste_predefined.class \
 	org/gjt/sp/jedit/actions/paste_previous.class \
+	org/gjt/sp/jedit/actions/paste_string_register.class \
 	org/gjt/sp/jedit/actions/plugin_options.class \
+	org/gjt/sp/jedit/actions/prev_bracket_exp.class \
 	org/gjt/sp/jedit/actions/prev_buffer.class \
 	org/gjt/sp/jedit/actions/prev_paragraph.class \
 	org/gjt/sp/jedit/actions/print.class \
@@ -58,21 +63,22 @@ classes=org/gjt/sp/jedit/actions/about.class \
 	org/gjt/sp/jedit/actions/reload.class \
 	org/gjt/sp/jedit/actions/replace_all.class \
 	org/gjt/sp/jedit/actions/replace_in_selection.class \
-	org/gjt/sp/jedit/actions/replace_next.class \
 	org/gjt/sp/jedit/actions/save.class \
 	org/gjt/sp/jedit/actions/save_all.class \
 	org/gjt/sp/jedit/actions/save_as.class \
 	org/gjt/sp/jedit/actions/save_url.class \
 	org/gjt/sp/jedit/actions/scroll_line.class \
 	org/gjt/sp/jedit/actions/select_all.class \
-	org/gjt/sp/jedit/actions/select_anchor.class \
 	org/gjt/sp/jedit/actions/select_block.class \
 	org/gjt/sp/jedit/actions/select_buffer.class \
+	org/gjt/sp/jedit/actions/select_caret_register.class \
 	org/gjt/sp/jedit/actions/select_line_range.class \
 	org/gjt/sp/jedit/actions/select_next_paragraph.class \
+	org/gjt/sp/jedit/actions/select_none.class \
 	org/gjt/sp/jedit/actions/select_prev_paragraph.class \
 	org/gjt/sp/jedit/actions/send.class \
-	org/gjt/sp/jedit/actions/set_anchor.class \
+	org/gjt/sp/jedit/actions/set_caret_register.class \
+	org/gjt/sp/jedit/actions/set_filename_register.class \
 	org/gjt/sp/jedit/actions/set_marker.class \
 	org/gjt/sp/jedit/actions/shift_left.class \
 	org/gjt/sp/jedit/actions/shift_right.class \
@@ -81,6 +87,7 @@ classes=org/gjt/sp/jedit/actions/about.class \
 	org/gjt/sp/jedit/actions/to_upper.class \
 	org/gjt/sp/jedit/actions/undo.class \
 	org/gjt/sp/jedit/actions/untab.class \
+	org/gjt/sp/jedit/actions/view_registers.class \
 	org/gjt/sp/jedit/actions/wing_comment.class \
 	org/gjt/sp/jedit/actions/word_count.class
 

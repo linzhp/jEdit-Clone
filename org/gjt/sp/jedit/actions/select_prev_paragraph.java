@@ -1,6 +1,6 @@
 /*
  * select_prev_paragraph.java
- * Copyright (C) 1998 Slava Pestov
+ * Copyright (C) 1998, 1999 Slava Pestov
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -19,8 +19,6 @@
 
 package org.gjt.sp.jedit.actions;
 
-import javax.swing.text.BadLocationException;
-import javax.swing.text.Element;
 import java.awt.event.ActionEvent;
 import org.gjt.sp.jedit.*;
 import org.gjt.sp.jedit.textarea.JEditTextArea;
@@ -31,23 +29,25 @@ public class select_prev_paragraph extends EditAction
 	{
 		super("select-prev-paragraph");
 	}
-	
+
 	public void actionPerformed(ActionEvent evt)
 	{
 		View view = getView(evt);
 		Buffer buffer = view.getBuffer();
-		Element map = buffer.getDefaultRootElement();
 		JEditTextArea textArea = view.getTextArea();
-		int lineNo = textArea.getSelectionStartLine();
-		int start = map.getElement(buffer.locateParagraphStart(lineNo))
-			.getStartOffset();
-		Element endElement = map.getElement(buffer
-			.locateParagraphEnd(lineNo));
-		int end;
-		if(endElement == null)
-			end = buffer.getLength();
-		else
-			end = endElement.getStartOffset();
-		textArea.select(start,Math.max(textArea.getSelectionEnd(),end));
+
+		int lineNo = textArea.getCaretLine();
+
+		for(int i = lineNo - 1; i >= 0; i--)
+		{
+			if(textArea.getLineLength(i) == 0)
+			{
+				textArea.select(textArea.getMarkPosition(),
+					textArea.getLineStartOffset(i));
+				return;
+			}
+		}
+
+		textArea.select(textArea.getMarkPosition(),0);
 	}
 }

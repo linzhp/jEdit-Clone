@@ -43,158 +43,164 @@ public class CTokenMarker extends TokenMarker
 	{
 		char[] array = line.array;
 		int offset = line.offset;
-		int lastOffset = offset;
-		int lastKeyword = offset;
+		lastOffset = offset;
+		lastKeyword = offset;
 		int length = line.count + offset;
 		boolean backslash = false;
+
 loop:		for(int i = offset; i < length; i++)
 		{
 			int i1 = (i+1);
 
 			char c = array[i];
-			switch(c)
+			if(c == '\\')
 			{
-			case '\\':
 				backslash = !backslash;
-				break;
-			case '*':
-				if((token == Token.COMMENT1 || token == Token.COMMENT2)
-					&& length - i > 1)
+				continue;
+			}
+
+			switch(token)
+			{
+			case Token.NULL:
+				switch(c)
 				{
+				case '#':
+					if(backslash)
+						backslash = false;
+					else
+					{
+						if(doKeyword(line,i,c))
+							break;
+						addToken(i - lastOffset,token);
+						addToken(length - i,Token.KEYWORD2);
+						lastOffset = lastKeyword = length;
+						break loop;
+					}
+					break;
+				case '"':
+					doKeyword(line,i,c);
+					if(backslash)
+						backslash = false;
+					else
+					{
+						addToken(i - lastOffset,token);
+						token = Token.LITERAL1;
+						lastOffset = lastKeyword = i;
+					}
+					break;
+				case '\'':
+					doKeyword(line,i,c);
+					if(backslash)
+						backslash = false;
+					else
+					{
+						addToken(i - lastOffset,token);
+						token = Token.LITERAL2;
+						lastOffset = lastKeyword = i;
+					}
+					break;
+				case ':':
+					if(lastKeyword == offset)
+					{
+						if(doKeyword(line,i,c))
+							break;
+						backslash = false;
+						addToken(i1 - lastOffset,Token.LABEL);
+						lastOffset = lastKeyword = i1;
+					}
+					else if(doKeyword(line,i,c))
+						break;
+					break;
+				case '/':
 					backslash = false;
-					if(length - i > 1 && array[i1] == '/')
+					doKeyword(line,i,c);
+					if(length - i > 1)
+					{
+						switch(array[i1])
+						{
+						case '*':
+							addToken(i - lastOffset,token);
+							lastOffset = lastKeyword = i;
+							if(length - i > 2 && array[i+2] == '*')
+								token = Token.COMMENT2;
+							else
+								token = Token.COMMENT1;
+							break;
+						case '/':
+							addToken(i - lastOffset,token);
+							addToken(length - i,Token.COMMENT1);
+							lastOffset = lastKeyword = length;
+							break loop;
+						}
+					}
+					break;
+				default:
+					backslash = false;
+					if(!Character.isLetterOrDigit(c)
+						&& c != '_')
+						doKeyword(line,i,c);
+					break;
+				}
+				break;
+			case Token.COMMENT1:
+			case Token.COMMENT2:
+				backslash = false;
+				if(c == '*' && length - i > 1)
+				{
+					if(array[i1] == '/')
 					{
 						i++;
 						addToken((i+1) - lastOffset,token);
 						token = Token.NULL;
-						lastOffset = i+1;
-						lastKeyword = lastOffset;
+						lastOffset = lastKeyword = i+1;
 					}
 				}
 				break;
-			case '#':
-				backslash = false;
-				if(cpp && token == Token.NULL)
-				{
-					token = Token.KEYWORD2;
-					addToken(i - lastOffset,Token.NULL);
-					addToken(length - i,Token.KEYWORD2);
-					lastOffset = length;
-					break loop;
-				}
-				break;
-			case '/':
-				backslash = false;
-				if(token == Token.NULL && length - i > 1)
-				{
-					switch(array[i1])
-					{
-					case '*':
-						addToken(i - lastOffset,token);
-						lastOffset = i;
-						lastKeyword = lastOffset;
-						if(length - i > 2 && array[i+2] == '*')
-							token = Token.COMMENT2;
-						else
-							token = Token.COMMENT1;
-						break;
-                        		case '/':
-						addToken(i - lastOffset,token);
-						addToken(length - i,Token.COMMENT1);
-						lastOffset = length;
-						lastKeyword = lastOffset;
-						break loop;
-					}
-				}
-				break;
-			case '"':
+			case Token.LITERAL1:
 				if(backslash)
 					backslash = false;
-				else if(token == Token.NULL)
+				else if(c == '"')
 				{
-					token = Token.LITERAL1;
-					addToken(i - lastOffset,Token.NULL);
-					lastOffset = i;
-					lastKeyword = lastOffset;
-				}
-				else if(token == Token.LITERAL1)
-				{
+					addToken(i1 - lastOffset,token);
 					token = Token.NULL;
-					addToken(i1 - lastOffset,Token.LITERAL1);
-					lastOffset = i1;
-					lastKeyword = lastOffset;
+					lastOffset = lastKeyword = i1;
 				}
 				break;
-			case '\'':
+			case Token.LITERAL2:
 				if(backslash)
 					backslash = false;
-				else if(token == Token.NULL)
+				else if(c == '\'')
 				{
-					token = Token.LITERAL2;
-					addToken(i - lastOffset,Token.NULL);
-					lastOffset = i;
-					lastKeyword = lastOffset;
-				}
-				else if(token == Token.LITERAL2)
-				{
-					token = Token.NULL;
 					addToken(i1 - lastOffset,Token.LITERAL1);
-					lastOffset = i1;
-					lastKeyword = lastOffset;
+					token = Token.NULL;
+					lastOffset = lastKeyword = i1;
 				}
 				break;
-			case ':':
-				if(token == Token.NULL && lastKeyword == offset)
-				{
-					backslash = false;
-					addToken(i1 - lastOffset,Token.LABEL);
-					lastOffset = i1;
-					lastKeyword = lastOffset;
-					break;
-				}
 			default:
-				backslash = false;
-				if(token == Token.NULL && c != '_' &&
-					!Character.isLetterOrDigit(c))
-				{
-					int len = i - lastKeyword;
-					byte id = keywords.lookup(line,lastKeyword,len);
-					if(id != Token.NULL)
-					{
-						if(lastKeyword != lastOffset)
-							addToken(lastKeyword - lastOffset,Token.NULL);
-						addToken(len,id);
-						lastOffset = i;
-					}
-					lastKeyword = i1;
-				}
-				break;
+				throw new InternalError("Invalid state: "
+					+ token);
 			}
 		}
+
 		if(token == Token.NULL)
+			doKeyword(line,length,'\0');
+
+		switch(token)
 		{
-			int len = length - lastKeyword;
-			byte id = keywords.lookup(line,lastKeyword,len);
-			if(id != Token.NULL)
-			{
-				if(lastKeyword != lastOffset)
-					addToken(lastKeyword - lastOffset,Token.NULL);
-				addToken(len,id);
-				lastOffset = length;
-			}
-		}
-		if(lastOffset != length)
-		{
-			if(token == Token.LITERAL1 || token == Token.LITERAL2)
-			{
-				addToken(length - lastOffset,Token.INVALID);
-				token = Token.NULL;
-			}
-			else
-				addToken(length - lastOffset,token);
-		}
-		if(token == Token.KEYWORD2 && !backslash)
+		case Token.LITERAL1:
+		case Token.LITERAL2:
+			addToken(length - lastOffset,Token.INVALID);
 			token = Token.NULL;
+			break;
+		case Token.KEYWORD2:
+			addToken(length - lastOffset,token);
+			if(!backslash)
+				token = Token.NULL;
+		default:
+			addToken(length - lastOffset,token);
+			break;
+		}
+
 		return token;
 	}
 
@@ -254,11 +260,33 @@ loop:		for(int i = offset; i < length; i++)
 
 	private boolean cpp;
 	private KeywordMap keywords;
+	private int lastOffset;
+	private int lastKeyword;
+
+	private boolean doKeyword(Segment line, int i, char c)
+	{
+		int i1 = i+1;
+
+		int len = i - lastKeyword;
+		byte id = keywords.lookup(line,lastKeyword,len);
+		if(id != Token.NULL)
+		{
+			if(lastKeyword != lastOffset)
+				addToken(lastKeyword - lastOffset,Token.NULL);
+			addToken(len,id);
+			lastOffset = i;
+		}
+		lastKeyword = i1;
+		return false;
+	}
 }
 
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.32  1999/09/30 12:21:04  sp
+ * No net access for a month... so here's one big jEdit 2.1pre1
+ *
  * Revision 1.31  1999/08/21 01:48:18  sp
  * jEdit 2.0pre8
  *

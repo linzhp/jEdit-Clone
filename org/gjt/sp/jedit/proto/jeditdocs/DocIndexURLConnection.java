@@ -67,12 +67,17 @@ public class DocIndexURLConnection extends URLConnection
 
 		String pluginEntry = jEdit.getProperty("docindex.plugins.entry");
 
-		Plugin[] plugins = jEdit.getPlugins();
+		// This code is really messy 'cos it needs to handle
+		// old and new plugins
+		EditPlugin[] plugins = jEdit.getPlugins();
 		args = new String[4];
 		for(int i = 0; i < plugins.length; i++)
 		{
-			Plugin plugin = plugins[i];
-			String clazz = plugin.getClass().getName();
+			EditPlugin plugin = plugins[i];
+			String clazz = (plugin instanceof Plugin.Wrapper
+				? ((Plugin.Wrapper)plugin).getPlugin()
+				.getClass().getName()
+				: plugin.getClass().getName());
 
 			args[0] = jEdit.getProperty("plugin." + clazz
 				+ ".name");

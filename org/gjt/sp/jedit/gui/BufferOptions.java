@@ -230,7 +230,6 @@ public class BufferOptions extends JDialog
 		dispose();
 
 		// Update text area
-		view.getTextArea().getPainter().invalidateOffscreen();
 		view.getTextArea().getPainter().repaint();
 	}
 
@@ -259,6 +258,9 @@ public class BufferOptions extends JDialog
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.10  1999/09/30 12:21:04  sp
+ * No net access for a month... so here's one big jEdit 2.1pre1
+ *
  * Revision 1.9  1999/08/21 01:48:18  sp
  * jEdit 2.0pre8
  *

@@ -204,19 +204,8 @@ public class SearchDialog extends JDialog
 			else if(source == replaceSelection)
 			{
 				save();
-				int selStart = view.getTextArea()
-					.getSelectionStart();
-				int selEnd = view.getTextArea()
-					.getSelectionEnd();
-				if(SearchAndReplace.replace(view,buffer,
-					selStart,selEnd))
-				{
-					/* workaround for weird Position.Bias
-					 * behaviour */
-					view.getTextArea().setSelectionStart(
-						selStart);
+				if(SearchAndReplace.replace(view))
 					disposeOrKeepDialog();
-				}
 				else
 					getToolkit().beep();
 			}
@@ -263,6 +252,9 @@ public class SearchDialog extends JDialog
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.4  1999/09/30 12:21:04  sp
+ * No net access for a month... so here's one big jEdit 2.1pre1
+ *
  * Revision 1.3  1999/06/09 07:28:10  sp
  * Multifile search and replace tweaks, removed console.html
  *
