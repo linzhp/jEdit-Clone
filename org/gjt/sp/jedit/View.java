@@ -745,9 +745,6 @@ public class View extends JFrame
 /*
  * ChangeLog:
  * $Log$
- * Revision 1.87  1999/08/28 00:41:39  sp
- * Documentation updates, minor fixes throughout the code
- *
  * Revision 1.86  1999/07/16 23:45:49  sp
  * 1.7pre6 BugFree version
  *

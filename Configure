@@ -17,7 +17,7 @@ rulesOut()
 }
 
 # Print version
-VERSION=1.6.1
+VERSION=2.0final
 echo ">> Configuring jEdit $VERSION"
 echo
 
@@ -34,13 +34,13 @@ rulesOut "# Created by Configure on `date`"
 rulesOut ""
 rulesOut "# In a plugin Makefile, set the following variables:"
 rulesOut "# jar: Plugin JAR file name"
-rulesOut "# resources: Class files of plugin"
-rulesOut "# no_compile_res: Inner classes, property files, and resources"
+rulesOut "# classes: Class files of plugin"
+rulesOut "# others: Inner classes, property files, and resources"
 rulesOut "# deps: Colon-separated list of JARs this one depends on"
 rulesOut ""
 rulesOut ".SUFFIXES: .java .class"
-rulesOut '../$(jar): $(resources)'
-rulesOut '	$(JAR) cf ../$(jar) $(resources) $(no_compile_res)'
+rulesOut '../$(jar): $(resources) $(classes)'
+rulesOut '	$(JAR) cf ../$(jar) $(resources) $(classes) $(no_compile_res) $(others)'
 rulesOut ".java.class:"
 rulesOut '	@echo $<:'
 rulesOut '	@$(JAVAC) -classpath $(CLASSPATH):$(deps):../.. $<'
@@ -64,6 +64,17 @@ fi
 rulesOut "JEDIT_HOME=$JEDIT_HOME"
 rulesOut "JEDIT_BIN=$JEDIT_BIN"
 
+echo -n "Where do you want to install jEdit's documentation? [/usr/local/doc/jedit-$VERSION] "
+read JEDIT_DOC
+if test "$JEDIT_DOC" = ""
+then
+	JEDIT_DOC=/usr/local/doc/jedit-$VERSION
+fi
+
+rulesOut "JEDIT_HOME=$JEDIT_HOME"
+rulesOut "JEDIT_BIN=$JEDIT_BIN"
+rulesOut "JEDIT_DOC=$JEDIT_DOC"
+
 # Configure Java virtual machine
 echo -n "What is the name of your Java virtual machine? [java] "
 read JAVA
@@ -81,6 +92,15 @@ then
 	JAVAC=javac
 fi
 rulesOut JAVAC=$JAVAC
+
+# Configure RMI stub compiler
+echo -n "What is the name of your RMI stub compiler? [rmic] "
+read RMIC
+if test "$RMIC" = ""
+then
+	RMIC=rmic
+fi
+rulesOut RMIC=$RMIC
 
 # Configure JAR tool
 echo -n "What is the name of your JAR tool? [jar] "

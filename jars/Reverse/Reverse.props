@@ -1,9 +1,0 @@
-plugin.ReversePlugin.name=Reverse
-plugin.ReversePlugin.author=Slava Pestov
-plugin.ReversePlugin.version=1.6pre1
-plugin.ReversePlugin.docs=index.html
-
-plugin.ReversePlugin.depend.0=jdk 1.1
-plugin.ReversePlugin.depend.1=jedit 01.06.01.00
-
-reverse.label=Reverse

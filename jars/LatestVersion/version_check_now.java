@@ -1,6 +1,6 @@
 /*
- * reverse.java - Simple plugin
- * Copyright (C) 1998, 1999 Slava Pestov
+ * version_check_now.java
+ * Copyright (C) 1999 Slava Pestov
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -18,25 +18,17 @@
  */
 
 import java.awt.event.ActionEvent;
-import org.gjt.sp.jedit.gui.JEditTextArea;
 import org.gjt.sp.jedit.*;
 
-public class reverse extends EditAction
+public class version_check_now extends EditAction
 {
-	public reverse()
+	public version_check_now()
 	{
-		super("reverse");
+		super("version-check-now");
 	}
-	
+
 	public void actionPerformed(ActionEvent evt)
 	{
-		View view = getView(evt);
-		JEditTextArea textArea = view.getTextArea();
-		String selection = textArea.getSelectedText();
-		if(selection != null)
-			textArea.replaceSelection(new StringBuffer(selection)
-				.reverse().toString());
-		else
-			view.getToolkit().beep();
+		LatestVersionPlugin.doVersionCheck(getView(evt));
 	}
 }

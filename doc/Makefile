@@ -7,7 +7,7 @@
 all:
 	@echo
 	@echo "The following targets are supported:"
-	@echo "    apidocs: rebuild the jEdit API documentation"
+	@echo "    api: rebuild the jEdit API documentation"
 	@echo "    htmldocs: generate nice HTML docs from the SGML source"
 	@echo "    dvidocs: generate TeX DVI docs from the SGML source"
 	@echo "    psdocs: generate PostScript docs from the SGML source"
@@ -16,7 +16,7 @@ all:
 	@echo
 	@exit 1
 
-apidocs:
+api:
 	-javadoc -J-mx24m -classpath $(CLASSPATH):.. -noindex -notree -d api \
 		org.gjt.sp.jedit \
 		org.gjt.sp.jedit.event \

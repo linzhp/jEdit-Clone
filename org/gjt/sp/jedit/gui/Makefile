@@ -38,7 +38,9 @@ others='org/gjt/sp/jedit/gui/BufferOptions$$ActionHandler.class' \
 	'org/gjt/sp/jedit/gui/MultiFileSearchDialog$$ActionHandler.class' \
 	'org/gjt/sp/jedit/gui/MultiFileSearchDialog$$KeyHandler.class' \
 	'org/gjt/sp/jedit/gui/SearchDialog$$ActionHandler.class' \
-	'org/gjt/sp/jedit/gui/SearchDialog$$KeyHandler.class'
+	'org/gjt/sp/jedit/gui/SearchDialog$$KeyHandler.class' \
+	'org/gjt/sp/jedit/gui/SplashScreen$$1.class' \
+	'org/gjt/sp/jedit/gui/SplashScreen$$2.class'
 
 all: $(classes)
 	echo $(classes) $(others) >> .resources

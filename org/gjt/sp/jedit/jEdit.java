@@ -1644,9 +1644,6 @@ public class jEdit
 /*
  * ChangeLog:
  * $Log$
- * Revision 1.126  1999/08/28 00:41:39  sp
- * Documentation updates, minor fixes throughout the code
- *
  * Revision 1.125  1999/08/21 01:48:18  sp
  * jEdit 2.0pre8
  *

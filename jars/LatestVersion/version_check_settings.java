@@ -1,5 +1,5 @@
 /*
- * Rot13Plugin.java - Rot13 Plugin
+ * version_check_settings.java
  * Copyright (C) 1999 Slava Pestov
  *
  * This program is free software; you can redistribute it and/or
@@ -17,16 +17,18 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+import java.awt.event.ActionEvent;
 import org.gjt.sp.jedit.*;
 
-public class Rot13Plugin implements Plugin
+public class version_check_settings extends EditAction
 {
-	public void start()
+	public version_check_settings()
 	{
-		jEdit.addPluginAction(new rot13());
+		super("version-check-settings");
 	}
 
-	public void stop()
+	public void actionPerformed(ActionEvent evt)
 	{
+		LatestVersionPlugin.doVersionCheckConfirm(getView(evt));
 	}
 }

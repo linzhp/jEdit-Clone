@@ -8,16 +8,26 @@ can be used for editing plain text files, such as HTML, Java source,
 Perl scripts, LaTeX documents, and so on. It has many commands useful
 for the editing of such files.
 
-jEdit is released under the GNU General Public License; basically, you
-can share jEdit and modify it all you want, but you must give away your
-modifications under the same terms. The license can be viewed within
-jEdit by selecting Help->Help Contents->GNU General Public License.
-Also, if you have a WWW browser such as Netscape, you can view it
-outside of jEdit by opening `copying.html' in the `doc' directory.
-
 jEdit uses gnu.regexp by the Free Software Foundation. Only the parts of
 gnu.regexp used by jEdit are included - the complete package can be
 found at <http://www.cacas.org/java/gnu/regexp/>.
+
+* jEdit's License
+
+Most of jEdit is released under the GNU General Public License, except
+for the following packages which are released under the GNU Lesser
+General Public License, which allows those packages to be linked into
+commercial programs:
+
+- org.gjt.sp.jedit.rmi (RMI interfaces)
+- org.gjt.sp.jedit.syntax (Syntax highlighting core and parsers)
+- org.gjt.sp.jedit.textarea (Syntax highlighting text area component)
+
+Note that jEdit comes with ABSOLUTELY NO WARRANTY OF ANY KIND; see
+section 11 and 12 of the GNU General Public License for details.
+
+The GNU General and Lesser Publice Licenses are stored in the
+COPYING.txt and COPYING-LIB.txt files, respectively.
 
 * jEdit on the Internet
 
@@ -31,8 +41,10 @@ If you have a feature suggestion, or you have written a plugin for
 jEdit, or you just want to be informed when new versions are released,
 you can subscribe to the mailing list.
 
-- To subscribe/unsubscribe: Go to <http://www.gjt.org/~sp/jedit.html>
+- To subscribe: Send mail to <jedit-subscribe@listbot.com>
+- To unsubscribe: Send mail to <jedit-unsubscribe@listbot.com>
 - To send a message to the list: Send mail to <jedit@listbot.com>
+- To view the archive: Go to <http://jedit.listbot.com>
 
 You may also contact the author of jEdit directly.
 
@@ -40,15 +52,17 @@ You may also contact the author of jEdit directly.
 
 * Installing jEdit
 
-jEdit requires either JDK/JRE 1.1 with Swing 1.1beta3 or later (for best
-performance, JDK/JRE 1.1.8 and Swing 1.1.1beta2) or JDK/JRE 1.2. Earlier
-JDK and Swing versions will not work.
+jEdit requires either JDK/JRE 1.1 with Swing 1.1 or later or JDK/JRE
+1.2. Earlier JDK and Swing versions will not work.
 
 Java runtimes for Solaris and Windows:
-<http://java.sun.com/products/jdk/1.2>
+JDK 1.1: <http://java.sun.com/products/jdk/1.1>
+JDK 1.2: <http://java.sun.com/products/jdk/1.2>
+
 Java runtime for Linux: <http://java.blackdown.org>
 Java runtime for the MacOS: <http://java.apple.com>
-Swing: <http://java.sun.com/products/jfc/index.html>
+
+Swing: <http://java.sun.com/products/jfc>
 
 ** Unix
 
@@ -59,7 +73,7 @@ Installation of jEdit on Unix is a two step process:
 2. Run `make install' to install jEdit.
 
 To pass options to the Java virtual machine, put them in the JEDIT
-enviroment variable. With a Bourne shell, the command is:
+environment variable. With a Bourne shell, the command is:
 
 	set JEDIT=<options>; export JEDIT
 
@@ -92,7 +106,7 @@ It is advisable to place this command in your C:\AUTOEXEC.BAT so that
 it's executed every time the computer starts up.
 
 To pass options to the Java virtual machine, put them in the JEDIT
-enviroment variable, like this:
+environment variable, like this:
 
 	set JEDIT=<options>
 
@@ -105,14 +119,19 @@ directory in the desired place and run jedit.cmd to start jEdit.
 
 There are no specific steps that must be taken to install jEdit on the
 MacOS. Simply run the `org.gjt.sp.jedit.jEdit' class from the jedit.jar
-file with your favourite JVM. If you use MRJ, try creating a JBindery
+file with your favorite JVM. If you use MRJ, try creating a JBindery
 file to make jEdit easier to start. Sorry, I can't give any more advice,
 my only Mac is an ancient 68040 LC575.
 
 * Documentation
 
-Once you have installed jEdit, a list of help topics can be displayed by
-running jEdit and selecting `Help->Help Contents' from the menu bar.
+jEdit's documentation is written in SGML-DocBook. HTML and PostScript
+versions are installed by default, and other formats such as text only,
+RTF and DVI can be generated from the SGML source.
+
+To view the HTML version, select `Help->Help Contents' in jEdit, or open
+doc/jeditdocs/index.html in a WWW browser. To view the PostScript, open
+doc/jeditdocs.ps in a PostScript viewer such as GV.
 
 Have fun!
 <sp@gjt.org>
