@@ -55,7 +55,8 @@ public class MiscUtilities
 			return canonPath(path);
 		// windows pathnames, eg C:\document
 		else if(path.length() >= 3 && path.charAt(1) == ':'
-			&& path.charAt(2) == '\\')
+			&& path.charAt(2) == '\\'
+			|| path.charAt(2) == '/')
 			return canonPath(path);
 		// relative pathnames
 		else if(parent == null)

@@ -141,6 +141,14 @@ public class EditorOptionPane extends OptionPane
 		add(autoIndent);
 
 		cons.gridy = 8;
+		noTabs = new JCheckBox(jEdit.getProperty("options.editor"
+			+ ".noTabs"));
+		noTabs.getModel().setSelected("yes".equals(jEdit.getProperty(
+			"buffer.noTabs")));
+		layout.setConstraints(noTabs,cons);
+		add(noTabs);
+
+		cons.gridy = 9;
 		blinkCaret = new JCheckBox(jEdit.getProperty("options.editor"
 			+ ".blinkCaret"));
 		blinkCaret.getModel().setSelected(!"0".equals(jEdit.getProperty(
@@ -148,7 +156,7 @@ public class EditorOptionPane extends OptionPane
 		layout.setConstraints(blinkCaret,cons);
 		add(blinkCaret);
 
-		cons.gridy = 9;
+		cons.gridy = 10;
 		blockCaret = new JCheckBox(jEdit.getProperty("options.editor"
 			+ ".blockCaret"));
 		blockCaret.getModel().setSelected("on".equals(jEdit.getProperty(
@@ -156,21 +164,13 @@ public class EditorOptionPane extends OptionPane
 		layout.setConstraints(blockCaret,cons);
 		add(blockCaret);
 
-		cons.gridy = 10;
+		cons.gridy = 11;
 		electricBorders = new JCheckBox(jEdit.getProperty("options.editor"
 			+ ".electricBorders"));
 		electricBorders.getModel().setSelected(!"0".equals(jEdit.getProperty(
 			"view.electricBorders")));
 		layout.setConstraints(electricBorders,cons);
 		add(electricBorders);
-
-		cons.gridy = 11;
-		noTabs = new JCheckBox(jEdit.getProperty("options.editor"
-			+ ".noTabs"));
-		noTabs.getModel().setSelected("yes".equals(jEdit.getProperty(
-			"buffer.noTabs")));
-		layout.setConstraints(noTabs,cons);
-		add(noTabs);
 	}
 
 	public void save()

@@ -510,7 +510,7 @@ implements CaretListener, KeyListener, WindowListener
 	public void windowDeactivated(WindowEvent evt) {}
 
 	// package-private members
-	View(Buffer buffer)
+	View(View view, Buffer buffer)
 	{
 		showTip = ("on".equals(jEdit.getProperty("view.showTips")));
 		
@@ -569,7 +569,16 @@ implements CaretListener, KeyListener, WindowListener
 		addKeyListener(this);
 		addWindowListener(this);
 		pack();
-		GUIUtilities.loadGeometry(this,"view");
+		if(view != null)
+		{
+			setSize(view.getSize());
+			Point location = view.getLocation();
+			location.x += 20;
+			location.y += 20;
+			setLocation(location);
+		}
+		else
+			GUIUtilities.loadGeometry(this,"view");
 
 		show();
 	}

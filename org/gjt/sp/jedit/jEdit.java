@@ -46,7 +46,7 @@ public class jEdit
 	 * The date when a change was last made to the source code,
 	 * in <code>YYYYMMDD</code> format.
 	 */
-	public static final String BUILD = "19990228";
+	public static final String BUILD = "19990305";
 
 	/**
 	 * AWK regexp syntax.
@@ -471,7 +471,7 @@ public class jEdit
 			buffer = newFile(null);
 
 		// Create the view
-		newView(buffer);
+		newView(null,buffer);
 
 		// Dispose of the splash screen
 		if(splash != null)
@@ -927,13 +927,14 @@ public class jEdit
 
 	/**
 	 * Creates a new view of a buffer.
+	 * @param view The view from which to take the geometry from
 	 * @param buffer The buffer
 	 */
-	public static View newView(Buffer buffer)
+	public static View newView(View view, Buffer buffer)
 	{
-		View view = new View(buffer);
-		views.addElement(view);
-		return view;
+		View _view = new View(view,buffer);
+		views.addElement(_view);
+		return _view;
 	}
 
 	/**
@@ -1578,7 +1579,7 @@ public class jEdit
 								.getStartOffset());
 						}
 					}
-					jEdit.newView(buffer);
+					jEdit.newView(null,buffer);
 				}
 			}
 			catch(NumberFormatException nf)

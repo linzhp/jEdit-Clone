@@ -19,8 +19,6 @@
 </a>
 
 <ul>
-<li>Each view should have a menu of functions, the buffer should be
-dynamically parsed, maybe in a separate thread
 <li>Folding (fold list stored in buffer, but each view has it's own
 fold configuration)
 <li>GUI key binding editor (including Swing keymaps)
@@ -39,8 +37,7 @@ as getProperty(), createFileReader(), exit(), etc
 subsystem, it make it usable on it's own
 <li>Expand abbreviation should fetch the next match if the caret hasn't
 moved since the last time it was invoked
-<li>Only one console should parse errors at a time, this prevents user
-confusion and messy error lists
+<li>Each view should have it's own `console' and file browser
 <li>Context menu - mnemonics/arrows don't work, and selection is extended if
 mouse is held down
 <li>Command line parameter to not open a new view when connecting to the server
@@ -51,7 +48,7 @@ mouse is held down
 </a>
 
 <ul>
-<li><b>Error list doesn't work for some people</b>
+<li><b>ACU BUG</b>
 <li>Geometry isn't saved/restored properly (getBounds() always returns
 less than was passed to setBounds(), and this only happends on X11)
 (probably a JDK bug, and a really annoying one too)
@@ -65,10 +62,27 @@ the TYA JIT (probably a TYA bug)
 <h1>Version 1.4final</h1>
 </a>
 
+<h2>Enhancements</h2>
+
+<ul>
+<li>New version of accent converter plugin (Romain Guy)
+<li>When a new view is created, it borrows it's geometry from the current
+view
+<li>Minor options dialog box updates
+<li>Changed several syntax colors
+<li>Minor documentation updates
+</ul>
+
 <h2>Bug Fixes</h2>
 
 <ul>
 <li>Reload command didn't work for files with no edit mode
+<li>Made mode selection case insensitive, so that AUTOEXEC.BAT is now
+recognized as a batch file
+<li>The paths that Jikes outputs on Windows (DOS drive letter + Unix
+path separator) should be correctly parsed by the `console'
+<li>Fixed bug in search &amp; replace where it would have problems dealing
+with an empty replace string
 <li>Possible fix for the options dialog crash some people have been
 seeing (autosave thread is now stopped with interrupt() instead of
 stop())

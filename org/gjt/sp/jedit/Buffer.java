@@ -662,7 +662,7 @@ implements DocumentListener, UndoableEditListener
 	public void setMode()
 	{
 		String nogzName = name.substring(0,name.length() -
-			(name.endsWith(".gz") ? 3 : 0));
+			(name.endsWith(".gz") ? 3 : 0)).toLowerCase();
 		Mode mode = jEdit.getMode(jEdit.getProperty(
 			"mode.filename.".concat(nogzName)));
 		if(mode != null)

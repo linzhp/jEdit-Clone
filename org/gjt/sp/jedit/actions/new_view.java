@@ -31,6 +31,7 @@ public class new_view extends EditAction
 	
 	public void actionPerformed(ActionEvent evt)
 	{
-		jEdit.newView(getBuffer(evt));
+		View view = getView(evt);
+		jEdit.newView(view,view.getBuffer());
 	}
 }

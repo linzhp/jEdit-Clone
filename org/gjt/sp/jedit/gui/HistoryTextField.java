@@ -43,7 +43,12 @@ public class HistoryTextField extends JTextField implements KeyListener
 
 	public void save()
 	{
-		addCurrentToHistory();
+		String text = getText();
+		if(text == null)
+			text = "";
+		System.arraycopy(history,0,history,1,history.length - 1);
+		history[0] = text;
+
 		for(int i = 0; i < history.length; i++)
 		{
 			String line = history[i];

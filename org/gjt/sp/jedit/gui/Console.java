@@ -133,7 +133,7 @@ implements ActionListener, KeyListener, ListSelectionListener, WindowListener
 
 		if(!view.isVisible())
 		{
-			view = jEdit.newView((Buffer)jEdit.getBuffers()
+			view = jEdit.newView(view,(Buffer)jEdit.getBuffers()
 				.nextElement());
 		}
 
