@@ -19,7 +19,6 @@
 
 package org.gjt.sp.jedit.actions;
 
-import javax.swing.JOptionPane;
 import java.awt.event.ActionEvent;
 import org.gjt.sp.jedit.*;
 
@@ -33,10 +32,8 @@ public class save_url extends EditAction
 	public void actionPerformed(ActionEvent evt)
 	{
 		View view = getView(evt);
-		String path = (String)JOptionPane.showInputDialog(view,
-			jEdit.getProperty("saveurl.message"),jEdit.getProperty(
-			"saveurl.title"),JOptionPane.QUESTION_MESSAGE,null,
-			null,view.getBuffer().getPath());
+		String path = jEdit.input(view,"saveurl",view.getBuffer()
+			.getPath());
 		if(path != null)
 			view.getBuffer().save(view,path);
 	}

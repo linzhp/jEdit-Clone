@@ -43,8 +43,8 @@ public class next_paragraph extends EditAction
 			view.getToolkit().beep();
 			return;
 		}
-		int nextParagraph = buffer.locateParagraphEnd(lineNo+1);
+		int nextParagraph = buffer.locateParagraphEnd(lineNo);
 		view.getTextArea().setCaretPosition(buffer.getDefaultRootElement()
-			.getElement(nextParagraph).getEndOffset());
+			.getElement(nextParagraph).getEndOffset() - 1);
 	}
 }

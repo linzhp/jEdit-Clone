@@ -177,12 +177,13 @@ public class SyntaxTextArea extends JEditorPane
 	}
 
 	/**
-	 * Sets the caret blink rate.
-	 * @param blinkRate the new blink rate, 0 = no blink
+	 * Sets the number of lines from the top or bottom of the
+	 * text area from which autoscroll begins.
+	 * @param lines The number of lines
 	 */
-	public void setCaretBlinkRate(int blinkRate)
+	public void setElectricBorders(int lines)
 	{
-		getCaret().setBlinkRate(blinkRate);
+		electricLines = lines;
 	}
 
 	/**
@@ -241,6 +242,7 @@ public class SyntaxTextArea extends JEditorPane
 	private Object lineHighlightTag;
 	private Color bracketHighlightColor;
 	private Object bracketHighlightTag;
+	private int electricLines;
 	private Segment lineSegment;
 
 	private class SyntaxCaret extends DefaultCaret
@@ -284,9 +286,20 @@ public class SyntaxTextArea extends JEditorPane
 			/* we do this even if the text area is read only,
 			 * otherwise stuff like line and bracket highlighting
 			 * will look weird without a caret */
-			/* There seems to be a bug in DefaultCaret.damage(),
-			 * causing the caret not to blink after this */
 			SyntaxCaret.this.setVisible(true);
+		}
+
+		public void adjustVisibility(Rectangle rect)
+		{
+			/* Electric borders: cursor is never actually at
+			 * first/last visible line of viewport.
+			 */
+			int height = getToolkit().getFontMetrics(getFont())
+				.getHeight();
+			rect.y = Math.max(0,rect.y - height * electricLines);
+			rect.height += Math.min(getHeight() - (rect.y + rect.height),
+				height * electricLines * 2);
+			super.adjustVisibility(rect);
 		}
 	}
 

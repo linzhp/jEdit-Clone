@@ -29,7 +29,7 @@ import java.net.*;
 import java.text.MessageFormat;
 import java.util.zip.*;
 import java.util.*;
-import org.gjt.sp.jedit.gui.SplashScreen;
+import org.gjt.sp.jedit.gui.*;
 
 /**
  * The main class of the jEdit text editor.
@@ -39,13 +39,13 @@ public class jEdit
 	/**
 	 * The jEdit version.
 	 */
-	public static final String VERSION = "1.3final";
+	public static final String VERSION = "1.4pre1";
 	
 	/**
 	 * The date when a change was last made to the source code,
 	 * in <code>YYYYMMDD</code> format.
 	 */
-	public static final String BUILD = "19990116";
+	public static final String BUILD = "19990126";
 
 	/**
 	 * AWK regexp syntax.
@@ -130,12 +130,12 @@ public class jEdit
 				{
 					version();
 					usage();
-					return;
+					System.exit(1);
 				}
 				else if(arg.equals("-version"))
 				{
 					version();
-					return;
+					System.exit(1);
 				}
 				else if(arg.equals("-nousrprops"))
 					usrProps = null;
@@ -158,6 +158,7 @@ public class jEdit
 					System.err.println("Unknown option: "
 						+ arg);
 					usage();
+					System.exit(1);
 				}
 				args[i] = null;
 			}
@@ -196,7 +197,7 @@ public class jEdit
 			}
 			catch(Exception e)
 			{
-				System.out.println("Stale port file deleted");
+				System.out.println("jEdit: stale port file deleted");
 				portFile.delete();
 			}
 		}
@@ -249,6 +250,9 @@ public class jEdit
 			loadProps(props.getClass().getResourceAsStream(
 				"/org/gjt/sp/jedit/jedit_keys.props"),jEditHome
 				+ "jedit_keys.props");
+			loadProps(props.getClass().getResourceAsStream(
+				"/org/gjt/sp/jedit/jedit_tips.props"),jEditHome
+				+ "jedit_tips.props");	
 		}
 		catch(Exception e)
 		{
@@ -257,6 +261,7 @@ public class jEdit
 				+ "- jedit.props\n"
 				+ "- jedit_gui.props\n"
 				+ "- jedit_keys.props\n"
+				+ "- jedit_tips.props\n"
 				+ "Try reinstalling jEdit.");
 			return;
 		}
@@ -277,6 +282,8 @@ public class jEdit
 
 		// Load actions
 		addAction(new org.gjt.sp.jedit.actions.about());
+		addAction(new org.gjt.sp.jedit.actions.block_comment());
+		addAction(new org.gjt.sp.jedit.actions.box_comment());
 		addAction(new org.gjt.sp.jedit.actions.browser_open_sel());
 		addAction(new org.gjt.sp.jedit.actions.browser_open_url());
 		addAction(new org.gjt.sp.jedit.actions.clear());
@@ -291,6 +298,7 @@ public class jEdit
 		addAction(new org.gjt.sp.jedit.actions.delete_no_indent());
 		addAction(new org.gjt.sp.jedit.actions.delete_paragraph());
 		addAction(new org.gjt.sp.jedit.actions.delete_start_line());
+		addAction(new org.gjt.sp.jedit.actions.exchange_anchor());
 		addAction(new org.gjt.sp.jedit.actions.execute());
 		addAction(new org.gjt.sp.jedit.actions.exit());
 		addAction(new org.gjt.sp.jedit.actions.expand_abbrev());
@@ -298,7 +306,9 @@ public class jEdit
 		addAction(new org.gjt.sp.jedit.actions.find_next());
 		addAction(new org.gjt.sp.jedit.actions.find_selection());
 		addAction(new org.gjt.sp.jedit.actions.format());
+		addAction(new org.gjt.sp.jedit.actions.generate_text());
 		addAction(new org.gjt.sp.jedit.actions.goto_anchor());
+		addAction(new org.gjt.sp.jedit.actions.goto_end_indent());
 		addAction(new org.gjt.sp.jedit.actions.goto_line());
 		addAction(new org.gjt.sp.jedit.actions.goto_marker());
 		addAction(new org.gjt.sp.jedit.actions.help());
@@ -327,6 +337,7 @@ public class jEdit
 		addAction(new org.gjt.sp.jedit.actions.save());
 		addAction(new org.gjt.sp.jedit.actions.save_as());
 		addAction(new org.gjt.sp.jedit.actions.save_url());
+		addAction(new org.gjt.sp.jedit.actions.scroll_line());
 		addAction(new org.gjt.sp.jedit.actions.select_all());
 		addAction(new org.gjt.sp.jedit.actions.select_anchor());
 		addAction(new org.gjt.sp.jedit.actions.select_block());
@@ -345,6 +356,7 @@ public class jEdit
 		addAction(new org.gjt.sp.jedit.actions.to_upper());
 		addAction(new org.gjt.sp.jedit.actions.undo());
 		addAction(new org.gjt.sp.jedit.actions.untab());
+		addAction(new org.gjt.sp.jedit.actions.wing_comment());
 		addAction(new org.gjt.sp.jedit.actions.word_count());
 
 		// Load plugins
@@ -370,6 +382,7 @@ public class jEdit
 				e.printStackTrace();
 			}
 		}
+
 		propertiesChanged();
 
 		// Set look and feel
@@ -440,14 +453,12 @@ public class jEdit
 		if(buffer == null)
 			buffer = newFile(null);
 
-		// Create the view
-		newView(buffer);
-
-		// Despose of the splash screen
-		if(showSplash)
+		// Dispose of the splash screen
+		if(splash != null)
 			splash.dispose();
 
-		// All done!
+		// Create the view
+		newView(buffer);
 	}
 
 	/**
@@ -849,9 +860,9 @@ public class jEdit
 		while(enum.hasMoreElements())
 		{
 			view = (View)enum.nextElement();
-			view.updateBuffersMenu();
 			if(view.getBuffer() == buffer)
 				view.setBuffer(prev);
+			view.updateBuffersMenu();
 		}
 		return true;
 	}
@@ -923,9 +934,6 @@ public class jEdit
 
 	/**
 	 * Loads a menubar from the properties for the specified view.
-	 * <p>
-	 * The menubar format is described in menus.txt. (Help-&gt;Menus
-	 * in jEdit).
 	 * @param view The view to load the menubar for
 	 * @param name The property with the list of menus
 	 */
@@ -950,9 +958,6 @@ public class jEdit
 
 	/**
 	 * Loads a menu from the properties for the specified view.
-	 * <p>
-	 * The menubar format is described in menus.txt. (Help-&gt;Menus
-	 * in jEdit).
 	 * @param view The view to load the menu for
 	 * @param name The menu name
 	 */
@@ -974,9 +979,9 @@ public class jEdit
 			if(index != -1 && label.length() - index > 1)
 			{
 				menu = new JMenu(label.substring(0,index)
-					.concat(label.substring(index+1)));
+					.concat(label.substring(++index)));
 				menu.setMnemonic(Character.toLowerCase(label
-					.substring(index+1,index+2).charAt(0)));
+					.charAt(index)));
 			}
 			else
 				menu = new JMenu(label);
@@ -1005,9 +1010,6 @@ public class jEdit
 
 	/**
 	 * Loads a menu item from the properties for the specified view.
-	 * <p>
-	 * The menubar format is described in menus.txt. (Help-&gt;Menus
-	 * in jEdit).
 	 * @param view The view to load the menu for
 	 * @param name The menu item name
 	 */
@@ -1029,8 +1031,8 @@ public class jEdit
 			action = name;
 		}
 		JMenuItem mi;
-                String label = getProperty(name + ".label");
-		String keyStroke = getProperty(name + ".shortcut");
+                String label = getProperty(name.concat(".label"));
+		String keyStroke = getProperty(name.concat(".shortcut"));
 		if(label == null)
 		{
 			System.err.println("Menu item label is null: "
@@ -1039,7 +1041,6 @@ public class jEdit
 		}
 		if(keyStroke != null)
 		{
-			label = label + "   ( " + keyStroke + " )";
 			index = keyStroke.indexOf(' ');
 			if(index == -1)
 				view.addKeyBinding(parseKeyStroke(keyStroke),
@@ -1052,13 +1053,12 @@ public class jEdit
 		index = label.indexOf('$');
                 if(index != -1 && label.length() - index > 1)
 		{
-			mi = new JMenuItem(label.substring(0,index)
-				.concat(label.substring(index+1)));
-                        mi.setMnemonic(Character.toLowerCase(label.substring(
-				index+1,index+2).charAt(0)));
+			mi = new EnhancedMenuItem(label.substring(0,index)
+				.concat(label.substring(++index)),keyStroke);
+                        mi.setMnemonic(Character.toLowerCase(label.charAt(index)));
 		}
 		else
-			mi = new JMenuItem(label);
+			mi = new EnhancedMenuItem(label,keyStroke);
 		
 		Action a = (Action)actionHash.get(action);
 		if(a == null)
@@ -1179,7 +1179,26 @@ public class jEdit
 	 * @param name The name of the dialog
 	 * @param def The text to display by default in the input field
 	 */
-	public static String input(View view, String name, String def)
+	public static String input(View view, String name, Object def)
+	{
+		String retVal = (String)JOptionPane.showInputDialog(view,
+			getProperty(name.concat(".message")),getProperty(name
+			.concat(".title")),JOptionPane.QUESTION_MESSAGE,null,
+			null,def);
+		return retVal;
+	}
+
+	/**
+	 * Displays an input dialog box and returns any text the user entered.
+	 * <p>
+	 * The title of the dialog is fetched from
+	 * the <code><i>name</i>.title</code> property. The message is fetched
+	 * from the <code><i>name</i>.message</code> property.
+	 * @param view The view to display the dialog for
+	 * @param name The name of the dialog
+	 * @param def The property whose text to display in the input field
+	 */
+	public static String inputProperty(View view, String name, String def)
 	{
 		String retVal = (String)JOptionPane.showInputDialog(view,
 			getProperty(name.concat(".message")),getProperty(name
@@ -1692,7 +1711,7 @@ loop:		for(int i = 0; i < str.length(); i++)
 			}
 			else if(result == JOptionPane.NO_OPTION)
 				buffer.getAutosaveFile().delete();
-			else if(result == JOptionPane.CANCEL_OPTION)
+			else
 				return false;
 		}
 		return true;
@@ -1774,7 +1793,7 @@ loop:		for(int i = 0; i < str.length(); i++)
 			}
 			catch(NumberFormatException nf)
 			{
-				interval = 30;
+				interval = 15;
 			}
 			if(interval == 0)
 				return;
@@ -1829,9 +1848,13 @@ loop:		for(int i = 0; i < str.length(); i++)
 				for(;;)
 				{
 					final Socket client = server.accept();
-					System.out.println("Connection from "
+					System.out.println("jEdit: connection from "
 						+ client.getInetAddress());
 					// Paranoid thread safety
+					// (We have a nasty DoS here if client
+					// opens connecton and never closes it,
+					// but it's not too catastrophic since
+					// the autosaver continues running)
 					SwingUtilities.invokeLater(new Runnable()
 					{
 						public void run()
@@ -1860,7 +1883,7 @@ loop:		for(int i = 0; i < str.length(); i++)
 				long auth = Long.parseLong(authString);
 				if(auth != authInfo)
 				{
-					System.err.println("Wrong authorization key: "
+					System.err.println("jEdit: wrong authorization key: "
 						+ auth);
 					client.close();
 					return;
@@ -1900,7 +1923,7 @@ loop:		for(int i = 0; i < str.length(); i++)
 			}
 			catch(NumberFormatException nf)
 			{
-				System.err.println("Invalid authorization key: "
+				System.err.println("jEdit: invalid authorization key: "
 					+ authString);
 			}
 			catch(Exception e)

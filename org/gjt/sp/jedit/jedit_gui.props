@@ -95,29 +95,37 @@ locate-bracket.label=$Locate Bracket
 
 anchor=set-anchor \
        goto-anchor \
-       select-anchor
+       - \
+       select-anchor \
+       exchange-anchor
 anchor.label=Anchor Operations
 set-anchor.label=Set Anchor
 goto-anchor.label=Go to Anchor
 select-anchor.label=Select to Anchor
+exchange-anchor.label=Exchange Anchor and Caret
 
 ### Line menu
 
-line=select-no-indent \
+line=goto-end-indent \
+     select-no-indent \
      - \
      delete-line \
      delete-no-indent \
      delete-start-line \
      delete-end-line \
      - \
-     join-lines
+     join-lines \
+     - \
+     scroll-line
 line.label=Line Operations
+goto-end-indent.label=Go to End of Indent
 select-no-indent.label=Select Line No Indent
 delete-line.label=Delete Line
 delete-no-indent.label=Delete Line No Indent
 delete-start-line.label=Delete to Start of Line
 delete-end-line.label=Delete to End of Line
 join-lines.label=Join Lines
+scroll-line.label=Scroll to Current Line
 
 ### Paragraph menu
 
@@ -139,11 +147,18 @@ delete-paragraph.label=Delete Paragraph
 block=select-block \
       - \
       shift-left \
-      shift-right
+      shift-right \
+      - \
+      wing-comment \
+      box-comment \
+      block-comment
 block.label=Code Block Operations
 select-block.label=Select Code Block
 shift-left.label=Shift Indent Left
 shift-right.label=Shift Indent Right
+wing-comment.label=Wing Comment
+box-comment.label=Box Comment
+block-comment.label=Block Comment
 
 ### Search menu
 search=find \
@@ -186,6 +201,7 @@ tools=execute \
       make \
       - \
       word-count \
+      generate-text \
       - \
       options \
       - \
@@ -199,6 +215,7 @@ browser-open-url.label=Open in $WWW Browser
 compile.label=$Compile...
 make.label=$Make...
 word-count.label=Wo$rd Count...
+generate-text.label=Generate Random Text...
 options.label=Opt$ions...
 
 ### Mode menu
@@ -213,7 +230,7 @@ help=about \
      help@index.html \
      - \
      help@copying.html \
-     help@version1.3.html \
+     help@version1.4.html \
      - \
      help@using.html \
      help@regexp.html \
@@ -227,7 +244,7 @@ help.label=$Help
 about.label=About jEdit...
 help@index.html.label=Help Contents
 help@copying.html.label=Copying & (No) Warranty
-help@version1.3.html.label=New Features in jEdit 1.3
+help@version1.4.html.label=New Features in jEdit 1.4
 help@using.html.label=Using jEdit
 help@regexp.html.label=Regular Expressions
 help@keys.html.label=Keyboard Shortcuts
@@ -242,25 +259,18 @@ help@menu_tools.html.label=Tools Menu
 
 # Title
 # {0} - file name
-view.title=jEdit - {0}
+# {1} - 1 if read only, 0 if read-write
+# {2} - 1 if modified, 0 if saved
+# {3} - 1 if the tip is non-null, 0 otherwise
+# {4} - The tip of the day
+view.title={0}{1,choice,0#|1# (read only)}{2,choice,0#|1# (modified)} \
+	{3,choice,0#|1# (Hint: {4})}
 
-# Status bar
-# {0} - the file name
-# {1} - the current editing mode
-# {2} - 1 if the file is not on disk
-# {3} - 1 if the file is read only
-# {4} - 1 if the file has changed since last save
-# {5} - the number of lines in the buffer
-# {6} - the current line number
-# {7} - the percentage of the file displayed
-view.status=({2,choice,0#--|1#**}{3,choice,0#:|1#/}{4,choice,0#--|1#**}) {0} \
-	({1}, Line {5}/{6} {7}%)
-
-# Buffers menu item label
-# {0} - the file name
-# {1} - the current editing mode
-# {2} - 1 if the file has changed since last save
-view.menulabel={0} ({2,choice,0#|1#* }{1})
+# Line number bar
+# {0} - the number of lines in the buffer
+# {1} - the current line number
+# {2} - the percentage of the file displayed
+view.lineNumber=({0}/{1} - {2}%)
 
 ###
 ### VARIOUS DIALOGS
@@ -289,24 +299,20 @@ about.message=jEdit {0} build {1}, Copyright (C) 1998, 1999 Slava Pestov.\n\
 	gnu.regexp (C) Free Software Foundation\n\
 	<http://www.cacas.org/java/gnu/regexp/>.\n\
 	\n\
-	For more information, see Help->Readme.
+	For help with using jEdit, see Help->Help Contents.
 
 # IO Error dialog, {0}=the error message
 ioerror.title=I/O Error
 ioerror.message=An I/O error occured ({0})
 
 # File not found dialog
-notfounderror.title=File Not Found
+notfounderror.title=Not Found
 # {0} - the file name
 notfounderror.message=The file could not be found: {0}
 
 # Open URL dialog
 openurl.title=Open URL
 openurl.message=URL to open:
-
-# Save first dialog
-savefirst.title=Save
-savefirst.message=Save changes before opening in the WWW browser?
 
 # Couldn't load browser dialog
 wwwerror.title=WWW Browser Error
@@ -319,7 +325,7 @@ saveurl.title=Save To URL
 saveurl.message=URL to save file to:
 
 # Execute dialog
-execute.title=Execute Command
+execute.title=Execute
 execute.message=Command (%p = file path, %u = file URL):
 
 # Command error dialog
@@ -358,7 +364,7 @@ gotoline.title=Go To Line
 gotoline.message=Line number to go to:
 
 # Word count dialog
-wordcount.title=Word Count Results
+wordcount.title=Word Count
 wordcount.message=Characters: {0}\nWords: {1}\nLines: {2}
 
 # Set marker dialog
@@ -425,6 +431,21 @@ output.title=Command Output
 output.caption=Output of {0} at {1}:\ 
 output.done=+++ Command finished.
 
+# File changed on disk dialog
+filechanged.title=File Changed on Disk
+filechanged.message=The file {0}\n\
+	has been modified on disk by another program. Are you sure\n\
+	you want to continue saving it?
+
+# Close dialog
+close.title=Unsaved Changes
+close.caption=The following buffers have unsaved changes:\ 
+close.save=Save
+close.saveAll=Save All
+close.discard=Discard
+close.discardAll=Discard All
+close.cancel=Cancel
+
 # Options dialog
 options.title=Options
 options.general.label=General
@@ -439,6 +460,7 @@ options.general.make=Make tool:\
 options.general.browser=WWW browser:\ 
 options.general.saveDesktop=Save desktop on exit
 options.general.server=Enable jEdit server
+options.general.showTips=Show hints in title bar
 options.editor.label=Editor
 options.editor.font=Text font:\ 
 options.editor.fontstyle=Text font style:\ 
@@ -455,6 +477,7 @@ options.editor.bracketHighlight=Bracket highlighting
 options.editor.syntax=Syntax colorizing
 options.editor.autoIndent=Auto indent
 options.editor.blinkCaret=Blinking caret
+options.editor.electricBorders=Electric (auto scroll) borders
 options.colors1.label=Colors (General)
 options.colors1.bgColor=View background:\ 
 options.colors1.fgColor=View foreground:\ 
@@ -482,3 +505,4 @@ helpviewer.height=400
 helpviewer.back=Back
 helpviewer.forward=Forward
 helpviewer.home=Contents
+helpviewer.close=Close

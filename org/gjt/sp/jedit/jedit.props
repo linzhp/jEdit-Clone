@@ -12,7 +12,7 @@ lf=javax.swing.plaf.metal.MetalLookAndFeel
 server=on
 
 # Autosave interval in seconds, 0=off
-autosave=30
+autosave=15
 
 # Number of recent files
 recent=8
@@ -50,6 +50,10 @@ buffer.tabSize=8
 buffer.openBrackets=([{
 buffer.closeBrackets=)]}
 
+# Indent brackets (only set to real value in C/CC/Java modes)
+buffer.indentOpenBrackets=
+buffer.indentCloseBrackets=
+
 # Print margins
 buffer.margin.top=0.5
 buffer.margin.left=0.5
@@ -76,13 +80,16 @@ buffer.colors.literal2=gray
 ### VIEW SETTINGS
 ###
 
+# Show hints/tips? (on/off)
+view.showTips=on
+
 # Geometry
 view.geometry.w=80
 view.geometry.h=30
 
 # Font
 view.font=Monospaced
-view.fontsize=12
+view.fontsize=14
 # 0=plain, 1=bold, 2=italic, 3=boldItalic
 view.fontstyle=0
 
@@ -107,6 +114,9 @@ view.selectionColor=#ccccff
 # Caret blink rate
 view.caretBlinkRate=500
 
+# Electric borders
+view.electricBorders=4
+
 # Auto indent
 view.autoindent=on
 #view.autoindent=off
@@ -128,13 +138,25 @@ mode.extension.bat=bat
 # C mode
 mode.c.name=C
 mode.c.noWordSep=._
-mode.c.compiler=cc -O2 %p
+mode.c.indentOpenBrackets={
+mode.c.indentCloseBrackets=}
+mode.c.commentStart=/*
+mode.c.commentEnd=*/
+mode.c.blockComment=//
+mode.c.boxComment=\ *
+mode.c.compiler=cc -O %p
 mode.extension.c=c
 mode.extension.h=c
 
 # C++ mode
 mode.cc.name=C++
 mode.cc.noWordSep=._
+mode.cc.indentOpenBrackets={
+mode.cc.indentCloseBrackets=}
+mode.cc.commentStart=/*
+mode.cc.commentEnd=*/
+mode.cc.blockComment=//
+mode.cc.boxComment=\ *
 mode.cc.compiler=c++ -O2 %p
 mode.extension.cc=cc
 mode.extension.cpp=cc
@@ -143,6 +165,9 @@ mode.extension.C=cc
 
 # HTML mode
 mode.html.name=HTML
+mode.html.commentStart=<!--
+mode.html.commentEnd=-->
+mode.html.boxComment=--
 mode.extension.html=html
 mode.extension.shtml=html
 mode.extension.htm=html
@@ -150,21 +175,36 @@ mode.extension.htm=html
 # Java mode
 mode.java_mode.name=Java
 mode.java_mode.noWordSep=._
+mode.java_mode.indentOpenBrackets={
+mode.java_mode.indentCloseBrackets=}
+mode.java_mode.commentStart=/*
+mode.java_mode.commentEnd=*/
+mode.java_mode.blockComment=//
+mode.java_mode.boxComment=\ *
 mode.java_mode.compiler=javac %p
 mode.extension.java=java_mode
 
 # JavaScript mode
 mode.javascript.name=JavaScript
+mode.javascript.noWordSep=._
+mode.javascript.indentOpenBrackets={
+mode.javascript.indentCloseBrackets=}
+mode.javascript.commentStart=/*
+mode.javascript.commentEnd=*/
+mode.javascript.blockComment=//
+mode.javascript.boxComment=\ *
 mode.extension.js=javascript
 
 # Makefile mode
 mode.makefile.name=Makefile
+mode.makefile.blockComment=#
 mode.filename.GNUmakefile=makefile
 mode.filename.Makefile=makefile
 mode.filename.makefile=makefile
 
 # Shell script mode
 mode.sh.name=Shell Script
+mode.sh.blockComment=#
 mode.extension.sh=sh
 mode.extension.csh=sh
 mode.firstline.#!/bin/sh=sh
@@ -183,6 +223,7 @@ mode.firstline.#!/usr/local/bin/tcsh=sh
 
 # TeX mode
 mode.tex.name=TeX
+mode.tex.blockComment=%
 mode.tex.compiler=tex %p
 mode.extension.tex=tex
 mode.extension.sty=tex
@@ -190,8 +231,10 @@ mode.extension.aux=tex
 
 # AMSTeX mode
 mode.amstex.name=AMS-TeX
+mode.amstex.blockComment=%a
 mode.amstex.compiler=amstex %p
 
 # LaTeX mode
 mode.latex.name=LaTeX
+mode.latex.blockComment=%
 mode.latex.compiler=latex %p

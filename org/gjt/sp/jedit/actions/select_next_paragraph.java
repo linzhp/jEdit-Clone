@@ -43,11 +43,7 @@ public class select_next_paragraph extends EditAction
 			.getStartOffset();
 		Element endElement = map.getElement(buffer
 			.locateParagraphEnd(lineNo));
-		int end;
-		if(endElement == null)
-			end = buffer.getLength();
-		else
-			end = endElement.getStartOffset();
+		int end = endElement.getEndOffset() - 1;
 		textArea.select(Math.min(textArea.getSelectionStart(),start),end);
 	}
 }

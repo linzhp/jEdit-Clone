@@ -31,7 +31,9 @@ public class GeneralOptionPane extends OptionPane
 		+ ".MotifLookAndFeel";
 	public static final String WINDOWS = "com.sun.java.swing.plaf.windows"
 		+ ".WindowsLookAndFeel";
-	
+	public static final String MAC = "com.sun.java.swing.plaf.mac"
+		+ ".MacLookAndFeel";
+
 	public GeneralOptionPane()
 	{
 		super("general");
@@ -57,14 +59,16 @@ public class GeneralOptionPane extends OptionPane
 		cons.gridx = 3;
 		cons.gridwidth = 1;
 		String lf = UIManager.getLookAndFeel().getClass().getName();
-		String[] lfs = { "Metal", "Motif", "Windows" };
+		String[] lfs = { "Java", "Mac", "Motif", "Windows" };
 		lookAndFeel = new JComboBox(lfs);
 		if(METAL.equals(lf))
 			lookAndFeel.setSelectedIndex(0);
-		else if(MOTIF.equals(lf))
+		else if(MAC.equals(lf))
 			lookAndFeel.setSelectedIndex(1);
-		else if(WINDOWS.equals(lf))
+		else if(MOTIF.equals(lf))
 			lookAndFeel.setSelectedIndex(2);
+		else if(WINDOWS.equals(lf))
+			lookAndFeel.setSelectedIndex(3);
 		layout.setConstraints(lookAndFeel,cons);
 		add(lookAndFeel);
 		
@@ -193,13 +197,23 @@ public class GeneralOptionPane extends OptionPane
 			"server")));
 		layout.setConstraints(server,cons);
 		add(server);
+
+		cons.gridy = 11;
+		showTips = new JCheckBox(jEdit.getProperty(
+			"options.general.showTips"));
+		showTips.getModel().setSelected("on".equals(jEdit.getProperty(
+			"view.showTips")));
+		layout.setConstraints(showTips,cons);
+		add(showTips);
 	}
 
 	public void save()
 	{
 		String lf = (String)lookAndFeel.getSelectedItem();
-		if("Metal".equals(lf))
+		if("Java".equals(lf))
 			lf = METAL;
+		else if("Mac".equals(lf))
+			lf = MAC;
 		else if("Motif".equals(lf))
 			lf = MOTIF;
 		else if("Windows".equals(lf))
@@ -223,6 +237,8 @@ public class GeneralOptionPane extends OptionPane
 		jEdit.setProperty("buffer.lineSeparator",lineSep);
 		jEdit.setProperty("browser",(String)browser.getSelectedItem());
 		jEdit.setProperty("buffer.make",(String)make.getSelectedItem());
+		jEdit.setProperty("view.showTips",showTips.getModel()
+			.isSelected() ? "on" : "off");
 	}
 
 	// private members
@@ -236,4 +252,5 @@ public class GeneralOptionPane extends OptionPane
 	private JComboBox browser;
 	private JCheckBox saveDesktop;
 	private JCheckBox server;
+	private JCheckBox showTips;
 }

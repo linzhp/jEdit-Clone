@@ -200,11 +200,16 @@ implements DocumentListener, UndoableEditListener
 	 */
 	public void autosave()
 	{
-		if(dirty)
+		if(adirty)
 		{
 			try
 			{
-				save(new FileOutputStream(autosaveFile));
+				File autosaveTmp = new File(autosaveFile
+					.getPath().concat("+tmp+#"));
+				save(new FileOutputStream(autosaveTmp));
+				autosaveTmp.renameTo(autosaveFile);
+				/* XXX race alert if dirty() runs here */
+				adirty = false;
 			}
 			catch(FileNotFoundException fnf)
 			{
@@ -258,6 +263,21 @@ implements DocumentListener, UndoableEditListener
 			saveUrl = url;
 			path = this.path;
 			saveFile = file;
+			// only do this check if saving to original file
+			// if user is doing a `Save As' they should know
+			// what they're doing anyway
+			long newModTime = saveFile.lastModified();
+			if(newModTime > modTime)
+			{
+				Object[] args = { path };
+				int result = JOptionPane.showConfirmDialog(view,
+					jEdit.getProperty("filechanged.message",
+					args),jEdit.getProperty("filechanged.title"),
+					JOptionPane.YES_NO_OPTION,
+					JOptionPane.WARNING_MESSAGE);
+				if(result != JOptionPane.YES_OPTION)
+					return false;
+			}
 		}
 		else
 		{
@@ -291,16 +311,18 @@ implements DocumentListener, UndoableEditListener
 			file = saveFile;
 			setPath();
 			saveMarkers();
-			dirty = newFile = readOnly = false;
+			adirty = dirty = newFile = readOnly = false;
 			autosaveFile.delete();
 			updateTitles();
+			updateBufferMenus();
 			if(mode == null)
 				setMode();
 			else
 			{
-				updateStatus();
+				updateTitles();
 				updateBufferMenus();
 			}
+			modTime = file.lastModified();
 			return true;
 		}
 		catch(IOException io)
@@ -403,16 +425,13 @@ implements DocumentListener, UndoableEditListener
 	public int locateParagraphStart(int lineNo)
 	{
 		Element map = getDefaultRootElement();
-		for(int i = lineNo; i >= 0; i--)
+		for(int i = lineNo - 1; i >= 0; i--)
 		{
 			Element lineElement = map.getElement(i);
 			if(lineElement.getEndOffset() - lineElement
 				.getStartOffset() == 1)
 			{
-				if(i == lineNo)
-					continue;
-				else
-					return i;
+				return i;
 			}
 		}
 		return 0;
@@ -427,19 +446,16 @@ implements DocumentListener, UndoableEditListener
 	{
 		Element map = getDefaultRootElement();
 		int lineCount = map.getElementCount();
-		for(int i = lineNo; i < lineCount; i++)
+		for(int i = lineNo + 1; i < lineCount; i++)
 		{
 			Element lineElement = map.getElement(i);
 			if(lineElement.getEndOffset() - lineElement
 				.getStartOffset() == 1)
 			{
-				if(i == lineNo)
-					continue;
-				else
-					return i;
+				return i;
 			}
 		}
-		return lineCount;
+		return lineCount - 1;
 	}
 
 	/**
@@ -565,8 +581,6 @@ implements DocumentListener, UndoableEditListener
 			colors.clear();
 			mode.enter(this);
 		}
-		updateStatus();
-		updateBufferMenus();
 	}
 
 	/**
@@ -868,6 +882,16 @@ implements DocumentListener, UndoableEditListener
 			((DocumentListener)mode).changedUpdate(evt);
 	}
 
+	// crude hack for CloseDialog
+	/**
+	 * Returns a string representation of this buffer.
+	 * This simply returns the path name.
+	 */
+	public String toString()
+	{
+		return path;
+	}
+
 	// package-private methods
 	Buffer(URL url, String path, boolean readOnly, boolean newFile)
 	{
@@ -880,6 +904,7 @@ implements DocumentListener, UndoableEditListener
 
 	// private methods
 	private File file;
+	private long modTime;
 	private File autosaveFile;
 	private File markersFile;
 	private URL url;
@@ -888,8 +913,10 @@ implements DocumentListener, UndoableEditListener
 	private String path;
 	private boolean init;
 	private boolean newFile;
+	private boolean adirty; /* Has file changed since last *auto* save? */
 	private boolean dirty;
 	private boolean readOnly;
+	private boolean alreadyBackedUp;
 	private Mode mode;
 	private UndoManager undo;
 	private CompoundEdit compoundEdit;
@@ -1003,9 +1030,9 @@ implements DocumentListener, UndoableEditListener
                         if(buf.length() != 0 && buf.charAt(buf.length() - 1)
                            == '\n')
 				buf.setLength(buf.length() - 1);
-			remove(0,getLength());
 			insertString(0,buf.toString(),null);
 			newFile = false;
+			modTime = file.lastModified();
 		}
 		catch(BadLocationException bl)
 		{
@@ -1220,6 +1247,9 @@ implements DocumentListener, UndoableEditListener
 
 	private void backup(File file)
 	{
+		if(alreadyBackedUp)
+			return;
+		alreadyBackedUp = true;
 		int backups;
 		try
 		{
@@ -1242,7 +1272,7 @@ implements DocumentListener, UndoableEditListener
 				if(i == backups)
 					backup.delete();
 				else
-					backup.renameTo(new File(name + "~"
+					backup.renameTo(new File(path + "~"
 						+ (i + 1) + "~"));
 			}
 		}
@@ -1289,17 +1319,6 @@ implements DocumentListener, UndoableEditListener
 		return -1 - count;
 	}
 
-	private void updateStatus()
-	{
-		Enumeration enum = jEdit.getViews();
-		while(enum.hasMoreElements())
-		{
-			View view = (View)enum.nextElement();
-			if(view.getBuffer() == this)
-				view.updateStatus(true);
-		}
-	}
-
 	private void updateTitles()
 	{
 		Enumeration enum = jEdit.getViews();
@@ -1326,9 +1345,10 @@ implements DocumentListener, UndoableEditListener
 		while(enum.hasMoreElements())
 		{
 			View view = (View)enum.nextElement();
+			view.updateBuffersMenu();
 			if(view.getBuffer() == this)
 			{
-				view.updateStatus(true);
+				view.updateTitle();
 				view.updateMarkerMenus();
 			}
 		}
@@ -1336,10 +1356,10 @@ implements DocumentListener, UndoableEditListener
 
 	private void dirty()
 	{
-		if(!(dirty || readOnly))
+		if(!((dirty && adirty) || readOnly))
 		{
-			dirty = !init;
-			updateStatus();
+			adirty = dirty = !init;
+			updateTitles();
 			updateBufferMenus();
 		}
 	}

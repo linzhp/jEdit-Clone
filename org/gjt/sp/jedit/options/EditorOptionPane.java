@@ -97,8 +97,9 @@ public class EditorOptionPane extends OptionPane
 		add(label);
 		cons.gridx = 3;
 		cons.gridwidth = 1;
-		String[] tabSizes = { "8", "4", "2" };
+		String[] tabSizes = { "8", "4" };
 		tabSize = new JComboBox(tabSizes);
+		tabSize.setEditable(true);
 		tabSize.setSelectedItem(jEdit.getProperty("buffer.tabSize"));
 		layout.setConstraints(tabSize,cons);
 		add(tabSize);
@@ -170,6 +171,13 @@ public class EditorOptionPane extends OptionPane
 			"view.caretBlinkRate")));
 		layout.setConstraints(blinkCaret,cons);
 		add(blinkCaret);
+
+		cons.gridy = 11;
+		electricBorders = new JCheckBox(jEdit.getProperty("options.editor"
+			+ ".electricBorders"));
+		electricBorders.getModel().setSelected(!"0".equals(jEdit.getProperty(
+			"view.electricBorders")));
+		add(electricBorders);
 	}
 
 	public void save()
@@ -191,6 +199,8 @@ public class EditorOptionPane extends OptionPane
 			.isSelected() ? "on" : "off");
 		jEdit.setProperty("view.caretBlinkRate",blinkCaret.getModel()
 			.isSelected() ? "500" : "0");
+		jEdit.setProperty("view.electricBorders",electricBorders.getModel()
+			.isSelected() ? "4" : "0");
 	}
 
 	// private members
@@ -205,4 +215,5 @@ public class EditorOptionPane extends OptionPane
 	private JCheckBox syntax;
 	private JCheckBox autoIndent;
 	private JCheckBox blinkCaret;
+	private JCheckBox electricBorders;
 }

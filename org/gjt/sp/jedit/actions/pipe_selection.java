@@ -39,7 +39,7 @@ public class pipe_selection extends EditAction
 		int start = textArea.getSelectionStart();
 		int end = textArea.getSelectionEnd();
 		Buffer buffer = view.getBuffer();
-		String command = jEdit.input(view,"execute","execute.cmd");
+		String command = jEdit.inputProperty(view,"execute","execute.cmd");
 		if(command == null)
 			return;
 		StringBuffer buf = new StringBuffer();

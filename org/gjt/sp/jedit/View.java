@@ -50,7 +50,7 @@ implements CaretListener, KeyListener, WindowListener
 		}
 		catch(NumberFormatException nf)
 		{
-			size = 12;
+			size = 14;
 		}
 		int style;
 		try
@@ -64,7 +64,6 @@ implements CaretListener, KeyListener, WindowListener
 		}
 		Font font = new Font(family,style,size);
 		textArea.setFont(font);
-		status.setFont(font);
 		textArea.setLineHighlight("on".equals(jEdit.getProperty(
 			"view.lineHighlight")));
 		textArea.setLineHighlightColor(jEdit.parseColor(jEdit
@@ -83,16 +82,25 @@ implements CaretListener, KeyListener, WindowListener
 			.getProperty("view.fgColor")));
 		try
 		{
-			textArea.setCaretBlinkRate(Integer.parseInt(jEdit
+			textArea.getCaret().setBlinkRate(Integer.parseInt(jEdit
 				.getProperty("view.caretBlinkRate")));
 		}
 		catch(NumberFormatException nf)
 		{
-			textArea.setCaretBlinkRate(0);
+			textArea.getCaret().setBlinkRate(0);
+		}
+		try
+		{
+			textArea.setElectricBorders(Integer.parseInt(jEdit
+				.getProperty("view.electricBorders")));
+		}
+		catch(NumberFormatException nf)
+		{
+			textArea.setElectricBorders(0);
 		}
 		updateOpenRecentMenu();
 		if(buffer != null) /* ie, after startup */
-			updateStatus(true);
+			updateLineNumber(true);
 	}
 	
 	/**
@@ -130,11 +138,12 @@ implements CaretListener, KeyListener, WindowListener
 		{
 			Buffer b = (Buffer)enum.nextElement();
 			String name = b.getPath();
-			Object[] args = { name, b.getModeName(),
-				new Integer(b.isDirty() ? 1 : 0) };
+			Object[] args = { name, new Integer(b.isReadOnly() ? 1: 0),
+				new Integer(b.isDirty() ? 1 : 0),
+				new Integer(0), null };
 			JRadioButtonMenuItem menuItem =
 				new JRadioButtonMenuItem(jEdit.getProperty(
-					"view.menulabel",args));
+					"view.title",args));
 			menuItem.addActionListener(jEdit.getAction("select-buffer"));
 			grp.add(menuItem);
 			menuItem.setActionCommand(name);
@@ -236,13 +245,13 @@ implements CaretListener, KeyListener, WindowListener
 	}
 	
 	/**
-	 * Updates the status bar.
+	 * Updates the line number indicator.
 	 * @param force True if it should be updated even if the caret
 	 * hasn't moved since the last update
 	 */
-	public void updateStatus(boolean force)
+	public void updateLineNumber(boolean force)
 	{
-		updateStatus(textArea.getCaretPosition(),force);
+		updateLineNumber(textArea.getCaretPosition(),force);
 	}
 
 	/**
@@ -251,7 +260,29 @@ implements CaretListener, KeyListener, WindowListener
 	 */
 	public void updateTitle()
 	{
-		Object[] args = { buffer.getPath() };
+		String tip;
+		if(showTip)
+		{
+			try
+			{
+				tip = jEdit.getProperty("tip." +
+					(Math.abs(new Random().nextInt()) %
+					Integer.parseInt(jEdit.getProperty(
+						"tip.count"))));
+			}
+			catch(Exception e)
+			{
+				tip = "Oops";
+			}
+			showTip = false;
+		}
+		else
+			tip = null;
+		Object[] args = { buffer.getName(),
+			new Integer(buffer.isReadOnly() ? 1 : 0),
+			new Integer(buffer.isDirty() ? 1: 0),
+			new Integer(tip != null ? 1 : 0),
+			tip };
 		setTitle(jEdit.getProperty("view.title",args));
 		textArea.setEditable(!buffer.isReadOnly());
 	}
@@ -274,11 +305,10 @@ implements CaretListener, KeyListener, WindowListener
 			saveCaretInfo();
 		this.buffer = buffer;
 		textArea.setDocument(buffer);
-		updateBuffersMenu();
 		updateMarkerMenus();
 		updateModeMenu();
 		updateTitle();
-		updateStatus(true);
+		updateLineNumber(true);
 	}
 
 	/**
@@ -329,17 +359,18 @@ implements CaretListener, KeyListener, WindowListener
 	// event handlers
 	public void caretUpdate(CaretEvent evt)
 	{
-		updateStatus(evt.getDot(),false);
+		updateLineNumber(evt.getDot(),false);
 	}
 
 	public void keyPressed(KeyEvent evt)
 	{
 		int keyCode = evt.getKeyCode();
-		if((evt.getModifiers() & ~InputEvent.SHIFT_MASK) != 0 ||
+		int modifiers = evt.getModifiers();
+		if((modifiers & ~InputEvent.SHIFT_MASK) != 0 ||
 			evt.isActionKey())
 		{
 			KeyStroke keyStroke = KeyStroke.getKeyStroke(keyCode,
-				evt.getModifiers());
+				modifiers);
 			Object o = currentPrefix.get(keyStroke);
 			if(o == null && currentPrefix != bindings)
 			{
@@ -437,6 +468,8 @@ implements CaretListener, KeyListener, WindowListener
 	// package-private members
 	View(Buffer buffer)
 	{
+		showTip = ("on".equals(jEdit.getProperty("view.showTips")));
+		
 		plugins = jEdit.loadMenu(this,"plugins");
 		buffers = jEdit.loadMenu(this,"buffers");
 		openRecent = jEdit.loadMenu(this,"open-recent");
@@ -446,6 +479,7 @@ implements CaretListener, KeyListener, WindowListener
 		bindings = new Hashtable();
 		currentPrefix = bindings;
 		lineSegment = new Segment();
+		
 		int w = 80;
 		int h = 30;
 		try
@@ -464,28 +498,38 @@ implements CaretListener, KeyListener, WindowListener
 		catch(Exception e)
 		{
 		}
+
 		textArea = new SyntaxTextArea();
 		scroller = new JScrollPane(textArea,ScrollPaneConstants
 			.VERTICAL_SCROLLBAR_ALWAYS,ScrollPaneConstants
-			.HORIZONTAL_SCROLLBAR_AS_NEEDED);	
-		status = new JLabel("Try our new product: soap! `It's fresh!'");
+			.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+
+		lineNumber = new JLabel();
 		textArea.addKeyListener(this);
 		textArea.addCaretListener(this);
 		textArea.setBorder(null);
 		updatePluginsMenu();
-		setJMenuBar(jEdit.loadMenubar(this,"view.mbar"));
+
+		JMenuBar mbar = jEdit.loadMenubar(this,"view.mbar");
+		mbar.add(new JPanel()); // silly hack to move ruler to right side
+		mbar.add(lineNumber);
+		setJMenuBar(mbar);
+
 		propertiesChanged();
+
 		FontMetrics fm = getToolkit().getFontMetrics(textArea
 			.getFont());
 		JViewport viewport = scroller.getViewport();
 		viewport.setPreferredSize(new Dimension(w * fm.charWidth('m'),
 			h * fm.getHeight()));
+
 		if(buffer == null)
 			setBuffer((Buffer)jEdit.getBuffers().nextElement());
 		else
 			setBuffer(buffer);
+		updateBuffersMenu();
+
 		getContentPane().add("Center",scroller);
-		getContentPane().add("South",status);
 		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 		addKeyListener(this);
 		addWindowListener(this);
@@ -526,12 +570,13 @@ implements CaretListener, KeyListener, WindowListener
 	private Hashtable currentPrefix;
 	private JScrollPane scroller;
 	private SyntaxTextArea textArea;
-	private JLabel status;
+	private JLabel lineNumber;
 	private int lastLine;
 	private Segment lineSegment;
 	private Buffer buffer;
+	private boolean showTip;
 
-	private void updateStatus(int dot, boolean force)
+	private void updateLineNumber(int dot, boolean force)
 	{
 		int currLine;
 		Element map = buffer.getDefaultRootElement();
@@ -595,14 +640,9 @@ implements CaretListener, KeyListener, WindowListener
 			return;
 		lastLine = currLine;
 		int numLines = map.getElementCount();
-		Object[] args = { buffer.getName(),
-			buffer.getModeName(),
-			new Integer(buffer.isNewFile() ? 1 : 0),
-			new Integer(buffer.isReadOnly() ? 1 : 0),
-			new Integer(buffer.isDirty() ? 1 : 0),
-			new Integer(currLine),
+		Object[] args = { new Integer(currLine),
 			new Integer(numLines),
 			new Integer((currLine * 100) / numLines) };
-		status.setText(jEdit.getProperty("view.status",args));
+		lineNumber.setText(jEdit.getProperty("view.lineNumber",args));
 	}
 }

@@ -47,21 +47,16 @@ public class delete_line extends EditAction
 		{
 			int start = lineElement.getStartOffset();
 			int end = lineElement.getEndOffset();
-			int length = buffer.getLength();
-			if(end > length)
+			if(end >= buffer.getLength())
 			{
+				if(start != 0)
+					start--;
 				end--;
-				start--;
 			}
 			buffer.remove(start,end - start);
 		}
 		catch(BadLocationException bl)
 		{
-			/* now, if anybody from Sun is reading this, let
-			 * me make myself clear: BadLocationException SUX.
-			 * why not throw a StringIndexOutOfBounds, or at
-			 * least make BadLocationException a RuntimeException?
-			 */
 			bl.printStackTrace();
 		}
 	}

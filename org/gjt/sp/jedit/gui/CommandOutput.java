@@ -1,6 +1,6 @@
 /*
- * CommandOutput.java - Command output dialog
- * Copyright (C) 1998 Slava Pestov
+ * CommandOutput.java - Command output window
+ * Copyright (C) 1998, 1999 Slava Pestov
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -27,12 +27,12 @@ import java.io.*;
 import java.util.Date;
 import org.gjt.sp.jedit.*;
 
-public class CommandOutput extends JDialog
+public class CommandOutput extends JFrame
 implements KeyListener
 {
 	public CommandOutput(View view, String cmd, Process process)
 	{
-		super(view,jEdit.getProperty("output.title"),false);
+		super(jEdit.getProperty("output.title"));
 
 		this.process = process;
 

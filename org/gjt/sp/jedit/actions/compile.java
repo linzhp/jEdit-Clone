@@ -38,6 +38,20 @@ public class compile extends EditAction
 		Buffer buffer = view.getBuffer();
 		String compiler = (String)buffer.getProperty("compiler");
 
+		if(buffer.isDirty())
+		{
+			String[] args = { buffer.getName() };
+			int result = JOptionPane.showConfirmDialog(view,
+				jEdit.getProperty("notsaved.message",args),
+				jEdit.getProperty("notsaved.title"),
+				JOptionPane.YES_NO_CANCEL_OPTION,
+				JOptionPane.WARNING_MESSAGE);
+			if(result == JOptionPane.YES_OPTION)
+				buffer.save(view,null);
+			else if(result != JOptionPane.NO_OPTION)
+				return;
+		}
+
 		if(compiler != null && System.getProperty("os.name")
 			.indexOf("Windows") != -1)
 		{
@@ -51,14 +65,10 @@ public class compile extends EditAction
 			}
 		}
 
-		compiler = (String)JOptionPane.showInputDialog(view,
-			jEdit.getProperty("compile.message"),
-			jEdit.getProperty("compile.title"),
-			JOptionPane.QUESTION_MESSAGE,null,null,
-			compiler);
+		compiler = jEdit.input(view,"compile",compiler);
 		if(compiler == null)
 			return;
-		buffer.putProperty("compile",compiler);
+		buffer.putProperty("compiler",compiler);
 		StringBuffer buf = new StringBuffer();
 		for(int i = 0; i < compiler.length(); i++)
 		{

@@ -142,7 +142,6 @@ implements ActionListener, KeyListener, ListSelectionListener, WindowListener
 				}
 			}
 			results.setListData(data);
-			pack();
 		}
 		catch(Exception e)
 		{

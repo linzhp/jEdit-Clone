@@ -47,7 +47,7 @@ public class delete_paragraph extends EditAction
 		int start = map.getElement(buffer.locateParagraphStart(lineNo))
 			.getStartOffset();
 		int end = map.getElement(buffer.locateParagraphEnd(lineNo))
-			.getStartOffset();
+			.getEndOffset() - 1;
 		try
 		{
 			buffer.remove(start,end - start);

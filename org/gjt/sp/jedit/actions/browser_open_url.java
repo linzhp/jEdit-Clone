@@ -38,14 +38,15 @@ public class browser_open_url extends EditAction
 
 		if(buffer.isDirty())
 		{
+			String[] args = { buffer.getName() };
 			int result = JOptionPane.showConfirmDialog(view,
-				jEdit.getProperty("savefirst.message"),
-				jEdit.getProperty("savefirst.title"),
+				jEdit.getProperty("notsaved.message",args),
+				jEdit.getProperty("notsaved.title"),
 				JOptionPane.YES_NO_CANCEL_OPTION,
 				JOptionPane.WARNING_MESSAGE);
 			if(result == JOptionPane.YES_OPTION)
 				buffer.save(view,null);
-			else if(result == JOptionPane.CANCEL_OPTION)
+			else if(result != JOptionPane.NO_OPTION)
 				return;
 		}
 		String[] args = { jEdit.getProperty("browser"),

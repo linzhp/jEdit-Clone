@@ -1,60 +1,66 @@
 ###
-### jEdit key bindings
+### jEdit keyboard shortcuts
 ### by Slava Pestov <sp@gjt.org>
 ###
 
-### MacOS/Windows compatibility shortcuts
-new-file.shortcut=C+n
-open-file.shortcut=C+o
-close-file.shortcut=C+w
-save.shortcut=C+s
-print.shortcut=C+p
-exit.shortcut=C+q
-undo.shortcut=C+z
-cut.shortcut=C+x
-copy.shortcut=C+c
-paste.shortcut=C+v
-select-all.shortcut=C+a
-find.shortcut=C+f
-find-next.shortcut=C+g
-help@index.html.shortcut=F1
+# I *LOVE* tabs: (:tabSize=8:)
 
-### Non-standard single-key bindings
-redo.shortcut=C+r
-set-anchor.shortcut=C+t
-goto-anchor.shortcut=C+y
-expand-abbrev.shortcut=C+b
-locate-bracket.shortcut=C+]
-select-block.shortcut=C+[
-hypersearch.shortcut=C+h
-join-lines.shortcut=C+j
-compile.shortcut=C+k
-goto-line.shortcut=C+l
-make.shortcut=C+m
-next-paragraph.shortcut=C+DOWN
-prev-paragraph.shortcut=C+UP
-select-next-paragraph.shortcut=CS+DOWN
-select-prev-paragraph.shortcut=CS+UP
-shift-left.shortcut=A+LEFT
-shift-right.shortcut=A+RIGHT
+select-all.shortcut		C+a
+expand-abbrev.shortcut		C+b
+copy.shortcut			C+c
+delete-line.shortcut		C+d C+d
+delete-end-line.shortcut	C+d C+f
+delete-no-indent.shortcut	C+d C+i
+delete-paragraph.shortcut	C+d C+p
+delete-start-line.shortcut	C+d C+s
+replace-all.shortcut		C+e C+a
+box-comment.shortcut		C+e C+b
+wing-comment.shortcut		C+e C+c
+execute.shortcut		C+e C+e
+format.shortcut			C+e C+f
+replace-next.shortcut		C+e C+g
+select-no-indent.shortcut	C+e C+i
+block-comment.shortcut		C+e C+k
+scroll-line.shortcut		C+e C+l
+set-marker.shortcut		C+e C+m
+new-view.shortcut		C+e C+n
+open-url.shortcut		C+e C+o
+pipe-selection.shortcut		C+e C+p
+replace.shortcut		C+e C+r
+find-selection.shortcut		C+e C+s
+tab.shortcut			C+e C+t
+untab.shortcut			C+e C+u
+paste-previous.shortcut		C+e C+v
+close-view.shortcut		C+e C+w
+exchange-anchor.shortcut	C+e C+x
+find.shortcut			C+f
+find-next.shortcut		C+g
+hypersearch.shortcut		C+h
+goto-end-indent.shortcut	C+i
+join-lines.shortcut		C+j
+compile.shortcut		C+k
+goto-line.shortcut		C+l
+make.shortcut			C+m
+new-file.shortcut		C+n
+open-file.shortcut		C+o
+print.shortcut			C+p
+exit.shortcut			C+q
+redo.shortcut			C+r
+save.shortcut			C+s
+set-anchor.shortcut		C+t
+select-anchor.shortcut		C+u
+paste.shortcut			C+v
+close-file.shortcut		C+w
+cut.shortcut			C+x
+goto-anchor.shortcut		C+y
+undo.shortcut			C+z
+select-block.shortcut		C+[
+locate-bracket.shortcut		C+]
+shift-left.shortcut		A+LEFT
+shift-right.shortcut		A+RIGHT
+prev-paragraph.shortcut		C+UP
+next-paragraph.shortcut		C+DOWN
+select-prev-paragraph.shortcut	CS+UP
+select-next-paragraph.shortcut	CS+DOWN
+help@index.html.shortcut	F1
 
-### The scary stuff
-new-view.shortcut=C+e C+n
-open-url.shortcut=C+e C+o
-close-view.shortcut=C+e C+w
-select-anchor.shortcut=C+u C+y
-select-no-indent.shortcut=C+u C+n
-delete-line.shortcut=C+d C+d
-delete-no-indent.shortcut=C+d C+n
-delete-start-line.shortcut=C+d C+s
-delete-end-line.shortcut=C+d C+f
-delete-paragraph.shortcut=C+d C+ENTER
-paste-previous.shortcut=C+e C+v
-format.shortcut=C+e C+f
-tab.shortcut=C+e C+t
-untab.shortcut=C+e C+u
-find-selection.shortcut=C+e C+s
-replace.shortcut=C+e C+r
-replace-next.shortcut=C+e C+g
-replace-all.shortcut=C+e C+a
-set-marker.shortcut=C+e C+m

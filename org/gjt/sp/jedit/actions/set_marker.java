@@ -1,6 +1,6 @@
 /*
  * set_marker.java
- * Copyright (C) 1998 Slava Pestov
+ * Copyright (C) 1998, 1999 Slava Pestov
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -19,7 +19,6 @@
 
 package org.gjt.sp.jedit.actions;
 
-import javax.swing.*;
 import java.awt.event.ActionEvent;
 import org.gjt.sp.jedit.gui.SyntaxTextArea;
 import org.gjt.sp.jedit.*;
@@ -38,11 +37,8 @@ public class set_marker extends EditAction
 		if(buffer.isReadOnly())
 			view.getToolkit().beep();
 		SyntaxTextArea textArea = view.getTextArea();
-		String marker = (String)JOptionPane.showInputDialog(view,
-				jEdit.getProperty("setmarker.message"),
-				jEdit.getProperty("setmarker.title"),
-				JOptionPane.QUESTION_MESSAGE,null,null,
-				textArea.getSelectedText());
+		String marker = jEdit.input(view,"setmarker",
+			textArea.getSelectedText());
 		if(marker != null)
 			buffer.addMarker(marker,textArea.getSelectionStart(),
 				textArea.getSelectionEnd());

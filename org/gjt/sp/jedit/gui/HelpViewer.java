@@ -49,6 +49,9 @@ implements ActionListener, HyperlinkListener
 		home = new JButton(jEdit.getProperty("helpviewer.home"));
 		home.addActionListener(this);
 		buttons.add(home);
+		close = new JButton(jEdit.getProperty("helpviewer.close"));
+		close.addActionListener(this);
+		buttons.add(close);
 		getContentPane().add("North",buttons);
 
 		viewer = new JEditorPane();
@@ -113,6 +116,8 @@ implements ActionListener, HyperlinkListener
 		}
 		else if(source == home)
 			gotoURL(getClass().getResource("/doc/index.html"),true);
+		else if(source == close)
+			dispose();
 	}
 
 	public void hyperlinkUpdate(HyperlinkEvent evt)
@@ -136,6 +141,7 @@ implements ActionListener, HyperlinkListener
 	private JButton back;
 	private JButton forward;
 	private JButton home;
+	private JButton close;
 	private JEditorPane viewer;
 	private URL[] history;
 	private int historyPos;

@@ -21,7 +21,6 @@ package org.gjt.sp.jedit.actions;
 
 import java.awt.event.ActionEvent;
 import java.io.*;
-import javax.swing.JOptionPane;
 import org.gjt.sp.jedit.gui.CommandOutput;
 import org.gjt.sp.jedit.*;
 
@@ -37,11 +36,7 @@ public class make extends EditAction
 		View view = getView(evt);
 		Buffer buffer = view.getBuffer();
 		String makeTool = (String)buffer.getProperty("make");
-		makeTool = (String)JOptionPane.showInputDialog(view,
-			jEdit.getProperty("make.message"),
-			jEdit.getProperty("make.title"),
-			JOptionPane.QUESTION_MESSAGE,null,null,
-			makeTool);
+		makeTool = jEdit.input(view,"make",makeTool);
 		if(makeTool == null)
 			return;
 		buffer.putProperty("make",makeTool);

@@ -1,6 +1,6 @@
 /*
  * goto_line.java
- * Copyright (C) 1998 Slava Pestov
+ * Copyright (C) 1998, 1999 Slava Pestov
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -38,12 +38,8 @@ public class goto_line extends EditAction
 		Buffer buffer = view.getBuffer();
 		SyntaxTextArea textArea = view.getTextArea();
 		Element map = buffer.getDefaultRootElement();
-		String line = (String)JOptionPane.showInputDialog(view,
-			jEdit.getProperty("gotoline.message"),
-			jEdit.getProperty("gotoline.title"),
-			JOptionPane.QUESTION_MESSAGE,null,null,
-			String.valueOf(map.getElementIndex(textArea
-				.getCaretPosition()) + 1));
+		String line = jEdit.input(view,"gotoline",String.valueOf(
+			map.getElementIndex(textArea.getCaretPosition()) + 1));
 		if(line != null)
 		{
 			try
@@ -60,7 +56,7 @@ public class goto_line extends EditAction
 			catch(NumberFormatException nf)
 			{
 			}
+			view.getToolkit().beep();
 		}
-		view.getToolkit().beep();
 	}
 }
