@@ -46,11 +46,11 @@ implements ActionListener, KeyListener, WindowListener
 		addOptionPane(new ColorTableOptionPane());
 		getContentPane().add(BorderLayout.CENTER,tabs);
 		JPanel buttons = new JPanel();
-		ok = new JButton(jEdit.getProperty("options.ok"));
+		ok = new JButton(jEdit.getProperty("common.ok"));
 		ok.addActionListener(this);
 		buttons.add(ok);
 		getRootPane().setDefaultButton(ok);
-		cancel = new JButton(jEdit.getProperty("options.cancel"));
+		cancel = new JButton(jEdit.getProperty("common.cancel"));
 		cancel.addActionListener(this);
 		buttons.add(cancel);
 		getContentPane().add(BorderLayout.SOUTH,buttons);
@@ -132,6 +132,10 @@ implements ActionListener, KeyListener, WindowListener
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.5  1999/04/02 03:21:09  sp
+ * Added manifest file, common strings such as OK, etc are no longer duplicated
+ * many times in jedit_gui.props
+ *
  * Revision 1.4  1999/03/21 01:07:27  sp
  * Fixed stupid bug in global options
  *

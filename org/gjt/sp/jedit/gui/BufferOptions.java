@@ -137,11 +137,11 @@ public class BufferOptions extends JDialog
 			new BufferOptionsActionListener();
 
 		panel = new JPanel();
-		ok = new JButton(jEdit.getProperty("buffer_options.ok"));
+		ok = new JButton(jEdit.getProperty("common.ok"));
 		ok.addActionListener(actionListener);
 		getRootPane().setDefaultButton(ok);
 		panel.add(ok);
-		cancel = new JButton(jEdit.getProperty("buffer_options.cancel"));
+		cancel = new JButton(jEdit.getProperty("common.cancel"));
 		cancel.addActionListener(actionListener);
 		panel.add(cancel);
 		getContentPane().add(BorderLayout.SOUTH,panel);
@@ -229,6 +229,10 @@ public class BufferOptions extends JDialog
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.4  1999/04/02 03:21:09  sp
+ * Added manifest file, common strings such as OK, etc are no longer duplicated
+ * many times in jedit_gui.props
+ *
  * Revision 1.3  1999/04/02 02:39:46  sp
  * Updated docs, console fix, getDefaultSyntaxColors() method, hypersearch update
  *

@@ -69,7 +69,7 @@ public class HyperSearch extends JDialog
 		findBtn = new JButton(jEdit.getProperty("hypersearch.findBtn"));
 		panel.add(findBtn);
 		getRootPane().setDefaultButton(findBtn);
-		close = new JButton(jEdit.getProperty("hypersearch.close"));
+		close = new JButton(jEdit.getProperty("common.close"));
 		panel.add(close);
 		stretchPanel.add(panel,BorderLayout.NORTH);
 
@@ -243,6 +243,10 @@ public class HyperSearch extends JDialog
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.26  1999/04/02 03:21:09  sp
+ * Added manifest file, common strings such as OK, etc are no longer duplicated
+ * many times in jedit_gui.props
+ *
  * Revision 1.25  1999/04/02 02:39:46  sp
  * Updated docs, console fix, getDefaultSyntaxColors() method, hypersearch update
  *

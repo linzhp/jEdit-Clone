@@ -49,7 +49,7 @@ implements ActionListener, HyperlinkListener
 		home = new JButton(jEdit.getProperty("helpviewer.home"));
 		home.addActionListener(this);
 		buttons.add(home);
-		close = new JButton(jEdit.getProperty("helpviewer.close"));
+		close = new JButton(jEdit.getProperty("common.close"));
 		close.addActionListener(this);
 		buttons.add(close);
 		getContentPane().add(BorderLayout.NORTH,buttons);

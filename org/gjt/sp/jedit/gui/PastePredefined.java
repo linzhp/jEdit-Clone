@@ -57,7 +57,7 @@ implements ActionListener, KeyListener, MouseListener
 		content.add(new JScrollPane(clips), BorderLayout.CENTER);
 
 		JPanel buttons = new JPanel();
-		insert = new JButton(jEdit.getProperty("pastepredef.insert"));
+		insert = new JButton(jEdit.getProperty("common.insert"));
 		insert.addActionListener(this);
 		buttons.add(insert);
 		add = new JButton(jEdit.getProperty("pastepredef.add"));
@@ -69,7 +69,7 @@ implements ActionListener, KeyListener, MouseListener
 		edit = new JButton(jEdit.getProperty("pastepredef.edit"));
 		edit.addActionListener(this);
 		buttons.add(edit);
-		cancel = new JButton(jEdit.getProperty("pastepredef.cancel"));
+		cancel = new JButton(jEdit.getProperty("common.cancel"));
 		cancel.addActionListener(this);
 		buttons.add(cancel);
 		content.add(buttons, BorderLayout.SOUTH);

@@ -56,10 +56,10 @@ implements ActionListener, KeyListener
 		getContentPane().add(BorderLayout.CENTER,panel);
 
 		panel = new JPanel();
-		panel.add(ok = new JButton(jEdit.getProperty("selectlinerange.ok")));
+		panel.add(ok = new JButton(jEdit.getProperty("common.ok")));
 		ok.addActionListener(this);
 		panel.add(cancel = new JButton(jEdit.getProperty(
-			"selectlinerange.cancel")));
+			"common.cancel")));
 		cancel.addActionListener(this);
 		getContentPane().add(BorderLayout.SOUTH,panel);
 
@@ -147,6 +147,10 @@ implements ActionListener, KeyListener
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.4  1999/04/02 03:21:09  sp
+ * Added manifest file, common strings such as OK, etc are no longer duplicated
+ * many times in jedit_gui.props
+ *
  * Revision 1.3  1999/03/20 05:23:32  sp
  * Code cleanups
  *

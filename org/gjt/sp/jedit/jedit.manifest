@@ -1,0 +1,2 @@
+# Manifest file for jEdit text editor
+Main-Class: org.gjt.sp.jedit.jEdit

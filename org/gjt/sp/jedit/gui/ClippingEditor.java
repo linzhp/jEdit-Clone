@@ -40,11 +40,11 @@ implements ActionListener, KeyListener
 			new JScrollPane(textArea));
 			
 		JPanel buttons = new JPanel();
-		ok = new JButton(jEdit.getProperty("clipedit.ok"));
+		ok = new JButton(jEdit.getProperty("common.ok"));
 		ok.addActionListener(this);
 		buttons.add(ok);
 		getRootPane().setDefaultButton(ok);
-		cancel = new JButton(jEdit.getProperty("clipedit.cancel"));
+		cancel = new JButton(jEdit.getProperty("common.cancel"));
 		cancel.addActionListener(this);
 		buttons.add(cancel);
 		getContentPane().add(BorderLayout.SOUTH,buttons);

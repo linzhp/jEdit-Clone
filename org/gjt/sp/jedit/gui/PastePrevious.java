@@ -51,8 +51,8 @@ implements ActionListener, KeyListener, MouseListener
 		clips.setVisibleRowCount(10);
 		clips.setFont(view.getTextArea().getFont());
 		clips.addMouseListener(this);
-		insert = new JButton(jEdit.getProperty("pasteprev.insert"));
-		cancel = new JButton(jEdit.getProperty("pasteprev.cancel"));
+		insert = new JButton(jEdit.getProperty("common.insert"));
+		cancel = new JButton(jEdit.getProperty("common.cancel"));
 		content.setLayout(new BorderLayout());
 		content.add(new JLabel(jEdit.getProperty("pasteprev.caption")), BorderLayout.NORTH);
 		content.add(new JScrollPane(clips), BorderLayout.CENTER);

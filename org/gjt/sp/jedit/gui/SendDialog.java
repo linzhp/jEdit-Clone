@@ -107,7 +107,7 @@ implements ActionListener, KeyListener, Runnable
 		buttons = new JPanel();
 		send = new JButton(jEdit.getProperty("send.send"));
 		buttons.add(send);
-		cancel = new JButton(jEdit.getProperty("send.cancel"));
+		cancel = new JButton(jEdit.getProperty("common.cancel"));
 		buttons.add(cancel);
 		getContentPane().add(BorderLayout.SOUTH,buttons);
 		Dimension screen = getToolkit().getScreenSize();

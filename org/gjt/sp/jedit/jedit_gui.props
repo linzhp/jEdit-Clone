@@ -4,6 +4,15 @@
 ###
 
 ###
+### COMMON STRINGS
+###
+
+common.ok=OK
+common.cancel=Cancel
+common.insert=Insert
+common.close=Close
+
+###
 ### TOOLBAR
 ###
 view.toolbar=new-file open-file open-url close-file - save save-all - \
@@ -137,7 +146,6 @@ expand-abbrev.label=E$xpand Abbreviation
 locate-bracket.label=$Locate Bracket
 
 ### Anchor menu
-
 anchor=set-anchor \
        goto-anchor \
        - \
@@ -150,7 +158,6 @@ select-anchor.label=Select to Anchor
 exchange-anchor.label=Exchange Anchor and Caret
 
 ### Line menu
-
 line=goto-end-indent \
      select-no-indent \
      - \
@@ -173,7 +180,6 @@ join-lines.label=Join Lines
 scroll-line.label=Scroll to Current Line
 
 ### Paragraph menu
-
 paragraph=next-paragraph \
           prev-paragraph \
 	  - \
@@ -372,7 +378,6 @@ send.from=From:\
 send.to=To:\ 
 send.subject=Subject:\ 
 send.send=Send
-send.cancel=Cancel
 sendempty.title=Send Error
 sendempty.message=The SMTP Server, From and To fields must all be\n\
 	filled out before the file can be sent.
@@ -432,7 +437,6 @@ search.replaceSelection=Replace in Selection
 search.replaceSelection.mnemonic=s
 search.replaceAll=Replace All
 search.replaceAll.mnemonic=r
-search.cancel=Cancel
 
 # Keep searching dialog
 keepsearching.title=No More Matches Found
@@ -443,7 +447,6 @@ keepsearching.message=No more matches were found. Continue search from\n\
 hypersearch.title=HyperSearch
 hypersearch.find=Search For:\ 
 hypersearch.findBtn=Find All
-hypersearch.close=Close
 hypersearch.ignoreCase=Ignore Case
 
 # Invalid regexp dialog
@@ -453,8 +456,6 @@ reerror.message=The regular expression is invalid. ({0})
 # Paste previous dialog
 pasteprev.title=Paste Previous
 pasteprev.caption=Previous clippings:
-pasteprev.insert=Insert
-pasteprev.cancel=Cancel
 
 # Paste predefined dialog
 pastepredef.title=Paste Predefined
@@ -462,22 +463,14 @@ pastepredef.caption=Predefined clippings:
 pastepredef.add=Add
 pastepredef.delete=Delete
 pastepredef.edit=Edit
-pastepredef.insert=Insert
-pastepredef.cancel=Cancel
 
 # Clipping editor dialog
 clipedit.title=Clipping Editor
-clipedit.ok=OK
-clipedit.cancel=Cancel
 
 # Console dialog
-console.title=Console
 console.cmd=Command:\ 
 console.output=Output
 console.errors=Errors
-console.run=Run
-console.stop=Stop
-console.close=Close
 console.ioerror=I/O error: {0}
 
 # Compile error dialog
@@ -494,8 +487,6 @@ selectlinerange.title=Select Line Range
 selectlinerange.caption=Select line range:
 selectlinerange.start=Start line:\ 
 selectlinerange.end=End line:\ 
-selectlinerange.ok=OK
-selectlinerange.cancel=Cancel
 
 # Buffer options dialog
 buffer_options.title=Buffer Options
@@ -503,8 +494,6 @@ buffer_options.tabSize=Tab size:\
 buffer_options.mode=Edit mode:\ 
 buffer_options.lineSeparator=Line separator:\ 
 buffer_options.noTabs=Soft (emulated with spaces) tabs
-buffer_options.ok=OK
-buffer_options.cancel=Cancel
 
 # Global options dialog
 options.title=Global Options
@@ -559,8 +548,6 @@ options.colors.keyword2Color=Keyword 2
 options.colors.keyword3Color=Keyword 3
 options.colors.operatorColor=Operator
 options.colors.invalidColor=Invalid token
-options.ok=OK
-options.cancel=Cancel
 
 # Color chooser, used by options.colors[12]
 colorChooser.title=Pick a Color
@@ -572,4 +559,3 @@ helpviewer.height=400
 helpviewer.back=Back
 helpviewer.forward=Forward
 helpviewer.home=Contents
-helpviewer.close=Close

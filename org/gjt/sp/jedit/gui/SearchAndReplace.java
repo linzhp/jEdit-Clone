@@ -62,7 +62,7 @@ public class SearchAndReplace extends JDialog
 		replaceAll = new JButton(jEdit.getProperty("search.replaceAll"));
 		replaceAll.setMnemonic(jEdit.getProperty("search.replaceAll"
 			+ ".mnemonic").charAt(0));
-		cancel = new JButton(jEdit.getProperty("search.cancel"));
+		cancel = new JButton(jEdit.getProperty("common.cancel"));
 		getContentPane().setLayout(new BorderLayout());
 		JPanel panel = new JPanel();
 		GridBagLayout layout = new GridBagLayout();
@@ -216,6 +216,10 @@ public class SearchAndReplace extends JDialog
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.24  1999/04/02 03:21:09  sp
+ * Added manifest file, common strings such as OK, etc are no longer duplicated
+ * many times in jedit_gui.props
+ *
  * Revision 1.23  1999/03/20 05:23:32  sp
  * Code cleanups
  *
