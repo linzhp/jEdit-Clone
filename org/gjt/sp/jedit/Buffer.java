@@ -377,10 +377,9 @@ public class Buffer extends DefaultSyntaxDocument
 	 */
 	public void beginCompoundEdit()
 	{
+		compoundEditCount++;
 		if(compoundEdit == null)
 			compoundEdit = new CompoundEdit();
-		else
-			throw new InternalError("You can't do this");
 	}
 
 	/**
@@ -388,6 +387,9 @@ public class Buffer extends DefaultSyntaxDocument
 	 */
 	public void endCompoundEdit()
 	{
+		if(compoundEditCount == 0)
+			return;
+		compoundEditCount--;
 		if(compoundEdit != null)
 		{
 			compoundEdit.end();
@@ -643,9 +645,15 @@ loop:		for(int i = 0; i < markers.size(); i++)
 	}
 	
 	/**
-	 * Saves the caret information.
+	 * Sets the selection start and end that will be used
+	 * the next time this buffer is edited by a view. This will
+	 * have no effect on any views already editing that buffer;
+	 * <code>view.getTextArea().select()</code> should be used
+	 * in those situations.
+	 *
 	 * @param savedSelStart The selection start
 	 * @param savedSelEnd The selection end
+	 * @see org.gjt.sp.jedit.View#getTextArea()
 	 */
 	public void setCaretInfo(int savedSelStart, int savedSelEnd)
 	{
@@ -777,6 +785,7 @@ loop:		for(int i = 0; i < markers.size(); i++)
 	private Mode mode;
 	private UndoManager undo;
 	private CompoundEdit compoundEdit;
+	private int compoundEditCount;
 	private Vector markers;
 	private Position anchor;
 	private int savedSelStart;
@@ -1350,6 +1359,9 @@ loop:		for(int i = 0; i < markers.size(); i++)
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.82  1999/06/09 05:22:11  sp
+ * Find next now supports multi-file searching, minor Perl mode tweak
+ *
  * Revision 1.81  1999/06/07 06:36:32  sp
  * Syntax `styling' (bold/italic tokens) added,
  * plugin options dialog for plugin option panes
@@ -1381,32 +1393,4 @@ loop:		for(int i = 0; i < markers.size(); i++)
  *
  * Revision 1.72  1999/04/20 06:38:26  sp
  * jEdit.addPluginMenu() method added
- *
- * Revision 1.71  1999/04/19 05:47:35  sp
- * ladies and gentlemen, 1.6pre1
- *
- * Revision 1.70  1999/04/02 00:39:19  sp
- * Fixed console bug, syntax API changes, minor jEdit.java API change
- *
- * Revision 1.69  1999/03/28 01:36:24  sp
- * Backup system overhauled, HistoryTextField updates
- *
- * Revision 1.68  1999/03/27 23:47:57  sp
- * Updated docs, view tweak, goto-line fix, next/prev error tweak
- *
- * Revision 1.67  1999/03/27 03:05:17  sp
- * Modular SyntaxTextArea
- *
- * Revision 1.66  1999/03/27 00:44:15  sp
- * Documentation updates, various bug fixes
- *
- * Revision 1.65  1999/03/26 04:14:45  sp
- * EnhancedMenuItem tinkering, fixed compile error, fixed backup bug
- *
- * Revision 1.64  1999/03/24 09:33:22  sp
- * Fixed backup.directory bug, updated options dialog, updated documentation
- *
- * Revision 1.63  1999/03/24 05:45:27  sp
- * Juha Lidfors' backup directory patch, removed debugging messages from various locations, documentation updates
- *
  */

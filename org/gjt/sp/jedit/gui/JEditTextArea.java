@@ -133,7 +133,7 @@ public class JEditTextArea extends SyntaxTextArea
 					.getFontMetrics(getFont()).getHeight();
 				Rectangle rect = new Rectangle(0,startLine * height,
 					0,(endLine - startLine) * height);
-				doElectricScroll(rect);
+				doScroll(rect,true);
 			}
 		}
 	}
@@ -142,6 +142,9 @@ public class JEditTextArea extends SyntaxTextArea
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.4  1999/06/09 05:22:11  sp
+ * Find next now supports multi-file searching, minor Perl mode tweak
+ *
  * Revision 1.3  1999/04/23 07:35:11  sp
  * History engine reworking (shared history models, history saved to
  * .jedit-history)

@@ -396,9 +396,12 @@ loop:		for(int i = offset; i < length; i++)
 			token = Token.NULL;
 			break;
 		case S_END:
-			token = Token.NULL;
-		case S_ONE: case S_TWO:
 			addToken(length - lastOffset,Token.LITERAL2);
+			token = Token.NULL;
+			break;
+		case S_ONE: case S_TWO:
+			addToken(length - lastOffset,Token.INVALID); // XXX
+			token = Token.NULL;
 			break;
 		default:
 			addToken(length - lastOffset,token);
@@ -694,6 +697,9 @@ loop:		for(int i = offset; i < length; i++)
 /**
  * ChangeLog:
  * $Log$
+ * Revision 1.7  1999/06/09 05:22:11  sp
+ * Find next now supports multi-file searching, minor Perl mode tweak
+ *
  * Revision 1.6  1999/06/07 06:36:32  sp
  * Syntax `styling' (bold/italic tokens) added,
  * plugin options dialog for plugin option panes

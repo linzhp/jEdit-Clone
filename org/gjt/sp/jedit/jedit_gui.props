@@ -436,7 +436,7 @@ search.multifile.selected=Search in selected buffers:\
 # Keep searching dialog
 keepsearching.title=No More Matches Found
 keepsearching.message=No more matches were found. Continue search from\n\
-	beginning of buffer?
+	beginning?
 
 # Hypersearch dialog
 hypersearch.title=HyperSearch

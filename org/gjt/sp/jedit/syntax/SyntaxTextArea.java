@@ -508,9 +508,9 @@ public class SyntaxTextArea extends JEditorPane
 	/**
 	 * This method is public because of a Java language limitation.
 	 */
-	public void doElectricScroll(Rectangle rect)
+	public void doScroll(Rectangle rect, boolean electric)
 	{
-		SwingUtilities.invokeLater(new SyntaxSafeScroller(rect));
+		SwingUtilities.invokeLater(new SyntaxSafeScroller(rect,electric));
 	}
 
 	// private members
@@ -615,7 +615,7 @@ public class SyntaxTextArea extends JEditorPane
 
 		public void adjustVisibility(Rectangle rect)
 		{
-			doElectricScroll(rect);
+			doScroll(rect,true);
 		}
 
 		public void damage(Rectangle r)
@@ -661,23 +661,28 @@ public class SyntaxTextArea extends JEditorPane
 
 	class SyntaxSafeScroller implements Runnable
 	{
-		public Rectangle rect;
+		Rectangle rect;
+		boolean electric;
 
-		public SyntaxSafeScroller(Rectangle rect)
+		public SyntaxSafeScroller(Rectangle rect, boolean electric)
 		{
 			this.rect = rect;
+			this.electric = electric;
 		}
 
 		public void run()
 		{
-			int height = getToolkit().getFontMetrics(
-				getFont()).getHeight();
-			int y = Math.max(0,rect.y - height * electricLines);
-			int lines = height * electricLines * 2;
-			if(y + lines + rect.height <= getHeight())
+			if(electric)
 			{
-				rect.y = y;
-				rect.height += lines;
+				int height = getToolkit().getFontMetrics(
+					getFont()).getHeight();
+				int y = Math.max(0,rect.y - height * electricLines);
+				int lines = height * electricLines * 2;
+				if(y + lines + rect.height <= getHeight())
+				{
+					rect.y = y;
+					rect.height += lines;
+				}
 			}
 			scrollRectToVisible(rect);
 		}
@@ -747,6 +752,9 @@ public class SyntaxTextArea extends JEditorPane
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.30  1999/06/09 05:22:11  sp
+ * Find next now supports multi-file searching, minor Perl mode tweak
+ *
  * Revision 1.29  1999/06/07 06:36:32  sp
  * Syntax `styling' (bold/italic tokens) added,
  * plugin options dialog for plugin option panes

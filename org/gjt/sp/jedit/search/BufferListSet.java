@@ -56,11 +56,25 @@ public class BufferListSet implements SearchFileSet
 		return bufferArray;
 	}
 
+	/**
+	 * Returns the next buffer to search.
+	 * @param view The view performing the search
+	 * @param buffer The last buffer searched
+	 */
+	public Buffer getNextBuffer(View view, Buffer buffer)
+	{
+		throw new InternalError("find-next not supported for "
+			+ "this file set");
+	}
+
 	private Object[] buffers;
 }
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.2  1999/06/09 05:22:11  sp
+ * Find next now supports multi-file searching, minor Perl mode tweak
+ *
  * Revision 1.1  1999/06/03 08:24:13  sp
  * Fixing broken CVS
  *

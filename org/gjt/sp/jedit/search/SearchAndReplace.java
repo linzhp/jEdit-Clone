@@ -19,6 +19,7 @@
 
 package org.gjt.sp.jedit.search;
 
+import javax.swing.text.BadLocationException;
 import javax.swing.text.Element;
 import javax.swing.JOptionPane;
 import org.gjt.sp.jedit.gui.JEditTextArea;
@@ -122,8 +123,11 @@ public class SearchAndReplace
 
 	/**
 	 * Returns the current search string matcher.
+	 * @exception IllegalArgumentException if regular expression search
+	 * is enabled, the search string or replacement string is invalid
 	 */
 	public static SearchMatcher getSearchMatcher()
+		throws IllegalArgumentException
 	{
 		if(matcher != null)
 			return matcher;
@@ -155,60 +159,50 @@ public class SearchAndReplace
 	}
 
 	/**
-	 * Finds the next instance of the search string in this buffer,
-	 * starting at the end of the selected text, or the caret position
-	 * if nothing is selected.
+	 * Finds the next occurance of the search string.
 	 * @param view The view
-	 * @param buffer The buffer
-	 * @param done For internal use. False if a `keep searching'
-	 * dialog should be shown if no more matches have been found.
+	 * @return True if the operation was successful, false otherwise
 	 */
-	public static boolean find(View view, Buffer buffer, boolean done)
+	public static boolean find(View view)
 	{
-		return find(view,buffer,view.getTextArea().getSelectionEnd(),done);
-	}
+		Buffer buffer = null;
 
-	/**
-	 * Finds the next instance of the search string in the specified buffer.
-	 * @param view The view
-	 * @param buffer The buffer
-	 * @param start Location where to start the search
-	 * @param done For internal use. False if a `keep searching'
-	 * dialog should be shown if no more matches have been found.
-	 */
-	public static boolean find(View view, Buffer buffer, int start, boolean done)
-	{
+		SearchMatcher matcher = getSearchMatcher();
+		if(matcher == null)
+		{
+			view.getToolkit().beep();
+			return false;
+		}
+
 		try
 		{
-			SearchMatcher matcher = getSearchMatcher();
-			if(matcher == null)
+loop:			while(true)
 			{
-				view.getToolkit().beep();
-				return false;
-			}
+				while((buffer = fileset.getNextBuffer(view,buffer)) != null)
+				{
+					int start;
+					if(view.getBuffer() == buffer)
+						start = view.getTextArea()
+							.getSelectionEnd();
+					else
+						start = 0;
+					if(find(view,buffer,start))
+						return true;
+				}
 
-			String text = buffer.getText(start,
-				buffer.getLength() - start);
-			int[] match = matcher.nextMatch(text);
-			if(match != null)
-			{
-				view.getTextArea().select(start + match[0],
-					start + match[1]);
-				return true;
+				int result = JOptionPane.showConfirmDialog(view,
+					jEdit.getProperty("keepsearching.message"),
+					jEdit.getProperty("keepsearching.title"),
+					JOptionPane.YES_NO_OPTION,
+					JOptionPane.QUESTION_MESSAGE);
+				if(result != JOptionPane.YES_OPTION)
+					return false;
+				else
+				{
+					// start search from beginning
+					buffer = null;
+				}
 			}
-			if(done)
-			{
-				view.getToolkit().beep();
-				return false;
-			}
-
-			int result = JOptionPane.showConfirmDialog(view,
-				jEdit.getProperty("keepsearching.message"),
-				jEdit.getProperty("keepsearching.title"),
-				JOptionPane.YES_NO_OPTION,
-				JOptionPane.QUESTION_MESSAGE);
-			if(result == JOptionPane.YES_OPTION)
-				return find(view,buffer,0,true);
 		}
 		catch(Exception e)
 		{
@@ -218,7 +212,44 @@ public class SearchAndReplace
 				args[0] = e.toString();
 			GUIUtilities.error(view,"searcherror",args);
 		}
+
 		return false;
+	}
+
+	/**
+	 * Finds the next instance of the search string in the specified buffer.
+	 * @param view The view
+	 * @param buffer The buffer
+	 * @param start Location where to start the search
+	 * @exception BadLocationException if `start' is invalid
+	 * @exception IllegalArgumentException if regular expression search
+	 * is enabled, the search string or replacement string is invalid
+	 */
+	public static boolean find(View view, Buffer buffer, int start)
+		throws BadLocationException, IllegalArgumentException
+	{
+		SearchMatcher matcher = getSearchMatcher();
+
+		String text = buffer.getText(start,
+			buffer.getLength() - start);
+		int[] match = matcher.nextMatch(text);
+		if(match != null)
+		{
+			if(view.getBuffer() == buffer)
+			{
+				view.getTextArea().select(start + match[0],
+					start + match[1]);
+			}
+			else
+			{
+				buffer.setCaretInfo(start + match[0],
+					start + match[1]);
+				view.setBuffer(buffer);
+			}
+			return true;
+		}
+		else
+			return false;
 	}
 
 	/**
@@ -379,6 +410,9 @@ public class SearchAndReplace
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.6  1999/06/09 05:22:11  sp
+ * Find next now supports multi-file searching, minor Perl mode tweak
+ *
  * Revision 1.5  1999/06/06 05:05:25  sp
  * Search and replace tweaks, Perl/Shell Script mode updates
  *

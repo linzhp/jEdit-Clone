@@ -191,7 +191,7 @@ public class SearchDialog extends JDialog
 			else if(source == findBtn)
 			{
 				save();
-				if(SearchAndReplace.find(view,buffer,false))
+				if(SearchAndReplace.find(view))
 					disposeOrKeepDialog();
 				else
 					view.getToolkit().beep();
@@ -244,8 +244,7 @@ public class SearchDialog extends JDialog
 			if(evt.getKeyCode() == KeyEvent.VK_ENTER)
 			{
 				save();
-				if(SearchAndReplace.find(view,view.getBuffer(),
-					false))
+				if(SearchAndReplace.find(view))
 					disposeOrKeepDialog();
 			}
 			else if(evt.getKeyCode() == KeyEvent.VK_ESCAPE)
@@ -259,6 +258,9 @@ public class SearchDialog extends JDialog
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.2  1999/06/09 05:22:11  sp
+ * Find next now supports multi-file searching, minor Perl mode tweak
+ *
  * Revision 1.1  1999/06/03 08:40:03  sp
  * More cvs fixing
  *

@@ -34,6 +34,6 @@ public class find_next extends EditAction
 	{
 		View view = getView(evt);
 		Buffer buffer = view.getBuffer();
-		SearchAndReplace.find(view,buffer,false);
+		SearchAndReplace.find(view);
 	}
 }
