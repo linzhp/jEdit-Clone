@@ -205,6 +205,25 @@ loop:		for(int i = 0; i < str.length(); i++)
 	}
 
 	/**
+	 * Checks if the specified string is a URL.
+	 * @param str The string to check
+	 * @return True if the string is a URL, false otherwise
+	 */
+	public static boolean isURL(String str)
+	{
+		int colonIndex = str.indexOf(':');
+		int spaceIndex = str.indexOf(' ');
+		if(spaceIndex == -1)
+			spaceIndex = str.length();
+
+		if(colonIndex > 1 /* fails for C:\... */
+			&& colonIndex < spaceIndex)
+			return true;
+		else
+			return false;
+	}
+
+	/**
 	 * Returns the current regular expression.
 	 * @exception REException if the stored regular expression is invalid
 	 */
@@ -263,6 +282,9 @@ loop:		for(int i = 0; i < str.length(); i++)
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.11  1999/05/28 02:00:25  sp
+ * SyntaxView bug fix, faq update, MiscUtilities.isURL() method added
+ *
  * Revision 1.10  1999/05/26 04:46:03  sp
  * Minor API change, soft tabs fixed ,1.7pre1
  *

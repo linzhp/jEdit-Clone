@@ -5,9 +5,12 @@
 
 # Function keys
 help.shortcut=F1
-paste-previous.shortcut=F2
-paste-predefined.shortcut=F3
-hypersearch.shortcut=F4
+word-count.shortcut=F2
+save-all.shortcut=F3
+send.shortcut=F4
+paste-previous.shortcut=F5
+paste-predefined.shortcut=F6
+hypersearch.shortcut=F7
 prev-buffer.shortcut=F11
 next-buffer.shortcut=F12
 

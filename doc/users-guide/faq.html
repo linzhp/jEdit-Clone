@@ -6,8 +6,13 @@
 <ul>
 <li><a href=#console>What happened to the console?</a>
 <li><a href=#wwwbrowser>What happened to the `Open in WWW Browser' command?</a>
+<li><a href=#rot13>What happened to the Rot13 and Reverse plugins?</a>
+<li><a href=#bestjdk>What is the best JDK/Swing version for jEdit?</a>
 <li><a href=#permissions>Why are file permissions reset to the defaults
 when I save?</a>
+<li><a href=#clipboard>Why can't I copy and paste between jEdit and other
+applications?</a>
+<li><a href=#print>Why can't I print in JDK 1.2?</a>
 <li><a href=#memory>Why do I get OutOfMemoryErrors?</a>
 <li><a href=#noswing>Why do I get a ClassDefNotFoundError on startup?</a>
 <li><a href=#exithang>Why does jEdit hang when exiting?</a>
@@ -34,12 +39,61 @@ As of jEdit 1.7pre1, the `Open in WWW Browser' command is a plugin
 distributed separately from jEdit. Download it from
 &lt;http://www.icg-online.de/jedit/&gt;.
 
+<a name=rot13>
+<h1>What happened to the Rot13 and Reverse plugins?</h1>
+</a>
+
+You mean you actually *USE* them? As of jEdit 1.7pre1, Rot13 and Reverse
+have been rolled into Mike Dillon's TextTools plugin, which is distributed
+separately from jEdit. Download it from
+&lt;http://www.icg-online.de/jedit/&gt;.
+
+<a name=bestjdk>
+<h1>What is the best JDK/Swing version for jEdit?</h1>
+</a>
+
+jEdit runs best with JDK 1.1.8 and Swing 1.1.1beta2. It runs reasonably
+well with JDK 1.2, but mainly because of JDK bugs, it has the following
+problems:
+
+<ul>
+<li>Printing doesn't work
+<li>Overwrite mode doesn't work
+<li>C+HOME/C+END behave in a broken manner
+<li>Alt-key mnemonics don't work properly
+</ul>
+
+Hopefully these will be fixed in a future JDK 1.2 release.
+
 <a name=permissions>
 <h1>Why are file permissions reset to the defaults when I save?</h1>
 </a>
 
 This occurs because of a Java limitation. The only workaround is to
 disable backups in `File-&gt;Global Options'.
+
+<a name=clipboard>
+<h1>Why can't I copy and paste between jEdit and other applications?</h1>
+</a>
+
+If you're using jEdit on a Unix system, you will not be able to access
+the `middle-mouse-button' cut buffer, only the Motif clipboard. This
+is due to the way the JDK is implemented on Unix - there is no way to
+changes this.<p>
+
+A crude workaround is to use an application that supports both clipboards,
+such as nedit, to transfer data.
+
+<a name=print>
+<h1>Why can't I print in JDK 1.2?</h1>
+</a>
+
+JDK 1.2 has a bug where the entire printed document is stored in memory,
+rather than a spool file. This can fill up memory and cause problems
+and crashes.<p>
+
+This bug is entered as #4186108 in the Bug Parade - see
+&lt;http://developer.java.sun.com&gt; for details.
 
 <a name=memory>
 <h1>Why do I get OutOfMemoryErrors?</h1>
@@ -77,6 +131,8 @@ Where <i>nn</i> is the size of the Java heap, in megabytes. The
 default is 32 Mb - if you like to open lots of files at once, 64
 might be better.<p>
 
+Note that JDK 1.1.8 has a dynamic heap, so this is not necessary.
+
 <a name=noswing>
 <h1>Why do I get a ClassDefNotFoundError on startup?</h1>
 </a>
@@ -93,29 +149,23 @@ Swing can be downloaded from &lt;java.sun.com/products/jfc/index.html&gt;.
 </a>
 
 There is a bug in some JDKs where calling <code>ServerSocket.close()</code>
-will hang the JVM. This is documented as bug 4107121 in the JDC bug
-parade (see <code>http://developer.java.sun.com</code>).<p>
-
-The only workaround is to disable the jEdit server in
-`File-&gt;Global Options-&gt;General'.
+will hang the JVM. JDK 1.1.8 does not seem to have this problem - upgrade
+if you are experiencing problems.
 
 <a name=bigfile>
 <h1>Why does the display mess up when editing large files?</h1>
 </a>
 
-Due to an AWT limitation or Swing bug (or maybe both) in certain
-JDK versions, the
+Due to an AWT bug in Unix versions of the JDK, the
 Swing JTextComponent component has problems editing documents greater
 than about 2000 lines. The problem is that the viewscreen turns gray
-and GUI elements are repainted incorrectly.<p>
-
-JDK 1.2.1 appears to fix this problem.
+and GUI elements are repainted incorrectly.
 
 <a name=overwrite>
 <h1>Why doesn't overwrite mode work?</h1>
 </a>
 
-Overwrite mode doesn't appear to work on Windows JDK 1.2. I am
+Overwrite mode doesn't appear to work on JDK 1.2. I am
 working on a fix; it will be available as soon as possible.<p>
 
 If overwrite mode doesn't work on other systems, the most likely
@@ -145,9 +195,9 @@ Swing can be downloaded from &lt;java.sun.com/products/jfc/index.html&gt;.
 <h1>Why don't the Alt key mnemonics work?</h1>
 </a>
 
-On some JDK versions, the AWT incorrectly sets the modifiers of
-KEY_TYPED events to 0 even if the Alt key is pressed. The end
-result is that the keystroke is inserted in the document. This
+On JDK 1.2 and 1.1.x where x is earlier than about 6, the AWT incorrectly
+sets the modifiers of KEY_TYPED events to 0 even if the Alt key is pressed.
+The end result is that the keystroke is inserted in the document. This
 is an AWT bug, and as far as I know the only way to fix it is
 to upgrade to a later JDK version.
 

@@ -531,15 +531,14 @@ public class View extends JFrame
 		scroller = new JScrollPane(textArea,ScrollPaneConstants
 			.VERTICAL_SCROLLBAR_ALWAYS,ScrollPaneConstants
 			.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-		scroller.setMinimumSize(new Dimension(0,0));
+		
+		propertiesChanged();
 
 		FontMetrics fm = getToolkit().getFontMetrics(textArea
 			.getFont());
 
 		scroller.setPreferredSize(new Dimension(81 * fm.charWidth('m'),
 			26 * fm.getHeight()));
-		
-		propertiesChanged();
 
 		if(buffer == null)
 			setBuffer(bufferArray[bufferArray.length - 1]);
@@ -774,6 +773,9 @@ public class View extends JFrame
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.76  1999/05/28 02:00:25  sp
+ * SyntaxView bug fix, faq update, MiscUtilities.isURL() method added
+ *
  * Revision 1.75  1999/05/27 03:09:22  sp
  * Console unbundled
  *

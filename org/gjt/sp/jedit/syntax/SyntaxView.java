@@ -156,13 +156,17 @@ public class SyntaxView extends PlainView
 		 * entire viewscreen, since PlainView doesn't (yet)
 		 * collapse multiple repaint requests.
 		 */
-		host.repaint(x,y,size.width - x,metrics.getHeight());
+		host.repaint(x,y,size.width - x,metrics.getHeight()
+			+ metrics.getMaxAscent());
 	}
 }
 
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.22  1999/05/28 02:00:25  sp
+ * SyntaxView bug fix, faq update, MiscUtilities.isURL() method added
+ *
  * Revision 1.21  1999/05/02 00:07:21  sp
  * Syntax system tweaks, console bugfix for Swing 1.1.1
  *
