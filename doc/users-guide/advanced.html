@@ -7,7 +7,6 @@
 <ul>
 <li><a href=#intro>Introduction</a>
 <li><a href=#desktop>Session Management</a>
-<li><a href=#rmi>jEdit RMI Interface</a>
 <li><a href=#history>History Text Fields</a>
 <li><a href=#lineSep>Line Separator Characters</a>
 <li><a href=#modes>Edit Modes</a>
@@ -34,36 +33,6 @@ command line parameters, it can reopen those files.<p>
 
 Session management can be disabled either on a `one-time' basis with the
 `-nodesktop' switch, or permanently in `File-&gt;Global Options-&gt;General'.
-
-<a name=rmi>
-<h1>jEdit RMI Interface</h1>
-</a>
-
-jEdit can export some of it's services via RMI, allowing other applications
-to open files in jEdit and do various other things.<p>
-
-For the RMI interface to work, the rmiregistry program must be running.
-To start the RMI registry on Unix, enter the following in a command prompt:
-
-<pre>
-rmiregistry &amp;
-</pre>
-
-The corresponding command on Windows is:
-
-<pre>
-start rmiregistry
-</pre>
-
-The RMI interface is enabled by default. It can be enabled with the
-<code>-rmi</code> command line, and disabled with <code>-normi</code>.<p>
-
-If you want to change the name under which jEdit exports itself in the RMI
-registry, use the <code>-rmi=<i>path</i></code> option.<p>
-
-When the RMI interface is active, starting jEdit when an instance is
-already running will open a new window in the already running instance,
-instead of spawning a new copy.
 
 <a name=history>
 <h1>History Text Fields</h1>

@@ -65,184 +65,225 @@ loop:		for(int i = offset; i < length; i++)
 			int i1 = (i+1);
 
 			char c = array[i];
-			if(token == Token.KEYWORD2)
+
+			if(c == '\\')
 			{
+				backslash = !backslash;
+				continue;
+			}
+
+			switch(token)
+			{
+			case Token.NULL:
+				switch(c)
+				{
+				case ' ': case '\t': case '(': case ')':
+					backslash = false;
+					if(cmdState == 1/*insideCmd*/)
+					{
+						addToken(i - lastOffset,Token.KEYWORD1);
+						lastOffset = i;
+						cmdState = 2; /*afterCmd*/
+					}
+					break;
+				case '=':
+					backslash = false;
+					if(cmdState == 1/*insideCmd*/)
+					{
+						addToken(i - lastOffset,token);
+						lastOffset = i;
+						cmdState = 2; /*afterCmd*/
+					}
+					break;
+				case '&': case '|': case ';':
+					if(backslash)
+						backslash = false;
+					else
+						cmdState = 0; /*beforeCmd*/
+					break;
+				case '#':
+					if(backslash)
+						backslash = false;
+					else
+					{
+						addToken(i - lastOffset,token);
+						addToken(length - i,Token.COMMENT1);
+						lastOffset = length;
+						break loop;
+					}
+					break;
+				case '$':
+					if(backslash)
+						backslash = false;
+					else
+					{
+						addToken(i - lastOffset,token);
+						cmdState = 2; /*afterCmd*/
+						lastOffset = i;
+						if(length - i >= 2)
+						{
+							switch(array[i1])
+							{
+							case '(':
+								continue;
+							case '{':
+								token = LVARIABLE;
+								break;
+							default:
+								token = Token.KEYWORD2;
+								break;
+							}
+						}
+						else
+							token = Token.KEYWORD2;
+					}
+					break;
+				case '"':
+					if(backslash)
+						backslash = false;
+					else
+					{
+						addToken(i - lastOffset,token);
+						token = Token.LITERAL1;
+						lineInfo[lineIndex].obj = null;
+						cmdState = 2; /*afterCmd*/
+						lastOffset = i;
+					}
+					break;
+				case '\'':
+					if(backslash)
+						backslash = false;
+					else
+					{
+						addToken(i - lastOffset,token);
+						token = Token.LITERAL2;
+						cmdState = 2; /*afterCmd*/
+						lastOffset = i;
+					}
+					break;
+				case '<':
+					if(backslash)
+						backslash = false;
+					else
+					{
+						if(length - i > 1 && array[i1] == '<')
+						{
+							addToken(i - lastOffset,
+								token);
+							token = Token.LITERAL1;
+							lastOffset = i;
+							lineInfo[lineIndex].obj =
+								new String(array,i + 2,
+									length - (i+2));
+						}
+					}
+					break;
+				default:
+					backslash = false;
+					if(Character.isLetter(c))
+					{
+						if(cmdState == 0 /*beforeCmd*/)
+						{
+							addToken(i - lastOffset,token);
+							lastOffset = i;
+							cmdState++; /*insideCmd*/
+						}
+					}
+					break;
+				}
+				break;
+			case Token.KEYWORD2:
 				backslash = false;
 				if(!Character.isLetterOrDigit(c) && c != '_')
 				{
-					token = Token.NULL;
 					if(i != offset && array[i-1] == '$')
 					{
-						addToken(i1 - lastOffset,
-							Token.KEYWORD2);
+						addToken(i1 - lastOffset,token);
 						lastOffset = i1;
+						token = Token.NULL;
 						continue;
 					}
 					else
 					{
-						addToken(i - lastOffset,
-							Token.KEYWORD2);
+						addToken(i - lastOffset,token);
 						lastOffset = i;
+						token = Token.NULL;
 					}
 				}
-			}
-			else if(token == LVARIABLE && c == '}')
-			{
-				backslash = false;
-				token = Token.NULL;
-				addToken(i1 - lastOffset,Token.KEYWORD2);
-				lastOffset = i1;
-			}
-			switch(c)
-			{
-			case '\\':
-				backslash = !backslash;
 				break;
-			case ' ': case '\t': case '(': case ')':
-				backslash = false;
-				if(token == Token.NULL && cmdState == 1/*insideCmd*/)
-				{
-					addToken(i - lastOffset,Token.KEYWORD1);
-					lastOffset = i;
-					cmdState = 2; /*afterCmd*/
-				}
-				break;
-			case '=':
-				backslash = false;
-				if(token == Token.NULL && cmdState == 1/*insideCmd*/)
-				{
-					addToken(i - lastOffset,Token.NULL);
-					lastOffset = i;
-					cmdState = 2; /*afterCmd*/
-				}
-				break;
-			case '&': case '|': case ';':
+			case Token.LITERAL1:
 				if(backslash)
 					backslash = false;
+				else if(c == '"')
+				{
+					addToken(i1 - lastOffset,token);
+					cmdState = 2; /*afterCmd*/
+					lastOffset = i1;
+					token = Token.NULL;
+				}
 				else
-					cmdState = 0; /*beforeCmd*/
+					backslash = false;
 				break;
-			case '#':
+			case Token.LITERAL2:
 				if(backslash)
 					backslash = false;
-				else if(token == Token.NULL)
+				else if(c == '\'')
 				{
-					addToken(i - lastOffset,Token.NULL);
-					addToken(length - i,Token.COMMENT1);
-					lastOffset = length;
-					break loop;
-				}
-				break;
-			case '$':
-				if(backslash)
-					backslash = false;
-				else if(token == Token.NULL)
-				{
-					if(length - i >= 2)
-					{
-						switch(array[i1])
-						{
-						case '(':
-							continue;
-						case '{':
-							token = LVARIABLE;
-							break;
-						default:
-							token = Token.KEYWORD2;
-							break;
-						}
-					}
-					else
-						token = Token.KEYWORD2;
-					addToken(i - lastOffset,Token.NULL);
-					cmdState = 2; /*afterCmd*/
-					lastOffset = i;
-				}
-				break;
-			case '"':
-				if(backslash)
-					backslash = false;
-				else if(token == Token.NULL)
-				{
-					token = Token.LITERAL1;
-					lineInfo[lineIndex].obj = null;
-					addToken(i - lastOffset,Token.NULL);
-					cmdState = 2; /*afterCmd*/
-					lastOffset = i;
-				}
-				else if(token == Token.LITERAL1)
-				{
-					token = Token.NULL;
 					addToken(i1 - lastOffset,Token.LITERAL1);
 					cmdState = 2; /*afterCmd*/
 					lastOffset = i1;
-				}
-				break;
-			case '\'':
-				if(backslash)
-					backslash = false;
-				else if(token == Token.NULL)
-				{
-					token = Token.LITERAL2;
-					addToken(i - lastOffset,Token.NULL);
-					cmdState = 2; /*afterCmd*/
-					lastOffset = i;
-				}
-				else if(token == Token.LITERAL2)
-				{
 					token = Token.NULL;
-					addToken(i1 - lastOffset,Token.LITERAL1);
-					cmdState = 2; /*afterCmd*/
-					lastOffset = i1;
 				}
-				break;
-			case '<':
-				if(backslash)
+				else
 					backslash = false;
-				else if(token == Token.NULL)
+				break;
+			case LVARIABLE:
+				backslash = false;
+				if(c == '}')
 				{
-					if(length - i > 1 && array[i1] == '<')
-					{
-						addToken(i - lastOffset,
-							Token.NULL);
-						token = Token.LITERAL1;
-						lastOffset = i;
-						lineInfo[lineIndex].obj =
-							new String(array,i + 2,
-								length - (i+2));
-					}
+					addToken(i1 - lastOffset,Token.KEYWORD2);
+					lastOffset = i1;
+					token = Token.NULL;
 				}
 				break;
 			default:
-				backslash = false;
-				if(Character.isLetter(c))
-				{
-					if(cmdState == 0 /*beforeCmd*/)
-					{
-						addToken(i - lastOffset,token);
-						lastOffset = i;
-						cmdState++; /*insideCmd*/
-					}
-				}
-				break;
+				throw new InternalError("Invalid state: " + token);
 			}
 		}
-		if(lastOffset != length)
+
+		switch(token)
 		{
-			if(token == Token.NULL && cmdState == 1)
-				token = Token.KEYWORD1;
-			else if(token == LVARIABLE)
-				token = Token.INVALID;
+		case Token.NULL:
+			if(cmdState == 1)
+				addToken(length - lastOffset,Token.KEYWORD1);
+			else
+				addToken(length - lastOffset,token);
+			break;
+		case Token.LITERAL2:
+			addToken(length - lastOffset,Token.LITERAL1);
+			break;
+		case Token.KEYWORD2:
 			addToken(length - lastOffset,token);
+			token = Token.NULL;
+			break;
+		case LVARIABLE:
+			addToken(length - lastOffset,Token.INVALID);
+			token = Token.NULL;
+			break;
+		default:
+			addToken(length - lastOffset,token);
+			break;
 		}
-		return (token == Token.LITERAL2 || token == Token.LITERAL1
-			? token : Token.NULL);
+		return token;
 	}
 }
 
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.17  1999/06/20 02:15:45  sp
+ * Syntax coloring optimizations
+ *
  * Revision 1.16  1999/06/06 05:05:25  sp
  * Search and replace tweaks, Perl/Shell Script mode updates
  *

@@ -42,41 +42,47 @@ loop:		for(int i = offset; i < length; i++)
 		{
 			int i1 = (i+1);
 
-			switch(array[i])
+			switch(token)
 			{
-			case '#': case ';':
-				if(i == offset && token == Token.NULL)
+			case Token.NULL:
+				switch(array[i])
 				{
-					addToken(line.count,Token.COMMENT1);
-					lastOffset = length;
-					break loop;
-				}
-				break;
-			case '[':
-				if(i == offset && token == Token.NULL)
-				{
-					token = Token.KEYWORD2;
-					addToken(i - lastOffset,Token.NULL);
+				case '#': case ';':
+					if(i == offset)
+					{
+						addToken(line.count,Token.COMMENT1);
+						lastOffset = length;
+						break loop;
+					}
+					break;
+				case '[':
+					if(i == offset)
+					{
+						addToken(i - lastOffset,token);
+						token = Token.KEYWORD2;
+						lastOffset = i;
+					}
+					break;
+				case '=':
+					addToken(i - lastOffset,Token.KEYWORD1);
+					token = VALUE;
 					lastOffset = i;
+					break;
 				}
 				break;
-			case ']':
-				if(token == Token.KEYWORD2)
+			case Token.KEYWORD2:
+				if(array[i] == ']')
 				{
+					addToken(i1 - lastOffset,token);
 					token = Token.NULL;
-					addToken(i1 - lastOffset,
-						Token.KEYWORD2);
 					lastOffset = i1;
 				}
 				break;
-			case '=':
-				if(token == Token.NULL)
-				{
-					token = VALUE; // Can't have [...] after =
-					addToken(i - lastOffset,Token.KEYWORD1);
-					lastOffset = i;
-				}
+			case VALUE:
 				break;
+			default:
+				throw new InternalError("Invalid state: "
+					+ token);
 			}
 		}
 		if(lastOffset != length)
@@ -88,6 +94,9 @@ loop:		for(int i = offset; i < length; i++)
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.6  1999/06/20 02:15:45  sp
+ * Syntax coloring optimizations
+ *
  * Revision 1.5  1999/06/05 00:22:58  sp
  * LGPL'd syntax package
  *

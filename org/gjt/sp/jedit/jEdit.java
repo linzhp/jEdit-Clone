@@ -48,7 +48,7 @@ public class jEdit
 	 */
 	public static String getVersion()
 	{
-		return "1.7pre4";
+		return "1.7pre5";
 	}
 
 	/**
@@ -58,7 +58,7 @@ public class jEdit
 	public static String getBuild()
 	{
 		// (major) (minor) (<99 = preX, 99 = final) (bug fix)
-		return "01.07.04.00";
+		return "01.07.05.00";
 	}
 
 	/**
@@ -1558,6 +1558,9 @@ public class jEdit
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.117  1999/06/20 02:15:45  sp
+ * Syntax coloring optimizations
+ *
  * Revision 1.116  1999/06/16 03:29:59  sp
  * Added <title> tags to docs, configuration data is now stored in a
  * ~/.jedit directory, style option pane finished

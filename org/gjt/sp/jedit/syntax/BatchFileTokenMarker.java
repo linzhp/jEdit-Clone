@@ -34,19 +34,26 @@ public class BatchFileTokenMarker extends TokenMarker
 		int offset = line.offset;
 		int lastOffset = offset;
 		int length = line.count + offset;
+
+		if(SyntaxUtilities.regionMatches(true,line,offset,"rem"))
+		{
+			addToken(line.count,Token.COMMENT1);
+			return Token.NULL;
+		}
+
 loop:		for(int i = offset; i < length; i++)
 		{
 			int i1 = (i+1);
 
-			switch(array[i])
+			switch(token)
 			{
-			case '%':
-				if(token == Token.NULL)
+			case Token.NULL:
+				switch(array[i])
 				{
-					addToken(i - lastOffset,Token.NULL);
+				case '%':
+					addToken(i - lastOffset,token);
 					lastOffset = i;
-					if(length - i <= 3 || array[i+2]
-					   == ' ')
+					if(length - i <= 3 || array[i+2] == ' ')
 					{
 						addToken(2,Token.KEYWORD2);
 						i++;
@@ -54,65 +61,50 @@ loop:		for(int i = offset; i < length; i++)
 					}
 					else
 						token = Token.KEYWORD2;
-				}
-				else if(token == Token.KEYWORD2)
-				{
-					token = Token.NULL;
-					addToken(i1 - lastOffset,Token.KEYWORD2);
-					lastOffset = i1;
-				}
-				break;
-			case '"':
-				if(token == Token.NULL)
-				{
+					break;
+				case '"':
+					addToken(i - lastOffset,token);
 					token = Token.LITERAL1;
-					addToken(i - lastOffset,Token.NULL);
 					lastOffset = i;
-				}
-				else if(token == Token.LITERAL1)
-				{
-					token = Token.NULL;
-					addToken(i1 - lastOffset,Token.LITERAL1);
-					lastOffset = i1;
-				}
-				break;
-			case '=':
-				if(token == Token.NULL && lastOffset == offset)
-				{
-					addToken(i - lastOffset,Token.NULL);
-					lastOffset = i;
-				}
-				break;
-			case ':':
-				if(i == offset)
-				{
-					addToken(line.count,Token.LABEL);
-					lastOffset = length;
-					break loop;
-				}
-				break;
-			case ' ':
-				if(lastOffset == offset)
-				{
-					if(i > 2 && SyntaxUtilities
-						.regionMatches(true,line,
-					       i - 3,"rem"))
+					break;
+				case ':':
+					if(i == offset)
 					{
-						addToken(length - lastOffset,
-							 Token.COMMENT1);
+						addToken(line.count,Token.LABEL);
 						lastOffset = length;
 						break loop;
 					}
-					else if(token == Token.NULL)
+					break;
+				case ' ':
+					if(lastOffset == offset)
 					{
-						addToken(i - lastOffset,
-							 Token.KEYWORD1);
+						addToken(i - lastOffset,Token.KEYWORD1);
 						lastOffset = i;
 					}
+					break;
 				}
 				break;
+			case Token.KEYWORD2:
+				if(array[i] == '%')
+				{
+					addToken(i1 - lastOffset,token);
+					token = Token.NULL;
+					lastOffset = i1;
+				}
+				break;
+			case Token.LITERAL1:
+				if(array[i] == '"')
+				{
+					addToken(i1 - lastOffset,token);
+					token = Token.NULL;
+					lastOffset = i1;
+				}
+				break;
+			default:
+				throw new InternalError("Invalid state: " + token);
 			}
 		}
+
 		if(lastOffset != length)
 		{
 			if(token != Token.NULL)
@@ -128,6 +120,9 @@ loop:		for(int i = offset; i < length; i++)
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.17  1999/06/20 02:15:45  sp
+ * Syntax coloring optimizations
+ *
  * Revision 1.16  1999/06/05 00:22:58  sp
  * LGPL'd syntax package
  *

@@ -734,7 +734,7 @@ loop:		for(int i = 0; i < markers.size(); i++)
 	// package-private members
 	Buffer prev;
 	Buffer next;
-	final int uid;
+	int uid;
 
 	Buffer(View view, URL url, String path, boolean readOnly, boolean newFile)
 	{
@@ -1352,6 +1352,9 @@ loop:		for(int i = 0; i < markers.size(); i++)
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.87  1999/06/20 02:15:45  sp
+ * Syntax coloring optimizations
+ *
  * Revision 1.86  1999/06/16 03:29:59  sp
  * Added <title> tags to docs, configuration data is now stored in a
  * ~/.jedit directory, style option pane finished

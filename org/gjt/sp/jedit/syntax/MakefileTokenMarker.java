@@ -40,123 +40,139 @@ loop:		for(int i = offset; i < length; i++)
 		{
 			int i1 = (i+1);
 
-			switch(array[i])
+			char c = array[i];
+			if(c == '\\')
 			{
-			case '\\':
 				backslash = !backslash;
-				break;
-			case ':': case '=': case ' ': case '\t':
-				backslash = false;
-				if(token == Token.NULL && lastOffset == offset)
+				continue;
+			}
+
+			switch(token)
+			{
+			case Token.NULL:
+				switch(c)
 				{
-					addToken(i1 - lastOffset,Token.KEYWORD1);
-					lastOffset = i1;
-				}
-				break;
-			case '#':
-				if(backslash)
+				case ':': case '=': case ' ': case '\t':
 					backslash = false;
-				else if(token == Token.NULL)
-				{
-					addToken(i - lastOffset,Token.NULL);
-					addToken(length - i,Token.COMMENT1);
-					lastOffset = length;
-					break loop;
-				}
-				break;
-			case '$':
-				if(backslash)
-					backslash = false;
-				else if(token == Token.NULL && lastOffset != offset)
-				{
-					addToken(i - lastOffset,Token.NULL);
-					lastOffset = i;
-					if(length - i > 1)
-	 				{
-						char c = array[i1];
-				      		if(c == '(' || c == '{')
-							token = Token.KEYWORD2;
-						else
+					if(lastOffset == offset)
+					{
+						addToken(i1 - lastOffset,Token.KEYWORD1);
+						lastOffset = i1;
+					}
+					break;
+				case '#':
+					if(backslash)
+						backslash = false;
+					else
+					{
+						addToken(i - lastOffset,token);
+						addToken(length - i,Token.COMMENT1);
+						lastOffset = length;
+						break loop;
+					}
+					break;
+				case '$':
+					if(backslash)
+						backslash = false;
+					else if(lastOffset != offset)
+					{
+						addToken(i - lastOffset,token);
+						lastOffset = i;
+						if(length - i > 1)
 						{
-							addToken(2,Token.KEYWORD2);
-							lastOffset += 2;
-							i++;
+							char c1 = array[i1];
+							if(c1 == '(' || c1 == '{')
+								token = Token.KEYWORD2;
+							else
+							{
+								addToken(2,Token.KEYWORD2);
+								lastOffset += 2;
+								i++;
+							}
 						}
 					}
-				}
-				break;
-			case ')': case '}':
-				backslash = false;
-				if(token == Token.KEYWORD2)
-				{
-					token = Token.NULL;
-					addToken(i1 - lastOffset,Token.KEYWORD2);
-					lastOffset = i1;
-				}
-				break;
-			case '"':
-				if(backslash)
-				{
+					break;
+				case '"':
+					if(backslash)
+						backslash = false;
+					else
+					{
+						addToken(i - lastOffset,token);
+						token = Token.LITERAL1;
+						lastOffset = i;
+					}
+					break;
+				case '\'':
+					if(backslash)
+						backslash = false;
+					else
+					{
+						addToken(i - lastOffset,token);
+						token = Token.LITERAL2;
+						lastOffset = i;
+					}
+					break;
+				default:
 					backslash = false;
 					break;
 				}
-				if(token == Token.NULL)
+			case Token.KEYWORD2:
+				backslash = false;
+				if(c == ')' || c == '}')
 				{
-					token = Token.LITERAL1;
-					addToken(i - lastOffset,Token.NULL);
-					lastOffset = i;
-				}
-				else if(token == Token.LITERAL1)
-				{
+					addToken(i1 - lastOffset,token);
 					token = Token.NULL;
-					addToken(i1 - lastOffset,Token.LITERAL1);
-					lastOffset = i + 1;
-				}
-				break;
-			case '\'':
-				if(backslash)
-				{
-					backslash = false;
-					break;
-				}
-				if(token == Token.NULL)
-				{
-					token = Token.LITERAL2;
-					addToken(i - lastOffset,Token.NULL);
-					lastOffset = i;
-				}
-				else if(token == Token.LITERAL2)
-				{
-					token = Token.NULL;
-					addToken(i1 - lastOffset,Token.LITERAL1);
 					lastOffset = i1;
 				}
 				break;
-			default:
-				backslash = false;
+			case Token.LITERAL1:
+				if(backslash)
+					backslash = false;
+				else if(c == '"')
+				{
+					addToken(i1 - lastOffset,token);
+					token = Token.NULL;
+					lastOffset = i1;
+				}
+				else
+					backslash = false;
+				break;
+			case Token.LITERAL2:
+				if(backslash)
+					backslash = false;
+				else if(c == '\'')
+				{
+					addToken(i1 - lastOffset,Token.LITERAL1);
+					token = Token.NULL;
+					lastOffset = i1;
+				}
+				else
+					backslash = false;
 				break;
 			}
 		}
-		if(lastOffset != length)
+		switch(token)
 		{
-			if(token != Token.NULL && token != Token.KEYWORD2)
-			{
-				addToken(length - lastOffset,Token.INVALID);
-				token = Token.NULL;
-			}
-			else
-			{
-				addToken(length - lastOffset,lastOffset == offset ?
-					 Token.KEYWORD1 : token);
-			}
+		case Token.KEYWORD2:
+			addToken(length - lastOffset,Token.INVALID);
+			token = Token.NULL;
+			break;
+		case Token.LITERAL2:
+			addToken(length - lastOffset,Token.LITERAL1);
+			break;
+		default:
+			addToken(length - lastOffset,token);
+			break;
 		}
-		return (token == Token.LITERAL1 || token == Token.LITERAL2 ?
-			token : Token.NULL);
+		return token;
 	}
 }
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.17  1999/06/20 02:15:45  sp
+ * Syntax coloring optimizations
+ *
  * Revision 1.16  1999/06/05 00:22:58  sp
  * LGPL'd syntax package
  *

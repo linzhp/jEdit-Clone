@@ -491,7 +491,7 @@ public class View extends JFrame
 	// package-private members
 	View prev;
 	View next;
-	final int uid;
+	int uid;
 
 	View(View view, Buffer buffer)
 	{
@@ -811,6 +811,9 @@ public class View extends JFrame
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.79  1999/06/20 02:15:45  sp
+ * Syntax coloring optimizations
+ *
  * Revision 1.78  1999/06/16 03:29:59  sp
  * Added <title> tags to docs, configuration data is now stored in a
  * ~/.jedit directory, style option pane finished
