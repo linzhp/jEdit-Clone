@@ -255,6 +255,11 @@ public class JARClassLoader extends ClassLoader
 				return cls;
 		}
 
+		/* Defer to whoever loaded us (such as JShell, Echidna, etc) */
+                ClassLoader loader = getClass().getClassLoader();
+		if (loader != null)
+			return loader.loadClass(clazz);
+
 		/* Doesn't exist in any other plugin, look in system classes */
 		return findSystemClass(clazz);
 	}
@@ -324,6 +329,9 @@ public class JARClassLoader extends ClassLoader
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.12  1999/06/07 09:02:40  sp
+ * Minor JAR loader tweak
+ *
  * Revision 1.11  1999/05/22 08:33:53  sp
  * FAQ updates, mode selection tweak, patch mode update, javadoc updates, JDK 1.1.8 fix
  *
