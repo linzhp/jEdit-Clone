@@ -67,8 +67,8 @@ loop:		for(int i = offset; i < length; i++)
 						lastOffset = i + 1;
 						lastKeyword = lastOffset;
 					}
-					break;
 				}
+				break;
 			case '#':
 				backslash = false;
 				if(cpp && token == Token.NULL)
@@ -256,6 +256,9 @@ loop:		for(int i = offset; i < length; i++)
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.28  1999/05/29 03:46:53  sp
+ * CTokenMarker bug fix, new splash screen
+ *
  * Revision 1.27  1999/05/14 04:56:15  sp
  * Docs updated, default: fix in C/C++/Java mode, full path in title bar toggle
  *
