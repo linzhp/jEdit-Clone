@@ -21,6 +21,7 @@
 package org.gjt.sp.jedit;
 
 import java.io.*;
+import java.lang.reflect.Modifier;
 import java.net.*;
 import java.util.*;
 import java.util.zip.*;
@@ -35,6 +36,7 @@ public class JARClassLoader extends ClassLoader
 	public JARClassLoader(String path)
 		throws IOException
 	{
+		index = classLoaders.size();
 		classLoaders.addElement(this);
 
 		System.out.println("Scanning JAR file: " + path);
@@ -62,7 +64,10 @@ public class JARClassLoader extends ClassLoader
 		throws Exception
 	{
 		Class clazz = loadClass(MiscUtilities.fileToClass(name),false);
-		if(Plugin.class.isAssignableFrom(clazz))
+		int modifiers = clazz.getModifiers();
+		if(Plugin.class.isAssignableFrom(clazz)
+			&& !Modifier.isInterface(modifiers)
+			&& !Modifier.isAbstract(modifiers))
 		{
 			Plugin plugin = (Plugin)clazz.newInstance();
 			System.out.println(" -- loaded plugin: " +
@@ -110,8 +115,7 @@ public class JARClassLoader extends ClassLoader
 
 	public String getResourceAsPath(String name)
 	{
-		return "jeditresource:" + MiscUtilities.fileToClass(
-			(String)pluginClasses.elementAt(0)) + "/" + name;
+		return "jeditresource:" + index + "/" + name;
 	}
 
 	public static void initPlugins()
@@ -124,12 +128,18 @@ public class JARClassLoader extends ClassLoader
 		}
 	}
 
+	public static JARClassLoader getClassLoader(int index)
+	{
+		return (JARClassLoader)classLoaders.elementAt(index);
+	}
+
 	// private members
 
 	/* Loading of plugin classes is deferred until all JARs
 	 * are loaded - this is necessary because a plugin might
 	 * depend on classes stored in other JARs. */
 	private static Vector classLoaders = new Vector();
+	private int index;
 	private Vector pluginClasses = new Vector();
 
 	private ZipFile zipFile;
@@ -234,6 +244,9 @@ public class JARClassLoader extends ClassLoader
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.7  1999/05/07 06:15:43  sp
+ * Resource loading update, fix for abstract Plugin classes in JARs
+ *
  * Revision 1.6  1999/05/06 07:16:14  sp
  * Plugins can use classes from other loaded plugins
  *

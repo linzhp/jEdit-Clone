@@ -35,12 +35,9 @@ public class PluginResURLConnection extends URLConnection
 		int index = file.indexOf('/',1);
 		if(index == -1)
 			throw new IOException("Invalid plugin resource URL");
-		String pluginName = file.substring(1,index);
-		Plugin plugin = jEdit.getPlugin(pluginName);
-		if(plugin == null)
-			throw new IOException("Invalid plugin resource URL");
-		in = plugin.getClass().getClassLoader().getResourceAsStream(
-			file.substring(index + 1));
+		int pluginIndex = Integer.parseInt(file.substring(1,index));
+		in = JARClassLoader.getClassLoader(pluginIndex)
+			.getResourceAsStream(file.substring(index + 1));
 	}
 
 	public void connect() {}

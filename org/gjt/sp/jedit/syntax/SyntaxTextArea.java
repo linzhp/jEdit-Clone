@@ -388,7 +388,27 @@ public class SyntaxTextArea extends JEditorPane
 			super.setDocument(doc);
 		else
 			throw new IllegalArgumentException("Document is not"
-				+ " an instance of SyntaxDOcument");
+				+ " an instance of SyntaxDocument");
+	}
+
+	/**
+	 * Sets the content of this text component. This implementation
+	 * doesn't create a new document (therefore the token marker, etc
+	 * is preserved) unlike the default <code>JEditorPane</code>
+	 * implementation.
+	 */
+	public void setText(String text)
+	{
+		Document doc = getDocument();
+		try
+		{
+			doc.remove(0,doc.getLength());
+			doc.insertString(0,text,null);
+		}
+		catch(BadLocationException bl)
+		{
+			throw new InternalError("setText() fuckup");
+		}
 	}
 
 	// delegates to SyntaxDocument
@@ -722,6 +742,9 @@ public class SyntaxTextArea extends JEditorPane
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.24  1999/05/07 06:15:43  sp
+ * Resource loading update, fix for abstract Plugin classes in JARs
+ *
  * Revision 1.23  1999/05/06 05:16:17  sp
  * Syntax text are compile fix, FAQ updated
  *

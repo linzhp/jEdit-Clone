@@ -21,6 +21,9 @@ This is what needs to be done as soon as possible:
 
 <ul>
 
+<li>In addition to the history data itself, the selected index
+is shared between all history text fields.
+
 <li>Caps lock doesn't work ??? !!!<p>
 This appears to be a JDK/Swing bug. Should check if this occurs
 on Windows as well.
@@ -49,6 +52,8 @@ The C+END `bug' still exists.
 
 <li>Sometimes closing a view stuffs up all other event listeners.<p>
 This usually occurs with views created by the server.
+
+<li>`Expand Abbreviation' should only expand on view boundaries.
 
 </ul>
 
@@ -125,6 +130,8 @@ to repaint lines after a multiline token.
 This is what needs to be done in jEdit versions after 1.6:
 
 <ul>
+<li>Class/method/variable completion.
+
 <li>Integrate XMode.<p>
 Mike Dillon's XMode is a much better way of writing syntax
 modes than the current `manual' way.<p>
