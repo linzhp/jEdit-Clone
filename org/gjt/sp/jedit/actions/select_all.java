@@ -1,5 +1,5 @@
 /*
- * SyntaxTextArea.java - jEdit's own text component
+ * select_all.java
  * Copyright (C) 1998 Slava Pestov
  *
  * This program is free software; you can redistribute it and/or
@@ -17,26 +17,20 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-package org.gjt.sp.jedit.syntax;
+package org.gjt.sp.jedit.actions;
 
-import javax.swing.text.EditorKit;
-import javax.swing.JEditorPane;
-import java.awt.*;
+import java.awt.event.ActionEvent;
+import org.gjt.sp.jedit.EditAction;
 
-/**
- * A subclass of <code>JEditorPane</code> whose default editor kit is
- * <code>SyntaxEditorKit</code>
- * @see org.gjt.sp.jedit.syntax.SyntaxEditorKit
- */
-public class SyntaxTextArea extends JEditorPane
+public class select_all extends EditAction
 {
-	// public members
-
-	/**
-	 * Returns the default editor kit for this text component.
-	 */
-	public EditorKit createDefaultEditorKit()
+	public select_all()
 	{
-		return new SyntaxEditorKit();
+		super("select-all");
+	}
+	
+	public void actionPerformed(ActionEvent evt)
+	{
+		getView(evt).getTextArea().selectAll();
 	}
 }

@@ -18,20 +18,49 @@
  */
 package org.gjt.sp.jedit.syntax;
 
+/**
+ * A linked list of tokens.
+ * @see org.gjt.sp.jedit.syntax.TokenMarker
+ */
 public class Token
 {
 	// public members
+
+	/**
+	 * The length of this token.
+	 */
 	public int length;
+
+	/**
+	 * The id of this token. This can be looked up in the table returned
+	 * by <code>Buffer.getColors()</code> to obtain a color value.
+	 */
 	public String id;
+
+	/**
+	 * The next token in the linked list.
+	 */
 	public Token next;
+
+	/**
+	 * Set to true if the next token is valid, false otherwise.
+	 */
 	public boolean nextValid;
 
+	/**
+	 * Creates a new token.
+	 * @param length The length of the token
+	 * @param id The id of the token
+	 */
 	public Token(int length, String id)
 	{
 		this.length = length;
 		this.id = id;
 	}
 
+	/**
+	 * Returns a string representation of this token.
+	 */
 	public String toString()
 	{
 		return id + "[length=" + length + (nextValid ? ",nextValid]"

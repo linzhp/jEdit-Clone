@@ -45,7 +45,7 @@ implements ActionListener, WindowListener, Runnable
 	
 	public SendDialog(View view)
 	{
-		super(view,jEdit.props.getProperty("send.title"),true);
+		super(view,jEdit.getProperty("send.title"),true);
 		this.view = view;
 		JPanel panel = new JPanel();
 		GridBagLayout layout = new GridBagLayout();
@@ -54,45 +54,45 @@ implements ActionListener, WindowListener, Runnable
 		constraints.gridwidth = constraints.gridheight = 1;
 		constraints.fill = constraints.BOTH;
 		constraints.weightx = 1.0f;
-		JLabel label = new JLabel(jEdit.props
+		JLabel label = new JLabel(jEdit
 			.getProperty("send.smtp"),SwingConstants.RIGHT);
 		layout.setConstraints(label,constraints);
 		panel.add(label);
 		constraints.gridx = 1;
 		constraints.gridwidth = 2;
-		smtp = new JTextField(jEdit.props
+		smtp = new JTextField(jEdit
 			.getProperty("send.smtp.value"),30);
 		layout.setConstraints(smtp,constraints);
 		panel.add(smtp);
 		constraints.gridx = 0;
 		constraints.gridy = 1;
 		constraints.gridwidth = 1;
-		label = new JLabel(jEdit.props.getProperty("send.from"),
+		label = new JLabel(jEdit.getProperty("send.from"),
 			SwingConstants.RIGHT);
 		layout.setConstraints(label,constraints);
 		panel.add(label);
 		constraints.gridx = 1;
 		constraints.gridwidth = 2;
-		from = new JTextField(jEdit.props
+		from = new JTextField(jEdit
 			.getProperty("send.from.value"),30);
 		layout.setConstraints(from,constraints);
 		panel.add(from);
 		constraints.gridx = 0;
 		constraints.gridy = 2;
 		constraints.gridwidth = 1;
-		label = new JLabel(jEdit.props.getProperty("send.to"),
+		label = new JLabel(jEdit.getProperty("send.to"),
 			SwingConstants.RIGHT);
 		layout.setConstraints(label,constraints);
 		panel.add(label);
 		constraints.gridx = 1;
 		constraints.gridwidth = 2;
-		to = new JTextField(jEdit.props.getProperty("send.to.value"),30);
+		to = new JTextField(jEdit.getProperty("send.to.value"),30);
 		layout.setConstraints(to,constraints);
 		panel.add(to);
 		constraints.gridx = 0;
 		constraints.gridy = 3;
 		constraints.gridwidth = 1;
-		label = new JLabel(jEdit.props.getProperty("send.subject"),
+		label = new JLabel(jEdit.getProperty("send.subject"),
 			SwingConstants.RIGHT);
 		layout.setConstraints(label,constraints);
 		panel.add(label);
@@ -104,9 +104,9 @@ implements ActionListener, WindowListener, Runnable
 		getContentPane().add("North",panel);
 		getContentPane().add("Center",new JSeparator());
 		buttons = new JPanel();
-		send = new JButton(jEdit.props.getProperty("send.send"));
+		send = new JButton(jEdit.getProperty("send.send"));
 		buttons.add(send);
-		cancel = new JButton(jEdit.props.getProperty("send.cancel"));
+		cancel = new JButton(jEdit.getProperty("send.cancel"));
 		buttons.add(cancel);
 		getContentPane().add("South",buttons);
 		Dimension screen = getToolkit().getScreenSize();
@@ -143,7 +143,7 @@ implements ActionListener, WindowListener, Runnable
 		getContentPane().add("South",new JScrollPane(transcript));
 		pack();
 		Object[] args = { smtp };
-		transcript.append(jEdit.props.getProperty("send.connect",
+		transcript.append(jEdit.getProperty("send.connect",
 			args));
 		transcript.append(CRLF);
 		try
@@ -264,10 +264,10 @@ implements ActionListener, WindowListener, Runnable
 	
 	public void dispose()
 	{
-		jEdit.props.put("send.smtp.value",smtp.getText());
-		jEdit.props.put("send.from.value",from.getText());
-		jEdit.props.put("send.to.value",to.getText());
-		jEdit.props.put("send.subject.value",subject.getText());
+		jEdit.setProperty("send.smtp.value",smtp.getText());
+		jEdit.setProperty("send.from.value",from.getText());
+		jEdit.setProperty("send.to.value",to.getText());
+		jEdit.setProperty("send.subject.value",subject.getText());
 		super.dispose();
 		if(thread != null)
 			thread.stop();

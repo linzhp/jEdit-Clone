@@ -109,15 +109,15 @@ public class Server extends Thread
 				else
 				{
 					if(filename.length() == 0)
-						buffer = jEdit.buffers.newFile(null);
+						buffer = jEdit.newFile(null);
 					else
-						buffer = jEdit.buffers.openFile(null,
+						buffer = jEdit.openFile(null,
 							cwd,filename,readOnly,
 							false);
 				}
 			}
 			if(buffer != null)
-				jEdit.buffers.newView(buffer);
+				jEdit.newView(buffer);
 		}
 		catch(NumberFormatException nf)
 		{

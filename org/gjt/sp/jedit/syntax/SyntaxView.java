@@ -25,15 +25,44 @@ import java.util.*;
 import org.gjt.sp.jedit.jEdit;
 import org.gjt.sp.jedit.Buffer;
 
+/**
+ * A Swing view implementation that colorizes text with a
+ * <code>TokenMarker</code>.
+ * @see org.gjt.sp.jedit.Buffer
+ * @see org.gjt.sp.jedit.syntax.TokenMarker
+ */
 public class SyntaxView extends PlainView
 {
 	// public methods
+	
+	/**
+	 * Creates a new <code>SyntaxView</code> for painting the specified
+	 * element.
+	 * @param elem The element
+	 */
 	public SyntaxView(Element elem)
 	{
 		super(elem);
 		line = new Segment();
 	}
 	
+	/**
+	 * Paints the specified line.
+	 * <p>
+	 * This is what it does:
+	 * <ul>
+	 * <li>Gets the token marker and color table from the current document,
+	 * typecast to a <code>Buffer</code>.
+	 * <li>Tokenizes the required line by calling the
+	 * <code>markTokens()</code> method of the token marker.
+	 * <li>Paints each token, obtaining the color by looking up the
+	 * the <code>Token.id</code> value in the color table.
+	 * </ul>
+	 * @param lineIndex The line number
+	 * @param g The graphics context
+	 * @param x The x co-ordinate where the line should be painted
+	 * @param y The y co-ordinate where the line should be painted
+	 */
 	public void drawLine(int lineIndex, Graphics g, int x, int y)
 	{
 		Buffer buffer = (Buffer)getDocument();

@@ -80,9 +80,8 @@ implements DocumentListener, UndoableEditListener
 				return false;
 			}
 			int result = JOptionPane.showConfirmDialog(view,
-				jEdit.props.getProperty(
-					"keepsearching.message"),
-				jEdit.props.getProperty("keepsearching.title"),
+				jEdit.getProperty("keepsearching.message"),
+				jEdit.getProperty("keepsearching.title"),
 				JOptionPane.YES_NO_OPTION,
 				JOptionPane.QUESTION_MESSAGE);
 			if(result == JOptionPane.YES_OPTION)
@@ -114,8 +113,7 @@ implements DocumentListener, UndoableEditListener
 		try
 		{
 			RE regexp = jEdit.getRE();
-			String replaceStr = jEdit.props.getProperty("search"
-				+ ".replace.value");
+			String replaceStr = jEdit.getProperty("search.replace.value");
 			if(regexp == null)
 			{
 				view.getToolkit().beep();
@@ -145,8 +143,7 @@ implements DocumentListener, UndoableEditListener
 		try
 		{
 			RE regexp = jEdit.getRE();
-			String replaceStr = jEdit.props.getProperty("search"
-				+ ".replace.value");
+			String replaceStr = jEdit.getProperty("search.replace.value");
 			if(regexp == null)
 			{
 				view.getToolkit().beep();
@@ -422,7 +419,7 @@ implements DocumentListener, UndoableEditListener
 	 */
 	public String getModeName()
 	{
-		return jEdit.cmds.getModeName(mode);
+		return jEdit.getModeName(mode);
 	}
 	
 	/**
@@ -501,8 +498,7 @@ implements DocumentListener, UndoableEditListener
 	public void loadColors(String name)
 	{
 		colors.clear();
-		String prop = jEdit.props.getProperty("mode.".concat(name)
-			+ ".colors");
+		String prop = jEdit.getProperty("mode." + name + ".colors");
 		if(prop == null)
 			return;
 		StringTokenizer st = new StringTokenizer(prop);
@@ -641,7 +637,7 @@ implements DocumentListener, UndoableEditListener
 			Object oldSize = getProperty(tabSizeAttribute);
 			if(oldSize == null)
 			{
-				Integer tabSize = new Integer(jEdit.props
+				Integer tabSize = new Integer(jEdit
 					.getProperty("buffer.tabSize"));
 				putProperty(tabSizeAttribute,tabSize);
 			}
@@ -769,7 +765,7 @@ implements DocumentListener, UndoableEditListener
 		}
 		String userMode = (String)getProperty("mode");
 		if(userMode != null)
-			setMode(jEdit.cmds.getMode(userMode));
+			setMode(jEdit.getMode(userMode));
 		addDocumentListener(this);
 		addUndoableEditListener(this);
 		updateMarkers();
@@ -809,15 +805,16 @@ implements DocumentListener, UndoableEditListener
 		{
 			String nogzName = name.substring(0,name.length() -
 				(name.endsWith(".gz") ? 3 : 0));
-			Mode mode = jEdit.cmds.getMode(jEdit.props.getProperty(
+			Mode mode = jEdit.getMode(jEdit.getProperty(
 				"mode.filename.".concat(nogzName)));
 			if(mode != null)
 				setMode(mode);
 			else
 			{
 				int index = nogzName.lastIndexOf('.') + 1;
-				mode = jEdit.cmds.getMode(jEdit.props.getProperty(
-					"mode.extension.".concat(nogzName.substring(index))));
+				mode = jEdit.getMode(jEdit.getProperty(
+					"mode.extension.".concat(nogzName
+					.substring(index))));
 				if(mode != null)
 					setMode(mode);
 			}
@@ -850,10 +847,8 @@ implements DocumentListener, UndoableEditListener
 				{
 					if(mode == null)
 					{
-						setMode(jEdit.cmds.getMode(
-							jEdit.props
-							.getProperty("mode.firstline."
-								     + line)));
+						setMode(jEdit.getMode(jEdit.getProperty(
+							"mode.firstline." + line)));
 					}
 				}
 				if(count < 10)
@@ -1035,8 +1030,8 @@ implements DocumentListener, UndoableEditListener
 		throws IOException, BadLocationException
 	{
 		OutputStreamWriter out = new OutputStreamWriter(_out);
-		String newline = jEdit.props.getProperty("buffer.line."
-			+ "separator",System.getProperty("line.separator"));
+		String newline = jEdit.getProperty("buffer.line.separator",
+			System.getProperty("line.separator"));
 		Element map = getDefaultRootElement();
 		for(int i = 0; i < map.getElementCount();)
 		{
@@ -1086,7 +1081,7 @@ implements DocumentListener, UndoableEditListener
 		int backups;
 		try
 		{
-			backups = Integer.parseInt(jEdit.props.getProperty(
+			backups = Integer.parseInt(jEdit.getProperty(
 				"buffer.backup.count"));
 		}
 		catch(NumberFormatException nf)
@@ -1154,7 +1149,7 @@ implements DocumentListener, UndoableEditListener
 
 	private void updateStatus()
 	{
-		Enumeration enum = jEdit.buffers.getViews();
+		Enumeration enum = jEdit.getViews();
 		while(enum.hasMoreElements())
 		{
 			View view = (View)enum.nextElement();
@@ -1165,7 +1160,7 @@ implements DocumentListener, UndoableEditListener
 
 	private void updateMarkers()
 	{
-		Enumeration enum = jEdit.buffers.getViews();
+		Enumeration enum = jEdit.getViews();
 		while(enum.hasMoreElements())
 		{
 			View view = (View)enum.nextElement();
@@ -1196,11 +1191,11 @@ implements DocumentListener, UndoableEditListener
 			if(mode == null)
 				return null;
 			String clazz = mode.getClass().getName();
-			String value = jEdit.props.getProperty("mode." + clazz
+			String value = jEdit.getProperty("mode." + clazz
 				.substring(clazz.lastIndexOf('.')) + "." + key);
 			if(value == null)
 			{
-				value = jEdit.props.getProperty("buffer." + key);
+				value = jEdit.getProperty("buffer." + key);
 				if(value == null)
 					return null;
 			}

@@ -21,14 +21,34 @@ package org.gjt.sp.jedit.syntax;
 import javax.swing.text.Segment;
 import java.util.*;
 
+/**
+ * A token marker that splits lines of text into tokens. Each token carries
+ * a length field and an indentification tag that can be mapped to a color
+ * for painting that token.
+ * <p>
+ * For performance reasons, the linked list of tokens is reused after each
+ * line is tokenized. Therefore, the <code>Token.nextValid</code> flag is
+ * necessary - a token instance might exist, but it might not actually be
+ * valid.
+ * @see org.gjt.sp.jedit.Token
+ */
 public abstract class TokenMarker
 {
 	// public members
+
+	/**
+	 * Creates a new <code>TokenMarker</code>. This calls the
+	 * <code>init()</code> method.
+	 */
 	public TokenMarker()
 	{
 		init();
 	}
 
+	/**
+	 * Clears the token marker's state. This should be called before
+	 * a new document is to be tokenized.
+	 */
 	public void init()
 	{
 		lineInfo = new String[100];
@@ -37,8 +57,26 @@ public abstract class TokenMarker
 		lastToken = null;
 	}
 
+	/**
+	 * An abstract method that is called to split a line up into
+	 * tokens.
+	 * <p>
+	 * At the start of this method, <code>lastToken</code> should
+	 * be set to null so that <code>addToken()</code> is aware that
+	 * a new line is being tokenized. At the end, <code>firstToken</code>
+	 * should be returned. Tokens can be added to the list with
+	 * <code>addToken()</code>.
+	 * @param line The line
+	 * @param lineIndex The line number
+	 */
 	public abstract Token markTokens(Segment line, int lineIndex);
 
+	/**
+	 * Informs the token marker that a line has been inserted into
+	 * the document. This inserts a gap in the <code>lineInfo</code>
+	 * array.
+	 * @param lineIndex The line number
+	 */
 	public void insertLine(int lineIndex)
 	{
 		length = Math.max(length,lineIndex);
@@ -46,7 +84,13 @@ public abstract class TokenMarker
 		System.arraycopy(lineInfo,lineIndex,lineInfo,lineIndex + 1,
 			length - lineIndex);
 	}
-		
+	
+	/**
+	 * Informs the token marker that a line has been deleted from
+	 * the document. This removes the line in question from the
+	 * <code>lineInfo</code> array.
+	 * @param lineIndex The line number
+	 */
 	public void deleteLine(int lineIndex)
 	{
 		length = Math.max(length,lineIndex);
@@ -56,12 +100,43 @@ public abstract class TokenMarker
 	}
 
 	// protected members
+
+	/**
+	 * The last tokenized line. This isn't set or used by this class,
+	 * it's defined for convinience.
+	 */
 	protected int lastLine;
+
+	/**
+	 * The first token in the list. This should be used as the return
+	 * value from <code>markTokens()</code>.
+	 */
 	protected Token firstToken;
+
+	/**
+	 * The last token in the list. New tokens are added here.
+	 * This should be set to null before a new line is to be tokenized.
+	 */
 	protected Token lastToken;
+
+	/**
+	 * An array for storing information about lines. It is enlarged and
+	 * shrunk automatically by the <code>insertLine()</code> and
+	 * <code>deleteLine()</code> methods.
+	 */
 	protected String[] lineInfo;
+
+	/**
+	 * The length of the <code>lineInfo</code> array.
+	 */
 	protected int length;
 
+	/**
+	 * Ensures that the <code>lineInfo</code> array can contain the
+	 * specified index. This enlarges it if necessary. No action is
+	 * taken if the array is large enough already.
+	 * @param index The array index
+	 */
 	protected void ensureCapacity(int index)
 	{
 		if(lineInfo.length <= index)
@@ -73,6 +148,11 @@ public abstract class TokenMarker
 		}
 	}
 
+	/**
+	 * Adds a token to the list.
+	 * @param length The length of the token
+	 * @param id The id of the token
+	 */
 	protected void addToken(int length, String id)
 	{
 		if(firstToken == null)

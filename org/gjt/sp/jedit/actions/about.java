@@ -1,5 +1,5 @@
 /*
- * SyntaxTextArea.java - jEdit's own text component
+ * about.java
  * Copyright (C) 1998 Slava Pestov
  *
  * This program is free software; you can redistribute it and/or
@@ -17,26 +17,27 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-package org.gjt.sp.jedit.syntax;
+package org.gjt.sp.jedit.actions;
 
-import javax.swing.text.EditorKit;
-import javax.swing.JEditorPane;
-import java.awt.*;
+import java.awt.event.ActionEvent;
+import org.gjt.sp.jedit.*;
 
-/**
- * A subclass of <code>JEditorPane</code> whose default editor kit is
- * <code>SyntaxEditorKit</code>
- * @see org.gjt.sp.jedit.syntax.SyntaxEditorKit
- */
-public class SyntaxTextArea extends JEditorPane
+public class about extends EditAction
 {
-	// public members
-
-	/**
-	 * Returns the default editor kit for this text component.
-	 */
-	public EditorKit createDefaultEditorKit()
+	public about()
 	{
-		return new SyntaxEditorKit();
+		super("about");
+	}
+
+	public void actionPerformed(ActionEvent evt)
+	{
+		Object[] aboutArgs = { jEdit.VERSION, jEdit.BUILD,
+			System.getProperty("java.version"),
+			System.getProperty("os.name"),
+			System.getProperty("os.version"),
+			System.getProperty("os.arch"),
+			new Long(Runtime.getRuntime().freeMemory() / 1024),
+			new Long(Runtime.getRuntime().totalMemory() / 1024) };
+		jEdit.message(getView(evt),"about",aboutArgs);
 	}
 }

@@ -21,15 +21,34 @@ package org.gjt.sp.jedit.syntax;
 import javax.swing.text.Segment;
 import org.gjt.sp.jedit.jEdit;
 
+/**
+ * A <code>KeywordMap</code> is similar to a hashtable in that it maps keys
+ * to values. However, the `keys' are Swing segments. This allows lookups of
+ * text substrings without the overhead of creating a new string object.
+ * <p>
+ * This class is used by <code>CTokenMarker</code> to map keywords to ids.
+ * @see org.gjt.sp.jedit.syntax.CTokenMarker
+ */
 public class KeywordMap
 {
 	// public members
+
+	/**
+	 * Creates a new <code>KeywordMap</code>.
+	 * @param ignoreCase True if keys are case insensitive
+	 */
 	public KeywordMap(boolean ignoreCase)
 	{
 		map = new Keyword[27];
 		this.ignoreCase = ignoreCase;
 	}
 
+	/**
+	 * Looks up a key.
+	 * @param text The text segment
+	 * @param offset The offset of the substring within the text segment
+	 * @param length The length of the substring
+	 */
 	public String lookup(Segment text, int offset, int length)
 	{
 		if(length == 0)
@@ -55,6 +74,11 @@ public class KeywordMap
 		return null;
 	}
 
+	/**
+	 * Adds a key-value mapping.
+	 * @param keyword The key
+	 * @Param id The value
+	 */
 	public void add(String keyword, String id)
 	{
 		char key = keyword.charAt(0);

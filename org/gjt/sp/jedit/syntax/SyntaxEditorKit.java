@@ -20,17 +20,46 @@
 package org.gjt.sp.jedit.syntax;
 
 import javax.swing.text.*;
+import javax.swing.*;
+import org.gjt.sp.jedit.jEdit;
 
+/**
+ * An editor kit that creates syntax colorizing views for elements.
+ * @see org.gjt.sp.jedit.syntax.SyntaxView
+ */
 public class SyntaxEditorKit extends DefaultEditorKit implements ViewFactory
 {
 	// public members
+
+	/**
+	 * Returns an instance of a view factory that can be used for
+	 * creating views from elements. This implementation returns
+	 * the current object, because this class already implements
+	 * <code>ViewFactory</code>.
+	 */
 	public ViewFactory getViewFactory()
 	{
 		return this;
 	}
 
+	/**
+	 * Creates a view from an element. This implementation returns
+	 * a new <code>SyntaxView</code>
+	 * @param elem The element
+	 */
 	public View create(Element elem)
 	{
 		return new SyntaxView(elem);
+	}
+
+	/**
+	 * Returns the list of actions supported by this editor kit.
+	 * This implementation returns a combination of the standard
+	 * Swing actions and those registered with the jEdit class.
+	 */
+	public Action[] getActions()
+	{
+		return TextAction.augmentList(super.getActions(),
+			jEdit.getActions());
 	}
 }

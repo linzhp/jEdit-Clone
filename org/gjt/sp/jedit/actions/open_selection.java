@@ -1,5 +1,5 @@
 /*
- * SyntaxTextArea.java - jEdit's own text component
+ * open_selection.java
  * Copyright (C) 1998 Slava Pestov
  *
  * This program is free software; you can redistribute it and/or
@@ -17,26 +17,26 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-package org.gjt.sp.jedit.syntax;
+package org.gjt.sp.jedit.actions;
 
-import javax.swing.text.EditorKit;
-import javax.swing.JEditorPane;
-import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.io.File;
+import org.gjt.sp.jedit.*;
 
-/**
- * A subclass of <code>JEditorPane</code> whose default editor kit is
- * <code>SyntaxEditorKit</code>
- * @see org.gjt.sp.jedit.syntax.SyntaxEditorKit
- */
-public class SyntaxTextArea extends JEditorPane
+public class open_selection extends EditAction
 {
-	// public members
-
-	/**
-	 * Returns the default editor kit for this text component.
-	 */
-	public EditorKit createDefaultEditorKit()
+	public open_selection()
 	{
-		return new SyntaxEditorKit();
+		super("open-selection");
+	}
+	
+	public void actionPerformed(ActionEvent evt)
+	{
+		View view = getView(evt);
+		String selection = view.getTextArea().getSelectedText();
+		if(selection == null)
+			view.getToolkit().beep();
+		else
+			jEdit.openFile(view,null,selection,false,false);
 	}
 }

@@ -47,7 +47,7 @@ public class Autosave extends Thread
 		int interval;
 		try
 		{
-			interval = Integer.parseInt(jEdit.props.getProperty(
+			interval = Integer.parseInt(jEdit.getProperty(
 				"daemon.autosave.interval"));
 		}
 		catch(NumberFormatException nf)
@@ -66,7 +66,7 @@ public class Autosave extends Thread
 			catch(InterruptedException i)
 			{
 			}
-			Enumeration enum = jEdit.buffers.getBuffers();
+			Enumeration enum = jEdit.getBuffers();
 			while(enum.hasMoreElements())
 				((Buffer)enum.nextElement()).autosave();
 		}

@@ -1,5 +1,5 @@
 /*
- * Command.java - jEdit command
+ * exit.java
  * Copyright (C) 1998 Slava Pestov
  *
  * This program is free software; you can redistribute it and/or
@@ -17,25 +17,20 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-package org.gjt.sp.jedit;
+package org.gjt.sp.jedit.actions;
 
-import java.util.Hashtable;
+import java.awt.event.ActionEvent;
+import org.gjt.sp.jedit.*;
 
-/**
- * A command. At the moment, commands can be bound to menu items. More uses
- * for them will be available in the future.
- * @see CommandMgr#getCommand
- * @see CommandMgr#execCommand
- */
-public interface Command
+public class exit extends EditAction
 {
-	/**
-	 * Executes the command.
-	 * @param buffer The buffer to execute the command in
-	 * @param view The view to execute the command in
-	 * @param arg Text after the '@' character in the command name
-	 * @param args Reserved for future use
-	 */
-	public abstract void exec(Buffer buffer, View view, String arg,
-		Hashtable args);
+	public exit()
+	{
+		super("exit");
+	}
+
+	public void actionPerformed(ActionEvent evt)
+	{
+		jEdit.exit(getView(evt));
+	}
 }

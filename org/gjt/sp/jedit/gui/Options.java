@@ -65,7 +65,7 @@ implements ActionListener
 
 	public Options(View view)
 	{
-		super(view,jEdit.props.getProperty("options.title"),true);
+		super(view,jEdit.getProperty("options.title"),true);
 		GridBagLayout layout = new GridBagLayout();
 		GridBagConstraints constraints = new GridBagConstraints();
 		constraints.fill = constraints.BOTH;
@@ -106,21 +106,21 @@ implements ActionListener
 	private JPanel createLfPanel()
 	{
 		JPanel content = new JPanel();
-		content.setBorder(new TitledBorder(jEdit.props.getProperty(
+		content.setBorder(new TitledBorder(jEdit.getProperty(
 			"options.lf")));
 		String lf = UIManager.getLookAndFeel().getClass().getName();
 		ButtonGroup grp = new ButtonGroup();
-		metal = new JRadioButton(jEdit.props.getProperty(
+		metal = new JRadioButton(jEdit.getProperty(
 			"options.lf.metal"));
 		metal.getModel().setSelected(METAL.equals(lf));
 		grp.add(metal);
 		content.add(metal);
-		motif = new JRadioButton(jEdit.props.getProperty(
+		motif = new JRadioButton(jEdit.getProperty(
 			"options.lf.motif"));
 		motif.getModel().setSelected(MOTIF.equals(lf));
 		grp.add(motif);
 		content.add(motif);
-		windows = new JRadioButton(jEdit.props.getProperty(
+		windows = new JRadioButton(jEdit.getProperty(
 			"options.lf.windows"));
 		windows.getModel().setSelected(WINDOWS.equals(lf));
 		grp.add(windows);
@@ -131,26 +131,26 @@ implements ActionListener
 	private JPanel createOpeningPanel()
 	{
 		JPanel content = new JPanel();
-		content.setBorder(new TitledBorder(jEdit.props.getProperty(
+		content.setBorder(new TitledBorder(jEdit.getProperty(
 			"options.opening")));
 		GridBagLayout layout = new GridBagLayout();
 		content.setLayout(layout);
 		GridBagConstraints constraints = new GridBagConstraints();
 		constraints.fill = constraints.BOTH;
 		constraints.weightx = 1.0f;
-		server = new JCheckBox(jEdit.props.getProperty(
+		server = new JCheckBox(jEdit.getProperty(
 			"options.opening.server"));
-		server.getModel().setSelected("on".equals(jEdit.props
+		server.getModel().setSelected("on".equals(jEdit
 			.getProperty("daemon.server.toggle")));
 		layout.setConstraints(server,constraints);
 		content.add(server);
 		constraints.gridy = 1;
-		JLabel label = new JLabel(jEdit.props.getProperty(
+		JLabel label = new JLabel(jEdit.getProperty(
 			"options.opening.maxrecent"),SwingConstants.RIGHT);
 		layout.setConstraints(label,constraints);
 		content.add(label);
 		constraints.gridx = 1;
-		maxrecent = new JTextField(jEdit.props.getProperty(
+		maxrecent = new JTextField(jEdit.getProperty(
 			"buffermgr.recent"),5);
 		layout.setConstraints(maxrecent,constraints);
 		content.add(maxrecent);
@@ -160,7 +160,7 @@ implements ActionListener
 	private JPanel createSavingPanel()
 	{
 		JPanel content = new JPanel();
-		content.setBorder(new TitledBorder(jEdit.props.getProperty(
+		content.setBorder(new TitledBorder(jEdit.getProperty(
 			"options.saving")));
 		GridBagLayout layout = new GridBagLayout();
 		content.setLayout(layout);
@@ -168,53 +168,53 @@ implements ActionListener
 		constraints.fill = constraints.BOTH;
 		constraints.weightx = 1.0f;
 		constraints.gridwidth = 3;
-		JLabel label = new JLabel(jEdit.props.getProperty(
+		JLabel label = new JLabel(jEdit.getProperty(
 			"options.saving.autosave"),SwingConstants.RIGHT);
 		layout.setConstraints(label,constraints);
 		content.add(label);
 		constraints.gridx = 3;
-		autosave = new JTextField(jEdit.props.getProperty("daemon."
+		autosave = new JTextField(jEdit.getProperty("daemon."
 			+ "autosave.interval"),5);
 		layout.setConstraints(autosave,constraints);
 		content.add(autosave);
 		constraints.gridx = 0;
 		constraints.gridy = 1;
 		constraints.gridwidth = 3;
-		label = new JLabel(jEdit.props.getProperty(
+		label = new JLabel(jEdit.getProperty(
 			"options.saving.backups"),SwingConstants.RIGHT);
 		layout.setConstraints(label,constraints);
 		content.add(label);
 		constraints.gridx = 3;
-		backups = new JTextField(jEdit.props.getProperty("buffer."
+		backups = new JTextField(jEdit.getProperty("buffer."
 			+ "backup.count"),5);
 		layout.setConstraints(backups,constraints);
 		content.add(backups);
 		constraints.gridx = 0;
 		constraints.gridy = 2;
 		constraints.gridwidth = 1;
-		label = new JLabel(jEdit.props.getProperty(
+		label = new JLabel(jEdit.getProperty(
 			"options.saving.newline"),SwingConstants.RIGHT);
 		layout.setConstraints(label,constraints);
 		content.add(label);
-		String newline = jEdit.props.getProperty("buffer.line."
+		String newline = jEdit.getProperty("buffer.line."
 			+ "separator",System.getProperty("line.separator"));
 		ButtonGroup grp = new ButtonGroup();
 		constraints.gridx = 1;
-		newlineUnix = new JRadioButton(jEdit.props.getProperty(
+		newlineUnix = new JRadioButton(jEdit.getProperty(
 			"options.saving.newline.unix"));
 		grp.add(newlineUnix);
 		newlineUnix.getModel().setSelected(LF.equals(newline));
 		layout.setConstraints(newlineUnix,constraints);
 		content.add(newlineUnix);
 		constraints.gridx = 2;
-		newlineWindows = new JRadioButton(jEdit.props.getProperty(
+		newlineWindows = new JRadioButton(jEdit.getProperty(
 			"options.saving.newline.windows"));
 		grp.add(newlineWindows);
 		newlineWindows.getModel().setSelected(CRLF.equals(newline));
 		layout.setConstraints(newlineWindows,constraints);
 		content.add(newlineWindows);
 		constraints.gridx = 3;
-		newlineMac = new JRadioButton(jEdit.props.getProperty(
+		newlineMac = new JRadioButton(jEdit.getProperty(
 			"options.saving.newline.mac"));
 		grp.add(newlineMac);
 		newlineMac.getModel().setSelected(CR.equals(newline));
@@ -226,7 +226,7 @@ implements ActionListener
 	private JPanel createEditingPanel()
 	{
 		JPanel content = new JPanel();
-		content.setBorder(new TitledBorder(jEdit.props.getProperty(
+		content.setBorder(new TitledBorder(jEdit.getProperty(
 			"options.editing")));
 		GridBagLayout layout = new GridBagLayout();
 		content.setLayout(layout);
@@ -234,76 +234,46 @@ implements ActionListener
 		constraints.fill = constraints.BOTH;
 		constraints.weightx = 1.0f;
 		constraints.gridwidth = 1;
-		JLabel label = new JLabel(jEdit.props.getProperty(
+		JLabel label = new JLabel(jEdit.getProperty(
 			"options.editing.font"),SwingConstants.RIGHT);
 		layout.setConstraints(label,constraints);
 		content.add(label);
 		constraints.gridx = 1;
 		constraints.gridwidth = 2;
 		font = new JComboBox(getToolkit().getFontList());
-		font.setSelectedItem(jEdit.props.getProperty("view.font"));
+		font.setSelectedItem(jEdit.getProperty("view.font"));
 		layout.setConstraints(font,constraints);
 		content.add(font);
 		constraints.gridx = 3;
 		constraints.gridwidth = 1;
 		Object[] sizes = { "9", "10", "12", "14", "18", "24" };
 		fontSize = new JComboBox(sizes);
-		fontSize.setSelectedItem(jEdit.props.getProperty(
+		fontSize.setSelectedItem(jEdit.getProperty(
 			"view.fontsize"));
 		layout.setConstraints(fontSize,constraints);
 		content.add(fontSize);
 		constraints.gridx = 0;
 		constraints.gridy = 1;
-		/*
-		label = new JLabel(jEdit.props.getProperty(
-			"options.editing.wrap"),SwingConstants.RIGHT);
-		layout.setConstraints(label,constraints);
-		content.add(label);
-		String wrap = jEdit.props.getProperty("view.linewrap");
-		ButtonGroup grp = new ButtonGroup();
-		constraints.gridx = 1;
-		off = new JRadioButton(jEdit.props.getProperty(
-			"options.editing.wrap.off"));
-		off.getModel().setSelected("off".equals(wrap));
-		grp.add(off);
-		layout.setConstraints(off,constraints);
-		content.add(off);
-		constraints.gridx = 2;
-		charWrap = new JRadioButton(jEdit.props.getProperty(
-			"options.editing.wrap.char"));
-		charWrap.getModel().setSelected("char".equals(wrap));
-		grp.add(charWrap);
-		layout.setConstraints(charWrap,constraints);
-		content.add(charWrap);
-		constraints.gridx = 3;
-		wordWrap = new JRadioButton(jEdit.props.getProperty(
-			"options.editing.wrap.word"));
-		wordWrap.getModel().setSelected("word".equals(wrap));
-		grp.add(wordWrap);
-		layout.setConstraints(wordWrap,constraints);
-		content.add(wordWrap);
-		constraints.gridx = 0;
-		constraints.gridy = 2;*/
-		label = new JLabel(jEdit.props.getProperty(
+		label = new JLabel(jEdit.getProperty(
 			"options.editing.tabsize"),SwingConstants.RIGHT);
 		layout.setConstraints(label,constraints);
 		content.add(label);
 		constraints.gridx = 1;
-		tabSize = new JTextField(jEdit.props.getProperty(
+		tabSize = new JTextField(jEdit.getProperty(
 			"buffer.tabsize"),5);
 		layout.setConstraints(tabSize,constraints);
 		content.add(tabSize);
 		constraints.gridx = 2;
-		autoindent = new JCheckBox(jEdit.props.getProperty(
+		autoindent = new JCheckBox(jEdit.getProperty(
 			"options.editing.autoindent"));
-		autoindent.getModel().setSelected("on".equals(jEdit.props
+		autoindent.getModel().setSelected("on".equals(jEdit
 			.getProperty("view.autoindent")));
 		layout.setConstraints(autoindent,constraints);
 		content.add(autoindent);
 		constraints.gridx = 3;
-		syntax = new JCheckBox(jEdit.props.getProperty(
+		syntax = new JCheckBox(jEdit.getProperty(
 			"options.editing.syntax"));
-		syntax.getModel().setSelected("on".equals(jEdit.props
+		syntax.getModel().setSelected("on".equals(jEdit
 			.getProperty("buffer.syntax")));
 		layout.setConstraints(syntax,constraints);
 		content.add(syntax);
@@ -313,27 +283,27 @@ implements ActionListener
 	private JPanel createPrintingPanel()
 	{
 		JPanel content = new JPanel();
-		content.setBorder(new TitledBorder(jEdit.props.getProperty(
+		content.setBorder(new TitledBorder(jEdit.getProperty(
 			"options.printing")));
 		content.setLayout(new GridLayout(2,4));
-		content.add(new JLabel(jEdit.props.getProperty(
+		content.add(new JLabel(jEdit.getProperty(
 			"options.printing.top"),SwingConstants.RIGHT));
-		top = new JTextField(jEdit.props.getProperty("buffer.margin."
+		top = new JTextField(jEdit.getProperty("buffer.margin."
 			+ "top"),5);
 		content.add(top);
-		content.add(new JLabel(jEdit.props.getProperty(
+		content.add(new JLabel(jEdit.getProperty(
 			"options.printing.left"),SwingConstants.RIGHT));
-		left = new JTextField(jEdit.props.getProperty("buffer.margin."
+		left = new JTextField(jEdit.getProperty("buffer.margin."
 			+ "left"),5);
 		content.add(left);
-		content.add(new JLabel(jEdit.props.getProperty(
+		content.add(new JLabel(jEdit.getProperty(
 			"options.printing.bottom"),SwingConstants.RIGHT));
-		bottom = new JTextField(jEdit.props.getProperty(
+		bottom = new JTextField(jEdit.getProperty(
 			"buffer.margin.bottom"),5);
 		content.add(bottom);
-		content.add(new JLabel(jEdit.props.getProperty(
+		content.add(new JLabel(jEdit.getProperty(
 			"options.printing.right"),SwingConstants.RIGHT));
-		right = new JTextField(jEdit.props.getProperty("buffer.margin"
+		right = new JTextField(jEdit.getProperty("buffer.margin"
 			+ ".right"),5);
 		content.add(right);
 		return content;
@@ -342,10 +312,10 @@ implements ActionListener
 	private JPanel createButtonsPanel()
 	{
 		JPanel content = new JPanel();
-		ok = new JButton(jEdit.props.getProperty("options.ok"));
+		ok = new JButton(jEdit.getProperty("options.ok"));
 		ok.addActionListener(this);
 		content.add(ok);
-		cancel = new JButton(jEdit.props
+		cancel = new JButton(jEdit
 			.getProperty("options.cancel"));
 		cancel.addActionListener(this);
 		content.add(cancel);
@@ -366,15 +336,12 @@ implements ActionListener
 				lf = WINDOWS;
 			else
 				lf = METAL;
-			jEdit.props.put("lf",lf);
-			jEdit.props.put("daemon.server.toggle",server
-				.getModel().isSelected() ? "on" : "off");
-			jEdit.props.put("buffermgr.recent.count",maxrecent
-				.getText());
-			jEdit.props.put("daemon.autosave.interval",autosave
-				.getText());
-			jEdit.props.put("buffer.backup.count",backups
-				.getText());
+			jEdit.setProperty("lf",lf);
+			jEdit.setProperty("daemon.server.toggle",server.getModel()
+				.isSelected() ? "on" : "off");
+			jEdit.setProperty("buffermgr.recent.count",maxrecent.getText());
+			jEdit.setProperty("daemon.autosave.interval",autosave.getText());
+			jEdit.setProperty("buffer.backup.count",backups.getText());
 			String newline;
 			if(newlineWindows.getModel().isSelected())
 				newline = CRLF;
@@ -382,33 +349,23 @@ implements ActionListener
 				newline = CR;
 			else
 				newline = LF;
-			jEdit.props.put("buffer.line.separator",newline);
-			jEdit.props.put("view.font",font.getSelectedItem());
-			jEdit.props.put("view.fontsize",fontSize
-				.getSelectedItem());
-			/*String wrap;
-			if(charWrap.getModel().isSelected())
-				wrap = "char";
-			else if(wordWrap.getModel().isSelected())
-				wrap = "word";
-			else
-				wrap = "off";
-			jEdit.props.put("view.linewrap",wrap);*/
-			jEdit.props.put("buffer.tabsize",tabSize.getText());
-			jEdit.props.put("view.autoindent",autoindent
+			jEdit.setProperty("buffer.line.separator",newline);
+			jEdit.setProperty("view.font",(String)font.getSelectedItem());
+			jEdit.setProperty("view.fontsize",(String)fontSize.getSelectedItem());
+			jEdit.setProperty("buffer.tabsize",tabSize.getText());
+			jEdit.setProperty("view.autoindent",autoindent
 				.getModel().isSelected() ? "on" : "off");
-			jEdit.props.put("buffer.syntax",syntax
-				.getModel().isSelected() ? "on" : "off");
-			jEdit.props.put("buffer.margin.top",top.getText());
-			jEdit.props.put("buffer.margin.left",left.getText());
-			jEdit.props.put("buffer.margin.bottom",bottom
-				.getText());
-			jEdit.props.put("buffer.margin.right",right.getText());
+			jEdit.setProperty("buffer.syntax",syntax.getModel()
+				.isSelected() ? "on" : "off");
+			jEdit.setProperty("buffer.margin.top",top.getText());
+			jEdit.setProperty("buffer.margin.left",left.getText());
+			jEdit.setProperty("buffer.margin.bottom",bottom.getText());
+			jEdit.setProperty("buffer.margin.right",right.getText());
 			jEdit.propertiesChanged();
-			Enumeration enum = jEdit.buffers.getViews();
+			Enumeration enum = jEdit.getViews();
 			while(enum.hasMoreElements())
 				((View)enum.nextElement()).propertiesChanged();
-			enum = jEdit.buffers.getBuffers();
+			enum = jEdit.getBuffers();
 			while(enum.hasMoreElements())
 				((Buffer)enum.nextElement())
 					.propertiesChanged();

@@ -39,25 +39,23 @@ implements ActionListener, WindowListener
 	
 	public SearchAndReplace(View view)
 	{
-		super(view,jEdit.props.getProperty("search.title"),false);
+		super(view,jEdit.getProperty("search.title"),false);
 		this.view = view;
-		find = new JTextField(jEdit.props.getProperty("search.find"
+		find = new JTextField(jEdit.getProperty("search.find"
 			+ ".value"),30);
-		replace = new JTextField(jEdit.props
+		replace = new JTextField(jEdit
 			.getProperty("search.replace.value"),30);
-		ignoreCase = new JCheckBox(jEdit.props.getProperty(
+		ignoreCase = new JCheckBox(jEdit.getProperty(
 			"search.ignoreCase"),
-			"on".equals(jEdit.props.getProperty("search."
+			"on".equals(jEdit.getProperty("search."
 				+ "ignoreCase.toggle")));
 		regexpSyntax = new JComboBox(jEdit.SYNTAX_LIST);
-		regexpSyntax.setSelectedItem(jEdit.props.getProperty("search"
+		regexpSyntax.setSelectedItem(jEdit.getProperty("search"
 			+ ".regexp.value"));
-		findNext = new JButton(jEdit.props.getProperty("search.next"));
-		replaceBtn = new JButton(jEdit.props
-			.getProperty("search.replaceBtn"));
-		replaceAll = new JButton(jEdit.props
-			.getProperty("search.replaceAll"));
-		close = new JButton(jEdit.props.getProperty("search.close"));
+		findNext = new JButton(jEdit.getProperty("search.next"));
+		replaceBtn = new JButton(jEdit.getProperty("search.replaceBtn"));
+		replaceAll = new JButton(jEdit.getProperty("search.replaceAll"));
+		close = new JButton(jEdit.getProperty("search.close"));
 		getContentPane().setLayout(new BorderLayout());
 		JPanel panel = new JPanel();
 		GridBagLayout layout = new GridBagLayout();
@@ -66,8 +64,8 @@ implements ActionListener, WindowListener
 		constraints.gridwidth = constraints.gridheight = 1;
 		constraints.fill = constraints.BOTH;
 		constraints.weightx = 1.0f;
-		JLabel label = new JLabel(jEdit.props
-			.getProperty("search.find"),SwingConstants.RIGHT);
+		JLabel label = new JLabel(jEdit.getProperty("search.find"),
+			SwingConstants.RIGHT);
 		layout.setConstraints(label,constraints);
 		panel.add(label);
 		constraints.gridx = 1;
@@ -77,7 +75,7 @@ implements ActionListener, WindowListener
 		constraints.gridx = 0;
 		constraints.gridwidth = 1;
 		constraints.gridy = 2;
-		label = new JLabel(jEdit.props.getProperty("search.replace"),
+		label = new JLabel(jEdit.getProperty("search.replace"),
 			SwingConstants.RIGHT);
 		layout.setConstraints(label,constraints);
 		panel.add(label);
@@ -88,8 +86,7 @@ implements ActionListener, WindowListener
 		getContentPane().add("North",panel);
 		panel = new JPanel();
 		panel.add(ignoreCase);
-		panel.add(new JLabel(jEdit.props.getProperty(
-			"search.regexp")));
+		panel.add(new JLabel(jEdit.getProperty("search.regexp")));
 		panel.add(regexpSyntax);
 		getContentPane().add("Center",panel);
 		panel = new JPanel();
@@ -113,11 +110,11 @@ implements ActionListener, WindowListener
 	
 	public void save()
 	{
-		jEdit.props.put("search.find.value",find.getText());
-		jEdit.props.put("search.replace.value",replace.getText());
-		jEdit.props.put("search.ignoreCase.toggle",ignoreCase
+		jEdit.setProperty("search.find.value",find.getText());
+		jEdit.setProperty("search.replace.value",replace.getText());
+		jEdit.setProperty("search.ignoreCase.toggle",ignoreCase
 			.getModel().isSelected() ? "on" : "off");
-		jEdit.props.put("search.regexp.value",regexpSyntax
+		jEdit.setProperty("search.regexp.value",(String)regexpSyntax
 			.getSelectedItem());
 	}
 	

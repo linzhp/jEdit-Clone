@@ -21,6 +21,6 @@ package org.gjt.sp.jedit;
 
 /**
  */
-public interface Plugin extends Command
+public interface Plugin
 {
 }

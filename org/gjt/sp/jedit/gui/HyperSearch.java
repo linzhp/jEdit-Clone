@@ -45,36 +45,31 @@ implements ActionListener, ListSelectionListener, WindowListener
 	
 	public HyperSearch(View view)
 	{
-		super(view,jEdit.props.getProperty("hypersearch.title"),false);
+		super(view,jEdit.getProperty("hypersearch.title"),false);
 		this.view = view;
 		positions = new Vector();
 		Container content = getContentPane();
 		content.setLayout(new BorderLayout());
 		JPanel panel = new JPanel();
 		panel.setLayout(new BorderLayout());
-		panel.add("West",new JLabel(jEdit.props.getProperty(
+		panel.add("West",new JLabel(jEdit.getProperty(
 			"hypersearch.find")));
-		find = new JTextField(jEdit.props.getProperty("search.find"
-			+ ".value"),20);
+		find = new JTextField(jEdit.getProperty("search.find.value"),20);
 		panel.add("Center",find);
 		content.add("North",panel);
 		panel = new JPanel();
-		ignoreCase = new JCheckBox(jEdit.props.getProperty(
+		ignoreCase = new JCheckBox(jEdit.getProperty(
 			"search.ignoreCase"),
-			"on".equals(jEdit.props.getProperty("search"
-				+ ".ignoreCase.toggle")));
+			"on".equals(jEdit.getProperty("search.ignoreCase.toggle")));
 		panel.add(ignoreCase);
-		panel.add(new JLabel(jEdit.props.getProperty(
-			"search.regexp")));
+		panel.add(new JLabel(jEdit.getProperty("search.regexp")));
 		regexpSyntax = new JComboBox(jEdit.SYNTAX_LIST);
-		regexpSyntax.setSelectedItem(jEdit.props.getProperty("search"
+		regexpSyntax.setSelectedItem(jEdit.getProperty("search"
 			+ ".regexp.value"));
 		panel.add(regexpSyntax);
-		findBtn = new JButton(jEdit.props.getProperty(
-			"hypersearch.findBtn"));
+		findBtn = new JButton(jEdit.getProperty("hypersearch.findBtn"));
 		panel.add(findBtn);
-		close = new JButton(jEdit.props.getProperty(
-			"hypersearch.close"));
+		close = new JButton(jEdit.getProperty("hypersearch.close"));
 		panel.add(close);
 		content.add("Center",panel);
 		results = new JList();
@@ -95,10 +90,10 @@ implements ActionListener, ListSelectionListener, WindowListener
 	
 	public void save()
 	{
-		jEdit.props.put("search.find.value",find.getText());
-		jEdit.props.put("search.ignoreCase.toggle",ignoreCase
+		jEdit.setProperty("search.find.value",find.getText());
+		jEdit.setProperty("search.ignoreCase.toggle",ignoreCase
 			.getModel().isSelected() ? "on" : "off");
-		jEdit.props.put("search.regexp.value",regexpSyntax
+		jEdit.setProperty("search.regexp.value",(String)regexpSyntax
 			.getSelectedItem());
 	}
 	
@@ -122,7 +117,7 @@ implements ActionListener, ListSelectionListener, WindowListener
 			Vector data = new Vector();
 			RE regexp = new RE(find.getText(),(ignoreCase
 				.getModel().isSelected() ? RE.REG_ICASE : 0),
-				jEdit.getRESyntax(jEdit.props.getProperty(
+				jEdit.getRESyntax(jEdit.getProperty(
 				"search.regexp.value")));
 			Element map = buffer.getDefaultRootElement();
 			int lines = map.getElementCount();

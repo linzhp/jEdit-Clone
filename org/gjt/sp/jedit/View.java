@@ -32,13 +32,9 @@ import org.gjt.sp.jedit.syntax.SyntaxTextArea;
  * View class. Views are created and destroyed by the <code>BufferMgr</code>
  * class.
  * @see Buffer
- * @see BufferMgr
- * @see BufferMgr#newView(View)
- * @see BufferMgr#closeView(View)
- * @see BufferMgr#getViews()
  */
 public class View extends JFrame
-implements ActionListener, CaretListener, KeyListener, WindowListener
+implements CaretListener, KeyListener, WindowListener
 {	
 	// public members
 
@@ -59,64 +55,19 @@ implements ActionListener, CaretListener, KeyListener, WindowListener
 		Font font = jEdit.getFont();
 		textArea.setFont(font);
 		status.setFont(font);
-		/*String linewrap = jEdit.props.getProperty("view.linewrap");
-		if("word".equals(linewrap))
-		{
-			textArea.setLineWrap(true);
-			textArea.setWrapStyleWord(true);
-		}
-		else if("char".equals(linewrap))
-		{
-			textArea.setLineWrap(true);
-			textArea.setWrapStyleWord(false);
-		}*/
-		SwingUtilities.updateComponentTreeUI(this);
 		updateOpenRecentMenu();
-	}
-	
-	/**
-	 * Recreates the plugins menu.
-	 * @see #updateBuffersMenu()
-	 * @see #updateOpenRecentMenu()
-	 * @see #updateMarkerMenus()
-	 * @see #updateModeMenu()
-	 */
-	public void updatePluginsMenu()
-	{
-		if(plugins.getMenuComponentCount() != 0)
-			plugins.removeAll();
-		Enumeration enum = jEdit.cmds.getPlugins();
-		if(!enum.hasMoreElements())
-		{
-			JMenuItem menuItem = jEdit.loadMenuItem(this,
-				"no_plugins");
-			menuItem.setEnabled(false);
-			plugins.add(menuItem);
-			return;
-		}
-		while(enum.hasMoreElements())
-		{
-			String clazz = enum.nextElement().getClass().getName();
-			JMenuItem menuItem = jEdit.loadMenuItem(this,clazz
-				.substring(clazz.lastIndexOf('.') + 1));
-			if(menuItem != null)
-				plugins.add(menuItem);
-		}
+		SwingUtilities.updateComponentTreeUI(this);
 	}
 	
 	/**
 	 * Recreates the buffers menu.
-	 * @see #updatePluginsMenu()
-	 * @see #updateOpenRecentMenu()
-	 * @see #updateMarkerMenus()
-	 * @see #updateModeMenu()
 	 */
 	public void updateBuffersMenu()
 	{
 		if(buffers.getMenuComponentCount() != 0)
 			buffers.removeAll();
 		ButtonGroup grp = new ButtonGroup();
-		Enumeration enum = jEdit.buffers.getBuffers();
+		Enumeration enum = jEdit.getBuffers();
 		while(enum.hasMoreElements())
 		{
 			Buffer b = (Buffer)enum.nextElement();
@@ -124,60 +75,46 @@ implements ActionListener, CaretListener, KeyListener, WindowListener
 			Object[] args = { name, b.getModeName(),
 				new Integer(b.isDirty() ? 1 : 0) };
 			JRadioButtonMenuItem menuItem =
-				new JRadioButtonMenuItem(jEdit.props
-					.getProperty("view.menulabel",args));
-			menuItem.getModel().setGroup(grp);
+				new JRadioButtonMenuItem(jEdit.getProperty(
+					"view.menulabel",args));
+			menuItem.addActionListener(jEdit.getAction("select-buffer"));
+			grp.add(menuItem);
+			menuItem.setActionCommand(name);
 			if(buffer == b)
-				menuItem.setSelected(true);
-			menuItem.setActionCommand("select_buffer@"
-				.concat(name));
-			menuItem.addActionListener(this);
+				menuItem.getModel().setSelected(true);
 			buffers.add(menuItem);
 		}
 	}
 	
 	/**
 	 * Recreates the open recent menu.
-	 * @see #updatePluginsMenu()
-	 * @see #updateBuffersMenu()
-	 * @see #updateMarkerMenus()
-	 * @see #updateModeMenu()
 	 */
 	public void updateOpenRecentMenu()
 	{
 		if(openRecent.getMenuComponentCount() != 0)
 			openRecent.removeAll();
-		Enumeration enum = jEdit.buffers.getRecent();
+		Action action = jEdit.getAction("open-file");
+		Enumeration enum = jEdit.getRecent();
 		if(!enum.hasMoreElements())
 		{
-			JMenuItem menuItem = jEdit.loadMenuItem(this,
-				"no_recent");
-			if(menuItem == null)
-				return;
-			menuItem.setEnabled(false);
-			openRecent.add(menuItem);
+			openRecent.add(jEdit.getAction("no-recent"));
 			return;
 		}
 		while(enum.hasMoreElements())
 		{
-			String name = (String)enum.nextElement();
-			JMenuItem menuItem = new JMenuItem(name);
-			menuItem.setActionCommand("open_file@".concat(name));
-			menuItem.addActionListener(this);
-			openRecent.add(menuItem);
+			String path = (String)enum.nextElement();
+			JMenuItem mi = openRecent.add(action);
+			mi.setActionCommand(path);
+			mi.setText(path);
 		}
 	}
 	
 	/**
 	 * Recreates the goto marker and clear marker menus.
-	 * @see #updatePluginsMenu()
-	 * @see #updateBuffersMenu()
-	 * @see #updateOpenRecentMenu()
-	 * @see #updateModeMenu()
 	 */
 	public void updateMarkerMenus()
 	{
-		if(clearMarker.getMenuComponentCount() != 0)
+		/*if(clearMarker.getMenuComponentCount() != 0)
 			clearMarker.removeAll();
 		if(gotoMarker.getMenuComponentCount() != 0)
 			gotoMarker.removeAll();
@@ -221,15 +158,11 @@ implements ActionListener, CaretListener, KeyListener, WindowListener
 				n++;
 			}
 			gotoMarker.add(menuItem);
-		}
+		}*/
 	}
 
 	/**
 	 * Recreates the mode menu.
-	 * @see #updatePluginsMenu()
-	 * @see #updateBuffersMenu()
-	 * @see #updateOpenRecentMenu()
-	 * @see #updateMarkerMenus()
 	 */
 	public void updateModeMenu()
 	{
@@ -237,26 +170,27 @@ implements ActionListener, CaretListener, KeyListener, WindowListener
 			mode.removeAll();
 		Mode bufferMode = buffer.getMode();
 		ButtonGroup grp = new ButtonGroup();
-		Enumeration enum = jEdit.cmds.getModes();
-		JMenuItem menuItem = new JRadioButtonMenuItem(jEdit.cmds
+		Enumeration enum = jEdit.getModes();
+		JMenuItem menuItem = new JRadioButtonMenuItem(jEdit
 			.getModeName(null));
-		grp.add(menuItem);
-		if(buffer.getMode() == null)
+		menuItem.addActionListener(jEdit.getAction("select-mode"));
+		menuItem.setActionCommand(null);
+		if(bufferMode == null)
 			menuItem.getModel().setSelected(true);
-		menuItem.setActionCommand("select_mode");
-		menuItem.addActionListener(this);
+		grp.add(menuItem);
 		mode.add(menuItem);
 		while(enum.hasMoreElements())
 		{
 			Mode m = (Mode)enum.nextElement();
-			String name = jEdit.cmds.getModeName(m);
+			String name = jEdit.getModeName(m);
 			menuItem = new JRadioButtonMenuItem(name);
-			menuItem.setActionCommand("select_mode@".concat(m
-				.getClass().getName().substring(22)));
+			menuItem.addActionListener(jEdit.getAction("select-mode"));
+			String clazz = m.getClass().getName();
+			menuItem.setActionCommand(clazz.substring(clazz
+				.lastIndexOf('.') + 1));
 			grp.add(menuItem);
 			if(m == bufferMode)
 				menuItem.getModel().setSelected(true);
-			menuItem.addActionListener(this);
 			mode.add(menuItem);
 		}
 	}
@@ -319,20 +253,6 @@ implements ActionListener, CaretListener, KeyListener, WindowListener
 	}
 	
 	// event handlers
-	public void actionPerformed(ActionEvent evt)
-	{
-		try
-		{
-			jEdit.cmds.execCommand(buffer,this,evt
-				.getActionCommand());
-		}
-		catch(Exception e)
-		{
-			e.printStackTrace();
-			Object[] args = { evt.getActionCommand() };
-			jEdit.error(this,"execcmderr",args);
-		}
-	}
 
 	public void caretUpdate(CaretEvent evt)
 	{
@@ -376,7 +296,7 @@ implements ActionListener, CaretListener, KeyListener, WindowListener
 	
 	public void windowClosing(WindowEvent evt)
 	{
-		jEdit.buffers.closeView(this);
+		jEdit.closeView(this);
 	}
 	
 	public void windowClosed(WindowEvent evt) {}
@@ -388,17 +308,16 @@ implements ActionListener, CaretListener, KeyListener, WindowListener
 	// package-private members
 	View(Buffer buffer)
 	{
-		plugins = jEdit.loadMenu(this,"plugins");
 		buffers = jEdit.loadMenu(this,"buffers");
-		openRecent = jEdit.loadMenu(this,"open_recent");
-		clearMarker = jEdit.loadMenu(this,"clear_marker");
-		gotoMarker = jEdit.loadMenu(this,"goto_marker");
+		openRecent = jEdit.loadMenu(this,"open-recent");
+		clearMarker = jEdit.loadMenu(this,"clear-marker");
+		gotoMarker = jEdit.loadMenu(this,"goto-marker");
 		mode = jEdit.loadMenu(this,"mode");
 		int x;
 		int y;
 		try
 		{
-			x = Integer.parseInt(jEdit.props.getProperty(
+			x = Integer.parseInt(jEdit.getProperty(
 				"view.geometry.x"));
 		}
 		catch(Exception e)
@@ -407,7 +326,7 @@ implements ActionListener, CaretListener, KeyListener, WindowListener
 		}
 		try
 		{
-			y = Integer.parseInt(jEdit.props.getProperty(
+			y = Integer.parseInt(jEdit.getProperty(
 				"view.geometry.y"));
 		}
 		catch(Exception e)
@@ -418,7 +337,7 @@ implements ActionListener, CaretListener, KeyListener, WindowListener
 		int h = 30;
 		try
 		{
-			w = Integer.parseInt(jEdit.props.getProperty(
+			w = Integer.parseInt(jEdit.getProperty(
 				"view.geometry.w"));
 		}
 		catch(Exception e)
@@ -426,7 +345,7 @@ implements ActionListener, CaretListener, KeyListener, WindowListener
 		}
 		try
 		{
-			h = Integer.parseInt(jEdit.props.getProperty(
+			h = Integer.parseInt(jEdit.getProperty(
 				"view.geometry.h"));
 		}
 		catch(Exception e)
@@ -438,13 +357,12 @@ implements ActionListener, CaretListener, KeyListener, WindowListener
 			.HORIZONTAL_SCROLLBAR_AS_NEEDED);	
 		status = new JLabel("Tastes like chicken!");
 		if(buffer == null)
-			setBuffer((Buffer)jEdit.buffers.getBuffers().nextElement());
+			setBuffer((Buffer)jEdit.getBuffers().nextElement());
 		else
 			setBuffer(buffer);
 		textArea.addCaretListener(this);
 		textArea.addKeyListener(this);
 		textArea.setBorder(null);
-		updatePluginsMenu();
 		setJMenuBar(jEdit.loadMenubar(this,"view.mbar"));
 		propertiesChanged();
 		FontMetrics fm = getToolkit().getFontMetrics(textArea
@@ -465,15 +383,13 @@ implements ActionListener, CaretListener, KeyListener, WindowListener
 
 	JMenu getMenu(String name)
 	{
-		if(name.equals("plugins"))
-			return plugins;
-		else if(name.equals("buffers"))
+		if(name.equals("buffers"))
 			return buffers;
-		else if(name.equals("open_recent"))
+		else if(name.equals("open-recent"))
 			return openRecent;
-		else if(name.equals("clear_marker"))
+		else if(name.equals("clear-marker"))
 			return clearMarker;
-		else if(name.equals("goto_marker"))
+		else if(name.equals("goto-marker"))
 			return gotoMarker;
 		else if(name.equals("mode"))
 			return mode;
@@ -482,7 +398,6 @@ implements ActionListener, CaretListener, KeyListener, WindowListener
 	}
 	
 	// private members
-	private JMenu plugins;
 	private JMenu buffers;
 	private JMenu openRecent;
 	private JMenu clearMarker;
@@ -511,9 +426,9 @@ implements ActionListener, CaretListener, KeyListener, WindowListener
 			new Integer(currLine),
 			new Integer(numLines),
 			new Integer((currLine * 100) / numLines) };
-		status.setText(jEdit.props.getProperty("view.status",args));
+		status.setText(jEdit.getProperty("view.status",args));
 		args[0] = this.buffer.getPath();
-		setTitle(jEdit.props.getProperty("view.title",args));
+		setTitle(jEdit.getProperty("view.title",args));
 		updateBuffersMenu();
 		textArea.setEditable(!buffer.isReadOnly());
 	}
