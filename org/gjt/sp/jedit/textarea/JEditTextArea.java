@@ -215,7 +215,7 @@ public class JEditTextArea extends JComponent
 		if(vertical != null && visibleLines != 0)
 		{
 			vertical.setValues(firstLine,visibleLines,0,getLineCount());
-			vertical.setUnitIncrement(1);
+			vertical.setUnitIncrement(2);
 			vertical.setBlockIncrement(visibleLines);
 		}
 
@@ -1443,9 +1443,9 @@ public class JEditTextArea extends JComponent
 			Dimension centerPref = center.getMinimumSize();
 			dim.height += centerPref.height;
 			dim.width += centerPref.width;
-			Dimension rightPref = center.getMinimumSize();
-			dim.width += rightPref.height;
-			Dimension bottomPref = center.getMinimumSize();
+			Dimension rightPref = right.getMinimumSize();
+			dim.width += rightPref.width;
+			Dimension bottomPref = bottom.getMinimumSize();
 			dim.height += bottomPref.height;
 
 			return dim;
@@ -1802,6 +1802,9 @@ public class JEditTextArea extends JComponent
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.18  1999/08/28 00:41:39  sp
+ * Documentation updates, minor fixes throughout the code
+ *
  * Revision 1.17  1999/08/21 01:48:18  sp
  * jEdit 2.0pre8
  *

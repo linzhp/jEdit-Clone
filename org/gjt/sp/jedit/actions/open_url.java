@@ -20,6 +20,7 @@
 package org.gjt.sp.jedit.actions;
 
 import java.awt.event.ActionEvent;
+import java.io.File;
 import org.gjt.sp.jedit.*;
 
 public class open_url extends EditAction
@@ -34,7 +35,7 @@ public class open_url extends EditAction
 		View view = getView(evt);
 		Buffer buffer = view.getBuffer();
 		String path = GUIUtilities.input(view,"openurl",
-			buffer.getFile().getParent());
+			buffer.getFile().getParent() + File.separator);
 		if(path != null)
 		{
 			jEdit.openFile(view,buffer.getFile().getParent(),

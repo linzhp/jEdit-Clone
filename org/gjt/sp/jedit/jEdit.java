@@ -51,7 +51,7 @@ public class jEdit
 	 */
 	public static String getVersion()
 	{
-		return "2.0pre8";
+		return MiscUtilities.buildToVersion(getBuild());
 	}
 
 	/**
@@ -61,7 +61,7 @@ public class jEdit
 	public static String getBuild()
 	{
 		// (major) (minor) (<99 = preX, 99 = final) (bug fix)
-		return "02.00.08.00";
+		return "02.00.99.00";
 	}
 
 	/**
@@ -229,6 +229,7 @@ public class jEdit
 		initPlugins();
 		initUserProperties();
 		initPLAF();
+		initKeyBindings();
 		propertiesChanged();
 		initRecent();
 		if(settingsDirectory != null)
@@ -240,9 +241,6 @@ public class jEdit
 
 		// Start plugins
 		JARClassLoader.initPlugins();
-
-		// Only do this after plugin actions are available
-		initKeyBindings();
 
 		// Load files specified on the command line
 		Buffer buffer = null;
@@ -390,9 +388,6 @@ public class jEdit
 			maxRecent = 8;
 		}
 
-		if(inputHandler != null)
-			initKeyBindings();
-
 		fireEditorEvent(EditorEvent.PROPERTIES_CHANGED,null,null);
 	}
 
@@ -498,6 +493,11 @@ public class jEdit
 	public static void addAction(EditAction action)
 	{
 		actionHash.put(action.getName(),action);
+
+		// Register key binding
+		String binding = getProperty(action.getName() + ".shortcut");
+		if(binding != null)
+			inputHandler.addKeyBinding(binding,action);
 	}
 
 	/**
@@ -814,6 +814,8 @@ public class jEdit
 		if(view != null)
 			GUIUtilities.hideWaitCursor(view);
 
+		newView.addWindowListener(windowHandler);
+
 		fireEditorEvent(EditorEvent.VIEW_CREATED,newView,buffer);
 		return newView;
 	}
@@ -832,8 +834,6 @@ public class jEdit
 			view.close();
 			removeViewFromList(view);
 		}
-
-
 	}
 
 	/**
@@ -1057,6 +1057,7 @@ public class jEdit
 	private static int maxRecent;
 	private static InputHandler inputHandler;
 	private static EventListenerList listenerList;
+	private static WindowHandler windowHandler;
 
 	// buffer link list
 	private static Buffer buffersFirst;
@@ -1127,6 +1128,8 @@ public class jEdit
 	private static void initMisc()
 	{
 		listenerList = new EventListenerList();
+		inputHandler = new DefaultInputHandler();
+		windowHandler = new WindowHandler();
 
 		// Add our protcols to java.net.URL's list
 		System.getProperties().put("java.protocol.handler.pkgs",
@@ -1439,24 +1442,6 @@ public class jEdit
 	 */
 	private static void initKeyBindings()
 	{
-		// This is also called from propertiesChanged(), so we
-		// save some gc by reusing the old input handler
-		if(inputHandler == null)
-			inputHandler = new DefaultInputHandler();
-		else
-			inputHandler.removeAllKeyBindings();
-
-		// Register menu key bindings
-		inputHandler.removeAllKeyBindings();
-		EditAction[] actions = jEdit.getActions();
-		for(int i = 0; i < actions.length; i++)
-		{
-			String binding = jEdit.getProperty(actions[i]
-				.getName() + ".shortcut");
-			if(binding != null)
-				inputHandler.addKeyBinding(binding,actions[i]);
-		}
-
 		// Register text area key bindings
 		ActionListener[] textActions = DefaultInputHandler.ACTIONS;
 		for(int i = 0; i < textActions.length; i++)
@@ -1644,11 +1629,24 @@ public class jEdit
 			}
 		}
 	}
+
+	// Since window closing is handled by the editor itself,
+	// and is the same for all views, it is ok to do it here
+	static class WindowHandler extends WindowAdapter
+	{
+		public void windowClosing(WindowEvent evt)
+		{
+			closeView((View)evt.getSource());
+		}
+	}
 }
 
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.126  1999/08/28 00:41:39  sp
+ * Documentation updates, minor fixes throughout the code
+ *
  * Revision 1.125  1999/08/21 01:48:18  sp
  * jEdit 2.0pre8
  *
@@ -1680,26 +1678,4 @@ public class jEdit
  * Revision 1.116  1999/06/16 03:29:59	sp
  * Added <title> tags to docs, configuration data is now stored in a
  * ~/.jedit directory, style option pane finished
- *
- * Revision 1.115  1999/06/15 05:03:54	sp
- * RMI interface complete, save all hack, views & buffers are stored as a link
- * list now
- *
- * Revision 1.114  1999/06/14 08:21:07	sp
- * Started rewriting `jEdit server' to use RMI (doesn't work yet)
- *
- * Revision 1.113  1999/06/13 05:47:02	sp
- * Minor changes required for LatestVersion plugin
- *
- * Revision 1.112  1999/06/12 02:30:27	sp
- * Find next can now perform multifile searches, multifile-search command added,
- * new style option pane
- *
- * Revision 1.111  1999/06/07 06:36:32	sp
- * Syntax `styling' (bold/italic tokens) added,
- * plugin options dialog for plugin option panes
- *
- * Revision 1.110  1999/06/05 07:17:08	sp
- * Cascading makefiles, HyperSearch tweak, doc updates
- *
  */

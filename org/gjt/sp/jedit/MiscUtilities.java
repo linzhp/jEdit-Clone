@@ -172,6 +172,29 @@ loop:		for(int i = 0; i < str.length(); i++)
 			return false;
 	}
 
+	/**
+	 * Converts an internal version number (build) into a
+	 * `human-readable' form.
+	 * @param build The build
+	 */
+	public static String buildToVersion(String build)
+	{
+		if(build.length() != 11)
+			return "<unknown version: " + build + ">";
+		// First 2 chars are the major version number
+		int major = Integer.parseInt(build.substring(0,2));
+		// Second 2 are the minor number
+		int minor = Integer.parseInt(build.substring(3,5));
+		// Then the pre-release status
+		int beta = Integer.parseInt(build.substring(6,8));
+		// Finally the bug fix release
+		int bugfix = Integer.parseInt(build.substring(9,11));
+
+		return "" + major + "." + minor +
+			(beta == 99 && bugfix == 0 ? "final" :
+			(beta == 99 ? "." + bugfix : "pre" + beta));
+	}
+
 	// private members
 	private MiscUtilities() {}
 
@@ -191,6 +214,9 @@ loop:		for(int i = 0; i < str.length(); i++)
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.15  1999/08/28 00:41:39  sp
+ * Documentation updates, minor fixes throughout the code
+ *
  * Revision 1.14  1999/07/16 23:45:49  sp
  * 1.7pre6 BugFree version
  *

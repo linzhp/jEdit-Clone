@@ -39,6 +39,7 @@ public class SplashScreen extends JWindow
 		
 		splash.add(new JLabel("jEdit " + jEdit.getVersion(),
 			SwingConstants.CENTER),BorderLayout.SOUTH);
+
 		splash.setBorder(new SoftBevelBorder(BevelBorder.RAISED));
 
 		setContentPane(splash);

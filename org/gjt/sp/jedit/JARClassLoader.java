@@ -221,7 +221,12 @@ public class JARClassLoader extends ClassLoader
 			String what = dep.substring(0,index);
 			String arg = dep.substring(index + 1);
 
-			String[] args2 = { arg };
+			String[] args2 = new String[1];
+			if(what.equals("jedit"))
+				args2[0] = MiscUtilities.buildToVersion(arg);
+			else
+				args2[0] = arg;
+
 			deps.append(jEdit.getProperty("jar.what." + what,args2));
 			deps.append('\n');
 
@@ -343,6 +348,9 @@ public class JARClassLoader extends ClassLoader
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.14  1999/08/28 00:41:39  sp
+ * Documentation updates, minor fixes throughout the code
+ *
  * Revision 1.13  1999/08/21 01:48:18  sp
  * jEdit 2.0pre8
  *

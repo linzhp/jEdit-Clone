@@ -469,7 +469,6 @@
     --</></indexterm>
     <indexterm><primary>moving the caret</><secondary>
     to a marker</></indexterm>
-    <indexterm><primary>Unix</></indexterm>
     <indexterm><primary>markers</></indexterm>
     Any file names passed on the command line are opened by jEdit.
     It is possible to have the caret positioned on a specific line
@@ -481,9 +480,6 @@
     For example, to open <filename>Kernel.java</> and go to
     the marker named <filename>getCommandStack</>, you would invoke:
     <screen><prompt>$</> <userinput>jedit Kernel.java#getCommandStack</></screen>
-    On Unix, you will need to escape the <quote>#</> by prefixing
-    it with a backslash (<quote>\</>) to stop the shell from
-    interpreting it.
    </para>
    <para>
     If your file name includes a dash (<quote>-</>), you will need
@@ -2393,9 +2389,8 @@ proc-&gt;getThread("__gui")-&gt;sendPulse(P_WAKE_UP); */</screen>
     of keystrokes can be present in a key binding.
    </para>
    <para>
-    Changes to the key bindings take effect immediately after the key
-    binding editor is closed, but the menu item labels are not updated
-    in currently opened views.
+    Changes to the key bindings take effect the next time jEdit is
+    started.
    </para>
    <figure><title>The Shortcuts tab of the Global Options dialog box</>
     <graphic fileref=dialog-options-shortcuts></>
@@ -2485,8 +2480,6 @@ Loaded successfully: WWWBrowserPlugin</screen>
   </para>
  </sect1>
  <sect1 id=depend-errors><title>Dependency Errors</>
-  <indexterm><primary>internal version number</></indexterm>
-  <indexterm><primary>build number</></indexterm>
   <indexterm><primary>dependency errors</></indexterm>
   <para>
    If jEdit detects that the plugin requires some capability
@@ -2495,21 +2488,11 @@ Loaded successfully: WWWBrowserPlugin</screen>
    <screen>Dependency check failed: LatestVersionPlugin
 The following is required to use this plugin:
         JDK version >= 1.1
-        jEdit version >= 02.00.99.01</screen>
+        jEdit version >= 2.0pre8</screen>
    This is a simple example; some plugins might not only depend on
    a jEdit and JDK version, but also other plugins and class libraries.
-   Two things to note about the dependency display is that all
-   dependencies are displayed, not just the unsatisfied ones, and also
-   that the jEdit version is shown in <firstterm>internal</> form, also
-   known as the <firstterm>build</>.
-   The first number in the internal form is the major version number.
-   The second number is the minor version number.
-   The third number is the pre-release number;
-   99 means a <quote>final version</>. The fourth number is the bug fix
-   release. So the version number in the example is <quote>2.0.1</>.
-   (but jEdit 2.0.1 doesn't exist yet...)
-   As another example, the internal version <quote>01.06.05.00</>
-   corresponds to jEdit version <quote>1.6pre5</>.
+   When an unsatisfied dependency is found, all
+   dependencies are displayed, not just the failed ones.
   </para>
  </sect1>
  <sect1 id=using-plugins><title>Using Plugins</>
@@ -2625,8 +2608,9 @@ The following is required to use this plugin:
   <itemizedlist>
    <listitem><para>
     <filename>jedit</>: the argument is the internal
-    version of jEdit that this plugin requires. See <xref linkend=depend-errors>
-    for information about the internal version number.
+    version of jEdit that this plugin requires. The internal version
+    number of a jEdit release is listed in the <filename>jEdit.java</>
+    source file.
    </para></listitem>
    <listitem><para>
     <filename>jdk</>: the argument is the JDK version required by this
@@ -2822,14 +2806,40 @@ sample-menu.label=Sample Plugin Menu</programlisting>
    and <filename>remove()</>.
   </para>
  </sect1>
- <sect1 id=plugin-events><title>The Event System</>
-  <para>
-   Not yet written.
-  </para>
- </sect1>
  <sect1 id=writing-modes><title>Writing New Edit Modes</>
   <para>
-   Not yet written.
+   Each jEdit edit mode is an instance of the <filename>org.gjt.sp.jedit.Mode</>
+   class. The Mode class is defined as follows:
+  </para>
+  <programlisting>public class Mode
+{
+        public Mode(String name);
+        public String getName();
+        public void enter(Buffer buffer);
+        public void enterView(View view);
+        public void leave(Buffer buffer);
+        public void leaveView(View view);
+        public boolean indentLine(Buffer buffer, View view, int caret);
+        public TokenMarker createTokenMarker();
+}</programlisting>
+  <para>
+   The constructor must be passed a name for this edit mode. The
+   <filename>getName()</> method can be used to obtain it. The
+   <filename>enter()</> and <filename>enterView()</> methods are
+   called when a buffer enters this mode, and when a view is set to
+   edit a buffer with this mode, respectively. The <filename>leave()</>
+   and <filename>leaveView()</> methods
+   are called when a buffer or view leaves the mode.
+  </para>
+  <para>
+   The <filename>indentLine()</> method is called when a line needs to
+   be indented, usually when the <keycap>Tab</> or <keycap>Enter</> keys
+   are pressed. The implementation provided in the Mode class preforms the
+   default auto indent. Only override this method if something more
+   complicated needs to be performed.
+  </para>
+  <para>
+   XXX - token markers, mode properties
   </para>
  </sect1>
 </chapter>
