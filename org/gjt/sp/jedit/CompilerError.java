@@ -131,15 +131,7 @@ public class CompilerError implements EditorListener
 	{
 		// Try opening the file
 		if(buffer == null)
-		{
-			jEdit.openFile(null,null,path,false,false);
-			// We should've gotten an openNotify
-			if(buffer == null)
-			{
-				System.err.println("BUG: no openNotify() received");
-				System.err.println("Report this to Slava Pestov <sp@gjt.org>");
-			}
-		}
+			buffer = jEdit.openFile(null,null,path,false,false);
 
 		return buffer;
 	}
@@ -158,7 +150,7 @@ public class CompilerError implements EditorListener
 	// BEGIN EDITOR LISTENER
 	public void bufferCreated(EditorEvent evt)
 	{
-		if(evt.getBuffer().getPath().equals(path))
+		if(buffer != null && evt.getBuffer().getPath().equals(path))
 			openNotify(evt.getBuffer());
 	}
 
@@ -211,6 +203,9 @@ public class CompilerError implements EditorListener
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.10  1999/04/01 04:13:00  sp
+ * Bug fixing for 1.5final
+ *
  * Revision 1.9  1999/03/27 00:44:15  sp
  * Documentation updates, various bug fixes
  *

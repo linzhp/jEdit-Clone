@@ -127,7 +127,7 @@ implements ActionListener, KeyListener, ListSelectionListener
 
 	public void valueChanged(ListSelectionEvent evt)
 	{
-		if(results.isSelectionEmpty())
+		if(results.isSelectionEmpty() || evt.getValueIsAdjusting())
 			return;
 		Position pos = (Position)positions.elementAt(results
 			.getSelectedIndex());
@@ -196,6 +196,9 @@ implements ActionListener, KeyListener, ListSelectionListener
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.24  1999/04/01 04:13:00  sp
+ * Bug fixing for 1.5final
+ *
  * Revision 1.23  1999/03/27 02:45:07  sp
  * New JEditTextArea class that adds jEdit-specific features to SyntaxTextArea
  *

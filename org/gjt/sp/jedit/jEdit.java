@@ -47,7 +47,7 @@ public class jEdit
 	 * The date when a change was last made to the source code,
 	 * in <code>YYYYMMDD</code> format.
 	 */
-	public static final String BUILD = "19990329";
+	public static final String BUILD = "19990332";
 
 	/**
 	 * AWK regexp syntax.
@@ -791,6 +791,12 @@ public class jEdit
 				return buffer;
 			}
 		}
+
+		// Java doesn't currently support saving to file:// URLs,
+		// hence the crude hack here
+		if(path.startsWith("file:"))
+			path = path.substring(5);
+
 		URL url = null;
 		try
 		{
@@ -808,25 +814,24 @@ public class jEdit
 			{
 				if(view != null)
 				{
-					buffers.removeElementAt(i);
-					buffers.addElement(buffer);
 					if(marker != null)
 						gotoMarker(buffer,view,
 							marker);
-					if(view.getBuffer() != buffer)
-						view.setBuffer(buffer);
+					view.setBuffer(buffer);
 				}
 				return buffer;
 			}
 		}
 		Buffer buffer = new Buffer(view,url,path,readOnly,newFile);
+		buffers.addElement(buffer);
 		if(marker != null)
 			gotoMarker(buffer,null,marker);
 		if(view != null)
 			view.setBuffer(buffer);
-		buffers.addElement(buffer);
+		
 		fireEditorEvent(new EditorEvent(EditorEvent.BUFFER_CREATED,
 			view,buffer));
+
 		return buffer;
 	}
 
@@ -1520,6 +1525,9 @@ public class jEdit
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.65  1999/04/01 04:13:00  sp
+ * Bug fixing for 1.5final
+ *
  * Revision 1.64  1999/03/29 06:30:25  sp
  * Documentation updates, fixed bug in DefaultSyntaxDocument, fixed bug in
  * goto-line

@@ -72,15 +72,7 @@ implements ActionListener, ListSelectionListener
 
 		output.setText("> " + command + "\n");
 
-		// First check if it's a file:// URL
-		if(command.startsWith("file:"))
-		{
-			String path = command.substring(5);
-			jEdit.openFile(view,null,path,false,false);
-			return;
-		}
-
-		// Then check for a general URL
+		// Check for a URL
 		int colonIndex = command.indexOf(':');
 		int spaceIndex = command.indexOf(' ');
 		if(colonIndex > 1 /* fails for C:\... */
@@ -204,12 +196,10 @@ implements ActionListener, ListSelectionListener
 
 	public void valueChanged(ListSelectionEvent evt)
 	{
-		if(errorList.isSelectionEmpty())
+		if(errorList.isSelectionEmpty() || evt.getValueIsAdjusting())
 			return;
 
-		int errorNo = errorList.getSelectedIndex();
-		setCurrentError(errorNo);
-		CompilerError error = getError(errorNo);
+		CompilerError error = getError(errorList.getSelectedIndex());
 		
 		Buffer buffer = error.openFile();
 		int lineNo = error.getLineNo();
@@ -460,6 +450,9 @@ implements ActionListener, ListSelectionListener
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.18  1999/04/01 04:13:00  sp
+ * Bug fixing for 1.5final
+ *
  * Revision 1.17  1999/03/28 01:36:24  sp
  * Backup system overhauled, HistoryTextField updates
  *

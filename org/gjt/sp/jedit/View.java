@@ -277,6 +277,9 @@ public class View extends JFrame
 	 */
 	public void setBuffer(Buffer buffer)
 	{
+		if(this.buffer == buffer)
+			return;
+
 		Buffer oldBuffer = this.buffer;
 		if(oldBuffer != null)
 		{
@@ -747,6 +750,9 @@ public class View extends JFrame
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.58  1999/04/01 04:13:00  sp
+ * Bug fixing for 1.5final
+ *
  * Revision 1.57  1999/03/28 01:36:24  sp
  * Backup system overhauled, HistoryTextField updates
  *

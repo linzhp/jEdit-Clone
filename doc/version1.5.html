@@ -4,6 +4,7 @@
 
 <ul>
 <li><a href=#ui>User Interface Improvements</a>
+<li><a href=#backups>Backup System Improvements</a>
 <li><a href=#buffer>Buffer Options Dialog Box</a>
 <li><a href=#plugin>New Plugin Loader and API</a>
 <li><a href=#syntax>Modular Syntax Colorizing Package</a>
@@ -42,6 +43,13 @@ Menu items and the tool bar have a new look.
 
 </ul>
 
+<a name=backups>
+<h1>Backup System Improvements</h1>
+</a>
+
+The backup filename prefix and suffix, and the directory where backups are
+saved can now be specified in the options.
+
 <a name=buffer>
 <h1>Buffer Options Dialog Box</h1>
 </a>
@@ -78,6 +86,10 @@ syntax colorizing capabilities.
 jEdit 1.5 fixes the following bugs present in 1.4:
 
 <ul>
+<li>HistoryTextField had several problems, using the history to make a
+selection would often leave the text field in a weird state
+<li>`File-&gt;Line Separator' menu wasn't updated for all views editing
+a buffer
 <li>The current file wasn't restored properly by the session management
 code
 <li>Print command would sometimes print stuff other than the file name in
@@ -88,6 +100,7 @@ have a different syntax
 <li>Invalid file names in compiler errors caused problems
 <li>Reload command didn't clear the dirty flag and could throw an array
 index out of bounds exception
+<li>Non-existent files are no longer opened twice by the console
 </ul>
 
 </body>

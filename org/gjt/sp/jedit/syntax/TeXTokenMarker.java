@@ -19,7 +19,6 @@
 package org.gjt.sp.jedit.syntax;
 
 import javax.swing.text.Segment;
-import org.gjt.sp.jedit.jEdit;
 
 /**
  * TeX token marker.
@@ -160,6 +159,9 @@ loop:		for(int i = offset; i < length; i++)
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.12  1999/04/01 04:13:00  sp
+ * Bug fixing for 1.5final
+ *
  * Revision 1.11  1999/03/27 00:44:15  sp
  * Documentation updates, various bug fixes
  *

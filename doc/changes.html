@@ -21,10 +21,8 @@
 all modes, so it's a bottleneck in some global method
 <li>Views sometimes lose contact with their buffer
 <li>DefaultSyntaxDocument calls insertLines() twice for each new line
-(Swing bug?)
-<li>Sometimes clicking on a color in the color options panel displays
-the color picker dialog twice
-<li>Non-existent files are opened twice by the console
+(Swing bug/limitation?)
+<li>HyperSearch should switch the view to the correct buffer, if necessary
 </ul>
 
 <a name=15final>
@@ -35,6 +33,8 @@ the color picker dialog twice
 
 <ul>
 <li>Documentation updates
+<li>Text cursor is now displayed in the text area
+<li>Saving file:/ URLs now works
 </ul>
 
 <h2>Bug Fixes</h2>
@@ -44,6 +44,8 @@ the color picker dialog twice
 <li>JAR loader no longer tries (in vain) to load non-JAR files
 <li>Fixed null pointer exception when switching to non-syntax colorized
 edit modes
+<li>Color options dialog shows the color picker dialog twice sometimes
+<li>Fixed unnecessary dependency TeXTokenMarker had on jEdit class
 </ul>
 
 <a name=15pre4>

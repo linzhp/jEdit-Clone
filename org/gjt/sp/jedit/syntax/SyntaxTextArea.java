@@ -54,6 +54,9 @@ public class SyntaxTextArea extends JEditorPane
 	public SyntaxTextArea()
 	{
 		setCaret(new SyntaxCaret());
+		
+		setBorder(null);
+		setCursor(Cursor.getPredefinedCursor(Cursor.TEXT_CURSOR));
 
 		lineHighlightColor = new Color(0xe0e0e0);
 		bracketHighlightColor = new Color(0xffaaaa);
@@ -488,6 +491,9 @@ public class SyntaxTextArea extends JEditorPane
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.16  1999/04/01 04:13:00  sp
+ * Bug fixing for 1.5final
+ *
  * Revision 1.15  1999/03/27 23:47:57  sp
  * Updated docs, view tweak, goto-line fix, next/prev error tweak
  *

@@ -33,58 +33,73 @@ package org.gjt.sp.jedit.syntax;
 public class Token
 {
 	/**
-	 * Alternate text token id.
+	 * Alternate text token id. This will be rendered in the
+	 * same color as normal text. It is provided for internal
+	 * use by token markers (eg, HTML mode uses it to mark
+	 * JavaScripts)
 	 */
 	public static final String ALTTXT = "alt";
 
 	/**
-	 * Comment 1 token id.
+	 * Comment 1 token id. This can be used to mark a comment.
 	 */
 	public static final String COMMENT1 = "comment1";
 
 	/**
-	 * Comment 2 token id.
+	 * Comment 2 token id. This can be used to mark a comment.
 	 */
 	public static final String COMMENT2 = "comment2";
 
 	
 	/**
-	 * Literal 1 token id.
+	 * Literal 1 token id. This can be used to mark a string
+	 * literal (eg, C mode uses this to mark "..." literals)
 	 */
 	public static final String LITERAL1 = "literal1";
 
 	/**
-	 * Literal 2 token id.
+	 * Literal 2 token id. This can be used to mark a string
+	 * literal (eg, C mode uses this to mark '...' literals)
 	 */
 	public static final String LITERAL2 = "literal2";
 
 	/**
-	 * Label token id.
+	 * Label token id. This can be used to mark labels
+	 * (eg, C mode uses this to mark ...: sequences)
 	 */
 	public static final String LABEL = "label";
 
 	/**
-	 * Keyword 1 token id.
+	 * Keyword 1 token id. This can be used to mark a
+	 * keyword. This should be used for general language
+	 * constructs.
 	 */
 	public static final String KEYWORD1 = "keyword1";
 
 	/**
-	 * Keyword 2 token id.
+	 * Keyword 2 token id. This can be used to mark a
+	 * keyword. This should be used for preprocessor
+	 * commands, or variables.
 	 */
 	public static final String KEYWORD2 = "keyword2";
 
 	/**
-	 * Keyword 3 token id.
+	 * Keyword 3 token id. This can be used to mark a
+	 * keyword. This should be used for data types.
 	 */
 	public static final String KEYWORD3 = "keyword3";
 
 	/**
-	 * Operator token id.
+	 * Operator token id. This can be used to mark an
+	 * operator. (eg, SQL mode marks +, -, etc with this
+	 * token type)
 	 */
 	public static final String OPERATOR = "operator";
 
 	/**
-	 * Invalid token id.
+	 * Invalid token id. This can be used to mark invalid
+	 * or incomplete tokens, so the user can easily spot
+	 * syntax errors.
 	 */
 	public static final String INVALID = "invalid";
 
@@ -132,6 +147,9 @@ public class Token
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.8  1999/04/01 04:13:00  sp
+ * Bug fixing for 1.5final
+ *
  * Revision 1.7  1999/03/13 08:50:39  sp
  * Syntax colorizing updates and cleanups, general code reorganizations
  *

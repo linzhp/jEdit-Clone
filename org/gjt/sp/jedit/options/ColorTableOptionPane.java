@@ -68,6 +68,8 @@ public class ColorTableOptionPane extends OptionPane
 	// ListSelectionListener implementation
 	public void valueChanged(ListSelectionEvent e)
 	{
+		if(e.getValueIsAdjusting())
+			return;
 		cellSelectionChanged();
 	}
 	// end ListSelectionListener implementation
@@ -95,6 +97,8 @@ public class ColorTableOptionPane extends OptionPane
 
 	public void columnSelectionChanged(ListSelectionEvent e)
 	{
+		if(e.getValueIsAdjusting())
+			return;
 		cellSelectionChanged();
 	}
 	// end TableColumnModelListener implementation
@@ -518,6 +522,9 @@ class ColorChoice
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.6  1999/04/01 04:13:00  sp
+ * Bug fixing for 1.5final
+ *
  * Revision 1.5  1999/03/20 06:24:34  sp
  * Colors option pane commited
  *

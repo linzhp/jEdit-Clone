@@ -32,6 +32,7 @@ public class hypersearch extends EditAction
 	
 	public void actionPerformed(ActionEvent evt)
 	{
-		new HyperSearch(getView(evt));
+		View view = getView(evt);
+		new HyperSearch(view);
 	}
 }
