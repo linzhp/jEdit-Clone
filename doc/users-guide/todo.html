@@ -19,9 +19,8 @@
 This is what needs to be done as soon as possible:
 
 <ul>
-<li>Finish Perl mode (more keywords, s#aaa#)
+<li>Finish Perl mode (qw( (aaa) ), s'aaa'bbb'g)
 <li>Faster literal search
-<li>Faster syntax coloring
 <li>Scroll bar saving
 <li>Nested compound edits
 </ul>
@@ -78,6 +77,9 @@ an issue.
 <li>Multi-line search patterns.<p>
 This sort of works with searching; but it would be hard to implement
 with replacement.
+
+<li>All token markers should be rewritten to use the same structure
+as PerlTokenMarker - they will be faster.
 </ul>
 
 <a name=longterm>
