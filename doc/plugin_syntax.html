@@ -40,6 +40,11 @@ The <a href=api/org.gjt.sp.jedit.syntax.SyntaxEditorKit.html>
 org.gjt.sp.jedit.syntax.SyntaxEditorKit</a> creates instances of
 the <code>SyntaxView</code> class.
 
+Finally, the <a href=api/org.gjt.sp.jedit.syntax.SyntaxTextArea.html>
+org.gjt.sp.jedit.syntax.SyntaxTextArea</a> class provides an easy
+way t use the above, along with bracket matching and a number of other
+useful features.
+
 <a name=extending>
 <h1>Writing New TokenMarkers</h1>
 </a>
@@ -69,17 +74,17 @@ The easiest way to describe how this is done is with a live code
 example:
 
 <pre>
-SyntaxTextArea textArea = new SyntaxTextArea();
+SyntaxTextArea textArea = <font color=blue>new</font> SyntaxTextArea();
 
 <font color=red>/* Enable bracket highlighting (optional) */</font>
-textArea.setBracketHighlight(true);
+textArea.setBracketHighlight(<font color=blue>true</font>);
 
 <font color=red>/* Fetch it's document */</font>
 DefaultSyntaxDocument document =
 	(DefaultSyntaxDocument)textArea.getDocument();
 
 <font color=red>/* Give it a token marker */</font>
-document.setTokenMarker(new JavaTokenMarker());
+document.setTokenMarker(<font color=blue>new</font> JavaTokenMarker());
 
 <font color=red>/* Give it a color table */</font>
 document.setColors(SyntaxUtilities.getDefaultSyntaxColors());

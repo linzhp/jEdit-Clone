@@ -1,1 +1,34 @@
+<html>
+<body>
 
+<h1>Writing jEdit Commands</h1>
+
+<ul>
+<li><a href=#intro>Introduction</a>
+</ul>
+
+<a name=intro>
+<h1>Introduction</h1>
+</a>
+
+To write a jEdit command, an implementation of the
+<a href=api/org.gjt.sp.jedit.EditAction.html>org.gjt.sp.jedit.EditAction</a>
+class must be provided, and an instance of the command must be added to
+jEdit's command list with either the <code>addAction()</code> or
+<code>addPluginAction()</code> method of the
+<a href=api/org.gjt.sp.jedit.jEdit.html>org.gjt.sp.jedit.jEdit</a>
+class.<p>
+
+The difference between the two methods is that <code>addAction</code>
+doesn't list the action in the `Tools-&gt;Plugins' menu, while
+<code>addPluginAction()</code> does. <code>addPluginAction()</code>
+should be used in most circumstances.<p>
+
+Commands should be registered in the <code>start()</code> method of
+the plugin - see the <a href=plugin_general.html>jEdit Plugin
+Development</a> help topic for details.
+
+<b>XXX - not finished</b>
+
+</body>
+</html>
