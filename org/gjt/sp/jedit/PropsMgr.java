@@ -62,17 +62,7 @@ public class PropsMgr extends Properties
 	{
 		try
 		{
-			if(in == null)
-				in = new FileInputStream(name);
-			if(defaults)
-			{
-				if(this.defaults == null)
-					this.defaults = new Properties();
-				this.defaults.load(in);
-			}
-			else
-				load(in);
-			in.close();
+			_loadProps(in,name,defaults);
 			return true;
 		}
 		catch(FileNotFoundException fnf)
@@ -80,11 +70,36 @@ public class PropsMgr extends Properties
 		}
 		catch(IOException io)
 		{
+			System.err.println("Error while loading properties:");
 			io.printStackTrace();
 		}
 		return false;
 	}
-
+	
+	/**
+	 * Loads properties, throwing an exception if an error occurs.
+	 * The properties are loaded from the specified input stream, or if
+	 * it's null, from the file named <code>name</code>.
+	 * @param in The input stream to load the properties from
+	 * @param name The name of the file to load the properties from if
+	 * <code>in</code> is null
+	 */
+	public void _loadProps(InputStream in, String name, boolean defaults)
+		throws FileNotFoundException, IOException
+	{
+		if(in == null)
+			in = new FileInputStream(name);
+		if(defaults)
+		{
+			if(this.defaults == null)
+				this.defaults = new Properties();
+			this.defaults.load(in);
+		}
+		else
+			load(in);
+		in.close();
+	}
+	
 	/**
 	 * Returns a property.
 	 * The <code>MessageFormat</code> class is used to format the message

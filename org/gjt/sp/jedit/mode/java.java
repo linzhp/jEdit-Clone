@@ -50,7 +50,11 @@ public class java implements Mode
 		synchronized(this)
 		{
 			beautifier.init();
-			beautifier.setTabIndentation();
+			beautifier.setSpaceIndentation(buffer.getTabSize());
+			beautifier.setBracketIndent(buffer.getProperty("ib")
+				!= null);
+			beautifier.setSwitchIndent(buffer.getProperty("fs")
+				!= null);
 			line = beautifier.beautifyLine(enum);
 		}
 		Element lineElement = map.getElement(index);
@@ -58,10 +62,8 @@ public class java implements Mode
 		{
 			int offset = lineElement.getStartOffset();
 			int len = lineElement.getEndOffset() - offset - 1;
-			System.out.println("len: " + len + " ll" + line.length());
-			buffer.remove(offset, len);
+			buffer.remove(offset,len);
 			buffer.insertString(offset,line,null);
-			view.getTextArea().setCaretPosition(caret);
 		}
 		catch (Exception e) {
 			e.printStackTrace();

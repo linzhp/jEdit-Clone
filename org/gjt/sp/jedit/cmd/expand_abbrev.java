@@ -31,68 +31,89 @@ public class expand_abbrev implements Command
 		String separators = (String)buffer.getProperty("ws");
 		if(separators == null)
 			separators = ".,:;!?";
-		int dot = view.getTextArea().getCaretPosition();
+		int dot = view.getTextArea().getSelectionStart();
 		Element map = buffer.getDefaultRootElement();
-		Element lineElement = map.getElement(map.getElementIndex(dot));
+		int lineNo = map.getElementIndex(dot);
+		Element lineElement = map.getElement(lineNo);
 		int start = lineElement.getStartOffset();
-		int end = lineElement.getEndOffset() - start;
+		int len = lineElement.getEndOffset() - start;
 		String line;
 		try
 		{
-			line = buffer.getText(start,end);
+			line = buffer.getText(start,len);
+			System.out.println("ea debug: line=" + line);
+			// scan backwards to find word
+			int wordStart = start;
+loop:			for(int i = dot - 1; i >= start; i--)
+			{
+				char c = line.charAt(dot - start);
+				switch(c)
+				{
+				case ' ':
+				case '\t':
+					wordStart = i;
+					break loop;
+				default:
+					if(separators.indexOf(c) != -1)
+					{
+						wordStart = i;
+						break loop;
+					}
+				}
+			}
+			System.out.println("ea debug: wordStart=" + wordStart);
+			System.out.println("ea debug: dot=" + dot);
+			String word = line.substring(wordStart - start,dot
+				- start);
+			System.out.println("ea debug: word=" + word);
+			// loop through lines in file looking for previous
+			// occurance of word
+			for(int i = lineNo - 1; i >= 0; i--)
+			{
+				System.out.println("ea debug: checking #" + i);
+				lineElement = map.getElement(i);
+				int lineStart = lineElement.getStartOffset();
+				int lineLen = lineElement.getEndOffset()
+					- lineStart;
+				line = buffer.getText(lineStart, lineLen);
+				System.out.println("ea debug: checking " +
+					line);
+				int index = line.indexOf(word);
+				if(index != -1)
+				{
+					System.out.println("ea debug: ok");
+					int wordEnd = lineLen;
+loop2:					for(int j = index; j < lineLen; j++)
+					{
+						char c = line.charAt(j);
+						switch(c)
+						{
+						case ' ':
+						case '\t':
+							wordEnd = j;
+							break loop2;
+						default:
+							if(separators.indexOf(c)
+								!= -1)
+							{
+								wordEnd = j;
+								break loop2;
+							}
+						}
+					}
+					System.out.println("ea debug: wordEnd="
+						+ wordEnd);
+					view.getTextArea().replaceSelection(
+						line.substring(index +
+							word.length(),
+							wordEnd));
+					return;
+				}
+			}
 		}
 		catch(BadLocationException bl)
 		{
-			return;
 		}
-		dot -= start;
-		int wordStart = start;
-		int wordEnd = end;
-loop1:		for(wordStart = dot - 1; wordStart >= 0; wordStart--)
-		{
-			char c = line.charAt(wordStart);
-			switch(c)
-			{
-			case ' ': case '\t': case '\n':
-				break loop1;
-			default:
-				if(separators.indexOf(c) != -1)
-					break loop1;
-				else
-					break;
-			}
-		}
-loop2:		for(wordEnd = dot; wordEnd < end; wordEnd++)
-		{
-			char c = line.charAt(wordEnd);
-			switch(c)
-			{
-			case ' ': case '\t': case '\n':
-				break loop2;
-			default:
-				if(separators.indexOf(c) != -1)
-					break loop2;
-				else
-					break;
-			}
-		}
-		try
-		{
-			wordStart++;
-			wordEnd = wordEnd - wordStart;
-			wordStart = start + wordStart;
-			String expansion = jEdit.props.getProperty("abbrev."
-				.concat(buffer.getText(wordStart,wordEnd)));
-			if(expansion != null)
-			{
-				buffer.remove(wordStart,wordEnd);
-				buffer.insertString(wordStart,expansion,null);
-			}
-			else
-				view.getToolkit().beep();
-		}
-		catch(BadLocationException bl)
-		{
-		}
+		view.getToolkit().beep();
 	}
 }
