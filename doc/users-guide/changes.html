@@ -13,6 +13,14 @@
 <h1>Version 1.6pre4</h1>
 </a>
 
+<h2>New Features</h2>
+
+<ul>
+<li>Pressing the Insert key should now toggle overwrite mode. This
+only works in the main text component. <b>FOR THIS TO WORK YOU
+MUST DELETE THE AltGrPatch PLUGIN!!!</b>
+</ul>
+
 <h2>Enhancements</h2>
 
 <ul>
@@ -26,6 +34,9 @@ aren't added/removed from inside the fire() method (this limitation
 will be removed in the future)
 <li>The TokenMarker.lineInfo[] array is now guaranteed to contain
 LineInfo objects for all valid lines
+<li>AltGrPatch no longer part of jEdit - it's functionality has
+been integrated into SyntaxTextArea. Remove this plugin if you
+have it installed, it conflicts with the overwrite mode feature.
 </ul>
 
 <a name=16pre3>

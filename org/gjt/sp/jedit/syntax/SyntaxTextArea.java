@@ -22,7 +22,7 @@ package org.gjt.sp.jedit.syntax;
 import javax.swing.event.*;
 import javax.swing.text.*;
 import javax.swing.*;
-import java.awt.event.FocusEvent;
+import java.awt.event.*;
 import java.awt.*;
 
 /**
@@ -35,6 +35,8 @@ import java.awt.*;
  * <li>Implements bracket highlighting, where if the caret is on a
  * bracket, the matching one is highlighted.
  * <li>Has an optional block caret
+ * <li>Implements overwrite mode that is toggled by pressing the
+ * Insert key
  * </ul>
  *
  * @author Slava Pestov
@@ -270,6 +272,33 @@ public class SyntaxTextArea extends JEditorPane
 	}
 
 	/**
+	 * Sets the overwrite mode.
+	 * @param overwrite True if newly inserted characters should
+	 * overwrite existing ones, false if they should be inserted.
+	 */
+	public void setOverwrite(boolean overwrite)
+	{
+		this.overwrite = overwrite;
+	}
+
+	/**
+	 * Returns true if overwrite mode is enabled, false otherwise.
+	 */
+	public boolean getOverwrite(boolean overwrite)
+	{
+		return overwrite;
+	}
+
+	/**
+	 * Sets the overwrite mode flag to the opposite of it's
+	 * current value.
+	 */
+	public void toggleOverwrite()
+	{
+		overwrite = !overwrite;
+	}
+
+	/**
 	 * Updates the bracket and line highlighters.
 	 */
 	public void updateHighlighters()
@@ -361,8 +390,86 @@ public class SyntaxTextArea extends JEditorPane
 	private Object bracketHighlightTag;
 	private int electricLines;
 	private boolean block;
+	private boolean overwrite;
 	private Segment lineSegment;
 	private int lastLine = -1;
+
+	private void _replaceSelection(String content)
+	{
+		if(!overwrite || getSelectionStart() != getSelectionEnd())
+		{
+			replaceSelection(content);
+			return;
+		}
+
+		int caret = getCaretPosition();
+		Document doc = getDocument();
+		Element map = doc.getDefaultRootElement();
+		Element line = map.getElement(map.getElementIndex(caret));
+
+		if(line.getEndOffset() - caret <= content.length())
+		{
+			replaceSelection(content);
+			return;
+		}
+
+		try
+		{
+			doc.remove(caret,content.length());
+			doc.insertString(caret,content,null);
+		}
+		catch(BadLocationException bl)
+		{
+			bl.printStackTrace();
+		}
+	}
+		
+	static class DefaultKeyTypedAction extends TextAction
+	{
+		public DefaultKeyTypedAction()
+		{
+			super(DefaultEditorKit.defaultKeyTypedAction);
+		}
+
+		public void actionPerformed(ActionEvent evt)
+		{
+			JTextComponent comp = getTextComponent(evt);
+			String content = evt.getActionCommand();
+			int modifiers = evt.getModifiers();
+
+			if(content != null && content.length() != 0
+				&& ((modifiers & ActionEvent.ALT_MASK) == 0)
+				|| ((modifiers & ActionEvent.CTRL_MASK) != 0))
+			{
+				char c = content.charAt(0);
+				if ((c >= 0x20) && (c != 0x7F))
+				{
+					if(comp instanceof SyntaxTextArea)
+						((SyntaxTextArea)comp)._replaceSelection(content);
+					else
+						comp.replaceSelection(content);
+				}
+			}
+		}
+	}
+
+	static class InsertKeyAction extends TextAction
+	{
+		public InsertKeyAction()
+		{
+			super("insert-key");
+		}
+
+		public void actionPerformed(ActionEvent evt)
+		{
+			JComponent comp = getTextComponent(evt);
+			if(comp instanceof SyntaxTextArea)
+			{
+				((SyntaxTextArea)comp).toggleOverwrite();
+				comp.repaint(); // to repaint caret
+			}
+		}
+	}
 
 	class SyntaxCaret extends DefaultCaret
 	{
@@ -400,8 +507,15 @@ public class SyntaxTextArea extends JEditorPane
 				int dot = getDot();
 				Rectangle r = modelToView(dot);
 				width = g.getFontMetrics().charWidth('m');
-				r.width = block ? width - 1 : 0;
+				r.width = (overwrite || block) ? width - 1 : 0;
 				width += 2;
+
+				if(overwrite)
+				{
+					r.y += r.height - 1;
+					r.height = 1;
+				}
+
 				g.setColor(getCaretColor());
 				g.drawRect(r.x,r.y,r.width,r.height - 1);
 			}
@@ -496,11 +610,23 @@ public class SyntaxTextArea extends JEditorPane
 			updateHighlighters();
 		}
 	}
+
+	static
+	{
+		Keymap map = JTextComponent.getKeymap(JTextComponent
+			.DEFAULT_KEYMAP);
+		map.setDefaultAction(new SyntaxTextArea.DefaultKeyTypedAction());
+		map.addActionForKeyStroke(KeyStroke.getKeyStroke(
+			KeyEvent.VK_INSERT,0),new SyntaxTextArea.InsertKeyAction());
+	}
 }
 
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.19  1999/04/28 04:10:40  sp
+ * Overwrite/overstrike mode
+ *
  * Revision 1.18  1999/04/22 05:31:17  sp
  * Documentation updates, minor SyntaxTextArea update
  *

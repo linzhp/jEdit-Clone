@@ -103,4 +103,5 @@ tip.96=The help viewer can be used as a simple WWW browser
 tip.97=For information about installed plugins, see Help->Plugin Help Contents
 tip.98=You can change the default edit mode in Tools->Global Options->Editor
 tip.99=Check out the jEdit plugin page <http://www.icg-online.de/jedit/>
-tip.count=100
+tip.100=Pressing Insert toggles overwrite mode
+tip.count=101
