@@ -999,7 +999,8 @@ implements DocumentListener, UndoableEditListener
 				}
 			}
 			bin.close();
-			if(buf.charAt(buf.length() - 1) == '\n')
+                        if(buf.length() != 0 && buf.charAt(buf.length() - 1)
+                           == '\n')
 				buf.setLength(buf.length() - 1);
 			insertString(0,buf.toString(),null);
 			newFile = false;

@@ -56,9 +56,19 @@ public class EditorOptionPane extends OptionPane
 		add(label);
 		cons.gridx = 3;
 		cons.gridwidth = 1;
-		String[] styles = { "plain", "bold", "italic", "boldItalic" };
+		String[] styles = { jEdit.getProperty("options.editor.plain"),
+			jEdit.getProperty("options.editor.bold"),
+			jEdit.getProperty("options.editor.italic"),
+			jEdit.getProperty("options.editor.boldItalic") };
 		style = new JComboBox(styles);
-		style.setSelectedItem(jEdit.getProperty("view.fontstyle"));
+		try
+		{
+			style.setSelectedIndex(Integer.parseInt(jEdit
+				.getProperty("view.fontstyle")));
+		}
+		catch(NumberFormatException nf)
+		{
+		}
 		layout.setConstraints(style,cons);
 		add(style);
 
@@ -81,6 +91,21 @@ public class EditorOptionPane extends OptionPane
 		cons.gridx = 0;
 		cons.gridy = 3;
 		cons.gridwidth = 3;
+		label = new JLabel(jEdit.getProperty("options.editor.tabSize"),
+			SwingConstants.RIGHT);
+		layout.setConstraints(label,cons);
+		add(label);
+		cons.gridx = 3;
+		cons.gridwidth = 1;
+		String[] tabSizes = { "8", "4", "2" };
+		tabSize = new JComboBox(tabSizes);
+		tabSize.setSelectedItem(jEdit.getProperty("buffer.tabSize"));
+		layout.setConstraints(tabSize,cons);
+		add(tabSize);
+
+		cons.gridx = 0;
+		cons.gridy = 4;
+		cons.gridwidth = 3;
 		label = new JLabel(jEdit.getProperty("options.editor.width"),
 			SwingConstants.RIGHT);
 		layout.setConstraints(label,cons);
@@ -92,7 +117,7 @@ public class EditorOptionPane extends OptionPane
 		add(viewWidth);
 
 		cons.gridx = 0;
-		cons.gridy = 4;
+		cons.gridy = 5;
 		cons.gridwidth = 3;
 		label = new JLabel(jEdit.getProperty("options.editor.height"),
 			SwingConstants.RIGHT);
@@ -104,19 +129,6 @@ public class EditorOptionPane extends OptionPane
 		layout.setConstraints(viewHeight,cons);
 		add(viewHeight);
 		
-		cons.gridx = 0;
-		cons.gridy = 5;
-		cons.gridwidth = 3;
-		label = new JLabel(jEdit.getProperty("options.editor.tabSize"),
-			SwingConstants.RIGHT);
-		layout.setConstraints(label,cons);
-		add(label);
-		cons.gridx = 3;
-		cons.gridwidth = 1;
-		tabSize = new JTextField(jEdit.getProperty("buffer.tabSize"));
-		layout.setConstraints(tabSize,cons);
-		add(tabSize);
-
 		cons.gridx = 0;
 		cons.gridy = 6;
 		cons.gridwidth = cons.REMAINDER;
@@ -167,7 +179,8 @@ public class EditorOptionPane extends OptionPane
 		jEdit.setProperty("view.fontstyle",(String)style.getSelectedItem());
 		jEdit.setProperty("view.geometry.w",viewWidth.getText());
 		jEdit.setProperty("view.geometry.h",viewHeight.getText());
-		jEdit.setProperty("buffer.tabSize",tabSize.getText());
+		jEdit.setProperty("buffer.tabSize",(String)tabSize
+			.getSelectedItem());
 		jEdit.setProperty("view.lineHighlight",lineHighlight.getModel()
 			.isSelected() ? "on" : "off");
 		jEdit.setProperty("view.bracketHighlight",bracketHighlight.getModel()
@@ -184,9 +197,9 @@ public class EditorOptionPane extends OptionPane
 	private JComboBox font;
 	private JComboBox style;
 	private JComboBox size;
+	private JComboBox tabSize;
 	private JTextField viewWidth;
 	private JTextField viewHeight;
-	private JTextField tabSize;
 	private JCheckBox lineHighlight;
 	private JCheckBox bracketHighlight;
 	private JCheckBox syntax;

@@ -53,15 +53,15 @@ implements CaretListener, KeyListener, WindowListener
 			size = 12;
 		}
 		int style;
-		String styleStr = jEdit.getProperty("view.fontstyle");
-		if("bold".equals(styleStr))
-			style = Font.BOLD;
-		else if("italic".equals(styleStr))
-			style = Font.ITALIC;
-		else if("boldItalic".equals(styleStr))
-			style = (Font.BOLD | Font.ITALIC);
-		else
+		try
+		{
+			style = Integer.parseInt(jEdit.getProperty(
+				"view.fontstyle"));
+		}
+		catch(NumberFormatException nf)
+		{
 			style = Font.PLAIN;
+		}
 		Font font = new Font(family,style,size);
 		textArea.setFont(font);
 		status.setFont(font);

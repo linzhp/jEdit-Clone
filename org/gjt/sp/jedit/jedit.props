@@ -83,8 +83,8 @@ view.geometry.h=30
 # Font
 view.font=Monospaced
 view.fontsize=12
-# Possible values: plain, bold, boldItalic
-view.fontstyle=plain
+# 0=plain, 1=bold, 2=italic, 3=boldItalic
+view.fontstyle=0
 
 # Background and foreground colors
 view.bgColor=white

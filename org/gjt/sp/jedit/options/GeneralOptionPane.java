@@ -145,7 +145,7 @@ public class GeneralOptionPane extends OptionPane
 		add(label);
 		cons.gridx = 3;
 		cons.gridwidth = 1;
-		String[] makes = { "make", "nmake" };
+		String[] makes = { "make", "nmake.exe" };
 		make = new JComboBox(makes);
 		make.setEditable(true);
 		make.setSelectedItem(jEdit.getProperty("buffer.make"));
@@ -161,8 +161,8 @@ public class GeneralOptionPane extends OptionPane
 		add(label);
 		cons.gridx = 3;
 		cons.gridwidth = 1;
-		String[] browsers = { "jedit_moz_remote",
-			"jedit_moz_remote.bat", "netscape.exe" };
+		String[] browsers = { "jedit_moz_remote", "iexplore.exe",
+			"netscape.exe" };
 		browser = new JComboBox(browsers);
 		browser.setEditable(true);
 		browser.setSelectedItem(jEdit.getProperty("browser"));

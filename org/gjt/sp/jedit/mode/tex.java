@@ -38,7 +38,7 @@ public class tex extends autoindent
 		Element map = buffer.getDefaultRootElement();
 		int count = Math.min(100,map.getElementCount());
 		boolean beginFound = false;
-		boolean docClassFound = false;
+		boolean docStyleFound = false;
 		
 		try
 		{
@@ -50,9 +50,12 @@ public class tex extends autoindent
 				String line = buffer.getText(start,
 					end - start - 1);
 				if(line.indexOf("\\begin") != -1)
+				{
 					beginFound = true;
-				else if(line.indexOf("\\documentclass") != -1)
-					docClassFound = true;
+					break;
+				}
+				else if(line.indexOf("\\documentstyle") != -1)
+					docStyleFound = true;
 			}
 		}
 		catch(BadLocationException bl)
@@ -63,7 +66,7 @@ public class tex extends autoindent
 
 		if(beginFound)
 			buffer.setMode(jEdit.getMode("latex"));
-		else if(docClassFound)
+		else if(docStyleFound)
 			buffer.setMode(jEdit.getMode("amstex"));
 	}
 			

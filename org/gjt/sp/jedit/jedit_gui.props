@@ -84,7 +84,7 @@ select-all.label=Select $All
 select-block.label=Select Co$de Block
 to-lower.label=To $Lowercase
 to-upper.label=To $Uppercase
-format.label=$Format Text
+format.label=F$ormat Text
 tab.label=Spaces to Tabs
 untab.label=Tabs to Spaces
 insert-date.label=$Insert Date
@@ -103,9 +103,7 @@ select-anchor.label=Select to Anchor
 
 ### Line menu
 
-line=select-next-line \
-     select-prev-line \
-     select-no-indent \
+line=select-no-indent \
      - \
      delete-line \
      delete-no-indent \
@@ -114,8 +112,6 @@ line=select-next-line \
      - \
      join-lines
 line.label=Line Operations
-select-next-line.label=Select Next Line
-select-prev-line.label=Select Previous Line
 select-no-indent.label=Select Line No Indent
 delete-line.label=Delete Line
 delete-no-indent.label=Delete Line No Indent
@@ -185,9 +181,9 @@ tools=execute \
       - \
       %mode \
       %plugins
-tools.label=Tools
+tools.label=$Tools
 execute.label=E$xecute Command...
-pipe-selection.label=$Pipe Selection Through Command...
+pipe-selection.label=Fi$lter Selection...
 browser-open-sel.label=$Open Selection in WWW Browser
 browser-open-url.label=Open in $WWW Browser
 compile.label=$Compile...
@@ -204,15 +200,15 @@ no-plugins.label=No Plugins
 
 ### Help menu
 help=about \
-     - \
      help@index.html \
+     - \
      help@copying.html \
-     help@changes.html \
      help@version1.3.html \
      - \
      help@using.html \
      help@regexp.html \
      - \
+     help@keys.html \
      help@menu_file.html \
      help@menu_edit.html \
      help@menu_search.html \
@@ -221,10 +217,10 @@ help.label=$Help
 about.label=About jEdit...
 help@index.html.label=Help Contents
 help@copying.html.label=Copying & (No) Warranty
-help@changes.html.label=Version History
 help@version1.3.html.label=New Features in jEdit 1.3
 help@using.html.label=Using jEdit
 help@regexp.html.label=Regular Expressions
+help@keys.html.label=Keyboard Shortcuts
 help@menu_file.html.label=File Menu
 help@menu_edit.html.label=Edit Menu
 help@menu_search.html.label=Search Menu
@@ -435,6 +431,10 @@ options.general.server=Enable jEdit server
 options.editor.label=Editor
 options.editor.font=Text font:\ 
 options.editor.fontstyle=Text font style:\ 
+options.editor.plain=Plain
+options.editor.bold=Bold
+options.editor.italic=Italic
+options.editor.boldItalic=Bold Italic
 options.editor.fontsize=Text font size:\ 
 options.editor.width=Default view width (columns):\ 
 options.editor.height=Default view height (rows):\ 

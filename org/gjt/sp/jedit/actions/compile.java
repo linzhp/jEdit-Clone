@@ -37,6 +37,20 @@ public class compile extends EditAction
 		View view = getView(evt);
 		Buffer buffer = view.getBuffer();
 		String compiler = (String)buffer.getProperty("compiler");
+
+		if(compiler != null && System.getProperty("os.name")
+			.indexOf("Windows") != -1)
+		{
+			// append .exe to command name on Windows
+			int dotIndex = compiler.indexOf('.');
+			int spaceIndex = compiler.indexOf(' ');
+			if(dotIndex == -1 || dotIndex > spaceIndex)
+			{
+				compiler = compiler.substring(0,spaceIndex)
+					+ ".exe" + compiler.substring(spaceIndex);
+			}
+		}
+
 		compiler = (String)JOptionPane.showInputDialog(view,
 			jEdit.getProperty("compile.message"),
 			jEdit.getProperty("compile.title"),
@@ -75,8 +89,9 @@ public class compile extends EditAction
 		compiler = buf.toString();
 		try
 		{
-			new CommandOutput(view,compiler,Runtime.getRuntime()
-				.exec(compiler));
+			Process proc = Runtime.getRuntime().exec(compiler);
+			proc.getOutputStream().close();
+			new CommandOutput(view,compiler,proc);
 		}
 		catch(IOException io)
 		{

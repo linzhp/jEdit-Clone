@@ -47,8 +47,9 @@ public class make extends EditAction
 		buffer.putProperty("make",makeTool);
 		try
 		{
-			new CommandOutput(view,makeTool,Runtime.getRuntime()
-				.exec(makeTool));
+			Process proc = Runtime.getRuntime().exec(makeTool);
+			proc.getOutputStream().close();
+			new CommandOutput(view,makeTool,proc);
 		}
 		catch(IOException io)
 		{

@@ -69,6 +69,7 @@ public class execute extends EditAction
 		{
 			String cmd = buf.toString();
 			Process proc = Runtime.getRuntime().exec(cmd);
+			proc.getOutputStream().close();
 			new CommandOutput(view,cmd,proc);
 		}
 		catch(IOException io)

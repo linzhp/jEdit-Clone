@@ -87,11 +87,11 @@ implements ActionListener, HyperlinkListener
 		Object source = evt.getSource();
 		if(source == back)
 		{
-			if(historyPos == 0)
+			if(historyPos <= 1)
 				getToolkit().beep();
 			else
 			{
-				URL url = history[--historyPos];
+				URL url = history[--historyPos - 1];
 				gotoURL(url,false);
 			}
 		}
@@ -101,8 +101,14 @@ implements ActionListener, HyperlinkListener
 				getToolkit().beep();
 			else
 			{
-				URL url = history[historyPos++];
-				gotoURL(url,false);
+				URL url = history[historyPos];
+				if(url == null)
+					getToolkit().beep();
+				else
+				{
+					historyPos++;
+					gotoURL(url,false);
+				}
 			}
 		}
 		else if(source == home)
@@ -145,6 +151,7 @@ implements ActionListener, HyperlinkListener
 				if(history.length == historyPos)
 					System.arraycopy(history,1,history,
 						0,history.length);
+				history[historyPos] = null;
 			}
 		}
 		catch(IOException io)
@@ -152,12 +159,5 @@ implements ActionListener, HyperlinkListener
 			Object[] args = { io.getMessage() };
 			jEdit.error((View)getParent(),"ioerror",args);
 		}
-	}
-
-	private void addToHistory(URL url)
-	{
-		history[historyPos++] = url;
-		if(history.length == historyPos)
-			System.arraycopy(history,1,history,0,history.length);
 	}
 }
