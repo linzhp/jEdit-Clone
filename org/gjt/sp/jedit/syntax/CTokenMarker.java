@@ -23,11 +23,11 @@ import javax.swing.text.Segment;
 public class CTokenMarker extends TokenMarker
 {
 	// public members
-	public static final String LABEL = "label";
-	public static final String CPP_CMD = "cpp_cmd";
-	public static final String COMMENT = "comment";
-	public static final String DQUOTE = "dquote";
-	public static final String SQUOTE = "squote";
+	public static final String LABEL = ".label";
+	public static final String CPP_CMD = ".cpp_cmd";
+	public static final String COMMENT = ".comment";
+	public static final String DQUOTE = ".dquote";
+	public static final String SQUOTE = ".squote";
 
 	public CTokenMarker(boolean cpp)
 	{
@@ -82,8 +82,8 @@ loop2:					while(++off < i)
 				backslash = false;
 				if(token == null)
 				{
-					addToken(i - lastOffset,LABEL);
-					lastOffset = i;
+					addToken((i+1) - lastOffset,LABEL);
+					lastOffset = i + 1;
 				}
 				break;
 			case '#':
@@ -166,6 +166,26 @@ loop2:					while(++off < i)
 				backslash = false;
 				break;
 			}
+		}
+		if(token == null)
+		{
+			int off = lastOffset-1;
+loop3:			while(++off < length)
+			{
+				switch(line.array[off])
+				{
+				case ' ': case '\t':
+				case '(': case ')':
+					break;
+				default:
+					break loop3;
+				}
+			}
+			int len = length - off;
+			if(off != lastOffset)
+				addToken(off - lastOffset,null);
+			addToken(len,new String(line.array,off,len));
+			lastOffset = length;
 		}
 		if(lastOffset != length)
 			addToken(length - lastOffset,token);

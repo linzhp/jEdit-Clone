@@ -85,7 +85,7 @@ public class Server extends Thread
 			long auth = Long.parseLong(authString);
 			if(auth != authInfo)
 			{
-				System.err.println("Invalid authInfo: "
+				System.err.println("Wrong authorization key: "
 					+ auth);				
 				client.close();
 				return;
@@ -94,6 +94,7 @@ public class Server extends Thread
 			String cwd = "";
 			boolean endOpts = false;
 			boolean readOnly = false;
+			Buffer buffer = null;
 			while((filename = in.readLine()) != null)
 			{
 				if(filename.startsWith("-") && !endOpts)
@@ -107,21 +108,23 @@ public class Server extends Thread
 				}
 				else
 				{
-					Buffer buffer = null;
+					Buffer b;
 					if(filename.length() == 0)
-						buffer = jEdit.buffers.newFile(null);
+						b = jEdit.buffers.newFile(null);
 					else
-						buffer = jEdit.buffers.openFile(null,
+						b = jEdit.buffers.openFile(null,
 							cwd,filename,readOnly,
 							false);
-					if(buffer != null)
-						jEdit.buffers.newView(null).setBuffer(buffer);
+					if(buffer == null)
+						buffer = b;
 				}
 			}
+			if(buffer != null)
+				jEdit.buffers.newView(null).setBuffer(buffer);
 		}
 		catch(NumberFormatException nf)
 		{
-			System.err.println("Invalid auth info: " + authString);
+			System.err.println("Invalid authorization key: " + authString);
 		}
 		catch(Exception e)
 		{

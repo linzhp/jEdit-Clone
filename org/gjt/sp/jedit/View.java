@@ -406,7 +406,7 @@ implements ActionListener, CaretListener, KeyListener, WindowListener
 		catch(Exception e)
 		{
 		}
-		textArea = new SyntaxTextArea(w,h);
+		textArea = new SyntaxTextArea();
 		scroller = new JScrollPane(textArea,ScrollPaneConstants
 			.VERTICAL_SCROLLBAR_ALWAYS,ScrollPaneConstants
 			.HORIZONTAL_SCROLLBAR_AS_NEEDED);	

@@ -25,34 +25,8 @@ import java.awt.*;
 public class SyntaxTextArea extends JEditorPane
 {
 	// public members
-	public SyntaxTextArea(int columns, int rows)
+	public SyntaxTextArea()
 	{
 		setEditorKit(new SyntaxEditorKit());
-		this.columns = columns;
-		this.rows = rows;
 	}
-
-	// fix for horizontal scrollbar
-	public boolean getScrollableTracksViewportWidth()
-	{
-		return false;
-	}
-
-	public Dimension getPreferredSize()
-	{
-		FontMetrics fm = getToolkit().getFontMetrics(getFont());
-		Dimension d = super.getPreferredSize();
-		d.width = Math.max(d.width,columns * fm.charWidth('m'));
-		d.height = Math.max(d.height,rows * fm.getHeight());
-		return d;
-	}
-
-	public Dimension getMinimumSize()
-	{
-		return getPreferredSize();
-	}
-
-	// private members
-	private int columns;
-	private int rows;
 }

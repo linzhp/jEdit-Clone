@@ -36,6 +36,11 @@ public class locate_block implements Command
 			.getProperty("closeBrackets");
 		if(closeBrackets == null)
 			closeBrackets = ")]}";
+		if(closeBrackets.length() != openBrackets.length())
+		{
+			view.getToolkit().beep();
+			return;
+		}
 		int count;
 		int blockStart = 0;
 		int blockEnd = buffer.getLength();

@@ -62,7 +62,6 @@ public class SyntaxView extends PlainView
 					int length = tokens.length;
 					Color color;
 					String id = tokens.id;
-//System.out.println(id);
 					if(id == null)
 						color = Color.black;
 					else

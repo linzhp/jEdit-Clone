@@ -36,6 +36,11 @@ public class locate_bracket implements Command
 			.getProperty("closeBrackets");
 		if(closeBrackets == null)
 			closeBrackets = ">)]}";
+		if(closeBrackets.length() != openBrackets.length())
+		{
+			view.getToolkit().beep();
+			return;
+		}
 		int dot = view.getTextArea().getCaretPosition();
 		if(dot != 0)
 			dot--;

@@ -117,9 +117,9 @@ public class BufferMgr
 		{
 			if(recent.contains(path))
 				recent.removeElement(path);
-			recent.addElement(path);
+			recent.insertElementAt(path,0);
 			if(recent.size() > maxRecent)
-				recent.removeElementAt(0);
+				recent.removeElementAt(maxRecent);
 		}
 		if(view != null)
 			view.setBuffer(buffer);
