@@ -30,7 +30,6 @@ are closed before exiting
 <li>Use Swing EventListenerList to fire events
 <li>HelpViewer should support bookmarks, and a history window
 <li>Console's stdin stuff doesn't work
-<li>Docs for addOptionPane()
 </ul>
 
 <a name=16pre2>
@@ -42,18 +41,18 @@ are closed before exiting
 <ul>
 <li>Plugins can now add their own tabs to the global options dialog
 with the jEdit.addOptionPane() method
+<li>Plugins can now add their own menus to the `Plugins' menu with
+the jEdit.addPluginMenu() method
 </ul>
 
 <h2>Enhancements</h2>
 
 <ul>
-<li><b>API change:</b> Plugin.start() called at the very end of jEdit's
+<li><b>API change:</b> Plugin.start() called near the end of jEdit's
 startup sequence
-<li>New <code>jEdit.addPluginMenus()</code> method that plugins can
-use to add submenus to the `Plugins' menu
+<li>Documentation updates
 <li>`Plugins' menu moved to top level of menu bar
 <li>New splash screen
-<li>Basic FAQ written
 <li>Operator color changed (operators are only colorized by Transact-SQL mode)
 <li>Documentation for the accent converter plugin is now provided
 (Romain Guy)
@@ -69,6 +68,8 @@ use to add submenus to the `Plugins' menu
 <li>Fixed NullPointerException when loading desktop entries with
 unknown edit modes (this could occur, for example when starting
 1.6pre1 for the first time after running 1.5)
+<li>Fixed minor problem with line and bracket highlighting when
+options dialog closed
 </ul>
 
 <a name=16pre1>

@@ -46,7 +46,7 @@ public class jEdit
 	 * The date when a change was last made to the source code,
 	 * in <code>YYYYMMDD</code> format.
 	 */
-	public static final String BUILD = "19990421";
+	public static final String BUILD = "19990422";
 
 	/**
 	 * The user properties file.
@@ -1558,6 +1558,9 @@ public class jEdit
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.77  1999/04/22 05:31:17  sp
+ * Documentation updates, minor SyntaxTextArea update
+ *
  * Revision 1.76  1999/04/22 04:41:41  sp
  * Help viewer update (Juha Lindfors), splash screen & jEdit update (Mike Dillon)
  *

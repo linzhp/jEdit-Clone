@@ -5,19 +5,45 @@
 
 <ul>
 <li><a href=#intro>Introduction</a>
+<li><a href=#writing>The EditAction Class</a>
+<li><a href=#adding>Registering EditActions</a>
 <li><a href=#menus>Plugin Menus</a>
-<li><a href=#editaction>The EditAction Class</a>
 </ul>
 
 <a name=intro>
 <h1>Introduction</h1>
 </a>
 
-To write a jEdit command, an implementation of the
-<code>EditAction</code>
-class must be provided, and an instance of the command must be added to
+With jEdit's EditAction API, new editor commands can be written.
+
+<a name=writing>
+<h1>The EditAction Class</h1>
+</a>
+
+
+The <a href=../api/org.gjt.sp.jedit.EditAction.html>EditAction</a>
+class is what all commands must extend. It is an implementation of
+<code>java.awt.event.ActionListener</code>.<p>
+
+The EditAction class defines two utility methods:
+<ul>
+<li><code>getView(ActionEvent evt)</code> - returns the view that
+fired the event. This is effectively the view that the plugin was
+invoked from.
+<li><code>getBuffer(ActionEvent evt)</code> - returns the buffer of
+the view returned by <code>getView()</code>.
+</ul>
+
+Both of these methods are static; they can also be used outside of
+the EditAction class to find out information about ActionEvents.
+
+<a name=adding>
+<h1>Registering EditActions</h1>
+</a>
+
+Commands can be added to
 jEdit's command list with either the <code>addAction()</code> or
-<code>addPluginAction()</code> method of the
+<code>addPluginAction()</code> methods of the
 <a href=../api/org.gjt.sp.jedit.jEdit.html>org.gjt.sp.jedit.jEdit</a>
 class.<p>
 
@@ -59,32 +85,6 @@ the <code>addAction()</code> method, <b>NOT</b> the
 <code>addPluginAction()</code> method. Otherwise the actions will be
 listed twice, first in the respective submenu, then in the plugins
 menu itself.
-
-<a name=editaction>
-<h1>The EditAction Class</h1>
-</a>
-
-The <a href=../api/org.gjt.sp.jedit.EditAction.html>EditAction</a>
-class is an implementation of
-<code>java.awt.event.ActionListener</code>.<p>
-
-Each EditAction has an
-internal name - the name used to load various properties, and used
-internally by jEdit itself. The name is set by passing a value to
-the constructor, and can be obtained with the <code>getName()</code>
-method, however doing so isn't necessary in most circumstances.<p>
-
-The EditAction class also defines two utility methods:
-<ul>
-<li><code>getView(ActionEvent evt)</code> - returns the view that
-fired the event. This is effectively the view that the plugin was
-invoked from.
-<li><code>getBuffer(ActionEvent evt)</code> - returns the buffer of
-the view returned by <code>getView()</code>.
-</ul>
-
-Both of these methods are static; they can also be used outside of
-the EditAction class to find out information about ActionEvents.
 
 </body>
 </html>

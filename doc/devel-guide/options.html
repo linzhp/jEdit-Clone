@@ -1,0 +1,39 @@
+<html>
+<body>
+
+<h1>Extending jEdit's Options Dialog</h1>
+
+<ul>
+<li><a href=#intro>Introduction</a>
+<li><a href=#writing>The OptionPane Class</a>
+<li><a href=#adding>Registering OptionPanes</a>
+</ul>
+
+<a name=intro>
+<h1>Introduction</h1>
+</a>
+
+With jEdit's OptionPane API, new tabs can be added to the
+`Global Options' dialog.
+
+<a name=writing>
+<h1>The OptionPane Class</h1>
+</a>
+
+The <a href=../api/org.gjt.sp.jedit.OptionPane.html>OptionPane</a>
+is what all option pane classes must extend. It is a subclass of
+<code>javax.swing.JPanel</code>.
+
+<a name=adding>
+<h1>Registering OptionPanes</h1>
+</a>
+
+To register an OptionPane class with jEdit, the class instance must be
+passed to the <code>addOptionPane()</code> method of the
+<a href=../api/org.gjt.sp.jedit.jEdit.html>org.gjt.sp.jedit.jEdit</a> class
+This should be done in the <code>start()</code> method of the plugin
+- see the <a href=general.html>jEdit Plugin
+Development</a> help topic for details.
+
+</body>
+</html>

@@ -5,24 +5,35 @@
 
 <ul>
 <li><a href=#intro>Introduction</a>
+<li><a href=#writing>The Mode Class</a>
+<li><a href=#adding>Registering Modes</a>
 </ul>
 
 <a name=intro>
 <h1>Introduction</h1>
 </a>
 
-To write a jEdit mode, an implementation of the
-<a href=../api/org.gjt.sp.jedit.Mode.html>org.gjt.sp.jedit.Mode</a>
-interface must be provided, and an instance of the mode must be added
-to jEdit's mode list with <code>addMode()</code> method of the
+With jEdit's Mode API, new edit modes can be written.
+
+<a name=writing>
+<h1>The Mode Class</h1>
+</a>
+
+The <a href=../api/org.gjt.sp.jedit.Mode.html>org.gjt.sp.jedit.Mode</a>
+class is what all edit modes must extend.
+
+<a name=adding>
+<h1>Registering Modes</h1>
+</a>
+
+New edit modes can be added
+to jEdit's mode list with te <code>addMode()</code> method of the
 <a href=../api/org.gjt.sp.jedit.jEdit.html>org.gjt.sp.jedit.jEdit</a>
 class.<p>
 
 Modes should be registered in the <code>start()</code> method of
 the plugin - see the <a href=general.html>jEdit Plugin
 Development</a> help topic for details.
-
-<b>XXX - not finished</b>
 
 </body>
 </html>

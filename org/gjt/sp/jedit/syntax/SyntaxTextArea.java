@@ -119,9 +119,16 @@ public class SyntaxTextArea extends JEditorPane
 	public void setLineHighlight(boolean lineHighlight)
 	{
 		if(lineHighlightTag != null)
-			getHighlighter().removeHighlight(lineHighlightTag);
-		
-		if(lineHighlight)
+		{
+			if(lineHighlight)
+				return;
+			else
+			{
+				getHighlighter().removeHighlight(lineHighlightTag);
+				lineHighlightTag = null;
+			}
+		}
+		else if(lineHighlight)
 		{
 			try
 			{
@@ -133,8 +140,6 @@ public class SyntaxTextArea extends JEditorPane
 				bl.printStackTrace();
 			}
 		}
-		else
-			lineHighlightTag = null;
 	}
 
 	/**
@@ -196,22 +201,27 @@ public class SyntaxTextArea extends JEditorPane
 	public void setBracketHighlight(boolean bracketHighlight)
 	{
 		if(bracketHighlightTag != null)
-			getHighlighter().removeHighlight(bracketHighlightTag);
-		
-		if(bracketHighlight)
+		{
+			if(bracketHighlight)
+				return;
+			else
+			{
+				getHighlighter().removeHighlight(bracketHighlightTag);
+				bracketHighlightTag = null;
+			}
+		}
+		else if(bracketHighlight)
 		{
 			try
 			{
-				bracketHighlightTag = getHighlighter().addHighlight(
-					0,0,new BracketHighlighter());
+				bracketHighlightTag = getHighlighter()
+					.addHighlight(0,0,new BracketHighlighter());
 			}
 			catch(BadLocationException bl)
 			{
 				bl.printStackTrace();
 			}
 		}
-		else
-			bracketHighlightTag = null;
 	}
 
 	/**
@@ -491,6 +501,9 @@ public class SyntaxTextArea extends JEditorPane
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.18  1999/04/22 05:31:17  sp
+ * Documentation updates, minor SyntaxTextArea update
+ *
  * Revision 1.17  1999/04/19 05:38:20  sp
  * Syntax API changes
  *
