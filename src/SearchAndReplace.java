@@ -48,7 +48,7 @@ implements ActionListener, WindowListener
 	
 	public SearchAndReplace(View view)
 	{
-		super(view,jEdit.props.getProperty("search.title"),true);
+		super(view,jEdit.props.getProperty("search.title"),false);
 		this.view = view;
 		find = new JTextField(jEdit.props.getProperty("lastfind"),30);
 		replace = new JTextField(jEdit.props

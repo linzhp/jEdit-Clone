@@ -26,9 +26,7 @@ backups=1
 
 ### Look and feel
 # Cross platform
-lf=xp
-# System
-#lf=system
+lf=com.sun.java.swing.plaf.metal.MetalLookAndFeel
 # Motif
 #lf=com.sun.java.swing.plaf.motif.MotifLookAndFeel
 # Windows
@@ -42,6 +40,10 @@ maxrecent=8
 untitled=Untitled-{0}
 
 ### Editor window
+# Title
+# {0} - the current file name
+editor.title=jEdit - {0}
+
 # The width and height of the text area, in characters
 editor.w=80
 editor.h=30
@@ -80,7 +82,7 @@ about.title=About jEdit
 about.message=jEdit version {0} build {1}, Copyright (C) 1998 Slava Pestov.\n\
 	jEdit comes with ABSOLUTELY NO WARRANTY. This is free software,\n\
 	and you are welcome to redistribute it under certain conditions;\n\
-	see the COPYING file for details.
+	see `Help->Copying' for details.
 
 ### IO Error dialog
 # {0} - the error message
@@ -184,10 +186,6 @@ options.editing.wrap.char=Character
 options.editing.wrap.word=Word
 options.editing.tabsize=Tab Size:\ 
 options.editing.font=Font:\ 
-options.editing.font.plain=Plain
-options.editing.font.bold=Bold
-options.editing.font.italic=Italic
-options.editing.font.bolditalic=Bold Italic
 options.printing=Print Margins (Inches)
 options.printing.left=Left:\ 
 options.printing.right=Right:\ 

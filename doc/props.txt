@@ -1,4 +1,4 @@
-JEDIT PROPERTY MANAGER
+JEDIT PROPERTY MANAGER (props.txt, last modified 8 Oct 1998)
 
 Contents
 --------
@@ -35,11 +35,11 @@ module.opt2=some other value
 
 4. Changing Properties
 ----------------------
-The easiest way to change a property is to add it to your user property file.
-But finding the name of the property might be tricky. If you have the full JDK
-installed, you can use the jar program to extract the default properties and
-copy the appropriate values to your user properties file. Use this command to
-do this:
+The options dialog is the easiest way to change properties. However, if you
+need to change a menu definition or string you must edit your user properties
+file manually. If you have the full JDK installed, you can use the jar program
+to extract the default properties and copy the appropriate values to your user
+properties file. Use this command to do this:
 
 	jar xf <path to jedit.jar>/jedit.jar properties
 

@@ -188,7 +188,7 @@ implements ActionListener, WindowListener, Runnable
 			transcript.append(CRLF);
 			if(!response.startsWith("250"))
 				error("badhost");
-			command = "MAIL FROM: " + from + CRLF;
+			command = "MAIL FROM: \"" + from + "\"" + CRLF;
 			transcript.append(command);
 			out.write(command);
 			out.flush();
@@ -197,7 +197,7 @@ implements ActionListener, WindowListener, Runnable
 			transcript.append(CRLF);
 			if(!response.startsWith("250"))
 				error("badsender");
-			command = "RCPT TO: " + to + CRLF;
+			command = "RCPT TO: \"" + to + "\"" + CRLF;
 			transcript.append(command);
 			out.write(command);
 			out.flush();
@@ -215,6 +215,9 @@ implements ActionListener, WindowListener, Runnable
 			transcript.append(CRLF);
 			if(!response.startsWith("354"))
 				error("badmsg");
+			out.write("X-Mailer: jEdit " + jEdit.VERSION
+				+ " build " + jEdit.BUILD);
+			out.write(CRLF);
 			Buffer buffer = view.getBuffer();
 			Element map = buffer.getDefaultRootElement();
 			int lines = map.getElementCount();

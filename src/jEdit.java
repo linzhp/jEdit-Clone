@@ -35,8 +35,8 @@ import com.sun.java.swing.UIManager;
 
 public class jEdit
 {
-	public static final String VERSION = "0.8";
-	public static final String BUILD = "19981007";
+	public static final String VERSION = "0.9";
+	public static final String BUILD = "19981008";
 	public static final PropsMgr props = new PropsMgr();
 	public static final CommandMgr cmds = new CommandMgr();
 	public static final BufferMgr buffers = new BufferMgr();
@@ -114,16 +114,10 @@ public class jEdit
 
 	public static void propertiesChanged()
 	{
-		String lf = props.getProperty("lf","xp");
+		String lf = props.getProperty("lf");
 		try
 		{
-			if(lf.equals("xp"))
-				UIManager.setLookAndFeel(UIManager
-				.getCrossPlatformLookAndFeelClassName());
-			else if(lf.equals("system"))
-				UIManager.setLookAndFeel(UIManager
-				.getSystemLookAndFeelClassName());
-			else
+			if(lf != null)
 				UIManager.setLookAndFeel(lf);
 		}
 		catch(Exception e)
@@ -339,13 +333,13 @@ public class jEdit
 	
 	public static void exit(View view)
 	{
+		if(!buffers.closeAll(view))
+			return;
 		if(server != null)
 		{
 			server.stopServer();
 			server = null;
 		}
-		if(!buffers.closeAll(view))
-			return;
 		buffers.saveRecent();
 		props.saveUserProps();
 		System.exit(0);

@@ -348,7 +348,8 @@ implements ActionListener, KeyListener, CaretListener, WindowListener
 			new Integer(numLines),
 			new Integer(currLine * 100 / numLines) };
 		status.setText(jEdit.props.getProperty("status",args));
-		setTitle(this.buffer.getPath());
+		args[0] = this.buffer.getPath();
+		setTitle(jEdit.props.getProperty("editor.title",args));
 		textArea.setEditable(!buffer.isReadOnly());
 	}
 	
@@ -359,15 +360,6 @@ implements ActionListener, KeyListener, CaretListener, WindowListener
 
 	public void setBuffer(Buffer buffer)
 	{
-		JScrollBar scrollBar = scroller.getVerticalScrollBar();
-		if(this.buffer != null)
-		{
-			this.buffer.setSelectionStart(textArea
-				.getSelectionStart());
-			this.buffer.setSelectionEnd(textArea
-				.getSelectionEnd());
-			this.buffer.setScrollPosition(scrollBar.getValue());
-		}
 		if(buffer == null)
 			this.buffer = jEdit.buffers.getBufferAt(0);
 		else
@@ -376,10 +368,7 @@ implements ActionListener, KeyListener, CaretListener, WindowListener
 		updateBuffersMenu();
 		updateMarkerMenus();
 		updateStatus(true);
-		textArea.select(this.buffer.getSelectionStart(),
-			this.buffer.getSelectionEnd());
-		scrollBar.setValue(this.buffer.getScrollPosition());
-		textArea.requestFocus();
+		textArea.requestDefaultFocus();
 	}
 
 	public JTextArea getTextArea()

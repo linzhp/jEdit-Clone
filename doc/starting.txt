@@ -1,4 +1,4 @@
-GETTING STARTED WITH JEDIT (starting.txt, last modified 7 Oct 1998)
+GETTING STARTED WITH JEDIT (starting.txt, last modified 8 Oct 1998)
 
 Contents
 --------
@@ -12,6 +12,7 @@ Contents
 4. Editing Files
 5. Markers
 6. Auto Indent
+7. Customising jEdit
 
 1. Starting jEdit
 -----------------
@@ -190,7 +191,13 @@ cleared with `Edit->Clear Marker' and jumped to with `Edit->Go To Marker'.
 --------------
 This feature is useful for editing source code. When you press return, white
 space and comment characters from the start of the previous line are copied to
-the the new one. 
+the the new one.
+
+7. Customising jEdit
+--------------------
+Simple settings such as the font, print margins, word wrap and many
+miscallanous options can be changed in the `Edit->Options' dialog. See
+menus.txt and props.txt for information about customising menus and strings.
 
 -- Slava Pestov
 <slava_pestov@geocities.com>

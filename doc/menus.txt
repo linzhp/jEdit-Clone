@@ -1,4 +1,4 @@
-JEDIT MENUS (menus.txt, last modified 7 Oct 1998)
+JEDIT MENUS (menus.txt, last modified 8 Oct 1998)
 
 Contents
 --------
@@ -121,8 +121,8 @@ marker is AS-0.
 -- SEPARATOR --
 
 - Options (options)
-Displays the options dialog, for changing jEdit's behaviour. Most elements
-should be self-explanatory.
+Displays the options dialog, for changing fonts, margins, and such. Most
+elements should be self-explanatory.
 
 4. Search Menu
 --------------

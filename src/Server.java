@@ -52,8 +52,6 @@ public class Server extends Thread
 			FileWriter out = new FileWriter(portFile);
 			out.write(String.valueOf(port));
 			out.close();
-			System.out.println("jEdit server started on port "
-				+ port);
 			for(;;)
 			{
 				Socket client = server.accept();
@@ -77,18 +75,25 @@ public class Server extends Thread
 				new BufferedReader(new InputStreamReader(client
 					.getInputStream()));
 			String filename;
+			String cwd = "";
 			boolean endOpts = false;
 			boolean readOnly = false;
 			while((filename = in.readLine()) != null)
 			{
-				if(filename.equals("--"))
-					endOpts = true;
-				else if(!endOpts && filename.equals(
-					"-readonly"))
-					readOnly = true;
+				if(!endOpts)
+				{
+					if(filename.equals("--"))
+						endOpts = true;
+					else if(filename.equals("-readonly"))
+						readOnly = true;
+					else if(filename.startsWith("-cwd="))
+						cwd = filename.substring(5);
+				}
 				else
-					jEdit.buffers.openFile(view,filename,
-						readOnly,true);
+				{
+					jEdit.buffers.openFile(view,cwd,
+						filename,readOnly,true);
+				}
 			}
 		}
 		catch(IOException io)
@@ -120,6 +125,5 @@ public class Server extends Thread
 			io.printStackTrace();
 		}
 		portFile.delete();
-		System.out.println("jEdit server stopped");
 	}
 }

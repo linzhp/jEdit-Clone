@@ -1,10 +1,25 @@
-VERSION INFORMATION (VERSION, last modified 7 Oct 1998)
+VERSION INFORMATION (VERSION, last modified 8 Oct 1998)
 
-CURRENT VERSION: 0.8
+CURRENT VERSION: 0.9
 
--- To Do:
+-- To Do Before 1.1:
 - Word wrap when printing
 - API documentation for plugin authors
+- Save/restore caret position on buffer switch
+
+-- To Do Before 1.0:
+- Debug
+- Optimise
+- Improve documentation
+
+-- Version 0.9:
+- jOpen's broken behaviour fixed
+- Minor documentation updates
+- Win32 JRE doesn't like the classpath. Changed to use javaw instead
+- Minor send plugin updates
+- Title bar now includes the string `jEdit'
+- Lots of bug fixes
+- Code cleanups
 
 -- Version 0.8:
 - Several bug fixes

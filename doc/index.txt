@@ -1,9 +1,9 @@
-HELP INDEX (index.txt, last modified 2 Oct 1998)
+HELP INDEX (index.txt, last modified 8 Oct 1998)
 
 If you're viewing this file with jEdit, you can open a topic by double
 clicking its name and pressing CS-o - that is, `o' while holding down the
 Control and Shift keys. Most help files have markers. Check out the
-`Edit->Go To Marker' menu.
+`Edit->Go To Marker' menu. These files look best with a monospaced font.
 
 General
 -------

@@ -1,8 +1,17 @@
-JEDIT README (README, last modified 6 Oct 1998)
+JEDIT README (README, last modified 8 Oct 1998)
 
 jEdit is a text editor written in Java. I wrote it to learn more about JFC
 programming. This is a pre-release version. See the VERSION file to see what
 remains to be done.
+
+jEdit requires a Java 1.1 compatible runtime and Sun's Java Foundation Classes
+version 1.0.x. jEdit does NOT currently run with Swing 1.1beta3 or higher. When
+1.1 is finished, I'll port jEdit, but in the meantime, use 1.0.x or 1.1beta2.
+
+A Java runtime for Solaris and Windows can be found at
+<http://java.sun.com/products/jdk/1.1>. A Linux version is available at
+<http://java.blackdown.org>. The JFC can be obtained from
+<http://java.sun.com/products/jfc/index.html>.
 
 To get started with jEdit, I suggest you take a look at doc/index.txt. You
 might also want to take a look at the contents of the etc/ directory, it

@@ -29,24 +29,19 @@ import java.util.Properties;
 
 public class PropsMgr extends Properties
 {
-	private String usrProps;
-	
-	public PropsMgr()
-	{
-		usrProps = System.getProperty("user.home",".") + File.separator
-			+ ".jedit-props";
-	}
+	public static final String USER_PROPS = System.getProperty("user.home")
+		+ File.separator + ".jedit-props";
 	
 	public void loadSystemProps()
 	{
 		if(!loadProps(getClass().getResourceAsStream("/properties"),
 			"properties",true))
-			System.exit(1);
+		System.exit(1);
 	}
 
 	public void loadUserProps()
 	{
-		loadProps(null,usrProps,false);
+		loadProps(null,USER_PROPS,false);
 	}
 	
 	public boolean loadProps(InputStream in, String name, boolean defaults)
@@ -55,7 +50,6 @@ public class PropsMgr extends Properties
 		{
 			if(in == null)
 				in = new FileInputStream(name);
-			
 			if(defaults)
 			{
 				if(this.defaults == null)
@@ -74,7 +68,6 @@ public class PropsMgr extends Properties
 		{
 			io.printStackTrace();
 		}
-
 		return false;
 	}
 
@@ -95,7 +88,7 @@ public class PropsMgr extends Properties
 	}
 	public boolean saveUserProps()
 	{
-		return saveProps(null,usrProps);
+		return saveProps(null,USER_PROPS);
 	}
 	
 	public boolean saveProps(OutputStream out, String name)

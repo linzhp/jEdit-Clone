@@ -18,7 +18,6 @@
  */
 
 import com.sun.java.swing.JOptionPane;
-import com.sun.java.swing.preview.JFileChooser;
 import java.io.File;
 import java.util.Hashtable;
 

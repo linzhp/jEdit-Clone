@@ -66,59 +66,36 @@ implements DocumentListener, UndoableEditListener
 	private boolean newFile;
 	private boolean dirty;
 	private boolean readOnly;
-	private int selectionStart;
-	private int selectionEnd;
-	private int scrollPosition;
 	private UndoManager undo;
 	private Vector markers;
 	
-	public Buffer(View view, String name, boolean readOnly, boolean load)
+	public Buffer(String parent, String path, boolean readOnly,
+		boolean load)
 	{
 		undo = new UndoManager();
 		markers = new Vector();
 		this.readOnly = readOnly;
 		newFile = !load;
 		init = true;
-		String parent = "";
-		if(view != null)
-			parent = view.getBuffer().getFile().getParent();
-		int index = name.indexOf('#');
-		String marker = null;
-		if(index != -1)
-		{
-			marker = name.substring(index + 1);
-			name = name.substring(0,index);
-		}
-		setPath(parent,name);
+		setPath(parent,path);
 		if(load)
 		{
 			if(autosaveFile.exists())
 			{
 				Object[] args = { autosaveFile.getPath() };
-				jEdit.message(view,"autosaveexists",args);
+				jEdit.message(null,"autosaveexists",args);
 			}
-			load(view);
+			load();
 			loadMarkers();
 		}
 		addDocumentListener(this);
 		addUndoableEditListener(this);
-		init = false;
 		updateStatus();
 		updateMarkers();
-		if(view != null)
-		{
-			view.setBuffer(this);
-			if(marker != null)
-			{
-				int[] pos = getMarker(marker);
-				if(pos != null)
-					view.getTextArea().select(pos[0],
-						pos[1]);
-			}
-		}
+		init = false;
 	}
 
-	private void load(View view)
+	private void load()
 	{
 		try
 		{
@@ -143,17 +120,17 @@ implements DocumentListener, UndoableEditListener
 		catch(FileNotFoundException fnf)
 		{
 			Object[] args = { path };
-			jEdit.error(view,"notfounderror",args);
+			jEdit.error(null,"notfounderror",args);
 		}
 		catch(IOException io)
 		{
 			Object[] args = { io.toString() };
-			jEdit.error(view,"ioerror",args);
+			jEdit.error(null,"ioerror",args);
 		}
 		catch(BadLocationException bl)
 		{
 			Object[] args = { bl.toString() };
-			jEdit.error(view,"error",args);
+			jEdit.error(null,"error",args);
 		}
 	}
 
@@ -664,49 +641,44 @@ loop:		for(int i = 0; i < map.getElementCount(); i++)
 	
 	public void setPath(String path)
 	{
-		setPath("",path);
+		setPath(null,path);
 	}
 
 	public void setPath(String parent, String path)
 	{
-		try
-		{
-			parent = new File(parent).getCanonicalPath();
-		}
-		catch(IOException io)
-		{
-		}
+		if(path.startsWith(File.separator))
+			parent = null;
+		else if(parent == null)
+			parent = System.getProperty("user.dir");
+		this.path = path;
 		url = null;
 		try
 		{
 			url = new URL(path);
-			this.path = path;
 			name = url.getFile();
 			if(name.length() == 0)
 				name = url.getHost();
 			if(name.startsWith(File.separator))
-				parent = "";
-			file = new File(parent,name);
+				parent = null;
+			if(parent == null)
+				file = new File(name);
+			else
+				file = new File(parent,name);
 			markersUrl = new URL(url,'.' + name + ".marks");
 			name = file.getName();
 		}
 		catch(MalformedURLException mu)
 		{
-			if(path.startsWith(File.separator))
-				parent = "";
-			file = new File(parent,path);
-			try
-			{
-				this.path = file.getCanonicalPath();
-			}
-			catch(IOException io)
-			{
-				this.path = path;
-			}
+			if(parent == null)
+				file = new File(path);
+			else
+				file = new File(parent,path);
+			path = file.getPath();
 			name = file.getName();
+			markersFile = new File(file.getParent(),'.' + name
+				+ ".marks");
 		}
 		autosaveFile = new File(file.getParent(),'#' + name + '#');
-		markersFile = new File(file.getParent(),'.' + name + ".marks");
 	}
 	
 	public boolean isNewFile()
@@ -722,36 +694,6 @@ loop:		for(int i = 0; i < map.getElementCount(); i++)
 	public boolean isReadOnly()
 	{
 		return readOnly;
-	}
-	
-	public int getSelectionStart()
-	{
-		return selectionStart;
-	}
-
-	public void setSelectionStart(int selectionStart)
-	{
-		this.selectionStart = selectionStart;
-	}
-
-	public int getSelectionEnd()
-	{
-		return selectionEnd;
-	}
-
-	public void setSelectionEnd(int selectionEnd)
-	{
-		this.selectionEnd = selectionEnd;
-	}
-
-	public int getScrollPosition()
-	{
-		return scrollPosition;
-	}
-
-	public void setScrollPosition(int scrollPosition)
-	{
-		this.scrollPosition = scrollPosition;
 	}
 	
 	public UndoManager getUndo()

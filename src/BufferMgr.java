@@ -101,7 +101,7 @@ public class BufferMgr
 		if(path == null)
 			return null;
 		jEdit.props.put("lasturl",path);
-		return openFile(view,path,false,true);
+		return openFile(view,null,path,false,true);
 	}
 	
 	public Buffer openFile(View view)
@@ -118,7 +118,7 @@ public class BufferMgr
 			.getProperty("openfile.title"));
 		int retVal = fileChooser.showOpenDialog(view);
 		if(retVal == JFileChooser.APPROVE_OPTION)
-			return openFile(view,fileChooser.getSelectedFile()
+			return openFile(view,null,fileChooser.getSelectedFile()
 				.getPath(),false,true);
 		else
 			return null;
@@ -126,22 +126,37 @@ public class BufferMgr
 
 	public Buffer openFile(String path)
 	{
-		return openFile(null,path,false,true);
+		return openFile(null,null,path,false,true);
 	}
 	
 	public Buffer openFile(String path, boolean readOnly)
 	{
-		return openFile(null,path,readOnly,true);
+		return openFile(null,null,path,readOnly,true);
 	}
 	
 	public Buffer openFile(View view, String path)
 	{
-		return openFile(view,path,false,true);
+		return openFile(view,null,path,false,true);
 	}
 
 	public Buffer openFile(View view, String path, boolean readOnly,
 		boolean load)
 	{
+		return openFile(view,null,path,readOnly,load);
+	}
+	
+	public Buffer openFile(View view, String parent, String path,
+		boolean readOnly, boolean load)
+	{
+		if(view != null && parent == null)
+			parent = view.getBuffer().getFile().getParent();
+		int index = path.indexOf('#');
+		String marker = null;
+		if(index != -1)
+		{
+			marker = path.substring(index + 1);
+			path = path.substring(0,index);
+		}
 		Enumeration enum = getBuffers();
 		while(enum.hasMoreElements())
 		{
@@ -153,8 +168,10 @@ public class BufferMgr
 				return buffer;
 			}
 		}
+		Buffer buffer = new Buffer(parent,path,readOnly,load);
 		if(load)
 		{
+			path = buffer.getPath();
 			if(!recent.contains(path))
 			{
 				recent.addElement(path);
@@ -162,7 +179,17 @@ public class BufferMgr
 					recent.removeElementAt(0);
 			}
 		}
-		Buffer buffer = new Buffer(view,path,readOnly,load);
+		if(view != null)
+		{
+			view.setBuffer(buffer);
+			if(marker != null)
+			{
+				int[] pos = buffer.getMarker(marker);
+				if(pos != null)
+					view.getTextArea().select(pos[0],
+						pos[1]);
+			}
+		}
 		buffers.addElement(buffer);
 		enum = getViews();
 		while(enum.hasMoreElements())

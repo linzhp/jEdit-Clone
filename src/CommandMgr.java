@@ -80,14 +80,7 @@ public class CommandMgr extends ClassLoader
 		{
 			int len = (int)entry.getSize();
 			byte[] cls = new byte[len];
-			int bs = 1024;
-			int c = 0;
-			while(len >= 0)
-			{
-				in.read(cls,c,Math.min(bs,len));
-				c += bs;
-				len -= bs;
-			}
+			in.read(cls,0,len);
 			String clsName = fileToClass(entryName);
 			classes.put(clsName,cls);
 			if(clsName.startsWith("Cmd_"))

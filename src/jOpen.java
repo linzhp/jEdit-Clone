@@ -26,8 +26,8 @@ import java.net.Socket;
 
 public class jOpen
 {
-	public static final String VERSION = "0.8";
-	public static final String BUILD = "19981007";
+	public static final String VERSION = "0.9";
+	public static final String BUILD = "19981008";
 	
 	public static void usage()
 	{
@@ -106,7 +106,9 @@ public class jOpen
 			{
 				out.writeBytes("-readonly\n");
 			}
-			out.writeBytes("--\n");
+			out.writeBytes("-cwd=".concat(System
+				.getProperty("user.dir")));
+			out.writeBytes("\n--\n");
 			for(int i = 0; i < args.length; i++)
 			{
 				if(args[i] != null)
