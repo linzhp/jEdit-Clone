@@ -17,86 +17,41 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-import com.sun.java.swing.JOptionPane;
+import com.sun.java.swing.*;
 import java.awt.FileDialog;
-import java.io.File;
-import java.io.IOException;
-import java.util.Enumeration;
-import java.util.Vector;
+import java.io.*;
+import java.util.*;
 
+/**
+ * The buffer manager.
+ * <p>
+ * Only one instance of the buffer manager exists. It is stored in
+ * <code>jEdit.buffers</code>.
+ * <p>
+ * The buffer manager opens and closes buffers and views.
+ * @see Buffer
+ * @see View
+ */
 public class BufferMgr
 {
-	private int untitledCount;
-	private Vector buffers;
-	private Vector views;
-	private Vector recent;
-	private int maxRecent;
+	// public members
 	
-	public BufferMgr()
-	{
-		buffers = new Vector();
-		views = new Vector();
-		recent = new Vector();
-	}
-
-	public void loadRecent()
-	{
-		try
-		{
-			maxRecent = Integer.parseInt(jEdit.props
-				.getProperty("maxrecent"));
-		}
-		catch(NumberFormatException nf)
-		{
-			maxRecent = 8;
-		}
-		recent.removeAllElements();
-		for(int i = 0; i < maxRecent; i++)
-		{
-			String file = jEdit.props.getProperty("recent." + i);
-			if(file != null)
-				recent.addElement(file);
-		}
-	}
-
-	public void saveRecent()
-	{
-		for(int i = 0; i < recent.size(); i++)
-		{
-			String file = (String)recent.elementAt(i);
-			jEdit.props.put("recent." + i,file);
-		}
-		jEdit.props.remove("recent." + maxRecent);
-	}
-
-	public int getMaxRecent()
-	{
-		return maxRecent;
-	}
-
-	public void openFiles(String[] files, boolean readOnly)
-	{
-		boolean opened = false;
-		for(int i = 0; i < files.length; i++)
-		{
-			if(files[i] == null)
-				continue;
-			opened = true;
-			openFile(files[i],readOnly);
-		}
-		if(!opened)
-			newFile();
-		newView(null);
-	}
-
+	/**
+	 * Prompts the user for a URL to open.
+	 * @param view The view to display the dialog box for
+	 */
 	public Buffer openURL(View view)
 	{
-		String path = jEdit.input(view,"openurl","lasturl");
+		String path = jEdit.input(view,"openurl","openurl.url");
 		if(path == null)
 			return null;
 		return openFile(view,null,path,false,false);
 	}
 	
+	/**
+	 * Prompts the user for a file to open.
+	 * @param view The view to display the dialog box for
+	 */
 	public Buffer openFile(View view)
 	{
 		FileDialog fileDialog = new FileDialog(view,jEdit.props
@@ -113,27 +68,15 @@ public class BufferMgr
 				+ file,false,false);
 	}
 
-	public Buffer openFile(String path)
-	{
-		return openFile(null,null,path,false,false);
-	}
-	
-	public Buffer openFile(String path, boolean readOnly)
-	{
-		return openFile(null,null,path,readOnly,false);
-	}
-	
-	public Buffer openFile(View view, String path)
-	{
-		return openFile(view,null,path,false,false);
-	}
-
-	public Buffer openFile(View view, String path, boolean readOnly,
-		boolean newFile)
-	{
-		return openFile(view,null,path,readOnly,newFile);
-	}
-	
+	/**
+	 * Opens the specified file.
+	 * @param view The view to open the file in
+	 * @param parent The directory containing this file
+	 * @param path The path name of this file
+	 * @param readOnly True if the file should be opened read only
+	 * @param newFile True if the file shouldn't be loaded and marked
+	 * untitled
+	 */
 	public Buffer openFile(View view, String parent, String path,
 		boolean readOnly, boolean newFile)
 	{
@@ -161,47 +104,46 @@ public class BufferMgr
 		if(!newFile)
 		{
 			path = buffer.getPath();
-			if(!recent.contains(path))
-			{
-				recent.addElement(path);
-				if(recent.size() > maxRecent)
-					recent.removeElementAt(0);
-			}
+			if(recent.contains(path))
+				recent.removeElement(path);
+			recent.addElement(path);
+			if(recent.size() > maxRecent)
+				recent.removeElementAt(0);
 		}
 		if(view != null)
-		{
 			view.setBuffer(buffer);
-			if(marker != null)
-			{
-				int[] pos = buffer.getMarker(marker);
-				if(pos != null)
-					view.getTextArea().select(pos[0],
-						pos[1]);
-			}
-		}
 		buffers.addElement(buffer);
 		enum = getViews();
 		while(enum.hasMoreElements())
 		{
-			view = (View)enum.nextElement();
-			view.updateBuffersMenu();
-			view.updateOpenRecentMenu();
+			View v = (View)enum.nextElement();
+			v.updateBuffersMenu();
+			v.updateOpenRecentMenu();
 		}
+		if(marker != null)
+			gotoMarker(buffer,view,marker);
 		return buffer;
 	}
 
-	public Buffer newFile()
-	{
-		return newFile(null);
-	}
-	
+	/**
+	 * Creates a new, untitled file.
+	 * @param view The view to create the file in
+	 */
 	public Buffer newFile(View view)
 	{
 		Object[] args = { new Integer(++untitledCount) };
-		return openFile(view,jEdit.props.getProperty("untitled",
-			args),false,true);
+		return openFile(view,null,jEdit.props.getProperty("buffermgr."
+			+ "untitled",args),false,true);
 	}
 
+	/**
+	 * Closes an open buffer.
+	 * @param view The view to display the confirmation dialog box in,
+	 * if needed
+	 * @param buffer The buffer to close
+	 * @return True if the buffer was closed, false if the user cancelled
+	 * the operation
+	 */
 	public boolean closeBuffer(View view, Buffer buffer)
 	{
 		if(buffer.isDirty())
@@ -215,7 +157,7 @@ public class BufferMgr
 				JOptionPane.WARNING_MESSAGE);
 			if(result == JOptionPane.YES_OPTION)
 			{
-				if(!buffer.save(view))
+				if(!buffer.save(view,null))
 					return false;
 			}
 			else if(result == JOptionPane.NO_OPTION)
@@ -237,16 +179,10 @@ public class BufferMgr
 		return true;
 	}
 
-	public boolean closeAll(View view)
-	{
-		for(int i = buffers.size() - 1; i >= 0; i--)	
-		{
-			if(!closeBuffer(view,(Buffer)buffers.elementAt(i)))
-				return false;
-		}
-		return true;
-	}
-	
+	/**
+	 * Returns the buffer with the specified path name.
+	 * @param path The path name of the buffer to return
+	 */
 	public Buffer getBuffer(String path)
 	{
 		Enumeration enum = getBuffers();
@@ -259,24 +195,18 @@ public class BufferMgr
 		return null;
 	}
 	
-	public Buffer getBufferAt(int index)
-	{
-		if(buffers.size() <= index)
-			return null;
-		else
-			return (Buffer)buffers.elementAt(index);
-	}
-	
+	/**
+	 * Returns all open buffers.
+	 */
 	public Enumeration getBuffers()
 	{
 		return buffers.elements();
 	}
 
-	public View newView()
-	{
-		return newView(null);
-	}
-	
+	/**
+	 * Creates a new view.
+	 * @param view The view to inherit the current buffer from
+	 */
 	public View newView(View view)
 	{
 		View viewN = new View(view);
@@ -284,6 +214,10 @@ public class BufferMgr
 		return viewN;
 	}
 
+	/**
+	 * Closes the specified view.
+	 * @param view The view to close
+	 */
 	public void closeView(View view)
 	{
 		if(views.size() == 1)
@@ -297,13 +231,93 @@ public class BufferMgr
 		}
 	}
 
+	/**
+	 * Returns all open views.
+	 */
 	public Enumeration getViews()
 	{
 		return views.elements();
 	}
 
+	/**
+	 * Returns a list of recently opened files.
+	 */
 	public Enumeration getRecent()
 	{
 		return recent.elements();
+	}
+
+	// package-private members
+	BufferMgr()
+	{
+		buffers = new Vector();
+		views = new Vector();
+		recent = new Vector();
+	}
+
+	void loadRecent()
+	{
+		try
+		{
+			maxRecent = Integer.parseInt(jEdit.props
+				.getProperty("buffermgr.recent"));
+		}
+		catch(NumberFormatException nf)
+		{
+			maxRecent = 8;
+		}
+		recent.removeAllElements();
+		for(int i = 0; i < maxRecent; i++)
+		{
+			String file = jEdit.props.getProperty("buffermgr."
+				+ "recent." + i);
+			if(file != null)
+				recent.addElement(file);
+		}
+	}
+
+	void saveRecent()
+	{
+		for(int i = 0; i < recent.size(); i++)
+		{
+			String file = (String)recent.elementAt(i);
+			jEdit.props.put("buffermgr.recent." + i,file);
+		}
+		jEdit.props.remove("buffermgr.recent." + maxRecent);
+	}
+	
+	boolean closeAll(View view)
+	{
+		for(int i = buffers.size() - 1; i >= 0; i--)	
+		{
+			if(!closeBuffer(view,(Buffer)buffers.elementAt(i)))
+				return false;
+		}
+		return true;
+	}
+
+	// private members
+	private int untitledCount;
+	private Vector buffers;
+	private Vector views;
+	private Vector recent;
+	private int maxRecent;
+
+	private void gotoMarker(final Buffer buffer, final View view,
+		String marker)
+	{
+		final Marker m = buffer.getMarker(marker);
+		if(m == null)
+			return;
+		if(view != null)
+		{
+			SwingUtilities.invokeLater(new Runnable() {
+				public void run()
+				{
+					view.getTextArea().select(m.getStart(),
+						m.getEnd());
+				}
+			});
+		}
 	}
 }

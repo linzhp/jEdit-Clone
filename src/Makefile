@@ -1,5 +1,27 @@
 # Makefile
-resources=jEdit.class \
+jar=jedit.jar
+resources=gnu/regexp/RESyntax.class \
+	gnu/regexp/CharIndexed.class \
+	gnu/regexp/REMatch.class \
+	gnu/regexp/REToken.class \
+	gnu/regexp/REException.class \
+	gnu/regexp/RETokenChar.class \
+	gnu/regexp/RETokenRange.class \
+	gnu/regexp/RETokenPOSIX.class \
+	gnu/regexp/RETokenOneOf.class \
+	gnu/regexp/RETokenAny.class \
+	gnu/regexp/RETokenRepeated.class \
+	gnu/regexp/RETokenBackRef.class \
+	gnu/regexp/CharIndexedString.class \
+	gnu/regexp/CharIndexedCharArray.class \
+	gnu/regexp/CharIndexedStringBuffer.class \
+	gnu/regexp/CharIndexedInputStream.class \
+	gnu/regexp/RE.class \
+	gnu/regexp/RETokenStart.class \
+	gnu/regexp/RETokenEnd.class \
+	gnu/regexp/REMatchEnumeration.class \
+	gnu/regexp/REFilterInputStream.class \
+	jEdit.class \
 	jOpen.class \
 	Autosave.class \
 	Buffer.class \
@@ -8,11 +30,13 @@ resources=jEdit.class \
 	CommandMgr.class \
 	HyperSearch.class \
 	Marker.class \
+	Mode.class \
 	Options.class \
 	PropsMgr.class \
 	SearchAndReplace.class \
 	SendDialog.class \
 	Server.class \
+	SyntaxTextArea.class \
 	View.class \
 	Cmd_about.class \
 	Cmd_clear.class \
@@ -48,17 +72,21 @@ resources=jEdit.class \
 	Cmd_save_url.class \
 	Cmd_select_all.class \
 	Cmd_select_buffer.class \
+	Cmd_select_mode.class \
 	Cmd_send.class \
 	Cmd_set_marker.class \
 	Cmd_to_lower.class \
 	Cmd_to_upper.class \
 	Cmd_undo.class \
-	Cmd_word_count.class \
-	properties
-jar=../jedit.jar
-files=$(jar)
-directory=$(SLAVA_SHARE_DIR)
-all: $(jar)
-install: default-install
-properties:
+	Cmd_word_count.class
+no_compile_res=gnu/regexp/CharUnit.class \
+	gnu/regexp/IntPair.class \
+	'BufferMgr$$1.class' \
+	'View$$1.class'
+all: ../$(jar)
+	$(MKDIRHIER) ../doc/api
+	$(JAVADOC) -noindex -notree -public -d ../doc/api jEdit.java \
+		BufferMgr.java Buffer.java CommandMgr.java Command.java \
+		Marker.java Mode.java PropsMgr.java View.java
+	rm -f ../doc/api/package.html
 include ../Rules.make

@@ -17,18 +17,11 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.net.Socket;
 
 public class jOpen
 {
-	public static final String VERSION = "1.0.1";
-	public static final String BUILD = "19981107";
-	
 	public static void usage()
 	{
 		System.err.println("Usage: jopen [<options>] [<files>]");
@@ -37,8 +30,6 @@ public class jOpen
 		System.err.println("    -version: Print jOpen version and"
 			+ " exit");
 		System.err.println("    -usage: Print this message and exit");
-		System.err.println("    -server=<server>: Server to connect"
-			+ " to");
 		System.err.println("    -portfile=<file>: File with server"
 			+ " port");
 		System.err.println("    -readonly: Open files read-only");
@@ -47,13 +38,13 @@ public class jOpen
 
 	public static void version()
 	{
-		System.err.println("jOpen " + VERSION + " build " + BUILD);
+		System.err.println("jOpen " + jEdit.VERSION + " build "
+			+ jEdit.BUILD);
 		System.exit(1);
 	}
 
 	public static void main(String[] args)
 	{
-		String server = "localhost";
 		String portFilename = System.getProperty("user.home") +
 			File.separator + ".jedit-server";
 		boolean endOpts = false;
@@ -69,8 +60,6 @@ public class jOpen
 					usage();
 				else if(arg.equals("-version"))
 					version();
-				else if(arg.startsWith("-server="))
-					server = arg.substring(8);
 				else if(arg.startsWith("-portfile="))
 					portFilename = arg.substring(10);
 				else if(arg.equals("-readonly"))
@@ -96,34 +85,37 @@ public class jOpen
 			BufferedReader in = new BufferedReader(new FileReader(
 				portFile));
 			int port = Integer.parseInt(in.readLine());
+			long authInfo = Long.parseLong(in.readLine());
 			in.close();
-			System.out.println("Connecting to " + server
-				+ " on port " + port);
-			Socket socket = new Socket(server,port);
-			DataOutputStream out = new DataOutputStream(socket
-				.getOutputStream());
+			System.out.println("Connecting to port " + port
+				+ " with authorization key " + authInfo);
+			Socket socket = new Socket("localhost",port);
+			BufferedWriter out = new BufferedWriter(new
+				OutputStreamWriter(socket.getOutputStream()));
+			out.write(String.valueOf(authInfo));
+			out.write('\n');
 			if(readOnly)
 			{
-				out.writeBytes("-readonly\n");
+				out.write("-readonly\n");
 			}
-			out.writeBytes("-cwd=".concat(System
-				.getProperty("user.dir")));
-			out.writeBytes("\n--\n");
+			out.write("-cwd=".concat(System.getProperty(
+				"user.dir")));
+			out.write("\n--\n\n");
 			for(int i = 0; i < args.length; i++)
 			{
 				if(args[i] != null)
 				{
-					out.writeBytes(args[i]);
+					out.write(args[i]);
 					out.write('\n');
 				}
 			}
 			out.close();
 			socket.close();
 		}
-		catch(IOException io)
+		catch(Exception e)
 		{
-			io.printStackTrace();
-			System.out.println("Deleting stale port file");
+			e.printStackTrace();
+			System.out.println("Stale port file deleted");
 			portFile.delete();
 			System.exit(1);
 		}

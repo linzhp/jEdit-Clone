@@ -17,69 +17,615 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-import com.sun.java.swing.JOptionPane;
-import com.sun.java.swing.JTextArea;
-import com.sun.java.swing.event.DocumentEvent;
-import com.sun.java.swing.event.DocumentListener;
-import com.sun.java.swing.event.UndoableEditEvent;
-import com.sun.java.swing.event.UndoableEditListener;
-import com.sun.java.swing.text.BadLocationException;
-import com.sun.java.swing.text.Element;
-import com.sun.java.swing.text.PlainDocument;
+import com.sun.java.swing.*;
+import com.sun.java.swing.event.*;
+import com.sun.java.swing.text.*;
 import com.sun.java.swing.undo.UndoManager;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.FileDialog;
-import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.PrintJob;
-import java.awt.Toolkit;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
-import java.util.Enumeration;
-import java.util.Vector;
-import java.util.zip.GZIPInputStream;
-import java.util.zip.GZIPOutputStream;
+import gnu.regexp.*;
+import java.awt.*;
+import java.io.*;
+import java.net.*;
+import java.util.*;
+import java.util.zip.*;
 
+/**
+ * A buffer is an in-memory copy of an open file.
+ * @see BufferMgr
+ * @see BufferMgr#openFile(View)
+ * @see BufferMgr#openURL(View)
+ * @see BufferMgr#openFile(View,String,String,boolean,boolean)
+ * @see BufferMgr#closeBuffer(View)
+ * @see BufferMgr#getBuffers()
+ */
 public class Buffer extends PlainDocument
 implements DocumentListener, UndoableEditListener
 {
-	private File file;
-	private File autosaveFile;
-	private File markersFile;
-	private URL url;
-	private URL markersUrl;
-	private String name;
-	private String path;
-	private boolean init;
-	private boolean newFile;
-	private boolean dirty;
-	private boolean readOnly;
-	private UndoManager undo;
-	private Vector markers;
+	// public methods
 	
-	public Buffer(String parent, String path, boolean readOnly,
-		boolean newFile)
+	/**
+	 * Finds the next instance of the search string in this buffer.
+	 * @param view The view
+	 * @param done For internal use really. False if a `keep searching'
+	 * dialog should be shown if no more matches have been found.
+	 */
+	public boolean find(View view, boolean done)
 	{
+		try
+		{
+			RE regexp = jEdit.getRE();
+			if(regexp == null)
+			{
+				view.getToolkit().beep();
+				return false;
+			}
+			int caret = view.getTextArea().getCaretPosition();
+			String text = getText(caret,getLength() - caret);
+			REMatch match = regexp.getMatch(text);
+			if(match != null)
+			{
+				view.getTextArea().select(caret + match
+					.getStartIndex(),
+					caret + match.getEndIndex());
+				return true;
+			}
+			if(done)
+			{
+				view.getToolkit().beep();
+				return false;
+			}
+			int result = JOptionPane.showConfirmDialog(view,
+				jEdit.props.getProperty(
+					"keepsearching.message"),
+				jEdit.props.getProperty("keepsearching.title"),
+				JOptionPane.YES_NO_OPTION,
+				JOptionPane.QUESTION_MESSAGE);
+			if(result == JOptionPane.YES_OPTION)
+			{
+				view.getTextArea().setCaretPosition(0);
+				return find(view,true);
+			}
+		}
+		catch(REException re)
+		{
+			Object[] args = { re.getMessage() };
+			jEdit.error(view,"reerror",args);
+		}
+		catch(BadLocationException bl)
+		{
+		}
+		return false;
+	}
+
+	/**
+	 * Replaces the current selection with the replacement string.
+	 * @param view The view
+	 */
+	public void replace(View view)
+	{
+		try
+		{
+			RE regexp = jEdit.getRE();
+			String replaceStr = jEdit.props.getProperty("search"
+				+ ".replace.value");
+			if(regexp == null)
+			{
+				view.getToolkit().beep();
+				return;
+			}
+			SyntaxTextArea textArea = view.getTextArea();
+			textArea.replaceSelection(regexp.substitute(textArea
+				.getSelectedText(),replaceStr));
+		}
+		catch(REException re)
+		{
+			Object[] args = { re.getMessage() };
+			jEdit.error(view,"reerror",args);
+		}
+	}
+
+	/**
+	 * Replaces all occurances of the search string with the replacement
+	 * string.
+	 * @param view The view
+	 */
+	public void replaceAll(View view)
+	{
+		try
+		{
+			RE regexp = jEdit.getRE();
+			String replaceStr = jEdit.props.getProperty("search"
+				+ ".replace.value");
+			if(regexp == null)
+			{
+				view.getToolkit().beep();
+				return;
+			}
+			REMatch match;
+			int index = 0;
+			while((match = regexp.getMatch(getText(index,
+				getLength() - index))) != null)
+			{
+				int start = match.getStartIndex() + index;
+				int len = match.getEndIndex() - match
+					.getStartIndex();
+				index += len;
+				String str = getText(start,len);
+				remove(start,len);
+				insertString(start,regexp.substitute(str,
+					replaceStr),null);
+			}
+		}
+		catch(REException re)
+		{
+			Object[] args = { re.getMessage() };
+			jEdit.error(view,"reerror",args);
+		}
+		catch(BadLocationException bl)
+		{
+		}
+	}
+	
+	/**
+	 * Does a word count and displays the results in a dialog box.
+	 * @param view The view
+	 */
+	public void wordCount(View view)
+	{
+		if(view != null)
+		{
+			String selection = view.getTextArea()
+				.getSelectedText();
+			if(selection != null)
+			{
+				wordCount(view,selection);
+				return;
+			}
+		}
+		try
+		{
+			wordCount(view,getText(0,getLength()));
+		}
+		catch(BadLocationException bl)
+		{
+		}
+	}
+
+	/**
+	 * Executes <code>cmd</code>, or if it is null, prompts the user for
+	 * a command to execute.
+	 * <p>
+	 * Note that these aren't jEdit commands, but OS commands.
+	 * @param view The view
+	 * @param cmd The command to execute
+	 */
+	public void execute(View view, String cmd)
+	{
+		if(cmd == null)
+			cmd = jEdit.input(view,"execute","execute.cmd");
+		if(cmd == null)
+			return;		
+		StringBuffer buf = new StringBuffer();
+		for(int i = 0; i < cmd.length(); i++)
+		{
+			switch(cmd.charAt(i))
+			{
+			case '%':
+				if(i != cmd.length() - 1)
+				{
+					switch(cmd.charAt(++i))
+					{
+					case 'u':
+						buf.append(path);
+						break;
+					case 'p':
+						buf.append(file.getPath());
+						break;
+					default:
+						buf.append('%');
+						break;
+					}
+					break;
+				}
+			default:
+				buf.append(cmd.charAt(i));
+			}
+		}
+		try
+		{
+			Runtime.getRuntime().exec(buf.toString());
+		}
+		catch(IOException io)
+		{
+			Object[] error = { io.toString() };
+			jEdit.error(view,"ioerror",error);
+		}
+	}
+
+	/**
+	 * Autosaves this buffer.
+	 */
+	public void autosave()
+	{
+		if(dirty)
+		{
+			try
+			{
+				save(new FileOutputStream(autosaveFile));
+			}
+			catch(Exception e)
+			{
+				System.err.println("Error during autosave:");
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	/**
+	 * Prompts the user for a file to save this buffer to.
+	 * @param view The view
+	 */
+	public boolean saveAs(View view)
+	{
+		FileDialog fileDialog = new FileDialog(view,jEdit.props
+			.getProperty("savefile.title"),FileDialog.LOAD);
+		String parent = getFile().getParent();
+		if(parent != null)
+			fileDialog.setDirectory(parent);
+		fileDialog.setFile(name);
+		fileDialog.show();
+		String file = fileDialog.getFile();
+		if(file == null)
+			return false;
+		else
+			return save(view,fileDialog.getDirectory() + file);
+		
+	}
+
+	/**
+	 * Prompts the user for a URL to save this buffer to.
+	 * @param view The view
+	 */
+	public boolean saveToURL(View view)
+	{
+		String path = jEdit.input(view,"saveurl","openurl.url");
+		if(path != null)
+			return save(view,path);
+		return false;
+	}
+
+	/**
+	 * Saves this buffer to the specified path name, or the current path
+	 * name if it's null.
+	 * @param view The view
+	 * @param path The path name to save the buffer to
+	 */
+	public boolean save(View view, String path)
+	{
+		if(path == null && newFile)
+			return saveAs(view);
+		if(path != null)
+			setPath(null,path);
+		backup();
+		try
+		{
+			OutputStream out;
+			if(url != null)
+			{
+				URLConnection connection = url.openConnection();
+				out = connection.getOutputStream();
+			}
+			else
+				out = new FileOutputStream(file);
+			if(name.endsWith(".gz"))
+				out = new GZIPOutputStream(out);
+			save(out);
+			saveMarkers();
+			dirty = newFile = readOnly = false;
+			autosaveFile.delete();
+			updateStatus();
+			return true;
+		}
+		catch(IOException io)
+		{
+			Object[] args = { io.toString() };
+			jEdit.error(view,"ioerror",args);
+		}
+		catch(BadLocationException bl)
+		{
+		}
+		return false;
+	}
+	
+	/**
+	 * Prints this buffer.
+	 * @param view The view
+	 */
+	public void print(View view)
+	{
+		PrintJob job = view.getToolkit().getPrintJob(view,name,null);
+		if(job == null)
+			return;
+		int topMargin;
+		int leftMargin;
+		int bottomMargin;
+		int rightMargin;
+		int ppi = job.getPageResolution();
+		try
+		{
+			topMargin = (int)(Float.valueOf(jEdit.props
+				.getProperty("buffer.margin.top")).floatValue()
+				* ppi);
+		}
+		catch(NumberFormatException nf)
+		{
+			topMargin = ppi / 2;
+		}
+		try
+		{
+			leftMargin = (int)(Float.valueOf(jEdit.props
+				.getProperty("buffer.margin.left"))
+				.floatValue() * ppi);
+		}
+		catch(NumberFormatException nf)
+		{
+			leftMargin = ppi / 2;
+		}
+		try
+		{
+			bottomMargin = (int)(Float.valueOf(jEdit.props
+				.getProperty("buffer.margin.bottom"))
+				.floatValue() * ppi);
+		}
+		catch(NumberFormatException nf)
+		{
+			bottomMargin = topMargin;
+		}
+		try
+		{
+			rightMargin = (int)(Float.valueOf(jEdit.props
+				.getProperty("buffer.margin.right"))
+				.floatValue() * ppi);
+		}
+		catch(NumberFormatException nf)
+		{
+			rightMargin = leftMargin;
+		}
+		String header = view.getTitle();
+		Element map = getDefaultRootElement();
+		SyntaxTextArea textArea = view.getTextArea();
+		Graphics gfx = null;
+		Font font = textArea.getFont();
+		int fontHeight = font.getSize();
+		int tabSize = view.getTextArea().getTabSize();
+		Dimension pageDimension = job.getPageDimension();
+		int pageWidth = pageDimension.width;
+		int pageHeight = pageDimension.height;
+		int y = 0;
+loop:		for(int i = 0; i < map.getElementCount(); i++)
+		{
+			if(gfx == null)
+			{
+				gfx = job.getGraphics();
+				gfx.setFont(font);
+				FontMetrics fm = gfx.getFontMetrics();
+				gfx.setColor(Color.lightGray);
+				gfx.fillRect(leftMargin,topMargin,pageWidth
+					- leftMargin - rightMargin,
+					  fm.getMaxAscent()
+					  + fm.getMaxDescent()
+					  + fm.getLeading());
+				gfx.setColor(Color.black);
+				y = topMargin + fontHeight;
+				gfx.drawString(header,leftMargin,y);
+				y += fontHeight;
+			}
+			Element line = map.getElement(i);
+			try
+			{
+				int start = line.getStartOffset();
+				gfx.drawString(jEdit.untab(tabSize,getText(
+					start,line.getEndOffset() - start
+					- 1)),leftMargin,y += fontHeight);
+			}
+			catch(BadLocationException bl)
+			{
+			}
+			if((y > pageHeight - bottomMargin) ||
+				(i == map.getElementCount() - 1))
+			{
+				gfx.dispose();
+				gfx = null;
+			}
+		}
+		job.end();
+	}
+	
+	/**
+	 * Returns the file this buffer is editing.
+	 */
+	public File getFile()
+	{
+		return file;
+	}
+
+	/**
+	 * Returns the autosave file for this buffer.
+	 */
+	public File getAutosaveFile()
+	{
+		return autosaveFile;
+	}
+
+	/**
+	 * Returns the name of this buffer.
+	 */
+	public String getName()
+	{
+		return name;
+	}
+
+	/**
+	 * Returns the path name of this buffer.
+	 */
+	public String getPath()
+	{
+		return path;
+	}
+	
+	/**
+	 * Returns true if this is an untitled file, false otherwise.
+	 */
+	public boolean isNewFile()
+	{
+		return newFile;
+	}
+	
+	/**
+	 * Returns true if this file has changed since last save, false
+	 * otherwise.
+	 */
+	public boolean isDirty()
+	{
+		return dirty;
+	}
+	
+	/**
+	 * Returns true if this file is read only, false otherwise.
+	 */
+	public boolean isReadOnly()
+	{
+		return readOnly;
+	}
+	
+	/**
+	 * Returns this buffer's undo manager.
+	 */
+	public UndoManager getUndo()
+	{
+		return undo;
+	}
+
+	/**
+	 * Returns this buffer's edit mode.
+	 */
+	public Mode getMode()
+	{
+		return mode;
+	}
+	
+	/**
+	 * Returns the localised name of this buffer's edit mode.
+	 */
+	public String getModeName()
+	{
+		return jEdit.cmds.getModeName(mode);
+	}
+	
+	/**
+	 * Sets this buffer's edit mode.
+	 * @param mode The mode
+	 */
+	public void setMode(Mode mode)
+	{
+		if(this.mode != null)
+			this.mode.leave(this);
+		this.mode = mode;
+		if(!init)
+			updateStatus();
+		if(mode != null)
+			mode.enter(this);
+	}
+	
+	/**
+	 * Returns an enumeration of set markers.
+	 */
+	public Enumeration getMarkers()
+	{
+		return markers.elements();
+	}
+	
+	/**
+	 * Adds a marker to this buffer.
+	 * @param name The name of the marker
+	 * @param start The start offset of the marker
+	 * @param end The end offset of this marker
+	 */
+	public void addMarker(String name, int start, int end)
+	{
+		if(readOnly && !init)
+			return;
+		dirty = !init;
+		name = name.replace(';',' ');
+		Marker markerN;
+		try
+		{
+			markerN = new Marker(name,createPosition(start),
+				createPosition(end));
+		}
+		catch(BadLocationException bl)
+		{
+			return;
+		}
+		for(int i = 0; i < markers.size(); i++)
+		{
+			Marker marker = (Marker)markers.elementAt(i);
+			if(marker.getName().equals(name))
+			{
+				markers.removeElementAt(i);
+				break;
+			}
+		}
+		markers.addElement(markerN);
+		if(!init)
+			updateMarkers();
+	}
+
+	/**
+	 * Returns the marker with the specified name.
+	 * @param name The marker name
+	 */
+	public Marker getMarker(String name)
+	{
+		Enumeration enum = getMarkers();
+		while(enum.hasMoreElements())
+		{
+			Marker marker = (Marker)enum.nextElement();
+			if(marker.getName().equals(name))
+				return marker;
+		}
+		return null;
+	}
+
+	// event handlers
+	public void undoableEditHappened(UndoableEditEvent evt)
+	{
+		undo.addEdit(evt.getEdit());
+	}
+
+	public void insertUpdate(DocumentEvent evt)
+	{
+		dirty();
+	}
+
+	public void removeUpdate(DocumentEvent evt)
+	{
+		dirty();
+	}
+
+	public void changedUpdate(DocumentEvent evt)
+	{
+		dirty();
+	}
+
+	// package-private methods
+	Buffer(String parent, String path, boolean readOnly, boolean newFile)
+	{
+		init = true;
 		undo = new UndoManager();
 		markers = new Vector();
 		this.newFile = newFile;
-		init = true;
-		setPath(parent,path);
 		this.readOnly = readOnly;
+		setPath(parent,path);
 		if(!newFile)
 		{
 			if(file.exists())
@@ -94,33 +640,65 @@ implements DocumentListener, UndoableEditListener
 		}
 		addDocumentListener(this);
 		addUndoableEditListener(this);
-		updateStatus();
 		updateMarkers();
+		caretInfo = new int[4];
 		init = false;
 	}
+	
+	void setCaretInfo(int scrollH, int scrollV, int selStart,
+		int selEnd)
+	{
+		caretInfo[0] = scrollH;
+		caretInfo[1] = scrollV;
+		caretInfo[2] = selStart;
+		caretInfo[3] = selEnd;
+	}
+
+	int[] getCaretInfo()
+	{
+		return caretInfo;
+	}
+	
+	// private methods
+	private File file;
+	private File autosaveFile;
+	private File markersFile;
+	private URL url;
+	private URL markersUrl;
+	private String name;
+	private String path;
+	private boolean init;
+	private boolean newFile;
+	private boolean dirty;
+	private boolean readOnly;
+	private Mode mode;
+	private UndoManager undo;
+	private Vector markers;
+	private int[] caretInfo;
 
 	private void load()
 	{
+		InputStream in;
+		URLConnection connection = null;
+		StringBuffer buf = new StringBuffer();
 		try
 		{
-			InputStream in;
-			URLConnection connection = null;
+			
 			if(url != null)
 				in = url.openStream();
 			else
 				in = new FileInputStream(file);
 			if(name.endsWith(".gz"))
 				in = new GZIPInputStream(in);
-			BufferedReader r = new BufferedReader(new
+			BufferedReader bin = new BufferedReader(new
 				InputStreamReader(in));
-			StringBuffer buf = new StringBuffer();
 			String line;
-			while((line = r.readLine()) != null)
+			while ((line = bin.readLine()) != null)
 			{
 				buf.append(line);
 				buf.append('\n');
 			}
-			r.close();
+			bin.close();
 			insertString(0,buf.toString(),null);
 			newFile = false;
 		}
@@ -136,8 +714,6 @@ implements DocumentListener, UndoableEditListener
 		}
 		catch(BadLocationException bl)
 		{
-			Object[] args = { bl.toString() };
-			jEdit.error(null,"error",args);
 		}
 	}
 
@@ -220,134 +796,6 @@ implements DocumentListener, UndoableEditListener
 		}
 	}
 
-	public void find(View view)
-	{
-		new SearchAndReplace(view);
-	}
-	
-	public boolean find(View view, String str, boolean done)
-	{
-		try
-		{
-			boolean ignoreCase = "on".equals(jEdit.props
-				.getProperty("ignoreCase"));
-			if(ignoreCase)
-				str = str.toLowerCase();
-			char[] pattern = str.toCharArray();
-			Element map = getDefaultRootElement();
-			int lines = map.getElementCount();
-			int caret = view.getTextArea().getSelectionEnd();
-			int startLine = map.getElementIndex(caret);
-			int startOff = caret - map.getElement(startLine)
-				.getStartOffset();
-			for(int i = startLine; i < lines; i++)
-			{
-				Element lineElement = map.getElement(i);
-				int start = lineElement.getStartOffset();
-				String lineString = getText(start,lineElement
-					.getEndOffset() - start);
-				if(ignoreCase)
-					lineString = lineString.toLowerCase();
-				char[] line = lineString.toCharArray();
-				int offset = jEdit.find(pattern,line,startOff);
-				if(offset != -1)
-				{
-					offset += start;
-					view.getTextArea().select(offset,
-						offset + pattern.length);
-					return true;
-				}
-				startOff = 0;
-			}
-		}
-		catch(BadLocationException bl)
-		{
-			Object[] args = { bl.toString() };
-			jEdit.error(view,"error",args);
-		}
-		if(done)
-		{
-			view.getToolkit().beep();
-			return false;
-		}
-		int result = JOptionPane.showConfirmDialog(view,
-			jEdit.props.getProperty("keepsearching.message"),
-			jEdit.props.getProperty("keepsearching.title"),
-			JOptionPane.YES_NO_OPTION,
-			JOptionPane.QUESTION_MESSAGE);
-		if(result == JOptionPane.YES_OPTION)
-		{
-			view.getTextArea().setCaretPosition(0);
-			return find(view,str,true);
-		}
-		else
-			return false;
-	}
-
-	public boolean findNext(View view)
-	{
-		String findStr = jEdit.props.getProperty("lastfind");
-		if(findStr == null || "".equals(findStr))
-		{
-			view.getToolkit().beep();
-			return false;
-		}
-		else
-			return find(view,findStr,false);
-	}
-
-	public void replace(View view)
-	{
-		String replaceStr = jEdit.props.getProperty("lastreplace");
-		if(replaceStr == null)
-			view.getToolkit().beep();
-		else
-			view.getTextArea().replaceSelection(replaceStr);
-	}
-
-	public void replaceAll(View view)
-	{
-		String findStr = jEdit.props.getProperty("lastfind");
-		String replaceStr = jEdit.props.getProperty("lastreplace");
-		JTextArea textArea = view.getTextArea();
-		if(findStr == null || replaceStr == null || "".equals(findStr))
-		{
-			view.getToolkit().beep();
-			return;
-		}
-		else
-		{
-			while(find(view,findStr,false))
-				textArea.replaceSelection(replaceStr);
-		}
-	}
-	
-	public void hypersearch(View view)
-	{
-		new HyperSearch(view);
-	}
-	
-	public void wordCount(View view)
-	{
-		if(view != null)
-		{
-			String selection = view.getTextArea()
-				.getSelectedText();
-			if(selection != null)
-			{
-				wordCount(view,selection);
-				return;
-			}
-		}
-		try
-		{
-			wordCount(view,getText(0,getLength()));
-		}
-		catch(BadLocationException bl)
-		{
-		}
-	}
-	
 	private void wordCount(View view, String text)
 	{
 		char[] chars = text.toCharArray();
@@ -379,160 +827,20 @@ implements DocumentListener, UndoableEditListener
 		}
 		Object[] args = { new Integer(characters), new Integer(words),
 			new Integer(lines) };
-		jEdit.message(view,"word_count",args);
+		jEdit.message(view,"wordcount",args);
 	}
 
-	public void execute(View view)
-	{
-		String cmd = jEdit.input(view,"execute","lastcmd");
-		if(cmd != null)
-			execute(view,cmd);
-	}
-
-	public void execute(View view, String cmd)
-	{
-		StringBuffer buf = new StringBuffer();
-		for(int i = 0; i < cmd.length(); i++)
-		{
-			switch(cmd.charAt(i))
-			{
-			case '%':
-				if(i != cmd.length() - 1)
-				{
-					switch(cmd.charAt(++i))
-					{
-					case 'u':
-						buf.append(path);
-						break;
-					case 'p':
-						buf.append(file.getPath());
-						break;
-					default:
-						buf.append('%');
-						break;
-					}
-					break;
-				}
-			default:
-				buf.append(cmd.charAt(i));
-			}
-		}
-		try
-		{
-			Runtime.getRuntime().exec(buf.toString());
-		}
-		catch(IOException io)
-		{
-			Object[] error = { io.toString() };
-			jEdit.error(view,"ioerror",error);
-		}
-	}
-
-	public void send(View view)
-	{
-		new SendDialog(view);
-	}
-
-	public void autosave()
-	{
-		if(dirty)
-		{
-			try
-			{
-				save(new FileOutputStream(autosaveFile));
-			}
-			catch(Exception e)
-			{
-				System.err.println("Error during autosave:");
-				e.printStackTrace();
-			}
-		}
-	}
-	
-	public boolean save(View view)
-	{
-		return save(view,null);
-	}
-	
-	public boolean saveAs(View view)
-	{
-		FileDialog fileDialog = new FileDialog(view,jEdit.props
-			.getProperty("savefile.title"),FileDialog.LOAD);
-		String parent = getFile().getParent();
-		if(parent != null)
-			fileDialog.setDirectory(parent);
-		fileDialog.setFile(name);
-		fileDialog.show();
-		String file = fileDialog.getFile();
-		if(file == null)
-			return false;
-		else
-			return save(view,fileDialog.getDirectory() + file);
-		
-	}
-
-	public boolean saveToURL(View view)
-	{
-		String path = jEdit.input(view,"saveurl","lasturl");
-		if(path != null)
-			return save(view,path);
-		return false;
-	}
-
-	public boolean save(View view, String path)
-	{
-		if(path == null)
-		{
-			if(newFile)
-				return saveAs(view);
-			else
-				path = this.path;
-		}
-		setPath(path);
-		backup();
-		try
-		{
-			OutputStream out;
-			if(url != null)
-			{
-				URLConnection connection = url.openConnection();
-				out = connection.getOutputStream();
-			}
-			else
-				out = new FileOutputStream(file);
-			if(name.endsWith(".gz"))
-				out = new GZIPOutputStream(out);
-			save(out);
-			saveMarkers();
-			dirty = newFile = readOnly = false;
-			autosaveFile.delete();
-			updateStatus();
-			return true;
-		}
-		catch(IOException io)
-		{
-			Object[] args = { io.toString() };
-			jEdit.error(view,"ioerror",args);
-		}
-		catch(Exception e)
-		{
-			Object[] args = { e.toString() };
-			jEdit.error(view,"error",args);
-		}
-		return false;
-	}
-	
 	private void save(OutputStream out)
-		throws Exception
+		throws IOException, BadLocationException
 	{
 		save(new OutputStreamWriter(out));
 	}
 
 	private void save(Writer out)
-		throws Exception
+		throws IOException, BadLocationException
 	{
-		String newline = jEdit.props.getProperty("line.separator",
-			System.getProperty("line.separator"));
+		String newline = jEdit.props.getProperty("buffer.line."
+			+ "separator",System.getProperty("line.separator"));
 		Element map = getDefaultRootElement();
 		for(int i = 0; i < map.getElementCount();)
 		{
@@ -583,7 +891,7 @@ implements DocumentListener, UndoableEditListener
 		try
 		{
 			backups = Integer.parseInt(jEdit.props.getProperty(
-				"backups"));
+				"buffer.backup.count"));
 		}
 		catch(NumberFormatException nf)
 		{
@@ -607,7 +915,7 @@ implements DocumentListener, UndoableEditListener
 		}
 		file.renameTo(backup);
 	}
-	
+
 	private void updateStatus()
 	{
 		Enumeration enum = jEdit.buffers.getViews();
@@ -619,138 +927,7 @@ implements DocumentListener, UndoableEditListener
 		}
 	}
 
-	public void print(View view)
-	{
-		PrintJob job = view.getToolkit().getPrintJob(view,name,null);
-		if(job == null)
-			return;
-		int topMargin;
-		int leftMargin;
-		int bottomMargin;
-		int rightMargin;
-		int ppi = job.getPageResolution();
-		try
-		{
-			topMargin = (int)(Float.valueOf(jEdit.props
-				.getProperty("margin.top")).floatValue()
-				* ppi);
-		}
-		catch(NumberFormatException nf)
-		{
-			topMargin = ppi / 2;
-		}
-		try
-		{
-			leftMargin = (int)(Float.valueOf(jEdit.props
-				.getProperty("margin.left")).floatValue()
-				* ppi);
-		}
-		catch(NumberFormatException nf)
-		{
-			leftMargin = ppi / 2;
-		}
-		try
-		{
-			bottomMargin = (int)(Float.valueOf(jEdit.props
-				.getProperty("margin.bottom")).floatValue()
-				* ppi);
-		}
-		catch(NumberFormatException nf)
-		{
-			bottomMargin = topMargin;
-		}
-		try
-		{
-			rightMargin = (int)(Float.valueOf(jEdit.props
-				.getProperty("margin.right")).floatValue()
-				* ppi);
-		}
-		catch(NumberFormatException nf)
-		{
-			rightMargin = leftMargin;
-		}
-		String header;
-		if(url != null)
-			header = "jEdit: " + url;
-		else
-			header = "jEdit: " + getPath();
-		Element map = getDefaultRootElement();
-		JTextArea textArea = view.getTextArea();
-		Graphics gfx = null;
-		Font font = textArea.getFont();
-		int fontHeight = font.getSize();
-		int tabSize = view.getTextArea().getTabSize();
-		Dimension pageDimension = job.getPageDimension();
-		int pageWidth = pageDimension.width;
-		int pageHeight = pageDimension.height;
-		int y = 0;
-loop:		for(int i = 0; i < map.getElementCount(); i++)
-		{
-			if(gfx == null)
-			{
-				gfx = job.getGraphics();
-				gfx.setFont(font);
-				FontMetrics fm = gfx.getFontMetrics();
-				gfx.setColor(Color.lightGray);
-				gfx.fillRect(leftMargin,topMargin,pageWidth
-					- leftMargin - rightMargin,
-					  fm.getMaxAscent()
-					  + fm.getMaxDescent()
-					  + fm.getLeading());
-				gfx.setColor(Color.black);
-				y = topMargin + fontHeight;
-				gfx.drawString(header,leftMargin,y);
-				y += fontHeight;
-			}
-			Element line = map.getElement(i);
-			try
-			{
-				int start = line.getStartOffset();
-				gfx.drawString(jEdit.untab(tabSize,getText(
-					start,line.getEndOffset() - start
-					- 1)),leftMargin,y += fontHeight);
-			}
-			catch(BadLocationException bl)
-			{
-				Object [] arg = { bl.toString() };
-				jEdit.error(view,"error",arg);
-			}
-			if((y > pageHeight - bottomMargin) ||
-				(i == map.getElementCount() - 1))
-			{
-				gfx.dispose();
-				gfx = null;
-			}
-		}
-		job.end();
-	}
-	
-	public File getFile()
-	{
-		return file;
-	}
-
-	public File getAutosaveFile()
-	{
-		return autosaveFile;
-	}
-
-	public String getName()
-	{
-		return name;
-	}
-
-	public String getPath()
-	{
-		return path;
-	}
-	
-	public void setPath(String path)
-	{
-		setPath(null,path);
-	}
-
-	public void setPath(String parent, String path)
+	private void setPath(String parent, String path)
 	{
 		if(path.startsWith(File.separator))
 			parent = null;
@@ -772,10 +949,10 @@ loop:		for(int i = 0; i < map.getElementCount(); i++)
 				file = new File(name);
 			else
 				file = new File(parent,name);
-			System.out.println(name);
+			name = file.getName();
 			markersUrl = new URL(url,'.' + new File(name)
 				.getName() + ".marks");
-			name = file.getName();
+			this.path = path;
 		}
 		catch(MalformedURLException mu)
 		{
@@ -783,100 +960,34 @@ loop:		for(int i = 0; i < map.getElementCount(); i++)
 				file = new File(path);
 			else
 				file = new File(parent,path);
-			try
-			{
-				this.path = file.getCanonicalPath();
-			}
-			catch(IOException io)
-			{
-				this.path = file.getPath();
-			}
 			name = file.getName();
 			markersFile = new File(file.getParent(),'.' + name
 				+ ".marks");
+			if(newFile)
+				this.path = name;
+			else
+			{
+				try
+				{
+					this.path = file.getCanonicalPath();
+				}
+				catch(IOException io)
+				{
+					this.path = file.getPath();
+				}
+			}
 		}
 		autosaveFile = new File(file.getParent(),'#' + name + '#');
-	}
-	
-	public boolean isNewFile()
-	{
-		return newFile;
-	}
-	
-	public boolean isDirty()
-	{
-		return dirty;
-	}
-	
-	public boolean isReadOnly()
-	{
-		return readOnly;
-	}
-	
-	public UndoManager getUndo()
-	{
-		return undo;
-	}
-
-	public Enumeration getMarkers()
-	{
-		return markers.elements();
-	}
-	
-	public void addMarker(String name, int start, int end)
-		throws BadLocationException
-	{
-		if(readOnly && !init)
-			throw new RuntimeException();
-		dirty = !init;
-		name = name.replace(';',' ');
-		Marker markerN = new Marker(name,createPosition(start),
-			createPosition(end));
-		for(int i = 0; i < markers.size(); i++)
+		String nogzName = name.substring(0,name.length() -
+			(name.endsWith(".gz") ? 3 : 0));
+		int index = nogzName.lastIndexOf('.');
+		if(mode == null)
 		{
-			Marker marker = (Marker)markers.elementAt(i);
-			if(marker.getName().equals(name))
-			{
-				markers.removeElementAt(i);
-				break;
-			}
-		}
-		markers.addElement(markerN);
-		if(!init)
-			updateMarkers();
-	}
-
-	public int[] getMarker(String name)
-	{
-		int[] retVal = new int[2];
-		Enumeration enum = getMarkers();
-		while(enum.hasMoreElements())
-		{
-			Marker marker = (Marker)enum.nextElement();
-			if(marker.getName().equals(name))
-			{
-				retVal[0] = marker.getStart();
-				retVal[1] = marker.getEnd();
-				return retVal;
-			}
-		}
-		return null;
-	}
-
-	public void removeMarker(String name)
-	{
-		if(readOnly)
-			throw new RuntimeException();
-		dirty = !init;
-		for(int i = 0; i < markers.size(); i++)
-		{
-			Marker marker = (Marker)markers.elementAt(i);
-			if(marker.getName().equals(name))
-			{
-				markers.removeElementAt(i);
-				updateMarkers();
-				return;
-			}
+			Mode modeN = jEdit.cmds.getMode(jEdit.props
+				.getProperty("mode.".concat(nogzName.substring(
+					index + 1))));
+			if(modeN != null)
+				setMode(modeN);
 		}
 	}
 
@@ -894,6 +1005,23 @@ loop:		for(int i = 0; i < map.getElementCount(); i++)
 		}
 	}
 
+	public void removeMarker(String name)
+	{
+		if(readOnly)
+			return;
+		dirty = !init;
+		for(int i = 0; i < markers.size(); i++)
+		{
+			Marker marker = (Marker)markers.elementAt(i);
+			if(marker.getName().equals(name))
+			{
+				markers.removeElementAt(i);
+				updateMarkers();
+				return;
+			}
+		}
+	}
+
 	private void dirty()
 	{
 		if(!(dirty || readOnly))
@@ -901,25 +1029,5 @@ loop:		for(int i = 0; i < map.getElementCount(); i++)
 			dirty = !init;
 			updateStatus();
 		}
-	}
-	
-	public void undoableEditHappened(UndoableEditEvent evt)
-	{
-		undo.addEdit(evt.getEdit());
-	}
-
-	public void insertUpdate(DocumentEvent evt)
-	{
-		dirty();
-	}
-
-	public void removeUpdate(DocumentEvent evt)
-	{
-		dirty();
-	}
-
-	public void changedUpdate(DocumentEvent evt)
-	{
-		dirty();
 	}
 }

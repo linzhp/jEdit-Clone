@@ -21,23 +21,16 @@ import java.util.Hashtable;
 
 public class Cmd_find_selection implements Command
 {
-	public Object init(Hashtable args)
+	public void exec(Buffer buffer, View view, String arg, Hashtable args)
 	{
-		return null;
-	}
-
-	public Object exec(Hashtable args)
-	{
-		View view = (View)args.get(VIEW);
-		if(view != null)
+		String selection = view.getTextArea()
+			.getSelectedText();
+		if(selection != null)
 		{
-			String selection = view.getTextArea()
-				.getSelectedText();
-			if(selection != null)
-				view.getBuffer().find(view,selection,false);
-			else
-				view.getToolkit().beep();
+			jEdit.props.put("search.find.value",selection);
+			buffer.find(view,false);
 		}
-		return null;
+		else
+			view.getToolkit().beep();
 	}
 }

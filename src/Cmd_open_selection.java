@@ -22,19 +22,13 @@ import java.util.Hashtable;
 
 public class Cmd_open_selection implements Command
 {
-	public Object init(Hashtable args)
+	public void exec(Buffer buffer, View view, String arg, Hashtable args)
 	{
-		return null;
-	}
-
-	public Object exec(Hashtable args)
-	{
-		View view = (View)args.get(VIEW);
 		String selection = view.getTextArea().getSelectedText();
 		if(selection == null)
 			view.getToolkit().beep();
 		else
-			jEdit.buffers.openFile(view,selection);
-		return null;
+			jEdit.buffers.openFile(view,null,selection,false,
+				false);
 	}
 }

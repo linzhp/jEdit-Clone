@@ -17,23 +17,19 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.InputStreamReader;
-import java.io.IOException;
-import java.net.InetAddress;
-import java.net.ServerSocket;
-import java.net.Socket;
+import java.io.*;
+import java.net.*;
+import java.util.Random;
 
 public class Server extends Thread
 {
 	private File portFile;
 	private ServerSocket server;
+	private long authInfo;
 
 	public Server(File portFile)
 	{
-		super("***jEdit server***");
+		super("***jEdit server thread***");
 		this.portFile = portFile;
 		start();
 	}
@@ -42,21 +38,47 @@ public class Server extends Thread
 	{
 		if(portFile.exists())
 		{
-			System.out.println("jEdit server already running");
-			return;
+			// Maybe the server crashed?
+			try
+			{
+				BufferedReader in = new BufferedReader(
+					new FileReader(portFile));
+				Socket socket = new Socket("localhost",
+					Integer.parseInt(in.readLine()));
+				DataOutputStream out = new DataOutputStream(
+					socket.getOutputStream());
+				out.writeBytes(in.readLine());
+				socket.close();
+				in.close();
+				System.out.println("jEdit server already"
+					+ " running");
+				return;
+			}
+			catch(Exception e)
+			{
+				System.out.println("Stale port file deleted");
+			}
 		}
 		try
 		{
 			server = new ServerSocket(0);
 			int port = server.getLocalPort();
-			FileWriter out = new FileWriter(portFile);
+			
+			Random random = new Random();
+			authInfo = Math.abs(random.nextLong());
+			
+			BufferedWriter out = new BufferedWriter(
+				new FileWriter(portFile));
 			out.write(String.valueOf(port));
+			out.write('\n');
+			out.write(String.valueOf(authInfo));
+			out.write('\n');
 			out.close();
 			for(;;)
 			{
 				Socket client = server.accept();
-				InetAddress addr = client.getInetAddress();
-				System.out.println("Connection from " + addr);
+				System.out.println("Connection from "
+					+ client.getInetAddress());
 				doClient(client);
 			}
 		}
@@ -68,12 +90,22 @@ public class Server extends Thread
 
 	private void doClient(Socket client)
 	{
-		View view = jEdit.buffers.newView();
+		View view = null;
+		String authString = null;
 		try
 		{
 			BufferedReader in =
-				new BufferedReader(new InputStreamReader(client
-					.getInputStream()));
+				new BufferedReader(new InputStreamReader(
+					client.getInputStream()));
+			authString = in.readLine();
+			long auth = Long.parseLong(authString);
+			if(auth != authInfo)
+			{
+				System.err.println("Invalid authInfo: "
+					+ auth);				
+				client.close();
+				return;
+			}
 			String filename;
 			String cwd = "";
 			boolean endOpts = false;
@@ -89,16 +121,25 @@ public class Server extends Thread
 					else if(filename.startsWith("-cwd="))
 						cwd = filename.substring(5);
 				}
-				else if(filename.length() != 0)
+				else
 				{
-					jEdit.buffers.openFile(view,cwd,
-						filename,readOnly,false);
+					if(view == null)
+						view = jEdit.buffers
+							.newView(null);
+					if(filename.length() != 0)
+						jEdit.buffers.openFile(view,
+							cwd,filename,readOnly,
+							false);
 				}
 			}
 		}
-		catch(IOException io)
+		catch(NumberFormatException nf)
 		{
-			io.printStackTrace();
+			System.err.println("Invalid auth info: " + authString);
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
 		}
 		try
 		{

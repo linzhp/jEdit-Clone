@@ -22,19 +22,11 @@ import java.util.Hashtable;
 
 public class Cmd_help implements Command
 {
-	public Object init(Hashtable args)
+	public void exec(Buffer buffer, View view, String arg, Hashtable args)
 	{
-		return null;
-	}
-
-	public Object exec(Hashtable args)
-	{
-		String arg = (String)args.get(ARG);
 		if(arg == null)
 			arg = "index.txt";
-		View view = (View)args.get(VIEW);
-		jEdit.buffers.openFile(view,jEdit.props.getProperty("helpdir")
-			+ File.separator + arg);
-		return null;
+		jEdit.buffers.openFile(view,System.getProperty("jedit.home")
+			+ File.separator + "doc",arg,false,false);
 	}
 }

@@ -17,36 +17,45 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
 import java.text.MessageFormat;
 import java.util.Properties;
 
+/**
+ * The properties manager.
+ * <p>
+ * Only one instance of the properties manager exists. It is stored in
+ * <code>jEdit.props</code>.
+ * <p>
+ * The properties manager is a subclass of <code>java.util.Properties</code>,
+ * so it supports all methods defined there. In addition, it defines an
+ * enhanced <code>getProperty</code> method, and methods for loading and
+ * saving property files.
+ * @see jEdit#props
+ * @see #getProperty(String,Object[])
+ * @see #loadProps(InputStream,String,boolean)
+ * @see #saveProps(OutputStream,String)
+ */
 public class PropsMgr extends Properties
 {
+	// public members
+	
+	/**
+	 * The path name of the user properties file.
+	 */
 	public static final String USER_PROPS = System.getProperty("user.home")
 		+ File.separator + ".jedit-props";
 	
-	public void loadSystemProps()
-	{
-		if(!loadProps(getClass().getResourceAsStream("/properties"),
-			"properties",true))
-		{
-			System.err.println("Error loading properties!");
-			System.exit(1);
-		}
-	}
-
-	public void loadUserProps()
-	{
-		loadProps(null,USER_PROPS,false);
-	}
-	
+	/**
+	 * Loads properties.
+	 * The properties are loaded from the specified input stream, or if
+	 * it's null, from the file named <code>name</code>.
+	 * @param in The input stream to load the properties from
+	 * @param name The name of the file to load the properties from if
+	 * <code>in</code> is null
+	 * @return True if the properties were loaded, false if an error
+	 * occured
+	 */
 	public boolean loadProps(InputStream in, String name, boolean defaults)
 	{
 		try
@@ -74,6 +83,13 @@ public class PropsMgr extends Properties
 		return false;
 	}
 
+	/**
+	 * Returns a property.
+	 * The <code>MessageFormat</code> class is used to format the message
+	 * with <code>args</code> as the positional parameters.
+	 * @param name The name of the property
+	 * @param args The positional parameters
+	 */
 	public String getProperty(String name, Object[] args)
 	{
 		if(args == null)
@@ -83,17 +99,16 @@ public class PropsMgr extends Properties
 				args);
 	}
 
-	public String setDefault(String name, String value)
-	{
-		if(defaults == null)
-			defaults = new Properties();
-		return (String)defaults.put(name,value);
-	}
-	public boolean saveUserProps()
-	{
-		return saveProps(null,USER_PROPS);
-	}
-	
+	/**
+	 * Saves properties not in the defaults list.
+	 * The properties are saved to the specified output stream, or if
+	 * it's null, to the file named <code>name</code>.
+	 * @param out The output stream to save the properties to
+	 * @param name The name of the file to save the properties to if
+	 * <code>out</code> is null
+	 * @return True if the properties were saved, false if an error
+	 * occured
+	 */
 	public boolean saveProps(OutputStream out, String name)
 	{
 		try
@@ -111,5 +126,36 @@ public class PropsMgr extends Properties
 		}
 
 		return false;
+	}
+
+	// package-private methods
+	PropsMgr() {}
+	
+	void loadSystemProps()
+	{
+		if(loadProps(null,System.getProperty("jedit.home",".")
+			+ File.separator + "jedit.props",true))
+			return;
+		System.err.println();
+		System.err.println(">> ERROR LOADING SYSTEM PROPERTIES <<");
+		System.err.println("If jEdit is being started with the");
+		System.err.println("supplied shell script or batch file,");
+		System.err.println("try reinstalling it.");
+		System.err.println();
+		System.err.println("Otherwise, pass the -Djedit.home=<dir>");
+		System.err.println("option to the Java virtual machine,");
+		System.err.println("<dir> being the jEdit directory.");
+		System.err.println();
+		System.exit(1);
+	}
+
+	void loadUserProps()
+	{
+		loadProps(null,USER_PROPS,false);
+	}
+	
+	boolean saveUserProps()
+	{
+		return saveProps(null,USER_PROPS);
 	}
 }

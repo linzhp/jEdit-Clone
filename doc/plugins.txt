@@ -1,4 +1,4 @@
-JEDIT PLUGINS (plugins.txt, last modified 7 Nov 1998)
+JEDIT PLUGINS (plugins.txt, last modified 14 Nov 1998)
 
 Contents
 --------
@@ -7,6 +7,12 @@ Contents
 3. Using Plugins
 4. Developing Plugins
 5. Creating a Simple Plugin
+5.1 Create the Source File
+5.2 Compile the Source File
+5.3 Create the Properties File
+5.4 Install it
+5.5 Test it
+
 
 1. Introduction
 ---------------
@@ -20,11 +26,10 @@ Plugins are distributed as JAR files. They have a .jar extension.
 Plugins can be installed in one of two directories - the system plugin
 directory and the user plugin directory. Plugins in the system directory
 can be used by all users on the system. Plugins in a user's plugin directory
-can only be used by that user.
+can only be used by the respective user.
 
-On Unix, the system plugin directory (assuming that you didn't change any
-installation variables) is /opt/slava/share/jedit-1.0.1/jars. Each user has
-a plugin directory in $HOME/.jedit-jars.
+On Unix, the system plugin directory is /opt/slava/share/jedit-1.1.2/jars,
+Each user has a plugin directory in $HOME/.jedit-jars.
 
 On Windows 95 and 98, the system plugin directory is
 C:\Program Files\jEdit\jars. The user plugin directory is
@@ -37,22 +42,12 @@ Windows 95/98, but each user has a plugin directory in %HOME%\.jedit-jars.
 ----------------
 Once a plugin is installed, jEdit will say so during startup.
 
-	Loading plugin /opt/slava/share/jedit-1.0.1/jars/reverse.jar
-	Loading plugin /opt/slava/share/jedit-1.0.1/jars/rot13.jar
+	Loading plugin /opt/slava/share/jedit-1.1.2/jars/reverse.jar
+	Loading plugin /opt/slava/share/jedit-1.1.2/jars/rot13.jar
 
 If all goes well during startup, the plugins should also appear in the 
 `Plugins' menu. If a newly installed plugin doesn't appear to be loaded, check
-that it's in the correct directory and that it's a JAR file. A message such as
-this indicates that the plugin is corrupted:
-
-	Loading plugin /opt/slava/share/jedit-1.0.1/jars/rot13.jar
-	java.util.zip.ZipException: not a ZIP file (END header not found)
-		at java.util.zip.ZipFile.findEND(ZipFile.java)
-		at java.util.zip.ZipFile.readCEN(ZipFile.java)
-		at java.util.zip.ZipFile.<init>(ZipFile.java)
-		at CommandMgr.loadJar(CommandMgr.java:63)
-		at CommandMgr.loadPlugins(CommandMgr.java:52)
-		at jEdit.main(jEdit.java:95)
+that it's in the correct directory and that it's a JAR file.
 
 If a plugin doesn't appear in the plugins menu but a `Loading...' message is
 printed, the plugin might be incompatible with your version of jEdit.
@@ -67,25 +62,42 @@ property file format. Any property files in a plugin are loaded by the
 jEdit property manager automatically.
 
 Class entries have a .class extension. The jEdit command manager loads any
-classes in a plugin automatically. Classes which implement the `Command'
-interface and have a name prefixed with `Cmd_' are added to the plugins menu.
-To find out how to give the plugin's menu item a label, see menus.txt.
+classes in a plugin automatically.
 
-The Command interface defines the following methods:
+Classes which implement the `Command' interface and have a name prefixed with
+`Cmd_' are added to the plugins menu. To find out how to give the plugin's
+menu item a label, see menus.txt.
 
-- public Object init(Hashtable args);
-  This method is called when the plugin is loaded. `args' is a Hashtable
-  which may be used to pass parameters in the future. At the moment, it's
-  always empty. The return value is also unused - it should be null.
-  
-- public Object exec(Hashtable args)
-  This method is called when the plugin is selected from the menu. `args'
-  is a Hashtable used to pass parameters. At the moment, the only parameter
-  applicable to plugins is stored at the `Command.VIEW' key. It's the view
-  that was active when the plugin was invoked. As with init(), the return
-  value is unused. For forward compatibility, it should be null.
+The Command interface defines the following method:
 
-- A public constructor which accepts no arguments must also be defined.
+- public void exec(Buffer buffer, View view, String arg, Hashtable args)
+  This method is called when the plugin is selected from the menu.
+
+  buffer - the current buffer
+  view - the current view
+  arg - only used in internal commands, not in plugins
+  args - reserved for additional parameters which might be used in the future
+
+A public constructor which accepts no parameters must also be defined.
+
+Classes which implement the `Mode' interface and have a name prefixed with
+`Mode_' are added to the modes menu. The mode's name should be defined in the
+`modename.<class name without Mode_ prefix>' property. To create an extension
+to mode name mapping, define a property named `mode.<file extension>' with the
+mode name as the value.
+
+The Mode interface defines the following method:
+
+- public boolean indentLine(Buffer buffer, int caret)
+  This method is called when auto indent is enabled and the tab key is
+  pressed. It should indent the line of the caret position accordingly.
+  If no indentation is required, it should return false. This will cause
+  a normal tab to be inserted.
+
+A public constructor which accepts no parameters must also be defined.
+
+Javadoc generated API documentation for jEdit can be found in the doc/api
+directory in the jEdit distribution.
 
 5. Creating a Simple Plugin
 ---------------------------
@@ -94,8 +106,8 @@ plugin.
 
 You will need a java compiler and the jar tool to follow this example.
 
-Step 1 - Create the source file
-
+5.1 Create the Source File
+--------------------------
 Create a file, Cmd_SimplePlugin.java, with the following in it:
 
 // Simple jEdit plugin
@@ -103,37 +115,26 @@ import java.util.Hashtable;
 
 public class Cmd_SimplePlugin implements Command
 {
-	public Object init(Hashtable args)
+	// Constructor
+	public Cmd_SimplePlugin
 	{
-	/** this method is called when the plugin is loaded */
-		System.out.println("Hello from SimplePlugin.init()!");
-	/** the return value is ignored at the moment, so return null */
-		return null;
 	}
 	
-	public Object exec(Hashtable args)
+	// Called when plugin is executed
+	public void exec(Buffer buffer, View view, String arg, Hashtable args)
 	{
-	/** this method is called when the plugin is invoked */
-	/** args contains one key - VIEW, which is the current view */
 		System.out.println("Hello from SimplePlugin.exec()!");
-	/** replace the selection in the current view with `hello!!!' */
-		View view = (View)args.get(VIEW);
 		view.getTextArea().replaceSelection("hello!!!");
-	}
-	
-	public SimplePlugin()
-	{
-	/** Constructor, required for command to work */
 	}
 }
 
 // End of Cmd_SimplePlugin.java
 
-Step 2 - Compile the source file
-
+5.2 Compile the Source File
+---------------------------
 Use the javac compiler to compile the source file. On Unix, do:
 
-	javac -classpath $CLASSPATH:/opt/slava/share/jedit-1.0.1/jedit.jar \
+	javac -classpath $CLASSPATH:/opt/slava/share/jedit-1.1.2/jedit.jar \
 		Cmd_SimplePlugin.java
 
 On Windows 95 98 and NT, do:
@@ -152,8 +153,8 @@ An error such as this during compilation means that the classpath is wrong:
 
 If all goes well, go onto the next step.
 
-Step 3 - Create the properties file
-
+5.3 Create the Properties File
+------------------------------
 Create a file, SimplePlugin.props, with the following in it:
 
 # SimplePlugin.props: properties for simple plugin
@@ -163,17 +164,18 @@ SimplePlugin.label=Simple Plugin
 
 # End of SimplePlugin.props
 
-Step 4 - Create the JAR file
-
+5.4 Create the JAR File
+-----------------------
 Use the jar tool to create the JAR file:
 
 	jar cf0 SimplePlugin.jar Cmd_SimplePlugin.class SimplePlugin.props
 
-There should now be a file called SimplePlugin.jar. It is the finished
-plugin. Note that the first parameter is c-f-zero, not c-f-capital-o.
+Note that the first parameter is c-f-zero, not c-f-capital-o.
 
-Step 4 - Install the test plugin
+There should now be a file called SimplePlugin.jar. It is the finished plugin. 
 
+5.5 Install it
+--------------
 Install the plugin in your personal plugins directory. On Unix:
 
 	mkdir $HOME/.jedit-jars
@@ -189,12 +191,11 @@ On Windows NT:
 	md %HOME%\.jedit-jars
 	copy SimplePlugin.jar %HOME%\.jedit-jars
 
-Step 5 - Test it!
-
+5.5 Test it
+-----------
 Start jEdit. A message such as this should be printed:
 
 	Loading plugin /home/slava/.jedit-jars/SimplePlugin.jar
-	Hello from SimplePlugin.init()!
 
 The plugin should also appear in the Plugins menu. Select it. It should output
 `Hello from SimplePlugin.exec()!' and replace the current selection with

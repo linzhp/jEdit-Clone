@@ -17,34 +17,24 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-import com.sun.java.swing.JOptionPane;
-import com.sun.java.swing.JTextArea;
+import com.sun.java.swing.*;
 import java.util.Hashtable;
 
 public class Cmd_goto_marker implements Command
 {
-	public Object init(Hashtable args)
+	public void exec(Buffer buffer, View view, String arg, Hashtable args)
 	{
-		return null;
-	}
-
-	public Object exec(Hashtable args)
-	{
-		String arg = (String)args.get(ARG);
-		View view = (View)args.get(VIEW);
-		if(view == null)
-			return null;
-		JTextArea textArea = view.getTextArea();
+		SyntaxTextArea textArea = view.getTextArea();
 		if(arg == null)
 			arg = jEdit.input(view,"gotomarker","lastmarker");
 		if(arg != null)
 		{
-			int[] pos = view.getBuffer().getMarker(arg);
-			if(pos != null)
-				textArea.select(pos[0],pos[1]);
+			Marker marker = view.getBuffer().getMarker(arg);
+			if(marker != null)
+				textArea.select(marker.getStart(),
+					marker.getEnd());
 			else
 				view.getToolkit().beep();
 		}
-		return null;
 	}
 }

@@ -17,28 +17,11 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-import com.sun.java.swing.JButton;
-import com.sun.java.swing.JDialog;
-import com.sun.java.swing.JLabel;
-import com.sun.java.swing.JPanel;
-import com.sun.java.swing.JScrollPane;
-import com.sun.java.swing.JSeparator;
-import com.sun.java.swing.JTextArea;
-import com.sun.java.swing.JTextField;
-import com.sun.java.swing.SwingConstants;
-import com.sun.java.swing.text.Element;
-import java.awt.Dimension;
-import java.awt.GridBagLayout;
-import java.awt.GridBagConstraints;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
+import com.sun.java.swing.*;
+import com.sun.java.swing.text.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.io.*;
 import java.net.Socket;
 
 public class SendDialog extends JDialog
@@ -73,7 +56,7 @@ implements ActionListener, WindowListener, Runnable
 		constraints.gridx = 1;
 		constraints.gridwidth = 2;
 		smtp = new JTextField(jEdit.props
-			.getProperty("send.lastsmtp"),30);
+			.getProperty("send.smtp.value"),30);
 		layout.setConstraints(smtp,constraints);
 		panel.add(smtp);
 		constraints.gridx = 0;
@@ -86,7 +69,7 @@ implements ActionListener, WindowListener, Runnable
 		constraints.gridx = 1;
 		constraints.gridwidth = 2;
 		from = new JTextField(jEdit.props
-			.getProperty("send.lastfrom"),30);
+			.getProperty("send.from.value"),30);
 		layout.setConstraints(from,constraints);
 		panel.add(from);
 		constraints.gridx = 0;
@@ -98,7 +81,7 @@ implements ActionListener, WindowListener, Runnable
 		panel.add(label);
 		constraints.gridx = 1;
 		constraints.gridwidth = 2;
-		to = new JTextField(jEdit.props.getProperty("send.lastto"),30);
+		to = new JTextField(jEdit.props.getProperty("send.to.value"),30);
 		layout.setConstraints(to,constraints);
 		panel.add(to);
 		constraints.gridx = 0;
@@ -261,10 +244,8 @@ implements ActionListener, WindowListener, Runnable
 		{
 			jEdit.error(view,"badport",new Object[0]);
 		}
-		catch(Exception e)
+		catch(BadLocationException bl)
 		{
-			args[0] = e.toString();
-			jEdit.error(view,"error",args);
 		}
 		dispose();
 	}
@@ -277,10 +258,10 @@ implements ActionListener, WindowListener, Runnable
 	
 	public void dispose()
 	{
-		jEdit.props.put("send.lastsmtp",smtp.getText());
-		jEdit.props.put("send.lastfrom",from.getText());
-		jEdit.props.put("send.lastto",to.getText());
-		jEdit.props.put("send.lastsubject",subject.getText());
+		jEdit.props.put("send.smtp.value",smtp.getText());
+		jEdit.props.put("send.from.value",from.getText());
+		jEdit.props.put("send.to.value",to.getText());
+		jEdit.props.put("send.subject.value",subject.getText());
 		super.dispose();
 		if(thread != null)
 			thread.stop();

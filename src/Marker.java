@@ -19,31 +19,53 @@
 
 import com.sun.java.swing.text.Position;
 
+/**
+ * A marker is a named location in a buffer.
+ * <p>
+ * There is no public constructor for this class. Markers are created by
+ * <code>Buffer.addMarker()</code>.
+ * @see Buffer#addMarker(String,int,int)
+ * @see Buffer#getMarker(String)
+ * @see Buffer#removeMarker(String)
+ */
 public class Marker
 {
-	private String name;
-	private Position start;
-	private Position end;
+	// public members
+	
+	/**
+	 * Returns the name of this marker.
+	 */
+	public String getName()
+	{
+		return name;
+	}
 
-	public Marker(String name, Position start, Position end)
+	/**
+	 * Returns the start position of this marker.
+	 */
+	public int getStart()
+	{
+		return start.getOffset();
+	}
+
+	/**
+	 * Returns the end position of this marker.
+	 */
+	public int getEnd()
+	{
+		return end.getOffset();
+	}
+
+	// package-private members
+	Marker(String name, Position start, Position end)
 	{
 		this.name = name;
 		this.start = start;
 		this.end = end;
 	}
 
-	public String getName()
-	{
-		return name;
-	}
-
-	public int getStart()
-	{
-		return start.getOffset();
-	}
-
-	public int getEnd()
-	{
-		return end.getOffset();
-	}
+	// private members
+	private String name;
+	private Position start;
+	private Position end;
 }

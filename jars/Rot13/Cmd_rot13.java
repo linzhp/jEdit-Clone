@@ -17,29 +17,18 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-import com.sun.java.swing.JTextArea;
 import java.util.Hashtable;
 
 public class Cmd_rot13 implements Command
 {
-	public Object init(Hashtable args)
+	public void exec(Buffer buffer, View view, String arg, Hashtable args)
 	{
-		return null;
-	}
-
-	public Object exec(Hashtable args)
-	{
-		View view = (View)args.get(VIEW);
-		if(view != null)
-		{
-			JTextArea textArea = view.getTextArea();
-			String selection = textArea.getSelectedText();
-			if(selection != null)
-				textArea.replaceSelection(rot13(selection));
-			else
-				view.getToolkit().beep();
-		}
-		return null;
+		SyntaxTextArea textArea = view.getTextArea();
+		String selection = textArea.getSelectedText();
+		if(selection != null)
+			textArea.replaceSelection(rot13(selection));
+		else
+			view.getToolkit().beep();
 	}
 
 	private String rot13(String str)

@@ -1,0 +1,191 @@
+REGULAR EXPRESSIONS (regexp.txt, last modified 10 Nov 1998)
+
+(This a slightly reformatted version of gnu.regexp 1.0.5's syntax.html)
+
+Contents
+--------
+1. Brief Background
+2. Supported Syntax
+3. Unsupported Syntax
+4. Java Integration
+5. Reference Material
+6. Notes
+
+1. Brief Background
+-------------------
+A regular expression consists of a character string where some characters
+are given special meaning with regard to pattern matching. Regular
+expressions have been in use from the early days of computing, and provide a
+powerful and efficient way to parse, interpret and search and replace text
+within an application.
+
+2. Supported Syntax
+-------------------
+Within a regular expression, the following characters have special meaning:
+
+   * Positional Operators
+
+          ^ matches at the beginning of a line [Note 1]
+          $ matches at the end of a line [Note 2]
+          \A matches the start of the entire string
+          \Z matches the end of the entire string
+
+   * One-Character Operators
+
+          . matches any single character [Note 3]
+          \d matches any decimal digit
+          \D matches any non-digit
+          \n matches a newline character
+          \r matches a return character
+          \s matches any whitespace character
+          \S matches any non-whitespace character
+          \t matches a horizontal tab character
+          \w matches any word (alphanumeric) character
+          \W matches any non-word (alphanumeric) character
+          \x matches the character x, if x is not one of the above
+          listed escape sequences.
+
+   * Character Class Operator
+
+          [abc] matches any character in the set a, b or c
+          [^abc] matches any character not in the set a, b or c
+          [a-z] matches any character in the range a to z, inclusive
+          A leading or trailing dash will be interpreted literally.
+
+     Within a character class expression, the following sequences have
+     special meaning if the syntax bit RE_CHAR_CLASSES is on:
+
+          [:alnum:] Any alphanumeric character
+          [:alpha:] Any alphabetical character
+          [:blank:] A space or horizontal tab
+          [:cntrl:] A control character
+          [:digit:] A decimal digit
+          [:graph:] A non-space, non-control character
+          [:lower:] A lowercase letter
+          [:print:] Same as graph, but also space and tab
+          [:punct:] A punctuation character
+          [:space:] Any whitespace character, including newline and
+          return
+          [:upper:] An uppercase letter
+          [:xdigit:] A valid hexadecimal digit
+
+   * Subexpressions and Backreferences
+
+          (abc) matches whatever the expression abc would match, and
+          saves it as a subexpression. Also used for grouping.
+          (?:...) pure grouping operator, does not save contents
+          (?#...) embedded comment, ignored by engine
+          \n where 0 < n < 10, matches the same thing the nth
+          subexpression matched.
+
+   * Branching (Alternation) Operator
+
+          a|b matches whatever the expression a would match, or
+          whatever the expression b would match.
+
+   * Repeating Operators
+     These symbols operate on the previous atomic expression.
+
+          ? matches the preceding expression or the null string
+          * matches the null string or any number of repetitions of the
+          preceding expression
+          + matches one or more repetitions of the preceding expression
+          {m} matches exactly m repetitions of the one-character
+          expression
+          {m,n} matches between m and n repetitions of the preceding
+          expression, inclusive
+          {m,} matches m or more repetitions of the preceding
+          expression
+
+   * Stingy (Minimal) Matching
+     If a repeating operator (above) is immediately followed by a ?, the
+     repeating operator will stop at the smallest number of repetitions that
+     can complete the rest of the match.
+
+3. Unsupported Syntax
+---------------------
+Some flavors of regular expression utilities support additional escape
+sequences, and this is not meant to be an exhaustive list. In the future,
+gnu.regexp may support some or all of the following:
+
+     (?=...) positive lookahead operator (Perl5)
+     (?!...) negative lookahead operator (Perl5)
+     (?mods) inlined compilation/execution modifiers (Perl5)
+     \G end of previous match (Perl5)
+     \b word break positional anchor (Perl5)
+     \B non-word break positional anchor (Perl5)
+     \< start of word positional anchor (egrep)
+     \> end of word positional anchor (egrep)
+     [.symbol.] collating symbol in class expression (POSIX)
+     [=class=] equivalence class in class expression (POSIX)
+
+4. Java Integration
+-------------------
+In a Java environment, a regular expression operates on a string of Unicode
+characters, represented either as an instance of java.lang.String or as an
+array of the primitive char type. This means that the unit of matching is a
+Unicode character, not a single byte. Generally this will not present
+problems in a Java program, because Java takes pains to ensure that all
+textual data uses the Unicode standard.
+
+Because Java string processing takes care of certain escape sequences, they
+are not implemented in gnu.regexp. You should be aware that the following
+escape sequences are handled by the Java compiler if found in the Java
+source:
+
+     \b backspace
+     \f form feed
+     \n newline
+     \r carriage return
+     \t horizontal tab
+     \" double quote
+     \' single quote
+     \\ backslash
+     \xxx character, in octal (000-377)
+     \uxxxx Unicode character, in hexadecimal (0000-FFFF)
+
+In addition, note that the \u escape sequences are meaningful anywhere in a
+Java program, not merely within a singly- or doubly-quoted character string,
+and are converted prior to any of the other escape sequences. For example,
+the line
+gnu.regexp.RE exp = new gnu.regexp.RE("\u005cn");
+would be converted by first replacing \u005c with a backslash, then
+converting \n to a newline. By the time the RE constructor is called, it
+will be passed a String object containing only the Unicode newline
+character.
+
+The POSIX character classes (above), and the equivalent shorthand escapes
+(\d, \w and the like) are implemented to use the java.lang.Character static
+functions whenever possible. For example, \w and [:alnum:] (the latter only
+from within a class expression) will invoke the Java function
+Character.isLetterOrDigit() when executing. It is always better to use the
+POSIX expressions than a range such as [a-zA-Z0-9], because the latter will
+not match any letter characters in non-ISO 9660 encodings (for example, the
+umlaut character, "ü").
+
+5. Reference Material
+---------------------
+
+   * Print Books and Publications
+     Friedl, Jeffrey E.F., Mastering Regular Expressions. O'Reilly &
+     Associates, Inc., Sebastopol, California, 1997.
+
+   * Software Manuals and Guides
+     Berry, Karl and Hargreaves, Kathryn A., GNU Info Regex Manual Edition
+     0.12a, 19 September 1992.
+     perlre(1) man page (Perl Programmer's Reference Guide)
+     regcomp(3) man page (GNU C)
+     gawk(1) man page (GNU utilities)
+     sed(1) man page (GNU utilities)
+     ed(1) man page (GNU utilities)
+     grep(1) man page (GNU utilities)
+     regexp(n) and regsub(n) man pages (TCL)
+
+6. Notes
+--------
+1 but see the REG_NOTBOL and REG_MULTILINE flags
+2 but see the REG_NOTEOL and REG_MULTILINE flags
+3 but see the REG_MULTILINE flag
+
+-- Slava Pestov
+<slava_pestov@geocities.com>

@@ -22,19 +22,11 @@ import java.util.Hashtable;
 
 public class Cmd_open_file implements Command
 {
-	public Object init(Hashtable args)
+	public void exec(Buffer buffer, View view, String arg, Hashtable args)
 	{
-		return null;
-	}
-
-	public Object exec(Hashtable args)
-	{
-		View view = (View)args.get(VIEW);
-		String arg = (String)args.get(ARG);
-		if(arg == null)
-			jEdit.buffers.openFile(view);
+		if(arg != null)
+			jEdit.buffers.openFile(view,null,arg,false,false);
 		else
-			jEdit.buffers.openFile(view,arg);
-		return null;
+			jEdit.buffers.openFile(view);
 	}
 }

@@ -21,16 +21,8 @@ import java.util.Hashtable;
 
 public class Cmd_replace implements Command
 {
-	public Object init(Hashtable args)
+	public void exec(Buffer buffer, View view, String arg, Hashtable args)
 	{
-		return null;
-	}
-
-	public Object exec(Hashtable args)
-	{
-		View view = (View)args.get(VIEW);
-		if(view != null)
-			view.getBuffer().replace(view);
-		return null;
+		buffer.replace(view);
 	}
 }

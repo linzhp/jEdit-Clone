@@ -1,0 +1,195 @@
+#!/bin/sh
+# Configure script for jEdit
+
+# Functions
+error()
+{
+	rm -rf $DIR $RULES
+	exit $1
+}
+
+rulesOut()
+{
+	echo "$@" >&8
+}
+
+wrapperOut()
+{
+	echo "$@" >&9
+}
+
+out()
+{
+	echo "$@" >&8
+	echo "$@" >&9
+}
+
+# Print message
+VERSION=1.1.2
+echo ">> Configuring jEdit $VERSION"
+
+# Trap signals
+trap error 1
+trap error 2
+trap error 3
+trap error 15
+
+# Open rules and wrapper file
+DIR=_conf_tmp
+rm -rf $DIR
+mkdir $DIR
+RULES=Rules.make
+WRAPPER=$DIR/wrapper
+exec 7>/dev/null 8>$RULES 9>$WRAPPER
+
+# Create wrapper file
+wrapperOut "#!/bin/sh"
+out "# Created by Configure on `date`"
+
+# Create rules file
+rulesOut ".SUFFIXES: .java .class"
+rulesOut '../$(jar): $(resources)'
+rulesOut '	$(JAR) cf0 ../$(jar) $(resources) $(no_compile_res)'
+rulesOut ".java.class:"
+rulesOut '	@echo $<:'
+rulesOut '	@$(JAVAC) -classpath $(CLASSPATH):../../src $<'
+rulesOut VERSION=$VERSION
+
+# Configure paths
+echo -n "Where do you want to install jEdit? [/opt/slava] "
+read SLAVA_HOME
+if test "$SLAVA_HOME" = ""
+then
+	SLAVA_HOME=/opt/slava
+fi
+
+rulesOut SLAVA_HOME=$SLAVA_HOME
+rulesOut "SLAVA_BIN_DIR=$SLAVA_HOME/bin"
+out "SLAVA_SHARE_DIR=$SLAVA_HOME/share/jedit-$VERSION"
+rulesOut "SLAVA_DOC_DIR=$SLAVA_HOME/share/jedit-$VERSION/doc"
+rulesOut "SLAVA_JARS_DIR=$SLAVA_HOME/share/jedit-$VERSION/jars"
+
+# Configure java
+echo -n "What is the name of your Java virtual machine? [jre] "
+read JAVA
+if test "$JAVA" = ""
+then
+	JAVA=jre
+fi
+out JAVA=$JAVA
+
+# Configure javac
+echo -n "What is the name of your Java compiler? [javac] "
+read JAVAC
+if test "$JAVAC" = ""
+then
+	JAVAC=javac
+fi
+rulesOut JAVAC=$JAVAC
+
+# Configure jar
+echo -n "What is the name of your JAR tool? [jar] "
+read JAR
+if test "$JAR" = ""
+then
+	JAR=jar
+fi
+rulesOut JAR=$JAR
+
+# Configure javadoc
+echo -n "What is the name of your Javadoc tool? [javadoc] "
+read JAVADOC
+if test "$JAVADOC" = ""
+then
+	JAVADOC=javadoc
+fi
+rulesOut JAVADOC=$JAVADOC
+
+# Configure KDE
+echo -n "Are you running the K Desktop Enviroment? [yN] "
+read KDE
+case $KDE in
+	y*|Y*)
+		echo -n ">> Where is KDE located? [/opt/kde] "
+		read KDE_DIR
+		if test "$KDE_DIR" = ""
+		then
+			KDE_DIR=/opt/kde
+		fi ;;
+esac
+
+rulesOut KDE_DIR=$KDE_DIR
+
+# End of questions
+echo
+
+# Write classpath to wrapper
+wrapperOut 'CLASSPATH="$CLASSPATH:$SLAVA_SHARE_DIR/jedit.jar"'
+wrapperOut "export CLASSPATH"
+
+# Check for mkdirhier
+echo -n "Checking for mkdirhier..."
+mkdirhier $DIR/dir1/dir2 >&7 2>&7
+if test -d $DIR/dir1/dir2
+then
+	rm -Rf .test
+	echo " ok"
+	rulesOut MKDIRHIER=mkdirhier
+else
+	mkdir -p $DIR/dir1/dir2 >&7 2>&7
+	if test -d $DIR/dir1/dir2
+	then
+		rm -Rf .test2
+		echo " ok"
+		rulesOut "MKDIRHIER=mkdir -p"
+	else
+		echo " failed"
+		echo ">> You have neither mkdirhier or mkdir -p installed."
+		echo ">> Cannot continue."
+		error
+	fi
+fi
+
+# Some makes don't set $MAKE
+echo -n "Checking if make sets \$MAKE..."
+echo 'all:' > $DIR/testmakefile
+echo '	@echo $(MAKE)' >> $DIR/testmakefile
+if test "`make -f $DIR/testmakefile`" = ""
+then
+	echo " failed - workaround enabled"
+	rulesOut MAKE=make
+else
+	echo " ok"
+fi
+
+rm -f .testmakefile
+
+# Check for netpipes
+echo -n "Checking for netpipes..."
+test -x `which hose` >&7 2>&7
+if test "$?" -gt "0"
+then
+	echo " not found - will use pure Java jOpen"
+else
+	echo " ok"
+	netpipes=true
+fi
+
+cat $WRAPPER bin/jedit.in > bin/jedit
+chmod +x bin/jedit
+if test -z "$netpipes"
+then
+	cat $WRAPPER bin/jopen.in > bin/jopen
+else
+	cat $WRAPPER bin/jopen.sh > bin/jopen
+fi
+chmod +x bin/jopen
+
+rm -rf $DIR
+
+echo
+echo ">> Configuration complete."
+echo ">> Check Rules.make for any additional settings."
+echo ">> Run 'make install' to install jEdit."
+echo ">> Run 'make' if you wish to recompile it first."
+echo

@@ -17,27 +17,10 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-import com.sun.java.swing.ButtonGroup;
-import com.sun.java.swing.JButton;
-import com.sun.java.swing.JCheckBox;
-import com.sun.java.swing.JComboBox;
-import com.sun.java.swing.JDialog;
-import com.sun.java.swing.JLabel;
-import com.sun.java.swing.JPanel;
-import com.sun.java.swing.JRadioButton;
-import com.sun.java.swing.JTextField;
-import com.sun.java.swing.SwingConstants;
-import com.sun.java.swing.SwingUtilities;
-import com.sun.java.swing.UIManager;
-import com.sun.java.swing.border.EtchedBorder;
-import com.sun.java.swing.border.TitledBorder;
-import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import com.sun.java.swing.*;
+import com.sun.java.swing.border.*;
+import java.awt.*;
+import java.awt.event.*;
 import java.util.Enumeration;
 
 public class Options extends JDialog
@@ -154,7 +137,7 @@ implements ActionListener
 		server = new JCheckBox(jEdit.props.getProperty(
 			"options.opening.server"));
 		server.getModel().setSelected("on".equals(jEdit.props
-			.getProperty("server")));
+			.getProperty("daemon.server.toggle")));
 		layout.setConstraints(server,constraints);
 		content.add(server);
 		constraints.gridy = 1;
@@ -164,7 +147,7 @@ implements ActionListener
 		content.add(label);
 		constraints.gridx = 1;
 		maxrecent = new JTextField(jEdit.props.getProperty(
-			"maxrecent"),5);
+			"buffermgr.recent"),5);
 		layout.setConstraints(maxrecent,constraints);
 		content.add(maxrecent);
 		return content;
@@ -186,8 +169,8 @@ implements ActionListener
 		layout.setConstraints(label,constraints);
 		content.add(label);
 		constraints.gridx = 3;
-		autosave = new JTextField(jEdit.props.getProperty("autosave"),
-			5);
+		autosave = new JTextField(jEdit.props.getProperty("daemon."
+			+ "autosave.interval"),5);
 		layout.setConstraints(autosave,constraints);
 		content.add(autosave);
 		constraints.gridx = 0;
@@ -198,7 +181,8 @@ implements ActionListener
 		layout.setConstraints(label,constraints);
 		content.add(label);
 		constraints.gridx = 3;
-		backups = new JTextField(jEdit.props.getProperty("backups"),5);
+		backups = new JTextField(jEdit.props.getProperty("buffer."
+			+ "backup.count"),5);
 		layout.setConstraints(backups,constraints);
 		content.add(backups);
 		constraints.gridx = 0;
@@ -208,8 +192,8 @@ implements ActionListener
 			"options.saving.newline"),SwingConstants.RIGHT);
 		layout.setConstraints(label,constraints);
 		content.add(label);
-		String newline = jEdit.props.getProperty("line.separator",
-			System.getProperty("line.separator"));
+		String newline = jEdit.props.getProperty("buffer.line."
+			+ "separator",System.getProperty("line.separator"));
 		ButtonGroup grp = new ButtonGroup();
 		constraints.gridx = 1;
 		newlineUnix = new JRadioButton(jEdit.props.getProperty(
@@ -253,7 +237,7 @@ implements ActionListener
 		constraints.gridx = 1;
 		constraints.gridwidth = 2;
 		font = new JComboBox(getToolkit().getFontList());
-		font.setSelectedItem(jEdit.props.getProperty("editor.font"));
+		font.setSelectedItem(jEdit.props.getProperty("view.font"));
 		layout.setConstraints(font,constraints);
 		content.add(font);
 		constraints.gridx = 3;
@@ -261,7 +245,7 @@ implements ActionListener
 		Object[] sizes = { "9", "10", "12", "14", "18", "24" };
 		fontSize = new JComboBox(sizes);
 		fontSize.setSelectedItem(jEdit.props.getProperty(
-			"editor.fontsize"));
+			"view.fontsize"));
 		layout.setConstraints(fontSize,constraints);
 		content.add(fontSize);
 		constraints.gridx = 0;
@@ -270,7 +254,7 @@ implements ActionListener
 			"options.editing.wrap"),SwingConstants.RIGHT);
 		layout.setConstraints(label,constraints);
 		content.add(label);
-		String wrap = jEdit.props.getProperty("editor.linewrap");
+		String wrap = jEdit.props.getProperty("view.linewrap");
 		ButtonGroup grp = new ButtonGroup();
 		constraints.gridx = 1;
 		off = new JRadioButton(jEdit.props.getProperty(
@@ -301,7 +285,7 @@ implements ActionListener
 		content.add(label);
 		constraints.gridx = 1;
 		tabSize = new JTextField(jEdit.props.getProperty(
-			"editor.tabsize"),5);
+			"view.tabsize"),5);
 		layout.setConstraints(tabSize,constraints);
 		content.add(tabSize);
 		constraints.gridx = 2;
@@ -309,7 +293,7 @@ implements ActionListener
 		autoindent = new JCheckBox(jEdit.props.getProperty(
 			"options.editing.autoindent"));
 		autoindent.getModel().setSelected("on".equals(jEdit.props
-			.getProperty("editor.autoindent")));
+			.getProperty("view.autoindent")));
 		layout.setConstraints(autoindent,constraints);
 		content.add(autoindent);
 		return content;
@@ -323,22 +307,23 @@ implements ActionListener
 		content.setLayout(new GridLayout(2,4));
 		content.add(new JLabel(jEdit.props.getProperty(
 			"options.printing.top"),SwingConstants.RIGHT));
-		top = new JTextField(jEdit.props.getProperty("margin.top"),5);
+		top = new JTextField(jEdit.props.getProperty("buffer.margin."
+			+ "top"),5);
 		content.add(top);
 		content.add(new JLabel(jEdit.props.getProperty(
 			"options.printing.left"),SwingConstants.RIGHT));
-		left = new JTextField(jEdit.props.getProperty("margin.left"),
-			5);
+		left = new JTextField(jEdit.props.getProperty("buffer.margin."
+			+ "left"),5);
 		content.add(left);
 		content.add(new JLabel(jEdit.props.getProperty(
 			"options.printing.bottom"),SwingConstants.RIGHT));
 		bottom = new JTextField(jEdit.props.getProperty(
-			"margin.bottom"),5);
+			"buffer.margin.bottom"),5);
 		content.add(bottom);
 		content.add(new JLabel(jEdit.props.getProperty(
 			"options.printing.right"),SwingConstants.RIGHT));
-		right = new JTextField(jEdit.props.getProperty("margin.right"),
-			5);
+		right = new JTextField(jEdit.props.getProperty("buffer.margin"
+			+ ".right"),5);
 		content.add(right);
 		return content;
 	}
@@ -371,11 +356,14 @@ implements ActionListener
 			else
 				lf = METAL;
 			jEdit.props.put("lf",lf);
-			jEdit.props.put("server",server.getModel().isSelected()
-				? "on" : "off");
-			jEdit.props.put("maxrecent",maxrecent.getText());
-			jEdit.props.put("autosave",autosave.getText());
-			jEdit.props.put("backups",backups.getText());
+			jEdit.props.put("daemon.server.toggle",server
+				.getModel().isSelected() ? "on" : "off");
+			jEdit.props.put("buffermgr.recent.count",maxrecent
+				.getText());
+			jEdit.props.put("daemon.autosave.interval",autosave
+				.getText());
+			jEdit.props.put("buffer.backup.count",backups
+				.getText());
 			String newline;
 			if(newlineWindows.getModel().isSelected())
 				newline = CRLF;
@@ -383,9 +371,9 @@ implements ActionListener
 				newline = CR;
 			else
 				newline = LF;
-			jEdit.props.put("line.separator",newline);
-			jEdit.props.put("editor.font",font.getSelectedItem());
-			jEdit.props.put("editor.fontsize",fontSize
+			jEdit.props.put("buffer.line.separator",newline);
+			jEdit.props.put("view.font",font.getSelectedItem());
+			jEdit.props.put("view.fontsize",fontSize
 				.getSelectedItem());
 			String wrap;
 			if(charWrap.getModel().isSelected())
@@ -394,14 +382,15 @@ implements ActionListener
 				wrap = "word";
 			else
 				wrap = "off";
-			jEdit.props.put("editor.linewrap",wrap);
-			jEdit.props.put("editor.tabsize",tabSize.getText());
-			jEdit.props.put("editor.autoindent",autoindent
+			jEdit.props.put("view.linewrap",wrap);
+			jEdit.props.put("view.tabsize",tabSize.getText());
+			jEdit.props.put("view.autoindent",autoindent
 				.getModel().isSelected() ? "on" : "off");
-			jEdit.props.put("margin.top",top.getText());
-			jEdit.props.put("margin.left",left.getText());
-			jEdit.props.put("margin.bottom",bottom.getText());
-			jEdit.props.put("margin.right",right.getText());
+			jEdit.props.put("buffer.margin.top",top.getText());
+			jEdit.props.put("buffer.margin.left",left.getText());
+			jEdit.props.put("buffer.margin.bottom",bottom
+				.getText());
+			jEdit.props.put("buffer.margin.right",right.getText());
 			jEdit.propertiesChanged();
 			Enumeration enum = jEdit.buffers.getViews();
 			while(enum.hasMoreElements())

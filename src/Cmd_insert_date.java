@@ -1,5 +1,5 @@
 /*
- * Cmd_insert_date.java - Simple plugin
+ * Cmd_insert_date.java - Command
  * Copyright (C) 1998 Slava Pestov
  *
  * This program is free software; you can redistribute it and/or
@@ -17,25 +17,12 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-import com.sun.java.swing.JTextArea;
-import java.util.Date;
-import java.util.Hashtable;
+import java.util.*;
 
 public class Cmd_insert_date implements Command
 {
-	public Object init(Hashtable args)
+	public void exec(Buffer buffer, View view, String arg, Hashtable args)
 	{
-		return null;
-	}
-
-	public Object exec(Hashtable args)
-	{
-		View view = (View)args.get(VIEW);
-		if(view != null)
-		{
-			JTextArea textArea = view.getTextArea();
-			textArea.replaceSelection(new Date().toString());
-		}
-		return null;
+		view.getTextArea().replaceSelection(new Date().toString());
 	}
 }

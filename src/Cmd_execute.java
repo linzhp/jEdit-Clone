@@ -17,28 +17,12 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-import com.sun.java.swing.JOptionPane;
-import java.io.IOException;
 import java.util.Hashtable;
 
 public class Cmd_execute implements Command
 {
-	public Object init(Hashtable args)
+	public void exec(Buffer buffer, View view, String arg, Hashtable args)
 	{
-		return null;
-	}
-
-	public Object exec(Hashtable args)
-	{
-		View view = (View)args.get(VIEW);
-		String arg = (String)args.get(ARG);
-		if(view != null)
-		{
-			if(arg != null)
-				view.getBuffer().execute(view,arg);
-			else
-				view.getBuffer().execute(view);
-		}
-		return null;
+		buffer.execute(view,arg);
 	}
 }

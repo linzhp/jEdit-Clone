@@ -17,22 +17,9 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-import com.sun.java.swing.JButton;
-import com.sun.java.swing.JCheckBox;
-import com.sun.java.swing.JDialog;
-import com.sun.java.swing.JLabel;
-import com.sun.java.swing.JPanel;
-import com.sun.java.swing.JSeparator;
-import com.sun.java.swing.JTextField;
-import com.sun.java.swing.SwingConstants;
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
+import com.sun.java.swing.*;
+import java.awt.*;
+import java.awt.event.*;
 
 public class SearchAndReplace extends JDialog
 implements ActionListener, WindowListener
@@ -41,6 +28,7 @@ implements ActionListener, WindowListener
 	private JTextField find;
 	private JTextField replace;
 	private JCheckBox ignoreCase;
+	private JComboBox regexpSyntax;
 	private JButton findNext;
 	private JButton replaceBtn;
 	private JButton replaceAll;
@@ -50,12 +38,17 @@ implements ActionListener, WindowListener
 	{
 		super(view,jEdit.props.getProperty("search.title"),false);
 		this.view = view;
-		find = new JTextField(jEdit.props.getProperty("lastfind"),30);
+		find = new JTextField(jEdit.props.getProperty("search.find"
+			+ ".value"),30);
 		replace = new JTextField(jEdit.props
-			.getProperty("lastreplace"),30);
+			.getProperty("search.replace.value"),30);
 		ignoreCase = new JCheckBox(jEdit.props.getProperty(
 			"search.ignoreCase"),
-			"on".equals(jEdit.props.getProperty("ignoreCase")));
+			"on".equals(jEdit.props.getProperty("search."
+				+ "ignoreCase.toggle")));
+		regexpSyntax = new JComboBox(jEdit.SYNTAX_LIST);
+		regexpSyntax.setSelectedItem(jEdit.props.getProperty("search"
+			+ ".regexp.value"));
 		findNext = new JButton(jEdit.props.getProperty("search.next"));
 		replaceBtn = new JButton(jEdit.props
 			.getProperty("search.replaceBtn"));
@@ -90,9 +83,13 @@ implements ActionListener, WindowListener
 		layout.setConstraints(replace,constraints);
 		panel.add(replace);
 		getContentPane().add("North",panel);
-		getContentPane().add("Center",new JSeparator());
 		panel = new JPanel();
 		panel.add(ignoreCase);
+		panel.add(new JLabel(jEdit.props.getProperty(
+			"search.regexp")));
+		panel.add(regexpSyntax);
+		getContentPane().add("Center",panel);
+		panel = new JPanel();
 		panel.add(findNext);
 		panel.add(replaceBtn);
 		panel.add(replaceAll);
@@ -113,10 +110,12 @@ implements ActionListener, WindowListener
 	
 	public void save()
 	{
-		jEdit.props.put("lastfind",find.getText());
-		jEdit.props.put("lastreplace",replace.getText());
-		jEdit.props.put("ignoreCase",ignoreCase.getModel().isSelected()
-			? "on" : "off");
+		jEdit.props.put("search.find.value",find.getText());
+		jEdit.props.put("search.replace.value",replace.getText());
+		jEdit.props.put("search.ignoreCase.toggle",ignoreCase
+			.getModel().isSelected() ? "on" : "off");
+		jEdit.props.put("search.regexp.value",regexpSyntax
+			.getSelectedItem());
 	}
 	
 	public void actionPerformed(ActionEvent evt)
@@ -126,7 +125,7 @@ implements ActionListener, WindowListener
 		if(source == close)
 			dispose();
 		else if(source == findNext)
-			view.getBuffer().findNext(view);
+			view.getBuffer().find(view,false);
 		else if(source == replaceBtn)
 			view.getBuffer().replace(view);
 		else if(source == replaceAll)

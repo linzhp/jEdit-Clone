@@ -17,27 +17,12 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-import com.sun.java.swing.JButton;
-import com.sun.java.swing.JCheckBox;
-import com.sun.java.swing.JDialog;
-import com.sun.java.swing.JLabel;
-import com.sun.java.swing.JList;
-import com.sun.java.swing.JPanel;
-import com.sun.java.swing.JScrollPane;
-import com.sun.java.swing.JSeparator;
-import com.sun.java.swing.JTextArea;
-import com.sun.java.swing.JTextField;
-import com.sun.java.swing.SwingConstants;
-import com.sun.java.swing.event.ListSelectionEvent;
-import com.sun.java.swing.event.ListSelectionListener;
-import com.sun.java.swing.text.BadLocationException;
-import com.sun.java.swing.text.Element;
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
+import com.sun.java.swing.*;
+import com.sun.java.swing.event.*;
+import com.sun.java.swing.text.*;
+import gnu.regexp.*;
+import java.awt.*;
+import java.awt.event.*;
 import java.util.Vector;
 
 public class HyperSearch extends JDialog
@@ -46,6 +31,7 @@ implements ActionListener, ListSelectionListener, WindowListener
 	private View view;
 	private JTextField find;
 	private JCheckBox ignoreCase;
+	private JComboBox regexpSyntax;
 	private JButton findBtn;
 	private JButton close;
 	private JList results;
@@ -54,29 +40,40 @@ implements ActionListener, ListSelectionListener, WindowListener
 	{
 		super(view,jEdit.props.getProperty("hypersearch.title"),false);
 		this.view = view;
-		find = new JTextField(jEdit.props.getProperty("lastfind"),20);
+		Container content = getContentPane();
+		content.setLayout(new BorderLayout());
+		JPanel panel = new JPanel();
+		panel.setLayout(new BorderLayout());
+		panel.add("West",new JLabel(jEdit.props.getProperty(
+			"hypersearch.find")));
+		find = new JTextField(jEdit.props.getProperty("search.find"
+			+ ".value"),20);
+		panel.add("Center",find);
+		content.add("North",panel);
+		panel = new JPanel();
 		ignoreCase = new JCheckBox(jEdit.props.getProperty(
-			"hypersearch.ignoreCase"),
-			"on".equals(jEdit.props.getProperty("ignoreCase")));
+			"search.ignoreCase"),
+			"on".equals(jEdit.props.getProperty("search"
+				+ ".ignoreCase.toggle")));
+		panel.add(ignoreCase);
+		panel.add(new JLabel(jEdit.props.getProperty(
+			"search.regexp")));
+		regexpSyntax = new JComboBox(jEdit.SYNTAX_LIST);
+		regexpSyntax.setSelectedItem(jEdit.props.getProperty("search"
+			+ ".regexp.value"));
+		panel.add(regexpSyntax);
 		findBtn = new JButton(jEdit.props.getProperty(
 			"hypersearch.findBtn"));
+		panel.add(findBtn);
 		close = new JButton(jEdit.props.getProperty(
 			"hypersearch.close"));
+		panel.add(close);
+		content.add("Center",panel);
 		results = new JList();
 		results.setVisibleRowCount(10);
 		results.setFont(view.getTextArea().getFont());
 		results.addListSelectionListener(this);
-		getContentPane().setLayout(new BorderLayout());
-		JPanel panel = new JPanel();
-		panel.add(new JLabel(jEdit.props.getProperty(
-			"hypersearch.find")));
-		panel.add(find);
-		panel.add(ignoreCase);
-		panel.add(findBtn);
-		panel.add(close);
-		getContentPane().add("North",panel);
-		getContentPane().add("Center",new JSeparator());
-		getContentPane().add("South",new JScrollPane(results));
+		content.add("South",new JScrollPane(results));
 		Dimension screen = getToolkit().getScreenSize();
 		pack();
 		setLocation((screen.width - getSize().width) / 2,
@@ -90,9 +87,11 @@ implements ActionListener, ListSelectionListener, WindowListener
 	
 	public void save()
 	{
-		jEdit.props.put("lastfind",find.getText());
-		jEdit.props.put("ignoreCase",ignoreCase.getModel().isSelected()
-			? "on" : "off");
+		jEdit.props.put("search.find.value",find.getText());
+		jEdit.props.put("search.ignoreCase.toggle",ignoreCase
+			.getModel().isSelected() ? "on" : "off");
+		jEdit.props.put("search.regexp.value",regexpSyntax
+			.getSelectedItem());
 	}
 	
 	public void actionPerformed(ActionEvent evt)
@@ -111,8 +110,10 @@ implements ActionListener, ListSelectionListener, WindowListener
 		{
 			int tabSize = view.getTextArea().getTabSize();
 			Vector data = new Vector();
-			results.setListData(data);
-			char[] pattern = find.getText().toCharArray();
+			RE regexp = new RE(find.getText(),(ignoreCase
+				.getModel().isSelected() ? RE.REG_ICASE : 0),
+				jEdit.getRESyntax(jEdit.props.getProperty(
+				"search.regexp.value")));
 			Buffer buffer = view.getBuffer();
 			Element map = buffer.getDefaultRootElement();
 			int lines = map.getElementCount();
@@ -121,9 +122,9 @@ implements ActionListener, ListSelectionListener, WindowListener
 				Element lineElement = map.getElement(i - 1);
 				int start = lineElement.getStartOffset();
 				String lineString = buffer.getText(start,
-					lineElement.getEndOffset() - start);
-				char[] line = lineString.toCharArray();
-				if(jEdit.find(pattern,line,0) != -1)
+					lineElement.getEndOffset() - start
+					- 1);
+				if(regexp.getMatch(lineString) != null)
 					data.addElement(i + ":"
 						+ jEdit.untab(tabSize,
 							lineString));
@@ -131,10 +132,13 @@ implements ActionListener, ListSelectionListener, WindowListener
 			results.setListData(data);
 			pack();
 		}
+		catch(REException re)
+		{
+			Object[] args = { re.getMessage() };
+			jEdit.error(view,"reerror",args);
+		}
 		catch(BadLocationException bl)
 		{
-			Object[] args = { bl.toString() };
-			jEdit.error(view,"error",args);
 		}
 	}
 	
@@ -147,14 +151,12 @@ implements ActionListener, ListSelectionListener, WindowListener
 			String selected = (String)results.getSelectedValue();
 			int line = Integer.parseInt(selected.substring(0,
 				selected.indexOf(':')));
-			JTextArea textArea = view.getTextArea();
+			SyntaxTextArea textArea = view.getTextArea();
 			textArea.setCaretPosition(
 				textArea.getLineStartOffset(line - 1));
 		}
-		catch(Exception e)
+		catch(BadLocationException bl)
 		{
-			Object[] args = { e.toString() };
-			jEdit.error(view,"error",args);
 		}
 	}
 	

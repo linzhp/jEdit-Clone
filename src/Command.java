@@ -19,10 +19,21 @@
 
 import java.util.Hashtable;
 
+/**
+ * A command. At the moment, commands can be bound to menu items. More uses
+ * for them will be available in the future.
+ * @see CommandMgr#getCommand
+ * @see CommandMgr#execCommand
+ */
 public interface Command
 {
-	public static final String ARG = "arg";
-	public static final String VIEW = "view";
-	public abstract Object init(Hashtable args);
-	public abstract Object exec(Hashtable args);
+	/**
+	 * Executes the command.
+	 * @param buffer The buffer to execute the command in
+	 * @param view The view to execute the command in
+	 * @param arg Text after the '@' character in the command name
+	 * @param args Reserved for future use
+	 */
+	public abstract void exec(Buffer buffer, View view, String arg,
+		Hashtable args);
 }

@@ -21,17 +21,9 @@ import java.util.Hashtable;
 
 public class Cmd_select_buffer implements Command
 {
-	public Object init(Hashtable args)
+	public void exec(Buffer buffer, View view, String arg, Hashtable args)
 	{
-		return null;
-	}
-
-	public Object exec(Hashtable args)
-	{
-		String name = (String)args.get(ARG);
-		View view = (View)args.get(VIEW);
-		if(view != null && name != null)
-			view.setBuffer(jEdit.buffers.getBuffer(name));
-		return null;
+		if(arg != null)
+			view.setBuffer(jEdit.buffers.getBuffer(arg));
 	}
 }

@@ -1,0 +1,2 @@
+%JAVA% "-Djedit.home=%DIRECTORY%" -classpath "%CLASSPATH%;%DIRECTORY%\jedit.jar" jEdit %1 %2 %3 %4 %5 %6 %7 %8 %9
+

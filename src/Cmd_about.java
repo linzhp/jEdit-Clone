@@ -21,14 +21,15 @@ import java.util.Hashtable;
 
 public class Cmd_about implements Command
 {
-	public Object init(Hashtable args)
+	public void exec(Buffer buffer, View view, String arg, Hashtable args)
 	{
-		return null;
-	}
-
-	public Object exec(Hashtable args)
-	{
-		jEdit.about((View)args.get(VIEW));
-		return null;
+		Object[] aboutArgs = { jEdit.VERSION, jEdit.BUILD,
+			System.getProperty("java.version"),
+			System.getProperty("os.name"),
+			System.getProperty("os.version"),
+			System.getProperty("os.arch"),
+			new Long(Runtime.getRuntime().freeMemory() / 1024),
+			new Long(Runtime.getRuntime().totalMemory() / 1024) };
+		jEdit.message(view,"about",aboutArgs);
 	}
 }

@@ -17,39 +17,26 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-import com.sun.java.swing.JOptionPane;
-import com.sun.java.swing.JTextArea;
-import com.sun.java.swing.text.BadLocationException;
+import com.sun.java.swing.*;
 import java.util.Hashtable;
 
 public class Cmd_set_marker implements Command
 {
-	public Object init(Hashtable args)
+	public void exec(Buffer buffer, View view, String arg, Hashtable args)
 	{
-		return null;
-	}
-
-	public Object exec(Hashtable args)
-	{
-		String arg = (String)args.get(ARG);
-		View view = (View)args.get(VIEW);
-		if(view == null)
-			return null;
-		JTextArea textArea = view.getTextArea();
-		try
-		{
-			if(arg == null)
-				arg = jEdit.input(view,"setmarker",
-					"lastmarker");
-			if(arg != null)
-				view.getBuffer().addMarker(arg,textArea
-					.getSelectionStart(),textArea
-					.getSelectionEnd());
-		}
-		catch(Exception e)
-		{
+		if(buffer.isReadOnly())
 			view.getToolkit().beep();
+		SyntaxTextArea textArea = view.getTextArea();
+		if(arg == null)
+		{
+			arg = (String)JOptionPane.showInputDialog(view,
+				jEdit.props.getProperty("setmarker.message"),
+				jEdit.props.getProperty("setmarker.title"),
+				JOptionPane.QUESTION_MESSAGE,null,null,
+				textArea.getSelectedText());
 		}
-		return null;
+		if(arg != null)
+			buffer.addMarker(arg,textArea.getSelectionStart(),
+				textArea.getSelectionEnd());
 	}
 }

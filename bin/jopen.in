@@ -1,0 +1,2 @@
+exec $JAVA $JOPEN_J jOpen \
+	"-portfile=$HOME/.jedit-server-`echo $DISPLAY | sed 's/\..//'`" $@

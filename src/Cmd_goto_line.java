@@ -17,25 +17,15 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-import com.sun.java.swing.JOptionPane;
-import com.sun.java.swing.JTextArea;
+import com.sun.java.swing.*;
 import com.sun.java.swing.text.BadLocationException;
 import java.util.Hashtable;
 
 public class Cmd_goto_line implements Command
 {
-	public Object init(Hashtable args)
+	public void exec(Buffer buffer, View view, String arg, Hashtable args)
 	{
-		return null;
-	}
-
-	public Object exec(Hashtable args)
-	{
-		String arg = (String)args.get(ARG);
-		View view = (View)args.get(VIEW);
-		if(view == null)
-			return null;
-		JTextArea textArea = view.getTextArea();
+		SyntaxTextArea textArea = view.getTextArea();
 		try
 		{
 			if(arg == null)
@@ -61,8 +51,6 @@ public class Cmd_goto_line implements Command
 		}
 		catch(BadLocationException bl)
 		{
-			view.getToolkit().beep();
 		}
-		return null;
 	}
 }

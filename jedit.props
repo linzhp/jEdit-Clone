@@ -1,0 +1,431 @@
+### JEDIT PROPERTIES FILE
+
+###
+### LOOK AND FEEL
+###
+
+# Look and feel class
+#lf=com.sun.java.swing.plaf.metal.MetalLookAndFeel
+#lf=com.sun.java.swing.plaf.motif.MotifLookAndFeel
+#lf=com.sun.java.swing.plaf.windows.WindowsLookAndFeel
+lf=com.sun.java.swing.plaf.metal.MetalLookAndFeel
+
+###
+### DAEMONS THAT RUN IN THE BACKGROUND
+###
+
+# Server control. Can be on or off
+daemon.server.toggle=on
+
+# Autosave interval in seconds, 0=off
+daemon.autosave.interval=30
+
+###
+### BUFFER MANAGER SETTINGS
+###
+
+# Number of recent files to remember
+buffermgr.recent=8
+
+# Name for untitled files
+# {0} - count
+buffermgr.untitled=Untitled {0}
+
+###
+### BUFFER SETTINGS
+###
+
+### Number of backups to make, 0=no backups
+buffer.backup.count=1
+
+### Line separator
+### The OS default will be used if this is not specified
+### Unix=\n
+### Windows=\r\n
+### MacOS=\r
+#buffer.line.separator=\n
+
+# Print margins
+buffer.margin.top=0.5
+buffer.margin.left=0.5
+buffer.margin.bottom=0.5
+buffer.margin.right=0.5
+
+###
+### VIEW SETTINGS
+###
+
+# Title
+# {0} - file name
+view.title=jEdit - {0}
+
+# Geometry
+view.geometry.w=80
+view.geometry.h=30
+view.geometry.x=100
+view.geometry.y=50
+
+# Font
+view.font=Monospaced
+view.fontsize=12
+# o=plain, 1=bold, 2=italic, 3=bolditalic
+view.fontstyle=0
+
+# Tab width
+view.tabsize=8
+
+# Line wrap policy
+#view.linewrap=word
+#view.linewrap=char
+view.linewrap=off
+
+# Auto indent
+view.autoindent=on
+#view.autoindent=off
+
+# Status bar
+# {0} - the file name
+# {1} - the current editing mode
+# {2} - 1 if the file is not on disk
+# {3} - 1 if the file is read only
+# {4} - 1 if the file has changed since last save
+# {5} - the number of lines in the buffer
+# {6} - the current line number
+# {7} - the percentage of the file displayed
+view.status=({2,choice,0#--|1#**}{3,choice,0#:|1#/}{4,choice,0#--|1#**}) {0} \
+	({1}, Line {5}/{6} {7}%)
+
+# Buffers menu item label
+# {0} - the file name
+# {1} - the current editing mode
+# {2} - 1 if the file has changed since last save
+view.menulabel={0} ({2,choice,0#|1#* }{1})
+
+# Menu bar
+view.mbar=buffers file edit search plugins help
+file=new_file new_view open_file open_url open_selection %open_recent - \
+	close_file close_view - save save_as save_url - execute - send print \
+	- exit
+file.label=File
+new_file.label=New File
+new_file.shortcut=C-n
+new_view.label=New View
+new_view.shortcut=CS-n
+open_file.label=Open File...
+open_file.shortcut=C-o
+open_url.label=Open URL...
+open_url.shortcut=C-u
+open_selection.label=Open Selection
+open_selection.shortcut=CS-o
+open_recent.label=Open Recent
+no_recent.label=No Recent Files
+close_file.label=Close File
+close_file.shortcut=C-w
+close_view.label=Close View
+close_view.shortcut=CS-w
+save.label=Save
+save.shortcut=C-s
+save_as.label=Save As...
+save_as.shortcut=CS-s
+save_url.label=Save To URL...
+save_url.shortcut=CS-u
+execute.label=Execute...
+execute.shortcut=C-e
+send.label=Send...
+print.label=Print...
+print.shortcut=C-p
+exit.label=Exit
+exit.shortcut=C-q
+edit=undo redo - cut copy paste clear select_all - goto_line - to_upper \
+	to_lower insert_date - word_count - set_marker \
+	%clear_marker %goto_marker - %mode - options
+edit.label=Edit
+undo.label=Undo
+undo.shortcut=C-z
+redo.label=Redo
+redo.shortcut=CS-z
+cut.label=Cut
+cut.shortcut=C-x
+copy.label=Copy
+copy.shortcut=C-c
+paste.label=Paste
+paste.shortcut=C-v
+clear.label=Clear
+select_all.label=Select All
+select_all.shortcut=C-a
+goto_line.label=Go To Line...
+goto_line.shortcut=C-l
+to_lower.label=To Lowercase
+to_upper.label=To Uppercase
+insert_date.label=Insert Date
+word_count.label=Word Count...
+set_marker.label=Set Marker...
+set_marker.shortcut=C-m
+clear_marker.label=Clear Marker
+goto_marker.label=Go To Marker
+no_markers.label=No Markers Defined
+mode.label=Mode
+options.label=Options...
+search.label=Search
+search=find find_next find_selection - replace replace_next replace_all - \
+	hypersearch
+find.label=Find...
+find.shortcut=C-f
+find_next.label=Find Next
+find_next.shortcut=C-g
+find_selection.label=Find Selection
+find_selection.shortcut=C-h
+replace.label=Replace
+replace.shortcut=C-r
+replace_next.label=Replace & Find Next
+replace_next.shortcut=CS-g
+replace_all.label=Replace All
+replace_all.shortcut=CS-r
+hypersearch.label=HyperSearch...
+hypersearch.shortcut=CS-h
+plugins.label=Plugins
+no_plugins.label=No Plugins
+buffers.label=Buffers
+help=about help - help@COPYING.txt help@README.txt help@NEWS.txt \
+	help@VERSION.txt - help@starting.txt help@menus.txt \
+	help@shortcuts.txt help@regexp.txt help@props.txt help@plugins.txt \
+	help@security.txt
+help.label=Help
+about.label=About jEdit...
+help@COPYING.txt.label=Copying
+help@README.txt.label=Readme
+help@NEWS.txt.label=News
+help@VERSION.txt.label=Version Info
+help@starting.txt.label=Getting Started
+help@menus.txt.label=Menus
+help@shortcuts.txt.label=Shortcuts
+help@regexp.txt.label=Regular Expressions
+help@props.txt.label=Properties
+help@plugins.txt.label=Plugins
+help@security.txt.label=Security
+
+###
+### VARIOUS DIALOGS
+###
+
+# Recursive menu definition dialog
+recursmenu.title=Recursive Menu Definition
+recursmenu.message=There is a loop in the menubar definition: {0}\n\
+	The most likely cause of this is an invalid user properties file;\n\
+	try starting jEdit with the -nousrprops switch.
+
+# Invalid keystroke dialog
+invkeystroke.title=Invalid Keystroke
+invkeystroke.message=The keystroke {0} is invalid.\n\
+	The most likely cause of this is an invalid user properties file;\n\
+	try starting jEdit with the -nousrprops switch.
+
+# Error loading plugin dialog
+loadpluginerr.title=Error Loading Plugin
+loadpluginerr.message=The plugin {0} could not be loaded.\n\
+	Try reinstalling it.
+
+# Command not found dialog
+cmdnotfound.title=Command Not Found
+cmdnotfound.message=Could not find {0} command.\n\
+	The most likely cause of this is an invalid user properties file;\n\
+	try starting jEdit with the -nousrprops switch.
+
+# Error loading command dialog
+loadcmderr.title=Error Loading Command
+loadcmderr.message=The command {0} could not be loaded.\n\
+	If the command in question is a plugin, try reinstalling it.\n\
+	When sending a bug report, please include the stack trace dumped\n\
+	to System.err.
+
+# Error executing command dialog
+execcmderr.title=Error Executing Command
+execcmderr.message=The command {0} could not be executed.\n\
+	If the command in question is a plugin, try reinstalling it.\n\
+	When sending a bug report, please include the stack trace dumped\n\
+	to System.err.
+
+# Mode not found dialog
+modenotfound.title=Mode Not Found
+modenotfound.message=Could not find {0} mode.\n\
+	The most likely cause of this is an invalid user properties file;\n\
+	try starting jEdit with the -nousrprops switch.
+
+# Error loading mode dialog
+loadmodeerr.title=Error Loading Mode
+loadmodeerr.message=The mode {0} could not be loaded.\n\
+	Try reinstalling it. Otherwise, send the developer the stack trace\n\
+	dumped to System.err.
+
+#
+# About dialog
+# {0} - jEdit version
+# {1} - jEdit build
+# {2} - Java version
+# {3} - OS name
+# {4} - OS version
+# {5} - OS architecture
+# {6} - Free memory
+# {7} - Total memory
+about.title=About jEdit
+about.message=jEdit version {0} build {1}, Copyright (C) 1998 Slava Pestov.\n\
+	\n\
+	Java version {2} running on {3}/{5} version {4}.\n\
+	Java heap space: (free/total) {6}/{7}Kb\n\
+	\n\
+	This is free software, and you are welcome to redistribute it under\n\
+	certain conditions; see Help->Copying for details.\n\
+	\n\
+	jStyle (C) 1997-1998 Tal Davidson <tald@md2.huji.ac.il>.\n\
+	\n\
+	gnu.regexp (C) Free Software Foundation\n\
+	<http://www.cacas.org/java/gnu/regexp/>.\n\
+	\n\
+	For more information, see Help->Readme.
+
+# IO Error dialog, {0}=the error message
+ioerror.title=I/O Error
+ioerror.message=An I/O error occured ({0})
+
+# File not found dialog
+# {0} - the file name
+notfounderror.title=File Not Found
+notfounderror.message=The file could not be found: {0}
+
+# Open URL dialog
+openurl.title=Open URL
+openurl.message=URL to open:
+
+# Open file dialog
+openfile.title=Open File
+
+# Save To URL dialog
+saveurl.title=Save To URL
+saveurl.message=URL to save file to:
+
+# Save file dialog
+savefile.title=Save File
+
+# Execute dialog
+execute.title=Execute Command
+execute.message=Command (%p = file path, %u = file URL):
+
+# Send dialog
+send.title=Send
+send.smtp=SMTP Server:\ 
+send.from=From:\ 
+send.to=To:\ 
+send.subject=Subject:\ 
+send.send=Send
+send.cancel=Cancel
+sendempty.title=Send Error
+sendempty.message=The SMTP Server, From and To fields must all be\n\
+	filled out before the file can be sent.
+badport.title=Invalid Port
+badport.message=The specified port number is invalid.
+serverdown.title=Server Is Down
+serverdown.message=The SMTP server is down.
+badhost.title=The Server Doesn't Like You
+badhost.message=The SMTP server doesn't like you.
+badsender.title=Invalid Sender
+badsender.message=Invalid From: line. Check if it's okay.
+badrecepient.title=Invalid Recepient
+badrecepient.message=Invalid To: line. Check if it's okay.
+badmsg.title=Invalid Message
+badmsg.message=The server doesn't like your message.
+send.connect=Connecting to {0}...
+
+# Go to line dialog
+gotoline.title=Go To Line
+gotoline.message=Line number to go to:
+
+# Word count dialog
+wordcount.title=Word Count Results
+wordcount.message=Characters: {0}\nWords: {1}\nLines: {2}
+
+# Set marker dialog
+setmarker.title=Set Marker
+setmarker.message=Marker name:
+
+# Clear marker dialog
+clearmarker.title=Clear Marker
+clearmarker.message=Marker to clear:
+
+# Go to marker dialog
+gotomarker.title=Go To Marker
+gotomarker.message=Marker to jump to:
+
+# File not saved dialog
+notsaved.title=File Not Saved
+# {0} - file name
+notsaved.message=Save changes to {0}?
+
+# Autosave file exists dialog
+autosaveexists.title=Autosave File Exists
+# {0} - autosave file name
+autosaveexists.message=An autosave file {0} was found.\n\
+	This probably means that jEdit crashed before you could save.\n\
+	Open it to see your unsaved data.
+
+# Search and replace dialog
+search.title=Search And Replace
+search.find=Find:\ 
+search.replace=Replace With:\ 
+search.ignoreCase=Ignore Case
+search.regexp=RegExp Syntax:\ 
+search.regexp.value=perl5
+search.next=Find Next
+search.replaceBtn=Replace
+search.replaceAll=Replace All
+search.close=Close
+
+# Keep searching dialog
+keepsearching.title=No More Matches Found
+keepsearching.message=No more matches were found. Continue search from\n\
+	beginning of buffer?
+
+# Hypersearch dialog
+hypersearch.title=HyperSearch
+hypersearch.find=Search For:\ 
+hypersearch.findBtn=Find All
+hypersearch.close=Close
+hypersearch.ignoreCase=Ignore Case
+
+# Invalid regexp dialog
+reerror.title=Invalid Regular Expression
+reerror.message=The regular expression is invalid. ({0})
+
+# Options dialog
+options.title=Options
+options.lf=Look And Feel 
+options.lf.metal=Metal
+options.lf.motif=Motif
+options.lf.windows=Windows
+options.opening=Opening Files
+options.opening.server=Enable jEdit server (requred for jOpen)
+options.opening.maxrecent=Maximum number of recent files in menu:\ 
+options.saving=Saving Files
+options.saving.autosave=Autosave frequency (secs, 0 = never):\ 
+options.saving.backups=Maximum number of backups (0 = none):\ 
+options.saving.newline=Line separator:\ 
+options.saving.newline.unix=Unix
+options.saving.newline.windows=Windows
+options.saving.newline.mac=MacOS
+options.editing=Editing Files
+options.editing.autoindent=Auto Indent
+options.editing.wrap=Wrap:\ 
+options.editing.wrap.off=Off
+options.editing.wrap.char=Character
+options.editing.wrap.word=Word
+options.editing.tabsize=Tab Size:\ 
+options.editing.font=Font:\ 
+options.printing=Print Margins (Inches)
+options.printing.left=Left:\ 
+options.printing.right=Right:\ 
+options.printing.top=Top:\ 
+options.printing.bottom=Bottom:\ 
+options.ok=OK
+options.cancel=Cancel
+
+# Text mode
+modename.none=Text

@@ -1,0 +1,113 @@
+VERSION INFORMATION (VERSION.txt, last modified 16 Nov 1998)
+
+-- Version 1.1.2:
+- Search and replace has been broken since 1.1pre7... OOPS should work now :)
+- Minor makefile updates
+- Minor documentation updates
+
+-- Version 1.1.1:
+- Fixed version number in config.bat file
+- Fixed jopen shell script
+
+-- Version 1.1final:
+- Killed unfinished Java mode
+
+-- Version 1.1pre7:
+- Major auto indent mode updates
+- Renamed configure.bat to config.bat (somebody said that Win98 can't run .bat
+  files whose names are longer than 8 characters)
+- Buffers menu now shows edit modes and dirty flags
+- Updated to gnu.regexp 1.0.5
+- Minor kdelnk updates
+- Minor Makefile updates (should now work on Digital Unix (?))
+- Minor documentation updates
+
+-- Version 1.1pre6:
+- Server is more secure (authorization using a key stored in the port file
+  is now required)
+- jEdit and jOpen shell scripts should now work better on multi-headed
+  systems (screen part of $DISPLAY ignored when specifying port file)
+- Fixed bug when markers file wasn't properly updated after all markers were
+  cleared
+- Fixed pure Java jOpen behaviour to match shell script jOpen
+- Works better when "jedit.home" property isn't set (ie, when it's not being
+  run with the shell script or batch file)
+- Minor documentation updates
+
+-- Version 1.1pre5:
+- Fixed open URL path name bug
+- Fixed open recent bug
+- Fixed obscure path name bug
+- Fixed edit mode bug
+- Fixed port file setting in jEdit shell script
+- Fixed plugin load error dialog
+- System properties are now in a seprate file
+- Javadocs for Buffer class
+- Buffers menu moved to start of menubar
+- Documentation updates (including regexp syntax docs)
+
+-- Version 1.1pre4:
+- Regular expression search and replace using gnu.regexp
+- Go to marker from command line fixed
+- Hooks added to command manager
+- More property name changes
+- Server bug fixed
+- Help command fixed
+- Auto indent bug fixed
+- The caret position is saved when switching buffers
+- Mode is set correctly for GZipped files
+- Minor documentation updates
+- Shell script version of jOpen doesn't use `cut' anymore
+- SyntaxTextArea subclass of JTextArea created, will be used for
+  syntax colorizing later on
+- Configure script updates
+- Code cleanups
+
+-- Version 1.1pre3:
+- jEdit shell script fixed to run in shells other than bash
+- Major editing mode code updates
+- Many property names changed
+- Auto indent mode (similar in functionality to jEdit 1.0's auto indent)
+- Java mode updates (but it still doesn't work)
+- Java pretty print plugin included again
+- Documentation updates
+- Error message updates
+- Shell script version of jOpen installed if netpipes is detected
+- Configure script updates
+- Workaround for Swing 1.1beta's divide by zero bug
+- Minor pathname code updates
+- Obscure server bug fixed
+
+-- Version 1.1pre2:
+- Fixed scripts and Makefiles for non-GNU find, sh and make
+- Faster file loading
+- Preliminary and untested editing mode support
+- Open in Netscape and Open Selection in Netscape commands
+- Major changes to Command interface
+- Improved documentation
+- Fixed startup process
+- Code cleanups
+
+-- Version 1.1pre1:
+- Fixed opening non existent files
+- Fixed editing files with Windows line endings
+- Fixed horizontal scroll bar
+- There is now a Configure script for specifying the install directory and
+  other build parameters
+- Windows compile scripts scrapped. Too many hardcoded parameters, too hard
+  to maintain
+- Changed to use jre on Windows as well
+- `-noserver' option can be passed to jEdit
+- Server isn't started when jEdit is being run as root on Unix to protect
+  from denial of service attacks
+- Server checks if existing port file is valid before bailing out
+- A message is printed if system properties couldn't be found
+- Minor set marker command updates
+- Full path isn't displayed for untitled files
+- Removed jOpen's useless `-server' switch
+- Improved fatal error messages
+- Improved documentation
+- Code cleanups
+
+-- Slava Pestov
+<slava_pestov@geocities.com>

@@ -22,17 +22,8 @@ import java.util.Hashtable;
 
 public class Cmd_options implements Command
 {
-	public Object init(Hashtable args)
+	public void exec(Buffer buffer, View view, String arg, Hashtable args)
 	{
-		return null;
-	}
-
-	public Object exec(Hashtable args)
-	{
-		View view = (View)args.get(VIEW);
-		String arg = (String)args.get(ARG);
-		if(view != null)
-			view.options();
-		return null;
+		new Options(view);
 	}
 }

@@ -17,21 +17,12 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-import com.sun.java.swing.JTextArea;
 import java.util.Hashtable;
 
 public class Cmd_word_count implements Command
 {
-	public Object init(Hashtable args)
+	public void exec(Buffer buffer, View view, String arg, Hashtable args)
 	{
-		return null;
-	}
-
-	public Object exec(Hashtable args)
-	{
-		View view = (View)args.get(VIEW);
-		if(view != null)
-			view.getBuffer().wordCount(view);
-		return null;
+		buffer.wordCount(view);
 	}
 }

@@ -1,13 +1,13 @@
-JEDIT MENUS (menus.txt, last modified 8 Oct 1998)
+JEDIT MENUS (menus.txt, last modified 7 Nov 1998)
 
 Contents
 --------
 1. Format
-2. File Menu
-3. Edit Menu
-4. Search Menu
-5. Plugins Menu
-6. Buffers Menu
+2. Buffers Menu
+3. File Menu
+4. Edit Menu
+5. Search Menu
+6. Plugins Menu
 7. Help Menu
 8. Customizing Menus
 
@@ -15,7 +15,7 @@ Contents
 ---------
 Each menu item description in this file looks like this:
 
-- <Default label> <command name> <shortcut>
+- <label> <command name> <shortcut>
 <Description>
 
 The shortcut is one or more modifiers, followed by a dash, followed by the
@@ -26,7 +26,11 @@ S - shift
 A - alt
 M - meta (on PC keyboards, right alt)
 
-2. File Menu
+2. Buffers Menu
+---------------
+This menu contains one entry for each open file.
+
+3. File Menu
 ------------
 - New File (new_file) (C-n)
 Creates a new, untitled file.
@@ -66,10 +70,11 @@ Prompts for a new name to save the current file as.
 
 - Save To URL (save_url) (CS-u)
 Prompts for a URL or path name to save the file to.
+
 -- SEPARATOR --
 
 - Execute (execute) (C-e)
-Prompts for a command to execute.
+Prompts for a program to execute.
 
 -- SEPARATOR --
 
@@ -84,7 +89,7 @@ Prints the current file.
 - Exit (exit) (C-q)
 Exits jEdit, asking if any unsaved files should be saved first.
 
-3. Edit Menu
+4. Edit Menu
 ------------
 
 - Undo (undo) (C-z)
@@ -145,11 +150,13 @@ marker is AS-0.
 
 -- SEPARATOR --
 
-- Options (options)
-Displays the options dialog, for changing fonts, margins, and such. Most
-elements should be self-explanatory.
+- Mode (%mode)
+A submenu with a list of all available edit modes.
 
-4. Search Menu
+- Options (options)
+Displays the options dialog, for changing fonts, margins, and such.
+
+5. Search Menu
 --------------
 
 - Find (find) (C-f)
@@ -178,13 +185,9 @@ Replaces all occurrences of the search string with the replacement string.
 - HyperSearch (hypersearch) (CS-h)
 Try it!
 
-5. Plugins Menu
+6. Plugins Menu
 ---------------
-This menu contains one entry for each plugin you have installed.
-
-6. Buffers Menu
----------------
-This menu contains one entry for each open file.
+This menu contains one entry for each available plugin.
 
 7. Help Menu
 ------------
@@ -206,6 +209,7 @@ with the menu's label.
 
 	file=new_file new_view open_file open_url open_selection \
 	%open_recent - ... and so on ...
+	file.label=File
 
 If a menu item `-' is found, a separator is inserted. If a menu item starts
 with `%', a menu is inserted in it's place. For example, `%open_recent' will
@@ -219,8 +223,6 @@ contains it's label and one which contains it's shortcut.
 
 When that menu item is selected, it's name is executed as a command - the
 `new_file' menu item, when selected, will invoke the `new_file' command.
-
-The shortcut format is described in section 1.
 
 -- Slava Pestov
 <slava_pestov@geocities.com>
