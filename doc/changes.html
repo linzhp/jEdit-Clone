@@ -2,8 +2,8 @@
 <body>
 <h1>Version History</h1>
 
-<a href=#wishlist>Wish List</a><br>
-<a href=#todo>To Do</a><br>
+<a href=#wishlist>To Do For Future Versions</a><br>
+<a href=#todo>To Do For 1.4</a><br>
 <a href=#14pre7>Version 1.4pre7</a><br>
 <a href=#14pre6>Version 1.4pre6</a><br>
 <a href=#14pre5>Version 1.4pre5</a><br>
@@ -13,37 +13,34 @@
 <a href=#14pre1>Version 1.4pre1</a><br>
 
 <a name=wishlist>
-<h1>Wish List For Future Versions</h1>
+<h1>To Do For Future Versions</h1>
 </a>
 
 <ul>
-<li>Class/method/variable browser (the implementation is actally quite
-easy - the hardest part is writing the source code parser)
-<li>Make org.gjt.sp.jedit.syntax and org.gjt.sp.jedit.gui.SyntaxTextArea
-not dependant on Buffer/jEdit classes (maybe a SyntaxDocument interface,
-or set/getTabSize/TokenMarker methods in SyntaxTextArea)
-<li>Maybe make entire jEdit application a component that can be added to
-other programs, but this is tricky
-<li>One person has requested automatic word wrap - jEdit 1.0 and 1.1 had it,
-but it got lost in the syntax colorizing scuffle of jEdit 1.2. I'm not too
-keen on adding this since a) it requires major (well not major but considerable)
-changes to my SyntaxView class, b) jEdit is designed to be mainly a programming
-text editor, c) Edit-&gt;Format Text is there for manual word wrap, d)
-nobody else has asked for this and I don't need it either
-<li>Semi-automatic word wrap that inserts physical newlines if the line
-gets too long isn't very hard, but once a line is split it isn't rejoined
-again. Should ask that person if that's okay :) Maybe an Auto Format edit mode,
-that HTML and TeX modes can subclass?
-<li>Swing key maps should be editable
+<li>Each view should have a menu of functions, the buffer should be
+dynamically parsed, maybe in a separate thread
+<li>GUI key binding editor (including Swing keymaps)
 <li>Insert file command
-<li>`Literal' search (no regexp) option
-<li>`Fix' jEdit's lazy colorizing (no, I'm not going to do it)
-<li>`Locate Bracket' and `Select Block' should skip
-comments/quoted literals that might contain unmatched brackets.
-<li>Backup directory feature, where all ...~ files are placed
-<li>Syntax colorizing is still slow - should use a visible line cache to speed
-up scrolling
-<li>Error list component/toolbar/dialog
+<li>Literal (no regexp) search option
+<li>Bracket matching code should skip comments and quoted literals
+<li>Fix lazy colorizing of multiline statements and make syntax
+colorizing faster (with a cache or something)
+<li>Event system, with BufferEvent, ViewEvent notifying components when
+buffers/views are opened and closed. Would make a lot of existing code
+cleaner
+<li>ApplicationOwner and ViewOwner interfaces so jEdit be added to any
+application that supports those interfaces, which define functions such
+as createFrame(), getProperty(), exit(), etc
+<li>Syntax colorizing text area should be usable on it's own, maybe a
+JavaBean or something
+<li>Toolbar position should be saved
+<li>Expand abbreviation should fetch the next match if the caret hasn't
+moved since the last time it was invoked
+<li>Word wrap maybe? jEdit 1.0 and 1.1 had it, but it was removed in 1.2 to
+make syntax colorizing easier to implement. Not useful in a programmer's
+text editor
+<li>Only one console should parse errors at a time, this prevents user
+confusion and messy error lists
 </ul>
 
 <a name=todo>
@@ -53,11 +50,6 @@ up scrolling
 <ul>
 <li>Context menu - mnemonics/arrows don't work, and selection is extended if
 mouse is held down
-<li>Typing lags behind on last line of document? I think this is a Swing bug...
-<li>Toolbar options panel
-<li>Toolbar position should be saved (top/left/right/bottom/undocked/x/y)
-<li>Console should acquire compile `lock' so that there is only one compile
-going at once
 </ul>
 </ul>
 
@@ -69,15 +61,18 @@ going at once
 
 <ul>
 <li>Simple toolbar added
-<li>New `console' window to replace old `command output' - it is much more
-powerful
+<li>New `console' window to replace old `command output' - it has more
+features
 </ul>
 
 <h2>Bug Fixes</h2>
 
 <ul>
 <li>Error list menu was created incorrectly sometimes
+<li>Invalid line numbers in the error list caused problems
 <li>Keywords weren't colorized correctly sometimes
+<li>Untitled files were (wrongly) saved with the desktop, this caused problems
+<li>View size and position wasn't saved on exit
 </ul>
 
 <a name=14pre6>

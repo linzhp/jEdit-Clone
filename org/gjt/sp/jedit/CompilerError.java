@@ -41,6 +41,8 @@ public class CompilerError
 		this.lineNo = lineNo - 1;
 		this.error = error;
 
+		name = new File(path).getName();
+
 		Buffer buffer = jEdit.getBuffer(this.path);
 		if(buffer != null)
 			openNotify(buffer);
@@ -103,8 +105,7 @@ public class CompilerError
 	 */
 	public String toString()
 	{
-		return new File(getPath()).getName() + ":" + getLineNo()
-			+ ":" + getError();
+		return name + ":" + getLineNo() + ":" + getError();
 	}
 
 	// package private members
@@ -131,6 +132,7 @@ public class CompilerError
 
 	// private members
 	private String path;
+	private String name;
 	private Buffer buffer;
 	private int lineNo;
 	private Position linePos;

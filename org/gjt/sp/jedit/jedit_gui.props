@@ -485,6 +485,7 @@ console.errors=Errors
 console.run=Run
 console.stop=Stop
 console.close=Close
+console.ioerror=I/O error: {0}
 
 # Compile error dialog
 error.title=Compiler Error

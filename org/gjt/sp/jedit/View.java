@@ -535,6 +535,8 @@ implements CaretListener, KeyListener, WindowListener
 			.VERTICAL_SCROLLBAR_ALWAYS,ScrollPaneConstants
 			.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 
+		lastLine = -1;
+
 		lineNumber = new JLabel();
 		textArea.addKeyListener(this);
 		textArea.addCaretListener(this);
@@ -606,6 +608,7 @@ implements CaretListener, KeyListener, WindowListener
 	private SyntaxTextArea textArea;
 	private JLabel lineNumber;
 	private Segment lineSegment;
+	private int lastLine;
 	private Buffer buffer;
 	private boolean showTip;
 	private JToolBar toolBar;
@@ -625,9 +628,16 @@ implements CaretListener, KeyListener, WindowListener
 			new Integer(((currLine + 1) * 100) / numLines) };
 		lineNumber.setText(jEdit.getProperty("view.lineNumber",args));
 		if(textArea.getSelectionStart() == textArea.getSelectionEnd())
-			textArea.setHighlightedLine(start,end);
+		{
+			if(currLine != lastLine)
+				textArea.setHighlightedLine(start,end);
+			lastLine = currLine;
+		}
 		else
+		{
 			textArea.setHighlightedLine(0,0);
+			lastLine = -1;
+		}
 		try
 		{
 			if(dot != 0)

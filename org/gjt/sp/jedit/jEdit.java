@@ -45,7 +45,7 @@ public class jEdit
 	 * The date when a change was last made to the source code,
 	 * in <code>YYYYMMDD</code> format.
 	 */
-	public static final String BUILD = "19990222";
+	public static final String BUILD = "19990223";
 
 	/**
 	 * AWK regexp syntax.
@@ -1103,6 +1103,9 @@ public class jEdit
 	 */
 	public static void exit(View view)
 	{
+		// Save the current view's geometry
+		GUIUtilities.saveGeometry(view,"view");
+
 		// Save the `desktop'
 		if("on".equals(getProperty("saveDesktop")))
 		{
@@ -1111,6 +1114,8 @@ public class jEdit
 			for(i = 0; i < buffers.size(); i++)
 			{
 				Buffer buffer = (Buffer)buffers.elementAt(i);
+				if(buffer.isNewFile())
+					continue;
 				setProperty("desktop." + i + ".path",
 					buffer.getPath());
 				Mode mode = buffer.getMode();

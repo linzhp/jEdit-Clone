@@ -78,7 +78,9 @@ implements ActionListener, KeyListener, ListSelectionListener, WindowListener
 		output.append("> ");
 		output.append(command);
 		output.append("\n");
+		
 		jEdit.clearErrors();
+
 		try
 		{
 			process = Runtime.getRuntime().exec(command);
@@ -86,7 +88,8 @@ implements ActionListener, KeyListener, ListSelectionListener, WindowListener
 		catch(IOException io)
 		{
 			String[] args = { io.getMessage() };
-			GUIUtilities.error(this,"ioerror",args);
+			output.append(jEdit.getProperty("console.ioerror",args));
+			output.append("\n");
 			return;
 		}
 		stdout = new StdoutThread();
