@@ -328,20 +328,18 @@ lineSep.mac=MacOS (\\r)
 # {6} - Free memory
 # {7} - Total memory
 about.title=About jEdit
-about.message=jEdit {0} build {1}, Copyright (C) 1998, 1999 Slava Pestov.\n\
+about.message=jEdit {0} build {1}\n\
+	Copyright (C) 1998, 1999 Slava Pestov.\n\
+	Portions copyright (C) 1999 Mike Dillon, Romain Guy and Juha Lindfords\n\
+	\n\
 	jEdit homepage: <http://www.gjt.org/~sp/jedit.html>.\n\
 	jEdit e-mail: <sp@gjt.org>.\n\
-	\n\
-	Java version {2} running on {3}/{5} version {4}.\n\
-	Java heap space: (free/total) {6}/{7}Kb\n\
 	\n\
 	This is free software, and you are welcome to redistribute it under\n\
 	certain conditions; see Help->Help Contents->Copying for details.\n\
 	\n\
-	gnu.regexp (C) Free Software Foundation\n\
-	<http://www.cacas.org/java/gnu/regexp/>.\n\
-	\n\
-	For help with using jEdit, see Help->Help Contents.
+	Java version {2} running on {3}/{5} version {4}.\n\
+	Java heap space: (free/total) {6}/{7}Kb\n\
 
 # IO Error dialog, {0}=the error message
 ioerror.title=I/O Error

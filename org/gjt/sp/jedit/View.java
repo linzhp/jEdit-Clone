@@ -30,7 +30,7 @@ import org.gjt.sp.jedit.gui.SyntaxTextArea;
 
 /**
  * A <code>View</code> edits buffers. There is no public constructor in the
- * View class. Views are created and destroyed by the <code>BufferMgr</code>
+ * View class. Views are created and destroyed by the <code>jEdit</code>
  * class.
  * @see Buffer
  */

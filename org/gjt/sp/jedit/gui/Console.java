@@ -252,7 +252,9 @@ implements ActionListener, KeyListener, ListSelectionListener, WindowListener
 			}
 
 			// Otherwise, check for standard filename:lineno:error
-			int fileIndex = msg.indexOf(':');
+			// We have to start at offset 3, otherwise DOS drive
+			// letters will be caught (E:\file:12:error)
+			int fileIndex = msg.indexOf(':',2);
 			if(fileIndex == -1)
 				break; /* Oops */
 			file = msg.substring(0,fileIndex);
