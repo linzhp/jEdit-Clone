@@ -23,6 +23,7 @@ import com.sun.java.swing.JDialog;
 import com.sun.java.swing.JLabel;
 import com.sun.java.swing.JList;
 import com.sun.java.swing.JPanel;
+import com.sun.java.swing.JScrollPane;
 import com.sun.java.swing.JSeparator;
 import com.sun.java.swing.JTextArea;
 import com.sun.java.swing.JTextField;
@@ -75,7 +76,7 @@ implements ActionListener, ListSelectionListener, WindowListener
 		panel.add(close);
 		getContentPane().add("North",panel);
 		getContentPane().add("Center",new JSeparator());
-		getContentPane().add("South",results);
+		getContentPane().add("South",new JScrollPane(results));
 		Dimension screen = getToolkit().getScreenSize();
 		pack();
 		setLocation((screen.width - getSize().width) / 2,

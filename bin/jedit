@@ -7,7 +7,7 @@ fi
 
 if [ "$JEDIT_HOME" = "" ]
 then
-    JEDIT_HOME=/opt/slava/share/jedit-1.0pre1
+    JEDIT_HOME=/opt/slava/share/jedit-1.0pre2
 fi
 
 JEDIT="-portfile=$HOME/.jedit-server-$DISPLAY"

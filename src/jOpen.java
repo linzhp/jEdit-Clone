@@ -26,8 +26,8 @@ import java.net.Socket;
 
 public class jOpen
 {
-	public static final String VERSION = "1.0pre1";
-	public static final String BUILD = "19981009";
+	public static final String VERSION = "1.0pre2";
+	public static final String BUILD = "19981011";
 	
 	public static void usage()
 	{
@@ -55,7 +55,7 @@ public class jOpen
 	{
 		String server = "localhost";
 		String portFilename = System.getProperty("user.home") +
-			File.separator + ".jedit-port";
+			File.separator + ".jedit-server";
 		boolean endOpts = false;
 		boolean readOnly = false;
 		for(int i = 0; i < args.length; i++)
@@ -123,6 +123,8 @@ public class jOpen
 		catch(IOException io)
 		{
 			io.printStackTrace();
+			System.out.println("Deleting stale port file");
+			portFile.delete();
 			System.exit(1);
 		}
 	}

@@ -91,17 +91,10 @@ public class BufferMgr
 
 	public Buffer openURL(View view)
 	{
-		String path = (String)JOptionPane.showInputDialog(view,
-			jEdit.props.getProperty("openurl.message"),
-			jEdit.props.getProperty("openurl.title"),
-			JOptionPane.QUESTION_MESSAGE,
-			null,
-			null,
-			jEdit.props.getProperty("lasturl"));
+		String path = jEdit.input(view,"openurl","lasturl");
 		if(path == null)
 			return null;
-		jEdit.props.put("lasturl",path);
-		return openFile(view,null,path,false,true);
+		return openFile(view,null,path,false,false);
 	}
 	
 	public Buffer openFile(View view)
@@ -117,32 +110,32 @@ public class BufferMgr
 			return null;
 		else
 			return openFile(view,null,fileDialog.getDirectory()
-				+ file,false,true);
+				+ file,false,false);
 	}
 
 	public Buffer openFile(String path)
 	{
-		return openFile(null,null,path,false,true);
+		return openFile(null,null,path,false,false);
 	}
 	
 	public Buffer openFile(String path, boolean readOnly)
 	{
-		return openFile(null,null,path,readOnly,true);
+		return openFile(null,null,path,readOnly,false);
 	}
 	
 	public Buffer openFile(View view, String path)
 	{
-		return openFile(view,null,path,false,true);
+		return openFile(view,null,path,false,false);
 	}
 
 	public Buffer openFile(View view, String path, boolean readOnly,
-		boolean load)
+		boolean newFile)
 	{
-		return openFile(view,null,path,readOnly,load);
+		return openFile(view,null,path,readOnly,newFile);
 	}
 	
 	public Buffer openFile(View view, String parent, String path,
-		boolean readOnly, boolean load)
+		boolean readOnly, boolean newFile)
 	{
 		if(view != null && parent == null)
 			parent = view.getBuffer().getFile().getParent();
@@ -164,8 +157,8 @@ public class BufferMgr
 				return buffer;
 			}
 		}
-		Buffer buffer = new Buffer(parent,path,readOnly,load);
-		if(load)
+		Buffer buffer = new Buffer(parent,path,readOnly,newFile);
+		if(!newFile)
 		{
 			path = buffer.getPath();
 			if(!recent.contains(path))
@@ -206,7 +199,7 @@ public class BufferMgr
 	{
 		Object[] args = { new Integer(++untitledCount) };
 		return openFile(view,jEdit.props.getProperty("untitled",
-			args),false,false);
+			args),false,true);
 	}
 
 	public boolean closeBuffer(View view, Buffer buffer)

@@ -34,7 +34,7 @@ public class Cmd_find_selection implements Command
 			String selection = view.getTextArea()
 				.getSelectedText();
 			if(selection != null)
-				view.getBuffer().find(view,selection);
+				view.getBuffer().find(view,selection,false);
 			else
 				view.getToolkit().beep();
 		}

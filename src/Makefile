@@ -11,6 +11,7 @@ resources=jEdit.class \
 	Options.class \
 	PropsMgr.class \
 	SearchAndReplace.class \
+	SendDialog.class \
 	Server.class \
 	View.class \
 	Cmd_about.class \
@@ -20,6 +21,7 @@ resources=jEdit.class \
 	Cmd_close_view.class \
 	Cmd_copy.class \
 	Cmd_cut.class \
+	Cmd_execute.class \
 	Cmd_exit.class \
 	Cmd_find.class \
 	Cmd_find_next.class \
@@ -28,6 +30,7 @@ resources=jEdit.class \
 	Cmd_goto_marker.class \
 	Cmd_help.class \
 	Cmd_hypersearch.class \
+	Cmd_insert_date.class \
 	Cmd_new_file.class \
 	Cmd_new_view.class \
 	Cmd_open_file.class \
@@ -45,8 +48,12 @@ resources=jEdit.class \
 	Cmd_save_url.class \
 	Cmd_select_all.class \
 	Cmd_select_buffer.class \
+	Cmd_send.class \
 	Cmd_set_marker.class \
+	Cmd_to_lower.class \
+	Cmd_to_upper.class \
 	Cmd_undo.class \
+	Cmd_word_count.class \
 	properties
 jar=jedit.jar
 files=$(jar)

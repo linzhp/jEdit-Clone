@@ -5,8 +5,6 @@
 server=on
 # Server is off
 #server=off
-# Default port file
-server.portfile=.jedit-server
 
 ### Autosave
 # Autosave interval (in seconds)
@@ -112,9 +110,43 @@ saveurl.message=URL to save file to:
 
 ### Save file dialog
 savefile.title=Save File
+
+### Execute dialog
+execute.title=Execute Command
+execute.message=Command (%p = file path, %u = file URL):
+
+### Send dialog
+send.title=Send
+send.smtp=SMTP Server:\ 
+send.from=From:\ 
+send.to=To:\ 
+send.subject=Subject:\ 
+send.send=Send
+send.cancel=Cancel
+sendempty.title=Send Error
+sendempty.message=The SMTP Server, From and To fields must all be\n\
+	filled out before the file can be sent.
+badport.title=Invalid Port
+badport.message=The specified port number is invalid.
+serverdown.title=Server Is Down
+serverdown.message=The SMTP server is down.
+badhost.title=The Server Doesn't Like You
+badhost.message=The SMTP server doesn't like you.
+badsender.title=Invalid Sender
+badsender.message=Invalid From: line. Check if it's okay.
+badrecepient.title=Invalid Recepient
+badrecepient.message=Invalid To: line. Check if it's okay.
+badmsg.title=Invalid Message
+badmsg.message=The server doesn't like your message.
+send.connect=Connecting to {0}...
+
 ### Go to line dialog
 gotoline.title=Go To Line
 gotoline.message=Line number to go to:
+
+### Word count dialog
+word_count.title=Word Count Results
+word_count.message=Characters: {0}\nWords: {1}\nLines: {2}
 
 ### Set marker dialog
 setmarker.title=Set Marker
@@ -208,7 +240,8 @@ status=({1,choice,0#--|1#**}{2,choice,0#:|1#/}{3,choice,0#--|1#**}) {0} \
 ### Menubar
 editor_mbar=file edit search plugins buffers help
 file=new_file new_view open_file open_url open_selection %open_recent - \
-	close_file close_view - save save_as save_url - print - exit
+	close_file close_view - save save_as save_url - execute - send print \
+	- exit
 file.label=File
 new_file.label=New File
 new_file.shortcut=C-n
@@ -232,12 +265,16 @@ save_as.label=Save As...
 save_as.shortcut=CS-s
 save_url.label=Save To URL...
 save_url.shortcut=CS-u
+execute.label=Execute...
+execute.shortcut=C-e
+send.label=Send...
 print.label=Print...
 print.shortcut=C-p
 exit.label=Exit
 exit.shortcut=C-q
-edit=undo redo - cut copy paste clear select_all - goto_line - \
-	set_marker %clear_marker %goto_marker - options
+edit=undo redo - cut copy paste clear select_all - goto_line - to_upper \
+	to_lower insert_date - word_count - set_marker \
+	%clear_marker %goto_marker - options
 edit.label=Edit
 undo.label=Undo
 undo.shortcut=C-z
@@ -254,6 +291,10 @@ select_all.label=Select All
 select_all.shortcut=C-a
 goto_line.label=Go To Line...
 goto_line.shortcut=C-l
+to_lower.label=To Lowercase
+to_upper.label=To Uppercase
+insert_date.label=Insert Date
+word_count.label=Word Count...
 set_marker.label=Set Marker...
 set_marker.shortcut=C-m
 clear_marker.label=Clear Marker

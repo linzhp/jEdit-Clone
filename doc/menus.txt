@@ -66,8 +66,15 @@ Prompts for a new name to save the current file as.
 
 - Save To URL (save_url) (CS-u)
 Prompts for a URL or path name to save the file to.
+-- SEPARATOR --
+
+- Execute (execute) (C-e)
+Prompts for a command to execute.
 
 -- SEPARATOR --
+
+- Send (send)
+E-mails the current file.
 
 - Print (print) (C-p)
 Prints the current file.
@@ -105,6 +112,24 @@ Selects all the text in the current file.
 
 - Go To Line (goto_line) (C-l)
 Moves the caret to the specified line.
+
+-- SEPARATOR --
+
+- To Lowercase (to_lower)
+Converts the current selection to lower case.
+
+- To Uppercase (to_upper)
+Converts the current selection to upper case.
+
+- Insert Date (insert_date)
+Inserts the current date.
+
+-- SEPARATOR --
+
+- Word Count (word_count)
+Counts the characters, words and lines in the current file.
+
+-- SEPARATOR --
 
 - Set Marker (set_marker) (C-m)
 Defines a marker at the current caret position.

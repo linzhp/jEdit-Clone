@@ -1,8 +1,0 @@
-# Makefile
-# Version: 1.0
-
-jar=to_lower.jar
-resources=Cmd_to_lower.class to_lower.props
-all: $(jar)
-install: jar-install
-include ../../Rules.make

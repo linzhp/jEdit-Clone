@@ -35,8 +35,8 @@ import com.sun.java.swing.UIManager;
 
 public class jEdit
 {
-	public static final String VERSION = "1.0pre1";
-	public static final String BUILD = "19981009";
+	public static final String VERSION = "1.0pre2";
+	public static final String BUILD = "19981011";
 	public static final PropsMgr props = new PropsMgr();
 	public static final CommandMgr cmds = new CommandMgr();
 	public static final BufferMgr buffers = new BufferMgr();
@@ -72,7 +72,7 @@ public class jEdit
 		boolean noUsrProps = false;
 		boolean readOnly = false;
 		portFile = new File(System.getProperty("user.home"),
-			props.getProperty("server.portfile",".jedit-server"));
+			".jedit-server");
 		String jeditHome = System.getProperty("jedit.home",".");
 		for(int i = 0; i < args.length; i++)
 		{
@@ -266,7 +266,13 @@ public class jEdit
 		}		
 		return KeyStroke.getKeyStroke(ch,modifiers);
 	}
-		
+	
+	public static void about(View view)
+	{
+		Object[] args = { jEdit.VERSION, jEdit.BUILD };
+		message(view,"about",args);
+	}
+	
 	public static void message(View view, String name, Object[] args)
 	{
 		JOptionPane.showMessageDialog(view,
@@ -283,6 +289,20 @@ public class jEdit
 			JOptionPane.ERROR_MESSAGE);
 	}
 
+	public static String input(View view, String name, String def)
+	{
+		String retVal = (String)JOptionPane.showInputDialog(view,
+			jEdit.props.getProperty(name.concat(".message")),
+			jEdit.props.getProperty(name.concat(".title")),
+			JOptionPane.QUESTION_MESSAGE,
+			null,
+			null,
+			jEdit.props.getProperty(def));
+		if(retVal != null)
+			jEdit.props.put(def,retVal);
+		return retVal;
+	}
+	
 	// We really need to use a better algorithm
 	public static int find(char[] pattern, char[] line, int start)
 	{

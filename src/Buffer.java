@@ -70,16 +70,17 @@ implements DocumentListener, UndoableEditListener
 	private Vector markers;
 	
 	public Buffer(String parent, String path, boolean readOnly,
-		boolean load)
+		boolean newFile)
 	{
 		undo = new UndoManager();
 		markers = new Vector();
-		this.readOnly = readOnly;
-		newFile = !load;
+		this.newFile = newFile;
 		init = true;
 		setPath(parent,path);
-		if(load)
+		this.readOnly = readOnly;
+		if(!newFile)
 		{
+			this.readOnly |= !file.canWrite();
 			if(autosaveFile.exists())
 			{
 				Object[] args = { autosaveFile.getPath() };
@@ -217,13 +218,8 @@ implements DocumentListener, UndoableEditListener
 	{
 		new SearchAndReplace(view);
 	}
-
-	public boolean find(View view, String str)
-	{
-		return find(view,str,false);
-	}
-
-	private boolean find(View view, String str, boolean done)
+	
+	public boolean find(View view, String str, boolean done)
 	{
 		try
 		{
@@ -291,7 +287,7 @@ implements DocumentListener, UndoableEditListener
 			return false;
 		}
 		else
-			return find(view,findStr);
+			return find(view,findStr,false);
 	}
 
 	public void replace(View view)
@@ -324,7 +320,113 @@ implements DocumentListener, UndoableEditListener
 	{
 		new HyperSearch(view);
 	}
-		
+	
+	public void wordCount(View view)
+	{
+		if(view != null)
+		{
+			String selection = view.getTextArea()
+				.getSelectedText();
+			if(selection != null)
+			{
+				wordCount(view,selection);
+				return;
+			}
+		}
+		try
+		{
+			wordCount(view,getText(0,getLength()));
+		}
+		catch(BadLocationException bl)
+		{
+		}
+	}
+	
+	private void wordCount(View view, String text)
+	{
+		char[] chars = text.toCharArray();
+		int characters = chars.length;
+		int words;
+		if(characters == 0)
+			words = 0;
+		else
+			words = 1;
+		int lines = 1;
+		boolean word = false;
+		for(int i = 0; i < chars.length; i++)
+		{
+			switch(chars[i])
+			{
+			case '\r': case '\n':
+				lines++;
+			case ' ': case '\t':
+				if(word)
+				{
+					words++;
+					word = false;
+				}
+				break;
+			default:
+				word = true;
+				break;
+			}
+		}
+		Object[] args = { new Integer(characters), new Integer(words),
+			new Integer(lines) };
+		jEdit.message(view,"word_count",args);
+	}
+
+	public void execute(View view)
+	{
+		String cmd = jEdit.input(view,"execute","lastcmd");
+		if(cmd != null)
+			execute(view,cmd);
+	}
+
+	public void execute(View view, String cmd)
+	{
+		StringBuffer buf = new StringBuffer();
+		for(int i = 0; i < cmd.length(); i++)
+		{
+			switch(cmd.charAt(i))
+			{
+			case '%':
+				if(i != cmd.length() - 1)
+				{
+					switch(cmd.charAt(++i))
+					{
+					case 'u':
+						buf.append(path);
+						break;
+					case 'p':
+						buf.append(file.getPath());
+						break;
+					default:
+						buf.append('%');
+						break;
+					}
+					break;
+				}
+			default:
+				buf.append(cmd.charAt(i));
+			}
+		}
+		try
+		{
+			Runtime.getRuntime().exec(buf.toString());
+		}
+		catch(IOException io)
+		{
+			Object[] error = { io.toString() };
+			jEdit.error(view,"ioerror",error);
+		}
+	}
+
+	public void send(View view)
+	{
+		new SendDialog(view);
+	}
+
 	public void autosave()
 	{
 		if(dirty)
@@ -365,18 +467,9 @@ implements DocumentListener, UndoableEditListener
 
 	public boolean saveToURL(View view)
 	{
-		String path = (String)JOptionPane.showInputDialog(view,
-			jEdit.props.getProperty("saveurl.message"),
-			jEdit.props.getProperty("saveurl.title"),
-			JOptionPane.QUESTION_MESSAGE,
-			null,
-			null,
-			jEdit.props.getProperty("lasturl"));
+		String path = jEdit.input(view,"saveurl","lasturl");
 		if(path != null)
-		{
-			jEdit.props.put("lasturl",path);
 			return save(view,path);
-		}
 		return false;
 	}
 
@@ -405,7 +498,7 @@ implements DocumentListener, UndoableEditListener
 				out = new GZIPOutputStream(out);
 			save(out);
 			saveMarkers();
-			dirty = newFile = false;
+			dirty = newFile = readOnly = false;
 			autosaveFile.delete();
 			updateStatus();
 			return true;
@@ -657,7 +750,6 @@ loop:		for(int i = 0; i < map.getElementCount(); i++)
 			parent = null;
 		else if(parent == null)
 			parent = System.getProperty("user.dir");
-		this.path = path;
 		url = null;
 		try
 		{
@@ -684,11 +776,11 @@ loop:		for(int i = 0; i < map.getElementCount(); i++)
 				file = new File(parent,path);
 			try
 			{
-				path = file.getCanonicalPath();
+				this.path = file.getCanonicalPath();
 			}
 			catch(IOException io)
 			{
-				path = file.getPath();
+				this.path = file.getPath();
 			}
 			name = file.getName();
 			markersFile = new File(file.getParent(),'.' + name
@@ -814,7 +906,7 @@ loop:		for(int i = 0; i < map.getElementCount(); i++)
 
 	public void removeUpdate(DocumentEvent evt)
 	{
-		dirty();	
+		dirty();
 	}
 
 	public void changedUpdate(DocumentEvent evt)

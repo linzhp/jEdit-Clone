@@ -37,12 +37,7 @@ public class Cmd_clear_marker implements Command
 		JTextArea textArea = view.getTextArea();
 		if(arg == null)
 		{
-			arg = (String)JOptionPane.showInputDialog(view,
-				jEdit.props.getProperty(
-				"clearmarker.message"),
-				jEdit.props.getProperty(
-				"clearmarker.title"),
-				JOptionPane.QUESTION_MESSAGE);
+			arg = jEdit.input(view,"clearmarker","lastmarker");
 		}
 		if(arg != null)
 		{

@@ -92,7 +92,7 @@ public class Server extends Thread
 				else
 				{
 					jEdit.buffers.openFile(view,cwd,
-						filename,readOnly,true);
+						filename,readOnly,false);
 				}
 			}
 		}

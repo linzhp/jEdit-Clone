@@ -1,6 +1,6 @@
-VERSION INFORMATION (VERSION, last modified 9 Oct 1998)
+VERSION INFORMATION (VERSION, last modified 11 Oct 1998)
 
-CURRENT VERSION: 1.0pre1
+CURRENT VERSION: 1.0pre2
 
 -- To Do Before 1.1:
 - Word wrap when printing
@@ -11,6 +11,16 @@ CURRENT VERSION: 1.0pre1
 - Debug
 - Optimise
 - Improve documentation
+
+-- Version 1.0pre2:
+- Open URL command fixed
+- jOpen fixed on Windows
+- Read only flag is set if the file is read only
+- Read only flag is cleared after saving
+- Pathnames are always absolute now
+- Integrated several plugins into the main program
+- Execute command
+- Minor documentation updates
 
 -- Version 1.0pre1:
 - File loading and saving in Windows fixed

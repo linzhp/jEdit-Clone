@@ -30,7 +30,7 @@ public class Cmd_send implements Command
 	{
 		View view = (View)args.get(VIEW);
 		if(view != null)
-			new SendDialog(view);
+			view.getBuffer().send(view);
 		return null;
 	}
 }

@@ -1,5 +1,5 @@
 /*
- * Cmd_hello_world.java - Simple plugin
+ * Cmd_word_count.java - Simple plugin
  * Copyright (C) 1998 Slava Pestov
  *
  * This program is free software; you can redistribute it and/or
@@ -17,9 +17,10 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+import com.sun.java.swing.JTextArea;
 import java.util.Hashtable;
 
-public class Cmd_hello_world implements Command
+public class Cmd_word_count implements Command
 {
 	public Object init(Hashtable args)
 	{
@@ -28,7 +29,9 @@ public class Cmd_hello_world implements Command
 
 	public Object exec(Hashtable args)
 	{
-		jEdit.message((View)args.get(VIEW),"hello_world",new Object[0]);
+		View view = (View)args.get(VIEW);
+		if(view != null)
+			view.getBuffer().wordCount(view);
 		return null;
 	}
 }

@@ -368,7 +368,7 @@ implements ActionListener, KeyListener, CaretListener, WindowListener
 		updateBuffersMenu();
 		updateMarkerMenus();
 		updateStatus(true);
-		textArea.requestDefaultFocus();
+		textArea.requestFocus();
 	}
 
 	public JTextArea getTextArea()

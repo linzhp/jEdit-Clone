@@ -36,14 +36,7 @@ public class Cmd_goto_marker implements Command
 			return null;
 		JTextArea textArea = view.getTextArea();
 		if(arg == null)
-		{
-			arg = (String)JOptionPane.showInputDialog(view,
-				jEdit.props.getProperty(
-				"gotomarker.message"),
-				jEdit.props.getProperty(
-				"gotomarker.title"),
-				JOptionPane.QUESTION_MESSAGE);
-		}
+			arg = jEdit.input(view,"gotomarker","lastmarker");
 		if(arg != null)
 		{
 			int[] pos = view.getBuffer().getMarker(arg);

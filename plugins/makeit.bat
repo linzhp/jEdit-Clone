@@ -1,17 +1,5 @@
 set CLASSPATH=..\..\src\;%CLASSPATH%
-cd HelloWorld
-call makeit.bat
-cd ..\InsertDate
-call makeit.bat
 cd ..\Reverse
 call makeit.bat
 cd ..\Rot13
-call makeit.bat
-cd ..\Send
-call makeit.bat
-cd ..\ToLower
-call makeit.bat
-cd ..\ToUpper
-call makeit.bat
-cd ..\WordCount
 call makeit.bat

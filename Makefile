@@ -27,9 +27,13 @@ clean:
 	find -name \*.class -exec rm {} \;
 realclean: clean
 	find -name \*.jar -exec rm {} \;
-zip: clean
+todos:
 	find -name \*.bat -exec todos {} \;
-	find -type f -exec md5sum {} \; > MANIFEST
+manifest:
+	find -type f \! -name MANIFEST -exec md5sum {} \; > MANIFEST
+check:
+	find -type f \! -name MANIFEST -exec md5sum {} \; | diff - MANIFEST
+zip: clean todos manifest
 	(cd ..; zip -qr9 jEdit-`grep "CURRENT VERSION:" jEdit/VERSION|\
 		awk '{print $$3}'`.zip jEdit)
 	(cd ..; tar cfz jEdit-`grep "CURRENT VERSION:" jEdit/VERSION|\

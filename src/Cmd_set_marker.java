@@ -39,23 +39,12 @@ public class Cmd_set_marker implements Command
 		try
 		{
 			if(arg == null)
-			{
-				arg = (String)JOptionPane.showInputDialog(view,
-					jEdit.props.getProperty(
-					"setmarker.message"),
-					jEdit.props.getProperty(
-					"setmarker.title"),
-					JOptionPane.QUESTION_MESSAGE,
-					null,
-					null,
-					textArea.getSelectedText());
-			}
+				arg = jEdit.input(view,"setmarker",
+					"lastmarker");
 			if(arg != null)
-			{
 				view.getBuffer().addMarker(arg,textArea
 					.getSelectionStart(),textArea
 					.getSelectionEnd());
-			}
 		}
 		catch(Exception e)
 		{
