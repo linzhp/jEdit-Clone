@@ -55,6 +55,7 @@ public class SyntaxEditorKit extends DefaultEditorKit implements ViewFactory
 	 * element. This implementation returns a new <code>SyntaxView</code>
 	 * instance.
 	 * @param elem The element
+	 * @see org.gjt.sp.jedit.syntax.SyntaxView
 	 */
 	public View create(Element elem)
 	{
@@ -65,6 +66,7 @@ public class SyntaxEditorKit extends DefaultEditorKit implements ViewFactory
 	 * Creates a new instance of the default document for this
 	 * editor kit. This returns a new instance of
 	 * <code>DefaultSyntaxDocument</code>.
+	 * @see org.gjt.sp.jedit.syntax.DefaultSyntaxDocument
 	 */
 	public Document createDefaultDocument()
 	{
@@ -75,6 +77,9 @@ public class SyntaxEditorKit extends DefaultEditorKit implements ViewFactory
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.9  1999/05/02 00:07:21  sp
+ * Syntax system tweaks, console bugfix for Swing 1.1.1
+ *
  * Revision 1.8  1999/03/24 05:45:27  sp
  * Juha Lidfors' backup directory patch, removed debugging messages from various locations, documentation updates
  *

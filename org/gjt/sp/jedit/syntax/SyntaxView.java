@@ -70,21 +70,8 @@ public class SyntaxView extends PlainView
 	 */
 	public void drawLine(int lineIndex, Graphics g, int x, int y)
 	{
-		SyntaxDocument syntaxDocument;
-		TokenMarker tokenMarker;
-
-		Document document = getDocument();
-
-		if(document instanceof SyntaxDocument)
-		{
-			syntaxDocument = (SyntaxDocument)document;
-			tokenMarker = syntaxDocument.getTokenMarker();
-		}
-		else
-		{
-			syntaxDocument = null;
-			tokenMarker = null;
-		}
+		SyntaxDocument document = (SyntaxDocument)getDocument();
+		TokenMarker tokenMarker = document.getTokenMarker();
 
 		FontMetrics metrics = g.getFontMetrics();
 		Color def = getDefaultColor();
@@ -106,10 +93,10 @@ public class SyntaxView extends PlainView
 			else
 			{
 				paintSyntaxLine(line,lineIndex,x,y,g,
-					syntaxDocument,tokenMarker,def);
+					document,tokenMarker,def);
 
 				if(tokenMarker.isNextLineRequested())
-					forceRepaint(g,x,y);
+					forceRepaint(metrics,x,y);
 			}
 		}
 		catch(BadLocationException bl)
@@ -130,10 +117,10 @@ public class SyntaxView extends PlainView
 	private Rectangle newRect;
 
 	private void paintSyntaxLine(Segment line, int lineIndex, int x, int y,
-		Graphics g, SyntaxDocument syntaxDocument,
-		TokenMarker tokenMarker, Color def)
+		Graphics g, SyntaxDocument document, TokenMarker tokenMarker,
+		Color def)
 	{
-		Color[] colors = syntaxDocument.getColors();
+		Color[] colors = document.getColors();
 		Token tokens = tokenMarker.markTokens(line,lineIndex);
 		int offset = 0;
 		for(;;)
@@ -160,18 +147,25 @@ public class SyntaxView extends PlainView
 	}
 
 	/** Stupid hack that repaints from y to the end of the text component */
-	private void forceRepaint(Graphics g, int x, int y)
+	private void forceRepaint(FontMetrics metrics, int x, int y)
 	{
-		Component host = getContainer();
+		Container host = getContainer();
 		Dimension size = host.getSize();
-
-		host.repaint(x,y,size.width - x,size.height - y);
+		/**
+		 * We repaint the next line only, instead of the
+		 * entire viewscreen, since PlainView doesn't (yet)
+		 * collapse multiple repaint requests.
+		 */
+		host.repaint(x,y,size.width - x,metrics.getHeight());
 	}
 }
 
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.21  1999/05/02 00:07:21  sp
+ * Syntax system tweaks, console bugfix for Swing 1.1.1
+ *
  * Revision 1.20  1999/05/01 02:21:12  sp
  * 1.6pre4
  *

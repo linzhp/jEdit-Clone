@@ -24,7 +24,7 @@ This is what needs to be done as soon as possible:
 Probably a silly bug in Console.java.
 
 <li>Multiline token colorization needs some work.<p>
-The C+END `bug' still exists. Lines are repainted far too many times.
+The C+END `bug' still exists.
 
 <li>Sometimes closing a view stuffs up all other event listeners.<p>
 This usually occurs with views created by the server. Probably
@@ -80,7 +80,9 @@ series:
 <ul>
 <li>Proof-read and enhance all documentation.<p>
 The documentation, both for users and developers, is incomplete
-and possibly inaccurate at the moment.
+and possibly inaccurate at the moment.<p>
+Documentation for extending the console and using the history
+text field should be provided.
 
 <li>Inter-plugin class dependencies.<p>
 Classes from one plugin should be able to use classes from other
@@ -116,6 +118,7 @@ following workarounds should be removed from jEdit:
 
 <ul>
 <li>The removeAll() hack in the View.update*Menu methods
+<li>Various workarounds for &lt;h<i>n</i>&gt; bugs in the HTML help
 <li>... maybe more?
 </ul>
 
@@ -151,6 +154,19 @@ The console's support for `built in' commands should be improved.
 Versions of `ls', `mkdir', etc should be provided for Windows/MacOS
 users.
 
+<li>Auto indent improvements.<p>
+Auto indent should support `smart' indent (for example, shifting
+the indent on the next line after an `if'). Also, it should line
+up closing and opening brackets, instead of the current indent
+shifting that does not always work correctly.<p>
+
+Pressing keys such as {, } or : in C mode should invoke indentation
+routines automatically.<p>
+
+If we include XMode, we might as well get as much out of the
+XML parser as possible- a simple way of specifying indentation
+using XML should be supported.
+
 </ul>
 
 <a name=longterm>
@@ -166,19 +182,6 @@ modes than the current `manual' way.<p>
 
 XMode is evolving very quickly so it might be ready in time
 for the jEdit 1.6 release.
-
-<li>Auto indent improvements.<p>
-Auto indent should support `smart' indent (for example, shifting
-the indent on the next line after an `if'). Also, it should line
-up closing and opening brackets, instead of the current indent
-shifting that does not always work correctly.<p>
-
-Pressing keys such as {, } or : in C mode should invoke indentation
-routines automatically.<p>
-
-If we include XMode, we might as well get as much out of the
-XML parser as possible- a simple way of specifying indentation
-using XML should be supported.
 
 <li>Macro language.<p>
 

@@ -323,6 +323,8 @@ public class View extends JFrame
 		if(mode != null)
 			mode.enterView(this);
 
+		focusOnTextArea();
+
 		// Fire event
 		fireViewEvent(new ViewEvent(ViewEvent.BUFFER_CHANGED,this,
 			oldBuffer));
@@ -336,6 +338,16 @@ public class View extends JFrame
 	{
 		_setBuffer(buffer);
 		updateBuffersMenu();
+	}
+
+	/**
+	 * Sets the focus onto the text area.
+	 */
+	public void focusOnTextArea()
+	{
+		/* Focus on the scroll pane */
+		javax.swing.FocusManager.getCurrentManager().focusNextComponent(
+			textArea.getParent());
 	}
 
 	/**
@@ -373,7 +385,7 @@ public class View extends JFrame
 		else
 		{
 			splitter.setDividerLocation(0.0);
-			textArea.requestFocus();
+			focusOnTextArea();
 		}
 	}
 
@@ -498,11 +510,6 @@ public class View extends JFrame
                 addKeyBinding(KeyStroke.getKeyStroke(KeyEvent.VK_TAB,0),
 			"indent-on-tab");
 
-		textArea = new JEditTextArea();
-		scroller = new JScrollPane(textArea,ScrollPaneConstants
-			.VERTICAL_SCROLLBAR_ALWAYS,ScrollPaneConstants
-			.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-
 		lineNumber = new JLabel();
 		lineNumber.setBorder(new EmptyBorder(0,10,0,0)); // ten pixel border on left
 		String tip;
@@ -534,12 +541,18 @@ public class View extends JFrame
 
 		updatePluginsMenu();
 
-		textArea.setContextMenu(GUIUtilities.loadPopupMenu(this,
-			"view.context"));
 		setJMenuBar(GUIUtilities.loadMenubar(this,"view.mbar"));
 		
 		console = new Console(this);
 
+		textArea = new JEditTextArea();
+		textArea.setContextMenu(GUIUtilities.loadPopupMenu(this,
+			"view.context"));
+		scroller = new JScrollPane(textArea,ScrollPaneConstants
+			.VERTICAL_SCROLLBAR_ALWAYS,ScrollPaneConstants
+			.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		scroller.setMinimumSize(new Dimension(0,0));
+		
 		propertiesChanged();
 
 		if(buffer == null)
@@ -594,6 +607,8 @@ public class View extends JFrame
 		addWindowListener(new WindowHandler());
 		
 		show();
+
+		focusOnTextArea();
 	}
 
 	JMenu getMenu(String name)
@@ -650,6 +665,68 @@ public class View extends JFrame
 	private EventMulticaster multicaster;
 	private BufferListener bufferListener;
 	private EditorListener editorListener;
+
+	private void handleKeyEvent(KeyEvent evt)
+	{
+		int keyCode = evt.getKeyCode();
+		int modifiers = evt.getModifiers();
+		if((modifiers & ~InputEvent.SHIFT_MASK) != 0
+			|| evt.isActionKey()
+			|| keyCode == KeyEvent.VK_TAB
+			|| keyCode == KeyEvent.VK_ENTER)
+		{
+			KeyStroke keyStroke = KeyStroke.getKeyStroke(keyCode,
+				modifiers);
+			Object o = currentPrefix.get(keyStroke);
+			if(o == null && currentPrefix != bindings)
+			{
+				getToolkit().beep();
+				currentPrefix = bindings;
+				evt.consume();
+				return;
+			}
+			else if(o instanceof String)
+			{
+				String s = (String)o;
+				int index = s.indexOf('@');
+				String cmd;
+				if(index != -1)
+				{
+					cmd = s.substring(index+1);
+					s = s.substring(0,index);
+				}
+				else
+					cmd = null;
+				EditAction action = jEdit.getAction(s);
+				if(action == null)
+				{
+					System.out.println("Invalid key"
+						+ " binding: " + s);
+					currentPrefix = bindings;
+					evt.consume();
+					return;
+				}
+				jEdit.getAction(s).actionPerformed(
+					new ActionEvent(View.this,
+					ActionEvent.ACTION_PERFORMED,cmd));
+				currentPrefix = bindings;
+				evt.consume();
+				return;
+			}
+			else if(o instanceof Hashtable)
+			{
+				currentPrefix = (Hashtable)o;
+				evt.consume();
+				return;
+			}
+		}
+		else if(keyCode != KeyEvent.VK_SHIFT
+			&& keyCode != KeyEvent.VK_CONTROL
+			&& keyCode != KeyEvent.VK_ALT)
+		{
+			currentPrefix = bindings;
+		}
+	}
 
 	// event listeners
 	class BufferHandler implements BufferListener
@@ -718,65 +795,7 @@ public class View extends JFrame
 	{
 		public void keyPressed(KeyEvent evt)
 		{
-			int keyCode = evt.getKeyCode();
-			int modifiers = evt.getModifiers();
-			if((modifiers & ~InputEvent.SHIFT_MASK) != 0
-				|| evt.isActionKey()
-				|| keyCode == KeyEvent.VK_TAB
-				|| keyCode == KeyEvent.VK_ENTER)
-			{
-				KeyStroke keyStroke = KeyStroke.getKeyStroke(keyCode,
-					modifiers);
-				Object o = currentPrefix.get(keyStroke);
-				if(o == null && currentPrefix != bindings)
-				{
-					getToolkit().beep();
-					currentPrefix = bindings;
-					evt.consume();
-					return;
-				}
-				else if(o instanceof String)
-				{
-					String s = (String)o;
-					int index = s.indexOf('@');
-					String cmd;
-					if(index != -1)
-					{
-						cmd = s.substring(index+1);
-						s = s.substring(0,index);
-					}
-					else
-						cmd = null;
-					EditAction action = jEdit.getAction(s);
-					if(action == null)
-					{
-						System.out.println("Invalid key"
-							+ " binding: " + s);
-						currentPrefix = bindings;
-						evt.consume();
-						return;
-					}
-					jEdit.getAction(s).actionPerformed(
-						new ActionEvent(View.this,
-						ActionEvent.ACTION_PERFORMED,
-						cmd));
-					currentPrefix = bindings;
-					evt.consume();
-					return;
-				}
-				else if(o instanceof Hashtable)
-				{
-					currentPrefix = (Hashtable)o;
-					evt.consume();
-					return;
-				}
-			}
-			else if(keyCode != KeyEvent.VK_SHIFT
-				&& keyCode != KeyEvent.VK_CONTROL
-				&& keyCode != KeyEvent.VK_ALT)
-			{
-				currentPrefix = bindings;
-			}
+			handleKeyEvent(evt);
 		}
 	}
 
@@ -792,6 +811,9 @@ public class View extends JFrame
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.67  1999/05/02 00:07:21  sp
+ * Syntax system tweaks, console bugfix for Swing 1.1.1
+ *
  * Revision 1.66  1999/04/25 03:39:37  sp
  * Documentation updates, console updates, history text field updates
  *

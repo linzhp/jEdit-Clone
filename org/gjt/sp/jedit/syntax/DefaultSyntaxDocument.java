@@ -23,7 +23,7 @@ import javax.swing.text.*;
 import java.awt.Color;
 
 /**
- * A simple implementation of <code>SyntaxDocument</code>. It also takes
+ * A simple implementation of <code>SyntaxDocument</code>. It takes
  * care of inserting and deleting lines from the token marker's state.
  *
  * @author Slava Pestov
@@ -181,6 +181,9 @@ implements SyntaxDocument
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.4  1999/05/02 00:07:21  sp
+ * Syntax system tweaks, console bugfix for Swing 1.1.1
+ *
  * Revision 1.3  1999/04/19 05:38:20  sp
  * Syntax API changes
  *

@@ -80,12 +80,14 @@ SyntaxTextArea textArea = <font color=blue>new</font> SyntaxTextArea();
 <font color=red>/* Enable bracket highlighting (optional) */</font>
 textArea.setBracketHighlight(<font color=blue>true</font>);
 
-<font color=red>/* Fetch the text area's document */</font>
+<font color=red>/* Give it a token marker */</font>
+textArea.setTokenMarker(<font color=blue>new</font> JavaTokenMarker());
+
+<font color=red>/* This can also be done in the following manner:
 DefaultSyntaxDocument document =
 	(DefaultSyntaxDocument)textArea.getDocument();
-
-<font color=red>/* Give it a token marker */</font>
-document.setTokenMarker(<font color=blue>new</font> JavaTokenMarker());
+document.setTokenMarker(new JavaTokenMarker());
+*/</font>
 </pre>
 
 Basically, it boils down to creating an
@@ -95,6 +97,12 @@ and setting the appropriate properties of it's document.<p>
 
 After the text (if any) is first loaded into the document, the
 <code>tokenizeLines()</code> method should be called:
+
+<pre>
+textArea.tokenizeLines();
+</pre>
+
+or
 
 <pre>
 document.tokenizeLines();

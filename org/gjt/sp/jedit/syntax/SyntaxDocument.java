@@ -63,7 +63,7 @@ public interface SyntaxDocument extends Document
 	public Color[] getColors();
 
 	/**
-	 * Sets the dictionary that maps token identifiers to
+	 * Sets the color array that maps token identifiers to
 	 * <code>java.awt.Color</code> ojects. May throw an exception
 	 * if this is not supported for this type of document.
 	 * @param colors The new color list
@@ -90,6 +90,9 @@ public interface SyntaxDocument extends Document
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.5  1999/05/02 00:07:21  sp
+ * Syntax system tweaks, console bugfix for Swing 1.1.1
+ *
  * Revision 1.4  1999/04/19 05:38:20  sp
  * Syntax API changes
  *

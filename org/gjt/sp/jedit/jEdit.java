@@ -40,7 +40,7 @@ public class jEdit
 	/**
 	 * The jEdit version.
 	 */
-	public static final String VERSION = "1.6pre4";
+	public static final String VERSION = "1.6pre5";
 	
 	/**
 	 * The date when a change was last made to the source code,
@@ -1522,6 +1522,9 @@ public class jEdit
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.89  1999/05/02 00:07:21  sp
+ * Syntax system tweaks, console bugfix for Swing 1.1.1
+ *
  * Revision 1.88  1999/05/01 00:55:11  sp
  * Option pane updates (new, easier API), syntax colorizing updates
  *

@@ -383,6 +383,103 @@ public class SyntaxTextArea extends JEditorPane
 		SwingUtilities.invokeLater(new SyntaxSafeScroller(rect));
 	}
 
+	/**
+	 * Sets the document edited by this text area. This method
+	 * makes sure that it implements the <code>SyntaxDocument</code>
+	 * interface.
+	 * @param doc The document
+	 * @see org.gjt.sp.jedit.syntax.SyntaxDocument
+	 */
+	public void setDocument(Document doc)
+	{
+		if(doc instanceof SyntaxDocument)
+			super.setDocument(doc);
+		else
+			throw new IllegalArgumentException("Document is not"
+				+ " an instance of SyntaxDOcument");
+	}
+
+	// delegates to SyntaxDocument
+
+	/**
+	 * Returns the text area's document, typecast to a
+	 * <code>SyntaxDocument</code>.
+	 * @see org.gjt.sp.jedit.syntax.SyntaxDocument
+	 */
+	public SyntaxDocument getSyntaxDocument()
+	{
+		return (SyntaxDocument)getDocument();
+	}
+
+	/**
+	 * Returns the token marker that is to be used to split lines
+	 * of this document up into tokens. May return null if this
+	 * document is not to be colorized. This simply delegates to
+	 * the text area's document.
+	 */
+	public TokenMarker getTokenMarker()
+	{
+		return getSyntaxDocument().getTokenMarker();
+	}
+
+	/**
+	 * Sets the token marker that is to be used to split lines of
+	 * this document up into tokens. May throw an exception if
+	 * this is not supported for this type of document. This simply
+	 * delegates to the text area's document.
+	 * @param tm The new token marker
+	 */
+	public void setTokenMarker(TokenMarker tm)
+	{
+		getSyntaxDocument().setTokenMarker(tm);
+	}
+
+	/**
+	 * Returns the color array that maps token identifiers to
+	 * <code>java.awt.Color</code> objects. Each index in the
+	 * array is a token type. This simply delegates to the
+	 * text area's document.
+	 */
+	public Color[] getColors()
+	{
+		return getSyntaxDocument().getColors();
+	}
+
+	/**
+	 * Sets the color array that maps token identifiers to
+	 * <code>java.awt.Color</code> ojects. May throw an exception
+	 * if this is not supported for this type of document. This
+	 * simply delegates to the text area's document.
+	 * @param colors The new color list
+	 */
+	public void setColors(Color[] colors)
+	{
+		getSyntaxDocument().setColors(colors);
+	}
+
+	/**
+	 * Reparses the document, by passing all lines to the token
+	 * marker. This should be called after the document is first
+	 * loaded. This simply delegates to the text area's document.
+	 */
+	public void tokenizeLines()
+	{
+		getSyntaxDocument().tokenizeLines();
+	}
+
+	/**
+	 * Reparses the document, by passing the specified lines to the
+	 * token marker. This should be called after a large quantity of
+	 * text is first inserted. This simply delegates to the text
+	 * area's document.
+	 * @param start The first line to parse
+	 * @param len The number of lines, after the first one to parse
+	 */
+	public void tokenizeLines(int start, int len)
+	{
+		getSyntaxDocument().tokenizeLines(start,len);
+	}
+
 	// private members
 	private Color lineHighlightColor;
 	private Object lineHighlightTag;
@@ -624,6 +721,9 @@ public class SyntaxTextArea extends JEditorPane
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.20  1999/05/02 00:07:21  sp
+ * Syntax system tweaks, console bugfix for Swing 1.1.1
+ *
  * Revision 1.19  1999/04/28 04:10:40  sp
  * Overwrite/overstrike mode
  *

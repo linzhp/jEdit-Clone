@@ -51,16 +51,12 @@ public abstract class TokenMarker
 		LineInfo info = lineInfo[lineIndex];
 		byte oldToken = info.token;
 
-		/* optimization :) */
 		byte token = markTokensImpl((lineIndex == 0 ?
 			Token.NULL : lineInfo[lineIndex -1].token),
 			line,lineIndex);
 
 		info.token = token;
-
-		/* don't force repaint for empty lines */
-		nextLineRequested = (oldToken != token &&
-			lastToken != null);
+		nextLineRequested = (oldToken != token);
 
 		addToken(0,Token.END);
 
@@ -271,6 +267,9 @@ public abstract class TokenMarker
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.21  1999/05/02 00:07:21  sp
+ * Syntax system tweaks, console bugfix for Swing 1.1.1
+ *
  * Revision 1.20  1999/05/01 00:55:11  sp
  * Option pane updates (new, easier API), syntax colorizing updates
  *
