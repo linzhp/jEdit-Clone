@@ -4,12 +4,39 @@
 ###
 
 ###
+### TOOLBAR
+###
+view.toolbar=new-file open-file save print send - reload - undo redo - cut \
+	copy paste - find find-next - make compile prev-error next-error - \
+	options exit - help@index.html
+new-file.icon=filenew.gif
+open-file.icon=fileopen.gif
+save.icon=save.gif
+print.icon=fileprint.gif
+send.icon=send.gif
+reload.icon=reload.gif
+undo.icon=undo.gif
+redo.icon=redo.gif
+cut.icon=editcut.gif
+copy.icon=editcopy.gif
+paste.icon=editpaste.gif
+find.icon=search.gif
+find-next.icon=next.gif
+make.icon=make.gif
+compile.icon=compile.gif
+prev-error.icon=back.gif
+next-error.icon=forward.gif
+options.icon=configure.gif
+exit.icon=exit.gif
+help@index.html.icon=contents.gif
+
+###
 ### CONTEXT MENU
 ###
 view.context=undo redo - cut copy paste paste-previous paste-predefined - \
 	set-anchor select-anchor exchange-anchor - \
 	delete-line join-lines scroll-line
-	
+
 ###
 ### MENUBAR
 ###
@@ -504,6 +531,7 @@ options.general.browser=WWW browser:\
 options.general.saveDesktop=Save desktop on exit
 options.general.server=Enable jEdit server
 options.general.showTips=Show hints in title bar
+options.general.showToolbar=Show toolbar
 options.editor.label=Editor
 options.editor.font=Text font:\ 
 options.editor.fontstyle=Text font style:\ 

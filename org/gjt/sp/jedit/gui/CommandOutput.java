@@ -69,6 +69,13 @@ implements KeyListener
 		process.destroy();
 		GUIUtilities.saveGeometry(this,"output");
 		super.dispose();
+
+		// Update error list menus
+		Enumeration views = jEdit.getViews();
+		while(views.hasMoreElements())
+		{
+			((View)views.nextElement()).updateErrorListMenu();
+		}
 	}
 
 	public void keyPressed(KeyEvent evt)
@@ -265,13 +272,6 @@ implements KeyListener
 			{
 				Object[] args = { io.getMessage() };
 				GUIUtilities.error((View)getParent(),"ioerror",args);
-			}
-
-			// Update error list menus
-			Enumeration views = jEdit.getViews();
-			while(views.hasMoreElements())
-			{
-				((View)views.nextElement()).updateErrorListMenu();
 			}
 		}
 	}

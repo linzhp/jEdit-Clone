@@ -22,6 +22,7 @@ package org.gjt.sp.jedit;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.net.URL;
 import java.util.StringTokenizer;
 import org.gjt.sp.jedit.gui.EnhancedMenuItem;
 
@@ -198,9 +199,6 @@ public class GUIUtilities
 
 	/**
 	 * Converts a string to a keystroke.
-	 * <p>
-	 * The keystroke format is described in menus.txt. (Help-&gt;Menus
-	 * in jEdit).
 	 * @param keyStroke A string description of the key stroke
 	 */
 	public static KeyStroke parseKeyStroke(String keyStroke)
@@ -254,6 +252,97 @@ public class GUIUtilities
 			}
 		}		
 		return KeyStroke.getKeyStroke(ch,modifiers);
+	}
+
+	/**
+	 * Loads a toolbar from the properties.
+	 *
+	 * @param name The name of the toolbar
+	 */
+	public static JToolBar loadToolBar(String name)
+	{
+		JToolBar toolBar = new JToolBar();
+		
+		String buttons = jEdit.getProperty(name);
+		if(buttons == null)
+			return null;
+
+		StringTokenizer st = new StringTokenizer(buttons);
+		while(st.hasMoreElements())
+		{
+			String buttonName = st.nextToken();
+			if(buttonName.equals("-"))
+				toolBar.addSeparator();
+			else
+			{
+				JButton button = loadToolButton(buttonName);
+				if(button != null)
+					toolBar.add(button);
+			}
+		}
+
+		return toolBar;
+	}
+
+	/**
+	 * Loads a tool bar button.
+	 *
+	 * @param name The name of the button
+	 */
+	public static JButton loadToolButton(String name)
+	{
+		String iconName = jEdit.getProperty(name + ".icon");
+		if(iconName == null)
+		{
+			System.out.println("Tool button icon is null: " + name);
+			return null;
+		}
+		URL url = GUIUtilities.class.getResource("toolbar/" + iconName);
+		if(url == null)
+		{
+			System.out.println("Tool button icon is null: " + name);
+			return null;
+		}
+		JButton button = new JButton(new ImageIcon(url));
+		button.setRequestFocusEnabled(false);
+
+		String toolTip = jEdit.getProperty(name + ".label");
+		if(toolTip == null)
+		{
+			System.out.println("Tool button label is null: " + name);
+			return null;
+		}
+		int index = toolTip.indexOf('$');
+		if(index != -1)
+		{
+			toolTip = toolTip.substring(0,index)
+				.concat(toolTip.substring(index + 1));
+		}
+		if(toolTip.endsWith("..."))
+			toolTip = toolTip.substring(0,toolTip.length() - 3);
+		String shortcut = jEdit.getProperty(name + ".shortcut");
+		if(shortcut != null)
+			toolTip = toolTip + " (" + shortcut + ")";
+		button.setToolTipText(toolTip);
+
+		index = name.indexOf('@');
+		String actionCommand;
+		if(index != -1)
+		{
+			actionCommand = name.substring(index + 1);
+			name = name.substring(0,index);
+		}
+		else
+			actionCommand = null;
+		Action action = jEdit.getAction(name);
+		if(action == null)
+			button.setEnabled(false);
+		else
+		{
+			button.addActionListener(action);
+			button.setActionCommand(actionCommand);
+		}
+		return button;
 	}
 
 	/**

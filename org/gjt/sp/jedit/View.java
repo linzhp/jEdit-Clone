@@ -42,6 +42,19 @@ implements CaretListener, KeyListener, WindowListener
 	 */
 	public void propertiesChanged()
 	{
+		if("on".equals(jEdit.getProperty("view.showToolbar")))
+		{
+			if(toolBar == null)
+				toolBar = GUIUtilities.loadToolBar("view.toolbar");
+			getContentPane().add("North",toolBar);
+			validate();
+		}
+		else if(toolBar != null)
+		{
+			getContentPane().remove(toolBar);
+			validate();
+		}
+
 		String family = jEdit.getProperty("view.font");
 		int size;
 		try
@@ -628,6 +641,7 @@ implements CaretListener, KeyListener, WindowListener
 	private Segment lineSegment;
 	private Buffer buffer;
 	private boolean showTip;
+	private JToolBar toolBar;
 
 	private void updateLineNumber(int dot, boolean force)
 	{

@@ -81,6 +81,9 @@ buffer.colors.operator2=darkGray
 # Show hints/tips? (on/off)
 view.showTips=on
 
+# Show toolbar? (on/off)
+view.showToolbar=on
+
 # Font
 view.font=Monospaced
 view.fontsize=14

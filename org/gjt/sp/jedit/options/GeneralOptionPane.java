@@ -206,6 +206,14 @@ public class GeneralOptionPane extends OptionPane
 			"view.showTips")));
 		layout.setConstraints(showTips,cons);
 		add(showTips);
+
+		cons.gridy = 12;
+		showToolbar = new JCheckBox(jEdit.getProperty(
+			"options.general.showToolbar"));
+		showToolbar.getModel().setSelected("on".equals(jEdit.getProperty(
+			"view.showToolbar")));
+		layout.setConstraints(showToolbar,cons);
+		add(showToolbar);
 	}
 
 	public void save()
@@ -246,6 +254,8 @@ public class GeneralOptionPane extends OptionPane
 		jEdit.setProperty("buffer.make",(String)make.getSelectedItem());
 		jEdit.setProperty("view.showTips",showTips.getModel()
 			.isSelected() ? "on" : "off");
+		jEdit.setProperty("view.showToolbar",showToolbar.getModel()
+			.isSelected() ? "on" : "off");
 	}
 
 	// private members
@@ -260,4 +270,5 @@ public class GeneralOptionPane extends OptionPane
 	private JCheckBox saveDesktop;
 	private JCheckBox server;
 	private JCheckBox showTips;
+	private JCheckBox showToolbar;
 }
