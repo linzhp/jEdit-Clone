@@ -21,7 +21,6 @@ package org.gjt.sp.jedit.actions;
 
 import javax.swing.JFileChooser;
 import java.awt.event.ActionEvent;
-import java.io.File;
 import org.gjt.sp.jedit.*;
 
 public class open_path extends EditAction

@@ -748,9 +748,6 @@ implements DocumentListener, UndoableEditListener
 
 	/**
 	 * Reloads the tab size setting from the properties.
-	 * <p>
-	 * This should be called after the <code>buffer.tabsize</code>
-	 * has been changed.
 	 */
 	public void propertiesChanged()
 	{
@@ -1244,7 +1241,7 @@ implements DocumentListener, UndoableEditListener
 		try
 		{
 			backups = Integer.parseInt(jEdit.getProperty(
-				"buffer.backup.count"));
+				"backups"));
 		}
 		catch(NumberFormatException nf)
 		{

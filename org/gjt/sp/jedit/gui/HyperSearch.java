@@ -60,7 +60,7 @@ implements ActionListener, KeyListener, ListSelectionListener, WindowListener
 		panel = new JPanel();
 		ignoreCase = new JCheckBox(jEdit.getProperty(
 			"search.ignoreCase"),
-			"on".equals(jEdit.getProperty("search.ignoreCase.toggle")));
+			"on".equals(jEdit.getProperty("search.ignoreCase")));
 		panel.add(ignoreCase);
 		panel.add(new JLabel(jEdit.getProperty("search.regexp")));
 		regexpSyntax = new JComboBox(jEdit.SYNTAX_LIST);
@@ -94,7 +94,7 @@ implements ActionListener, KeyListener, ListSelectionListener, WindowListener
 	public void save()
 	{
 		jEdit.setProperty("search.find.value",find.getText());
-		jEdit.setProperty("search.ignoreCase.toggle",ignoreCase
+		jEdit.setProperty("search.ignoreCase",ignoreCase
 			.getModel().isSelected() ? "on" : "off");
 		jEdit.setProperty("search.regexp.value",(String)regexpSyntax
 			.getSelectedItem());

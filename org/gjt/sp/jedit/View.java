@@ -37,16 +37,7 @@ public class View extends JFrame
 implements CaretListener, KeyListener, WindowListener
 {	
 	/**
-	 * Reloads the font, auto indent and word wrap settings
-	 * from the properties.
-	 * <p>
-	 * This should be called after any of these properties have been
-	 * changed:
-	 * <ul>
-	 * <li><code>lf</code>
-	 * <li><code>view.linewrap</code>
-	 * <li><code>buffermgr.recent</code>
-	 * @see PropsMgr
+	 * Reloads various settings from the properties.
 	 */
 	public void propertiesChanged()
 	{
@@ -57,6 +48,10 @@ implements CaretListener, KeyListener, WindowListener
 			"view.lineHighlight")));
 		textArea.setLineHighlightColor(jEdit.parseColor(jEdit
 			.getProperty("view.lineHighlightColor")));
+		textArea.setLineHighlight("on".equals(jEdit.getProperty(
+			"view.bracketHighlight")));
+		textArea.setBracketHighlightColor(jEdit.parseColor(jEdit
+			.getProperty("view.bracketHighlightColor")));
 		textArea.setCaretColor(jEdit.parseColor(jEdit
 			.getProperty("view.caretColor")));
 		updateOpenRecentMenu();
@@ -528,6 +523,7 @@ implements CaretListener, KeyListener, WindowListener
 		}
 		else
 			textArea.setHighlightedLine(0,0);
+		textArea.setHighlightedBracket(0);
 		if(lastLine == currLine && !force)
 			return;
 		lastLine = currLine;

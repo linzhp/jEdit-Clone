@@ -41,7 +41,7 @@ public class expand_abbrev extends EditAction
 		int lineNo = map.getElementIndex(dot);
 		Element lineElement = map.getElement(lineNo);
 		int start = lineElement.getStartOffset();
-		int len = lineElement.getEndOffset() - start;
+		int len = lineElement.getEndOffset() - start - 1;
 		String line;
 		try
 		{
@@ -81,9 +81,9 @@ loop:			for(int i = dot - 1; i >= start; i--)
 				lineElement = map.getElement(i);
 				int lineStart = lineElement.getStartOffset();
 				int lineLen = lineElement.getEndOffset()
-					- lineStart;
+					- lineStart - 1;
 				line = buffer.getText(lineStart, lineLen);
-				int index = line.indexOf(word);
+				int index = line.lastIndexOf(word);
 				if(index != -1)
 				{
 					int wordEnd = lineLen;

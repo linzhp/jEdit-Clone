@@ -19,7 +19,6 @@
 
 package org.gjt.sp.jedit.actions;
 
-import java.io.File;
 import java.awt.event.ActionEvent;
 import org.gjt.sp.jedit.*;
 

@@ -23,12 +23,15 @@ import javax.swing.event.*;
 import javax.swing.text.*;
 import javax.swing.JEditorPane;
 import java.awt.*;
+import java.awt.datatransfer.*;
 import java.beans.*;
 import org.gjt.sp.jedit.Buffer;
+import org.gjt.sp.jedit.jEdit;
 
 /**
  * A subclass of <code>JEditorPane</code> whose default editor kit is
- * <code>SyntaxEditorKit</code>
+ * <code>SyntaxEditorKit</code>. It also does current line and bracket
+ * highlighting.
  * @see org.gjt.sp.jedit.syntax.SyntaxEditorKit
  */
 public class SyntaxTextArea extends JEditorPane
@@ -46,13 +49,16 @@ public class SyntaxTextArea extends JEditorPane
 		{
 			lineHighlightTag = getHighlighter().addHighlight(0,0,
 				new CurrentLineHighlighter());
+			bracketHighlightTag = getHighlighter().addHighlight(
+				0,0,new BracketHighlighter());
 		}
 		catch(BadLocationException bl)
 		{
 			bl.printStackTrace();
 		}
 		
-		lineHighlightColor = new Color(0xeeeeee);
+		lineHighlightColor = new Color(0xe0e0e0);
+		bracketHighlightColor = new Color(0xcc0000);
 	}
 
 	/**
@@ -91,7 +97,7 @@ public class SyntaxTextArea extends JEditorPane
 	}
 
 	/**
-	 * Sets the current line highlighting.
+	 * Sets the current line highlighting feature.
 	 * @param lineHighlight True if the current line should be
 	 * highlighted, false otherwise.
 	 */
@@ -100,10 +106,100 @@ public class SyntaxTextArea extends JEditorPane
 		this.lineHighlight = lineHighlight;
 	}
 
+	/**
+	 * Sets the highlighted bracket.
+	 * @param bracketPos The offset of the bracket in the document
+	 */
+	public void setHighlightedBracket(int bracketPos)
+	{
+		try
+		{
+			getHighlighter().changeHighlight(bracketHighlightTag,
+				bracketPos,bracketPos+1);
+		}
+		catch(BadLocationException bl)
+		{
+			bl.printStackTrace();
+		}
+	}
+
+	/**
+	 * Sets the bracket highlight color.
+	 * @param color The bracket highlight color
+	 */
+	public void setBracketHighlightColor(Color color)
+	{
+		bracketHighlightColor = color;
+	}
+
+	/**
+	 * Sets the bracket highlighting feature.
+	 * @param bracketHighlight True if the current line should be
+	 * highlighted, false otherwise.
+	 */
+	public void setBracketHighlight(boolean bracketHighlight)
+	{
+		this.bracketHighlight = bracketHighlight;
+	}
+
+	/**
+	 * Copies the selected text to the clipboard, adding it to the
+	 * jEdit clip history.
+	 */
+	public void copy()
+	{
+		String selection = getSelectedText();
+		if(selection != null)
+		{
+			super.copy();
+			jEdit.addToClipHistory(selection);
+		}
+	}
+
+	/**
+	 * Copies the selected text to the clipboard, removing it from
+	 * the document and adding it to the jEdit clip history.
+	 */
+	public void cut()
+	{
+		String selection = getSelectedText();
+		if(selection != null)
+		{
+			super.cut();
+			jEdit.addToClipHistory(selection);
+		}
+	}
+
+	/**
+	 * Inserts the clipboard contents at the caret.
+	 */
+	public void paste()
+	{
+		Clipboard clipboard = getToolkit().getSystemClipboard();
+		Transferable content = clipboard.getContents(this);
+		if(content != null)
+		{
+			try
+			{
+				String text = (String)content.getTransferData(
+					DataFlavor.stringFlavor);
+				jEdit.addToClipHistory(text);
+				replaceSelection(text);
+			}
+			catch(Exception e)
+			{
+				getToolkit().beep();
+			}
+		}
+	}
+
 	// private members
 	private boolean lineHighlight;
 	private Color lineHighlightColor;
 	private Object lineHighlightTag;
+	private boolean bracketHighlight;
+	private Color bracketHighlightColor;
+	private Object bracketHighlightTag;
 
 	private class SyntaxCaret extends DefaultCaret
 		implements PropertyChangeListener
@@ -150,6 +246,33 @@ public class SyntaxTextArea extends JEditorPane
 			int y = rect.y + height * lineNo;
 			g.setColor(lineHighlightColor);
 			g.fillRect(x,y,rect.width,height);
+		}
+	}
+
+	private class BracketHighlighter implements Highlighter.HighlightPainter
+	{
+		public void paint(Graphics g, int p0, int p1, Shape bounds,
+			JTextComponent textComponent)
+		{
+			if(getSelectionStart() != getSelectionEnd()
+				|| !bracketHighlight)
+				return;
+			Rectangle rect = (Rectangle)bounds;
+			Rectangle bracket;
+			try
+			{
+				bracket = modelToView(p0);
+				if(bracket == null)
+					return;
+			}
+			catch(BadLocationException bl)
+			{
+				return;
+			}
+			int x = rect.x + bracket.x;
+			int y = rect.y + bracket.y;
+			g.setColor(bracketHighlightColor);
+			g.fillRect(x,y,bracket.width,bracket.height);
 		}
 	}
 }

@@ -34,7 +34,7 @@ implements ActionListener, KeyListener, WindowListener
 	private JComboBox regexpSyntax;
 	private JButton findBtn;
 	private JButton replaceAll;
-	private JButton close;
+	private JButton cancel;
 	
 	public SearchAndReplace(View view)
 	{
@@ -47,13 +47,13 @@ implements ActionListener, KeyListener, WindowListener
 		ignoreCase = new JCheckBox(jEdit.getProperty(
 			"search.ignoreCase"),
 			"on".equals(jEdit.getProperty("search."
-				+ "ignoreCase.toggle")));
+				+ "ignoreCase")));
 		regexpSyntax = new JComboBox(jEdit.SYNTAX_LIST);
 		regexpSyntax.setSelectedItem(jEdit.getProperty("search"
 			+ ".regexp.value"));
 		findBtn = new JButton(jEdit.getProperty("search.findBtn"));
 		replaceAll = new JButton(jEdit.getProperty("search.replaceAll"));
-		close = new JButton(jEdit.getProperty("search.close"));
+		cancel = new JButton(jEdit.getProperty("search.cancel"));
 		getContentPane().setLayout(new BorderLayout());
 		JPanel panel = new JPanel();
 		GridBagLayout layout = new GridBagLayout();
@@ -90,7 +90,7 @@ implements ActionListener, KeyListener, WindowListener
 		panel = new JPanel();
 		panel.add(findBtn);
 		panel.add(replaceAll);
-		panel.add(close);
+		panel.add(cancel);
 		getRootPane().setDefaultButton(findBtn);
 		getContentPane().add("South",panel);
 		Dimension screen = getToolkit().getScreenSize();
@@ -104,7 +104,7 @@ implements ActionListener, KeyListener, WindowListener
 		addWindowListener(this);
 		findBtn.addActionListener(this);
 		replaceAll.addActionListener(this);
-		close.addActionListener(this);
+		cancel.addActionListener(this);
 		show();
 	}
 	
@@ -112,7 +112,7 @@ implements ActionListener, KeyListener, WindowListener
 	{
 		jEdit.setProperty("search.find.value",find.getText());
 		jEdit.setProperty("search.replace.value",replace.getText());
-		jEdit.setProperty("search.ignoreCase.toggle",ignoreCase
+		jEdit.setProperty("search.ignoreCase",ignoreCase
 			.getModel().isSelected() ? "on" : "off");
 		jEdit.setProperty("search.regexp.value",(String)regexpSyntax
 			.getSelectedItem());
@@ -122,7 +122,7 @@ implements ActionListener, KeyListener, WindowListener
 	{
 		save();
 		Object source = evt.getSource();
-		if(source == close)
+		if(source == cancel)
 			dispose();
 		else if(source == findBtn)
 		{
