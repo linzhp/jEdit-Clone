@@ -1,0 +1,162 @@
+/*
+ * ViewRegisters.java - View registers dialog
+ * Copyright (C) 1999 Slava Pestov
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+
+package org.gjt.sp.jedit.gui;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.util.Vector;
+import org.gjt.sp.jedit.*;
+
+public class ViewRegisters extends JDialog
+{
+	public ViewRegisters(View view)
+	{
+		super(view,jEdit.getProperty("view-registers.title"),true);
+		this.view = view;
+
+		Container content = getContentPane();
+
+		Registers.Register[] registers = Registers.getRegisters();
+		Vector strings = new Vector();
+
+		for(int i = 0; i < registers.length; i++)
+		{
+			Registers.Register reg = registers[i];
+			if(reg == null)
+				continue;
+
+			String value = reg.toString();
+			if(value == null)
+				continue;
+
+			strings.addElement((char)i + ": " + value);
+		}
+
+		registerList = new JList(strings);
+		registerList.setVisibleRowCount(10);
+		registerList.setFont(view.getTextArea().getPainter().getFont());
+		registerList.addMouseListener(new MouseHandler());
+
+		viewBtn = new JButton(jEdit.getProperty("view-registers.view"));
+		cancel = new JButton(jEdit.getProperty("common.cancel"));
+
+		content.setLayout(new BorderLayout());
+
+		content.add(new JLabel(jEdit.getProperty("view-registers.caption")),
+			BorderLayout.NORTH);
+
+		JScrollPane scroller = new JScrollPane(registerList);
+		Dimension dim = scroller.getPreferredSize();
+		scroller.setPreferredSize(new Dimension(640,dim.height));
+
+		content.add(scroller, BorderLayout.CENTER);
+
+		JPanel panel = new JPanel();
+		panel.add(viewBtn);
+		panel.add(cancel);
+		content.add(panel, BorderLayout.SOUTH);
+
+		addKeyListener(new KeyHandler());
+		getRootPane().setDefaultButton(viewBtn);
+
+		ActionHandler actionListener = new ActionHandler();
+		viewBtn.addActionListener(actionListener);
+		cancel.addActionListener(actionListener);
+		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+
+		Dimension screen = getToolkit().getScreenSize();
+		pack();
+		setLocation((screen.width - getSize().width) / 2,
+			(screen.height - getSize().height) / 2);
+		show();
+		registerList.requestFocus();
+	}
+
+	// private members
+	private View view;
+	private JList registerList;
+	private JButton viewBtn;
+	private JButton cancel;
+
+	private void doView()
+	{
+		if(registerList.getSelectedIndex() == -1)
+		{
+			view.getToolkit().beep();
+			return;
+		}
+
+		String selected = (String)registerList.getSelectedValue();
+		Registers.Register register = Registers.getRegister(
+			selected.charAt(selected.indexOf(':') - 1));
+
+		/* we don't check for the register to be null because that's
+		 * impossible. However they value can change in the case of
+		 * register '$' (the clipboard) */
+		String value = register.toString();
+		if(value == null)
+		{
+			view.getToolkit().beep();
+			return;
+		}
+
+		new ClippingEditor(view,value,true);
+	}
+
+	class ActionHandler implements ActionListener
+	{
+		public void actionPerformed(ActionEvent evt)
+		{
+			Object source = evt.getSource();
+			if(source == viewBtn)
+				doView();
+			else if(source == cancel)
+				dispose();
+		}
+	}
+
+	class KeyHandler extends KeyAdapter
+	{
+		public void keyPressed(KeyEvent evt)
+		{
+			switch(evt.getKeyCode())
+			{
+			case KeyEvent.VK_ENTER:
+				doView();
+				break;
+			case KeyEvent.VK_ESCAPE:
+				dispose();
+				break;
+			}
+		}
+	}
+
+	class MouseHandler extends MouseAdapter
+	{
+		public void mouseClicked(MouseEvent evt)
+		{
+			if (evt.getClickCount() == 2)
+			{
+				doView();
+			}
+		}
+	}
+}
