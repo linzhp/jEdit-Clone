@@ -442,7 +442,6 @@ public class View extends JFrame
 
 		bindings = new Hashtable();
 		currentPrefix = bindings;
-		lineSegment = new Segment();
 		
                 // Register tab
                 addKeyBinding(KeyStroke.getKeyStroke(KeyEvent.VK_TAB,0),
@@ -528,16 +527,15 @@ public class View extends JFrame
 			GUIUtilities.loadGeometry(this,"view");
 		}
 
-		splitter.setDividerLocation(0.0);
-
 		try
 		{
-			splitter.setLastDividerLocation(Integer
+			splitter.setDividerLocation(Integer
 				.parseInt(jEdit.getProperty(
 				"view.divider")));
 		}
 		catch(Exception e)
 		{
+			splitter.setDividerLocation(0.0);
 		}
 
 		updateLineNumber();
@@ -578,8 +576,6 @@ public class View extends JFrame
 		GUIUtilities.saveGeometry(this,"view");
 
 		int location = splitter.getDividerLocation();
-		if(location < splitter.getDividerSize() + 15)
-			location = splitter.getLastDividerLocation();
 		jEdit.setProperty("view.divider",String.valueOf(location));
 
 		HistoryTextField textField = console.getCommandField();
@@ -611,7 +607,6 @@ public class View extends JFrame
 	private JSplitPane splitter;
 	private JLabel lineNumber;
 	private JLabel hintBar;
-	private Segment lineSegment;
 	private Buffer buffer;
 	private boolean showTip;
 	private JToolBar toolBar;
@@ -754,6 +749,9 @@ public class View extends JFrame
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.56  1999/03/27 23:47:57  sp
+ * Updated docs, view tweak, goto-line fix, next/prev error tweak
+ *
  * Revision 1.55  1999/03/27 03:05:17  sp
  * Modular SyntaxTextArea
  *

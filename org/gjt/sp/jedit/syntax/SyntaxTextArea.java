@@ -329,8 +329,6 @@ public class SyntaxTextArea extends JEditorPane
 		}
 	}
 
-	// protected members
-
 	/**
 	 * Works like Caret.adjustVisibility(), but does `electric'
 	 * border scrolling (caret is never on the first or last
@@ -338,7 +336,7 @@ public class SyntaxTextArea extends JEditorPane
 	 * up or down)
 	 * @param rect The rectangle to scroll to
 	 */
-	protected void doElectricScroll(Rectangle rect)
+	public void doElectricScroll(Rectangle rect)
 	{
 		SwingUtilities.invokeLater(new SyntaxSafeScroller(rect));
 	}
@@ -387,7 +385,6 @@ public class SyntaxTextArea extends JEditorPane
 			try
 			{
 				int dot = getDot();
-				getDocument().getText(dot,1,lineSegment);
 				Rectangle r = modelToView(dot);
 				width = g.getFontMetrics().charWidth('m');
 				r.width = block ? width - 1 : 0;
@@ -491,6 +488,9 @@ public class SyntaxTextArea extends JEditorPane
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.15  1999/03/27 23:47:57  sp
+ * Updated docs, view tweak, goto-line fix, next/prev error tweak
+ *
  * Revision 1.14  1999/03/27 02:46:17  sp
  * SyntaxTextArea is now modular
  *

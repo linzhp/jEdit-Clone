@@ -377,6 +377,11 @@ public class Buffer extends DefaultSyntaxDocument
 
 		// The anchor gets f*cked across reloads, so clear it
 		anchor = null;
+		
+		// Clear dirty flag
+		dirty = false;
+		fireBufferEvent(new BufferEvent(BufferEvent
+				.DIRTY_CHANGED,this));
 
 		init = false;
 	}
@@ -1400,6 +1405,9 @@ loop:		for(int i = 0; i < markers.size(); i++)
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.68  1999/03/27 23:47:57  sp
+ * Updated docs, view tweak, goto-line fix, next/prev error tweak
+ *
  * Revision 1.67  1999/03/27 03:05:17  sp
  * Modular SyntaxTextArea
  *

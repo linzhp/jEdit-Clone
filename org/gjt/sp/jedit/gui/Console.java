@@ -72,11 +72,29 @@ implements ActionListener, ListSelectionListener
 
 		output.setText("> " + command + "\n");
 
+		// First check if it's a file:// URL
+		if(command.startsWith("file:"))
+		{
+			String path = command.substring(5);
+			jEdit.openFile(view,null,path,false,false);
+			return;
+		}
+
+		// Then check for a general URL
+		int colonIndex = command.indexOf(':');
+		int spaceIndex = command.indexOf(' ');
+			if(colonIndex > 1 /* fails for C:\... */
+			&& colonIndex < spaceIndex)
+		{
+			jEdit.openFile(view,null,command,false,false);
+			return;
+		}
+
+		// It must be a command
 		if(appendEXE)
 		{
 			// append .exe to command name on Windows and OS/2
 			int dotIndex = command.indexOf('.');
-			int spaceIndex = command.indexOf(' ');
 			if(dotIndex == -1 || dotIndex > spaceIndex)
 			{
 				command = command.substring(0,spaceIndex)
@@ -94,7 +112,6 @@ implements ActionListener, ListSelectionListener
 			}
 			errors.removeAllElements();
 		}
-		currentError = -1;
 
 		try
 		{
@@ -147,13 +164,15 @@ implements ActionListener, ListSelectionListener
 	}
 
 	/**
-	 * Sets the current error number.
+	 * Sets the current error number. This also opens the file
+	 * involved and goes to the appropriate line number.
 	 */
 	public void setCurrentError(int error)
 	{
-		currentError = error;
-		// XXX: causes valueChanged() to be called twice
-		//errorList.setSelectedIndex(error);
+		if(error >= errors.getSize())
+			return;
+
+		errorList.setSelectedIndex(error);
 
 		// Fire event
 		view.fireViewEvent(new ViewEvent(ViewEvent.CURRENT_ERROR_CHANGED,
@@ -165,7 +184,7 @@ implements ActionListener, ListSelectionListener
 	 */
 	public int getCurrentError()
 	{
-		return currentError;
+		return errorList.getSelectedIndex();
 	}
 
 	public void actionPerformed(ActionEvent evt)
@@ -218,7 +237,6 @@ implements ActionListener, ListSelectionListener
 	private View view;
 
 	private DefaultListModel errors;
-	private int currentError;
 
 	private Process process;
 	private StdoutThread stdout;
@@ -442,6 +460,9 @@ implements ActionListener, ListSelectionListener
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.16  1999/03/27 23:47:57  sp
+ * Updated docs, view tweak, goto-line fix, next/prev error tweak
+ *
  * Revision 1.15  1999/03/22 04:20:01  sp
  * Syntax colorizing updates
  *

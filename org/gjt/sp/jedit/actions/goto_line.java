@@ -38,7 +38,9 @@ public class goto_line extends EditAction
 		Buffer buffer = view.getBuffer();
 		JEditTextArea textArea = view.getTextArea();
 		Element map = buffer.getDefaultRootElement();
-		String line = GUIUtilities.inputProperty(view,"gotoline","line");
+		String line = GUIUtilities.input(view,"gotoline",
+			String.valueOf(map.getElementIndex(textArea
+			.getCaretPosition())));
 
 		if(line != null)
 		{

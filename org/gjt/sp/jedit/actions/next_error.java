@@ -1,5 +1,5 @@
 /*
- * next_error.java - Action
+ * next_error.java
  * Copyright (C) 1999 Slava Pestov
  *
  * This program is free software; you can redistribute it and/or
@@ -38,28 +38,7 @@ public class next_error extends EditAction
 			View view = getView(evt);
 			Console console = view.getConsole();
 			int errorNo = console.getCurrentError();
-			CompilerError error = console.getError(++errorNo);
-			if(error == null)
-			{
-				view.getToolkit().beep();
-				return;
-			}
-			JOptionPane.showMessageDialog(view,error.getError(),
-				jEdit.getProperty("error.title"),
-				JOptionPane.INFORMATION_MESSAGE);
-			console.setCurrentError(errorNo);
-			Buffer buffer = error.openFile();
-			int lineNo = error.getLineNo();
-			int start = buffer.getDefaultRootElement()
-				.getElement(lineNo).getStartOffset();
-			if(view.getBuffer() == buffer)
-				view.getTextArea().setCaretPosition(start);
-			else
-			{
-				buffer.setCaretInfo(start,start);
-				view.setBuffer(buffer);
-				view.updateBuffersMenu();
-			}
+			console.setCurrentError(errorNo + 1);
 		}
 		catch(Exception e)
 		{
