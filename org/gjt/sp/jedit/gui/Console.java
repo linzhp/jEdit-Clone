@@ -83,7 +83,7 @@ implements ActionListener, ListSelectionListener
 		// Then check for a general URL
 		int colonIndex = command.indexOf(':');
 		int spaceIndex = command.indexOf(' ');
-			if(colonIndex > 1 /* fails for C:\... */
+		if(colonIndex > 1 /* fails for C:\... */
 			&& colonIndex < spaceIndex)
 		{
 			jEdit.openFile(view,null,command,false,false);
@@ -460,6 +460,9 @@ implements ActionListener, ListSelectionListener
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.17  1999/03/28 01:36:24  sp
+ * Backup system overhauled, HistoryTextField updates
+ *
  * Revision 1.16  1999/03/27 23:47:57  sp
  * Updated docs, view tweak, goto-line fix, next/prev error tweak
  *

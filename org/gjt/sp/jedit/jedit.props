@@ -29,6 +29,13 @@ saveDesktop=on
 # Number of backups to make, 0=no backups
 backups=1
 
+# Backup directory
+backup.directory=
+
+# Backup filename prefix and suffix
+backup.prefix=
+backup.suffix=~
+
 # Default WWW browser
 browser=jedit_moz_remote
 

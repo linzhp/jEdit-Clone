@@ -35,13 +35,6 @@ public class HistoryTextField extends JComboBox
 	public HistoryTextField(String name)
 	{
 		this.name = name;
-		String line;
-		int i = 0;
-		while((line = jEdit.getProperty("history." + name + "." + i)) != null)
-		{
-			addItem(line);
-			i++;
-		}
 
 		try
 		{
@@ -50,6 +43,17 @@ public class HistoryTextField extends JComboBox
 		catch(NumberFormatException nf)
 		{
 			max = 25;
+		}
+
+		String line;
+		int i = 0;
+		while((line = jEdit.getProperty("history." + name + "." + i)) != null)
+		{
+			if(i >= max)
+				break;
+			if(line.length() != 0)
+				addItem(line);
+			i++;
 		}
 
 		setEditable(true);
@@ -65,9 +69,14 @@ public class HistoryTextField extends JComboBox
 		String text = (String)getEditor().getItem();
 		if(text == null)
 			text = (String)getSelectedItem();
-		if(text == null)
+		if(text == null || text.length() == 0)
 			text = "";
-		insertItemAt(text,0);
+		else
+		{
+			insertItemAt(text,0);
+			if(getItemCount() > max)
+				removeItemAt(getItemCount() - 1);
+		}
 		for(int i = 0; i < getItemCount(); i++)
 		{
 			jEdit.setProperty("history." + name + "." +
@@ -80,8 +89,8 @@ public class HistoryTextField extends JComboBox
 		String text = (String)getEditor().getItem();
 		if(text == null)
 			text = (String)getSelectedItem();
-		if(text == null)
-			text = "";
+		if(text == null || text.length() == 0)
+			return;
 		insertItemAt(text,0);
 		if(getItemCount() > max)
 			removeItemAt(getItemCount() - 1);
@@ -145,6 +154,9 @@ public class HistoryTextField extends JComboBox
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.20  1999/03/28 01:36:24  sp
+ * Backup system overhauled, HistoryTextField updates
+ *
  * Revision 1.19  1999/03/27 03:22:16  sp
  * Number of items in a history list can now be set
  *

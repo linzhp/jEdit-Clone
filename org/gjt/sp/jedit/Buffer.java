@@ -1254,6 +1254,8 @@ loop:		for(int i = 0; i < markers.size(); i++)
 		if(alreadyBackedUp)
 			return;
 		alreadyBackedUp = true;
+		
+		// Fetch properties
 		int backups;
 		try
 		{
@@ -1264,35 +1266,55 @@ loop:		for(int i = 0; i < markers.size(); i++)
 		{
 			backups = 1;
 		}
+
 		if(backups == 0)
 			return;
-		File backup = null;
 
-		for(int i = backups; i > 0; i--)
+		String backupPrefix = jEdit.getProperty("backup.prefix","");
+		String backupSuffix = jEdit.getProperty("backup.suffix","~");
+
+		// Check for backup.directory property, and create that
+		// directory if it doesn't exist
+		String backupDirectory = jEdit.getProperty("backup.directory");
+		if(backupDirectory == null || backupDirectory.length() == 0)
+			backupDirectory = file.getParent();
+		else
 		{
-			// Checks for backup path property. If it's found, use it to build
-			// the filename for backup files, otherwise use the files own
-			// directory to save backups in.
-			String backupPath = jEdit.getProperty("backup.directory",
-					file.getParent());
-			backup = new File(backupPath + File.separator
-				+ file.getName()
-				+ (backups == 1 ? "~" : "~" + i + "~"));
-
-			if(backup.exists())
-			{
-				if(i == backups)
-					backup.delete();
-				else
-				{
-					backup.renameTo(new File(backupPath 
-							+ File.separator
-							+ file.getName() + "~"
-							+ (i + 1) + "~"));
-				}
-			}
+			backupDirectory = MiscUtilities.constructPath(
+				System.getProperty("user.home"),backupDirectory);
+			new File(backupDirectory).mkdirs();
 		}
-		file.renameTo(backup);
+		
+		String name = file.getName();
+
+		// If backups is 1, create ~ file
+		if(backups == 1)
+		{
+			file.renameTo(new File(backupDirectory,
+				backupPrefix + name + backupSuffix));
+		}
+		// If backups > 1, move old ~n~ files, create ~1~ file
+		else
+		{
+			new File(backupDirectory,
+				backupPrefix + name + backupSuffix
+				+ backups + backupSuffix).delete();
+
+			for(int i = backups - 1; i > 0; i--)
+			{
+				File backup = new File(backupDirectory,
+					backupPrefix + name + backupSuffix
+					+ i + backupSuffix);
+
+				backup.renameTo(new File(backupDirectory,
+					backupPrefix + name + backupSuffix
+					+ (i+1) + backupSuffix));
+			}
+
+			file.renameTo(new File(backupDirectory,
+				backupPrefix + name + backupSuffix
+				+ "1" + backupSuffix));
+		}
 	}
 
 	class BufferProps extends Hashtable
@@ -1405,6 +1427,9 @@ loop:		for(int i = 0; i < markers.size(); i++)
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.69  1999/03/28 01:36:24  sp
+ * Backup system overhauled, HistoryTextField updates
+ *
  * Revision 1.68  1999/03/27 23:47:57  sp
  * Updated docs, view tweak, goto-line fix, next/prev error tweak
  *

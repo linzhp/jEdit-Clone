@@ -516,6 +516,8 @@ options.general.recent=Number of recent files:\
 options.general.history=Maximum elements in a history list:\ 
 options.general.backups=Number of backups when saving:\ 
 options.general.backupDirectory=Backup directory (none=current):\ 
+options.general.backupPrefix=Backup filename prefix:\ 
+options.general.backupSuffix=Backup filename suffix:\ 
 options.general.lineSeparator=Default line separator:\ 
 options.general.browser=WWW browser:\ 
 options.general.saveDesktop=Save session on exit

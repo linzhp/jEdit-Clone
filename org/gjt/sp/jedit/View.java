@@ -578,9 +578,7 @@ public class View extends JFrame
 		int location = splitter.getDividerLocation();
 		jEdit.setProperty("view.divider",String.valueOf(location));
 
-		HistoryTextField textField = console.getCommandField();
-		if(textField.getSelectedItem() != null)
-			textField.save();
+		console.getCommandField().save();
 
 		console.stop();
 
@@ -749,6 +747,9 @@ public class View extends JFrame
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.57  1999/03/28 01:36:24  sp
+ * Backup system overhauled, HistoryTextField updates
+ *
  * Revision 1.56  1999/03/27 23:47:57  sp
  * Updated docs, view tweak, goto-line fix, next/prev error tweak
  *
