@@ -219,6 +219,7 @@ mode.java.blockComment=//
 mode.java.boxComment=\ *
 mode.java.compiler=javac %f
 mode.extension.java=java
+mode.extension.sqlj=java
 
 # JavaScript mode
 mode.javascript.name=JavaScript

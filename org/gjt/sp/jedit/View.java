@@ -37,7 +37,17 @@ import org.gjt.sp.jedit.gui.*;
  * @see Buffer
  */
 public class View extends JFrame
-{	
+{
+	/**
+	 * Tool bar position at the top of the view.
+	 */
+	public static final int TOP = 0;
+
+	/**
+	 * Tool bar position at the bottom of the view.
+	 */
+	public static final int BOTTOM = 0;
+
 	/**
 	 * Reloads various settings from the properties.
 	 */
@@ -49,13 +59,13 @@ public class View extends JFrame
 				toolBar = GUIUtilities.loadToolBar("view.toolbar");
 			if(toolBar.getParent() == null)
 			{
-				getContentPane().add(BorderLayout.NORTH,toolBar);
+				addToolBar(TOP,toolBar);
 				validate();
 			}
 		}
 		else if(toolBar != null)
 		{
-			getContentPane().remove(toolBar);
+			removeToolBar(toolBar);
 			toolBar = null;
 			validate();
 		}
@@ -409,12 +419,29 @@ public class View extends JFrame
 	}
 
 	/**
-	 * Returns this view's divider, which separates the text area
-	 * and command console.
+	 * Adds a tool bar to this view.
+	 * @param pos The tool bar's position, either <code>TOP</code>
+	 * or <code>BOTTOM</code>.
+	 * @param toolBar The tool bar
 	 */
-	public JSplitPane getSplitPane()
+	public void addToolBar(int pos, Component toolBar)
 	{
-		return splitter;
+		if(pos == TOP)
+			topToolBars.add(toolBar);
+		else if(pos == BOTTOM)
+			bottomToolBars.add(toolBar);
+		invalidate();
+		validate();
+	}
+
+	/**
+	 * Removes a tool bar from this view.
+	 * @param toolBar The tool bar
+	 */
+	public void removeToolBar(Component toolBar)
+	{
+		topToolBars.remove(toolBar);
+		bottomToolBars.remove(toolBar);
 	}
 
 	/**
@@ -542,7 +569,10 @@ public class View extends JFrame
 		updatePluginsMenu();
 
 		setJMenuBar(GUIUtilities.loadMenubar(this,"view.mbar"));
-		
+
+		topToolBars = new Box(BoxLayout.Y_AXIS);
+		bottomToolBars = new Box(BoxLayout.Y_AXIS);
+
 		console = new Console(this);
 
 		textArea = new JEditTextArea();
@@ -570,8 +600,13 @@ public class View extends JFrame
 		splitter.setPreferredSize(new Dimension(81 * fm.charWidth('m'),
 			26 * fm.getHeight()));
 
+		getContentPane().add(BorderLayout.NORTH,topToolBars);
 		getContentPane().add(BorderLayout.CENTER,splitter);
-		getContentPane().add(BorderLayout.SOUTH,status);
+
+		JPanel panel = new JPanel(new BorderLayout());
+		panel.add(BorderLayout.CENTER,bottomToolBars);
+		panel.add(BorderLayout.SOUTH,status);
+		getContentPane().add(BorderLayout.SOUTH,panel);
 
 		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 		pack();
@@ -653,6 +688,9 @@ public class View extends JFrame
 	private JMenu plugins;
 	private Hashtable bindings;
 	private Hashtable currentPrefix;
+	private Box topToolBars;
+	private Box bottomToolBars;
+	private Component toolBar;
 	private JScrollPane scroller;
 	private JEditTextArea textArea;
 	private Console console;
@@ -661,7 +699,6 @@ public class View extends JFrame
 	private JLabel hintBar;
 	private Buffer buffer;
 	private boolean showTip;
-	private JToolBar toolBar;
 	private EventMulticaster multicaster;
 	private BufferListener bufferListener;
 	private EditorListener editorListener;
@@ -811,6 +848,9 @@ public class View extends JFrame
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.70  1999/05/04 04:51:25  sp
+ * Fixed HistoryTextField for Swing 1.1.1
+ *
  * Revision 1.69  1999/05/03 08:28:14  sp
  * Documentation updates, key binding editor, syntax text area bug fix
  *

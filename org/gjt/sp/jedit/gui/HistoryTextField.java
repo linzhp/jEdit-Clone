@@ -55,10 +55,14 @@ public class HistoryTextField extends JComboBox
 	
 	public void addCurrentToHistory()
 	{
-		Object obj = getEditor().getItem();
-		if(obj == null)
-			obj = getSelectedItem();
-		((HistoryModel)getModel()).addItem((String)obj);
+		String str = (String)getEditor().getItem();
+		if(str == null)
+			str = (String)getSelectedItem();
+		if(str != null && str.length() != 0)
+		{
+			((HistoryModel)getModel()).addItem(str);
+			setSelectedIndex(0);
+		}
 	}
 
 	public void actionPerformed(ActionEvent evt)
@@ -90,14 +94,13 @@ public class HistoryTextField extends JComboBox
 		// Don't fire actionEvent here
 	}
 
-	/**
-	 * Making it public so that an inner class can use it.
-	 */
-	public void fireActionEvent()
+	public void _fireActionEvent()
 	{
 		super.fireActionEvent();
 	}
-	
+
+	public void fireActionEvent() {}
+
 	// private members
 	private String name;
 	private int max;
@@ -110,7 +113,7 @@ public class HistoryTextField extends JComboBox
 			{
 				Object current = getEditor().getItem();
 				setSelectedItem(current);
-				fireActionEvent();
+				_fireActionEvent();
 			}
 		}
 	}
@@ -119,6 +122,9 @@ public class HistoryTextField extends JComboBox
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.24  1999/05/04 04:51:25  sp
+ * Fixed HistoryTextField for Swing 1.1.1
+ *
  * Revision 1.23  1999/04/25 03:39:37  sp
  * Documentation updates, console updates, history text field updates
  *

@@ -1131,8 +1131,8 @@ public class jEdit
 
 		addOptionPane(org.gjt.sp.jedit.options.GeneralOptionPane.class);
 		addOptionPane(org.gjt.sp.jedit.options.EditorOptionPane.class);
-		addOptionPane(org.gjt.sp.jedit.options.ColorTableOptionPane.class);
 		addOptionPane(org.gjt.sp.jedit.options.KeyTableOptionPane.class);
+		addOptionPane(org.gjt.sp.jedit.options.ColorTableOptionPane.class);
 	}
 
 	/**
@@ -1523,6 +1523,9 @@ public class jEdit
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.92  1999/05/04 04:51:25  sp
+ * Fixed HistoryTextField for Swing 1.1.1
+ *
  * Revision 1.91  1999/05/03 08:28:14  sp
  * Documentation updates, key binding editor, syntax text area bug fix
  *

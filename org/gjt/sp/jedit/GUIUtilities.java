@@ -287,7 +287,7 @@ public class GUIUtilities
 	 * @param name The property with the white space separated list
 	 * of tool bar buttons
 	 */
-	public static JToolBar loadToolBar(String name)
+	public static Component loadToolBar(String name)
 	{
 		JToolBar toolBar = new JToolBar();
 		toolBar.setFloatable(false);
@@ -309,6 +309,8 @@ public class GUIUtilities
 					toolBar.add(button);
 			}
 		}
+
+		toolBar.add(Box.createHorizontalGlue());
 
 		return toolBar;
 	}
@@ -598,6 +600,9 @@ public class GUIUtilities
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.18  1999/05/04 04:51:25  sp
+ * Fixed HistoryTextField for Swing 1.1.1
+ *
  * Revision 1.17  1999/05/03 08:28:14  sp
  * Documentation updates, key binding editor, syntax text area bug fix
  *

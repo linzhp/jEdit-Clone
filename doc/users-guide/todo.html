@@ -20,6 +20,11 @@
 This is what needs to be done as soon as possible:
 
 <ul>
+
+<li>Caps lock doesn't work ??? !!!
+
+<li>After the first find, the wrong text is selected ?
+
 <li>Command names in the keyboard shortcut editor need to be sorted.<p>
 Very easy to implement, not if only I could find that quicksort.java...
 
@@ -49,28 +54,6 @@ the current way of storing listeners in a linked list.
 the best way, because it already implements thread-safety.
 </ul>
 
-<li>View extension API<p>
-
-<b>The case against view extensions:</b> on small screens,
-sticking everything into one window saves space, etc. However,
-nowadays most monitors are at least 800x600 where multiple
-frames can be easily seen and manipulated.<p>
-
-Witness the decreasing popularity of MDI (child windows inside
-one big parent window). People prefer having several top-level
-frames. They are much easier to work with and more flexible.<p>
-
-The MacOS is considered the most intuitive UI that exists
-right now. No Mac apps use MDI, or lots of controls in one
-window for that matter.<p>
-
-Frames exist for a reason; don't overlook their usefulness
-and stick everything in one frame.<p>
-
-<b>Having said that,</b> a system for adding toolbars to
-views should still be provided, to cleanly accomodate the
-BufferSelector plugin.
-
 </ul>
 
 <a name=shortterm>
@@ -85,7 +68,8 @@ series:
 The documentation, both for users and developers, is incomplete
 and possibly inaccurate at the moment.<p>
 Documentation for extending the console and using the history
-text field should be provided.
+text field should be provided. Also, some information about the
+tool bar API in the View class needs to be written.
 
 <li>Inter-plugin class dependencies.<p>
 Classes from one plugin should be able to use classes from other
@@ -102,7 +86,9 @@ an issue.
 <li>Syntax colorizing optimizations.<p>
 If we override the paint() method of the View class then we will
 be able to fetch the document and token marker once per paint
-request, rather than once per line.
+request, rather than once per line.<p>
+Also, a direct setClipBounds()/paintSyntaxLine() should be used
+to repaint lines after a multiline token.
 </ul>
 
 </ul>
@@ -124,6 +110,9 @@ following workarounds should be removed from jEdit:
 <li>Various workarounds for &lt;h<i>n</i>&gt; bugs in the HTML help
 <li>... maybe more?
 </ul>
+
+<li>More syntax modes.<p>
+Perl, SQLJ and TCL are the most frequently requested ones.
 
 <li>Editor needs to be embeddable in other applications.<p>
 There are several levels of integration that should be looked into:
@@ -152,7 +141,8 @@ current getView()/getBuffer() system is limited.
 <li>Console updates.<p>
 The console's support for `built in' commands should be improved.
 Versions of `ls', `mkdir', etc should be provided for Windows/MacOS
-users.
+users. More than one output area should be supported. Maybe some
+way of redirecting System.out/err to the console should be provided?
 
 <li>Auto indent improvements.<p>
 Auto indent should support `smart' indent (for example, shifting

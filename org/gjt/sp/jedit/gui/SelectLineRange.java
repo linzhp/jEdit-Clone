@@ -78,7 +78,7 @@ implements ActionListener, KeyListener
 	{
 		Object source = evt.getSource();
 
-		if(source == ok || source == start || source == end)
+		if(source == ok)
 			doSelectLineRange();
 		else if(source == cancel)
 			dispose();
@@ -88,6 +88,9 @@ implements ActionListener, KeyListener
 	{
 		switch(evt.getKeyCode())
 		{
+		case KeyEvent.VK_ENTER:
+			doSelectLineRange();
+			break;
 		case KeyEvent.VK_ESCAPE:
 			dispose();
 			break;
@@ -145,6 +148,9 @@ implements ActionListener, KeyListener
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.8  1999/05/04 04:51:25  sp
+ * Fixed HistoryTextField for Swing 1.1.1
+ *
  * Revision 1.7  1999/04/24 07:34:46  sp
  * Documentation updates
  *
