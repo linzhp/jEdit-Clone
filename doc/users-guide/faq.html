@@ -4,12 +4,42 @@
 <h1>jEdit Frequently Asked Questions</h1>
 
 <ul>
+<li><a href=#compiler>How do I Change the Compiler Used by `Tools-&gt;Compile'?</a>
+<li><a href=#cd>Why can't I change directories in the console?</a>
+<li><a href=#wincommands>Why do certain commands not work in the console on Windows?</a>
 <li><a href=#memory>Why do I get OutOfMemoryErrors?</a>
 <li><a href=#bigfile>Why does the display mess up when editing large files?</a>
+<li><a href=#overwrite>Why doesn't overwrite mode work?</a>
 <li><a href=#www>Why doesn't the `Open in WWW Browser' command work?</a>
 <li><a href=#alt>Why don't the Alt key mnemonics work?</a>
 <li><a href=#slow>Why is jEdit so slow?</a>
 </ul>
+
+<a name=compiler>
+<h1>How do I Change the Compiler Used by `Tools-&gt;Compile'?</h1>
+</a>
+
+See the <a href=console.html#compiler>Invoking Mode Specific Compilers</a>
+help topic for details.
+
+<a name=cd>
+<h1>Why can't I change directories in the console?</h1>
+</a>
+
+At the moment, Java doesn't support changing the current working directory
+(user.dir).
+
+<a name=wincommands>
+<h1>Why do certain commands not work in the console on Windows?</h1>
+</a>
+
+On Windows 95, 98 and NT, some commands, such as dir, del, mkdir, type
+and several others are internal to COMMAND.COM. To invoke them you
+must enter the following in the console:
+
+<pre>
+command.com /k <i>command</i>
+</pre>
 
 <a name=memory>
 <h1>Why do I get OutOfMemoryErrors?</h1>
@@ -57,6 +87,17 @@ than about 2000 lines. The problem is that the viewscreen turns gray
 and GUI elements are repainted incorrectly. Until Sun fixes
 this, other editors will have to be used to edit very large
 files.
+
+<a name=overwrite>
+<h1>Why doesn't overwrite mode work?</h1>
+</a>
+
+If you get the overwrite cursor, but text is still inserted
+when you start typing, the most likely problem is that your jEdit
+is still loading the AltGrPatch plugin that was obsoleted as
+of version 1.6pre4. Delete any copies of altgr.jar from the
+system and user plugin directories (see the
+<a href=plugins.html>jEdit Plugins</a> help topic for details).
 
 <a name=www>
 <h1>Why doesn't the `Open in WWW Browser' command work?</h1>

@@ -40,13 +40,13 @@ public class jEdit
 	/**
 	 * The jEdit version.
 	 */
-	public static final String VERSION = "1.6pre5";
+	public static final String VERSION = "1.6pre6";
 	
 	/**
 	 * The date when a change was last made to the source code,
 	 * in <code>YYYYMMDD</code> format.
 	 */
-	public static final String BUILD = "19990505";
+	public static final String BUILD = "19990506";
 
 	/**
 	 * The main method of the jEdit application.
@@ -1523,6 +1523,9 @@ public class jEdit
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.94  1999/05/06 05:16:17  sp
+ * Syntax text are compile fix, FAQ updated
+ *
  * Revision 1.93  1999/05/05 07:20:45  sp
  * jEdit 1.6pre5
  *

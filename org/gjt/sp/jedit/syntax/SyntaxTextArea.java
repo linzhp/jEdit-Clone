@@ -472,8 +472,10 @@ public class SyntaxTextArea extends JEditorPane
 		getSyntaxDocument().tokenizeLines(start,len);
 	}
 
-	// protected members
-	protected void doElectricScroll(Rectangle rect)
+	/**
+	 * This method is public because of a Java language limitation.
+	 */
+	public void doElectricScroll(Rectangle rect)
 	{
 		SwingUtilities.invokeLater(new SyntaxSafeScroller(rect));
 	}
@@ -720,6 +722,9 @@ public class SyntaxTextArea extends JEditorPane
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.23  1999/05/06 05:16:17  sp
+ * Syntax text are compile fix, FAQ updated
+ *
  * Revision 1.22  1999/05/03 08:28:14  sp
  * Documentation updates, key binding editor, syntax text area bug fix
  *
