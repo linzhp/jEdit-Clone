@@ -87,6 +87,25 @@ public class KeywordMap
 		map[key] = new Keyword(keyword.toCharArray(),id,map[key]);
 	}
 
+	/**
+	 * Returns true if the keyword map is set to be case insensitive,
+	 * false otherwise.
+	 */
+	public boolean getIgnoreCase()
+	{
+		return ignoreCase;
+	}
+
+	/**
+	 * Sets if the keyword map should be case insensitive.
+	 * @param ignoreCase True if the keyword map should be case
+	 * insensitive, false otherwise
+	 */
+	public void setIgnoreCase(boolean ignoreCase)
+	{
+		this.ignoreCase = ignoreCase;
+	}
+
 	// protected members
 	protected int mapLength;
 
@@ -126,6 +145,9 @@ public class KeywordMap
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.12  1999/04/07 05:22:46  sp
+ * Buffer options bug fix, keyword map API change (get/setIgnoreCase() methods)
+ *
  * Revision 1.11  1999/03/17 05:32:52  sp
  * Event system bug fix, history text field updates (but it still doesn't work), code cleanups, lots of banging head against wall
  *

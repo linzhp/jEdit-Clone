@@ -79,11 +79,7 @@ public class BufferOptions extends JDialog
 		modeNames[0] = jEdit.getModeName(null) + " (none)";
 		for(int i = 0; i < modes.length; i++)
 		{
-			Mode mode = modes[i];
-			String clazz = mode.getClass().getName();
-			modeNames[i + 1] = jEdit.getModeName(mode)
-				+ " (" + clazz.substring(clazz.lastIndexOf('.') + 1)
-				+ ")";
+			modeNames[i + 1] = jEdit.getModeName(modes[i]);
 		}
 		mode = new JComboBox(modeNames);
 		mode.setSelectedItem(buffer.getModeName());
@@ -229,6 +225,9 @@ public class BufferOptions extends JDialog
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.5  1999/04/07 05:22:46  sp
+ * Buffer options bug fix, keyword map API change (get/setIgnoreCase() methods)
+ *
  * Revision 1.4  1999/04/02 03:21:09  sp
  * Added manifest file, common strings such as OK, etc are no longer duplicated
  * many times in jedit_gui.props
