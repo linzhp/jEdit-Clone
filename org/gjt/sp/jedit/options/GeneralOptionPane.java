@@ -88,15 +88,15 @@ public class GeneralOptionPane extends OptionPane
 		cons.gridx = 0;
 		cons.gridy = 3;
 		cons.gridwidth = 3;
-		label = new JLabel(jEdit.getProperty("options.general.clipHistory"),
+		label = new JLabel(jEdit.getProperty("options.general.history"),
 			SwingConstants.RIGHT);
 		layout.setConstraints(label,cons);
 		add(label);
 		cons.gridx = 3;
 		cons.gridwidth = 1;
-		clipHistory = new JTextField(jEdit.getProperty("clipHistory"));
-		layout.setConstraints(clipHistory,cons);
-		add(clipHistory);
+		history = new JTextField(jEdit.getProperty("history"));
+		layout.setConstraints(history,cons);
+		add(history);
 
 		cons.gridx = 0;
 		cons.gridy = 4;
@@ -234,7 +234,7 @@ public class GeneralOptionPane extends OptionPane
 			? "on" : "off");
 		jEdit.setProperty("autosave",autosave.getText());
 		jEdit.setProperty("recent",recent.getText());
-		jEdit.setProperty("clipHistory",clipHistory.getText());
+		jEdit.setProperty("history",history.getText());
 		jEdit.setProperty("backups",backups.getText());
 		jEdit.setProperty("backup.directory",backupDirectory.getText());
 		String lineSep = null;
@@ -262,7 +262,7 @@ public class GeneralOptionPane extends OptionPane
 	private JComboBox lookAndFeel;
 	private JTextField autosave;
 	private JTextField recent;
-	private JTextField clipHistory;
+	private JTextField history;
 	private JTextField backups;
 	private JTextField backupDirectory;
 	private JComboBox lineSeparator;

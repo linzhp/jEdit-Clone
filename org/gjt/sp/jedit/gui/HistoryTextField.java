@@ -42,6 +42,16 @@ public class HistoryTextField extends JComboBox
 			addItem(line);
 			i++;
 		}
+
+		try
+		{
+			max = Integer.parseInt(jEdit.getProperty("history"));
+		}
+		catch(NumberFormatException nf)
+		{
+			max = 25;
+		}
+
 		setEditable(true);
 		setMaximumRowCount(20);
 		setSelectedItem(null);
@@ -73,7 +83,7 @@ public class HistoryTextField extends JComboBox
 		if(text == null)
 			text = "";
 		insertItemAt(text,0);
-		if(getItemCount() > 25)
+		if(getItemCount() > max)
 			removeItemAt(getItemCount() - 1);
 	}
 
@@ -116,6 +126,7 @@ public class HistoryTextField extends JComboBox
 	
 	// private members
 	private String name;
+	private int max;
 
 	class HistoryKeyListener extends KeyAdapter
 	{
@@ -134,6 +145,9 @@ public class HistoryTextField extends JComboBox
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.19  1999/03/27 03:22:16  sp
+ * Number of items in a history list can now be set
+ *
  * Revision 1.18  1999/03/27 03:08:55  sp
  * Changed max number of items in history to 25 from 100
  *

@@ -588,7 +588,7 @@ public class jEdit
 		try
 		{
 			maxClipHistory = Integer.parseInt(getProperty(
-				"clipHistory"));
+				"history"));
 		}
 		catch(NumberFormatException nf)
 		{
@@ -1040,7 +1040,6 @@ public class jEdit
 	 */
 	public static void addToClipHistory(String str)
 	{
-		clipHistory.removeElement(str);
 		clipHistory.addElement(str);
 	}
 
@@ -1518,6 +1517,9 @@ public class jEdit
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.63  1999/03/27 03:22:15  sp
+ * Number of items in a history list can now be set
+ *
  * Revision 1.62  1999/03/27 00:44:15  sp
  * Documentation updates, various bug fixes
  *
