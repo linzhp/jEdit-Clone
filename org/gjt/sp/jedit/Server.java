@@ -108,19 +108,16 @@ public class Server extends Thread
 				}
 				else
 				{
-					Buffer b;
 					if(filename.length() == 0)
-						b = jEdit.buffers.newFile(null);
+						buffer = jEdit.buffers.newFile(null);
 					else
-						b = jEdit.buffers.openFile(null,
+						buffer = jEdit.buffers.openFile(null,
 							cwd,filename,readOnly,
 							false);
-					if(buffer == null)
-						buffer = b;
 				}
 			}
 			if(buffer != null)
-				jEdit.buffers.newView(null).setBuffer(buffer);
+				jEdit.buffers.newView(buffer);
 		}
 		catch(NumberFormatException nf)
 		{

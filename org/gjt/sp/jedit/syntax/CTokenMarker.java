@@ -121,7 +121,7 @@ loop2:					while(++off < i)
 				backslash = false;
 				if(token == COMMENT && length - i >= 1)
 				{
-					if(line.array[i+1] == '/')
+					if(length - i > 1 && line.array[i+1] == '/')
 					{
 						token = null;
 						i++;

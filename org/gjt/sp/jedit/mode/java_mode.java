@@ -24,65 +24,10 @@ import jstyle.*;
 import org.gjt.sp.jedit.syntax.*;
 import org.gjt.sp.jedit.*;
 
-public class java_mode implements Mode
+public class java_mode extends autoindent
 {
-	private JSLineBeautifier beautifier;
-	
-	public java_mode()
-	{
-		beautifier = new jstyle.JSLineBeautifier();
-	}
-
-	public void enter(Buffer buffer)
-	{
-	}
-
-	public boolean indentLine(Buffer buffer, View view, int caret)
-	{
-		Element map = buffer.getDefaultRootElement();
-		int index = map.getElementIndex(caret);
-		JavaLineEnumeration enum = new JavaLineEnumeration(buffer,map,
-			index);
-		String line;
-		synchronized(this)
-		{
-			beautifier.init();
-			beautifier.setTabIndentation(buffer.getTabSize());
-			Integer maxIndent = (Integer)buffer.getProperty(
-				"maxIndent");
-			if(maxIndent != null)
-				beautifier.setMaxInStatementIndetation(maxIndent
-					.intValue());
-			beautifier.setBracketIndent(buffer.getProperty(
-				"blockIndent")
-				!= null);
-			beautifier.setSwitchIndent(buffer.getProperty(
-				"flushSwitch")
-				!= null);
-			line = beautifier.beautifyLine(enum);
-		}
-		Element lineElement = map.getElement(index);
-		try
-		{
-			int offset = lineElement.getStartOffset();
-			int len = lineElement.getEndOffset() - offset - 1;
-			buffer.remove(offset,len);
-			buffer.insertString(offset,line,null);
-			view.getTextArea().setCaretPosition(caret + (line
-				.length() - len));
-		}
-		catch (Exception e) {
-			e.printStackTrace();
-		}
-		return true;
-	}
-
 	public TokenMarker createTokenMarker()
 	{
 		return new CTokenMarker(false);
-	}
-
-	public void leave(Buffer buffer)
-	{
 	}
 }

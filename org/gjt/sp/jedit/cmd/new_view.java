@@ -26,6 +26,6 @@ public class new_view implements Command
 {
 	public void exec(Buffer buffer, View view, String arg, Hashtable args)
 	{
-		jEdit.buffers.newView(view);
+		jEdit.buffers.newView(buffer);
 	}
 }

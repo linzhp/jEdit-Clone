@@ -690,16 +690,6 @@ implements DocumentListener, UndoableEditListener
 		String userMode = (String)getProperty("mode");
 		if(userMode != null)
 			setMode(jEdit.cmds.getMode(userMode));
-		else
-		{
-			String nogzName = name.substring(0,name.length() -
-				(name.endsWith(".gz") ? 3 : 0));
-			int index = nogzName.lastIndexOf('.') + 1;
-			Mode mode = jEdit.cmds.getMode(jEdit.props.getProperty(
-				"mode.".concat(nogzName.substring(index))));
-			if(mode != null) // silly hack for shell script mode
-				setMode(mode);
-		}
 		addDocumentListener(this);
 		addUndoableEditListener(this);
 		updateMarkers();
@@ -742,6 +732,16 @@ implements DocumentListener, UndoableEditListener
 			}
 		}
 		autosaveFile = new File(file.getParent(),'#' + name + '#');
+		if(mode == null)
+		{
+			String nogzName = name.substring(0,name.length() -
+				(name.endsWith(".gz") ? 3 : 0));
+			int index = nogzName.lastIndexOf('.') + 1;
+			Mode mode = jEdit.cmds.getMode(jEdit.props.getProperty(
+				"mode.".concat(nogzName.substring(index))));
+			if(mode != null) // silly hack for shell script mode
+				setMode(mode);
+		}
 	}
 	
 	private void load()

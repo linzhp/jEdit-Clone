@@ -83,7 +83,8 @@ implements ActionListener, CaretListener, KeyListener, WindowListener
 	 */
 	public void updatePluginsMenu()
 	{
-		plugins.removeAll();
+		if(plugins.getMenuComponentCount() != 0)
+			plugins.removeAll();
 		Enumeration enum = jEdit.cmds.getPlugins();
 		if(!enum.hasMoreElements())
 		{
@@ -113,7 +114,8 @@ implements ActionListener, CaretListener, KeyListener, WindowListener
 	 */
 	public void updateBuffersMenu()
 	{
-		buffers.removeAll();
+		if(buffers.getMenuComponentCount() != 0)
+			buffers.removeAll();
 		ButtonGroup grp = new ButtonGroup();
 		Enumeration enum = jEdit.buffers.getBuffers();
 		while(enum.hasMoreElements())
@@ -144,7 +146,8 @@ implements ActionListener, CaretListener, KeyListener, WindowListener
 	 */
 	public void updateOpenRecentMenu()
 	{
-		openRecent.removeAll();
+		if(openRecent.getMenuComponentCount() != 0)
+			openRecent.removeAll();
 		Enumeration enum = jEdit.buffers.getRecent();
 		if(!enum.hasMoreElements())
 		{
@@ -175,8 +178,10 @@ implements ActionListener, CaretListener, KeyListener, WindowListener
 	 */
 	public void updateMarkerMenus()
 	{
-		clearMarker.removeAll();
-		gotoMarker.removeAll();
+		if(clearMarker.getMenuComponentCount() != 0)
+			clearMarker.removeAll();
+		if(gotoMarker.getMenuComponentCount() != 0)
+			gotoMarker.removeAll();
 		Enumeration enum = buffer.getMarkers();
 		int n = 1;
 		if(!enum.hasMoreElements())
@@ -229,7 +234,8 @@ implements ActionListener, CaretListener, KeyListener, WindowListener
 	 */
 	public void updateModeMenu()
 	{
-		mode.removeAll();
+		if(mode.getMenuComponentCount() != 0)
+			mode.removeAll();
 		Mode bufferMode = buffer.getMode();
 		ButtonGroup grp = new ButtonGroup();
 		Enumeration enum = jEdit.cmds.getModes();
@@ -316,7 +322,17 @@ implements ActionListener, CaretListener, KeyListener, WindowListener
 	// event handlers
 	public void actionPerformed(ActionEvent evt)
 	{
-		jEdit.cmds.execCommand(buffer,this,evt.getActionCommand());
+		try
+		{
+			jEdit.cmds.execCommand(buffer,this,evt
+				.getActionCommand());
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+			Object[] args = { evt.getActionCommand() };
+			jEdit.error(this,"execcmderr",args);
+		}
 	}
 
 	public void caretUpdate(CaretEvent evt)
@@ -360,7 +376,7 @@ implements ActionListener, CaretListener, KeyListener, WindowListener
 	public void windowDeactivated(WindowEvent evt) {}
 
 	// package-private members
-	View(View view)
+	View(Buffer buffer)
 	{
 		plugins = jEdit.loadMenu(this,"plugins");
 		buffers = jEdit.loadMenu(this,"buffers");
@@ -411,10 +427,10 @@ implements ActionListener, CaretListener, KeyListener, WindowListener
 			.VERTICAL_SCROLLBAR_ALWAYS,ScrollPaneConstants
 			.HORIZONTAL_SCROLLBAR_AS_NEEDED);	
 		status = new JLabel("Tastes like chicken!");
-		if(view == null)
+		if(buffer == null)
 			setBuffer((Buffer)jEdit.buffers.getBuffers().nextElement());
 		else
-			setBuffer(view.getBuffer());
+			setBuffer(buffer);
 		textArea.addCaretListener(this);
 		textArea.addKeyListener(this);
 		textArea.setBorder(null);

@@ -93,9 +93,9 @@ public class CommandMgr extends ClassLoader
 		{
 			_loadPlugin(name);
 		}
-		catch(IOException io)
+		catch(Exception e)
 		{
-			io.printStackTrace();
+			e.printStackTrace();
 			Object[] args = { name };
 			jEdit.error(null,"loadpluginerr",args);
 		}
@@ -110,9 +110,14 @@ public class CommandMgr extends ClassLoader
 	 * list.
 	 * @param name The path name of the plugin
 	 * @exception IOException if an I/O error occurs
+	 * @exception ClassNotFoundException if the class could not be found
+	 * @exception InstantiationException if a zero-argument constructor
+	 * doesn't exist
+	 * @exception IllegalAccessException if the constructor isn't public
 	 */
 	public void _loadPlugin(String name)
-		throws IOException
+		throws IOException, ClassNotFoundException,
+		InstantiationException, IllegalAccessException
 	{
 		if(!name.endsWith(".jar"))
 			return;
@@ -148,35 +153,6 @@ public class CommandMgr extends ClassLoader
 	 * Returns a command.
 	 * <p>
 	 * This loads a command if necessary. If the command could not be
-	 * found, it dislays an error message and returns <code>null</code>.
-	 * @param name The name of the command
-	 * @return <code>null</code> if the command could not be found,
-	 * the command otherwise
-	 */
-	public Command getCommand(String name)
-	{
-		try
-		{
-			return _getCommand(name);
-		}
-		catch(ClassNotFoundException cnf)
-		{
-			Object[] args = { name };
-			jEdit.error(null,"cmdnotfound",args);
-		}
-		catch(Exception e)
-		{
-			e.printStackTrace();
-			Object[] args = { name };
-			jEdit.error(null,"loadcmderr",args);
-		}
-		return null;
-	}
-
-	/**
-	 * Returns a command.
-	 * <p>
-	 * This loads a command if necessary. If the command could not be
 	 * found, it returns <code>null</code>.
 	 * @param name The name of the command
 	 * @return <code>null</code> if the command could not be found,
@@ -186,7 +162,7 @@ public class CommandMgr extends ClassLoader
 	 * doesn't exist
 	 * @exception IllegalAccessException if the constructor isn't public
 	 */
-	public Command _getCommand(String name)
+	public Command getCommand(String name)
 		throws ClassNotFoundException, InstantiationException,
 			IllegalAccessException
 	{
@@ -205,34 +181,6 @@ public class CommandMgr extends ClassLoader
 	}
 	
 	/**
-	 * Executes the specified command, showing a dialog box if an error
-	 * occurs.
-	 * <p>
-	 * This loads the command if necessary and calls it's
-	 * <code>exec()</code> method.
-	 * <p>
-	 * If <code>cmd</code> contains an '@' character, any text after the
-	 * '@' is passed to the command's <code>exec()</code> method.
-	 * @param buffer The buffer to execute the command in
-	 * @param view The view to execute the command in
-	 * @param cmd The command to execute
-	 * @see Command
-	 */
-	public void execCommand(Buffer buffer, View view, String cmd)
-	{
-		try
-		{
-			_execCommand(buffer,view,cmd);
-		}
-		catch(Exception e)
-		{
-			e.printStackTrace();
-			Object[] args = { cmd };
-			jEdit.error(view,"execcmderr",args);
-		}
-	}
-
-	/**
 	 * Executes the specified command, throwing an exception if an error
 	 * occurs.
 	 * <p>
@@ -249,7 +197,7 @@ public class CommandMgr extends ClassLoader
 	 * doesn't exist
 	 * @exception IllegalAccessException if the constructor isn't public
 	 */
-	public void _execCommand(Buffer buffer, View view, String cmd)
+	public void execCommand(Buffer buffer, View view, String cmd)
 		throws ClassNotFoundException, InstantiationException,
 			IllegalAccessException
 	{
@@ -261,7 +209,7 @@ public class CommandMgr extends ClassLoader
 			cmd = cmd.substring(0,index);
 		}
 		execHook(buffer,view,"pre_".concat(cmd));
-		Command command = _getCommand(cmd);
+		Command command = getCommand(cmd);
 		command.exec(buffer,view,arg,null);
 		execHook(buffer,view,"post_".concat(cmd));
 	}
@@ -275,24 +223,6 @@ public class CommandMgr extends ClassLoader
 	}
 
 	/**
-	 * Loads the specified mode, showing a dialog box if an error occurs.
-	 * @param name The name of the mode
-	 */
-	public void initMode(String name)
-	{
-		try
-		{
-			_initMode(name);
-		}
-		catch(Exception e)
-		{
-			e.printStackTrace();
-			Object[] args = { name };
-			jEdit.error(null,"loadmodeerr",args);
-		}
-	}
-
-	/**
 	 * Loads the specified mode, throwing an exception if an error
 	 * occurs.
 	 * @param name The name of the mode
@@ -301,11 +231,11 @@ public class CommandMgr extends ClassLoader
 	 * doesn't exist
 	 * @exception IllegalAccessException if the constructor isn't public
 	 */
-	public void _initMode(String name)
+	public void initMode(String name)
 		throws ClassNotFoundException, InstantiationException,
 			IllegalAccessException
 	{
-		if(_getMode(name) != null)
+		if(getMode(name) != null)
 			return;
 		Class cls = loadClass("org.gjt.sp.jedit.mode."
 			.concat(name));
@@ -316,27 +246,6 @@ public class CommandMgr extends ClassLoader
 	}
 	
 	/**
-	 * Returns an instance of the edit mode with the specified name,
-	 * showing a dialog box if the mode doesn't exist.
-	 * <p>
-	 * This loads the mode if necessary. It will return <code>null</code>
-	 * if the mode could not be found.
-	 * @param name The mode name
-	 * @return <code>null</code> if the mode could not be found.
-	 */
-	public Mode getMode(String name)
-	{
-		if(name == null)
-			return null;
-		Mode mode = _getMode(name);
-		if(mode != null)
-			return mode;
-		Object[] args = { name };
-		jEdit.error(null,"modenotfound",args);
-		return null;
-	}
-
-	/**
 	 * Returns an instance of the edit mode with the specified name.
 	 * <p>
 	 * This loads the mode if necessary. It will return <code>null</code>
@@ -344,7 +253,7 @@ public class CommandMgr extends ClassLoader
 	 * @param name The mode name
 	 * @return <code>null</code> if the mode could not be found.
 	 */
-	public Mode _getMode(String name)
+	public Mode getMode(String name)
 	{
 		if(name == null)
 			return null;
@@ -430,8 +339,14 @@ public class CommandMgr extends ClassLoader
 	 * @param buffer The buffer executing this hook
 	 * @param view The view executing this hook
 	 * @param name The name of the hook
+	 * @exception ClassNotFoundException if the class could not be found
+	 * @exception InstantiationException if a zero-argument constructor
+	 * doesn't exist
+	 * @exception IllegalAccessException if the constructor isn't public
 	 */
 	public void execHook(Buffer buffer, View view, String name)
+		throws ClassNotFoundException, InstantiationException,
+			IllegalAccessException
 	{
 		Vector hook = (Vector)hooks.get(name);
 		if(hook == null)

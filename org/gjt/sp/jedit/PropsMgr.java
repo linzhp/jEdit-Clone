@@ -152,8 +152,9 @@ public class PropsMgr extends Properties
 	
 	void loadSystemProps()
 	{
-		if(loadProps(null,jEdit.getJEditHome() + File.separator
-			+ "jedit.props",true))
+		if(loadProps(getClass().getResourceAsStream("/jedit.props"),
+			jEdit.getJEditHome() + File.separator + "jedit.props",
+			true))
 			return;
 		System.err.println(">> ERROR LOADING SYSTEM PROPERTIES <<\n"
 			+ "The jEdit system properties file `jedit.props'\n"

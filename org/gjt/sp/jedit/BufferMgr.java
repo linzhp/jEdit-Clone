@@ -226,13 +226,13 @@ public class BufferMgr
 
 	/**
 	 * Creates a new view.
-	 * @param view The view to inherit the current buffer from
+	 * @param buffer The buffer the view will be editing
 	 */
-	public View newView(View view)
+	public View newView(Buffer buffer)
 	{
-		View viewN = new View(view);
-		views.addElement(viewN);
-		return viewN;
+		View view = new View(buffer);
+		views.addElement(view);
+		return view;
 	}
 
 	/**
