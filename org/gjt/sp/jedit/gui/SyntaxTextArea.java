@@ -41,6 +41,8 @@ implements MouseListener, MouseMotionListener
 {
 	// public members
 
+	public static final EditorKit EDITOR_KIT = new SyntaxEditorKit();
+
 	/**
 	 * Creates a new SyntaxTextArea component.
 	 */
@@ -61,7 +63,7 @@ implements MouseListener, MouseMotionListener
 	 */
 	public EditorKit createDefaultEditorKit()
 	{
-		return new SyntaxEditorKit();
+		return EDITOR_KIT;
 	}
 
 	/**

@@ -25,6 +25,7 @@ import javax.swing.text.Element;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
+import org.gjt.sp.jedit.event.*;
 import org.gjt.sp.jedit.*;
 
 public class Console extends JPanel
@@ -123,6 +124,11 @@ implements ActionListener, ListSelectionListener
 	public void setCurrentError(int error)
 	{
 		currentError = error;
+		errorList.setSelectedIndex(error);
+
+		// Fire event
+		view.fireViewEvent(new ViewEvent(ViewEvent.CURRENT_ERROR_CHANGED,
+			view,null));
 	}
 
 	/**
@@ -150,6 +156,7 @@ implements ActionListener, ListSelectionListener
 
 	public void valueChanged(ListSelectionEvent evt)
 	{
+		System.out.println("HELLO");
 		if(errorList.isSelectionEmpty())
 			return;
 

@@ -11,6 +11,7 @@
 <a href=#history>History Feature</a><br>
 <a href=#markers>Markers and the Anchor</a><br>
 <a href=#search>Search &amp; Replace</a><br>
+<a href=#console>Executing External Programs</a><br>
 <a href=#misc>Miscallaneous Commands</a>
 
 <a name=intro>
@@ -182,13 +183,6 @@ Contributed by Mike Dillon &lt;mdillon@uclink4.berkeley.edu&gt;.
 
 </table>
 
-<a name=history>
-<h1>History Feature</h1>
-</a>
-
-In the Search &amp; Replace, HyperSearch and Console windows, the up and down
-arrows can be used to recall up to 100 previous entered strings.
-
 <a name=markers>
 <h1>Markers and the Anchor</h1>
 </a>
@@ -260,6 +254,71 @@ HyperSearch feature lists all lines that contain the search string. Clicking
 on a line in the list will select it in the editor.
 </ul>
 
+<b>Hint:</b> in the Search &amp; Replace and HyperSearch dialogs, the
+up/down arrow keys can be used to recall up to 100 previously entered
+strings.
+
+<a name=console>
+<h1>Executing External Programs</h1>
+</a>
+
+To make it easier to execute external programs such as compilers, each view
+has a built in `console' that component. An error parsing system also
+exists to make the compile-edit-fix cycle faster.<p>
+
+The console can be shown and hidden by dragging the patterned bar underneath
+the toolbar, or by invoking `Tools-&gt;Show/Hide Console'.<p>
+
+The console consists of a command text field, an output
+tab that lists the output of each command, and an errors tab that lists any
+parsed errors.<p>
+
+While a command is running, jEdit attempts to parse any errors. Currently,
+jEdit parses the following error formats:
+<ul>
+<li>Generic format used by many compilers and utilities:
+<blockquote><code>file name:line number:error message</code></blockquote>
+<lI>Emacs format used by Jikes Java compiler and several others:
+<blockquote><code>
+file name:line number:column number:end line number:end column number:<br>
+error message</code></blockquote>
+<li>TeX-style errors:
+<blockquote><code>
+! error message<br>
+l.line number, error message continued
+</code></blockquote>
+</ul>
+
+Selecting an error in the errors tab will open the file involved and move the
+caret to the line where the error occurred. The `Tools-&gt;Next Error' and
+`Tools-&gt;Previous Error' commands can also be used to go to the next and
+the previous error, respectively.<p>
+
+In addition to the console, jEdit has the following commands for executing
+external programs:
+
+<ul>
+<li><b>Tools-&gt;Filter Selection</b> - asks for a command to execute, and
+inserts the command's output into the document. The command's input is the
+selection, if any.
+<li><b>Tools-&gt;Compile</b> - used to compile the current file. Invokes
+a mode specific compiler - for example, in C mode, this is cc, in Java
+this is javac, etc.<p>
+
+The compiler can also be set on a file-by-file basis by setting the
+`compiler' buffer-local property, for example by putting this in one of
+the first 10 lines of the file:
+<blockquote><code>:compiler=c89 -O2 %p:</code></blockquote>
+Of course c89 -O2 should be replaced by your compiler and compilation flags,
+if any. The %p should appear somewhere in the compiler command - it is
+replaced with the file's path name by the compile command.
+</ul>
+
+
+<b>Hint:</b> in the command entry field, the
+up/down arrow keys can be used to recall up to 100 previously entered
+commands.
+
 <a name=misc>
 <h1>Miscallaneous Commands</h1>
 </a>
@@ -289,8 +348,6 @@ non-alphanumeric characters except for those listed in the `noWordSep'
 buffer-local property. For example, to be able to complete words containing `-',
 place the following in the first 10 lines of the file:
 <blockquote><code>:noWordSep=-:</code></blockquote>
-<li><b>Tools-&gt;Filter Selecton</b> - filters the selection through an
-external command, specified in a text entry dialog.
 <li><b>Search-&gt;Select Line Range</b> - similar to Go To Line, but selects a
 range of lines instead of moving the caret.
 </ul>

@@ -236,7 +236,7 @@ tools.label=$Tools
 word-count.label=Word Co$unt...
 generate-text.label=Generate Random Text...
 pipe-selection.label=Fi$lter Selection...
-toggle-console.label=Show/Hide Console
+toggle-console.label=Show/Hi$de Console
 compile.label=$Compile...
 prev-error.label=Go to Pre$vious Error
 next-error.label=Go to $Next Error
@@ -245,7 +245,7 @@ browser-open-url.label=Open in $WWW Browser
 options.label=Opt$ions...
 
 ### Mode menu
-mode.label=Mo$de
+mode.label=$Mode
 
 ### Plugins menu
 plugins.label=$Plugins

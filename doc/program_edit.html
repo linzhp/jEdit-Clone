@@ -8,17 +8,15 @@
 <a href=#autoindent>Indentation</a><br>
 <a href=#colorizing>Syntax Colorizing</a><br>
 <a href=#comment>Commenting and Uncommenting</a><br>
-<a href=#compile>Compiling and Fixing Errors</a>
 
 <a name=intro>
 <h1>Introduction</h1>
 </a>
 
 jEdit has many features useful for editing program source code,
-including bracket matching, auto indent, several commands for
-commenting and uncommenting code and commands for quick compile-edit-fix
-cycles. While  they don't count as programs some of the information in
-this document applies to HTML and TeX files too.
+including bracket matching, auto indent and several commands for
+commenting and uncommenting code. While they don't count as programs
+some of the information in this document applies to HTML and TeX files too.
 
 <a name=bracket>
 <h1>Bracket Matching</h1>
@@ -169,56 +167,6 @@ placing something like the following in one of the first 10 lines of the
 file:
 <blockquote><code>:commentStart=(*:commentEnd=*):<br>
 :blockComment=->:boxComment=**:</code></blockquote>
-
-<a name=compile>
-<h1>Compiling and Fixing Errors</h1>
-</a>
-
-To make edit-compile-fix cycles faster, jEdit has the following
-commands:
-
-<ul>
-<li><b>Tools-&gt;Compile</b> - used to compile the current file. Invokes
-a mode specific compiler - for example, in C mode, this is cc, in Java
-this is javac, etc.<p>
-
-The compiler can also be set on a file-by-file basis by setting the
-`compiler' buffer-local property, for example by putting this in one of
-the first 10 lines of the file:
-<blockquote><code>:compiler=c89 -O2 %p:</code></blockquote>
-Of course c89 -O2 should be replaced by your compiler and compilation flags,
-if any. The %p should appear somewhere in the compiler command - it is
-replaced with the file's path name by the compile command.
-<li><b>Tools-&gt;Make</b> - invokes the `make' tool which is usually used to
-build the entire program. The make tool can be set for all files edited within
-jEdit in `Tools-&gt;Options-&gt;General'. Also, it can be set on a file-by-file
-basis by setting the `make' buffer-local property, for example by putting
-this in one of the first 10 lines of the file:
-<blockquote><code>:make=pmake:</code></blockquote>
-Of course pmake should be replaced by your make tool.
-</ul>
-
-While a command is running, jEdit attempts to parse any errors and lists them
-in the `Errors' tab. Currently, jEdit parses the
-following error formats:
-<ul>
-<li>Generic format used by many compilers and utilities:
-<blockquote><code>file name:line number:error message</code></blockquote>
-<lI>Emacs format used by Jikes Java compiler and several others:
-<blockquote><code>
-file name:line number:column number:end line number:end column number:<br>
-error message</code></blockquote>
-<li>TeX-style errors:
-<blockquote><code>
-! error message<br>
-l.line number, error message continued
-</code></blockquote>
-</ul>
-
-Selecting an error from `Errors' tab of the console window will open the file
-involved and move the caret to the line where the error occurred.
-The `Tools-&gt;Next Error' and `Tools-&gt;Previous Error' commands can also
-be used to go to the next and the previous error, respectively.
 
 </body>
 </html>

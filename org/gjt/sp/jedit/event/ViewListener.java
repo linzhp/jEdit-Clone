@@ -1,5 +1,5 @@
 /*
- * save_all.java - Action
+ * ViewListener.java - View event listener
  * Copyright (C) 1999 Slava Pestov
  *
  * This program is free software; you can redistribute it and/or
@@ -17,28 +17,22 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-package org.gjt.sp.jedit.actions;
+package org.gjt.sp.jedit.event;
 
-import java.awt.event.ActionEvent;
-import java.util.Enumeration;
 import org.gjt.sp.jedit.*;
 
-public class save_all extends EditAction
+/**
+ * The view event listener interface.
+ */
+public interface ViewListener extends AbstractEditorListener
 {
-	public save_all()
-	{
-		super("save-all");
-	}
+	/**
+	 * Method invoked when a view's current error number changes.
+	 */
+	public void viewCurrentErrorChanged(ViewEvent evt);
 
-	public void actionPerformed(ActionEvent evt)
-	{
-		View view = getView(evt);
-		Buffer[] buffers = jEdit.getBuffers();
-		for(int i = 0; i < buffers.length; i++)
-		{
-			Buffer buffer = buffers[i];
-			if(buffer.isDirty())
-				buffer.save(view,null);
-		}
-	}
+	/**
+	 * Method invoked when a view's bufer changes.
+	 */
+	public void viewBufferChanged(ViewEvent evt);
 }

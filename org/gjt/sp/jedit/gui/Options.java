@@ -67,12 +67,12 @@ implements ActionListener, KeyListener, WindowListener
 
 		jEdit.propertiesChanged();
 
-		enum = jEdit.getBuffers();
-		while(enum.hasMoreElements())
+		Buffer[] buffers = jEdit.getBuffers();
+		for(int i = 0; i < buffers.length; i++)
 			((Buffer)enum.nextElement()).propertiesChanged();
 		
-		enum = jEdit.getViews();
-		while(enum.hasMoreElements())
+		View[] views = jEdit.getViews();
+		for(int i = 0; i < views.length; i++)
 			((View)enum.nextElement()).propertiesChanged();
 
 		dispose();

@@ -98,7 +98,7 @@ public class compile extends EditAction
 			}
 		}
 
-		view.toggleConsoleVisibility();
+		view.showConsole();
 
 		view.getConsole().getCommandField().setText(buf.toString());
 	}

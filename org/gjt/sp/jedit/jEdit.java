@@ -47,7 +47,7 @@ public class jEdit
 	 * The date when a change was last made to the source code,
 	 * in <code>YYYYMMDD</code> format.
 	 */
-	public static final String BUILD = "19990309";
+	public static final String BUILD = "19990311";
 
 	/**
 	 * AWK regexp syntax.
@@ -706,11 +706,13 @@ public class jEdit
 	}
 
 	/**
-	 * Returns the list of plugins registered with the editor.
+	 * Returns an array of installed plugins.
 	 */
-	public static Enumeration getPlugins()
+	public static Action[] getPlugins()
 	{
-		return plugins.elements();
+		Action[] array = new Action[plugins.size()];
+		plugins.copyInto(array);
+		return array;
 	}
 
 	/**
@@ -730,10 +732,9 @@ public class jEdit
 	{
 		if(name == null)
 			return null;
-		Enumeration enum = modes.elements();
-		while(enum.hasMoreElements())
+		for(int i = 0; i < modes.size(); i++)
 		{
-			Mode mode = (Mode)enum.nextElement();
+			Mode mode = (Mode)modes.elementAt(i);
 			String clsName = mode.getClass().getName();
 			if(clsName.substring(clsName.lastIndexOf('.') + 1).equals(name))
 				return mode;
@@ -759,11 +760,13 @@ public class jEdit
 	}
 
 	/**
-	 * Returns all edit modes registered with the editor.
+	 * Returns an array of installed edit modes.
 	 */
-	public static Enumeration getModes()
+	public static Mode[] getModes()
 	{
-		return modes.elements();
+		Mode[] array = new Mode[modes.size()];
+		modes.copyInto(array);
+		return array;
 	}
 
 	/**
@@ -870,10 +873,10 @@ public class jEdit
 	 */
 	public static Buffer getBuffer(String path)
 	{
-		Enumeration enum = getBuffers();
-		while(enum.hasMoreElements())
+		Buffer[] bufferArray = getBuffers();
+		for(int i = 0; i < bufferArray.length; i++)
 		{
-			Buffer buffer = (Buffer)enum.nextElement();
+			Buffer buffer = bufferArray[i];
 			if(buffer.getPath().equals(path))
 				return buffer;
 		}
@@ -881,11 +884,13 @@ public class jEdit
 	}
 
 	/**
-	 * Returns an enumeration of open buffers.
+	 * Returns an array of open buffers.
 	 */
-	public static Enumeration getBuffers()
+	public static Buffer[] getBuffers()
 	{
-		return buffers.elements();
+		Buffer[] array = new Buffer[buffers.size()];
+		buffers.copyInto(array);
+		return array;
 	}
 
 	/**
@@ -922,19 +927,23 @@ public class jEdit
 	}
 
 	/**
-	 * Returns an enumeration of all open views.
+	 * Returns an array of all open views.
 	 */
-	public static Enumeration getViews()
+	public static View[] getViews()
 	{
-		return views.elements();
+		View[] array = new View[views.size()];
+		views.copyInto(array);
+		return array;
 	}
 
 	/**
-	 * Returns an enumeration of recently opened files.
+	 * Returns an array of recently opened files.
 	 */
-	public static Enumeration getRecent()
+	public static String[] getRecent()
 	{
-		return recent.elements();
+		String[] array = new String[recent.size()];
+		recent.copyInto(array);
+		return array;
 	}
 	
 	/**
@@ -1363,9 +1372,9 @@ public class jEdit
 				{
 					return;
 				}
-				Enumeration enum = jEdit.getBuffers();
-				while(enum.hasMoreElements())
-					((Buffer)enum.nextElement()).autosave();
+				Buffer[] bufferArray = jEdit.getBuffers();
+				for(int i = 0; i < bufferArray.length; i++)
+					bufferArray[i].autosave();
 				if(interrupted())
 					return;
 			}

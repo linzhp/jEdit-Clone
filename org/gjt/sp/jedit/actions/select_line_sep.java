@@ -20,6 +20,7 @@
 package org.gjt.sp.jedit.actions;
 
 import java.awt.event.ActionEvent;
+import org.gjt.sp.jedit.event.*;
 import org.gjt.sp.jedit.*;
 
 public class select_line_sep extends EditAction
@@ -34,5 +35,7 @@ public class select_line_sep extends EditAction
 		Buffer buffer = getBuffer(evt);
 		buffer.putProperty(Buffer.LINESEP,evt.getActionCommand());
 		buffer.dirty();
+		buffer.fireBufferEvent(new BufferEvent(BufferEvent
+			.LINESEP_CHANGED,buffer));
 	}
 }

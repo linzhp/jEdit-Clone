@@ -101,7 +101,8 @@ public class EditorEvent extends AbstractEditorEvent
 	/**
 	 * Returns the view involved. This is set in all cases except
 	 * for the buffers being created before the initial view is
-	 * shown, and those created by the server.
+	 * shown, and those created by the server. Also, this is not
+	 * set for BUFFER_DIRTY_CHANGED events.
 	 */
 	public View getView()
 	{

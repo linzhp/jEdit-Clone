@@ -133,10 +133,10 @@ CaretListener, KeyListener, WindowListener
 		if(buffers.getMenuComponentCount() != 0)
 			buffers.removeAll();
 		ButtonGroup grp = new ButtonGroup();
-		Enumeration enum = jEdit.getBuffers();
-		while(enum.hasMoreElements())
+		Buffer[] bufferArray = jEdit.getBuffers();
+		for(int i = 0; i < bufferArray.length; i++)
 		{
-			Buffer b = (Buffer)enum.nextElement();
+			Buffer b = bufferArray[i];
 			String name = b.getPath();
 			Object[] args = { name, new Integer(b.isReadOnly() ? 1: 0),
 				new Integer(b.isDirty() ? 1 : 0),
@@ -161,15 +161,15 @@ CaretListener, KeyListener, WindowListener
 		if(openRecent.getMenuComponentCount() != 0)
 			openRecent.removeAll();
 		Action action = jEdit.getAction("open-path");
-		Enumeration enum = jEdit.getRecent();
-		if(!enum.hasMoreElements())
+		String[] recentArray = jEdit.getRecent();
+		if(recentArray.length == 0)
 		{
 			openRecent.add(GUIUtilities.loadMenuItem(this,"no-recent"));
 			return;
 		}
-		while(enum.hasMoreElements())
+		for(int i = 0; i < recentArray.length; i++)
 		{
-			String path = (String)enum.nextElement();
+			String path = recentArray[i];
 			JMenuItem menuItem = new JMenuItem(path);
 			menuItem.setActionCommand(path);
 			menuItem.addActionListener(action);
@@ -216,17 +216,16 @@ CaretListener, KeyListener, WindowListener
 	public void updatePluginsMenu()
 	{
 		if(plugins.getMenuComponentCount() != 0)
-			buffers.removeAll();
-		Enumeration enum = jEdit.getPlugins();
-		if(!enum.hasMoreElements())
+			plugins.removeAll();
+		Action[] pluginArray = jEdit.getPlugins();
+		if(pluginArray.length == 0)
 		{
 			plugins.add(GUIUtilities.loadMenuItem(this,"no-plugins"));
 			return;
 		}
-		while(enum.hasMoreElements())
+		for(int i = 0; i < pluginArray.length; i++)
 		{
-			String action = (String)((Action)enum.nextElement())
-				.getValue(Action.NAME);
+			String action = (String)pluginArray[i].getValue(Action.NAME);
 			JMenuItem mi = GUIUtilities.loadMenuItem(this,action);
 			plugins.add(mi);
 		}
@@ -241,7 +240,7 @@ CaretListener, KeyListener, WindowListener
 			mode.removeAll();
 		Mode bufferMode = buffer.getMode();
 		ButtonGroup grp = new ButtonGroup();
-		Enumeration enum = jEdit.getModes();
+		Mode[] modeArray = jEdit.getModes();
 		JMenuItem menuItem = new JRadioButtonMenuItem(jEdit
 			.getModeName(null));
 		menuItem.addActionListener(jEdit.getAction("select-mode"));
@@ -250,9 +249,9 @@ CaretListener, KeyListener, WindowListener
 			menuItem.getModel().setSelected(true);
 		grp.add(menuItem);
 		mode.add(menuItem);
-		while(enum.hasMoreElements())
+		for(int i = 0; i < modeArray.length; i++)
 		{
-			Mode m = (Mode)enum.nextElement();
+			Mode m = modeArray[i];
 			String name = jEdit.getModeName(m);
 			menuItem = new JRadioButtonMenuItem(name);
 			menuItem.addActionListener(jEdit.getAction("select-mode"));
@@ -358,10 +357,11 @@ CaretListener, KeyListener, WindowListener
 	 */
 	public void setBuffer(Buffer buffer)
 	{
-		if(this.buffer != null)
+		Buffer oldBuffer = this.buffer;
+		if(oldBuffer != null)
 		{
 			saveCaretInfo();
-			this.buffer.removeBufferListener(this);
+			oldBuffer.removeBufferListener(this);
 		}
 		this.buffer = buffer;
 		textArea.setDocument(buffer);
@@ -371,6 +371,10 @@ CaretListener, KeyListener, WindowListener
 		updateTitle();
 		updateLineNumber(true);
 		buffer.addBufferListener(this);
+
+		// Fire event
+		fireViewEvent(new ViewEvent(ViewEvent.BUFFER_CHANGED,this,
+			oldBuffer));
 	}
 
 	/**
@@ -394,19 +398,39 @@ CaretListener, KeyListener, WindowListener
 	 */
 	public void toggleConsoleVisibility()
 	{
-		int max = splitter.getMaximumDividerLocation();
-		int height = splitter.getHeight();
-		if(splitter.getDividerLocation() >= max)
+		int value = splitter.getDividerLocation();
+		int min = splitter.getMinimumDividerLocation();
+		if(value < min)
 		{
-			int lastHeight = splitter.getLastDividerLocation();
-			if(lastHeight < max)
-				splitter.setDividerLocation(0.75);
+			int lastLocation = splitter.getLastDividerLocation();
+			if(lastLocation >= min)
+				splitter.setDividerLocation(lastLocation);
 			else
-				splitter.setDividerLocation(lastHeight);
-			console.getCommandField().requestFocus();
+				splitter.setDividerLocation(min);
 		}
 		else
-			splitter.setDividerLocation(height);
+			splitter.setDividerLocation(0.0);
+
+		console.getCommandField().requestFocus();
+	}
+
+	/**
+	 * Shows the view's console if it's hidden.
+	 */
+	public void showConsole()
+	{
+		int value = splitter.getDividerLocation();
+		int min = splitter.getMinimumDividerLocation();
+		if(value < min)
+		{
+			int lastLocation = splitter.getLastDividerLocation();
+			if(lastLocation >= min)
+				splitter.setDividerLocation(lastLocation);
+			else
+				splitter.setDividerLocation(min);
+		}
+
+		console.getCommandField().requestFocus();
 	}
 
 	/**
@@ -455,6 +479,33 @@ CaretListener, KeyListener, WindowListener
 		((Hashtable)o).put(key2,cmd);
 	}
 
+	/**
+	 * Adds a view event listener to this view.
+	 * @param listener The event listener
+	 */
+	public void addViewListener(ViewListener listener)
+	{
+		multicaster.addListener(listener);
+	}
+
+	/**	
+	 * Removes a view event listener from this view.
+	 * @param listener The event listener
+	 */
+	public void removeViewListener(ViewListener listener)
+	{
+		multicaster.removeListener(listener);
+	}
+
+	/**
+	 * Forwards a view event to all registered listeners.
+	 * @param evt The event
+	 */
+	public void fireViewEvent(ViewEvent evt)
+	{
+		multicaster.fire(evt);
+	}
+
 	// event handlers
 
 	// BEGIN CARET LISTENER
@@ -475,10 +526,10 @@ CaretListener, KeyListener, WindowListener
 		// Files are added to the recent list when they are closed
 		updateOpenRecentMenu();
 
-		// XXX: todo: change when we start using array model
-		Enumeration buffers = jEdit.getBuffers();
-		if(buffers.hasMoreElements())
-			setBuffer((Buffer)buffers.nextElement());
+		// XXX: should revert to 1.2 behaviour
+		Buffer[] bufferArray = jEdit.getBuffers();
+		if(bufferArray.length != 0)
+			setBuffer(bufferArray[0]);
 
 		updateBuffersMenu();
 	}
@@ -605,6 +656,8 @@ CaretListener, KeyListener, WindowListener
 	// package-private members
 	View(View view, Buffer buffer)
 	{
+		multicaster = new EventMulticaster();
+
 		showTip = ("on".equals(jEdit.getProperty("view.showTips")));
 		
 		buffers = GUIUtilities.loadMenu(this,"buffers");
@@ -639,7 +692,7 @@ CaretListener, KeyListener, WindowListener
 		textArea.setContextMenu(GUIUtilities.loadPopupMenu(this,
 			"view.context"));
 		JMenuBar mbar = GUIUtilities.loadMenubar(this,"view.mbar");
-		mbar.add(new JPanel()); // silly hack to move ruler to right side
+		mbar.add(Box.createGlue()); // silly hack to move ruler to right side
 		mbar.add(lineNumber);
 		setJMenuBar(mbar);
 
@@ -649,7 +702,7 @@ CaretListener, KeyListener, WindowListener
 			.getFont());
 
 		if(buffer == null)
-			setBuffer((Buffer)jEdit.getBuffers().nextElement());
+			setBuffer(jEdit.getBuffers()[0]);
 		else
 			setBuffer(buffer);
 		updateBuffersMenu();
@@ -657,7 +710,7 @@ CaretListener, KeyListener, WindowListener
 		console = new Console(this);
 
 		splitter = new JSplitPane(JSplitPane.VERTICAL_SPLIT,
-			scroller,console);
+			console,scroller);
 		splitter.setOneTouchExpandable(true);
 		splitter.setPreferredSize(new Dimension(81 * fm.charWidth('m'),
 			26 * fm.getHeight()));
@@ -675,28 +728,22 @@ CaretListener, KeyListener, WindowListener
 			location.x += 20;
 			location.y += 20;
 			setLocation(location);
-
-			splitter.setDividerLocation(view.getSplitPane()
-				.getLastDividerLocation());
 		}
 		else
 		{
 			GUIUtilities.loadGeometry(this,"view");
-
-			try
-			{
-				splitter.setDividerLocation(Integer
-					.parseInt(jEdit.getProperty(
-					"view.divider")));
-			}
-			catch(Exception e)
-			{
-				splitter.setLastDividerLocation((getSize()
-					.height * 3) / 4);
-			}
 		}
 
-		splitter.setDividerLocation(1.0);
+		try
+		{
+			splitter.setLastDividerLocation(Integer
+				.parseInt(jEdit.getProperty(
+				"view.divider")));
+		}
+		catch(Exception e)
+		{
+		}
+		splitter.setDividerLocation(0.0);
 
 		jEdit.addEditorListener(this);
 
@@ -726,8 +773,11 @@ CaretListener, KeyListener, WindowListener
 	void close()
 	{
 		GUIUtilities.saveGeometry(this,"view");
-		jEdit.setProperty("view.divider",String.valueOf(splitter
-			.getDividerLocation()));
+		int location = splitter.getDividerLocation();
+		if(location > splitter.getHeight()
+			- splitter.getDividerSize() - 15)
+			location = splitter.getLastDividerLocation();
+		jEdit.setProperty("view.divider",String.valueOf(location));
 		console.getCommandField().save();
 
 		buffer.removeBufferListener(this);
@@ -754,6 +804,7 @@ CaretListener, KeyListener, WindowListener
 	private Buffer buffer;
 	private boolean showTip;
 	private JToolBar toolBar;
+	private EventMulticaster multicaster;
 
 	private void updateLineNumber(int dot, boolean force)
 	{

@@ -262,7 +262,8 @@ public class GUIUtilities
 	public static JToolBar loadToolBar(String name)
 	{
 		JToolBar toolBar = new JToolBar();
-		
+		toolBar.setFloatable(false);
+
 		String buttons = jEdit.getProperty(name);
 		if(buttons == null)
 			return null;
