@@ -36,11 +36,6 @@ import java.awt.*;
  * tab in the options dialog
  * </ul>
  *
- * Option panes can be registered with the editor by passing the
- * option pane's class to <code>jEdit.addOptionPane()</code>. A list
- * of registered option panes can be obtained with
- * <code>jEdit.getOptionPanes()</code>.
- *
  * @see org.gjt.sp.jedit.jEdit
  */
 public abstract class OptionPane extends JPanel
@@ -132,6 +127,9 @@ public abstract class OptionPane extends JPanel
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.3  1999/10/02 01:12:36  sp
+ * Search and replace updates (doesn't work yet), some actions moved to TextTools
+ *
  * Revision 1.2  1999/05/01 00:55:11  sp
  * Option pane updates (new, easier API), syntax colorizing updates
  *

@@ -40,16 +40,6 @@ public class BufferListSet implements SearchFileSet
 	}
 
 	/**
-	 * Returns the list of buffers to search.
-	 * @param view The view performing the search
-	 */
-	public Buffer[] getSearchBuffers(View view)
-	{
-		updateBufferList();
-		return buffers;
-	}
-
-	/**
 	 * Returns the next buffer to search.
 	 * @param view The view performing the search
 	 * @param buffer The last buffer searched
@@ -116,6 +106,9 @@ public class BufferListSet implements SearchFileSet
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.6  1999/10/02 01:12:36  sp
+ * Search and replace updates (doesn't work yet), some actions moved to TextTools
+ *
  * Revision 1.5  1999/07/16 23:45:49  sp
  * 1.7pre6 BugFree version
  *

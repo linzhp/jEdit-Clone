@@ -29,17 +29,6 @@ import org.gjt.sp.jedit.*;
 public class CurrentBufferSet implements SearchFileSet
 {
 	/**
-	 * Returns the list of buffers to search.
-	 * @param view The view performing the search
-	 */
-	public Buffer[] getSearchBuffers(View view)
-	{
-		Buffer[] buffers = new Buffer[1];
-		buffers[0] = view.getBuffer();
-		return buffers;
-	}
-
-	/**
 	 * Returns the next buffer to search.
 	 * @param view The view performing the search
 	 * @param buffer The last buffer searched
@@ -64,6 +53,9 @@ public class CurrentBufferSet implements SearchFileSet
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.4  1999/10/02 01:12:36  sp
+ * Search and replace updates (doesn't work yet), some actions moved to TextTools
+ *
  * Revision 1.3  1999/06/09 07:28:10  sp
  * Multifile search and replace tweaks, removed console.html
  *

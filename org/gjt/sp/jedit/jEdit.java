@@ -1178,7 +1178,6 @@ public class jEdit
 		addAction(new org.gjt.sp.jedit.actions.find());
 		addAction(new org.gjt.sp.jedit.actions.find_next());
 		addAction(new org.gjt.sp.jedit.actions.find_selection());
-		addAction(new org.gjt.sp.jedit.actions.format());
 		addAction(new org.gjt.sp.jedit.actions.global_options());
 		addAction(new org.gjt.sp.jedit.actions.goto_end_indent());
 		addAction(new org.gjt.sp.jedit.actions.goto_line());
@@ -1189,7 +1188,6 @@ public class jEdit
 		addAction(new org.gjt.sp.jedit.actions.hypersearch_selection());
 		addAction(new org.gjt.sp.jedit.actions.indent_on_enter());
 		addAction(new org.gjt.sp.jedit.actions.indent_on_tab());
-		addAction(new org.gjt.sp.jedit.actions.insert_date());
 		addAction(new org.gjt.sp.jedit.actions.join_lines());
 		addAction(new org.gjt.sp.jedit.actions.locate_bracket());
 		addAction(new org.gjt.sp.jedit.actions.multifile_search());
@@ -1235,8 +1233,6 @@ public class jEdit
 		addAction(new org.gjt.sp.jedit.actions.shift_left());
 		addAction(new org.gjt.sp.jedit.actions.shift_right());
 		addAction(new org.gjt.sp.jedit.actions.tab());
-		addAction(new org.gjt.sp.jedit.actions.to_lower());
-		addAction(new org.gjt.sp.jedit.actions.to_upper());
 		addAction(new org.gjt.sp.jedit.actions.undo());
 		addAction(new org.gjt.sp.jedit.actions.untab());
 		addAction(new org.gjt.sp.jedit.actions.view_registers());
@@ -1618,6 +1614,9 @@ public class jEdit
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.129  1999/10/02 01:12:36  sp
+ * Search and replace updates (doesn't work yet), some actions moved to TextTools
+ *
  * Revision 1.128  1999/10/01 07:31:39  sp
  * RMI server replaced with socket-based server, minor changes
  *

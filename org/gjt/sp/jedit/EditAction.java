@@ -36,8 +36,7 @@ import java.util.EventObject;
  * method.<p>
  *
  * Actions can be added at run-time with the <code>jEdit.addAction()</code>
- * method, or the <code>jEdit.addPluginAction()</code> method if the action
- * is to appear in the plugins menu.<p>
+ * method.
  *
  * An array of available actions can be obtained with the
  * <code>jEdit.getActions()</code> method.<p>
@@ -132,6 +131,9 @@ public abstract class EditAction implements ActionListener
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.12  1999/10/02 01:12:36  sp
+ * Search and replace updates (doesn't work yet), some actions moved to TextTools
+ *
  * Revision 1.11  1999/09/30 12:21:04  sp
  * No net access for a month... so here's one big jEdit 2.1pre1
  *

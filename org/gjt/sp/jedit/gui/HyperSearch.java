@@ -152,13 +152,15 @@ public class HyperSearch extends JDialog
 				view.getToolkit().beep();
 				return;
 			}
-			Buffer[] buffers = SearchAndReplace.getSearchFileSet()
-				.getSearchBuffers(view);
 
-			for(int i = 0; i < buffers.length; i++)
+			SearchFileSet fileset = SearchAndReplace.getSearchFileSet();
+			Buffer buffer = fileset.getFirstBuffer(view);
+
+			do
 			{
-				doHyperSearch(buffers[i],matcher);
+				doHyperSearch(buffer,matcher);
 			}
+			while((buffer = fileset.getNextBuffer(view,buffer)) != null);
 	
 			if(resultModel.isEmpty())
 				view.getToolkit().beep();
@@ -319,6 +321,9 @@ public class HyperSearch extends JDialog
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.37  1999/10/02 01:12:36  sp
+ * Search and replace updates (doesn't work yet), some actions moved to TextTools
+ *
  * Revision 1.36  1999/07/05 04:38:39  sp
  * Massive batch of changes... bug fixes, also new text component is in place.
  * Have fun

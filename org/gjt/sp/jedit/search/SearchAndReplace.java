@@ -315,10 +315,9 @@ loop:			for(;;)
 
 		try
 		{
-			Buffer[] buffers = fileset.getSearchBuffers(view);
-			for(int i = 0; i < buffers.length; i++)
+			Buffer buffer = fileset.getFirstBuffer(view);
+			do
 			{
-				Buffer buffer = buffers[i];
 				// Leave buffer in a consistent state if
 				// an error occurs
 				try
@@ -331,6 +330,7 @@ loop:			for(;;)
 					buffer.endCompoundEdit();
 				}
 			}
+			while((buffer = fileset.getNextBuffer(view,buffer)) != null);
 		}
 		catch(Exception e)
 		{
@@ -429,6 +429,9 @@ loop:			for(;;)
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.13  1999/10/02 01:12:36  sp
+ * Search and replace updates (doesn't work yet), some actions moved to TextTools
+ *
  * Revision 1.12  1999/09/30 12:21:04  sp
  * No net access for a month... so here's one big jEdit 2.1pre1
  *

@@ -26,7 +26,6 @@ classes=org/gjt/sp/jedit/actions/about.class \
 	org/gjt/sp/jedit/actions/find.class \
 	org/gjt/sp/jedit/actions/find_next.class \
 	org/gjt/sp/jedit/actions/find_selection.class \
-	org/gjt/sp/jedit/actions/format.class \
 	org/gjt/sp/jedit/actions/global_options.class \
 	org/gjt/sp/jedit/actions/goto_end_indent.class \
 	org/gjt/sp/jedit/actions/goto_line.class \
@@ -37,7 +36,6 @@ classes=org/gjt/sp/jedit/actions/about.class \
 	org/gjt/sp/jedit/actions/hypersearch_selection.class \
 	org/gjt/sp/jedit/actions/indent_on_enter.class \
 	org/gjt/sp/jedit/actions/indent_on_tab.class \
-	org/gjt/sp/jedit/actions/insert_date.class \
 	org/gjt/sp/jedit/actions/join_lines.class \
 	org/gjt/sp/jedit/actions/locate_bracket.class \
 	org/gjt/sp/jedit/actions/multifile_search.class \
@@ -83,8 +81,6 @@ classes=org/gjt/sp/jedit/actions/about.class \
 	org/gjt/sp/jedit/actions/shift_left.class \
 	org/gjt/sp/jedit/actions/shift_right.class \
 	org/gjt/sp/jedit/actions/tab.class \
-	org/gjt/sp/jedit/actions/to_lower.class \
-	org/gjt/sp/jedit/actions/to_upper.class \
 	org/gjt/sp/jedit/actions/undo.class \
 	org/gjt/sp/jedit/actions/untab.class \
 	org/gjt/sp/jedit/actions/view_registers.class \
