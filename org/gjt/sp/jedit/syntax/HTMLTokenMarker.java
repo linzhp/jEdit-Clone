@@ -147,7 +147,7 @@ loop:		for(int i = offset; i < length; i++)
 				break;
 			case ':':
 				backslash = false;
-				if(token == Token.ALTTXT)
+				if(token == Token.ALTTXT && lastOffset == offset)
 				{
 					addToken((i+1) - lastOffset,Token.LABEL);
 					lastOffset = i + 1;

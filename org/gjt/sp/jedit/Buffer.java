@@ -317,7 +317,10 @@ implements DocumentListener, UndoableEditListener
 			updateTitles();
 			updateBufferMenus();
 			if(mode == null)
+			{
 				setMode();
+				view.getTextArea().repaint();
+			}
 			else
 			{
 				updateTitles();

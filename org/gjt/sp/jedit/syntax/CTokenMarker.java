@@ -36,7 +36,6 @@ public class CTokenMarker extends TokenMarker
 		String token = lineIndex == 0 ? null : lineInfo[lineIndex - 1];
 		int offset = line.offset;
 		int lastOffset = offset;
-		int lastKeyword = offset;
 		int length = line.count + offset;
 		boolean backslash = false;
 loop:		for(int i = offset; i < length; i++)
@@ -86,7 +85,7 @@ loop:		for(int i = offset; i < length; i++)
 				break;
 			case ':':
 				backslash = false;
-				if(token == null)
+				if(token == null && lastOffset == offset)
 				{
 					addToken((i+1) - lastOffset,Token.LABEL);
 					lastOffset = i + 1;

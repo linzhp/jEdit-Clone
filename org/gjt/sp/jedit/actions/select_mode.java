@@ -1,6 +1,6 @@
 /*
  * select_mode.java
- * Copyright (C) 1998 Slava Pestov
+ * Copyright (C) 1998, 1999 Slava Pestov
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -31,6 +31,8 @@ public class select_mode extends EditAction
 	
 	public void actionPerformed(ActionEvent evt)
 	{
-		getBuffer(evt).setMode(jEdit.getMode(evt.getActionCommand()));
+		View view = getView(evt);
+		view.getBuffer().setMode(jEdit.getMode(evt.getActionCommand()));
+		view.getTextArea().repaint();
 	}
 }
