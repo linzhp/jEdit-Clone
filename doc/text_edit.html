@@ -34,15 +34,15 @@ The following commands deal with paragraphs:
 
 <ul>
 <li><b>Edit-&gt;Paragraph Operations-&gt;Go to Next Paragraph</b> - moves the caret
-to the start of the next paragraph
+to the start of the next paragraph.
 <li><b>Edit-&gt;Paragraph Operations-&gt;Go to Previous Paragraph</b> - moves the
-caret to the start of the previous paragraph
+caret to the start of the previous paragraph.
 <li><b>Edit-&gt;Paragraph Operations-&gt;Select Next Paragraph</b> - extends the
-selection to the start of the next paragraph
+selection to the start of the next paragraph.
 <li><b>Edit-&gt;Paragraph Operations-&gt;Select Previous Paragraph</b> - extends
-the selection to the start of the previous paragraph
+the selection to the start of the previous paragraph.
 <li><b>Edit-&gt;Paragraph Operations-&gt;Delete Paragraph</b> - deletes
-the paragraph containing the caret
+the paragraph containing the caret.
 </ul>
 
 <b>Hint:</b> If you separate your program source into clear, logical sections
@@ -54,14 +54,14 @@ using double newlines, the paragraph commands will  be useful then, too.
 
 The `Edit-&gt;Format' command reflows the selected text to the current
 line width, by breaking lines at word boundaries if they are too long and
-rejoining lines if there is room available. If there are more than one
-paragraphs in the selection, Format will reflow each one induvidually.<p>
+rejoining lines if there is room available. If there is more than one
+paragraph in the selection, Format will reflow each one individually.<p>
 
-The `maxLineLen' buffer-local property controls the maximum line length
-in characters) before it is wrapped; default is 72, which makes for
+The `maxLineLen' buffer-local property controls the maximum line length,
+in characters, before it is wrapped; default is 72, which makes for
 comfortable reading in the default window width of most text editors and
 standard 80 column terminals.
-The change it to a different value, set the buffer-local property by placing
+To change it to a different value, set the buffer-local property by placing
 the following in one of the first 10 lines of the file:
 <blockquote><code>:maxLineLen=78:</code></blockquote>
 Of course replacing 78 with the desired line length.
@@ -83,7 +83,7 @@ The following commands are useful when editing HTML files:
 <ul>
 <li><b>Tools-&gt;Open Selection in WWW Browser</b> - opens the URL
 specified by the selection in the WWW browser that can be specified in
-`Tools-&gt;Options-&gt;General'. Good for checking links, etc.
+`Tools-&gt;Options-&gt;General'. Useful for checking links, etc.
 <li><b>Tools-&gt;Open in WWW Browser</b> - opens the current file in the
 WWW browser.
 </ul>

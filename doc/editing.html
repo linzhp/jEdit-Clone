@@ -31,12 +31,12 @@ session, or if the `save desktop' feature is disabled, a blank
 jEdit can also be started from the command line to edit one or more
 files like this:
 
-<blockquote><code>jedit &lt;file1&gt; &lt;file2&gt;...</code></blockquote>
+<blockquote><code>jedit <i>file1</i> <i>file2</i>...</code></blockquote>
 
 If the file name contains a hash (#) the remainder of the file name
 after the hash character is the name of a marker that will be jumped to.
 (See the <a href=advanced.html#markers>Markers</a> help topic for more
-information.<p>
+information.<p>)
 
 A number of `switches' can also be passed to jEdit.
 
@@ -63,7 +63,7 @@ Because the `-' character is reserved for switches, you must enter the
 <h1>Opening Files</h1>
 </a>
 
-Once jEdit is started, files can be opened in a number of ways:
+Once jEdit is started, additional files can be opened in a number of ways:
 
 <ul>
 <li><b>By starting another copy of jEdit.</b> -
@@ -76,14 +76,14 @@ the already running copy.
 entry dialog where a URL can be entered. The name `Open URL' is somewhat
 misleading, since file names, as well as URLs, can be entered. The
 exact protocols available depend on the Java implementation - most support
-ftp: and http:.
+<code>ftp:</code>, <code>http:</code> and <code>file:</code>.
 <li><b>With the `File-&gt;Open Selection' command.</b> - This opens the file
 or URL specified by the currently selected text.
 <li><b>With the `File-&gt;Open Recent' menu. </b>- This menu displays
 the most recently opened files, 8 by default but this can be changed in
 `Tools-&gt;Options-&gt;General.
 <li><b>With the `File-&gt;New File' command.</b> - This command creates an
-empty file named `Untitled-n' where <i>n</i> is the number of `Untitled'
+empty file named `Untitled-<i>n</i>' where <i>n</i> is the number of `Untitled'
 files open so far. The new file isn't actually created on disk until you save;
 see below.
 </ul>
@@ -120,19 +120,13 @@ to recover any unsaved changes.<p>
 
 Every 15 seconds (the interval can be changed in
 `Tools-&gt;Options-&gt;General') a copy of every open file with unsaved
-changes is written out to #filename# where <i>filename</i> is the name
+changes is written out to #<i>filename</i># where <i>filename</i> is the name
 of the file. If jEdit crashes (or you do a file listing in a directory
 which contains files open in jEdit) you will see these autosave files.<p>
 
-If jEdit has truly crashed, you can try opening these autosave files
-to see if they contain what you were editing before jEdit crashed. If
-so, you can overwrite the original copy of the file.<p>
-
-You might also see files named #filename#+tmp+# where <i>filename</i>
-is a file you were editing. A file named that means that jEdit crashed
-while writing out a new autosave - the old one should still be in
-#filename#. The +tmp+ version is probably useless, since it is
-incomplete.
+If jEdit has truly crashed, try opening these autosave files
+to see if they contain what was being edited before jEdit crashed. If
+so, overwrite the original copy of the file.<p>
 
 <h2>Backups</h2>
 
@@ -140,12 +134,12 @@ Sometimes you start editing a file, save it several times, then decide
 that you don't like the changes.<p>
 
 The first time you save a file after opening it, jEdit copies the old
-vesion to filename~ where <i>filename</i> is the name of the file being
+version to <i>filename</i>~ where <i>filename</i> is the name of the file being
 saved. The result is that the backup always contains the file, as it was
 before you started editing it.<p>
 
-Multiple backups (named filename~1~, filename~2~, filename~3~ and so on)
-<i>n</i> can be enabled `Tools-&gt;Options-&gt;General'.
+Multiple backups (named <i>filename</i>~1~, <i>filename</i>~2~,
+<i>filename</i>~3~ and so on) can be enabled `Tools-&gt;Options-&gt;General'.
 
 <a name=sendPrint>
 <h1>Sending and Printing Files</h1>
@@ -182,8 +176,8 @@ too much, try `Edit-&gt;Redo'.
 </a>
 
 Within jEdit, keyboard shortcuts are written as
-<code>modifier+key</code>, where <code>modifier</code> is S for Shift,
-C for Control, or A for Alt. <code>key</code> is either a letter,
+<i>modifier+key</i>, where <i>modifier</i> is S for Shift,
+C for Control, or A for Alt. <i>key</i> is either a letter,
 or a named key such as PageUp.<p>
 
 Some keyboard shortcuts consist of more than one keystroke, for

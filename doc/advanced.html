@@ -68,11 +68,11 @@ syntax colorizing patterns, and various settings such as default compiler,
 comment strings, and so on.<p>
 
 To determine which edit mode to use for a file, jEdit looks at the file
-name, file extension, and first line of the file. If neither of these
-methods are suitable, the mode can be specified `manually'; either for
-the current session by selecting it from the `Tools-&gt;Mode' menu, or
-permanently by entering the following in one of the first 10 lines
-of the file whose edit mode you want to set:
+name, file extension, and first line of the file. The mode can also be
+specified `manually'; either for the current session by selecting it
+from the `Tools-&gt;Mode' menu, or permanently by entering the following
+in one of the first 10 lines of the file whose edit mode you want to
+set:
 <blockquote><code>:mode=sh:</code></blockquote>
 Of course, <i>sh</i> should be the <b>internal</b> name of the desired edit
 mode.<p>
@@ -94,16 +94,15 @@ for files without a specific edit mode.</td>
 </tr>
 
 <tr>
+<td>Auto Indent</td> <td>autoindent</td> <td>Implements semi-intelligent
+indentation. Most other modes subclass this one.</td>
+</tr>
+
+<tr>
 <td>AMSTeX</td> <td>amstex</td> <td>For editing AMSTeX files. This mode
 is automatically selected for files whose names end with `.tex' and
 which contain `\documentstyle' in the first 100 lines, but which do not
 contain `\begin'. Default compiler is `amstex'.</td>
-</tr>
-
-<tr>
-<td>Auto Indent</td> <td>autoindent</td> <td>Implements semi-intelligent
-indentation. All other modes except for Text, HTML, Patch and the TeX family
-subclass this.</td>
 </tr>
 
 <tr>
@@ -123,7 +122,7 @@ Default compiler is `cc'.
 <td>C++</td> <td>cc</td> <td>For editing C++ source. This
 mode is automatically selected for files whose names end with `.cc',
 `.hh', `.cpp', `.cxx', `.C' or `.H' (sometimes I wish the C++ file
-extensions were more standard). Default compiler is `c++'.
+extensions were more standardized). Default compiler is `c++'.
 </td>
 </tr>
 
@@ -157,7 +156,8 @@ that contain `\begin' in the first 100 lines. Default compiler is `latex'.
 
 <tr>
 <td>Makefile</td> <td>make</td> <td>For editing Makefiles. This
-mode is automatically selected for files named `Makefile'.
+mode is automatically selected for files named `Makefile', `makefile', or
+`GNUmakefile'.
 </td>
 </tr>
 
@@ -226,10 +226,10 @@ the caret to the anchor position, and moves the anchor to where the caret
 used to be.
 </ul>
 
-Markers are more general purpose than the anchor, but they are slightly more
-inconvenient to use. There can be any number of markers defined in the
-file, and they are saved to disk when the file is saved. (Markers
-are saved to .filename.marks where <i>filename</i> is the file)<p>
+Markers are more general purpose than the anchor. There can be any
+number of markers defined in the file, and they are saved to disk when
+the file is saved. (Markers are saved to .<i>filename</i>.marks where
+<i>filename</i> is the file)<p>
 
 The following commands manipulate markers:
 
@@ -261,8 +261,7 @@ The actual searching and replacement commands are:
 <li><b>Search-&gt;Find Next</b> - locates the next occurance of the search
 string.
 <li><b>Search-&gt;Find Selection</b> - locates the next occurance of the
-selected text. Subsequent `Find Next' commands will also use the selection
-as the search string.
+selected text.
 <li><b>Search-&gt;Replace</b> - replaces the selection with the replacement
 string.
 <li><b>Search-&gt;Replace &amp; Find Next</b> - replaces the selection with
@@ -302,12 +301,12 @@ without any leading indent to the end of the current line.
 word by scanning backwards in the document looking for strings that start with
 the current word. The word separator characters are defined as all
 non-alphanumeric characters except for those listed in the `noWordSep'
-buffer-local property. For example, if you to complete words containing `-',
+buffer-local property. For example, to be able to complete words containing `-',
 place the following in the first 10 lines of the file:
-<blockquote><code>(:noWordSep=-:)</code></blockquote>
+<blockquote><code>:noWordSep=-:</code></blockquote>
 <li><b>Tools-&gt;Filter Selecton</b> - filters the selection through an
 external command, specified in a text entry dialog.
-<li><b>Search-&gt;Select Line Range</b> - line Goto Line, but selects a
+<li><b>Search-&gt;Select Line Range</b> - similar to Go To Line, but selects a
 range of lines instead of moving the caret.
 </ul>
 
