@@ -550,6 +550,26 @@ implements DocumentListener, UndoableEditListener
 	public void setTokenMarker(JSTokenMarker tokenMarker)
 	{
 		this.tokenMarker = tokenMarker;
+		if(tokenMarker == null)
+			return;
+		try
+		{
+			Element map = getDefaultRootElement();
+			int lines = map.getElementCount();
+			for(int i = 0; i < lines; i++)
+			{
+				Element lineElement = map.getElement(i);
+				int start = lineElement.getStartOffset();
+				String line = getText(start,lineElement
+					.getEndOffset() - start);
+				// a void version of markTokens() would be nice
+				tokenMarker.markTokens(line,i,i != 0);
+			}
+		}
+		catch(BadLocationException bl)
+		{
+			bl.printStackTrace();
+		}
 	}
 
 	/**
@@ -578,6 +598,7 @@ implements DocumentListener, UndoableEditListener
 			// this is painfully slow because of JScrollPane bugs,
 			// so we're just going to have to put up with
 			// inaccurate colorizing for now :(
+			// ... besides, Tal says it's not necessary
 			/*for(int i = oldLineIndex + 1; i < lineIndex; i++)
 			{
 				Element lineElement = map.getElement(i);
@@ -752,7 +773,7 @@ implements DocumentListener, UndoableEditListener
 	public void insertUpdate(DocumentEvent evt)
 	{
 		dirty();
-		/*if(tokenMarker == null)
+		if(tokenMarker == null)
 			return;
 		DocumentEvent.ElementChange ch = evt.getChange(
 			getDefaultRootElement());
@@ -762,14 +783,14 @@ implements DocumentListener, UndoableEditListener
 		Element[] children = ch.getChildrenAdded();
 		if(children == null)
 			return;
-		for(int i = line; i < children.length; i++)
-			tokenMarker.insertLine(i);*/
+		for(int i = 0; i < children.length; i++)
+			tokenMarker.insertLine(i);
 	}
 
 	public void removeUpdate(DocumentEvent evt)
 	{
 		dirty();
-		/*if(tokenMarker == null)
+		if(tokenMarker == null)
 			return;
 		DocumentEvent.ElementChange ch = evt.getChange(
 			getDefaultRootElement());
@@ -779,8 +800,8 @@ implements DocumentListener, UndoableEditListener
 		Element[] children = ch.getChildrenRemoved();
 		if(children == null)
 			return;
-		for(int i = line; i < children.length; i++)
-			tokenMarker.deleteLine(line);*/
+		for(int i = 0; i < children.length; i++)
+			tokenMarker.deleteLine(line);
 	}
 
 	public void changedUpdate(DocumentEvent evt)
