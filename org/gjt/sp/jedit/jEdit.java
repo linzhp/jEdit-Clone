@@ -405,6 +405,28 @@ public class jEdit
 	}
 
 	/**
+	 * Registers a plugin menu with the editor. The menu
+	 * resulting from the call to <code>GUIUtilities.loadMenu(menu)</code>
+	 * will be added to the plugins menu.
+	 * @param menu The menu's name
+	 * @see org.gjt.sp.jedit.GUIUtilities#loadMenu(org.gjt.sp.jedit.View,java.lang.String)
+	 */
+	public static void addPluginMenu(String menu)
+	{
+		pluginMenus.addElement(menu);
+	}
+
+	/**
+	 * Returns an array of registered plugin menus.
+	 */
+	public static String[] getPluginMenus()
+	{
+		String[] pluginMenuArray = new String[pluginMenus.size()];
+		pluginMenus.copyInto(pluginMenuArray);
+		return pluginMenuArray;
+	}
+
+	/**
 	 * Registers an action with the editor.
 	 * @param action The action
 	 */
@@ -864,6 +886,7 @@ public class jEdit
 	private static EditAction[] actions;
 	private static Vector modes;
 	private static Vector plugins;
+	private static Vector pluginMenus;
 	private static Vector pluginActions;
 	private static int untitledCount;
 	private static Vector buffers;
@@ -1102,6 +1125,7 @@ public class jEdit
 	private static void initPlugins()
 	{
 		plugins = new Vector();
+		pluginMenus = new Vector();
 		loadPlugins(jEditHome + "jars");
 		loadPlugins(System.getProperty("user.home") + File.separator
 			+ ".jedit-jars");
@@ -1495,6 +1519,9 @@ public class jEdit
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.73  1999/04/20 06:38:26  sp
+ * jEdit.addPluginMenu() method added
+ *
  * Revision 1.72  1999/04/20 05:11:16  sp
  * jEdit class API change, Acu docs
  *

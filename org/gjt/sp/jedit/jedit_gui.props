@@ -56,12 +56,12 @@ view.context=undo redo - cut copy paste paste-previous paste-predefined - \
 ###
 ### MENUBAR
 ###
-view.mbar=buffers file edit tools search help-menu
+view.mbar=buffers file edit tools search plugins help-menu
 
 ### Buffers menu
 buffers.label=$Buffers
 next-buffer.label=Open $Next Buffer
-prev-buffer.label=Open $Previous Buffer
+prev-buffer.label=Open P$revious Buffer
 
 ### File menu
 file=new-file \
@@ -87,7 +87,7 @@ file=new-file \
      exit
 file.label=$File
 new-file.label=$New File
-new-view.label=New V$iew
+new-view.label=New $View
 open-file.label=$Open File...
 open-url.label=Open $URL...
 open-selection.label=Open Sele$ction
@@ -101,7 +101,7 @@ save-as.label=Sa$ve As...
 save-url.label=Save to URL...
 save-all.label=Save All Buffers
 send.label=Sen$d...
-print.label=$Print...
+print.label=Pri$nt...
 exit.label=E$xit
 
 ### Edit menu
@@ -229,9 +229,7 @@ tools=word-count \
       browser-open-url \
       - \
       buffer-options \
-      global-options \
-      - \
-      %plugins
+      global-options
 tools.label=$Tools
 word-count.label=Word Co$unt...
 compile.label=$Compile
@@ -242,10 +240,6 @@ browser-open-sel.label=$Open Selection in WWW Browser
 browser-open-url.label=Open in $WWW Browser
 buffer-options.label=Buffe$r Options...
 global-options.label=$Global Options...
-
-### Plugins menu
-plugins.label=Plu$gins
-no-plugins.label=No Plugins
 
 ### Search menu
 search=find \
@@ -270,7 +264,7 @@ find.label=$Find...
 find-next.label=Fin$d Next
 find-selection.label=F$ind Selection
 replace.label=$Replace
-replace-next.label=Re$place & Find Next
+replace-next.label=Replace & Find Ne$xt
 replace-in-selection.label=Replace in Selecti$on
 replace-all.label=Replace $All
 hypersearch.label=H$yperSearch...
@@ -280,6 +274,10 @@ set-marker.label=Set $Marker...
 clear-marker.label=$Clear Marker
 goto-marker.label=$Go to Marker
 no-markers.label=No Markers Defined
+
+### Plugins menu
+plugins.label=$Plugins
+no-plugins.label=No Plugins
 
 ### Help menu
 help-menu=about \

@@ -439,7 +439,7 @@ implements ActionListener, ListSelectionListener
 					process.getOutputStream());
 
 				out.write(selection);
-				out.flush();
+				out.write('\n');
 				out.close();
 			}
 			catch(IOException io)
@@ -548,6 +548,9 @@ implements ActionListener, ListSelectionListener
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.23  1999/04/20 06:38:26  sp
+ * jEdit.addPluginMenu() method added
+ *
  * Revision 1.22  1999/04/19 05:44:34  sp
  * GUI updates
  *

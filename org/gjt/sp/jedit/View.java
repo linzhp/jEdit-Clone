@@ -222,12 +222,27 @@ public class View extends JFrame
 	{
 		if(plugins.getMenuComponentCount() != 0)
 			plugins.removeAll();
+
+		String[] pluginMenus = jEdit.getPluginMenus();
 		EditAction[] pluginArray = jEdit.getPluginActions();
-		if(pluginArray.length == 0)
+
+		if(pluginMenus.length == 0 && pluginArray.length == 0)
 		{
 			plugins.add(GUIUtilities.loadMenuItem(this,"no-plugins"));
 			return;
 		}
+
+		for(int i = 0; i < pluginMenus.length; i++)
+		{
+			String menu = pluginMenus[i];
+			plugins.add(GUIUtilities.loadMenu(this,menu));
+		}
+
+		if(pluginMenus.length != 0 && pluginArray.length != 0)
+		{
+			plugins.addSeparator();
+		}
+
 		for(int i = 0; i < pluginArray.length; i++)
 		{
 			String action = (String)pluginArray[i].getName();
@@ -778,6 +793,9 @@ public class View extends JFrame
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.62  1999/04/20 06:38:26  sp
+ * jEdit.addPluginMenu() method added
+ *
  * Revision 1.61  1999/04/19 05:47:35  sp
  * ladies and gentlemen, 1.6pre1
  *

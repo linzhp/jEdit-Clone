@@ -853,6 +853,7 @@ loop:		for(int i = 0; i < markers.size(); i++)
 		this.path = path;
 		this.newFile = newFile;
 		this.readOnly = readOnly;
+
 		setDocumentProperties(new BufferProps());
 		putProperty("i18n",Boolean.FALSE);
 		
@@ -1452,6 +1453,9 @@ loop:		for(int i = 0; i < markers.size(); i++)
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.72  1999/04/20 06:38:26  sp
+ * jEdit.addPluginMenu() method added
+ *
  * Revision 1.71  1999/04/19 05:47:35  sp
  * ladies and gentlemen, 1.6pre1
  *
