@@ -142,19 +142,6 @@ view.blockCaret=off
 view.electricBorders=3
 
 ###
-### CONSOLE SETTINGS
-###
-
-# Info message color
-console.infoColor=#009600
-
-# Error message color
-console.errorColor=red
-
-# Parsed error color
-console.parsedErrorColor=magenta
-
-###
 ### EDIT MODES
 ###
 
@@ -164,7 +151,6 @@ mode.text.name=Text
 # AMSTeX mode
 mode.amstex.name=AMS-TeX
 mode.amstex.blockComment=%
-mode.amstex.compiler=amstex $f
 
 # Batch File mode
 mode.bat.name=Batch File
@@ -180,7 +166,6 @@ mode.c.commentStart=/*
 mode.c.commentEnd=*/
 mode.c.blockComment=//
 mode.c.boxComment=\ *
-mode.c.compiler=cc -O $f
 mode.extension.c=c
 mode.extension.h=c
 
@@ -193,7 +178,6 @@ mode.cc.commentStart=/*
 mode.cc.commentEnd=*/
 mode.cc.blockComment=//
 mode.cc.boxComment=\ *
-mode.cc.compiler=c++ -O2 $f
 # I wish the C++ file extensions were more standard... jeez...
 mode.extension.cc=cc
 mode.extension.hh=cc
@@ -217,7 +201,6 @@ mode.java.commentStart=/*
 mode.java.commentEnd=*/
 mode.java.blockComment=//
 mode.java.boxComment=\ *
-mode.java.compiler=javac $f
 mode.extension.java=java
 mode.extension.sqlj=java
 
@@ -235,12 +218,10 @@ mode.extension.js=javascript
 # LaTeX mode
 mode.latex.name=LaTeX
 mode.latex.blockComment=%
-mode.latex.compiler=latex $f
 
 # Makefile mode
 mode.makefile.name=Makefile
 mode.makefile.blockComment=#
-mode.makefile.compiler=make -C $d -f $f
 mode.filename.gnumakefile=makefile
 mode.filename.makefile=makefile
 
@@ -283,7 +264,6 @@ mode.firstline.#!/usr/local/bin/tcsh=sh
 # TeX mode
 mode.tex.name=TeX
 mode.tex.blockComment=%
-mode.tex.compiler=tex $f
 mode.extension.tex=tex
 mode.extension.sty=tex
 mode.extension.aux=tex

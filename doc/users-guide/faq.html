@@ -4,12 +4,10 @@
 <h1>jEdit Frequently Asked Questions</h1>
 
 <ul>
-<li><a href=#compiler>How do I Change the Compiler Used by `Tools-&gt;Compile'?</a>
+<li><a href=#console>What happened to the console?</a>
+<li><a href=#wwwbrowser>What happened to the `Open in WWW Browser' command?</a>
 <li><a href=#permissions>Why are file permissions reset to the defaults
 when I save?</a>
-<li><a href=#cd>Why can't I change directories in the console?</a>
-<li><a href=#wincommands>Why do certain commands not work in the console on
-Windows?</a>
 <li><a href=#memory>Why do I get OutOfMemoryErrors?</a>
 <li><a href=#noswing>Why do I get a ClassDefNotFoundError on startup?</a>
 <li><a href=#exithang>Why does jEdit hang when exiting?</a>
@@ -21,13 +19,20 @@ Windows?</a>
 <li><a href=#slow>Why is jEdit so slow?</a>
 </ul>
 
-<a name=compiler>
-<h1>How do I Change the Compiler Used by `Tools-&gt;Compile'?</h1>
+<a name=console>
+<h1>What happened to the console?</h1>
 </a>
 
-This is detailed in the
-<a href=console.html#compiler>Invoking Mode Specific Compilers</a>
-help topic.
+As of jEdit 1.7pre1, the console is a plugin distributed separately from
+jEdit. Download it from &lt;http://www.icg-online.de/jedit/&gt;.
+
+<a name=wwwbrowser>
+<h1>What happened to the `Open in WWW Browser' command?</h1>
+</a>
+
+As of jEdit 1.7pre1, the `Open in WWW Browser' command is a plugin
+distributed separately from jEdit. Download it from
+&lt;http://www.icg-online.de/jedit/&gt;.
 
 <a name=permissions>
 <h1>Why are file permissions reset to the defaults when I save?</h1>
@@ -35,33 +40,6 @@ help topic.
 
 This occurs because of a Java limitation. The only workaround is to
 disable backups in `File-&gt;Global Options'.
-
-<a name=cd>
-<h1>Why can't I change directories in the console?</h1>
-</a>
-
-At the moment, Java doesn't support changing the current working directory
-(user.dir).
-
-<a name=wincommands>
-<h1>Why do certain commands not work in the console on Windows?</h1>
-</a>
-
-On Windows 95 and 98, some commands, such as dir, del, mkdir, type
-and several others are internal to COMMAND.COM, the MS-DOS command
-interpreter. To invoke them you must enter the following in the console:
-
-<pre>
-command.com /k <i>command</i>
-</pre>
-
-On Windows NT, the same commands are internal to CMD.EXE, the 32-bit
-command interpreter. To invoke them you must enter the following in
-the console:
-
-<pre>
-cmd /k <i>command</i>
-</pre>
 
 <a name=memory>
 <h1>Why do I get OutOfMemoryErrors?</h1>

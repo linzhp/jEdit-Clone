@@ -1049,7 +1049,6 @@ public class jEdit
 		addAction(new org.gjt.sp.jedit.actions.clear_marker());
 		addAction(new org.gjt.sp.jedit.actions.close_file());
 		addAction(new org.gjt.sp.jedit.actions.close_view());
-		addAction(new org.gjt.sp.jedit.actions.compile());
 		addAction(new org.gjt.sp.jedit.actions.copy());
 		addAction(new org.gjt.sp.jedit.actions.cut());
 		addAction(new org.gjt.sp.jedit.actions.delete_end_line());
@@ -1079,7 +1078,6 @@ public class jEdit
 		addAction(new org.gjt.sp.jedit.actions.new_file());
 		addAction(new org.gjt.sp.jedit.actions.new_view());
 		addAction(new org.gjt.sp.jedit.actions.next_buffer());
-		addAction(new org.gjt.sp.jedit.actions.next_error());
 		addAction(new org.gjt.sp.jedit.actions.next_paragraph());
 		addAction(new org.gjt.sp.jedit.actions.open_file());
 		addAction(new org.gjt.sp.jedit.actions.open_path());
@@ -1090,7 +1088,6 @@ public class jEdit
 		addAction(new org.gjt.sp.jedit.actions.paste_previous());
 		addAction(new org.gjt.sp.jedit.actions.plugin_help());
 		addAction(new org.gjt.sp.jedit.actions.prev_buffer());
-		addAction(new org.gjt.sp.jedit.actions.prev_error());
 		addAction(new org.gjt.sp.jedit.actions.prev_paragraph());
 		addAction(new org.gjt.sp.jedit.actions.print());
 		addAction(new org.gjt.sp.jedit.actions.redo());
@@ -1118,7 +1115,6 @@ public class jEdit
 		addAction(new org.gjt.sp.jedit.actions.shift_left());
 		addAction(new org.gjt.sp.jedit.actions.shift_right());
 		addAction(new org.gjt.sp.jedit.actions.tab());
-		addAction(new org.gjt.sp.jedit.actions.toggle_console());
 		addAction(new org.gjt.sp.jedit.actions.to_lower());
 		addAction(new org.gjt.sp.jedit.actions.to_upper());
 		addAction(new org.gjt.sp.jedit.actions.undo());
@@ -1528,6 +1524,9 @@ public class jEdit
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.106  1999/05/27 03:09:22  sp
+ * Console unbundled
+ *
  * Revision 1.105  1999/05/27 00:02:50  sp
  * Documentation updates, minor tweaks for WWW browser command unbundling
  *
@@ -1557,8 +1556,5 @@ public class jEdit
  *
  * Revision 1.96  1999/05/08 00:13:00  sp
  * Splash screen change, minor documentation update, toolbar API fix
- *
- * Revision 1.95  1999/05/06 07:16:14  sp
- * Plugins can use classes from other loaded plugins
  *
  */

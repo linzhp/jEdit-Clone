@@ -1,5 +1,5 @@
 /*
- * ViewEvent.java - Event fired when a views's state changes
+ * ViewEvent.java - Event fired when a view's state changes
  * Copyright (C) 1999 Slava Pestov
  *
  * This program is free software; you can redistribute it and/or
@@ -37,20 +37,14 @@ public class ViewEvent extends AbstractEditorEvent
 
 	/**
 	 * The return value of the <code>getID()</code> function when
-	 * a view's current error number has changed.
-	 */
-	public static final int CURRENT_ERROR_CHANGED = VIEW_FIRST + 1;
-
-	/**
-	 * The return value of the <code>getID()</code> function when
 	 * a view's current buffer has changed.
 	 */
-	public static final int BUFFER_CHANGED = VIEW_FIRST + 2;
+	public static final int BUFFER_CHANGED = VIEW_FIRST;
 
 	/**
 	 * The last event id that denotes a view event.
 	 */
-	public static final int VIEW_LAST = VIEW_FIRST + 2;
+	public static final int VIEW_LAST = VIEW_FIRST;
 
 	/**
 	 * Creates a new view event.
@@ -104,9 +98,6 @@ public class ViewEvent extends AbstractEditorEvent
 
 		switch(id)
 		{
-		case CURRENT_ERROR_CHANGED:
-			l.viewCurrentErrorChanged(this);
-			break;
 		case BUFFER_CHANGED:
 			l.viewBufferChanged(this);
 			break;
@@ -133,6 +124,9 @@ public class ViewEvent extends AbstractEditorEvent
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.5  1999/05/27 03:09:22  sp
+ * Console unbundled
+ *
  * Revision 1.4  1999/03/17 05:32:52  sp
  * Event system bug fix, history text field updates (but it still doesn't work), code cleanups, lots of banging head against wall
  *

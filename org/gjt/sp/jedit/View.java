@@ -31,7 +31,7 @@ import org.gjt.sp.jedit.event.*;
 import org.gjt.sp.jedit.gui.*;
 
 /**
- * A <code>View</code> edits buffers. There is no public constructor in the
+ * A window that edits buffers. There is no public constructor in the
  * View class. Views are created and destroyed by the <code>jEdit</code>
  * class.
  * @see Buffer
@@ -134,7 +134,6 @@ public class View extends JFrame
 		updateOpenRecentMenu();
 
 		textArea.updateHighlighters();
-		console.propertiesChanged();
 	}
 	
 	/**
@@ -370,56 +369,6 @@ public class View extends JFrame
 	{
 		return textArea;
 	}
-	
-	/**
-	 * Returns this view's command console.
-	 */
-	public Console getConsole()
-	{
-		return console;
-	}
-
-	/**
-	 * Toggles the visiblity of the view's console.
-	 */
-	public void toggleConsoleVisibility()
-	{
-		int value = splitter.getDividerLocation();
-		int min = splitter.getMinimumDividerLocation();
-		if(value <= min)
-		{
-			int lastLocation = splitter.getLastDividerLocation();
-			if(lastLocation > min)
-				splitter.setDividerLocation(lastLocation);
-			else
-				splitter.resetToPreferredSizes();
-			console.getCommandField().requestFocus();
-		}
-		else
-		{
-			splitter.setDividerLocation(0.0);
-			focusOnTextArea();
-		}
-	}
-
-	/**
-	 * Shows the view's console if it's hidden.
-	 */
-	public void showConsole()
-	{
-		int value = splitter.getDividerLocation();
-		int min = splitter.getMinimumDividerLocation();
-		if(value <= min)
-		{
-			int lastLocation = splitter.getLastDividerLocation();
-			if(lastLocation > min)
-				splitter.setDividerLocation(lastLocation);
-			else
-				splitter.setDividerLocation(min);
-		}
-
-		console.getCommandField().requestFocus();
-	}
 
 	/**
 	 * Adds a tool bar to this view.
@@ -576,8 +525,6 @@ public class View extends JFrame
 		topToolBars = new Box(BoxLayout.Y_AXIS);
 		bottomToolBars = new Box(BoxLayout.Y_AXIS);
 
-		console = new Console(this);
-
 		textArea = new JEditTextArea();
 		textArea.setContextMenu(GUIUtilities.loadPopupMenu(this,
 			"view.context"));
@@ -585,6 +532,12 @@ public class View extends JFrame
 			.VERTICAL_SCROLLBAR_ALWAYS,ScrollPaneConstants
 			.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		scroller.setMinimumSize(new Dimension(0,0));
+
+		FontMetrics fm = getToolkit().getFontMetrics(textArea
+			.getFont());
+
+		scroller.setPreferredSize(new Dimension(81 * fm.charWidth('m'),
+			26 * fm.getHeight()));
 		
 		propertiesChanged();
 
@@ -593,18 +546,8 @@ public class View extends JFrame
 		else
 			setBuffer(buffer);
 
-		splitter = new JSplitPane(JSplitPane.VERTICAL_SPLIT,
-			console,scroller);
-		splitter.setOneTouchExpandable(true);
-
-		FontMetrics fm = getToolkit().getFontMetrics(textArea
-			.getFont());
-
-		splitter.setPreferredSize(new Dimension(81 * fm.charWidth('m'),
-			26 * fm.getHeight()));
-
 		getContentPane().add(BorderLayout.NORTH,topToolBars);
-		getContentPane().add(BorderLayout.CENTER,splitter);
+		getContentPane().add(BorderLayout.CENTER,scroller);
 
 		JPanel panel = new JPanel(new BorderLayout());
 		panel.add(BorderLayout.CENTER,bottomToolBars);
@@ -624,17 +567,6 @@ public class View extends JFrame
 		else
 		{
 			GUIUtilities.loadGeometry(this,"view");
-		}
-
-		try
-		{
-			splitter.setDividerLocation(Integer
-				.parseInt(jEdit.getProperty(
-				"view.divider")));
-		}
-		catch(Exception e)
-		{
-			splitter.setDividerLocation(0.0);
 		}
 
 		updateLineNumber();
@@ -668,16 +600,8 @@ public class View extends JFrame
 	void close()
 	{
 		GUIUtilities.saveGeometry(this,"view");
-
-		int location = splitter.getDividerLocation();
-		jEdit.setProperty("view.divider",String.valueOf(location));
-
-		console.stop();
-
 		saveCaretInfo();
-
 		jEdit.removeEditorListener(editorListener);
-
 		Buffer[] bufferArray = jEdit.getBuffers();
 		for(int i = 0; i < bufferArray.length; i++)
 			bufferArray[i].removeBufferListener(bufferListener);
@@ -696,8 +620,6 @@ public class View extends JFrame
 	private Component toolBar;
 	private JScrollPane scroller;
 	private JEditTextArea textArea;
-	private Console console;
-	private JSplitPane splitter;
 	private JLabel lineNumber;
 	private JLabel hintBar;
 	private Buffer buffer;
@@ -852,6 +774,9 @@ public class View extends JFrame
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.75  1999/05/27 03:09:22  sp
+ * Console unbundled
+ *
  * Revision 1.74  1999/05/20 06:26:32  sp
  * Find selection update
  *
@@ -881,9 +806,5 @@ public class View extends JFrame
  *
  * Revision 1.65  1999/04/24 01:55:28  sp
  * MiscUtilities.constructPath() bug fixed, event system bug(s) fix
- *
- * Revision 1.64  1999/04/23 07:35:10  sp
- * History engine reworking (shared history models, history saved to
- * .jedit-history)
  *
  */

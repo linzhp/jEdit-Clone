@@ -39,7 +39,6 @@ jar.what.class=\tExistance of class {0}
 view.toolbar=new-file open-file open-url close-file - save save-all - \
 	send print - undo redo - cut copy paste - \
 	find find-next hypersearch - \
-	prev-error next-error - \
 	help
 
 new-file.icon=New.gif
@@ -58,8 +57,6 @@ paste.icon=Paste.gif
 find.icon=Magnify.gif
 find-next.icon=VCRFastForward.gif
 hypersearch.icon=DocumentIn.gif
-prev-error.icon=Left.gif
-next-error.icon=Right.gif
 help.icon=Help.gif
 
 
@@ -73,7 +70,7 @@ view.context=undo redo - cut copy paste paste-previous paste-predefined - \
 ###
 ### MENUBAR
 ###
-view.mbar=buffers file edit tools search plugins help-menu
+view.mbar=buffers file edit search plugins help-menu
 
 ### Buffers menu
 buffers.label=$Buffers
@@ -240,18 +237,6 @@ shift-right.label=Shift Indent Right
 wing-comment.label=Wing Comment
 box-comment.label=Box Comment
 block-comment.label=Block Comment
-
-### Tools menu
-tools=compile \
-      toggle-console \
-      - \
-      prev-error \
-      next-error
-tools.label=$Tools
-compile.label=$Compile
-toggle-console.label=Show/Hi$de Console
-prev-error.label=Go to $Previous Error
-next-error.label=Go to $Next Error
 
 ### Search menu
 search=find \
@@ -470,27 +455,6 @@ pastepredef.edit=Edit
 # Clipping editor dialog
 clipedit.title=Clipping Editor
 
-# Console component
-console.output=Output
-console.errors=Errors
-console.ioerror=I/O error: {0}
-console.killed=Process {0} killed
-console.exited=Process {0} exited with code {1}
-console.help=This is the jEdit console, a tool for executing programs and\n\
-	opening files. There are many useful tricks you can use here;\n\
-	see Help->Help Contents->The Console for details.\n\
-	\n\
-	Here are some examples of what you can enter here:\n\
-	\n\
-	ls (OS commands - .exe is automatically appended on Windows)\n\
-	ls ~/jars (~ expands to the user's home directory)\n\
-	cc $f ($f expands to the file path)\n\
-	make -C $d ($d is the current file's parent directory)\n\
-	clear (removes all text from the console)\n\
-	file:/etc/passwd (will open the file)\n\
-	file:C:\\Documents\\doc.txt (Windows file paths)\n\
-	http://www.sun.com (will open the URL)\n
-
 # File changed on disk dialog
 filechanged.title=File Changed on Disk
 filechanged.message=The file {0}\n\
@@ -553,9 +517,6 @@ options.colors.caretColor=Caret
 options.colors.selectionColor=Selection
 options.colors.lineHighlightColor=Line highlight
 options.colors.bracketHighlightColor=Bracket highlight
-options.colors.infoColor=Console info message
-options.colors.errorColor=Console error message
-options.colors.parsedErrorColor=Console parsed error
 options.colors.comment1Color=Comment 1
 options.colors.comment2Color=Comment 2
 options.colors.literal1Color=String literal

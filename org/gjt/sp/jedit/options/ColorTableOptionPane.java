@@ -53,9 +53,6 @@ public class ColorTableOptionPane extends OptionPane
 		saveColorChoice("view.selectionColor",i++);
 		saveColorChoice("view.lineHighlightColor",i++);
 		saveColorChoice("view.bracketHighlightColor",i++);
-		saveColorChoice("console.infoColor",i++);
-		saveColorChoice("console.errorColor",i++);
-		saveColorChoice("console.parsedErrorColor",i++);
 		saveColorChoice("buffer.colors.comment1",i++);
 		saveColorChoice("buffer.colors.comment2",i++);
 		saveColorChoice("buffer.colors.literal1",i++);
@@ -153,16 +150,6 @@ public class ColorTableOptionPane extends OptionPane
 		types.addElement(jEdit.getProperty("options.colors.bracketHighlightColor"));
 		colors.addElement(ColorChoice.choiceForValue(
 			jEdit.getProperty("view.bracketHighlightColor")));
-		// console
-		types.addElement(jEdit.getProperty("options.colors.infoColor"));
-		colors.addElement(ColorChoice.choiceForValue(
-			jEdit.getProperty("console.infoColor")));
-		types.addElement(jEdit.getProperty("options.colors.errorColor"));
-		colors.addElement(ColorChoice.choiceForValue(
-			jEdit.getProperty("console.errorColor")));
-		types.addElement(jEdit.getProperty("options.colors.parsedErrorColor"));
-		colors.addElement(ColorChoice.choiceForValue(
-			jEdit.getProperty("console.parsedErrorColor")));
 		// syntax
 		types.addElement(jEdit.getProperty("options.colors.comment1Color"));
 		colors.addElement(ColorChoice.choiceForValue(
@@ -538,6 +525,9 @@ class ColorChoice
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.10  1999/05/27 03:09:22  sp
+ * Console unbundled
+ *
  * Revision 1.9  1999/04/25 03:39:37  sp
  * Documentation updates, console updates, history text field updates
  *

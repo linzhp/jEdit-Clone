@@ -32,11 +32,6 @@ import org.gjt.sp.jedit.*;
 public abstract class ViewAdapter implements ViewListener
 {
 	/**
-	 * Method invoked when a view's current error number changes.
-	 */
-	public void viewCurrentErrorChanged(ViewEvent evt) {}
-
-	/**
 	 * Method invoked when a view's buffer changes.
 	 */
 	public void viewBufferChanged(ViewEvent evt) {}
@@ -45,6 +40,9 @@ public abstract class ViewAdapter implements ViewListener
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.4  1999/05/27 03:09:22  sp
+ * Console unbundled
+ *
  * Revision 1.3  1999/03/16 04:34:46  sp
  * HistoryTextField updates, moved generate-text to a plugin, fixed spelling mistake in EditAction Javadocs
  *
