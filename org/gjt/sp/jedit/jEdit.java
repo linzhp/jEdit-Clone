@@ -47,7 +47,7 @@ public class jEdit
 	 * The date when a change was last made to the source code,
 	 * in <code>YYYYMMDD</code> format.
 	 */
-	public static final String BUILD = "19990317";
+	public static final String BUILD = "19990318";
 
 	/**
 	 * AWK regexp syntax.
@@ -1576,6 +1576,9 @@ public class jEdit
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.52  1999/03/18 04:24:57  sp
+ * HistoryTextField hacking, some other minor changes
+ *
  * Revision 1.51  1999/03/17 05:32:51  sp
  * Event system bug fix, history text field updates (but it still doesn't work), code cleanups, lots of banging head against wall
  *

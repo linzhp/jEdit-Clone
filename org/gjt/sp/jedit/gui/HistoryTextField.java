@@ -24,6 +24,12 @@ import java.awt.*;
 import java.awt.event.*;
 import org.gjt.sp.jedit.*;
 
+/**
+ * Text field with a combo box component listing previously entered
+ * strings.
+ * @author Slava Pestov
+ * @version $Id$
+ */
 public class HistoryTextField extends JComboBox
 {
 	public HistoryTextField(String name)
@@ -43,7 +49,9 @@ public class HistoryTextField extends JComboBox
 
 	public void save()
 	{
-		String text = (String)getSelectedItem();
+		String text = (String)getEditor().getItem();
+		if(text == null)
+			text = (String)getSelectedItem();
 		if(text != null && text.length() != 0)
 			insertItemAt(text,0);
 		for(int i = 0; i < getItemCount(); i++)
@@ -55,7 +63,9 @@ public class HistoryTextField extends JComboBox
 
 	public void addCurrentToHistory()
 	{
-		String text = (String)getSelectedItem();
+		String text = (String)getEditor().getItem();
+		if(text == null)
+			text = (String)getSelectedItem();
 		if(text != null && text.length() != 0)
 			insertItemAt(text,0);
 		if(getItemCount() > 100)
@@ -65,3 +75,8 @@ public class HistoryTextField extends JComboBox
 	// private members
 	private String name;
 }
+
+/*
+ * ChangeLog:
+ * $Id$
+ */

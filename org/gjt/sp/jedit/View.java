@@ -585,6 +585,8 @@ public class View extends JFrame
 			GUIUtilities.loadGeometry(this,"view");
 		}
 
+		splitter.setDividerLocation(0.0);
+
 		try
 		{
 			splitter.setLastDividerLocation(Integer
@@ -594,7 +596,6 @@ public class View extends JFrame
 		catch(Exception e)
 		{
 		}
-		splitter.setDividerLocation(0.0);
 
 		bufferListener = new ViewBufferListener();
 
@@ -897,6 +898,9 @@ public class View extends JFrame
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.48  1999/03/18 04:24:57  sp
+ * HistoryTextField hacking, some other minor changes
+ *
  * Revision 1.47  1999/03/17 05:32:51  sp
  * Event system bug fix, history text field updates (but it still doesn't work), code cleanups, lots of banging head against wall
  *
