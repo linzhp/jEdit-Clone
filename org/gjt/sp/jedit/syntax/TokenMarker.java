@@ -1,6 +1,6 @@
 /*
  * TokenMarker.java - Generic token marker
- * Copyright (C) 1998 Slava Pestov
+ * Copyright (C) 1998, 1999 Slava Pestov
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -55,6 +55,7 @@ public abstract class TokenMarker
 		length = 0;
 		lastToken = null;
 	}
+
 	/**
 	 * An abstract method that is called to split a line up into
 	 * tokens.
@@ -70,31 +71,38 @@ public abstract class TokenMarker
 	public abstract Token markTokens(Segment line, int lineIndex);
 
 	/**
-	 * Informs the token marker that a line has been inserted into
+	 * Informs the token marker that lines have been inserted into
 	 * the document. This inserts a gap in the <code>lineInfo</code>
 	 * array.
 	 * @param lineIndex The line number
+	 * @param lines The number of lines 
 	 */
-	public void insertLine(int lineIndex)
+	public void insertLines(int lineIndex, int lines)
 	{
-		length = Math.max(length,lineIndex);
+		if (lines <= 0)
+			return;
+ 		int lastIndex = Math.max(length,(lineIndex - 1) + lines);
+		length = length + lines;
 		ensureCapacity(length);
-		System.arraycopy(lineInfo,lineIndex,lineInfo,lineIndex + 1,
-			length - lineIndex);
+		System.arraycopy(lineInfo,lineIndex,lineInfo,lineIndex + lines,
+			lastIndex - lineIndex);
 	}
 	
 	/**
-	 * Informs the token marker that a line has been deleted from
-	 * the document. This removes the line in question from the
+	 * Informs the token marker that line have been deleted from
+	 * the document. This removes the lines in question from the
 	 * <code>lineInfo</code> array.
 	 * @param lineIndex The line number
+	 * @param lines The number of lines
 	 */
-	public void deleteLine(int lineIndex)
+	public void deleteLines(int lineIndex, int lines)
 	{
-		length = Math.max(length,lineIndex);
-		ensureCapacity(length);
-		System.arraycopy(lineInfo,lineIndex + 1,lineInfo,lineIndex,
-			length - lineIndex);
+		if (lines <= 0)
+			return;
+		int lastIndex = Math.max(length,(lineIndex - 1) + lines);
+		length = length - lines;
+		System.arraycopy(lineInfo,lineIndex + lines,lineInfo,lineIndex,
+			lastIndex - lineIndex);
 	}
 
 	// protected members
@@ -113,8 +121,8 @@ public abstract class TokenMarker
 
 	/**
 	 * An array for storing information about lines. It is enlarged and
-	 * shrunk automatically by the <code>insertLine()</code> and
-	 * <code>deleteLine()</code> methods.
+	 * shrunk automatically by the <code>insertLines()</code> and
+	 * <code>deleteLines()</code> methods.
 	 */
 	protected String[] lineInfo;
 

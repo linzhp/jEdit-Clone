@@ -878,12 +878,10 @@ implements DocumentListener, UndoableEditListener
 			getDefaultRootElement());
 		if(ch == null)
 			return;
-		int line = ch.getIndex();
 		Element[] children = ch.getChildrenAdded();
 		if(children == null)
 			return;
-		for(int i = 0; i < children.length; i++)
-			tokenMarker.insertLine(i + line);
+		tokenMarker.insertLines(ch.getIndex(),children.length);
 	}
 
 	public void removeUpdate(DocumentEvent evt)
@@ -897,12 +895,10 @@ implements DocumentListener, UndoableEditListener
 			getDefaultRootElement());
 		if(ch == null)
 			return;
-		int line = ch.getIndex();
 		Element[] children = ch.getChildrenRemoved();
 		if(children == null)
 			return;
-		for(int i = 0; i < children.length; i++)
-			tokenMarker.deleteLine(i + line);
+		tokenMarker.deleteLines(ch.getIndex(),children.length);
 	}
 
 	public void changedUpdate(DocumentEvent evt)
@@ -922,7 +918,7 @@ implements DocumentListener, UndoableEditListener
 		return path;
 	}
 
-	// package-private methods
+	// package-private members
 	Buffer(URL url, String path, boolean readOnly, boolean newFile)
 	{
 		this.url = url;
@@ -932,7 +928,7 @@ implements DocumentListener, UndoableEditListener
 		init();
 	}
 
-	// private methods
+	// private members
 	private File file;
 	private long modTime;
 	private File autosaveFile;
@@ -1051,8 +1047,7 @@ implements DocumentListener, UndoableEditListener
 				int lastLine = 0; // Offset of last line
 				for(int i = 0; i < len; i++)
 				{
-					char c = buf[i];
-					switch(c)
+					switch(buf[i])
 					{
 					case '\r':
 						if(lastWasCR) // \r\r, probably Mac
