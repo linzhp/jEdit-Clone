@@ -428,13 +428,6 @@ public class JEditTextArea extends Container
 		{
 			for(int i = 0; i < segmentCount; i++)
 			{
-				if(i + offset >= segmentCount)
-				{
-					new Exception().printStackTrace();
-					System.err.println("You've found a"
-						+ " bug. E-mail <sp@gjt.org>");
-					return -1;
-				}
 				char c = segmentArray[i + segmentOffset];
 				int charWidth;
 				if(c == '\t')
@@ -1497,6 +1490,9 @@ public class JEditTextArea extends Container
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.13  1999/07/08 06:43:54  sp
+ * Fixed minor typo
+ *
  * Revision 1.12  1999/07/08 06:35:41  sp
  * 1.7pre5, yay
  *
