@@ -5,6 +5,8 @@
 
 <ul>
 <li><a href=#intro>Introduction</a>
+<li><a href=#menus>Plugin Menus</a>
+<li><a href=#editaction>The EditAction Class</a>
 </ul>
 
 <a name=intro>
@@ -12,7 +14,7 @@
 </a>
 
 To write a jEdit command, an implementation of the
-<a href=../api/org.gjt.sp.jedit.EditAction.html>org.gjt.sp.jedit.EditAction</a>
+<code>EditAction</code>
 class must be provided, and an instance of the command must be added to
 jEdit's command list with either the <code>addAction()</code> or
 <code>addPluginAction()</code> method of the
@@ -22,13 +24,67 @@ class.<p>
 The difference between the two methods is that <code>addAction</code>
 doesn't list the action in the `Plugins' menu, while
 <code>addPluginAction()</code> does. <code>addPluginAction()</code>
-should be used in most circumstances.<p>
+should be used in most circumstances. However, when the action is
+going to be part of a plugin menu (see <a href=#menus>Plugin Menus</a>
+for details) the <code>addAction()</code> method <b>MUST</b> be used.<p>
 
 Commands should be registered in the <code>start()</code> method of
 the plugin - see the <a href=general.html>jEdit Plugin
 Development</a> help topic for details.
 
-<b>XXX - not finished</b>
+<a name=menus>
+<h1>Plugin Menus</h1>
+</a>
+
+Not only can induvidual menu items be added to the `Plugins' menu
+with <code>jEdit.addPluginAction()</code>, but entire submenus can be
+added as well.<p>
+
+The <code>addPluginMenu()</code> method of the
+<a href=../api/org.gjt.sp.jedit.jEdit.html>jEdit</a> class takes a
+menu name as a parameter. Two properties are then queried to
+create the submenu:
+
+<ul>
+<li><code><i>name</i></code> - a whitespace separated list of
+edit actions that are to be added to the menu (internal names should
+be used here)
+<li><code><i>name</i>.label</code> - the menu's label
+</ul>
+
+Plugin menus, like plugin actions should be registered in the
+plugin's <code>start()</code> method. Also, plugin actions that
+are part of plugin menus should be registered with the editor using
+the <code>addAction()</code> method, <b>NOT</b> the
+<code>addPluginAction()</code> method. Otherwise the actions will be
+listed twice, first in the respective submenu, then in the plugins
+menu itself.
+
+<a name=editaction>
+<h1>The EditAction Class</h1>
+</a>
+
+The <a href=../api/org.gjt.sp.jedit.EditAction.html>EditAction</a>
+class is an implementation of
+<code>java.awt.event.ActionListener</code>.<p>
+
+Each EditAction has an
+internal name - the name used to load various properties, and used
+internally by jEdit itself. The name is set by passing a value to
+the constructor, and can be obtained with the <code>getName()</code>
+method, however doing so isn't necessary in most circumstances.<p>
+
+The EditAction class also defines two utility methods:
+<ul>
+<li><code>getView(ActionEvent evt)</code> - returns the view that
+fired the event. This is effectively the view that the plugin was
+invoked from.
+<li><code>getBuffer(ActionEvent evt)</code> - returns the buffer of
+the view returned by <code>getView()</code>.
+</ul>
+
+Both of these methods are static; they can also be used outside of
+the EditAction class to find out information about ActionEvents.
 
 </body>
 </html>
