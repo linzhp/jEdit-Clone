@@ -1,6 +1,6 @@
 /*
  * BatchFileTokenMarker.java - Batch file token marker
- * Copyright (C) 1998 Slava Pestov
+ * Copyright (C) 1998, 1999 Slava Pestov
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -23,13 +23,6 @@ import org.gjt.sp.jedit.jEdit;
 
 public class BatchFileTokenMarker extends TokenMarker
 {
-	// public members
-	public static final String COMMAND = "command";
-	public static final String COMMENT = "comment";
-	public static final String LABEL = "label";
-	public static final String VARIABLE = "variable";
-	public static final String QUOTE = "quote";
-
 	public Token markTokens(Segment line, int lineIndex)
 	{
 		lastToken = null;
@@ -49,31 +42,31 @@ loop:		for(int i = line.offset; i < length; i++)
 					if(length - i <= 3 || line.array[i+2]
 					   == ' ')
 					{
-						addToken(2,VARIABLE);
+						addToken(2,Token.KEYWORD2);
 						i++;
 						lastOffset = i + 1;
 					}
 					else
-						token = VARIABLE;
+						token = Token.KEYWORD2;
 				}
-				else if(token == VARIABLE)
+				else if(token == Token.KEYWORD2)
 				{
 					token = null;
-					addToken((i+1) - lastOffset,VARIABLE);
+					addToken((i+1) - lastOffset,Token.KEYWORD2);
 					lastOffset = i + 1;
 				}
 				break;
 			case '"':
 				if(token == null)
 				{
-					token = QUOTE;
+					token = Token.LITERAL1;
 					addToken(i - lastOffset,null);
 					lastOffset = i;
 				}
-				else if(token == QUOTE)
+				else if(token == Token.LITERAL1)
 				{
 					token = null;
-					addToken((i+1) - lastOffset,QUOTE);
+					addToken((i+1) - lastOffset,Token.LITERAL1);
 					lastOffset = i + 1;
 				}
 				break;
@@ -87,7 +80,7 @@ loop:		for(int i = line.offset; i < length; i++)
 			case ':':
 				if(lastOffset == offset && token == null)
 				{
-					addToken(length - offset,LABEL);
+					addToken(length - offset,Token.LABEL);
 					lastOffset = length;
 					break loop;
 				}
@@ -99,14 +92,14 @@ loop:		for(int i = line.offset; i < length; i++)
 							       i - 3,"rem"))
 					{
 						addToken(length - lastOffset,
-							 COMMENT);
+							 Token.COMMENT1);
 						lastOffset = length;
 						break loop;
 					}
 					else if(token == null)
 					{
 						addToken(i - lastOffset,
-							 COMMAND);
+							 Token.KEYWORD1);
 						lastOffset = i;
 					}
 				}
@@ -115,7 +108,7 @@ loop:		for(int i = line.offset; i < length; i++)
 		}
 		if(lastOffset != length)
 			addToken(length - lastOffset,lastOffset == offset ?
-				COMMAND : token);
+				Token.KEYWORD1 : token);
 		if(lastToken != null)
 		{
 			lastToken.nextValid = false;

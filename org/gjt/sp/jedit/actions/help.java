@@ -20,6 +20,7 @@
 package org.gjt.sp.jedit.actions;
 
 import java.awt.event.ActionEvent;
+import java.net.URL;
 import org.gjt.sp.jedit.*;
 
 public class help extends EditAction
@@ -31,10 +32,7 @@ public class help extends EditAction
 	
 	public void actionPerformed(ActionEvent evt)
 	{
-		String arg = evt.getActionCommand();
-		if(arg == null)
-			arg = "index.txt";
-		jEdit.openFile(getView(evt),jEdit.getJEditHome() + "doc",arg,
-			false,false);
+		jEdit.openFile(getView(evt),jEdit.getJEditHome() + "doc",
+			evt.getActionCommand(),true,false);
 	}
 }

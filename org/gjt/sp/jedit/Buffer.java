@@ -891,7 +891,7 @@ implements DocumentListener, UndoableEditListener
 		putProperty("i18n",Boolean.FALSE);
 		undo = new UndoManager();
 		markers = new Vector();
-		colors = new Hashtable();
+		colors = new ColorList();
 		setPath();
 		if(!newFile)
 		{
@@ -1405,5 +1405,31 @@ implements DocumentListener, UndoableEditListener
 				return value;
 			}
 		}
-	}		
+	}
+
+	private class ColorList extends Hashtable
+	{
+		public Object get(Object key)
+		{
+			Object o = super.get(key);
+			if(o != null)
+				return o;
+			String clazz = mode.getClass().getName();
+			String value = jEdit.getProperty("mode." + clazz
+				.substring(clazz.lastIndexOf('.')+1)
+					+ ".colors." + key);
+			if(value == null)
+			{
+				value = jEdit.getProperty("buffer.colors."
+					+ key);
+				if(value == null)
+					return null;
+			}
+			Color color = jEdit.parseColor(value);
+			if(color == null)
+				return null;
+			put(key,color);
+			return color;
+		}
+	}
 }

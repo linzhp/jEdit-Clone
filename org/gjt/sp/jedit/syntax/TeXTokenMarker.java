@@ -24,12 +24,9 @@ import org.gjt.sp.jedit.jEdit;
 public class TeXTokenMarker extends TokenMarker
 {
 	// public members
-	public static final String COMMENT = "comment";
-	public static final String COMMAND = "command";
-	public static final String FORMULA = "formula";
 	public static final String BDFORMULA = "bdformula";
 	public static final String EDFORMULA = "edformula";
-
+	
 	public Token markTokens(Segment line, int lineIndex)
 	{
 		ensureCapacity(lineIndex);
@@ -59,9 +56,11 @@ loop:		for(int i = offset; i < length; i++)
 					// we skip over this character,
 					// hence the `continue'
 					backslash = false;
+					if(token == Token.KEYWORD2 || token == EDFORMULA)
+						token = Token.KEYWORD2;
 					addToken((i+1) - lastOffset,token);
 					lastOffset = i+1;
-					if(token == COMMAND)
+					if(token == Token.KEYWORD1)
 						token = null;
 					continue;
 				}
@@ -71,8 +70,10 @@ loop:		for(int i = offset; i < length; i++)
 					// we leave the character in
 					// the stream, and it's not
 					// part of the command token
+					if(token == BDFORMULA || token == EDFORMULA)
+						token = Token.KEYWORD2;
 					addToken(i - lastOffset,token);
-					if(token == COMMAND)
+					if(token == Token.KEYWORD1)
 						token = null;
 					lastOffset = i;
 				}
@@ -86,14 +87,14 @@ loop:		for(int i = offset; i < length; i++)
 					break;
 				}
 				addToken(i - lastOffset,token);
-				addToken(length - i,COMMENT);
+				addToken(length - i,Token.COMMENT1);
 				lastOffset = length;
 				break loop;
 			case '\\':
 				backslash = true;
 				if(token == null)
 				{
-					token = COMMAND;
+					token = Token.KEYWORD1;
 					addToken(i - lastOffset,null);
 					lastOffset = i;
 				}
@@ -102,17 +103,17 @@ loop:		for(int i = offset; i < length; i++)
 				backslash = false;
 				if(token == null) // singe $
 				{
-					token = FORMULA;
+					token = Token.KEYWORD2;
 					addToken(i - lastOffset,null);
 					lastOffset = i;
 				}
-				else if(token == COMMAND) // \...$
+				else if(token == Token.KEYWORD1) // \...$
 				{
-					token = FORMULA;
-					addToken(i - lastOffset,COMMAND);
+					token = Token.KEYWORD2;
+					addToken(i - lastOffset,Token.KEYWORD1);
 					lastOffset = i;
 				}
-				else if(token == FORMULA) // $$aaa
+				else if(token == Token.KEYWORD2) // $$aaa
 				{
 					if(i - lastOffset == 1 && line.array[i-1] == '$')
 					{
@@ -120,7 +121,7 @@ loop:		for(int i = offset; i < length; i++)
 						break;
 					}
 					token = null;
-					addToken((i+1) - lastOffset,FORMULA);
+					addToken((i+1) - lastOffset,Token.KEYWORD2);
 					lastOffset = i + 1;
 				}
 				else if(token == BDFORMULA) // $$aaa$
@@ -130,15 +131,17 @@ loop:		for(int i = offset; i < length; i++)
 				else if(token == EDFORMULA) // $$aaa$$
 				{
 					token = null;
-					addToken((i+1) - lastOffset,FORMULA);
+					addToken((i+1) - lastOffset,Token.KEYWORD2);
 					lastOffset = i + 1;
 				}
 				break;
 			}
 		}
 		if(lastOffset != length)
-			addToken(length - lastOffset,token);
-		lineInfo[lineIndex] = (token != COMMAND ? token : null);
+			addToken(length - lastOffset,token == BDFORMULA
+				|| token == EDFORMULA ? Token.KEYWORD2 :
+				token);
+		lineInfo[lineIndex] = (token != Token.KEYWORD1 ? token : null);
 		if(lastToken != null)
 		{
 			lastToken.nextValid = false;

@@ -1,0 +1,172 @@
+###
+### jEdit global properties
+### By Slava Pestov <sp@gjt.org>
+###
+
+# Look and feel class
+#lf=com.sun.java.swing.plaf.motif.MotifLookAndFeel
+#lf=com.sun.java.swing.plaf.windows.WindowsLookAndFeel
+lf=javax.swing.plaf.metal.MetalLookAndFeel
+
+# Server control
+server=on
+
+# Autosave interval in seconds, 0=off
+autosave=30
+
+# Number of recent files
+recent=8
+
+# Number of elements in clipboard history (used by Paste Previous command)
+clipHistory=100
+
+# Name for untitled files, {0} is the number open so far
+untitled=Untitled-{0}
+
+# Desktop saving toggle
+saveDesktop=on
+
+# Number of backups to make, 0=no backups
+backups=1
+
+###
+### BUFFER SETTINGS
+###
+
+# Line separator
+# The OS default will be used if this is not specified
+# Unix=\n
+# Windows=\r\n
+# MacOS=\r
+#buffer.line.separator=\n
+
+# Tab width
+buffer.tabSize=8
+
+# Brackets
+buffer.openBrackets=([{
+buffer.closeBrackets=)]}
+
+# Print margins
+buffer.margin.top=0.5
+buffer.margin.left=0.5
+buffer.margin.bottom=0.5
+buffer.margin.right=0.5
+
+# Syntax colorizing
+buffer.syntax=on
+
+# `Make' tool
+buffer.make=make -k
+
+# Colors
+buffer.colors.alttxt=black
+buffer.colors.comment1=red
+buffer.colors.comment2=red
+buffer.colors.keyword1=blue
+buffer.colors.keyword2=magenta
+buffer.colors.keyword3=green
+buffer.colors.label=#8888ff
+buffer.colors.literal1=gray
+buffer.colors.literal2=gray
+
+###
+### VIEW SETTINGS
+###
+
+# Geometry
+view.geometry.w=80
+view.geometry.h=30
+
+# Font
+view.font=Monospaced
+view.fontsize=12
+
+# Line highlighting
+view.lineHighlight=on
+view.lineHighlightColor=#e0e0e0
+
+# Bracket highlighting
+view.bracketHighlight=on
+view.bracketHighlightColor=#ffaaaa
+
+# Caret color
+view.caretColor=red
+
+# Caret blink rate
+view.caretBlinkRate=500
+
+# Auto indent
+view.autoindent=on
+#view.autoindent=off
+
+###
+### EDIT MODES
+###
+
+# Text mode
+mode.none.name=Text
+
+# Auto Indent mode
+mode.autoindent.name=Auto Indent
+
+# Batch File mode
+mode.bat.name=Batch File
+mode.extension.bat=bat
+
+# C mode
+mode.c.name=C
+mode.c.noWordSep=._
+mode.extension.c=c
+mode.extension.h=c
+mode.extension.cc=c
+mode.extension.cpp=c
+
+# Help mode
+mode.help.name=Help
+mode.help.colors=heading@magenta link@blue
+
+# HTML mode
+mode.html.name=HTML
+mode.extension.html=html
+mode.extension.shtml=html
+mode.extension.htm=html
+
+# Java mode
+mode.java_mode.name=Java
+mode.java_mode.noWordSep=._
+mode.extension.java=java_mode
+
+# JavaScript mode
+mode.javascript.name=JavaScript
+mode.extension.js=javascript
+
+# Makefile mode
+mode.makefile.name=Makefile
+mode.filename.GNUmakefile=makefile
+mode.filename.Makefile=makefile
+mode.filename.makefile=makefile
+
+# Shell script mode
+mode.sh.name=Shell Script
+mode.extension.sh=sh
+mode.extension.csh=sh
+mode.firstline.#!/bin/sh=sh
+mode.firstline.#!/bin/ash=sh
+mode.firstline.#!/usr/local/bin/ash=sh
+mode.firstline.#!/bin/bash=sh
+mode.firstline.#!/usr/local/bin/bash=sh
+mode.firstline.#!/bin/zsh=sh
+mode.firstline.#!/usr/local/bin/zsh=sh
+mode.firstline.#!/bin/ksh=sh
+mode.firstline.#!/usr/local/bin/ksh=sh
+mode.firstline.#!/bin/csh=sh
+mode.firstline.#!/usr/local/bin/csh=sh
+mode.firstline.#!/bin/tcsh=sh
+mode.firstline.#!/usr/local/bin/tcsh=sh
+
+# TeX mode
+mode.tex.name=TeX
+mode.extension.tex=tex
+mode.extension.sty=tex
+mode.extension.aux=tex

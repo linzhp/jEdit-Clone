@@ -1,0 +1,58 @@
+###
+### jEdit key bindings
+### by Slava Pestov <sp@gjt.org>
+###
+
+### MacOS compatibility shortcuts
+new-file.shortcut=C+n
+open-file.shortcut=C+o
+close-file.shortcut=C+w
+save.shortcut=C+s
+print.shortcut=C+p
+exit.shortcut=C+q
+undo.shortcut=C+z
+cut.shortcut=C+x
+copy.shortcut=C+c
+paste.shortcut=C+v
+select-all.shortcut=C+a
+find.shortcut=C+f
+find-next.shortcut=C+g
+
+### Non-standard single-key bindings
+redo.shortcut=C+r
+set-anchor.shortcut=C+t
+goto-anchor.shortcut=C+y
+expand-abbrev.shortcut=C+b
+locate-bracket.shortcut=C+\\
+hypersearch.shortcut=C+h
+goto-line.shortcut=C+l
+compile.shortcut=C+k
+make.shortcut=C+m
+
+### The scary stuff
+new-view.shortcut=C+e C+n
+open-url.shortcut=C+e C+o
+open-link.shortcut=C+e C+l
+close-view.shortcut=C+e C+w
+select-anchor.shortcut=C+[ C+y
+select-next-line.shortcut=C+] C+]
+select-prev-line.shortcut=C+[ C+[
+select-no-indent.shortcut=C+[ C+n
+delete-line.shortcut=C+d C+d
+delete-no-indent.shortcut=C+d C+n
+delete-start-line.shortcut=C+d C+s
+delete-end-line.shortcut=C+d C+f
+join-lines.shortcut=C+j
+next-paragraph.shortcut=A+DOWN
+prev-paragraph.shortcut=A+UP
+select-next-paragraph.shortcut=C+] C+ENTER
+select-prev-paragraph.shortcut=C+[ C+ENTER
+delete-paragraph.shortcut=C+d C+ENTER
+select-block.shortcut=C+[ C+]
+paste-previous.shortcut=C+e C+v
+format.shortcut=C+e C+f
+find-selection.shortcut=C+e C+s
+replace.shortcut=C+e C+r
+replace-next.shortcut=C+e C+g
+replace-all.shortcut=C+e C+a
+set-marker.shortcut=C+e C+m

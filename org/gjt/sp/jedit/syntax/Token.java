@@ -27,6 +27,52 @@ public class Token
 	// public members
 
 	/**
+	 * Alternate text token id.
+	 */
+	public static final String ALTTXT = "alt";
+
+	/**
+	 * Comment 1 token id.
+	 */
+	public static final String COMMENT1 = "comment1";
+
+	/**
+	 * Comment 2 token id.
+	 */
+	public static final String COMMENT2 = "comment2";
+
+	
+	/**
+	 * Literal 1 token id.
+	 */
+	public static final String LITERAL1 = "literal1";
+
+	/**
+	 * Literal 2 token id.
+	 */
+	public static final String LITERAL2 = "literal2";
+
+	/**
+	 * Label token id.
+	 */
+	public static final String LABEL = "label";
+
+	/**
+	 * Keyword 1 token id.
+	 */
+	public static final String KEYWORD1 = "keyword1";
+
+	/**
+	 * Keyword 2 token id.
+	 */
+	public static final String KEYWORD2 = "keyword2";
+
+	/**
+	 * Keyword 3 token id.
+	 */
+	public static final String KEYWORD3 = "keyword3";
+
+	/**
 	 * The length of this token.
 	 */
 	public int length;

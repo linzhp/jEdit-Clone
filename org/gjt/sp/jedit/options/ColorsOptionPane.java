@@ -1,6 +1,6 @@
 /*
  * ColorsOptionPane.java - Colors options panel
- * Copyright (C) 1998 Slava Pestov
+ * Copyright (C) 1998, 1999 Slava Pestov
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,16 +20,34 @@
 package org.gjt.sp.jedit.options;
 
 import javax.swing.*;
+import java.awt.*;
 
 public class ColorsOptionPane extends OptionPane
 {
 	public ColorsOptionPane()
 	{
 		super("colors");
-		add(new JButton("coming soon..."));
+		GridBagLayout layout = new GridBagLayout();
+		setLayout(layout);
+		GridBagConstraints cons = new GridBagConstraints();
+		cons.gridx = cons.gridy = 0;
+		cons.gridwidth = 3;
+		cons.gridheight = 1;
+		cons.fill = GridBagConstraints.BOTH;
+		cons.weightx = 1.0f;
+
+		// how do? -- label, button attach button listener
 	}
 
 	public void save()
 	{
 	}
+
+	// private members
+	private Color backgroundColor;
+	private Color foregroundColor;
+	private Color lineHighlightColor;
+	private Color bracketHighlightColor;
+	private Color caretColor;
+	private Color selectionColor;
 }

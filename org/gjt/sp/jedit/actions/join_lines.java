@@ -41,16 +41,23 @@ public class join_lines extends EditAction
 		}
 		Buffer buffer = view.getBuffer();
 		Element map = buffer.getDefaultRootElement();
-		Element lineElement = map.getElement(map.getElementIndex(
-			view.getTextArea().getCaretPosition()));
-		if(lineElement.getEndOffset() >= buffer.getLength())
+		int lineNo = map.getElementIndex(view.getTextArea()
+			.getCaretPosition());
+		Element lineElement = map.getElement(lineNo);
+		int start = lineElement.getStartOffset();
+		int end = lineElement.getEndOffset();
+		if(end >= buffer.getLength())
 		{
 			view.getToolkit().beep();
 			return;
 		}
+		Element nextLineElement = map.getElement(lineNo+1);
+		int nextStart = nextLineElement.getStartOffset();
+		int nextEnd = nextLineElement.getEndOffset();
 		try
 		{
-			buffer.remove(lineElement.getEndOffset()-1,1);
+			buffer.remove(end - 1,jEdit.getLeadingWhiteSpace(
+				buffer.getText(nextStart,nextEnd - nextStart)) + 1);
 		}
 		catch(BadLocationException bl)
 		{

@@ -1,6 +1,6 @@
 /*
  * MakefileTokenMarker.java - Makefile token marker
- * Copyright (C) 1998 Slava Pestov
+ * Copyright (C) 1998, 1999 Slava Pestov
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -23,12 +23,6 @@ import javax.swing.text.Segment;
 public class MakefileTokenMarker extends TokenMarker
 {
 	// public members
-	public static final String MAKE_CMD = "make_cmd";
-	public static final String COMMENT = "comment";
-	public static final String VARIABLE = "variable";
-	public static final String DQUOTE = "dquote";
-	public static final String SQUOTE = "squote";
-
 	public Token markTokens(Segment line, int lineIndex)
 	{
 		ensureCapacity(lineIndex);
@@ -49,7 +43,7 @@ loop:		for(int i = offset; i < length; i++)
 				backslash = false;
 				if(token == null && lastOffset == offset)
 				{
-					addToken((i+1) - lastOffset,MAKE_CMD);
+					addToken((i+1) - lastOffset,Token.KEYWORD1);
 					lastOffset = i + 1;
 				}
 				break;
@@ -68,7 +62,7 @@ loop:		for(int i = offset; i < length; i++)
 				else if(token == null)
 				{
 					addToken(i - lastOffset,null);
-					addToken(length - i,COMMENT);
+					addToken(length - i,Token.COMMENT1);
 					lastOffset = length;
 					break loop;
 				}
@@ -84,10 +78,10 @@ loop:		for(int i = offset; i < length; i++)
 	 				{
 						char c = line.array[i + 1];
 				      		if(c == '(' || c == '{')
-							token = VARIABLE;
+							token = Token.KEYWORD2;
 						else
 						{
-							addToken(2,VARIABLE);
+							addToken(2,Token.KEYWORD2);
 							lastOffset += 2;
 							i++;
 						}
@@ -96,10 +90,10 @@ loop:		for(int i = offset; i < length; i++)
 				break;
 			case ')': case '}':
 				backslash = false;
-				if(token == VARIABLE)
+				if(token == Token.KEYWORD2)
 				{
 					token = null;
-					addToken((i+1) - lastOffset,VARIABLE);
+					addToken((i+1) - lastOffset,Token.KEYWORD2);
 					lastOffset = i + 1;
 				}
 				break;
@@ -111,14 +105,14 @@ loop:		for(int i = offset; i < length; i++)
 				}
 				if(token == null)
 				{
-					token = DQUOTE;
+					token = Token.LITERAL1;
 					addToken(i - lastOffset,null);
 					lastOffset = i;
 				}
-				else if(token == DQUOTE)
+				else if(token == Token.LITERAL1)
 				{
 					token = null;
-					addToken((i+1) - lastOffset,DQUOTE);
+					addToken((i+1) - lastOffset,Token.LITERAL1);
 					lastOffset = i + 1;
 				}
 				break;
@@ -130,14 +124,14 @@ loop:		for(int i = offset; i < length; i++)
 				}
 				if(token == null)
 				{
-					token = SQUOTE;
+					token = Token.LITERAL2;
 					addToken(i - lastOffset,null);
 					lastOffset = i;
 				}
-				else if(token == SQUOTE)
+				else if(token == Token.LITERAL2)
 				{
 					token = null;
-					addToken((i+1) - lastOffset,SQUOTE);
+					addToken((i+1) - lastOffset,Token.LITERAL2);
 					lastOffset = i + 1;
 				}
 				break;
@@ -148,8 +142,8 @@ loop:		for(int i = offset; i < length; i++)
 		}
 		if(lastOffset != length)
 			addToken(length - lastOffset,lastOffset == offset ?
-				 MAKE_CMD : token);
-		lineInfo[lineIndex] = (token == DQUOTE || token == SQUOTE ?
+				 Token.KEYWORD1 : token);
+		lineInfo[lineIndex] = (token == Token.LITERAL1 || token == Token.LITERAL2 ?
 			token : null);
 		if(lastToken != null)
 		{

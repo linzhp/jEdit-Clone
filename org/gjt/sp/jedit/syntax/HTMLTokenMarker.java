@@ -1,6 +1,6 @@
 /*
  * HTMLTokenMarker.java - HTML token marker
- * Copyright (C) 1998 Slava Pestov
+ * Copyright (C) 1998, 1999 Slava Pestov
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -25,15 +25,6 @@ import org.gjt.sp.jedit.jEdit;
 public class HTMLTokenMarker extends TokenMarker
 {
 	// public members
-	public static final String COMMENT = "comment";
-	public static final String TAG = "tag";
-	public static final String ENTITY = "entity";
-	public static final String JAVASCRIPT = "javascript";
-	public static final String LABEL = "label";
-	public static final String JS_COMMENT = "js_comment";
-	public static final String DQUOTE = "dquote";
-	public static final String SQUOTE = "squote";
-
 	public HTMLTokenMarker()
 	{
 		keywords = javascript.getKeywords();
@@ -56,17 +47,17 @@ loop:		for(int i = offset; i < length; i++)
 				backslash = !backslash;
 				break;
 			case ';':
-				if(token == ENTITY)
+				if(token == Token.KEYWORD2)
 				{
 					token = null;
-					addToken((i+1) - lastOffset,ENTITY);
+					addToken((i+1) - lastOffset,Token.KEYWORD2);
 					lastOffset = i + 1;
 					break;
 				}
 			case '.': case ',': case ' ': case '\t':
 			case '(': case ')': case '[': case ']':
 				backslash = false;
-				if(token == JAVASCRIPT)
+				if(token == Token.ALTTXT)
 				{
 					int off = i;
 					while(--off >= lastOffset)
@@ -80,7 +71,7 @@ loop:		for(int i = offset; i < length; i++)
 					if(id != null)
 					{
 						if(off != lastOffset)
-							addToken(off - lastOffset,JAVASCRIPT);
+							addToken(off - lastOffset,null);
 						addToken(len,id);
 						lastOffset = i;
 					}
@@ -91,43 +82,43 @@ loop:		for(int i = offset; i < length; i++)
 				if(token == null)
 				{
 					if(jEdit.regionMatches(false,line,i,"<!--"))
-						token = COMMENT;
+						token = Token.COMMENT1;
 					else
-						token = TAG;
+						token = Token.KEYWORD1;
 					addToken(i - lastOffset,null);
 					lastOffset = i;
 				}
-				else if(token == JAVASCRIPT)
+				else if(token == Token.ALTTXT)
 				{
 					if(jEdit.regionMatches(true,line,i,
 						"</SCRIPT>"))
 					{
-						token = TAG;
-						addToken(i - lastOffset,JAVASCRIPT);
+						token = Token.KEYWORD1;
+						addToken(i - lastOffset,null);
 						lastOffset = i;
 					}
 				}
 				break;
 			case '>':
 				backslash = false;
-				if(token == TAG)
+				if(token == Token.KEYWORD1)
 				{
 					if(jEdit.regionMatches(true,line,
 						lastOffset,"<SCRIPT"))
-						token = JAVASCRIPT;
+						token = Token.ALTTXT;
 					else
 						token = null;
-					addToken((i+1) - lastOffset,TAG);
+					addToken((i+1) - lastOffset,Token.KEYWORD1);
 					lastOffset = i + 1;
 				}
-				else if(token == COMMENT)
+				else if(token == Token.COMMENT1)
 				{
 					if(jEdit.regionMatches(false,line,
 						i - 2,"-->"))
 					{
 						token = null;
 						addToken((i+1) - lastOffset,
-							 COMMENT);
+							 Token.COMMENT1);
 						lastOffset = i + 1;
 					}
 				}
@@ -136,34 +127,34 @@ loop:		for(int i = offset; i < length; i++)
 				backslash = false;
 				if(token == null)
 				{
-					token = ENTITY;
+					token = Token.KEYWORD2;
 					addToken(i - lastOffset,null);
 					lastOffset = i;
 				}
 				break;
 			case ':':
 				backslash = false;
-				if(token == JAVASCRIPT)
+				if(token == Token.ALTTXT)
 				{
-					addToken((i+1) - lastOffset,LABEL);
+					addToken((i+1) - lastOffset,Token.LABEL);
 					lastOffset = i + 1;
 				}
 				break;
 			case '/':
 				backslash = false;
-				if(token == JAVASCRIPT && length - i >= 1)
+				if(token == Token.ALTTXT && length - i >= 1)
 				{
 					switch(line.array[i+1])
 					{
 					case '*':
-						token = JS_COMMENT;
-						addToken(i - lastOffset,JAVASCRIPT);
+						token = Token.COMMENT2;
+						addToken(i - lastOffset,Token.ALTTXT);
 						lastOffset = i;
 						i++;
 						break;
 					case '/':
 						addToken(i - lastOffset,token);
-						addToken(length - i,JS_COMMENT);
+						addToken(length - i,Token.COMMENT2);
 						lastOffset = length;
 						break loop;
 					}
@@ -171,13 +162,13 @@ loop:		for(int i = offset; i < length; i++)
 				break;
 			case '*':
 				backslash = false;
-				if(token == JS_COMMENT && length - i >= 1)
+				if(token == Token.COMMENT2 && length - i >= 1)
 				{
 					if(length - i > 1 && line.array[i+1] == '/')
 					{
-						token = JAVASCRIPT;
+						token = Token.ALTTXT;
 						i++;
-						addToken((i+1) - lastOffset,JS_COMMENT);
+						addToken((i+1) - lastOffset,Token.COMMENT2);
 						lastOffset = i + 1;
 					}
 				}
@@ -185,32 +176,32 @@ loop:		for(int i = offset; i < length; i++)
 			case '"':
 				if(backslash)
 					backslash = false;
-				else if(token == JAVASCRIPT)
+				else if(token == Token.ALTTXT)
 				{
-					token = DQUOTE;
-					addToken(i - lastOffset,JAVASCRIPT);
+					token = Token.LITERAL1;
+					addToken(i - lastOffset,Token.ALTTXT);
 					lastOffset = i;
 				}
-				else if(token == DQUOTE)
+				else if(token == Token.LITERAL1)
 				{
-					token = JAVASCRIPT;
-					addToken((i+1) - lastOffset,DQUOTE);
+					token = Token.ALTTXT;
+					addToken((i+1) - lastOffset,Token.LITERAL1);
 					lastOffset = i + 1;
 				}
 				break;
 			case '\'':
 				if(backslash)
 					backslash = false;
-				else if(token == JAVASCRIPT)
+				else if(token == Token.ALTTXT)
 				{
-					token = SQUOTE;
-					addToken(i - lastOffset,JAVASCRIPT);
+					token = Token.LITERAL2;
+					addToken(i - lastOffset,Token.ALTTXT);
 					lastOffset = i;
 				}
-				else if(token == SQUOTE)
+				else if(token == Token.LITERAL2)
 				{
-					token = JAVASCRIPT;
-					addToken((i+1) - lastOffset,SQUOTE);
+					token = Token.ALTTXT;
+					addToken((i+1) - lastOffset,Token.LITERAL2);
 					lastOffset = i + 1;
 				}
 				break;
@@ -219,7 +210,7 @@ loop:		for(int i = offset; i < length; i++)
 				break;
 			}
 		}
-		if(token == JAVASCRIPT)
+		if(token == Token.ALTTXT)
 		{
 			int off = length;
 			while(--off >= lastOffset)

@@ -1,0 +1,446 @@
+###
+### jEdit user interface definitions
+### By Slava Pestov <sp@gjt.org>
+###
+
+###
+### MENUBAR
+###
+view.mbar=buffers file edit search tools mode plugins help
+
+### Buffers menu
+buffers.label=$Buffers
+
+### File menu
+file=new-file \
+     new-view \
+     open-file \
+     open-url \
+     open-selection \
+     open-link \
+     %open-recent \
+     - \
+     close-file \
+     close-view \
+     - \
+     save \
+     save-as \
+     save-url \
+     - \
+     send \
+     print \
+     - \
+     exit
+file.label=$File
+new-file.label=$New File
+new-view.label=New View
+open-file.label=$Open File...
+open-url.label=Open $URL...
+open-selection.label=Open S$election
+open-link.label=Open $Link
+open-recent.label=Open $Recent
+no-recent.label=No Recent Files
+netscape-open-sel.label=Open Select$ion in Netscape
+netscape-open-url.label=Open in $Netscape
+close-file.label=$Close File
+close-view.label=Close Vie$w
+save.label=$Save
+save-as.label=Save $As...
+save-url.label=Save $to URL...
+send.label=Sen$d...
+print.label=$Print...
+exit.label=E$xit
+
+### Edit menu
+edit=undo \
+     redo \
+     - \
+     cut \
+     copy \
+     paste \
+     paste-previous \
+     clear \
+     select-all \
+     - \
+     %anchor \
+     %line \
+     %paragraph \
+     select-block \
+     - \
+     to-upper \
+     to-lower \
+     format \
+     tab \
+     untab \
+     insert-date \
+     - \
+     expand-abbrev \
+     locate-bracket
+edit.label=$Edit
+undo.label=$Undo
+redo.label=$Redo
+cut.label=Cu$t
+copy.label=$Copy
+paste.label=$Paste
+paste-previous.label=Paste Pre$vious...
+clear.label=Cl$ear
+select-all.label=Select $All
+select-block.label=Select C$ode Block
+to-lower.label=To $Lowercase
+to-upper.label=To $Uppercase
+format.label=$Format Text
+tab.label=$Spaces to Tabs
+untab.label=$Tabs to Spaces
+insert-date.label=Insert $Date
+expand-abbrev.label=E$xpand Abbreviation
+locate-bracket.label=$Locate Bracket
+
+### Anchor menu
+
+anchor=set-anchor \
+       goto-anchor \
+       select-anchor
+anchor.label=A$nchor Operations
+set-anchor.label=Set Anchor
+goto-anchor.label=Go to Anchor
+select-anchor.label=Select to Anchor
+
+### Line menu
+
+line=select-next-line \
+     select-prev-line \
+     select-no-indent \
+     - \
+     delete-line \
+     delete-no-indent \
+     delete-start-line \
+     delete-end-line \
+     - \
+     join-lines
+line.label=$Line Operations
+select-next-line.label=Select $Next Line
+select-prev-line.label=Select $Previous Line
+select-no-indent.label=Select Line No $Indent
+delete-line.label=$Delete Line
+delete-no-indent.label=D$elete Line No Indent
+delete-start-line.label=De$lete to Start of Line
+delete-end-line.label=Dele$te to End of Line
+join-lines.label=$Join Lines
+
+### Paragraph menu
+
+paragraph=next-paragraph \
+          prev-paragraph \
+	  - \
+	  select-next-paragraph \
+	  select-prev-paragraph \
+	  - \
+	  delete-paragraph
+paragraph.label=Pa$ragraph Operations
+next-paragraph.label=Go to $Next Paragraph
+prev-paragraph.label=Go to $Previous Paragraph
+select-next-paragraph.label=Select N$ext Paragraph
+select-prev-paragraph.label=Select P$revious Paragraph
+delete-paragraph.label=$Delete Paragraph
+
+### Search menu
+search=find \
+       find-next \
+       find-selection \
+       - \
+       replace \
+       replace-next \
+       replace-all \
+       - \
+       hypersearch \
+       - \
+       goto-line \
+       - \
+       set-marker \
+       %clear-marker \
+       %goto-marker
+search.label=$Search
+find.label=$Find...
+find-next.label=Find $Next
+find-selection.label=Find S$election
+replace.label=$Replace
+replace-next.label=Replace & F$ind Next
+replace-all.label=Replace $All
+hypersearch.label=$HyperSearch...
+goto-line.label=Go to $Line...
+set-marker.label=Set $Marker...
+clear-marker.label=$Clear Marker
+goto-marker.label=$Go to Marker
+no-markers.label=No Markers Defined
+
+### Tools menu
+tools=execute \
+      pipe-selection \
+      - \
+      netscape-open-sel \
+      netscape-open-url \
+      - \
+      compile \
+      make \
+      - \
+      word-count \
+      - \
+      options
+tools.label=$Tools
+execute.label=$Execute Command...
+pipe-selection.label=$Pipe Selection Through Command...
+compile.label=$Compile...
+make.label=$Make...
+next-error.label=$Next Error
+prev-error.label=$Previous Error
+list-errors.label=List $Errors...
+list-messages.label=List $Messages...
+word-count.label=$Word Count...
+options.label=$Options...
+
+### Mode menu
+mode.label=$Mode
+
+### Plugins menu
+plugins.label=$Plugins
+no-plugins.label=No Plugins
+
+### Help menu
+help=about \
+     - \
+     help@index.txt \
+     - \
+     help@COPYING.txt \
+     help@README.txt \
+     help@changes.txt \
+     help@version1.3.txt \
+     help@version1.2.txt \
+     help@version1.1.txt \
+     - \
+     help@index.txt#Menus \
+     help@index.txt#Shortcuts \
+     help@starting.txt \
+     help@editing.txt \
+     help@plugins.txt \
+     help@props.txt \
+     help@regexp.txt
+help.label=$Help
+about.label=About jEdit...
+help@index.txt.label=Help
+help@COPYING.txt.label=Copying
+help@README.txt.label=General Information
+help@changes.txt.label=Change Log
+help@version1.3.txt.label=New features in jEdit 1.3
+help@version1.2.txt.label=New Features in jEdit 1.2
+help@version1.1.txt.label=New Features in jEdit 1.1
+help@index.txt#Menus.label=Menus
+help@index.txt#Shortcuts.label=Key Bindings
+help@starting.txt.label=Getting Started
+help@editing.txt.label=Text Editing
+help@plugins.txt.label=Plugins
+help@props.txt.label=Properties
+help@regexp.txt.label=Regular Expressions
+
+###
+### MISC STUFF
+###
+
+# Title
+# {0} - file name
+view.title=jEdit - {0}
+
+# Status bar
+# {0} - the file name
+# {1} - the current editing mode
+# {2} - 1 if the file is not on disk
+# {3} - 1 if the file is read only
+# {4} - 1 if the file has changed since last save
+# {5} - the number of lines in the buffer
+# {6} - the current line number
+# {7} - the percentage of the file displayed
+view.status=({2,choice,0#--|1#**}{3,choice,0#:|1#/}{4,choice,0#--|1#**}) {0} \
+	({1}, Line {5}/{6} {7}%)
+
+# Buffers menu item label
+# {0} - the file name
+# {1} - the current editing mode
+# {2} - 1 if the file has changed since last save
+view.menulabel={0} ({2,choice,0#|1#* }{1})
+
+###
+### VARIOUS DIALOGS
+###
+
+# About dialog
+# {0} - jEdit version
+# {1} - jEdit build
+# {2} - Java version
+# {3} - OS name
+# {4} - OS version
+# {5} - OS architecture
+# {6} - Free memory
+# {7} - Total memory
+about.title=About jEdit
+about.message=jEdit {0} build {1}, Copyright (C) 1998, 1999 Slava Pestov.\n\
+	jEdit homepage: <http://www.gjt.org/~sp/jedit.html>.\n\
+	jEdit e-mail: <sp@gjt.org>.\n\
+	\n\
+	Java version {2} running on {3}/{5} version {4}.\n\
+	Java heap space: (free/total) {6}/{7}Kb\n\
+	\n\
+	This is free software, and you are welcome to redistribute it under\n\
+	certain conditions; see Help->Copying for details.\n\
+	\n\
+	gnu.regexp (C) Free Software Foundation\n\
+	<http://www.cacas.org/java/gnu/regexp/>.\n\
+	\n\
+	For more information, see Help->Readme.
+
+# IO Error dialog, {0}=the error message
+ioerror.title=I/O Error
+ioerror.message=An I/O error occured ({0})
+
+# File not found dialog
+notfounderror.title=File Not Found
+# {0} - the file name
+notfounderror.message=The file could not be found: {0}
+
+# Open URL dialog
+openurl.title=Open URL
+openurl.message=URL to open:
+
+# Save first dialog
+savefirst.title=Save
+savefirst.message=Save changes before opening in Netscape?
+
+# Save To URL dialog
+saveurl.title=Save To URL
+saveurl.message=URL to save file to:
+
+# Execute dialog
+execute.title=Execute Command
+execute.message=Command (%p = file path, %u = file URL):
+
+# Command error dialog
+cmderr.title=Command Output
+# {0} - command output
+cmderr.message=The command reported the following error(s):\n\
+	{0}
+
+# Send dialog
+send.title=Send
+send.smtp=SMTP Server:\ 
+send.from=From:\ 
+send.to=To:\ 
+send.subject=Subject:\ 
+send.send=Send
+send.cancel=Cancel
+sendempty.title=Send Error
+sendempty.message=The SMTP Server, From and To fields must all be\n\
+	filled out before the file can be sent.
+badport.title=Invalid Port
+badport.message=The specified port number is invalid.
+serverdown.title=Server Is Down
+serverdown.message=The SMTP server is down.
+badhost.title=The Server Doesn't Like You
+badhost.message=The SMTP server doesn't like you.
+badsender.title=Invalid Sender
+badsender.message=Invalid From: line. Check if it's okay.
+badrecepient.title=Invalid Recepient
+badrecepient.message=Invalid To: line. Check if it's okay.
+badmsg.title=Invalid Message
+badmsg.message=The server doesn't like your message.
+send.connect=Connecting to {0}...
+
+# Go to line dialog
+gotoline.title=Go To Line
+gotoline.message=Line number to go to:
+
+# Word count dialog
+wordcount.title=Word Count Results
+wordcount.message=Characters: {0}\nWords: {1}\nLines: {2}
+
+# Set marker dialog
+setmarker.title=Set Marker
+setmarker.message=Marker name:
+
+# Make dialog
+make.title=Make
+make.message=Make command line:
+
+# File not saved dialog
+notsaved.title=File Not Saved
+# {0} - file name
+notsaved.message=Save changes to {0}?
+
+# Autosave file exists dialog
+autosaveexists.title=Autosave File Exists
+# {0} - autosave file name
+autosaveexists.message=An autosave file {0} was found.\n\
+	This probably means that jEdit crashed before you could save.\n\
+	Open it to see your unsaved data.
+
+# Search and replace dialog
+search.title=Search And Replace
+search.find=Find:\ 
+search.replace=Replace With:\ 
+search.ignoreCase=Ignore Case
+search.regexp=RegExp Syntax:\ 
+search.regexp.value=perl5
+search.findBtn=Find
+search.replaceAll=Replace All
+search.cancel=Cancel
+
+# Keep searching dialog
+keepsearching.title=No More Matches Found
+keepsearching.message=No more matches were found. Continue search from\n\
+	beginning of buffer?
+
+# Hypersearch dialog
+hypersearch.title=HyperSearch
+hypersearch.find=Search For:\ 
+hypersearch.findBtn=Find All
+hypersearch.close=Close
+hypersearch.ignoreCase=Ignore Case
+
+# Invalid regexp dialog
+reerror.title=Invalid Regular Expression
+reerror.message=The regular expression is invalid. ({0})
+
+# Paste previous dialog
+pasteprev.title=Paste Previous
+pasteprev.caption=Previous clippings:
+pasteprev.insert=Insert Clipping
+pasteprev.cancel=Cancel
+
+# Error list dialog
+errorlist.title=Compile Errors
+# {0} - command
+# {1} - date
+errorlist.caption=Errors from {0} at {1}:
+
+# Options dialog
+options.title=Options
+options.general.label=General
+options.general.lf=Swing look & feel:\ 
+options.general.autosave=Autosave frequency (seconds):\ 
+options.general.recent=Number of recent files:\ 
+options.general.clipHistory=Number of clippings in clip history:\ 
+options.general.backups=Number of backups when saving:\ 
+options.general.lineSeparator=Line separator:\ 
+options.general.saveDesktop=Save desktop on exit
+options.general.server=Enable jEdit server
+options.editor.label=Editor
+options.editor.font=Text font:\ 
+options.editor.fontsize=Text font size:\ 
+options.editor.width=Default view width (columns):\ 
+options.editor.height=Default view height (rows):\ 
+options.editor.tabSize=Tab width:\ 
+options.editor.lineHighlight=Current line highlighting
+options.editor.bracketHighlight=Bracket highlighting
+options.editor.syntax=Syntax colorizing
+options.editor.autoIndent=Auto indent
+options.editor.blinkCaret=Blinking caret
+options.colors.label=Colors
+options.ok=OK
+options.cancel=Cancel

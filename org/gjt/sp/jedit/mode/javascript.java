@@ -33,21 +33,21 @@ public class javascript extends autoindent
 		if(keywords == null)
 		{
 			keywords = new KeywordMap(false);
-			keywords.add("function","type");
-			keywords.add("var","type");
-			keywords.add("else","keyword");
-			keywords.add("for","keyword");
-			keywords.add("if","keyword");
-			keywords.add("in","keyword");
-			keywords.add("new","keyword");
-			keywords.add("return","keyword");
-			keywords.add("while","keyword");
-			keywords.add("with","keyword");
-			keywords.add("break","label");
-			keywords.add("continue","label");
-			keywords.add("false","constant");
-			keywords.add("this","constant");
-			keywords.add("true","constant");
+			keywords.add("function",Token.KEYWORD3);
+			keywords.add("var",Token.KEYWORD3);
+			keywords.add("else",Token.KEYWORD1);
+			keywords.add("for",Token.KEYWORD1);
+			keywords.add("if",Token.KEYWORD1);
+			keywords.add("in",Token.KEYWORD1);
+			keywords.add("new",Token.KEYWORD1);
+			keywords.add("return",Token.KEYWORD1);
+			keywords.add("while",Token.KEYWORD1);
+			keywords.add("with",Token.KEYWORD1);
+			keywords.add("break",Token.LABEL);
+			keywords.add("continue",Token.LABEL);
+			keywords.add("false",Token.LABEL);
+			keywords.add("this",Token.LABEL);
+			keywords.add("true",Token.LABEL);
 		}
 		return keywords;
 	}

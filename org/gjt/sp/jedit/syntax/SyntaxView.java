@@ -116,19 +116,4 @@ public class SyntaxView extends PlainView
 
 	// private members
 	private Segment line;
-
-	private org.gjt.sp.jedit.View getView()
-	{
-		Container c = getContainer();
-		while(c != null)
-		{
-			if(c instanceof org.gjt.sp.jedit.View)
-				return (org.gjt.sp.jedit.View)c;
-			else
-				c = c.getParent();
-		}
-		System.err.println("BUG: getViewContainer() returning null");
-		System.err.println("Report to Slava Pestov <sp@gjt.org>");
-		return null;
-	}
 }

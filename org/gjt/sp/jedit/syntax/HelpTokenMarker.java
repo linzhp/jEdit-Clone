@@ -1,6 +1,6 @@
 /*
  * HelpTokenMarker.java - jEdit help file token marker
- * Copyright (C) 1998 Slava Pestov
+ * Copyright (C) 1998, 1999 Slava Pestov
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,9 +24,6 @@ import org.gjt.sp.jedit.jEdit;
 public class HelpTokenMarker extends TokenMarker
 {
 	// public members
-	public static final String HEADING = "heading";
-	public static final String LINK = "link";
-
 	public Token markTokens(Segment line, int lineIndex)
 	{
 		lastToken = null;
@@ -36,7 +33,7 @@ public class HelpTokenMarker extends TokenMarker
 		int length = line.count + offset;
 		if(line.array[offset] == '*' || line.array[offset] == '=')
 		{
-			addToken(length - offset,HEADING);
+			addToken(length - offset,Token.KEYWORD2);
 			lastToken.nextValid = false;
 			return firstToken;
 		}
@@ -46,14 +43,14 @@ loop:		for(int i = line.offset; i < length; i++)
 			{
 				if(token == null)
 				{
-					token = LINK;
+					token = Token.KEYWORD1;
 					addToken(i - lastOffset,null);
 					lastOffset = i;
 				}
-				else if(token == LINK)
+				else if(token == Token.KEYWORD1)
 				{
 					token = null;
-					addToken((i+1) - lastOffset,LINK);
+					addToken((i+1) - lastOffset,Token.KEYWORD1);
 					lastOffset = i + 1;
 				}
 			}

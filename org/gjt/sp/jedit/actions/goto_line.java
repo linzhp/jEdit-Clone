@@ -40,7 +40,7 @@ public class goto_line extends EditAction
 		Element map = buffer.getDefaultRootElement();
 		String line = (String)JOptionPane.showInputDialog(view,
 			jEdit.getProperty("gotoline.message"),
-		jEdit.getProperty("gotoline.title"),
+			jEdit.getProperty("gotoline.title"),
 			JOptionPane.QUESTION_MESSAGE,null,null,
 			String.valueOf(map.getElementIndex(textArea
 				.getCaretPosition()) + 1));

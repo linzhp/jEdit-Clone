@@ -1,6 +1,6 @@
 /*
  * ShellScriptTokenMarker.java - Shell script token marker
- * Copyright (C) 1998 Slava Pestov
+ * Copyright (C) 1998, 1999 Slava Pestov
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -23,12 +23,7 @@ import javax.swing.text.Segment;
 public class ShellScriptTokenMarker extends TokenMarker
 {
 	// public members
-	public static final String COMMAND = "command";
-	public static final String COMMENT = "comment";
-	public static final String VARIABLE = "variable";
 	public static final String LVARIABLE = "lvariable";
-	public static final String DQUOTE = "dquote";
-	public static final String SQUOTE = "squote";
 
 	public Token markTokens(Segment line, int lineIndex)
 	{
@@ -44,7 +39,7 @@ public class ShellScriptTokenMarker extends TokenMarker
 loop:		for(int i = offset; i < length; i++)
 		{
 			char c = line.array[i];
-			if(token == VARIABLE)
+			if(token == Token.KEYWORD2)
 			{
 				backslash = false;
 				if(!Character.isLetterOrDigit(c) && c != '_')
@@ -53,14 +48,14 @@ loop:		for(int i = offset; i < length; i++)
 					if(i != offset && line.array[i-1] == '$')
 					{
 						addToken((i+1) - lastOffset,
-							VARIABLE);
+							Token.KEYWORD2);
 						lastOffset = i + 1;
 						continue;
 					}
 					else
 					{
 						addToken(i - lastOffset,
-							VARIABLE);
+							Token.KEYWORD2);
 						lastOffset = i;
 					}
 				}
@@ -69,7 +64,7 @@ loop:		for(int i = offset; i < length; i++)
 			{
 				backslash = false;
 				token = null;
-				addToken((i+1) - lastOffset,VARIABLE);
+				addToken((i+1) - lastOffset,Token.KEYWORD2);
 				lastOffset = i + 1;
 			}
 			switch(c)
@@ -81,7 +76,7 @@ loop:		for(int i = offset; i < length; i++)
 				backslash = false;
 				if(token == null && cmdState == 1/*insideCmd*/)
 				{
-					addToken(i - lastOffset,COMMAND);
+					addToken(i - lastOffset,Token.KEYWORD1);
 					lastOffset = i;
 					cmdState = 2; /*afterCmd*/
 				}
@@ -107,7 +102,7 @@ loop:		for(int i = offset; i < length; i++)
 				else if(token == null)
 				{
 					addToken(i - lastOffset,null);
-					addToken(length - i,COMMENT);
+					addToken(length - i,Token.COMMENT1);
 					lastOffset = length;
 					break loop;
 				}
@@ -127,12 +122,12 @@ loop:		for(int i = offset; i < length; i++)
 							token = LVARIABLE;
 							break;
 						default:
-							token = VARIABLE;
+							token = Token.KEYWORD2;
 							break;
 						}
 					}
 					else
-						token = VARIABLE;
+						token = Token.KEYWORD2;
 					addToken(i - lastOffset,null);
 					cmdState = 2; /*afterCmd*/
 					lastOffset = i;
@@ -143,15 +138,15 @@ loop:		for(int i = offset; i < length; i++)
 					backslash = false;
 				else if(token == null)
 				{
-					token = DQUOTE;
+					token = Token.LITERAL1;
 					addToken(i - lastOffset,null);
 					cmdState = 2; /*afterCmd*/
 					lastOffset = i;
 				}
-				else if(token == DQUOTE)
+				else if(token == Token.LITERAL1)
 				{
 					token = null;
-					addToken((i+1) - lastOffset,DQUOTE);
+					addToken((i+1) - lastOffset,Token.LITERAL1);
 					cmdState = 2; /*afterCmd*/
 					lastOffset = i + 1;
 				}
@@ -161,15 +156,15 @@ loop:		for(int i = offset; i < length; i++)
 					backslash = false;
 				else if(token == null)
 				{
-					token = SQUOTE;
+					token = Token.LITERAL2;
 					addToken(i - lastOffset,null);
 					cmdState = 2; /*afterCmd*/
 					lastOffset = i;
 				}
-				else if(token == SQUOTE)
+				else if(token == Token.LITERAL2)
 				{
 					token = null;
-					addToken((i+1) - lastOffset,SQUOTE);
+					addToken((i+1) - lastOffset,Token.LITERAL2);
 					cmdState = 2; /*afterCmd*/
 					lastOffset = i + 1;
 				}
@@ -190,8 +185,8 @@ loop:		for(int i = offset; i < length; i++)
 		}
 		if(lastOffset != length)
 			addToken(length - lastOffset,token == null &&
-				cmdState == 1 ? COMMAND : token);
-		lineInfo[lineIndex] = (token == SQUOTE || token == DQUOTE
+				cmdState == 1 ? Token.KEYWORD1 : token);
+		lineInfo[lineIndex] = (token == Token.LITERAL2 || token == Token.LITERAL1
 			? token : null);
 		if(lastToken != null)
 		{
