@@ -103,12 +103,13 @@ The only workaround is to disable the jEdit server in
 <h1>Why does the display mess up when editing large files?</h1>
 </a>
 
-Due to an AWT limitation or Swing bug (or maybe both) the
+Due to an AWT limitation or Swing bug (or maybe both) in certain
+JDK versions, the
 Swing JTextComponent component has problems editing documents greater
 than about 2000 lines. The problem is that the viewscreen turns gray
-and GUI elements are repainted incorrectly. Until Sun fixes
-this, other editors will have to be used to edit very large
-files.
+and GUI elements are repainted incorrectly.<p>
+
+JDK 1.2.1 appears to fix this problem.
 
 <a name=overwrite>
 <h1>Why doesn't overwrite mode work?</h1>
