@@ -5,10 +5,9 @@
 
 <a href=#intro>Introduction</a><br>
 <a href=#server>The jEdit Server</a><br>
-<a href=#desktop>The Desktop File</a><br>
+<a href=#desktop>Session Management</a><br>
 <a href=#lineSep>Line Separator Characters</a><br>
 <a href=#modes>Edit Modes</a><br>
-<a href=#history>History Feature</a><br>
 <a href=#markers>Markers and the Anchor</a><br>
 <a href=#search>Search &amp; Replace</a><br>
 <a href=#console>Executing External Programs</a><br>
@@ -36,14 +35,14 @@ The server can be disabled either on a `one-time' basis with the
 `-noserver' switch, or permanently in `Tools-&gt;Options-&gt;General'.
 
 <a name=desktop>
-<h1>The Desktop File</h1>
+<h1>Session Management</h1>
 </a>
 
-When jEdit exits it saves the list of open files to the `desktop' file,
-so that the next time jEdit is started with no command line parameters,
-it can reopen those files.<p>
+When jEdit exits it saves the list of open files and caret positions
+to the properties, so that the next time jEdit is started with no
+command line parameters, it can reopen those files.<p>
 
-The desktop can be disabled either on a `one-time' basis with the
+Session management can be disabled either on a `one-time' basis with the
 `-nodesktop' switch, or permanently in `Tools-&gt;Options-&gt;General'.
 
 <a name=lineSep>
@@ -110,7 +109,7 @@ containing `\documentstyle' but not `\begin' in the first 100 lines.</td>
 </tr>
 
 <tr>
-<td>Batch File</td> <td>bat</td> <td>Files with extension `.bat' or `.cmd'.</td>
+<td>Batch File</td> <td>bat</td> <td>Files with extension `.bat'.</td>
 <td>For editing MS-DOS Batch Files.</td>
 </tr>
 
@@ -327,21 +326,12 @@ commands.
 Here are some of the more oddball commands in jEdit:
 
 <ul>
-<li><b>File-&gt;Reload</b> - reloads the current buffer from disk.
 <li><b>Edit-&gt;Paste Previous</b> - displays a list of previously
 copied and pasted strings available for insertion. By default, the last
 100 clippings are remembered - this can be changed in
 `Tools-&gt;Options-&gt;General'.
 <li><b>Edit-&gt;Paste Predefined</b> - displays a list of frequently used
 strings. Strings can be added and removed with the buttons in the dialog.
-<li><b>Edit-&gt;Line Operations-&gt;Go to End Indent</b> - moves the caret to
-the first non-whitespace character of the current line.
-<li><b>Edit-&gt;Line Operations-&gt;Delete No Indent</b> - deletes the current
-line except for any indent at the start.
-<li><b>Edit-&gt;Line Operations-&gt;Select No Indent</b> - selects the current
-line except for any indent at the start.
-<li><b>Edit-&gt;Line Operations-&gt;Join Lines</b> - appends the next line
-without any leading indent to the end of the current line.
 <li><b>Edit-&gt;Expand Abbreviation</b> - attempts to complete the current
 word by scanning backwards in the document looking for strings that start with
 the current word. The word separator characters are defined as all
@@ -349,8 +339,6 @@ non-alphanumeric characters except for those listed in the `noWordSep'
 buffer-local property. For example, to be able to complete words containing `-',
 place the following in the first 10 lines of the file:
 <blockquote><code>:noWordSep=-:</code></blockquote>
-<li><b>Search-&gt;Select Line Range</b> - similar to Go To Line, but selects a
-range of lines instead of moving the caret.
 </ul>
 
 </body>
