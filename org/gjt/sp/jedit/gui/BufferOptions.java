@@ -75,10 +75,11 @@ public class BufferOptions extends JDialog
 		cons.gridx = 3;
 		cons.gridwidth = 1;
 		modes = jEdit.getModes();
-		String[] modeNames = new String[modes.length];
+		String[] modeNames = new String[modes.length + 1];
+		modeNames[0] = jEdit.getModeName(null);
 		for(int i = 0; i < modes.length; i++)
 		{
-			modeNames[i] = jEdit.getModeName(modes[i]);
+			modeNames[i + 1] = jEdit.getModeName(modes[i]);
 		}
 		mode = new JComboBox(modeNames);
 		mode.setSelectedItem(buffer.getModeName());
@@ -112,17 +113,18 @@ public class BufferOptions extends JDialog
 		layout.setConstraints(lineSeparator,cons);
 		panel.add(lineSeparator);
 
-		/*cons.gridx = 0;
-		cons.gridy = 4;
+		// Soft tabs
+		cons.gridx = 0;
+		cons.gridy = 3;
 		cons.gridwidth = cons.REMAINDER;
 		cons.fill = GridBagConstraints.NONE;
 		cons.anchor = GridBagConstraints.WEST;
-		lineHighlight = new JCheckBox(jEdit.getProperty("options.editor"
-			+ ".lineHighlight"));
-		lineHighlight.getModel().setSelected("on".equals(jEdit
-			.getProperty("view.lineHighlight")));
-		layout.setConstraints(lineHighlight,cons);
-		add(lineHighlight);*/
+		noTabs = new JCheckBox(jEdit.getProperty(
+			"buffer_options.noTabs"));
+		noTabs.getModel().setSelected("yes".equals(
+			buffer.getProperty("noTabs")));
+		layout.setConstraints(noTabs,cons);
+		panel.add(noTabs);
 
 		getContentPane().setLayout(new BorderLayout());
 		getContentPane().add(BorderLayout.CENTER,panel);
@@ -157,6 +159,7 @@ public class BufferOptions extends JDialog
 	private Mode[] modes;
 	private JComboBox mode;
 	private JComboBox lineSeparator;
+	private JCheckBox noTabs;
 	private JButton ok;
 	private JButton cancel;
 
@@ -171,8 +174,13 @@ public class BufferOptions extends JDialog
 		{
 		}
 
-		buffer.setMode(modes[mode.getSelectedIndex()]);
-		int index = lineSeparator.getSelectedIndex();
+		int index = mode.getSelectedIndex();
+		if(index == 0)
+			buffer.setMode(null);
+		else
+			buffer.setMode(modes[index - 1]);
+		
+		index = lineSeparator.getSelectedIndex();
 		String lineSep;
 		if(index == 0)
 			lineSep = "\n";
@@ -183,6 +191,10 @@ public class BufferOptions extends JDialog
 		else
 			throw new InternalError();
 		buffer.putProperty("lineSeparator",lineSep);
+
+		buffer.putProperty("noTabs",noTabs.getModel().isSelected()
+			? "yes" : "no");
+
 		buffer.dirty(); // because lineSeparator was changed
 
 		dispose();
@@ -213,6 +225,9 @@ public class BufferOptions extends JDialog
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.2  1999/03/20 06:16:41  sp
+ * Buffer options panel updates, color table option pane updates
+ *
  * Revision 1.1  1999/03/20 05:23:32  sp
  * Code cleanups
  *
