@@ -255,7 +255,17 @@ implements CaretListener, KeyListener, WindowListener
 	}
 	
 	/**
-	 * Adds a multi-keystroke key binding.
+	 * Adds a key binding to this view.
+	 * @param key The key stroke
+	 * @param cmd The action command
+	 */
+	public void addKeyBinding(KeyStroke key1, String cmd)
+	{
+		prefixes.put(key1,cmd);
+	}
+
+	/**
+	 * Adds a multi-keystroke key binding to this view.
 	 * @param key1 The first key stroke
 	 * @param key2 The second key stroke
 	 * @param cmd The action command
@@ -281,11 +291,12 @@ implements CaretListener, KeyListener, WindowListener
 
 	public void keyPressed(KeyEvent evt)
 	{
-		if((evt.getModifiers() & ~InputEvent.ALT_MASK) != 0 ||
+		int keyCode = evt.getKeyCode();
+		if((evt.getModifiers() & ~InputEvent.SHIFT_MASK) != 0 ||
 			evt.isActionKey())
 		{
-			KeyStroke keyStroke = KeyStroke.getKeyStroke(evt
-				.getKeyCode(),evt.getModifiers());
+			KeyStroke keyStroke = KeyStroke.getKeyStroke(keyCode,
+				evt.getModifiers());
 			Object o = currentPrefix.get(keyStroke);
 			if(o == null && currentPrefix != prefixes)
 			{
@@ -326,13 +337,18 @@ implements CaretListener, KeyListener, WindowListener
 				return;
 			}
 		}
-		else
+		else if(keyCode != KeyEvent.VK_SHIFT
+			&& keyCode != KeyEvent.VK_CONTROL
+			&& keyCode != KeyEvent.VK_ALT)
+		{
 			currentPrefix = prefixes;
+		}
+				
 		Mode mode = buffer.getMode();
 		if(mode instanceof KeyListener)
 			((KeyListener)mode).keyTyped(evt);
 		else if(mode != null && jEdit.getAutoIndent()
-			&& evt.getKeyCode() == KeyEvent.VK_TAB)
+			&& keyCode == KeyEvent.VK_TAB)
 		{
 			if(mode.indentLine(buffer,this,textArea
 				.getCaretPosition()))

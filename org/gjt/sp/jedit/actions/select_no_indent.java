@@ -1,5 +1,5 @@
 /*
- * delete_no_indent.java
+ * select_no_indent.java
  * Copyright (C) 1998 Slava Pestov
  *
  * This program is free software; you can redistribute it and/or
@@ -24,11 +24,11 @@ import javax.swing.text.Element;
 import java.awt.event.ActionEvent;
 import org.gjt.sp.jedit.*;
 
-public class delete_no_indent extends EditAction
+public class select_no_indent extends EditAction
 {
-	public delete_no_indent()
+	public select_no_indent()
 	{
-		super("delete-no-indent");
+		super("select-no-indent");
 	}
 
 	public void actionPerformed(ActionEvent evt)
@@ -44,7 +44,7 @@ public class delete_no_indent extends EditAction
 		{
 			String str = buffer.getText(start,end - start);
 			int whitespace = start + jEdit.getLeadingWhiteSpace(str);
-			buffer.remove(whitespace,end - whitespace - 1);
+			view.getTextArea().select(whitespace,end - 1);
 		}
 		catch(BadLocationException bl)
 		{
