@@ -1,6 +1,6 @@
 /*
- * reverse.java - Simple plugin
- * Copyright (C) 1998, 1999 Slava Pestov
+ * AcuPlugin.java - Accent Converter Plugin
+ * Copyright (C) 1999 Slava Pestov
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -17,26 +17,22 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-import java.awt.event.ActionEvent;
-import org.gjt.sp.jedit.gui.JEditTextArea;
 import org.gjt.sp.jedit.*;
 
-public class reverse extends EditAction
+public class AcuPlugin implements Plugin
 {
-	public reverse()
+	public String getName()
 	{
-		super("reverse");
+		return "acu";
 	}
-	
-	public void actionPerformed(ActionEvent evt)
+
+	public void start()
 	{
-		View view = getView(evt);
-		JEditTextArea textArea = view.getTextArea();
-		String selection = textArea.getSelectedText();
-		if(selection != null)
-			textArea.replaceSelection(new StringBuffer(selection)
-				.reverse().toString());
-		else
-			view.getToolkit().beep();
+		jEdit.addPluginAction(new accents());
+		jEdit.addPluginAction(new entities());
+	}
+
+	public void stop()
+	{
 	}
 }

@@ -452,9 +452,6 @@ implements ActionListener, ListSelectionListener
 /*
  * ChangeLog:
  * $Log$
- * Revision 1.19  1999/04/02 00:39:19  sp
- * Fixed console bug, syntax API changes, minor jEdit.java API change
- *
  * Revision 1.18  1999/04/01 04:13:00  sp
  * Bug fixing for 1.5final
  *

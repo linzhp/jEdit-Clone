@@ -1,4 +1,4 @@
-# Makefile for jEdit 1.4.x
+# Makefile for jEdit 1.5.x
 #
 # This will only work on Unix - there is no easy way to
 # recompile jEdit on Windows. But that's OK because jEdit
@@ -29,16 +29,18 @@ resources=gnu/regexp/RESyntax.class \
 	org/gjt/sp/jedit/CompilerError.class \
 	org/gjt/sp/jedit/EditAction.class \
 	org/gjt/sp/jedit/GUIUtilities.class \
+	org/gjt/sp/jedit/JARClassLoader.class \
 	org/gjt/sp/jedit/Marker.class \
 	org/gjt/sp/jedit/MiscUtilities.class \
 	org/gjt/sp/jedit/Mode.class \
-	org/gjt/sp/jedit/TextUtilities.class \
+	org/gjt/sp/jedit/Plugin.class \
 	org/gjt/sp/jedit/View.class \
 	org/gjt/sp/jedit/actions/about.class \
 	org/gjt/sp/jedit/actions/block_comment.class \
 	org/gjt/sp/jedit/actions/box_comment.class \
 	org/gjt/sp/jedit/actions/browser_open_sel.class \
 	org/gjt/sp/jedit/actions/browser_open_url.class \
+	org/gjt/sp/jedit/actions/buffer_options.class \
 	org/gjt/sp/jedit/actions/clear.class \
 	org/gjt/sp/jedit/actions/clear_marker.class \
 	org/gjt/sp/jedit/actions/close_file.class \
@@ -52,14 +54,13 @@ resources=gnu/regexp/RESyntax.class \
 	org/gjt/sp/jedit/actions/delete_paragraph.class \
 	org/gjt/sp/jedit/actions/delete_start_line.class \
 	org/gjt/sp/jedit/actions/exchange_anchor.class \
-	org/gjt/sp/jedit/actions/execute.class \
 	org/gjt/sp/jedit/actions/exit.class \
 	org/gjt/sp/jedit/actions/expand_abbrev.class \
 	org/gjt/sp/jedit/actions/find.class \
 	org/gjt/sp/jedit/actions/find_next.class \
 	org/gjt/sp/jedit/actions/find_selection.class \
 	org/gjt/sp/jedit/actions/format.class \
-	org/gjt/sp/jedit/actions/generate_text.class \
+	org/gjt/sp/jedit/actions/global_options.class \
 	org/gjt/sp/jedit/actions/goto_anchor.class \
 	org/gjt/sp/jedit/actions/goto_end_indent.class \
 	org/gjt/sp/jedit/actions/goto_line.class \
@@ -70,7 +71,6 @@ resources=gnu/regexp/RESyntax.class \
 	org/gjt/sp/jedit/actions/insert_date.class \
 	org/gjt/sp/jedit/actions/join_lines.class \
 	org/gjt/sp/jedit/actions/locate_bracket.class \
-	org/gjt/sp/jedit/actions/make.class \
 	org/gjt/sp/jedit/actions/new_file.class \
 	org/gjt/sp/jedit/actions/new_view.class \
 	org/gjt/sp/jedit/actions/next_error.class \
@@ -79,7 +79,6 @@ resources=gnu/regexp/RESyntax.class \
 	org/gjt/sp/jedit/actions/open_path.class \
 	org/gjt/sp/jedit/actions/open_selection.class \
 	org/gjt/sp/jedit/actions/open_url.class \
-	org/gjt/sp/jedit/actions/options.class \
 	org/gjt/sp/jedit/actions/paste.class \
 	org/gjt/sp/jedit/actions/paste_predefined.class \
 	org/gjt/sp/jedit/actions/paste_previous.class \
@@ -103,8 +102,6 @@ resources=gnu/regexp/RESyntax.class \
 	org/gjt/sp/jedit/actions/select_block.class \
 	org/gjt/sp/jedit/actions/select_buffer.class \
 	org/gjt/sp/jedit/actions/select_line_range.class \
-	org/gjt/sp/jedit/actions/select_line_sep.class \
-	org/gjt/sp/jedit/actions/select_mode.class \
 	org/gjt/sp/jedit/actions/select_next_paragraph.class \
 	org/gjt/sp/jedit/actions/select_no_indent.class \
 	org/gjt/sp/jedit/actions/select_prev_paragraph.class \
@@ -114,27 +111,39 @@ resources=gnu/regexp/RESyntax.class \
 	org/gjt/sp/jedit/actions/shift_left.class \
 	org/gjt/sp/jedit/actions/shift_right.class \
 	org/gjt/sp/jedit/actions/tab.class \
+	org/gjt/sp/jedit/actions/toggle_console.class \
 	org/gjt/sp/jedit/actions/to_lower.class \
 	org/gjt/sp/jedit/actions/to_upper.class \
-	org/gjt/sp/jedit/actions/uncomment.class \
 	org/gjt/sp/jedit/actions/undo.class \
 	org/gjt/sp/jedit/actions/untab.class \
 	org/gjt/sp/jedit/actions/wing_comment.class \
 	org/gjt/sp/jedit/actions/word_count.class \
+	org/gjt/sp/jedit/event/AbstractEditorEvent.class \
+	org/gjt/sp/jedit/event/BufferAdapter.class \
+	org/gjt/sp/jedit/event/BufferEvent.class \
+	org/gjt/sp/jedit/event/BufferListener.class \
+	org/gjt/sp/jedit/event/EditorAdapter.class \
+	org/gjt/sp/jedit/event/EditorEvent.class \
+	org/gjt/sp/jedit/event/EditorListener.class \
+	org/gjt/sp/jedit/event/EventMulticaster.class \
+	org/gjt/sp/jedit/event/ViewAdapter.class \
+	org/gjt/sp/jedit/event/ViewEvent.class \
+	org/gjt/sp/jedit/event/ViewListener.class \
+	org/gjt/sp/jedit/gui/BufferOptions.class \
 	org/gjt/sp/jedit/gui/ClippingEditor.class \
 	org/gjt/sp/jedit/gui/Console.class \
 	org/gjt/sp/jedit/gui/EnhancedMenuItem.class \
+	org/gjt/sp/jedit/gui/GlobalOptions.class \
 	org/gjt/sp/jedit/gui/HelpViewer.class \
 	org/gjt/sp/jedit/gui/HistoryTextField.class \
 	org/gjt/sp/jedit/gui/HyperSearch.class \
-	org/gjt/sp/jedit/gui/Options.class \
+	org/gjt/sp/jedit/gui/JEditTextArea.class \
 	org/gjt/sp/jedit/gui/PastePredefined.class \
 	org/gjt/sp/jedit/gui/PastePrevious.class \
 	org/gjt/sp/jedit/gui/SearchAndReplace.class \
 	org/gjt/sp/jedit/gui/SelectLineRange.class \
 	org/gjt/sp/jedit/gui/SendDialog.class \
 	org/gjt/sp/jedit/gui/SplashScreen.class \
-	org/gjt/sp/jedit/gui/SyntaxTextArea.class \
 	org/gjt/sp/jedit/mode/amstex.class \
 	org/gjt/sp/jedit/mode/autoindent.class \
 	org/gjt/sp/jedit/mode/bat.class \
@@ -150,61 +159,96 @@ resources=gnu/regexp/RESyntax.class \
 	org/gjt/sp/jedit/mode/sh.class \
 	org/gjt/sp/jedit/mode/tex.class \
 	org/gjt/sp/jedit/mode/tsql.class \
-	org/gjt/sp/jedit/options/Colors1OptionPane.class \
-	org/gjt/sp/jedit/options/Colors2OptionPane.class \
-	org/gjt/sp/jedit/options/ColorsOptionPane.class \
+	org/gjt/sp/jedit/options/ColorTableOptionPane.class \
 	org/gjt/sp/jedit/options/EditorOptionPane.class \
 	org/gjt/sp/jedit/options/GeneralOptionPane.class \
 	org/gjt/sp/jedit/options/OptionPane.class \
 	org/gjt/sp/jedit/syntax/BatchFileTokenMarker.class \
+	org/gjt/sp/jedit/syntax/CCTokenMarker.class \
 	org/gjt/sp/jedit/syntax/CTokenMarker.class \
+	org/gjt/sp/jedit/syntax/DefaultSyntaxDocument.class \
 	org/gjt/sp/jedit/syntax/HTMLTokenMarker.class \
+	org/gjt/sp/jedit/syntax/JavaScriptTokenMarker.class \
+	org/gjt/sp/jedit/syntax/JavaTokenMarker.class \
 	org/gjt/sp/jedit/syntax/KeywordMap.class \
 	org/gjt/sp/jedit/syntax/MakefileTokenMarker.class \
 	org/gjt/sp/jedit/syntax/PatchTokenMarker.class \
 	org/gjt/sp/jedit/syntax/PropsTokenMarker.class \
 	org/gjt/sp/jedit/syntax/ShellScriptTokenMarker.class \
 	org/gjt/sp/jedit/syntax/SQLTokenMarker.class \
+	org/gjt/sp/jedit/syntax/SyntaxDocument.class \
 	org/gjt/sp/jedit/syntax/SyntaxEditorKit.class \
+	org/gjt/sp/jedit/syntax/SyntaxTextArea.class \
+	org/gjt/sp/jedit/syntax/SyntaxUtilities.class \
 	org/gjt/sp/jedit/syntax/SyntaxView.class \
 	org/gjt/sp/jedit/syntax/TeXTokenMarker.class \
 	org/gjt/sp/jedit/syntax/Token.class \
-	org/gjt/sp/jedit/syntax/TokenMarker.class
+	org/gjt/sp/jedit/syntax/TokenMarker.class \
+	org/gjt/sp/jedit/syntax/TSQLTokenMarker.class
 no_compile_res=gnu/regexp/IntPair.class \
 	gnu/regexp/CharUnit.class \
-	'org/gjt/sp/jedit/actions/print$$1.class' \
-	'org/gjt/sp/jedit/syntax/KeywordMap$$Keyword.class' \
-	'org/gjt/sp/jedit/gui/Console$$1.class' \
+	'org/gjt/sp/jedit/actions/print$$PrintSyntaxView.class' \
+	'org/gjt/sp/jedit/gui/BufferOptions$$BufferOptionsActionListener.class' \
+	'org/gjt/sp/jedit/gui/BufferOptions$$BufferOptionsKeyListener.class' \
+	'org/gjt/sp/jedit/gui/Console$$SafeAddError.class' \
+	'org/gjt/sp/jedit/gui/Console$$SafeAppend.class' \
 	'org/gjt/sp/jedit/gui/Console$$StderrThread.class' \
 	'org/gjt/sp/jedit/gui/Console$$StdoutThread.class' \
-	'org/gjt/sp/jedit/gui/SyntaxTextArea$$1.class' \
-	'org/gjt/sp/jedit/gui/SyntaxTextArea$$BracketHighlighter.class' \
-	'org/gjt/sp/jedit/gui/SyntaxTextArea$$CurrentLineHighlighter.class' \
-	'org/gjt/sp/jedit/gui/SyntaxTextArea$$SyntaxCaret.class' \
-	org/gjt/sp/jedit/toolbar/*.gif \
-	'org/gjt/sp/jedit/jEdit$$1.class' \
+	'org/gjt/sp/jedit/gui/HistoryTextField$$HistoryKeyListener.class' \
+	'org/gjt/sp/jedit/gui/JEditTextArea$$TextAreaMouseListener.class' \
+	'org/gjt/sp/jedit/gui/JEditTextArea$$TextAreaMouseMotionListener.class' \
+	'org/gjt/sp/jedit/gui/JEditTextArea$$TextAreaPropertyListener.class' \
+	'org/gjt/sp/jedit/gui/SearchAndReplace$$SearchActionListener.class' \
+	'org/gjt/sp/jedit/gui/SearchAndReplace$$SearchKeyListener.class' \
+	'org/gjt/sp/jedit/options/ColorChoice.class' \
+	'org/gjt/sp/jedit/options/ColorChoiceRenderer.class' \
+	'org/gjt/sp/jedit/options/ColorChoiceRenderer$$UIResource.class' \
+	'org/gjt/sp/jedit/options/ColorTableModel.class' \
+	'org/gjt/sp/jedit/syntax/DefaultSyntaxDocument$$SyntaxDocumentListener.class' \
+	'org/gjt/sp/jedit/syntax/KeywordMap$$Keyword.class' \
+	'org/gjt/sp/jedit/syntax/SyntaxTextArea$$BracketHighlighter.class' \
+	'org/gjt/sp/jedit/syntax/SyntaxTextArea$$CurrentLineHighlighter.class' \
+	'org/gjt/sp/jedit/syntax/SyntaxTextArea$$SyntaxCaret.class' \
+	'org/gjt/sp/jedit/syntax/SyntaxTextArea$$SyntaxCaretListener.class' \
+	'org/gjt/sp/jedit/syntax/SyntaxTextArea$$SyntaxSafeScroller.class' \
 	'org/gjt/sp/jedit/jEdit$$Autosave.class' \
-	'org/gjt/sp/jedit/jEdit$$JarClassLoader.class' \
+	'org/gjt/sp/jedit/jEdit$$JEditEditorListener.class' \
 	'org/gjt/sp/jedit/jEdit$$Server.class' \
+	'org/gjt/sp/jedit/jEdit$$ServerClientHandler.class' \
+	'org/gjt/sp/jedit/Buffer$$BufferDocumentListener.class' \
+	'org/gjt/sp/jedit/Buffer$$BufferEditorListener.class' \
 	'org/gjt/sp/jedit/Buffer$$BufferProps.class' \
+	'org/gjt/sp/jedit/Buffer$$BufferUndoableEditListener.class' \
 	'org/gjt/sp/jedit/Buffer$$ColorList.class' \
+	'org/gjt/sp/jedit/View$$ViewBufferListener.class' \
+	'org/gjt/sp/jedit/View$$ViewEditorListener.class' \
+	'org/gjt/sp/jedit/View$$ViewCaretListener.class' \
+	'org/gjt/sp/jedit/View$$ViewKeyListener.class' \
+	'org/gjt/sp/jedit/View$$ViewWindowListener.class' \
 	org/gjt/sp/jedit/jedit.props \
 	org/gjt/sp/jedit/jedit_gui.props \
 	org/gjt/sp/jedit/jedit_keys.props \
 	org/gjt/sp/jedit/jedit_logo.gif \
 	org/gjt/sp/jedit/jedit_predef.props \
 	org/gjt/sp/jedit/jedit_tips.props \
-	doc/*.html
+	org/gjt/sp/jedit/toolbar/*.gif \
+	doc/*.html \
+	doc/api/*.html \
+	doc/api/images/*.gif
+
 all: $(resources)
+	-javadoc -J-mx24m -noindex -notree -d doc/api org.gjt.sp.jedit \
+		org.gjt.sp.jedit.event \
+		org.gjt.sp.jedit.gui \
+		org.gjt.sp.jedit.options \
+		org.gjt.sp.jedit.syntax
 	@jar cvf jedit.jar $(resources) $(no_compile_res)
-	(cd themes/BlueTheme && make)
-	(cd themes/DarkTheme && make)
-	(cd themes/DefaultTheme && make)
-	(cd themes/GreenTheme && make)
 	(cd jars/Acu && make)
 	(cd jars/AltGrPatch && make)
+	(cd jars/GenerateText && make)
 	(cd jars/Reverse && make)
 	(cd jars/Rot13 && make)
+
 install:
 	mkdir -p $(JEDIT_HOME)
 	cp jedit.jar jedit jedit_moz_remote $(JEDIT_HOME)
@@ -215,29 +259,26 @@ install:
 		ln -sf $(JEDIT_HOME)/jedit $(JEDIT_BIN)/jedit
 	test "$(JEDIT_HOME)" != "$(JEDIT_BIN)" && \
 		ln -sf $(JEDIT_HOME)/jedit_moz_remote $(JEDIT_BIN)/jedit_moz_remote
-	(if test "$(KDE_DIR)" != ""; then \
-	mkdir -p $(KDE_DIR)/share/applnk/Applications; \
-	cp jEdit.kdelnk $(KDE_DIR)/share/applnk/Applications; fi)
+
 clean:
-	find . -name \*~ -exec rm {} \;
-	find . -name .\*~ -exec rm {} \;
-	find . -name \*.bak -exec rm {} \;
-	find . -name \*.orig -exec rm {} \;
-	find . -name \#\*\# -exec rm {} \;
-	find . -name .\*.swp -exec rm {} \;
-	find . -name \*.class -exec rm {} \;
-	find . -name \*.u -exec rm {} \;
-	rm -f Rules.make
+	-find . -name \*~ -exec rm {} \;
+	-find . -name .\*~ -exec rm {} \;
+	-find . -name \*.bak -exec rm {} \;
+	-find . -name \*.orig -exec rm {} \;
+	-find . -name \#\*\# -exec rm {} \;
+	-find . -name .\*.swp -exec rm {} \;
+	-find . -name \*.class -exec rm {} \;
+	-find . -name .\#\* -exec rm {} \;
+	-find . -name .new\* -exec rm {} \;
+	-find . -name .directory -exec rm {} \;
 	rm -f doc/api/*.html
-realclean: clean
-	find . -name \*.jar -exec rm {} \;
-distclean: clean
+	rm -f Rules.make
+
+zip: clean
 	chmod +x Configure jedit jedit_moz_remote
-	-todos install.bat README.txt
-bindist: distclean
+	todos install.bat README.txt
 	(cd ..; zip -qr9 jEdit-$(VERSION).zip jEdit-$(VERSION))
 	(cd ..; tar cfz jEdit-$(VERSION).tgz jEdit-$(VERSION))
-zip: bindist
 
 Rules.make:
 	@echo

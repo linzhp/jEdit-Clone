@@ -1,4 +1,4 @@
 # Makefile
 jar=acu.jar
-resources=accents.class entities.class acu.props
+resources=AcuPlugin.class accents.class entities.class acu.props
 include ../../Rules.make

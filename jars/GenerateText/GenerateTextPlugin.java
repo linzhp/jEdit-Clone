@@ -1,5 +1,5 @@
 /*
- * theme.java - Dummy action to clear user-defined colors
+ * GenerateTextPlugin.java - GenerateText Plugin
  * Copyright (C) 1999 Slava Pestov
  *
  * This program is free software; you can redistribute it and/or
@@ -17,28 +17,21 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-import java.awt.event.ActionEvent;
 import org.gjt.sp.jedit.*;
 
-public class theme extends EditAction
+public class GenerateTextPlugin implements Plugin
 {
-	public theme()
+	public String getName()
 	{
-		super("-theme-prop-unset-daemon-",false);
-		jEdit.unsetProperty("buffer.colors.comment1");
-		jEdit.unsetProperty("buffer.colors.comment2");
-		jEdit.unsetProperty("buffer.colors.keyword1");
-		jEdit.unsetProperty("buffer.colors.keyword2");
-		jEdit.unsetProperty("buffer.colors.keyword3");
-		jEdit.unsetProperty("buffer.colors.label");
-		jEdit.unsetProperty("buffer.colors.literal1");
-		jEdit.unsetProperty("buffer.colors.literal2");
-		jEdit.unsetProperty("buffer.colors.operator");
-		jEdit.unsetProperty("buffer.colors.invalid");
+		return "generate-text";
 	}
-	
-	public void actionPerformed(ActionEvent evt)
+
+	public void start()
 	{
-		throw new InternalError();
+		jEdit.addPluginAction(new generate_text());
+	}
+
+	public void stop()
+	{
 	}
 }

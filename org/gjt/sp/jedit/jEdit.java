@@ -1517,9 +1517,6 @@ public class jEdit
 /*
  * ChangeLog:
  * $Log$
- * Revision 1.67  1999/04/02 00:39:19  sp
- * Fixed console bug, syntax API changes, minor jEdit.java API change
- *
  * Revision 1.66  1999/04/01 04:27:07  sp
  * fixed silly jEdit.java bug
  *

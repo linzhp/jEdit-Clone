@@ -1429,9 +1429,6 @@ loop:		for(int i = 0; i < markers.size(); i++)
 /*
  * ChangeLog:
  * $Log$
- * Revision 1.70  1999/04/02 00:39:19  sp
- * Fixed console bug, syntax API changes, minor jEdit.java API change
- *
  * Revision 1.69  1999/03/28 01:36:24  sp
  * Backup system overhauled, HistoryTextField updates
  *

@@ -18,20 +18,20 @@
  */
 
 import java.awt.event.ActionEvent;
-import org.gjt.sp.jedit.gui.SyntaxTextArea;
+import org.gjt.sp.jedit.gui.JEditTextArea;
 import org.gjt.sp.jedit.*;
 
 public class rot13 extends EditAction
 {
 	public rot13()
 	{
-		super("rot13",true);
+		super("rot13");
 	}
 	
 	public void actionPerformed(ActionEvent evt)
 	{
 		View view = getView(evt);
-		SyntaxTextArea textArea = view.getTextArea();
+		JEditTextArea textArea = view.getTextArea();
 		String selection = textArea.getSelectedText();
 		if(selection != null)
 			textArea.replaceSelection(doRot13(selection));

@@ -4,6 +4,7 @@
  * Copyright (C) 1999 Romain Guy
  * Speed improvement thanks to Slava Pestov
  * Very minor modifications copyright (C) 1999 Slava Pestov
+ * Modifications for German Umlaute by Friedhelm Kunkel (Friedhelm.Kunkel@t-online.de)
  *
  * www.chez.com/powerteam
  * powerteam@chez.com
@@ -25,21 +26,21 @@
 
 import org.gjt.sp.jedit.*;
 import java.awt.event.ActionEvent;
-import org.gjt.sp.jedit.gui.SyntaxTextArea;
+import org.gjt.sp.jedit.gui.JEditTextArea;
 import javax.swing.text.BadLocationException;
 
 public class entities extends EditAction
 {
   public entities()
   {
-    super("entities", true);
+    super("entities");
   }
 
   public void actionPerformed(ActionEvent evt)
   {
     View view = getView(evt);
     Buffer buffer = view.getBuffer();
-    SyntaxTextArea textArea = view.getTextArea();
+    JEditTextArea textArea = view.getTextArea();
     String selection = textArea.getSelectedText();
 
     if (selection != null)
@@ -73,7 +74,7 @@ public class entities extends EditAction
 	  break;
 	case 'ê':
           buf.append("&ecirc;");
-	  break;	  
+	  break;
 	case 'ë':
           buf.append("&euml;");
 	  break;
@@ -110,11 +111,23 @@ public class entities extends EditAction
 	case 'ç':
           buf.append("&ccedil;");
 	  break;
+	case 'ß':
+          buf.append("&szlig;");
+	  break;
+	case 'Ä':
+          buf.append("&Auml;");
+	  break;
+	case 'Ö':
+          buf.append("&Ouml;");
+	  break;
+	case 'Ü':
+          buf.append("&Uuml;");
+	  break;
 	default:
           buf.append(html.charAt(i));
       }
     }
-    return buf.toString();   
+    return buf.toString();
   }
 }
 

@@ -80,9 +80,9 @@ If you're using a C shell the equivalent is:
 
 	setenv JEDIT <options>
 
-** Windows 95 and 98
+** Windows 95, 98 and NT
 
-Installation of jEdit on Windows 95 and 98 is a two step process:
+Installation of jEdit on Windows 9x and NT is a two step process:
 
 1. If you want to install jEdit elsewhere than `C:\Program Files\jEdit',
 or your Java virtual machine is not named `java.exe', edit the install.bat
@@ -106,10 +106,10 @@ enviroment variable, like this:
 
 	set JEDIT=<options>
 
-** Windows NT and OS/2
+** OS/2
 
-On Windows NT or OS/2, the installation process is the same, except
-that install.cmd should be run instead of install.bat.
+On OS/2, no installation is necessary - place the jEdit distribution
+directory in the desired place and run jedit.cmd to start jEdit.
 
 ** MacOS
 

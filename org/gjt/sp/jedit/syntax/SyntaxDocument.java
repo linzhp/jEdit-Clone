@@ -91,9 +91,6 @@ public interface SyntaxDocument extends Document
 /*
  * ChangeLog:
  * $Log$
- * Revision 1.3  1999/04/02 00:39:19  sp
- * Fixed console bug, syntax API changes, minor jEdit.java API change
- *
  * Revision 1.2  1999/03/22 04:20:01  sp
  * Syntax colorizing updates
  *

@@ -138,9 +138,6 @@ public class JARClassLoader extends ClassLoader
 /*
  * ChangeLog:
  * $Log$
- * Revision 1.3  1999/04/02 00:39:19  sp
- * Fixed console bug, syntax API changes, minor jEdit.java API change
- *
  * Revision 1.2  1999/03/24 05:45:27  sp
  * Juha Lidfors' backup directory patch, removed debugging messages from various locations, documentation updates
  *

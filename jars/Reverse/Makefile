@@ -1,4 +1,4 @@
 # Makefile
 jar=reverse.jar
-resources=reverse.class reverse.props
+resources=ReversePlugin.class reverse.class reverse.props
 include ../../Rules.make

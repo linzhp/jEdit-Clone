@@ -3,6 +3,7 @@
  * Converts HTML entities to accentuated chars
  * Copyright (C) 1999 Romain Guy - Speed improvements thanks to Slava Pestov
  * Very minor modifications copyright (C) 1999 Slava Pestov
+ * Modifications for German Umlaute by Friedhelm Kunkel (Friedhelm.Kunkel@t-online.de)
  *
  * www.chez.com/powerteam
  * powerteam@chez.com
@@ -25,21 +26,21 @@
 import org.gjt.sp.jedit.*;
 import java.util.Hashtable;
 import java.awt.event.ActionEvent;
-import org.gjt.sp.jedit.gui.SyntaxTextArea;
+import org.gjt.sp.jedit.gui.JEditTextArea;
 import javax.swing.text.BadLocationException;
 
 public class accents extends EditAction
 {
   public accents()
   {
-    super("accents", true);
+    super("accents");
   }
 
   public void actionPerformed(ActionEvent evt)
   {
     View view = getView(evt);
     Buffer buffer = view.getBuffer();
-    SyntaxTextArea textArea = view.getTextArea();
+    JEditTextArea textArea = view.getTextArea();
     String selection = textArea.getSelectedText();
 
     if (selection != null)
@@ -76,6 +77,10 @@ public class accents extends EditAction
     replace.put("&ograve;", "ô");
     replace.put("&ouml;", "ö");
     replace.put("&ccedil;", "ç");
+    replace.put("&szlig;", "ß");
+    replace.put("&Auml;", "Ä");
+    replace.put("&Ouml;", "Ö");
+    replace.put("&Uuml;", "Ü");
 
     StringBuffer buf = new StringBuffer();
     int entityOff = -1;
