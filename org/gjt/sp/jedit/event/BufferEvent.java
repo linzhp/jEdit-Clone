@@ -1,0 +1,124 @@
+/*
+ * BufferEvent.java - Event fired when a buffer's state changes
+ * Copyright (C) 1999 Slava Pestov
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+
+package org.gjt.sp.jedit.event;
+
+import org.gjt.sp.jedit.*;
+
+/**
+ * The event fired when a buffer's state changes. Note that changes to
+ * the dirty flag are fired as <code>EditorEvent</code>s, because they
+ * require global graphical buffer lists to be rebuilt.
+ */
+public class BufferEvent extends AbstractEditorEvent
+{
+	/**
+	 * The first event id that denotes an buffer event.
+	 */
+	public static final int BUFFER_FIRST = EditorEvent.EDITOR_LAST + 1;
+
+	/**
+	 * The return value of the <code>getID()</code> function when
+	 * a marker has been added or removed to the buffer.
+	 */
+	public static final int MARKERS_CHANGED = BUFFER_FIRST;
+
+	/**
+	 * The return value of the <code>getID()</code> function when
+	 * a buffer's line separator has changed.
+	 */
+	public static final int LINESEP_CHANGED = BUFFER_FIRST + 1;
+
+	/**
+	 * The return value of the <code>getID()</code> function when
+	 * a buffer's edit mode has changed.
+	 */
+	public static final int MODE_CHANGED = BUFFER_FIRST + 2;
+
+	/**
+	 * The last event id that denotes a buffer event.
+	 */
+	public static final int BUFFER_LAST = BUFFER_FIRST + 2;
+
+	/**
+	 * Creates a new buffer event.
+	 * @param id The event type
+	 * @param buffer The buffer involved
+	 */
+	public BufferEvent(int id, Buffer buffer)
+	{
+		super(id);
+
+		// Check the id value
+		if(id < BUFFER_FIRST || id > BUFFER_LAST)
+			throw new IllegalArgumentException("id out of range");
+
+		this.buffer = buffer;
+	}
+
+	/**
+	 * Returns the buffer involved. This is set for all event types.
+	 */
+	public Buffer getBuffer()
+	{
+		return buffer;
+	}
+
+	/**
+	 * Fires the event to the specified listener. This invokes
+	 * the appropriate method of the listener, depending on the
+	 * event type.
+	 * @param listener The event listener
+	 */
+	public void fire(AbstractEditorListener listener)
+	{
+		if(!(listener instanceof BufferListener))
+			return;
+
+		BufferListener l = (BufferListener)listener;
+
+		switch(id)
+		{
+		case MARKERS_CHANGED:
+			l.bufferMarkersChanged(this);
+			break;
+		case LINESEP_CHANGED:
+			l.bufferLineSepChanged(this);
+			break;
+		case MODE_CHANGED:
+			l.bufferModeChanged(this);
+			break;
+		default:
+			// shouldn't happen
+			throw new InternalError();
+		}
+	}
+
+	/**
+	 * Returns a string representation of this event.
+	 */
+	public String toString()
+	{
+		return getClass().getName() + "[id=" + id + ",timestamp="
+			+ timestamp + ",buffer=" + buffer + "]";
+	}
+
+	// protected members
+	protected Buffer buffer;
+}
