@@ -68,12 +68,13 @@ public class tab extends EditAction
 	{
 		StringBuffer buf = new StringBuffer();
 		for(int i = 0, width = 0, whitespace = 0;
-			i < in.length(); i++, width++)
+			i < in.length(); i++)
 		{
 			switch(in.charAt(i))
 			{
 			case ' ':
 				whitespace++;
+				width++;
 				break;
 			case '\t':
 				int tab = tabSize - (width % tabSize);
@@ -81,7 +82,8 @@ public class tab extends EditAction
 				whitespace += tab;
 				break;
 			case '\n':
-				whitespace = width = 0;
+				whitespace = 0;
+				width = 0;
 				buf.append('\n');
 				break;
 			default:
@@ -94,6 +96,7 @@ public class tab extends EditAction
 							% tabSize);
 						int tabs = indent / tabSize;
 						int spaces = indent % tabSize;
+						System.out.println("w=" +whitespace+",i=" + indent + ",s=" + spaces);
 						while(tabs-- > 0)
 							buf.append('\t');
 						while(spaces-- > 0)
@@ -107,6 +110,7 @@ public class tab extends EditAction
 					whitespace = 0;
 				}
 				buf.append(in.charAt(i));
+				width++;
 				break;
 			}
 		}	

@@ -66,8 +66,8 @@ public abstract class EditAction extends AbstractAction
 			}
 		}
 		// this shouldn't happen
-		System.out.println("BUG: getView() returning null");
-		System.out.println("Report this to Slava Pestov <sp@gjt.org>");
+		System.err.println("BUG: getView() returning null");
+		System.err.println("Report this to Slava Pestov <sp@gjt.org>");
 		return null;
 	}
 

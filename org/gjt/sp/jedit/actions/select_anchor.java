@@ -1,5 +1,5 @@
 /*
- * execute.java
+ * select_anchor.java
  * Copyright (C) 1998 Slava Pestov
  *
  * This program is free software; you can redistribute it and/or
@@ -20,58 +20,24 @@
 package org.gjt.sp.jedit.actions;
 
 import java.awt.event.ActionEvent;
-import java.io.IOException;
 import org.gjt.sp.jedit.*;
+import org.gjt.sp.jedit.syntax.SyntaxTextArea;
 
-public class execute extends EditAction
+public class select_anchor extends EditAction
 {
-	public execute()
+	public select_anchor()
 	{
-		super("execute");
+		super("select-anchor");
 	}
-
+	
 	public void actionPerformed(ActionEvent evt)
 	{
 		View view = getView(evt);
-		Buffer buffer = view.getBuffer();
-		String command = jEdit.input(view,"execute","execute.cmd");
-		if(command == null)
-			return;
-		StringBuffer buf = new StringBuffer();
-		for(int i = 0; i < command.length(); i++)
-		{
-			switch(command.charAt(i))
-			{
-			case '%':
-				if(i != command.length() - 1)
-				{
-					switch(command.charAt(++i))
-					{
-					case 'u':
-						buf.append(buffer.getPath());
-						break;
-					case 'p':
-						buf.append(buffer.getFile()
-							.getPath());
-						break;
-					default:
-						buf.append('%');
-						break;
-					}
-					break;
-				}
-			default:
-				buf.append(command.charAt(i));
-			}
-		}
-		try
-		{
-			Runtime.getRuntime().exec(buf.toString());
-		}
-		catch(IOException io)
-		{
-			Object[] error = { io.toString() };
-			jEdit.error(view,"ioerror",error);
-		}
+		SyntaxTextArea textArea = view.getTextArea();
+		int pos = view.getBuffer().getAnchor();
+		if(pos != -1)
+			textArea.select(textArea.getCaretPosition(),pos);
+		else
+			view.getToolkit().beep();
 	}
 }

@@ -32,7 +32,7 @@ import org.gjt.sp.jedit.Buffer;
 import org.gjt.sp.jedit.View;
 
 public class HyperSearch extends JDialog
-implements ActionListener, ListSelectionListener, WindowListener
+implements ActionListener, KeyListener, ListSelectionListener, WindowListener
 {
 	private View view;
 	private JTextField find;
@@ -83,6 +83,8 @@ implements ActionListener, ListSelectionListener, WindowListener
 		setLocation((screen.width - getSize().width) / 2,
 			(screen.height - getSize().height) / 2);
 		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+		find.addKeyListener(this);
+		addKeyListener(this);
 		addWindowListener(this);
 		findBtn.addActionListener(this);
 		close.addActionListener(this);
@@ -142,16 +144,31 @@ implements ActionListener, ListSelectionListener, WindowListener
 			results.setListData(data);
 			pack();
 		}
-		catch(REException re)
+		catch(Exception e)
 		{
-			Object[] args = { re.getMessage() };
+			Object[] args = { e.getMessage() };
 			jEdit.error(view,"reerror",args);
-		}
-		catch(BadLocationException bl)
-		{
 		}
 	}
 	
+	public void keyPressed(KeyEvent evt)
+	{
+		switch(evt.getKeyCode())
+		{
+		case KeyEvent.VK_ENTER:
+			save();
+			doHyperSearch();
+			break;
+		case KeyEvent.VK_ESCAPE:
+			save();
+			dispose();
+			break;
+		}
+	}
+
+	public void keyReleased(KeyEvent evt) {}
+	public void keyTyped(KeyEvent evt) {}
+
 	public void valueChanged(ListSelectionEvent evt)
 	{
 		if(results.isSelectionEmpty())

@@ -1,5 +1,5 @@
 /*
- * execute.java
+ * delete_no_indent.java
  * Copyright (C) 1998 Slava Pestov
  *
  * This program is free software; you can redistribute it and/or
@@ -19,59 +19,42 @@
 
 package org.gjt.sp.jedit.actions;
 
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Element;
 import java.awt.event.ActionEvent;
-import java.io.IOException;
 import org.gjt.sp.jedit.*;
 
-public class execute extends EditAction
+public class delete_no_indent extends EditAction
 {
-	public execute()
+	public delete_no_indent()
 	{
-		super("execute");
+		super("delete-no-indent");
 	}
 
 	public void actionPerformed(ActionEvent evt)
 	{
 		View view = getView(evt);
 		Buffer buffer = view.getBuffer();
-		String command = jEdit.input(view,"execute","execute.cmd");
-		if(command == null)
-			return;
-		StringBuffer buf = new StringBuffer();
-		for(int i = 0; i < command.length(); i++)
-		{
-			switch(command.charAt(i))
-			{
-			case '%':
-				if(i != command.length() - 1)
-				{
-					switch(command.charAt(++i))
-					{
-					case 'u':
-						buf.append(buffer.getPath());
-						break;
-					case 'p':
-						buf.append(buffer.getFile()
-							.getPath());
-						break;
-					default:
-						buf.append('%');
-						break;
-					}
-					break;
-				}
-			default:
-				buf.append(command.charAt(i));
-			}
-		}
+		Element map = buffer.getDefaultRootElement();
+		Element lineElement = map.getElement(map.getElementIndex(
+			view.getTextArea().getCaretPosition()));
+		int start = lineElement.getStartOffset();
+		int end = lineElement.getEndOffset();
 		try
 		{
-			Runtime.getRuntime().exec(buf.toString());
+			String str = buffer.getText(start,end - start);
+			int whitespace = 0;
+			for(; whitespace < str.length(); whitespace++)
+			{
+				char c = str.charAt(whitespace);
+				if(c != ' ' && c != '\t')
+					break;
+			}
+			whitespace += start;
+			buffer.remove(whitespace,end - whitespace - 1);
 		}
-		catch(IOException io)
+		catch(BadLocationException bl)
 		{
-			Object[] error = { io.toString() };
-			jEdit.error(view,"ioerror",error);
 		}
 	}
 }

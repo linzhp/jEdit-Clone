@@ -1,5 +1,5 @@
 /*
- * execute.java
+ * delete_line.java
  * Copyright (C) 1998 Slava Pestov
  *
  * This program is free software; you can redistribute it and/or
@@ -19,59 +19,38 @@
 
 package org.gjt.sp.jedit.actions;
 
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Element;
 import java.awt.event.ActionEvent;
-import java.io.IOException;
 import org.gjt.sp.jedit.*;
 
-public class execute extends EditAction
+public class delete_line extends EditAction
 {
-	public execute()
+	public delete_line()
 	{
-		super("execute");
+		super("delete-line");
 	}
 
 	public void actionPerformed(ActionEvent evt)
 	{
 		View view = getView(evt);
 		Buffer buffer = view.getBuffer();
-		String command = jEdit.input(view,"execute","execute.cmd");
-		if(command == null)
-			return;
-		StringBuffer buf = new StringBuffer();
-		for(int i = 0; i < command.length(); i++)
-		{
-			switch(command.charAt(i))
-			{
-			case '%':
-				if(i != command.length() - 1)
-				{
-					switch(command.charAt(++i))
-					{
-					case 'u':
-						buf.append(buffer.getPath());
-						break;
-					case 'p':
-						buf.append(buffer.getFile()
-							.getPath());
-						break;
-					default:
-						buf.append('%');
-						break;
-					}
-					break;
-				}
-			default:
-				buf.append(command.charAt(i));
-			}
-		}
+		Element map = buffer.getDefaultRootElement();
+		Element lineElement = map.getElement(map.getElementIndex(
+			view.getTextArea().getCaretPosition()));
 		try
 		{
-			Runtime.getRuntime().exec(buf.toString());
+			buffer.remove(lineElement.getStartOffset(),
+				lineElement.getEndOffset()
+				- lineElement.getStartOffset());
 		}
-		catch(IOException io)
+		catch(BadLocationException bl)
 		{
-			Object[] error = { io.toString() };
-			jEdit.error(view,"ioerror",error);
+			/* now, if anybody from Sun is reading this, let
+			 * me make myself clear: BadLocationException SUX.
+			 * why not throw a StringIndexOutOfBounds, or at
+			 * least make BadLocationException a RuntimeException?
+			 */
 		}
 	}
 }

@@ -25,7 +25,7 @@ import java.awt.event.*;
 import org.gjt.sp.jedit.*;
 
 public class SearchAndReplace extends JDialog
-implements ActionListener, WindowListener
+implements ActionListener, KeyListener, WindowListener
 {
 	private View view;
 	private JTextField find;
@@ -98,8 +98,11 @@ implements ActionListener, WindowListener
 		setLocation((screen.width - getSize().width) / 2,
 			(screen.height - getSize().height) / 2);
 		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+		find.addKeyListener(this);
+		replace.addKeyListener(this);
+		addKeyListener(this);
 		addWindowListener(this);
-		find.addActionListener(this);
+		findBtn.addActionListener(this);
 		replaceAll.addActionListener(this);
 		close.addActionListener(this);
 		show();
@@ -133,6 +136,26 @@ implements ActionListener, WindowListener
 		}
 	}
 
+	public void keyPressed(KeyEvent evt)
+	{
+		switch(evt.getKeyCode())
+		{
+		case KeyEvent.VK_ENTER:
+			save();
+			view.getBuffer().find(view,false);
+			dispose();
+			break;
+		case KeyEvent.VK_ESCAPE:
+			save();
+			dispose();
+			break;
+		}
+	}
+	
+	public void keyReleased(KeyEvent evt) {}
+
+	public void keyTyped(KeyEvent evt) {}
+	
 	public void windowOpened(WindowEvent evt) {}
 	
 	public void windowClosing(WindowEvent evt)

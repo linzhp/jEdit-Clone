@@ -50,9 +50,6 @@ implements ActionListener
 	private JRadioButton newlineMac;
 	private JComboBox font;
 	private JComboBox fontSize;
-	/*private JRadioButton off;
-	private JRadioButton charWrap;
-	private JRadioButton wordWrap;*/
 	private JTextField tabSize;
 	private JCheckBox autoindent;
 	private JCheckBox syntax;
@@ -339,7 +336,7 @@ implements ActionListener
 			jEdit.setProperty("lf",lf);
 			jEdit.setProperty("daemon.server.toggle",server.getModel()
 				.isSelected() ? "on" : "off");
-			jEdit.setProperty("buffermgr.recent.count",maxrecent.getText());
+			jEdit.setProperty("buffermgr.recent",maxrecent.getText());
 			jEdit.setProperty("daemon.autosave.interval",autosave.getText());
 			jEdit.setProperty("buffer.backup.count",backups.getText());
 			String newline;

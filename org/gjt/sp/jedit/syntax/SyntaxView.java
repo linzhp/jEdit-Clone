@@ -74,8 +74,8 @@ public class SyntaxView extends PlainView
 			Element lineElement = getElement().getElement(
 				lineIndex);
 			int start = lineElement.getStartOffset();
-			buffer.getText(start,lineElement.getEndOffset()
-				- (start + 1),line);
+			int end = lineElement.getEndOffset();
+			buffer.getText(start,end - (start + 1),line);
 			if(tokenMarker == null)
 			{
 				g.setColor(Color.black);
@@ -116,4 +116,19 @@ public class SyntaxView extends PlainView
 
 	// private members
 	private Segment line;
+
+	private org.gjt.sp.jedit.View getView()
+	{
+		Container c = getContainer();
+		while(c != null)
+		{
+			if(c instanceof org.gjt.sp.jedit.View)
+				return (org.gjt.sp.jedit.View)c;
+			else
+				c = c.getParent();
+		}
+		System.err.println("BUG: getViewContainer() returning null");
+		System.err.println("Report to Slava Pestov <sp@gjt.org>");
+		return null;
+	}
 }

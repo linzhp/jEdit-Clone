@@ -99,13 +99,10 @@ implements DocumentListener, UndoableEditListener
 				return find(view,0,true);
 			}
 		}
-		catch(REException re)
+		catch(Exception e)
 		{
-			Object[] args = { re.getMessage() };
+			Object[] args = { e.getMessage() };
 			jEdit.error(view,"reerror",args);
-		}
-		catch(BadLocationException bl)
-		{
 		}
 		return false;
 	}
@@ -622,6 +619,30 @@ implements DocumentListener, UndoableEditListener
 	}
 
 	/**
+	 * Moves the anchor to a new position.
+	 * @param pos The new anchor position
+	 */
+	public void setAnchor(int pos)
+	{
+		try
+		{
+			anchor = createPosition(pos);
+		}
+		catch(BadLocationException bl)
+		{
+			anchor = null;
+		}
+	}
+
+	/**
+	 * Returns the anchor position.
+	 */
+	public int getAnchor()
+	{
+		return (anchor == null ? -1 : anchor.getOffset());
+	}
+
+	/**
 	 * Returns the tab size.
 	 */
 	public int getTabSize()
@@ -746,6 +767,7 @@ implements DocumentListener, UndoableEditListener
 	private Mode mode;
 	private UndoManager undo;
 	private Vector markers;
+	private Position anchor;
 	private int[] caretInfo;
 	private TokenMarker tokenMarker;
 	private Hashtable colors;
@@ -809,6 +831,10 @@ implements DocumentListener, UndoableEditListener
 				markersUrl = null;
 			}
 		}
+		// if we don't do this, the autosave of a file won't be
+		// deleted after a save as
+		if(autosaveFile != null)
+			autosaveFile.delete();
 		autosaveFile = new File(file.getParent(),'#' + name + '#');
 		if(mode == null)
 		{

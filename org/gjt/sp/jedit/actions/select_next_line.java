@@ -1,5 +1,5 @@
 /*
- * execute.java
+ * select_next_line.java
  * Copyright (C) 1998 Slava Pestov
  *
  * This program is free software; you can redistribute it and/or
@@ -19,59 +19,28 @@
 
 package org.gjt.sp.jedit.actions;
 
+import javax.swing.text.Element;
 import java.awt.event.ActionEvent;
-import java.io.IOException;
 import org.gjt.sp.jedit.*;
+import org.gjt.sp.jedit.syntax.SyntaxTextArea;
 
-public class execute extends EditAction
+public class select_next_line extends EditAction
 {
-	public execute()
+	public select_next_line()
 	{
-		super("execute");
+		super("select-next-line");
 	}
 
 	public void actionPerformed(ActionEvent evt)
 	{
 		View view = getView(evt);
+		SyntaxTextArea textArea = view.getTextArea();
 		Buffer buffer = view.getBuffer();
-		String command = jEdit.input(view,"execute","execute.cmd");
-		if(command == null)
-			return;
-		StringBuffer buf = new StringBuffer();
-		for(int i = 0; i < command.length(); i++)
-		{
-			switch(command.charAt(i))
-			{
-			case '%':
-				if(i != command.length() - 1)
-				{
-					switch(command.charAt(++i))
-					{
-					case 'u':
-						buf.append(buffer.getPath());
-						break;
-					case 'p':
-						buf.append(buffer.getFile()
-							.getPath());
-						break;
-					default:
-						buf.append('%');
-						break;
-					}
-					break;
-				}
-			default:
-				buf.append(command.charAt(i));
-			}
-		}
-		try
-		{
-			Runtime.getRuntime().exec(buf.toString());
-		}
-		catch(IOException io)
-		{
-			Object[] error = { io.toString() };
-			jEdit.error(view,"ioerror",error);
-		}
+		Element map = buffer.getDefaultRootElement();
+		Element lineElement = map.getElement(map.getElementIndex(
+			textArea.getSelectionEnd()));
+		textArea.select(Math.min(lineElement.getStartOffset(),
+			textArea.getSelectionStart()),
+			lineElement.getEndOffset());
 	}
 }

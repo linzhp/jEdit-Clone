@@ -38,53 +38,55 @@ public class TeXTokenMarker extends TokenMarker
 		int offset = line.offset;
 		int lastOffset = offset;
 		int length = line.count + offset;
+		boolean backslash = false;
 loop:		for(int i = offset; i < length; i++)
 		{
 			char c = line.array[i];
-			if(token == COMMAND)
+			// if a backslash is followed immediately
+			// by a non-alpha character, the command at
+			// the non-alpha char. If we have a backslash,
+			// some text, and then a non-alpha char,
+			// the command ends before the non-alpha char.
+			if(!Character.isLetter(c))
 			{
-				// if a backslash is followed immediately
-				// by a non-alpha character, the command at
-				// the non-alpha char. If we have a backslash,
-				// some text, and then a non-alpha char,
-				// the command ends before the non-alpha char.
-				if(!Character.isLetter(c))
+				if(backslash)
 				{
-					if(i != offset && line.array[i-1]
-					   == '\\')
-					{
-						// \<non alpha>
-						// we skip over this character,
-						// hence the `continue'
+					// \<non alpha>
+					// we skip over this character,
+					// hence the `continue'
+					backslash = false;
+					addToken((i+1) - lastOffset,token);
+					lastOffset = i+1;
+					if(token == COMMAND)
 						token = null;
-						addToken((i+1) - lastOffset,
-							COMMAND);
-						lastOffset = i+1;
-						continue;
-					}
-					else
-					{
-						//\blah<non alpha>
-						// we leave the character in
-						// the stream, and it's not
-						// part of the command token
+					continue;
+				}
+				else
+				{
+					//\blah<non alpha>
+					// we leave the character in
+					// the stream, and it's not
+					// part of the command token
+					addToken(i - lastOffset,token);
+					if(token == COMMAND)
 						token = null;
-						addToken(i - lastOffset,
-							 COMMAND);
-						lastOffset = i;
-					}
+					lastOffset = i;
 				}
 			}
 			switch(c)
 			{
 			case '%':
-				if(i != offset && line.array[i-1] == '\\')
+				if(backslash)
+				{
+					backslash = false;
 					break;
+				}
 				addToken(i - lastOffset,token);
 				addToken(length - i,COMMENT);
 				lastOffset = length;
 				break loop;
 			case '\\':
+				backslash = true;
 				if(token == null)
 				{
 					token = COMMAND;
@@ -93,6 +95,7 @@ loop:		for(int i = offset; i < length; i++)
 				}
 				break;
 			case '$':
+				backslash = false;
 				if(token == null) // singe $
 				{
 					token = FORMULA;

@@ -139,7 +139,6 @@ implements CaretListener, KeyListener, WindowListener
 			clearMarker.removeAll();
 		if(gotoMarker.getMenuComponentCount() != 0)
 			gotoMarker.removeAll();
-		int n = 1;
 		Action clearMarkerAction = jEdit.getAction("clear-marker");
 		Action gotoMarkerAction = jEdit.getAction("goto-marker");
 		Enumeration enum = buffer.getMarkers();
@@ -160,16 +159,6 @@ implements CaretListener, KeyListener, WindowListener
 			menuItem = new JMenuItem(name);
 			menuItem.setActionCommand(name);
 			menuItem.addActionListener(gotoMarkerAction);
-			if(n <= 20)
-			{
-				char key = (char)('0' + n % 10);
-				int mask = InputEvent.ALT_MASK;
-				if(n > 10)
-					mask |= InputEvent.SHIFT_MASK;
-				menuItem.setAccelerator(KeyStroke.getKeyStroke(
-					key,mask));
-				n++;
-			}
 			gotoMarker.add(menuItem);
 		}
 	}
@@ -265,6 +254,24 @@ implements CaretListener, KeyListener, WindowListener
 		return textArea;
 	}
 	
+	/**
+	 * Adds a multi-keystroke key binding.
+	 * @param key1 The first key stroke
+	 * @param key2 The second key stroke
+	 * @param cmd The action command
+	 */
+	public void addKeyBinding(KeyStroke key1, KeyStroke key2,
+		String cmd)
+	{
+		Object o = prefixes.get(key1);
+		if(!(o instanceof Hashtable))
+		{
+			o = new Hashtable();
+			prefixes.put(key1,o);
+		}
+		((Hashtable)o).put(key2,cmd);
+	}
+
 	// event handlers
 
 	public void caretUpdate(CaretEvent evt)
@@ -274,6 +281,53 @@ implements CaretListener, KeyListener, WindowListener
 
 	public void keyPressed(KeyEvent evt)
 	{
+		if((evt.getModifiers() & ~InputEvent.ALT_MASK) != 0 ||
+			evt.isActionKey())
+		{
+			KeyStroke keyStroke = KeyStroke.getKeyStroke(evt
+				.getKeyCode(),evt.getModifiers());
+			Object o = currentPrefix.get(keyStroke);
+			if(o == null && currentPrefix != prefixes)
+			{
+				getToolkit().beep();
+				evt.consume();
+				return;
+			}
+			else if(o instanceof String)
+			{
+				String s = (String)o;
+				int index = s.indexOf('@');
+				String cmd;
+				if(index != -1)
+				{
+					cmd = s.substring(index+1);
+					s = s.substring(0,index);
+				}
+				else
+					cmd = null;
+				Action action = jEdit.getAction(s);
+				if(action == null)
+				{
+					System.out.println("Invalid key"
+						+ " binding:" + s);
+					return;
+				}
+				jEdit.getAction(s).actionPerformed(
+					new ActionEvent(this,ActionEvent
+					.ACTION_PERFORMED,cmd));
+				currentPrefix = prefixes;
+				evt.consume();
+				return;
+			}
+			else if(o instanceof Hashtable)
+			{
+				currentPrefix = (Hashtable)o;
+				evt.consume();
+				return;
+			}
+		}
+		else
+			currentPrefix = prefixes;
 		Mode mode = buffer.getMode();
 		if(mode instanceof KeyListener)
 			((KeyListener)mode).keyTyped(evt);
@@ -327,6 +381,8 @@ implements CaretListener, KeyListener, WindowListener
 		clearMarker = jEdit.loadMenu(this,"clear-marker");
 		gotoMarker = jEdit.loadMenu(this,"goto-marker");
 		mode = jEdit.loadMenu(this,"mode");
+		prefixes = new Hashtable();
+		currentPrefix = prefixes;
 		int x;
 		int y;
 		try
@@ -374,8 +430,8 @@ implements CaretListener, KeyListener, WindowListener
 			setBuffer((Buffer)jEdit.getBuffers().nextElement());
 		else
 			setBuffer(buffer);
-		textArea.addCaretListener(this);
 		textArea.addKeyListener(this);
+		textArea.addCaretListener(this);
 		textArea.setBorder(null);
 		updatePluginsMenu();
 		setJMenuBar(jEdit.loadMenubar(this,"view.mbar"));
@@ -388,6 +444,7 @@ implements CaretListener, KeyListener, WindowListener
 		getContentPane().add("Center",scroller);
 		getContentPane().add("South",status);
 		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+		addKeyListener(this);
 		addWindowListener(this);
 		pack();
 		setLocation(x,y);
@@ -419,6 +476,8 @@ implements CaretListener, KeyListener, WindowListener
 	private JMenu clearMarker;
 	private JMenu gotoMarker;
 	private JMenu mode;
+	private Hashtable prefixes;
+	private Hashtable currentPrefix;
 	private JScrollPane scroller;
 	private SyntaxTextArea textArea;
 	private JLabel status;

@@ -78,6 +78,7 @@ public class format extends EditAction
 			case '\n':
 				buf.append(word);
 				word.setLength(0);
+				boolean oldSpace = space;
 				space = true;
 				if(i == 0)
 				{
@@ -98,16 +99,13 @@ public class format extends EditAction
 					buf.append("\n\n");
 					newline = false;
 					newlineIgnore = true;
-					// this is NOT 0, but rather the
-					// number of characters already read
-					// before the wrap
-					lineLength = word.length();
+					lineLength = 0;
 					break;
 				}
 				if(lineLength >= maxLineLength ||
 					i == chars.length - 1)
 				{
-					buf.append(c);
+					buf.append('\n');
 					newline = false;
 					newlineIgnore = false;
 					lineLength = 0;
@@ -115,7 +113,8 @@ public class format extends EditAction
 				}
 				newline = true;
 				newlineIgnore = false;
-				buf.append(' ');
+				if(!oldSpace)
+					buf.append(' ');
 				break;
 			case ' ':
 				if(space)
@@ -135,7 +134,6 @@ public class format extends EditAction
 				if(lineLength >= maxLineLength)
 				{
 					buf.append('\n');
-					// see case '\n' for explanation
 					lineLength = word.length();
 				}
 				break;
