@@ -842,8 +842,9 @@ public class View extends JFrame
 						return;
 					}
 					jEdit.getAction(s).actionPerformed(
-						new ActionEvent(this,ActionEvent
-						.ACTION_PERFORMED,cmd));
+						new ActionEvent(View.this,
+						ActionEvent.ACTION_PERFORMED,
+						cmd));
 					currentPrefix = bindings;
 					evt.consume();
 					return;

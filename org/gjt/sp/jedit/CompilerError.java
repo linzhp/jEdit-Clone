@@ -25,12 +25,44 @@ import java.io.File;
 import org.gjt.sp.jedit.event.*;
 
 /**
- * A compiler error.
+ * A compiler error. When jEdit runs an external command, it attempts to
+ * parse any errors, and creates <code>CompilerError</code> instances for
+ * those it can.<p>
+ *
+ * A list of compiler errors is placed in the `Errors' tab of the
+ * <code>org.gjt.sp.jedit.gui.Console</code> component. Also, the
+ * Tools-&gt;Next Error and Tools-&lt;Previous Error commands can be
+ * used to go to the next and previous errors, respectively.<p>
+ *
+ * A list of compiler errors can be obtained with the
+ * <code>Console.getErrorList()</code> method. It returns an
+ * implementation of <code>ListModel</code> that can be used by
+ * a JList.<p>
+ *
+ * The `current' compiler error, for use with the Next Error and
+ * Previous Error commands, can be obtained and changed with the
+ * <code>Console.getCurrentError()</code> and
+ * <code>Console.setCurrentError()</code> methods.<p>
+ *
+ * An instance of the console component exists for each view, and
+ * one can be obtained with the <code>View.getConsole()</code>
+ * method.
+ *
+ * @author Slava Pestov
+ * @version $Id$
+ *
+ * @see org.gjt.sp.jedit.gui.Console
+ * @see org.gjt.sp.jedit.gui.Console#getErrorList()
+ * @see org.gjt.sp.jedit.gui.Console#getError()
+ * @see org.gjt.sp.jedit.gui.Console#getCurrentError()
+ * @see org.gjt.sp.jedit.gui.Console#setCurrentError()
+ * @see org.gjt.sp.jedit.View#getConsole()
  */
 public class CompilerError implements EditorListener
 {
 	/**
-	 * Creates a new compiler error.
+	 * Creates a new compiler error. This constructor should
+	 * not normally be invoked.
 	 * @param path The path name of the file involved
 	 * @param lineNo The line number
 	 * @param error The error message
@@ -60,7 +92,9 @@ public class CompilerError implements EditorListener
 	}
 
 	/**
-	 * Returns the line number where the error occured.
+	 * Returns the line number where the error occured. If the
+	 * file is open, the line number position `floats' as the
+	 * file is changed.
 	 */
 	public int getLineNo()
 	{
@@ -72,7 +106,8 @@ public class CompilerError implements EditorListener
 	}
 
 	/**
-	 * Returns the buffer where the error occured. This may be null.
+	 * Returns the buffer where the error occured. This may be null
+	 * if the file isn't open.
 	 */
 	public Buffer getBuffer()
 	{
@@ -80,7 +115,7 @@ public class CompilerError implements EditorListener
 	}
 
 	/**
-	 * Returns the error message itsef.
+	 * Returns the error message.
 	 */
 	public String getError()
 	{
@@ -88,7 +123,9 @@ public class CompilerError implements EditorListener
 	}
 
 	/**
-	 * Returns the buffer, ensuring that it exists first.
+	 * Returns the buffer where the error occured. This is the
+	 * same as <code>getBuffer()</code> except that the file is
+	 * opened if it isn't already first.
 	 */
 	public Buffer openFile()
 	{
@@ -104,7 +141,8 @@ public class CompilerError implements EditorListener
 	}
 
 	/**
-	 * Returns a string representation of this error.
+	 * Returns a string representation of this error. This is
+	 * the string displayed in the error list.
 	 */
 	public String toString()
 	{
@@ -161,3 +199,11 @@ public class CompilerError implements EditorListener
 		linePos = null;
 	}
 }
+
+/*
+ * ChangeLog:
+ * $Log$
+ * Revision 1.7  1999/03/12 07:23:19  sp
+ * Fixed serious view bug, Javadoc updates
+ *
+ */

@@ -21,8 +21,62 @@ package org.gjt.sp.jedit;
 import org.gjt.sp.jedit.syntax.TokenMarker;
 
 /**
- * An edit mode. At the moment, edit modes can define indent behaviour
- * and syntax colorizing rules. Other uses will exist in the future.
+ * The interface all jEdit edit modes most subclass. An edit mode defines
+ * a set of behaviours for editing a specific file type.<p>
+ * 
+ * The <i>internal</i> name of an edit mode is the class name, without
+ * the package prefix. The user visible name is that stored in the
+ * <code>mode.<i>internal name</i>.name</code> property.<p>
+ *
+ * A mode instance can be fetched if it's internal name is known with the
+ * <code>jEdit.getMode()</code> method. The
+ * <code>jEdit.getModeName()</code> method returns the user visible
+ * name of a mode instance.<p>
+ *
+ * An array of currently installed edit modes can be obtained with the
+ * <code>jEdit.getModes()</code> method.<p>
+ *
+ * When jEdit loads a plugin (JAR file) all classes that implement the
+ * Mode interface are automatically added to the mode list. While jEdit is
+ * running, modes can also be added with the <code>jEdit.addMode()</code>
+ * method.<p>
+ *
+ * Currently, edit modes can influence the following:
+ * <ul>
+ * <li>The indentation performed, if any, when the user presses `Tab'.
+ * this can be achieved by implementing the <code>indentLine()</code>
+ * method.
+ * <li>The token marker used for syntax colorizing, if any. This can
+ * be achieved by implementing the <code>createTokenMarker()</code>
+ * method.
+ * </ul>
+ * The following properties relate to edit modes:
+ * <ul>
+ * <li><code>mode.<i>internal name</i>.name</code> - the name of the edit
+ * mode, displayed in the `Mode' menu
+ * <li><code>mode.<i>internal name</i>.<i>buffer-local property</i></code> -
+ * the default value of <i>buffer-local property</i> in this edit mode
+ * <li><code>mode.extension.<i>extension</i></code> - the internal name of the
+ * mode to be used for editing files with extension <i>extension</i>
+ * <li><code>mode.filename.<i>filename</i></code> - the internal name of the
+ * mode to be used for editing files named <i>filename</i>
+ * <li><code>mode.firstline.<i>first line</i></code> - the internal name
+ * of the mode to be used for editing files whose first line is
+ * <i>first line</i>
+ * </ul>
+ *
+ * @author Slava Pestov
+ * @version $Id$
+ *
+ * @see org.gjt.sp.jedit.jEdit#getProperty(String)
+ * @see org.gjt.sp.jedit.jEdit#getProperty(String,String)
+ * @see org.gjt.sp.jedit.jEdit#getMode(String)
+ * @see org.gjt.sp.jedit.jEdit#getModeName(Mode)
+ * @see org.gjt.sp.jedit.jEdit#getModes()
+ * @see org.gjt.sp.jedit.jEdit#addMode()
+ * @see org.gjt.sp.jedit.Buffer#setMode()
+ * @see org.gjt.sp.jedit.Buffer#setMode(Mode)
+ * @see org.gjt.sp.jedit.syntax.TokenMarker
  */
 public interface Mode
 {
@@ -39,9 +93,9 @@ public interface Mode
 	public void enterView(View view);
 
 	/**
-	 * Called when the `Tab' key is pressed. This should perform
-	 * mode-specific indentation and return true, or return false if a
-	 * normal tab is to be inserted.
+	 * If auto indent is enabled, this method is called when the `Tab'
+	 * key is pressed to perform mode-specific indentation
+	 * and return true, or return false if a normal tab is to be inserted.
 	 * @param buffer The buffer where the tab key was pressed
 	 * @param view The view where the tab key was pressed
 	 * @param caret The caret position
@@ -68,3 +122,11 @@ public interface Mode
 	 */
 	public void leaveView(View view);
 }
+
+/*
+ * ChangeLog:
+ * $Log$
+ * Revision 1.7  1999/03/12 07:23:19  sp
+ * Fixed serious view bug, Javadoc updates
+ *
+ */

@@ -25,8 +25,42 @@ import java.awt.Component;
 import java.util.EventObject;
 
 /**
- * An action implementation useful for jEdit commands. It provides support
- * for finding out the current view and buffer.
+ * The class all jEdit actions must extend. It is a Swing
+ * <code>AbstractAction</code> with support for finding out the view and
+ * buffer that invoked the action.<p>
+ *
+ * The <i>internal</i> name of an action is the class name without the
+ * package prefix. An action instance can be obtained from it's internal
+ * name with the <code>jEdit.getAction()</code> method. An array of
+ * available actions can be obtained with the <code>jEdit.getActions()</code>
+ * method.<p>
+ *
+ * When jEdit loads a plugin (JAR file) any implementations of
+ * <code>EditAction</code> are added to the action table. Additionally,
+ * any implementations that define the <code>PLUGIN</code> property
+ * are added to the plugin list. The `Plugins' menu is later built
+ * from the plugin list. While jEdit is running, additional actions
+ * can also be added with the <code>jEdit.addAction()</code> method.
+ * <p>
+ *
+ * The following properties relate to actions:
+ * <ul>
+ * <li><code><i>internal name</i>.label</code> - the label of the
+ * action appearing in the menu bar or tooltip of a tool bar button
+ * <li><code><i>internal name</i>.shortcut</code> - the keyboard
+ * shortcut of the action. The action must be in a menu for this
+ * to work; you can't have keyboard-only actions. Format is described
+ * in documentation for the <code>GUIUtilities</code> class.
+ *
+ * @author Slava Pestov
+ * @version $Id$
+ *
+ * @see jEdit#getProperty(String)
+ * @see jEdit#getProperty(String,String)
+ * @see jEdit#getAction(String)
+ * @see jEdit#getActions()
+ * @see jEdit#addAction(Action)
+ * @see GUIUtilities#loadMenuar(View,String)
  */
 public abstract class EditAction extends AbstractAction
 {
@@ -101,3 +135,11 @@ public abstract class EditAction extends AbstractAction
 		return null;
 	}
 }
+
+/*
+ * ChangeLog:
+ * $Log$
+ * Revision 1.5  1999/03/12 07:23:19  sp
+ * Fixed serious view bug, Javadoc updates
+ *
+ */
