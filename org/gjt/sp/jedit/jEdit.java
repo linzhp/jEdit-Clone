@@ -40,7 +40,7 @@ public class jEdit
 	/**
 	 * The jEdit version.
 	 */
-	public static final String VERSION = "1.4pre8";
+	public static final String VERSION = "1.4final";
 	
 	/**
 	 * The date when a change was last made to the source code,
@@ -563,7 +563,7 @@ public class jEdit
 			server = null;
 		}
 		if(autosave != null)
-			autosave.stop();
+			autosave.interrupt();
 		if("on".equals(getProperty("server"))
 			&& portFile != null)
 			server = new Server();
@@ -1436,10 +1436,13 @@ public class jEdit
 				}
 				catch(InterruptedException i)
 				{
+					return;
 				}
 				Enumeration enum = jEdit.getBuffers();
 				while(enum.hasMoreElements())
 					((Buffer)enum.nextElement()).autosave();
+				if(interrupted())
+					return;
 			}
 		}
 	}

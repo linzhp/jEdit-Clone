@@ -4,6 +4,7 @@
 
 <a href=#wishlist>To Do For Future Versions</a><br>
 <a href=#showstop>Version 1.4 Showstoppers</a><br>
+<a href=#14final>Version 1.4final</a><br>
 <a href=#14pre8>Version 1.4pre8</a><br>
 <a href=#14pre7>Version 1.4pre7</a><br>
 <a href=#14pre6>Version 1.4pre6</a><br>
@@ -26,23 +27,18 @@ fold configuration)
 <li>Insert file command
 <li>Literal (no regexp) search option
 <li>Bracket matching code should skip comments and quoted literals
-<li>Fix lazy colorizing of multiline statements and make syntax
-colorizing faster (with a cache or something)
+<li>Fix lazy colorizing of multiline statements
 <li>Search and replace needs a reworking, it's too messy right now
 <li>Event system, with BufferEvent, ViewEvent notifying components when
 buffers/views are opened and closed. Would make a lot of existing code
 cleaner
-<li>ApplicationOwner and ViewOwner interfaces so jEdit be added to any
+<li>ApplicationOwner interface so that jEdit be added to any
 application that supports those interfaces, which define functions such
-as createFrame(), getProperty(), exit(), etc
-<li>Syntax colorizing text area should be usable on it's own, maybe a
-JavaBean or something
-<li>Toolbar position should be saved
+as getProperty(), createFileReader(), exit(), etc
+<li>Dependencies on Buffer class should be removed from syntax colorizing
+subsystem, it make it usable on it's own
 <li>Expand abbreviation should fetch the next match if the caret hasn't
 moved since the last time it was invoked
-<li>Word wrap maybe? jEdit 1.0 and 1.1 had it, but it was removed in 1.2 to
-make syntax colorizing easier to implement. Not useful in a programmer's
-text editor
 <li>Only one console should parse errors at a time, this prevents user
 confusion and messy error lists
 <li>Context menu - mnemonics/arrows don't work, and selection is extended if
@@ -63,6 +59,19 @@ less than was passed to setBounds(), and this only happends on X11)
 doesn't scroll to the correct line
 <li>Nothing is displayed in the help window when jEdit is being used with
 the TYA JIT (probably a TYA bug)
+</ul>
+
+<a name=14final>
+<h1>Version 1.4final</h1>
+</a>
+
+<h2>Bug Fixes</h2>
+
+<ul>
+<li>Reload command didn't work for files with no edit mode
+<li>Possible fix for the options dialog crash some people have been
+seeing (autosave thread is now stopped with interrupt() instead of
+stop())
 </ul>
 
 <a name=14pre8>

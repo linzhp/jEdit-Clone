@@ -513,7 +513,8 @@ public class GUIUtilities
 			y = (screen.height - height) / 2;
 		}
 
-		win.setBounds(x,y,width,height);
+		win.setLocation(x,y);
+		win.setSize(width,height);
 	}
 
 	/**
@@ -524,11 +525,13 @@ public class GUIUtilities
 	 */
 	public static void saveGeometry(Window win, String name)
 	{
-		Rectangle bounds = win.getBounds();
-		jEdit.setProperty(name + ".x",String.valueOf(bounds.x));
-		jEdit.setProperty(name + ".y",String.valueOf(bounds.y));
-		jEdit.setProperty(name + ".width",String.valueOf(bounds.width));
-		jEdit.setProperty(name + ".height",String.valueOf(bounds.height));
+		Point location = win.getLocation();
+		Dimension size = win.getSize();
+		jEdit.setProperty(name + ".x",String.valueOf(location.x));
+		jEdit.setProperty(name + ".y",String.valueOf(location.y));
+		jEdit.setProperty(name + ".width",String.valueOf(size.width));
+		jEdit.setProperty(name + ".height",String.valueOf(size.height));
+
 	}
 
 	// private members

@@ -372,6 +372,9 @@ implements DocumentListener, UndoableEditListener
 	 */
 	public void reload()
 	{
+		// Delete the autosave
+		autosaveFile.delete();
+
 		// This is so that `dirty' isn't set
 		init = true;
 
@@ -379,7 +382,7 @@ implements DocumentListener, UndoableEditListener
 		loadMarkers();
 		
 		// Reset token marker
-		if(tokenMarker == null)
+		if(tokenMarker != null)
 		{
 			tokenMarker.deleteLines(0,getDefaultRootElement()
 				.getElementCount());
