@@ -1,96 +1,19 @@
-VERSION INFORMATION (VERSION, last modified 11 Oct 1998)
+VERSION INFORMATION (VERSION, last modified 7 Nov 1998)
 
-CURRENT VERSION: 1.0pre2
-
--- To Do Before 1.1:
-- Word wrap when printing
-- API documentation for plugin authors
-- Save/restore caret position on buffer switch
-
--- To Do Before 1.0:
-- Debug
-- Optimise
-- Improve documentation
-
--- Version 1.0pre2:
-- Open URL command fixed
-- jOpen fixed on Windows
-- Read only flag is set if the file is read only
-- Read only flag is cleared after saving
-- Pathnames are always absolute now
-- Integrated several plugins into the main program
-- Execute command
+-- Version 1.0.1:
+- Fixed opening of non-existent files
+- Fixed Makefiles and shell scripts for non-GNU find, make and sh
+- Fixed editing of files with non-Unix newlines
+- Fixed startup process
+- jEdit and jOpen shell scripts should now work better on multi-headed systems
+  (screen part of $DISPLAY is now ignored when specifying port file)
+- Message is now printed if system properties couldn't be found
+- File are loaded much faster
+- Windows makeit.bat scripts scrapped (too hard to maintain)
+- Works better when "jedit.home" property isn't set (ie, when it's not being
+  run through the shell script or batch file)
+- Minor makefile updates
 - Minor documentation updates
-
--- Version 1.0pre1:
-- File loading and saving in Windows fixed
-- Windows batch files fixed (*THIS* time, they should really work!)
-- Changed to use the AWT file dialog. I will switch back to the Swing file
-  dialog as soon as Swing 1.1 final is out
-- Open recent fixed
-- Autoindent with selection fixed
-- Replace All quirk fixed
-- URL marker loading fixed
-- Plugin compilation under Windows fixed (Again)
-- Minor property updates
-- Minor documentation updates
-
--- Version 0.9:
-- jOpen's broken behaviour fixed
-- Minor documentation updates
-- Win32 JRE doesn't like the classpath. Changed to use javaw instead
-- Minor send plugin updates
-- Title bar now includes the string `jEdit'
-- Lots of bug fixes
-- Code cleanups
-
--- Version 0.8:
-- Several bug fixes
-- The first 20 markers now have keyboard shortcuts
-- Options dialog
-- jOpen now accepts -readonly flag
-- jEdit should now work with the TYA JIT
-- Improved documentation
-
--- Version 0.7:
-- Several bug fixes
-- Changed to use JRE by default
-- Send plugin
-- Rot13 plugin
-- Improved documentation
-
--- Version 0.6:
-- Several bug fixes
-- Source code cleaned up a bit
-- Plugins can now be compiled and installed under Windows (finally)
-- Read only flag added
-- Insert Date plugin
-- Jumping to a specific marker from command line
-- Search and replace
-- More documentation
-
--- Version 0.5:
-- Lots of bug fixes
-- Simplified shell scripts and batch files
-- More documentation
-
--- Version 0.4:
-- Lots of bug fixes
-- Improved error handling
-- Open selection command
-- Persistent markers
-- Printing
-- Automated installation of PIF and kdelnk files
-- More plugins
-- More documentation
-
--- Version 0.3:
-- Lots of bug fixes
-- File loading and saving cleaned up
-- More documentation
-
--- Version 0.2:
-- Change log started
 
 -- Slava Pestov
 <slava_pestov@geocities.com>

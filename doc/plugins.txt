@@ -1,4 +1,4 @@
-JEDIT PLUGINS (plugins.txt, last modified 6 Oct 1998)
+JEDIT PLUGINS (plugins.txt, last modified 7 Nov 1998)
 
 Contents
 --------
@@ -23,7 +23,7 @@ can be used by all users on the system. Plugins in a user's plugin directory
 can only be used by that user.
 
 On Unix, the system plugin directory (assuming that you didn't change any
-installation variables) is /opt/slava/share/jedit-1.00/jars. Each user has
+installation variables) is /opt/slava/share/jedit-1.0.1/jars. Each user has
 a plugin directory in $HOME/.jedit-jars.
 
 On Windows 95 and 98, the system plugin directory is
@@ -37,16 +37,15 @@ Windows 95/98, but each user has a plugin directory in %HOME%\.jedit-jars.
 ----------------
 Once a plugin is installed, jEdit will say so during startup.
 
-	Loading plugin /opt/slava/share/jedit-1.00/jars/hello_world.jar
-	Loading plugin /opt/slava/share/jedit-1.00/jars/to_lower.jar
-	Loading plugin /opt/slava/share/jedit-1.00/jars/to_upper.jar
+	Loading plugin /opt/slava/share/jedit-1.0.1/jars/reverse.jar
+	Loading plugin /opt/slava/share/jedit-1.0.1/jars/rot13.jar
 
 If all goes well during startup, the plugins should also appear in the 
 `Plugins' menu. If a newly installed plugin doesn't appear to be loaded, check
 that it's in the correct directory and that it's a JAR file. A message such as
 this indicates that the plugin is corrupted:
 
-	Loading plugin /opt/slava/share/jedit-1.00/jars/word_count.jar
+	Loading plugin /opt/slava/share/jedit-1.0.1/jars/rot13.jar
 	java.util.zip.ZipException: not a ZIP file (END header not found)
 		at java.util.zip.ZipFile.findEND(ZipFile.java)
 		at java.util.zip.ZipFile.readCEN(ZipFile.java)
@@ -134,7 +133,7 @@ Step 2 - Compile the source file
 
 Use the javac compiler to compile the source file. On Unix, do:
 
-	javac -classpath $CLASSPATH:/opt/slava/share/jedit-1.00/jedit.jar \
+	javac -classpath $CLASSPATH:/opt/slava/share/jedit-1.0.1/jedit.jar \
 		Cmd_SimplePlugin.java
 
 On Windows 95 98 and NT, do:

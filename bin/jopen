@@ -1,16 +1,16 @@
 #!/bin/sh
 
-if [ "$JAVA" = "" ]
+if test "$JAVA" = ""
 then
     JAVA="jre"
 fi
 
-if [ "$JEDIT_HOME" = "" ]
+if test "$JEDIT_HOME" = ""
 then
-    JEDIT_HOME=/opt/slava/share/jedit-1.0pre2
+    JEDIT_HOME=/opt/slava/share/jedit-1.0.1
 fi
 
-JOPEN="-portfile=$HOME/.jedit-server-$DISPLAY"
+JOPEN="-portfile=$HOME/.jedit-server-`echo $DISPLAY|sed 's/\..*//'`"
 
 for a in "$@"
 do
@@ -22,7 +22,8 @@ do
     fi
 done
 
-export CLASSPATH="$JEDIT_HOME/jedit.jar:$CLASSPATH"
-export JOPEN_J="$JOPEN_J jOpen"
+CLASSPATH="$JEDIT_HOME/jedit.jar:$CLASSPATH"
+export CLASSPATH
+JOPEN_J="$JOPEN_J jOpen"
 
 exec $JAVA $JOPEN_J $JOPEN

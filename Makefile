@@ -1,14 +1,14 @@
 # Makefile
 all:
-	@make -C src
-	@make -C plugins
+	@(cd src; $(MAKE))
+	@(cd jars; $(MAKE))
 install:
-	@make -C src install
-	@make -C plugins install
-	@make -C doc install
-	@make -C bin install
+	@(cd src; $(MAKE) install)
+	@(cd jars; $(MAKE) install)
+	@(cd doc; $(MAKE) install)
+	@(cd bin; $(MAKE) install)
 	@echo
-	@echo "Type 'make kde' to install KDE applnks for jEdit and jOpen."
+	@echo "Type '$(MAKE) kde' to install KDE applnks for jEdit and jOpen."
 	@echo
 kde:
 	@(echo "Where is KDE located? [/opt/kde]";\
@@ -17,25 +17,25 @@ kde:
 	then\
 	kdedir=/opt/kde;\
 	fi;\
-	cp etc/*.kdelnk $$kdedir/share/applnk/Applications;)
+	cp bin/*.kdelnk $$kdedir/share/applnk/Applications;)
 clean:
-	find -name \*~ -exec rm {} \;
-	find -name .\*~ -exec rm {} \;
-	find -name \*.bak -exec rm {} \;
-	find -name \#\*\# -exec rm {} \;
-	find -name .\*.swp -exec rm {} \;
-	find -name \*.class -exec rm {} \;
+	find . -name \*~ -exec rm {} \;
+	find . -name .\*~ -exec rm {} \;
+	find . -name \*.bak -exec rm {} \;
+	find . -name \#\*\# -exec rm {} \;
+	find . -name .\*.swp -exec rm {} \;
+	find . -name \*.class -exec rm {} \;
 realclean: clean
-	find -name \*.jar -exec rm {} \;
+	find . -name \*.jar -exec rm {} \;
 todos:
-	find -name \*.bat -exec todos {} \;
+	find . -name \*.bat -exec todos {} \;
+	find . -name \*.txt -exec todos {} \;
+	todos VERSION README COPYING
 manifest:
-	find -type f \! -name MANIFEST -exec md5sum {} \; > MANIFEST
+	find . -type f \! -name MANIFEST -exec md5sum {} \; > MANIFEST
 check:
-	find -type f \! -name MANIFEST -exec md5sum {} \; | diff - MANIFEST
+	find . -type f \! -name MANIFEST -exec md5sum {} \; | diff - MANIFEST
 zip: clean todos manifest
-	(cd ..; zip -qr9 jEdit-`grep "CURRENT VERSION:" jEdit/VERSION|\
-		awk '{print $$3}'`.zip jEdit)
-	(cd ..; tar cfz jEdit-`grep "CURRENT VERSION:" jEdit/VERSION|\
-		awk '{print $$3}'`.tgz jEdit)
+	(cd ..; zip -qr9 jEdit-1.0.1.zip jEdit-1.0.1)
+	(cd ..; tar cfz jEdit-1.0.1.tgz jEdit-1.0.1)
 include Rules.make

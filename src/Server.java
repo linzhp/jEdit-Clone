@@ -80,7 +80,7 @@ public class Server extends Thread
 			boolean readOnly = false;
 			while((filename = in.readLine()) != null)
 			{
-				if(!endOpts)
+				if(filename.startsWith("-") && !endOpts)
 				{
 					if(filename.equals("--"))
 						endOpts = true;
@@ -89,7 +89,7 @@ public class Server extends Thread
 					else if(filename.startsWith("-cwd="))
 						cwd = filename.substring(5);
 				}
-				else
+				else if(filename.length() != 0)
 				{
 					jEdit.buffers.openFile(view,cwd,
 						filename,readOnly,false);

@@ -1,0 +1,125 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<HEAD>
+   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+   <META NAME="GENERATOR" CONTENT="Mozilla/4.5b1 [en] (X11; I; Linux 2.0.34 i586) [Netscape]">
+   <TITLE>Untitled Normal Page</TITLE>
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+
+<CENTER><B><I><FONT COLOR="#000080"><FONT SIZE=+4>JSBeautifier - Release
+notes</FONT></FONT></I></B></CENTER>
+
+<BR>&nbsp;
+<BR>&nbsp;
+<BR>&nbsp;
+<BR>&nbsp;
+<H3>
+In Beautifier 1.1.1 :</H3>
+
+<BLOCKQUOTE>
+<LI>
+Fixed an important (although up to now unnoticed...) bug in multi-line
+statements that come right after 'for', 'if', ... statements.</LI>
+</BLOCKQUOTE>
+
+<H3>
+In Beautifier 1.1.0 :</H3>
+
+<UL>
+<LI>
+Lines within multi-line statements are now indented RELATIVELY to each
+other.</LI>
+
+<LI>
+Static arrays (i.e. a = {1, 2, 3}) are now detected and handled properly.</LI>
+
+<LI>
+Multiple-line comments now retain their original look, which is important
+for commented code.</LI>
+
+<LI>
+'switch' blocks now automatically contain an additional indent, making
+them (IMHO) more readable.</LI>
+
+<LI>
+Added ability to flush 'switch' blocks (ala the Java Code Convention) via
+the option '-fs'.</LI>
+
+<LI>
+Added ability to add an extra indent to brackets, via option '-ib' (due
+to user interest).</LI>
+</UL>
+
+<H3>
+In Beautifier 1.0.6</H3>
+
+<UL>
+<LI>
+MAJOR improvement in the indentation of inner classes.</LI>
+</UL>
+
+<H3>
+In Beautifier 1.0.5</H3>
+
+<UL>
+<LI>
+Fixed stream buffer flushing bug that was introduced in 1.0.4 .</LI>
+
+<LI>
+Fixed bug introduced in 1.0.4, regarding use of semicolons within parenthesies.</LI>
+</UL>
+
+<H3>
+In Beautifier 1.0.4</H3>
+
+<UL>
+<LI>
+Beautifier now accepts specific file names, in addition to redirection
+from input-stream.</LI>
+
+<LI>
+Fixed serious bug in anonymous inner classes</LI>
+
+<LI>
+Other minor bug fixes.</LI>
+</UL>
+
+<H3>
+In Beautifier 1.0.3</H3>
+
+<UL>
+<LI>
+Fixed indentation bug in 'case' statements.</LI>
+
+<LI>
+Other minor bug fixes.</LI>
+</UL>
+
+<H3>
+In Beautifier 1.0.2</H3>
+
+<UL>
+<LI>
+Fixed indentation bug in phrases containing headers after a '}'.</LI>
+
+<LI>
+Fixed indentation bug that occured in multiple catch() phrases.</LI>
+</UL>
+
+<H3>
+In Beautifier 1.0.1</H3>
+
+<UL>
+<LI>
+Beautifier nows makes it possible to customize comment indenting.</LI>
+
+<LI>
+You can now decide to add additional indentation at the begining of every
+line within a /* ... */ comment.</LI>
+
+<BR>The default indent is 1 space - making standard javadoc comments look
+much nicer.</UL>
+
+</BODY>
+</HTML>

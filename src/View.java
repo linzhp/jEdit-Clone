@@ -130,7 +130,6 @@ implements ActionListener, KeyListener, CaretListener, WindowListener
 		textArea.addCaretListener(this);
 		textArea.addKeyListener(this);
 		textArea.setBorder(null);
-		updateStatus();
 		updatePluginsMenu();
 		updateBuffersMenu();
 		updateMarkerMenus();

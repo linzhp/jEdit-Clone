@@ -1,6 +1,0 @@
-JEDIT AND JOPEN PIFS (pif.txt, last modified 29 Sep 1998)
-
-If you use Windows 95, 98 or NT, you'll find the .pif file useful.
-
--- Slava Pestov
-<slava_pestov@geocities.com>

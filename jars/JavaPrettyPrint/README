@@ -1,0 +1,14 @@
+README (README, last modifed 11 Oct 1998)
+
+Java Pretty Print 1.0pre3
+-------------------------
+This is the JavaPrettyPrint plugin for jEdit. It is released under the
+Artistic license (license.html), not the GPL like the rest of jEdit
+because it uses the jstyle classes by Tal Davidson <tald@md2.huji.ac.il>.
+
+IMPORTANT: Because of it's size, I didn't include the whole jstyle package,
+only the part used by jEdit. The full package can be found at 
+<http://www.bigfoot.com/~davidsont/jstyle/>.
+
+-- Slava Pestov
+<slava_pestov@geocities.com>

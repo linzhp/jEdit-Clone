@@ -55,7 +55,7 @@ resources=jEdit.class \
 	Cmd_undo.class \
 	Cmd_word_count.class \
 	properties
-jar=jedit.jar
+jar=../jedit.jar
 files=$(jar)
 directory=$(SLAVA_SHARE_DIR)
 all: $(jar)

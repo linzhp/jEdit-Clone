@@ -78,6 +78,7 @@ margin.right=0.5
 ### About dialog
 about.title=About jEdit
 about.message=jEdit version {0} build {1}, Copyright (C) 1998 Slava Pestov.\n\
+	jStyle classes (C) 1997-1998 Tal Davidson <tald@md2.huji.ac.il>.\n\
 	jEdit comes with ABSOLUTELY NO WARRANTY. This is free software,\n\
 	and you are welcome to redistribute it under certain conditions;\n\
 	see Help->Copying for details.

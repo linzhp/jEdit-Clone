@@ -35,11 +35,13 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.PrintJob;
 import java.awt.Toolkit;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -80,7 +82,8 @@ implements DocumentListener, UndoableEditListener
 		this.readOnly = readOnly;
 		if(!newFile)
 		{
-			this.readOnly |= !file.canWrite();
+			if(file.exists())
+				this.readOnly |= !file.canWrite();
 			if(autosaveFile.exists())
 			{
 				Object[] args = { autosaveFile.getPath() };
@@ -108,14 +111,17 @@ implements DocumentListener, UndoableEditListener
 				in = new FileInputStream(file);
 			if(name.endsWith(".gz"))
 				in = new GZIPInputStream(in);
-			byte[] buff = new byte[4096];
-			int n;
-			while ((n = in.read(buff, 0, buff.length)) != -1)
+			BufferedReader r = new BufferedReader(new
+				InputStreamReader(in));
+			StringBuffer buf = new StringBuffer();
+			String line;
+			while((line = r.readLine()) != null)
 			{
-				insertString(getLength(),new String(buff,0,n),
-					null);
+				buf.append(line);
+				buf.append('\n');
 			}
-			in.close();
+			r.close();
+			insertString(0,buf.toString(),null);
 			newFile = false;
 		}
 		catch(FileNotFoundException fnf)
@@ -544,7 +550,10 @@ implements DocumentListener, UndoableEditListener
 		throws IOException
 	{
 		if(markers.isEmpty())
+		{
+			markersFile.delete();
 			return;
+		}
 		OutputStream out;
 		if(url != null)
 		{

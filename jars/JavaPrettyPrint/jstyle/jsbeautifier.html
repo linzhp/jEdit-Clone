@@ -1,0 +1,226 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<HEAD>
+   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+   <META NAME="GENERATOR" CONTENT="Mozilla/4.5b1 [en] (X11; I; Linux 2.0.34 i586) [Netscape]">
+   <TITLE>JSBeautifier</TITLE>
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+
+<CENTER>
+<H1>
+<I><FONT COLOR="#0000A0"><FONT SIZE=+4>JSBeautifier 1.1.1</FONT></FONT></I></H1></CENTER>
+
+<CENTER>
+<H3>
+<FONT SIZE=+2>A <A HREF="license.html">Free</A>, Fast and Small Automatic
+Indentation Filter<BR>
+for Java Source Codes</FONT></H3></CENTER>
+
+<CENTER>
+<H3>
+<FONT SIZE=+0>by <A HREF="http://www.bigfoot.com/~davidsont">Tal Davidson</A>,
+Israel (E-mail: <A HREF="mailto:davidsont@bigfoot.com">davidsont@bigfoot.com</A>)</FONT></H3></CENTER>
+
+<BLOCKQUOTE>
+<CENTER>
+<H3>
+<FONT SIZE=+0>(Main home page - <A HREF="http://www.bigfoot.com/~davidsont/jstyle/jsbeautifier">http://www.bigfoot.com/~davidsont/jstyle/jsbeautifier</A>)</FONT></H3></CENTER>
+&nbsp;
+<P>&nbsp;
+<BR>&nbsp;
+<BR>&nbsp;
+<BR>&nbsp;
+<BR>&nbsp;
+<BR>&nbsp;
+<BR>&nbsp;
+<BR>&nbsp;
+<BR>&nbsp;
+<BR>&nbsp;
+<BR>&nbsp;
+<BR>&nbsp;
+<BR>&nbsp;</BLOCKQUOTE>
+<FONT COLOR="#000000"><FONT SIZE=+0>When indenting source code, we as programmers
+have a tendency to use both <B>spaces</B> and <B>tab</B> characters to
+create the wanted indentation. Moreover, some editors by default insert
+spaces instead of tabs when pressing the tab key, and other editors (Emacs
+for example) have the ability to "pretty up" lines by automatically setting
+up the white space before the code on the line, possibly inserting spaces
+in a code that up to now used only tabs for indentation</FONT></FONT><FONT SIZE=+1>.</FONT>
+<P><FONT SIZE=+0>Since the <B>NUMBER</B> of space characters showed on
+screen for each tab character in the source code changes between editors
+(until the user sets up the number to his liking...), <FONT COLOR="#000000"><B>one
+of the standard problems facing programmers when moving from one source
+code editor to another</B> is that code containing both spaces and tabs
+that was up to now perfectly indented, suddently becomes a mess to look
+at when changing to another editor. Even if you as a programmer take care
+to ONLY use spaces or tabs, looking at other peoples source code can still
+be problematic.</FONT></FONT>
+<P><FONT COLOR="#000000"><FONT SIZE=+0>To address this problem, I created
+JSBeautifier - a small&nbsp; filter, written in <B>pure java</B>, that
+automatically reindents java source files. The JSBeautifier class can be
+used from a <B>command line</B>, or it can be <B>incorporated as a class
+in another Java program</B>.</FONT></FONT>
+<BR>&nbsp;
+<BR>&nbsp;
+<BR>&nbsp;
+<BR>&nbsp;
+<BR>&nbsp;
+<BR>&nbsp;
+<BR>&nbsp;
+<CENTER>
+<H3>
+<FONT COLOR="#FF0000">New! Check out <A HREF="jsformatter.html">JSFormatter</A>
+- a full reformation filter for Java source files!!!</FONT></H3></CENTER>
+
+<BLOCKQUOTE>&nbsp;</BLOCKQUOTE>
+
+<H3>
+Read <A HREF="jsbeautifier_release_notes.html">Release Notes</A></H3>
+
+<H3>
+Read <A HREF="license.html">License</A></H3>
+
+<BLOCKQUOTE>From July 28, 1998 and on, JSBeautifier is distributed under
+the "Artistic License" - the same used by the Perl programming language.</BLOCKQUOTE>
+
+<H3>
+Download <A HREF="http://www.bigfoot.com/~davidsont/jstyle/jstyle.zip">jstyle.zip</A>
+.</H3>
+
+<BLOCKQUOTE><B>jstyle.zip</B> contains:
+<P>1) jstyle.jar
+<P>2) <A HREF="jsformatter.html">JSFormatter</A>&nbsp; sources
+<P>3) <A HREF="jsbeautifier.html">JSBeautifier</A> sources.
+<P>4) jsformatter.html - documentation of JSFormatter.
+<P>5) jsbeautifier.html - documentation on JSBeautifier.
+<P>6) license.html
+<P>7) release notes.
+<BR>&nbsp;
+<BR>&nbsp;
+<BR>&nbsp;
+<BR>&nbsp;
+<BR>&nbsp;</BLOCKQUOTE>
+
+<H3>
+<FONT COLOR="#000000"><FONT SIZE=+1>To use from the command line:</FONT></FONT></H3>
+
+<BLOCKQUOTE><FONT COLOR="#000000"><FONT SIZE=+0>1) Download the </FONT><B><FONT SIZE=+1>jstyle.zip</FONT></B><FONT SIZE=+0>
+file and unzip it. A new directory named <B>jstyle</B> will be created,
+containing (among the other files) a file named </FONT><B><FONT SIZE=+1>jstyle.jar</FONT></B>.</FONT>
+<P><FONT COLOR="#000000"><FONT SIZE=+0>2) Place </FONT><B><FONT SIZE=+1>jstyle.jar</FONT></B><FONT SIZE=-1>
+</FONT><FONT SIZE=+0>in
+your </FONT><B><TT><FONT FACE="Times New Roman"><FONT SIZE=+1>CLASSPATH</FONT></FONT></TT></B><FONT SIZE=+0>.</FONT></FONT>
+<P><FONT COLOR="#000000"><FONT SIZE=+0>3) Run JSBeautifier with the following
+syntax:</FONT></FONT>
+<BR>&nbsp;
+<BR>&nbsp;
+<BR>&nbsp;
+<BR>&nbsp;
+<BR>&nbsp;
+<BLOCKQUOTE><B><TT><FONT FACE="Times New Roman"><FONT SIZE=+0><FONT COLOR="#800080">java
+jstyle.JSBeautifier </FONT><FONT COLOR="#000080">[options]</FONT><FONT COLOR="#800080">
+</FONT></FONT><FONT COLOR="#FF0000"><FONT SIZE=+2>&lt;</FONT></FONT><FONT COLOR="#800080"><FONT SIZE=+0>
+OriginalSourceFile </FONT></FONT><FONT COLOR="#FF0000"><FONT SIZE=+2>></FONT></FONT><FONT COLOR="#800080"><FONT SIZE=+0>
+BeautifiedSourceFile</FONT></FONT></FONT></TT></B>
+<BR>&nbsp;
+<BLOCKQUOTE><B><FONT SIZE=+1>OR</FONT></B></BLOCKQUOTE>
+<B><TT><FONT FACE="Times New Roman"><FONT SIZE=+0><FONT COLOR="#800080">java
+jstyle.JSBeautifier </FONT><FONT COLOR="#000080">[options]</FONT></FONT>
+<FONT SIZE=+0><FONT COLOR="#800080">Foo.java
+Bar.java</FONT><FONT COLOR="#000080">
+</FONT><FONT COLOR="#800080">AnotherBar.java</FONT><FONT COLOR="#000080">
+[ . . . ]</FONT></FONT></FONT></TT></B>
+<P><FONT COLOR="#000000"><FONT SIZE=+0>The </FONT></FONT><B><FONT COLOR="#FF0000"><FONT SIZE=+2>&lt;</FONT></FONT></B><FONT COLOR="#000000"><FONT SIZE=+0>
+and</FONT></FONT><B><FONT COLOR="#FF0000"><FONT SIZE=+2> ></FONT></FONT></B><FONT COLOR="#000000"><FONT SIZE=+0>
+characters are used to redirect the files into standard input and out of
+standard output - don't forget them!!!</FONT></FONT>
+<P><FONT COLOR="#000000"><FONT SIZE=+0>The following <B>options</B> are
+acceptable:</FONT></FONT>
+<BR>&nbsp;
+<BR>&nbsp;
+<BR>&nbsp;
+<BR>&nbsp;
+<BR>&nbsp;
+<BLOCKQUOTE><B><TT><FONT FACE="Times New Roman"><FONT COLOR="#000080"><FONT SIZE=+1>-t</FONT></FONT></FONT></TT></B><FONT SIZE=+0>
+- Indent using a tab characters.</FONT>
+<P><B><TT><FONT FACE="Times New Roman"><FONT COLOR="#000080"><FONT SIZE=+1>-s#</FONT></FONT></FONT></TT></B><FONT SIZE=+0>
+- Indent using # spaces per indent (i.e. </FONT><B><TT><FONT FACE="Times New Roman"><FONT SIZE=+1>-s4</FONT></FONT></TT></B><FONT SIZE=+0>).</FONT>
+<BR><B><TT><FONT FACE="Times New Roman"><FONT COLOR="#000080"><FONT SIZE=+1>-m#</FONT></FONT></FONT></TT></B><FONT SIZE=+0>
+- Indent a maximal # spaces between two lines in a multi-line statement
+(i.e. </FONT><B><TT><FONT FACE="Times New Roman"><FONT SIZE=+1>-m40</FONT></FONT></TT></B><FONT SIZE=+0>).</FONT>
+<P><B><TT><FONT FACE="Times New Roman"><FONT COLOR="#000080"><FONT SIZE=+1>-ib</FONT></FONT></FONT></TT></B><FONT SIZE=+0>
+- Add extra indentation to brackets.</FONT>
+<P><B><TT><FONT FACE="Times New Roman"><FONT COLOR="#000080"><FONT SIZE=+1>-fs</FONT></FONT></FONT></TT></B><FONT SIZE=+0>
+- Flush (i.e. don't indent) 'switch' blocks..</FONT>
+<P><B><TT><FONT FACE="Times New Roman"><FONT COLOR="#000080"><FONT SIZE=+1>-h
+</FONT></FONT></FONT></TT></B><FONT SIZE=+0>-
+print help message and quit</FONT>
+<BR>&nbsp;
+<BR>&nbsp;
+<BR>&nbsp;
+<BR>&nbsp;
+<BR>&nbsp;</BLOCKQUOTE>
+<FONT SIZE=+0>Not specifying any option will bring the default 4 spaces
+per indent, and 40 spaces of maximal indent between lines in a multi-line
+statement</FONT></BLOCKQUOTE>
+</BLOCKQUOTE>
+
+<H3>
+<FONT SIZE=+0>To use as a class in your program:</FONT></H3>
+
+<BLOCKQUOTE><FONT SIZE=+0>1) Download both the JSBeautifier source and
+class files.</FONT>
+<P><FONT SIZE=+0>2) Run through the method information in the JSBeautifier.java
+file.</FONT>
+<BR>&nbsp;
+<BR>&nbsp;
+<BR>&nbsp;
+<BR>&nbsp;
+<BR>&nbsp;</BLOCKQUOTE>
+
+<H3>
+<FONT SIZE=+1>Comments, Questions and Ideas for Improvement:</FONT></H3>
+
+<BLOCKQUOTE><FONT SIZE=+0>Reach me at <A HREF="mailto:davidsont@bigfoot.com">davidsont@bigfoot.com</A></FONT></BLOCKQUOTE>
+
+<H3>
+<FONT SIZE=+0>Bugs:</FONT></H3>
+
+<BLOCKQUOTE><FONT SIZE=+0>- There are NO current known bugs.</FONT>
+<P><FONT SIZE=+0>- If you find a bug, </FONT><B><FONT SIZE=+1>please <A HREF="mailto:davidsont@bigfoot.com">send
+me</A> a bug-report</FONT></B><FONT SIZE=+0> including an example source
+code that generates the bug, and I will try to fix it as fast as possible.</FONT>
+<P><FONT SIZE=+0>- If you find a bug and find a fix for it in the source
+code, </FONT><B><FONT SIZE=+1>please <A HREF="mailto:davidsont@bigfoot.com">send
+me</A> a bug-report</FONT></B><FONT SIZE=+0> together with an example source-code
+that generates the bug PLUS the corrected JSBeautifier.java file, so that
+I can learn from it and publish it.</FONT>
+<BR>&nbsp;
+<BR>&nbsp;
+<BR>&nbsp;
+<BR>&nbsp;
+<BR>&nbsp;</BLOCKQUOTE>
+
+<H3>
+<FONT SIZE=+0>Acknowledgements:</FONT></H3>
+
+<BLOCKQUOTE><FONT SIZE=+1>-Thanks to <B>Jim Watson</B> for creating the
+help message option !!!</FONT>
+<P><FONT SIZE=+1>-Thanks to all the dedicated beta-testers and bug notifiers!!!</FONT>
+<BR>&nbsp;
+<BR>&nbsp;
+<BR>&nbsp;
+<BR>&nbsp;
+<BR>&nbsp;
+<BR>&nbsp;
+<BR>&nbsp;</BLOCKQUOTE>
+
+<P>&nbsp;
+<CENTER>
+<H1>
+<FONT COLOR="#0000A0">ENJOY !!!</FONT></H1></CENTER>
+&nbsp;
+
+</BODY>
+</HTML>

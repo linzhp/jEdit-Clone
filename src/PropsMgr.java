@@ -36,7 +36,10 @@ public class PropsMgr extends Properties
 	{
 		if(!loadProps(getClass().getResourceAsStream("/properties"),
 			"properties",true))
-		System.exit(1);
+		{
+			System.err.println("Error loading properties!");
+			System.exit(1);
+		}
 	}
 
 	public void loadUserProps()

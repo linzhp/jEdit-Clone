@@ -35,8 +35,8 @@ import com.sun.java.swing.UIManager;
 
 public class jEdit
 {
-	public static final String VERSION = "1.0pre2";
-	public static final String BUILD = "19981011";
+	public static final String VERSION = "1.0.1";
+	public static final String BUILD = "19981107";
 	public static final PropsMgr props = new PropsMgr();
 	public static final CommandMgr cmds = new CommandMgr();
 	public static final BufferMgr buffers = new BufferMgr();
@@ -73,7 +73,9 @@ public class jEdit
 		boolean readOnly = false;
 		portFile = new File(System.getProperty("user.home"),
 			".jedit-server");
-		String jeditHome = System.getProperty("jedit.home",".");
+		String jeditHome = System.getProperty("jedit.home",
+			System.getProperty("user.dir"));
+		System.getProperties().put("jedit.home",jeditHome);
 		for(int i = 0; i < args.length; i++)
 		{
 			String arg = args[i];
@@ -101,11 +103,11 @@ public class jEdit
 				args[i] = null;
 			}
 		}
+		props.loadSystemProps();
+		props.setDefault("helpdir",jeditHome + File.separator + "doc");
 		cmds.loadPlugins(jeditHome + File.separator + "jars");
 		cmds.loadPlugins(System.getProperty("user.home") +
 			File.separator + ".jedit-jars");
-		props.setDefault("helpdir",jeditHome + File.separator + "doc");
-		props.loadSystemProps();
 		if(!noUsrProps)
 			props.loadUserProps();	
 		propertiesChanged();

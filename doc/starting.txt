@@ -1,4 +1,4 @@
-GETTING STARTED WITH JEDIT (starting.txt, last modified 9 Oct 1998)
+GETTING STARTED WITH JEDIT (starting.txt, last modified 7 Nov 1998)
 
 Contents
 --------
@@ -20,16 +20,10 @@ Usually, jEdit is started to edit one or more files with this command:
 
 	jedit <filename 1> <filename 2>...
 
-You can instruct jEdit to open a file and move the caret to a specified
-marker like this:
-
-	jedit <filename 1>#<marker 1> <filename 2>#<marker 2>
-
 Or if another instance of jEdit is already running, jOpen can be used to open
 files in it:
 
 	jopen <filename 1> <filename 2>...
-	jopen <filename 1>#<marker 1> <filename 2>#<marker 2>...
 
 jEdit can also be started with no arguments:
 
@@ -58,7 +52,7 @@ If you want to open a file whose name starts with a dash (-), you must place
 the -- argument before it in the command line to stop it from being interpreted
 as an option:
 
-	jedit -- -file-who's-name-starts-with-dash
+	jedit -- -file-whose-name-starts-with-dash
 
 The -- indicates the end of options. No more options after it are interpreted.
 
@@ -81,7 +75,7 @@ log in.
 
 1.2. Windows 95 and 98
 ----------------------
-If you want to use jEdit from the command line, you must add it's directory to
+If you want to use jEdit from the command line, you must add its directory to
 the PATH. By default, jEdit is installed in C:\Program Files\jEdit. The command
 to add that directory to the PATH is:
 
