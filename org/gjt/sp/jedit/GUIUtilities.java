@@ -602,6 +602,9 @@ public class GUIUtilities
 	 */
 	public static void loadGeometry(Window win, String name)
 	{
+		if(!"on".equals(jEdit.getProperty("saveGeometry")))
+			return;
+
 		int x, y, width, height;
 
 		try
@@ -642,6 +645,9 @@ public class GUIUtilities
 	 */
 	public static void saveGeometry(Window win, String name)
 	{
+		if(!"on".equals(jEdit.getProperty("saveGeometry")))
+			return;
+
 		Point location = win.getLocation();
 		Dimension size = win.getSize();
 		jEdit.setProperty(name + ".x",String.valueOf(location.x));
@@ -680,6 +686,9 @@ public class GUIUtilities
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.24  1999/06/22 06:14:39  sp
+ * RMI updates, text area updates, flag to disable geometry saving
+ *
  * Revision 1.23  1999/06/16 03:29:59  sp
  * Added <title> tags to docs, configuration data is now stored in a
  * ~/.jedit directory, style option pane finished

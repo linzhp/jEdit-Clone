@@ -1341,10 +1341,9 @@ loop:		for(int i = 0; i < markers.size(); i++)
 		{
 			setDirty(true);
 		}
-	
+
 		public void changedUpdate(DocumentEvent evt)
 		{
-			setDirty(true);
 		}
 	}
 }
@@ -1352,6 +1351,9 @@ loop:		for(int i = 0; i < markers.size(); i++)
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.88  1999/06/22 06:14:39  sp
+ * RMI updates, text area updates, flag to disable geometry saving
+ *
  * Revision 1.87  1999/06/20 02:15:45  sp
  * Syntax coloring optimizations
  *

@@ -50,6 +50,16 @@ public class TextAreaPainter extends Component implements TabExpander
 		setBackground(Color.white);
 	}
 
+	public SyntaxStyle[] getStyles()
+	{
+		return styles;
+	}
+
+	public void setStyles(SyntaxStyle[] styles)
+	{
+		this.styles = styles;
+	}
+
 	public FontMetrics getFontMetrics()
 	{
 		return getToolkit().getFontMetrics(getFont());
@@ -71,12 +81,11 @@ public class TextAreaPainter extends Component implements TabExpander
 		if(offGfx == null)
 			return;
 		Rectangle bounds = getBounds();
-		offGfx.clearRect(bounds.x,bounds.y,bounds.width,bounds.height);
 
 		TextAreaModel model = textArea.getModel();
 
 		int firstLine = textArea.getFirstLine();
-		int lastLine = model.yToLine(bounds.height);
+		int lastLine = model.yToLine(bounds.height) + 1; // XXX
 
 		offscreenRepaintLineRange(model,firstLine,lastLine);
 	}
@@ -93,6 +102,7 @@ public class TextAreaPainter extends Component implements TabExpander
 			.intValue();
 
 		int y = model.lineToY(firstLine);
+
 		for(int i = firstLine; i < lastLine;)
 		{
 			i += offscreenRepaintLine(model,i,0,y);
@@ -107,6 +117,11 @@ public class TextAreaPainter extends Component implements TabExpander
 		TokenMarker tokenMarker = document.getTokenMarker();
 		Font defaultFont = getFont();
 		Color defaultColor = getForeground();
+
+		FontMetrics fm = getFontMetrics();
+
+		offGfx.clearRect(x,y + fm.getLeading() + fm.getDescent(),
+			getSize().width,fm.getAscent());
 
 		offGfx.setFont(defaultFont);
 		offGfx.setColor(defaultColor);

@@ -18,7 +18,6 @@
  */
 package org.gjt.sp.jedit.remote.impl;
 
-import javax.swing.text.BadLocationException;
 import javax.swing.text.Element;
 import java.rmi.server.UnicastRemoteObject;
 import java.rmi.*;
@@ -43,19 +42,6 @@ public class RemoteBufferImpl extends UnicastRemoteObject
 		throws RemoteException
 	{
 		buffer.save(jEdit.getView(view.getUID()),path);
-	}
-
-	public String getText(int start, int len)
-		throws RemoteException
-	{
-		try
-		{
-			return buffer.getText(start,len);
-		}
-		catch(BadLocationException bl)
-		{
-			return null;
-		}
 	}
 
 	public int getLineStartOffset(int line)
@@ -111,6 +97,9 @@ public class RemoteBufferImpl extends UnicastRemoteObject
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.3  1999/06/22 06:14:39  sp
+ * RMI updates, text area updates, flag to disable geometry saving
+ *
  * Revision 1.2  1999/06/15 05:03:54  sp
  * RMI interface complete, save all hack, views & buffers are stored as a link
  * list now

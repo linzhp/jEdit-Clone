@@ -31,9 +31,6 @@ public interface RemoteBuffer extends Remote
 	void save(RemoteView view, String path)
 		throws RemoteException;
 
-	String getText(int start, int len)
-		throws RemoteException;
-
 	int getLineStartOffset(int line)
 		throws RemoteException;
 
@@ -56,6 +53,9 @@ public interface RemoteBuffer extends Remote
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.3  1999/06/22 06:14:39  sp
+ * RMI updates, text area updates, flag to disable geometry saving
+ *
  * Revision 1.2  1999/06/15 05:03:54  sp
  * RMI interface complete, save all hack, views & buffers are stored as a link
  * list now

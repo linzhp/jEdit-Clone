@@ -40,14 +40,13 @@ public class JEditTextArea extends Container
 	{
 		painter = createPainter(cols,rows);
 		model = createModel();
-		events = createEvents();
 
 		setLayout(new ScrollLayout());
 		add(CENTER,painter);
 		add(RIGHT,vertical = new JScrollBar(JScrollBar.VERTICAL));
-		vertical.addAdjustmentListener(new AdjustHandler());
 		add(BOTTOM,horizontal = new JScrollBar(JScrollBar.HORIZONTAL));
 
+		vertical.addAdjustmentListener(new AdjustHandler());
 		addComponentListener(new ComponentHandler());
 	}
 
@@ -66,15 +65,6 @@ public class JEditTextArea extends Container
 	public TextAreaModel getModel()
 	{
 		return model;
-	}
-
-	/**
-	 * Returns the object resposible for handling this text area's
-	 * events.
-	 */
-	public TextAreaEvents getEventHandler()
-	{
-		return events;
 	}
 
 	/**
@@ -124,7 +114,6 @@ public class JEditTextArea extends Container
 	
 	protected TextAreaPainter painter;
 	protected TextAreaModel model;
-	protected TextAreaEvents events;
 
 	protected int firstLine;
 
@@ -142,12 +131,7 @@ public class JEditTextArea extends Container
 		return new TextAreaModel(this,new DefaultSyntaxDocument());
 	}
 
-	protected TextAreaEvents createEvents()
-	{
-		return new TextAreaEvents(this);
-	}
-
-		class ScrollLayout implements LayoutManager
+	class ScrollLayout implements LayoutManager
 	{
 		public void addLayoutComponent(String name, Component comp)
 		{

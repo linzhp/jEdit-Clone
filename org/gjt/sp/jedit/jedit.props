@@ -24,6 +24,9 @@ history=25
 # Name for untitled files, {0} is the number open so far
 untitled=Untitled-{0}
 
+# Geometry saving toggle
+saveGeometry=on
+
 # Desktop saving toggle
 saveDesktop=on
 

@@ -1087,6 +1087,7 @@ public class jEdit
 		}
 		jEditHome = jEditHome + File.separator;
 
+		
 		if(settingsDirectory != null)
 		{
 			File _settingsDirectory = new File(settingsDirectory);
@@ -1338,7 +1339,7 @@ public class jEdit
 				try
 				{
 					remoteEditor = new RemoteEditorImpl();
-					Naming.bind(serverPath,remoteEditor);
+					Naming.rebind(serverPath,remoteEditor);
 					System.out.println("Started RMI service on "
 						+ serverPath);
 				}
@@ -1558,6 +1559,9 @@ public class jEdit
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.118  1999/06/22 06:14:39  sp
+ * RMI updates, text area updates, flag to disable geometry saving
+ *
  * Revision 1.117  1999/06/20 02:15:45  sp
  * Syntax coloring optimizations
  *

@@ -15,6 +15,13 @@
 <h1>Version 1.7pre5</h1>
 </a>
 
+<h2>New Features</h2>
+
+<ul>
+<li>It is now possible to disable window geometry saving. While this should
+be enabled in most situations, it causes problems with some JVMs
+</ul>
+
 <h2>Enhancements</h2>
 
 <ul>
@@ -22,6 +29,9 @@
 <li>Documentation is no longer part of the jEdit JAR file - it is installed
 separately
 <li>More detailed RMI docs included
+<li>It is no longer necessary to start rmiregistry with a -classpath
+parameter pointing to jEdit's JAR file
+<li>Removed getText() from RemoteBuffer interface
 </ul>
 
 <h2>Bug Fixes</h2>

@@ -163,9 +163,6 @@ implements SyntaxDocument
 				getDefaultRootElement());
 			if(ch == null)
 				return;
-			Element[] children = ch.getChildrenRemoved();
-			if(children == null)
-				return;
 			tokenMarker.deleteLines(ch.getIndex() + 1,
 				ch.getChildrenRemoved().length -
 				ch.getChildrenAdded().length);
@@ -180,6 +177,9 @@ implements SyntaxDocument
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.7  1999/06/22 06:14:39  sp
+ * RMI updates, text area updates, flag to disable geometry saving
+ *
  * Revision 1.6  1999/06/07 06:36:32  sp
  * Syntax `styling' (bold/italic tokens) added,
  * plugin options dialog for plugin option panes

@@ -499,6 +499,7 @@ options.general.backupPrefix=Backup filename prefix:\
 options.general.backupSuffix=Backup filename suffix:\ 
 options.general.lineSeparator=Default line separator:\ 
 options.general.saveDesktop=Save session on exit
+options.general.saveGeometry=Save window and dialog positions
 options.general.showTips=Show hints in status bar
 options.general.showToolbar=Show toolbar
 options.general.showFullPath=Show full path of buffers in title bar

@@ -28,22 +28,14 @@
 <td>1.7pre5</td>
 <td>To do:
 <ul>
-<li>Rewrite token markers to use PerlTokenMarker-like structure<p>
-<b>PARTLY DONE: need to do C, HTML, TeX</b><br>
-<b>Mike D should do TSQL</b>
-<li>New text component
+<li>New text component. To reach next stage:
 <ul>
-<li>Stage 1 - read only, scrolling - <b>NEARLY DONE, need to fix bg color</b>
-<li>Stage 2 - read only, model listens for document events, repaints
-correct line range
-<li>Stage 3 - read only, various optimizations - only repaint changed
-lines, JScrollPane-like blit optimization
-<li>Stage 4 - read/write, caret position maintained, model to view/vice versa
-translation, keyTyped events passed to the document
-<li>Stage 5 - read/write, input handler implemented, caret bias implemented,
-etc
-<li>Stage 6 - input handler, actions implemented
-<li>Stage 7 - integrated into jEdit, actions changed to support this
+<li>In offscreenRepaintLine(): clearRect() is clearing the wrong rectangle
+<li>model/view translation: doesn't translate partial lines
+<li>model/view translation: everything is translated += fm.getLeading?
+<li>TextAreaModel: handle case when line is changed with no removal or
+deletion
+<li><b>Then add horizontal scrolling and translation</b>
 </ul>
 </ul>
 </td>
@@ -53,10 +45,17 @@ etc
 <td>1.7pre6</td>
 <td>To do:
 <ul>
+<li>RMI and startup process is not thread-safe. Instead of creating lots of
+inner classes and passing to invokeLater(), code a
+MiscUtilities.invokeLater(Class clazz, String method, Object object,
+Object[] args) method.
 <li>Faster literal search
 <li>MacOS clipboard workaround (Patrick is coding this)
 <li>Multi-file find next is severely broken
 <li>Finish Perl mode (brackets in matches, multiline matches)
+<li>Rewrite token markers to use PerlTokenMarker-like structure<p>
+<b>PARTLY DONE: need to do C, HTML, TeX</b><br>
+<b>Mike D should do TSQL</b>
 </ul>
 </td>
 </tr>
@@ -73,9 +72,10 @@ also support loading menus for stuff other than views)
 <li>Macro language
 <li>XMode integration
 <li>XML indent
-<li>Thread safe API
 <li>Piece content
-<li>Drop support for Swing &lt; 1.1.1 (removeAll() hack, maybe others)
+<li>Drop support for Swing &lt; 1.1 (removeAll() hack, maybe others)
+<li>Eventually, drop support for JDK 1.1 and add drag and drop, remove
+deprecates, change RMI to CORBA, add im/bidi support, etc
 </ul>
 
 </body>

@@ -111,6 +111,13 @@ public class GeneralOptionPane extends OptionPane
 			"saveDesktop")));
 		addComponent(saveDesktop);
 
+		/* Save window geometry */
+		saveGeometry = new JCheckBox(jEdit.getProperty(
+			"options.general.saveGeometry"));
+		saveGeometry.getModel().setSelected("on".equals(jEdit.getProperty(
+			"saveGeometry")));
+		addComponent(saveGeometry);
+
 		/* Show hints in status bar */
 		showTips = new JCheckBox(jEdit.getProperty(
 			"options.general.showTips"));
@@ -146,6 +153,8 @@ public class GeneralOptionPane extends OptionPane
 			lf = WINDOWS;
 		jEdit.setProperty("lf",lf);
 		jEdit.setProperty("saveDesktop",saveDesktop.getModel()
+			.isSelected() ? "on" : "off");
+		jEdit.setProperty("saveGeometry",saveGeometry.getModel()
 			.isSelected() ? "on" : "off");
 		jEdit.setProperty("autosave",autosave.getText());
 		jEdit.setProperty("recent",recent.getText());
@@ -187,6 +196,7 @@ public class GeneralOptionPane extends OptionPane
 	private JTextField backupSuffix;
 	private JComboBox lineSeparator;
 	private JCheckBox saveDesktop;
+	private JCheckBox saveGeometry;
 	private JCheckBox showTips;
 	private JCheckBox showToolbar;
 	private JCheckBox showFullPath;
