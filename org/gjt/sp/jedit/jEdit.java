@@ -1469,6 +1469,7 @@ public class jEdit
 		ServerClientHandler(Socket client, long authInfo)
 		{
 			this.client = client;
+			this.authInfo = authInfo;
 		}
 
 		public void run()
@@ -1573,6 +1574,9 @@ public class jEdit
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.47  1999/03/14 02:22:13  sp
+ * Syntax colorizing tweaks, server bug fix
+ *
  * Revision 1.46  1999/03/14 00:08:07  sp
  * Build number updated
  *

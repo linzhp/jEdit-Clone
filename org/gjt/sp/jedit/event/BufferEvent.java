@@ -22,9 +22,7 @@ package org.gjt.sp.jedit.event;
 import org.gjt.sp.jedit.*;
 
 /**
- * The event fired when a buffer's state changes. Note that changes to
- * the dirty flag are fired as <code>EditorEvent</code>s, because they
- * require global graphical buffer lists to be rebuilt.
+ * The event fired when a buffer's state changes.
  *
  * @author Slava Pestov
  * @version $Id$
@@ -38,26 +36,34 @@ public class BufferEvent extends AbstractEditorEvent
 
 	/**
 	 * The return value of the <code>getID()</code> function when
+	 * a buffer's dirty status has been changed. This event is fired
+	 * when the buffer is saved, and the first time it is changed
+	 * after a save.
+	 */
+	public static final int DIRTY_CHANGED = BUFFER_FIRST;
+
+	/**
+	 * The return value of the <code>getID()</code> function when
 	 * a marker has been added or removed to the buffer.
 	 */
-	public static final int MARKERS_CHANGED = BUFFER_FIRST;
+	public static final int MARKERS_CHANGED = BUFFER_FIRST + 1;
 
 	/**
 	 * The return value of the <code>getID()</code> function when
 	 * a buffer's line separator has changed.
 	 */
-	public static final int LINESEP_CHANGED = BUFFER_FIRST + 1;
+	public static final int LINESEP_CHANGED = BUFFER_FIRST + 2;
 
 	/**
 	 * The return value of the <code>getID()</code> function when
 	 * a buffer's edit mode has changed.
 	 */
-	public static final int MODE_CHANGED = BUFFER_FIRST + 2;
+	public static final int MODE_CHANGED = BUFFER_FIRST + 3;
 
 	/**
 	 * The last event id that denotes a buffer event.
 	 */
-	public static final int BUFFER_LAST = BUFFER_FIRST + 2;
+	public static final int BUFFER_LAST = BUFFER_FIRST + 4;
 
 	/**
 	 * Creates a new buffer event.
@@ -98,6 +104,9 @@ public class BufferEvent extends AbstractEditorEvent
 
 		switch(id)
 		{
+		case DIRTY_CHANGED:
+			l.bufferDirtyChanged(this);
+			break;
 		case MARKERS_CHANGED:
 			l.bufferMarkersChanged(this);
 			break;
@@ -129,6 +138,9 @@ public class BufferEvent extends AbstractEditorEvent
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.3  1999/03/14 02:22:13  sp
+ * Syntax colorizing tweaks, server bug fix
+ *
  * Revision 1.2  1999/03/12 23:51:00  sp
  * Console updates, uncomment removed cos it's too buggy, cvs log tags added
  *

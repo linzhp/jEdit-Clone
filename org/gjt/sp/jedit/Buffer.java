@@ -336,8 +336,10 @@ public class Buffer extends PlainDocument implements SyntaxDocument
 			saveMarkers();
 			adirty = dirty = newFile = readOnly = false;
 			autosaveFile.delete();
-			jEdit.fireEditorEvent(new EditorEvent(EditorEvent
-				.BUFFER_DIRTY_CHANGED,view,this));
+
+			fireBufferEvent(new BufferEvent(BufferEvent
+				.DIRTY_CHANGED,this));
+
 			if(mode == null)
 				setMode();
 			modTime = file.lastModified();
@@ -569,8 +571,8 @@ public class Buffer extends PlainDocument implements SyntaxDocument
 		if(!((dirty && adirty) || readOnly))
 		{
 			adirty = dirty = !init;
-			jEdit.fireEditorEvent(new EditorEvent(EditorEvent
-				.BUFFER_DIRTY_CHANGED,null,this));
+			fireBufferEvent(new BufferEvent(BufferEvent
+				.DIRTY_CHANGED,this));
 		}
 	}
 
@@ -761,8 +763,7 @@ public class Buffer extends PlainDocument implements SyntaxDocument
 		}
 		markers.addElement(markerN);
 		fireBufferEvent(new BufferEvent(BufferEvent.MARKERS_CHANGED,this));
-		jEdit.fireEditorEvent(new EditorEvent(EditorEvent
-			.BUFFER_DIRTY_CHANGED,null,this));
+		fireBufferEvent(new BufferEvent(BufferEvent.DIRTY_CHANGED,this));
 	}
 
 	/**
@@ -781,8 +782,7 @@ loop:		for(int i = 0; i < markers.size(); i++)
 				markers.removeElementAt(i);
 		}
 		fireBufferEvent(new BufferEvent(BufferEvent.MARKERS_CHANGED,this));
-		jEdit.fireEditorEvent(new EditorEvent(EditorEvent
-			.BUFFER_DIRTY_CHANGED,null,this));
+		fireBufferEvent(new BufferEvent(BufferEvent.DIRTY_CHANGED,this));
 	}
 	
 	/**
@@ -1529,7 +1529,8 @@ loop:		for(int i = 0; i < markers.size(); i++)
 			Element[] children = ch.getChildrenAdded();
 			if(children == null)
 				return;
-			tokenMarker.insertLines(ch.getIndex(),children.length);
+			tokenMarker.insertLines(ch.getIndex() + 1,
+				children.length - 1);
 		}
 	
 		public void removeUpdate(DocumentEvent evt)
@@ -1544,7 +1545,8 @@ loop:		for(int i = 0; i < markers.size(); i++)
 			Element[] children = ch.getChildrenRemoved();
 			if(children == null)
 				return;
-			tokenMarker.deleteLines(ch.getIndex(),children.length);
+			tokenMarker.deleteLines(ch.getIndex() + 1,
+				children.length - 1);
 		}
 	
 		public void changedUpdate(DocumentEvent evt)
@@ -1557,6 +1559,9 @@ loop:		for(int i = 0; i < markers.size(); i++)
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.59  1999/03/14 02:22:13  sp
+ * Syntax colorizing tweaks, server bug fix
+ *
  * Revision 1.58  1999/03/13 08:50:39  sp
  * Syntax colorizing updates and cleanups, general code reorganizations
  *

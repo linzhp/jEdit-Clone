@@ -24,12 +24,17 @@ import java.util.*;
 /**
  * A token marker that splits lines of text into tokens. Each token carries
  * a length field and an indentification tag that can be mapped to a color
- * for painting that token.
- * <p>
+ * for painting that token.<p>
+ *
  * For performance reasons, the linked list of tokens is reused after each
  * line is tokenized. Therefore, the return value of <code>markTokens</code>
  * should only be used for immediate painting. Notably, it cannot be
- * cached.
+ * cached.<p>
+ *
+ * <b>Note:</b> when using the token marker in your own code, you
+ * <b>must</b> call <code>insertLines()</code> with the total number
+ * of lines in the document to be tokenized, otherwise various problems
+ * will occur. This should only be done once per document.
  *
  * @author Slava Pestov
  * @version $Id$
@@ -38,17 +43,6 @@ import java.util.*;
  */
 public abstract class TokenMarker
 {
-	/**
-	 * Clears the token marker's state. This should be called before
-	 * a new document is to be tokenized.
-	 */
-	public void init()
-	{
-		lineInfo = new String[1000];
-		length = 0;
-		lastToken = null;
-	}
-
 	/**
 	 * An abstract method that is called to split a line up into
 	 * tokens.
@@ -67,17 +61,18 @@ public abstract class TokenMarker
 	 * Informs the token marker that lines have been inserted into
 	 * the document. This inserts a gap in the <code>lineInfo</code>
 	 * array.
-	 * @param lineIndex The line number
+	 * @param index The first line number
 	 * @param lines The number of lines 
 	 */
-	public void insertLines(int lineIndex, int lines)
+	public void insertLines(int index, int lines)
 	{
-		if(--lines <= 0) // Lines seems to be +=1...
+		System.out.println(lines + " lines inserted at " + index);
+		if(lines <= 0)
 			return;
-		int len = lineIndex + lines;
+		int len = index + lines;
 		length += lines;
 		ensureCapacity(len);
-		System.arraycopy(lineInfo,lineIndex,lineInfo,len,
+		System.arraycopy(lineInfo,index,lineInfo,len,
 			lineInfo.length - len);
 	}
 	
@@ -85,17 +80,19 @@ public abstract class TokenMarker
 	 * Informs the token marker that line have been deleted from
 	 * the document. This removes the lines in question from the
 	 * <code>lineInfo</code> array.
-	 * @param lineIndex The line number
+	 * @param index The first line number
 	 * @param lines The number of lines
 	 */
-	public void deleteLines(int lineIndex, int lines)
+	public void deleteLines(int index, int lines)
 	{
-		if (--lines <= 0) // Lines seems to be +=1...
+		System.out.println(lines + " lines deleted at " +
+			index);
+		if (lines <= 0)
 			return;
-		int len = lineIndex + lines;
+		int len = index + lines;
 		length -= lines;
 		System.arraycopy(lineInfo,len,lineInfo,
-			lineIndex,lineInfo.length - len);
+			index,lineInfo.length - len);
 	}
 
 	// protected members
@@ -125,12 +122,12 @@ public abstract class TokenMarker
 	protected int length;
 
 	/**
-	 * Creates a new <code>TokenMarker</code>. This calls the
-	 * <code>init()</code> method.
+	 * Creates a new <code>TokenMarker</code>. This creates the
+	 * initial <code>lineInfo</code> array.
 	 */
-	public TokenMarker()
+	protected TokenMarker()
 	{
-		init();
+		lineInfo = new String[0];
 	}
 
 	/**
@@ -192,6 +189,9 @@ public abstract class TokenMarker
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.10  1999/03/14 02:22:13  sp
+ * Syntax colorizing tweaks, server bug fix
+ *
  * Revision 1.9  1999/03/13 09:11:46  sp
  * Syntax code updates, code cleanups
  *

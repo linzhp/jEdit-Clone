@@ -359,7 +359,6 @@ public class View extends JFrame
 		if(oldBuffer != null)
 		{
 			saveCaretInfo();
-			oldBuffer.removeBufferListener(bufferListener);
 			Mode mode = oldBuffer.getMode();
 			if(mode != null)
 				mode.leaveView(this);
@@ -371,7 +370,6 @@ public class View extends JFrame
 		updateModeMenu();
 		updateTitle();
 		updateLineNumber(true);
-		buffer.addBufferListener(bufferListener);
 
 		Mode mode = buffer.getMode();
 		if(mode != null)
@@ -600,6 +598,10 @@ public class View extends JFrame
 
 		bufferListener = new ViewBufferListener();
 
+		Buffer[] bufferArray = jEdit.getBuffers();
+		for(int i = 0; i < bufferArray.length; i++)
+			bufferArray[i].addBufferListener(bufferListener);
+
 		jEdit.addEditorListener(editorListener = new ViewEditorListener());
 		textArea.addKeyListener(new ViewKeyListener());
 		textArea.addCaretListener(new ViewCaretListener());
@@ -642,7 +644,10 @@ public class View extends JFrame
 		console.getCommandField().save();
 		console.stop();
 
-		buffer.removeBufferListener(bufferListener);
+		Buffer[] bufferArray = jEdit.getBuffers();
+		for(int i = 0; i < bufferArray.length; i++)
+			bufferArray[i].removeBufferListener(bufferListener);
+
 		jEdit.removeEditorListener(editorListener);
 	}
 
@@ -748,20 +753,32 @@ public class View extends JFrame
 	// event listeners
 	private class ViewBufferListener implements BufferListener
 	{
+		public void bufferDirtyChanged(BufferEvent evt)
+		{
+			if(evt.getBuffer() == buffer)
+				updateTitle();
+			updateBuffersMenu();
+		}
+
 		public void bufferMarkersChanged(BufferEvent evt)
 		{
-			updateMarkerMenus();
+			if(evt.getBuffer() == buffer)
+				updateMarkerMenus();
 		}
 	
 		public void bufferLineSepChanged(BufferEvent evt)
 		{
-			updateLineSepMenu();
+			if(evt.getBuffer() == buffer)
+				updateLineSepMenu();
 		}
 	
 		public void bufferModeChanged(BufferEvent evt)
 		{
-			updateModeMenu();
-			textArea.repaint();
+			if(evt.getBuffer() == buffer)
+			{
+				updateModeMenu();
+				textArea.repaint();
+			}
 		}
 	}
 
@@ -770,6 +787,8 @@ public class View extends JFrame
 		public void bufferCreated(EditorEvent evt)
 		{
 			updateBuffersMenu();
+
+			evt.getBuffer().addBufferListener(bufferListener);
 		}
 	
 		public void bufferClosed(EditorEvent evt)
@@ -782,12 +801,8 @@ public class View extends JFrame
 				setBuffer(bufferArray[0]);
 	
 			updateBuffersMenu();
-		}
-	
-		public void bufferDirtyChanged(EditorEvent evt)
-		{
-			updateTitle();
-			updateBuffersMenu();
+
+			evt.getBuffer().removeBufferListener(bufferListener);
 		}
 	
 		public void propertiesChanged(EditorEvent evt)
@@ -880,6 +895,9 @@ public class View extends JFrame
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.45  1999/03/14 02:22:13  sp
+ * Syntax colorizing tweaks, server bug fix
+ *
  * Revision 1.44  1999/03/12 23:51:00  sp
  * Console updates, uncomment removed cos it's too buggy, cvs log tags added
  *

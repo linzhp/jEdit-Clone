@@ -32,6 +32,15 @@ import org.gjt.sp.jedit.*;
 public abstract class BufferAdapter extends AbstractEditorAdapter
 implements BufferListener
 {
+	
+
+	/**
+	 * Method invoked when a buffer's dirty flag changes.
+	 * This is invoked when a buffer is saved, or changed
+	 * for the first time since the last save.
+	 */
+	public void bufferDirtyChanged(BufferEvent evt) {}
+
 	/**
 	 * Method invoked when a marker has been added or removed.
 	 */
@@ -51,6 +60,9 @@ implements BufferListener
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.3  1999/03/14 02:22:13  sp
+ * Syntax colorizing tweaks, server bug fix
+ *
  * Revision 1.2  1999/03/12 23:51:00  sp
  * Console updates, uncomment removed cos it's too buggy, cvs log tags added
  *

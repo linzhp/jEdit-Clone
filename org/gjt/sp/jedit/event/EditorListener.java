@@ -50,13 +50,6 @@ public interface EditorListener extends AbstractEditorListener
 	public void viewClosed(EditorEvent evt);
 
 	/**
-	 * Method invoked when a buffer's dirty flag changes.
-	 * This is invoked when a buffer is saved, or changed
-	 * for the first time since the last save.
-	 */
-	public void bufferDirtyChanged(EditorEvent evt);
-
-	/**
 	 * Method invoked when the value of properties that
 	 * might require settings to be reloaded are changed.
 	 * This is invoked by the Options dialog box.
@@ -67,6 +60,9 @@ public interface EditorListener extends AbstractEditorListener
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.4  1999/03/14 02:22:13  sp
+ * Syntax colorizing tweaks, server bug fix
+ *
  * Revision 1.3  1999/03/12 23:51:00  sp
  * Console updates, uncomment removed cos it's too buggy, cvs log tags added
  *
