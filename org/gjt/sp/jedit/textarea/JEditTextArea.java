@@ -254,7 +254,7 @@ public class JEditTextArea extends Container
 
 		boolean returnValue = false;
 
-		if(line - electricScroll < firstLine)
+		if(line > electricScroll && line - electricScroll < firstLine)
 		{
 			setFirstLine(Math.max(0,line - electricScroll));
 			returnValue = true;
@@ -272,16 +272,17 @@ public class JEditTextArea extends Container
 		}
 
 		int x = model.offsetToX(line,offset);
+		int width = painter.getFontMetrics().charWidth('w');
 
-		if(x < horizontalOffset)
+		if(x < 0)
 		{
-			setHorizontalOffset(x);
+			setHorizontalOffset(-(x + horizontalOffset));
 			returnValue = true;
 		}
-		else if(x > horizontalOffset + painter.getSize().width)
+		else if(x + width > painter.getSize().width)
 		{
-			setHorizontalOffset(painter.getFontMetrics().charWidth('w')
-				- (x - painter.getSize().width));
+			setHorizontalOffset((painter.getSize().width - x)
+				+ horizontalOffset);
 			returnValue = true;
 		}
 
@@ -427,10 +428,9 @@ public class JEditTextArea extends Container
 			int lineHeight = model.getLineHeight();
 			if(height % lineHeight != 0)
 				height += lineHeight;
-			int newVisibleLines = height / lineHeight;
-			painter.invalidateLineRange(firstLine + visibleLines,
-				firstLine + newVisibleLines);
-			visibleLines = newVisibleLines;
+			int oldVisibleLines = visibleLines;
+			visibleLines = height / lineHeight;
+			painter.invalidateOffscreen();
 			updateScrollBars();
 		}
 	}
@@ -480,20 +480,8 @@ public class JEditTextArea extends Container
 	{
 		public void mouseDragged(MouseEvent evt)
 		{
-			int offset = model.xyToOffset(evt.getX(),evt.getY());
-
-			int mark = model.getMarkPosition();
-
-			if(offset < mark)
-			{
-				model.select(offset,mark);
-				model.setLeftBias(true);
-			}
-			else
-			{
-				model.select(mark,offset);
-				model.setLeftBias(false);
-			}
+			model.select(model.getMarkPosition(),
+				model.xyToOffset(evt.getX(),evt.getY()));
 		}
 	}
 
@@ -507,6 +495,9 @@ public class JEditTextArea extends Container
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.8  1999/06/30 05:01:55  sp
+ * Lots of text area bug fixes and optimizations
+ *
  * Revision 1.7  1999/06/29 09:01:24  sp
  * Text area now does bracket matching, eol markers, also xToOffset() and
  * offsetToX() now work better

@@ -42,6 +42,7 @@ public class TextAreaModel
 		documentHandler = new DocumentHandler();
 		setDocument(document);
 
+		editable = true;
 		bracketLine = bracketPosition = -1;
 	}
 
@@ -77,9 +78,7 @@ public class TextAreaModel
 		Segment lineSegment = painter.currentLine;
 
 		if(painter.currentLineIndex != line)
-		{
 			getLineText(line,lineSegment);
-		}
 
 		/* Because this is called in the middle of paintLine(),
 		 * we need to save the segment's state.
@@ -87,22 +86,21 @@ public class TextAreaModel
 		int segmentOffset = lineSegment.offset;
 		int segmentCount = lineSegment.count;
 
+		int x = textArea.getHorizontalOffset();
+
 		/* If syntax coloring is disabled, do simple translation */
 		if(tokenMarker == null)
 		{
 			lineSegment.count = offset;
-			returnValue = Utilities.getTabbedTextWidth(lineSegment,
-				fm,0,painter,0);
+			returnValue = x + Utilities.getTabbedTextWidth(lineSegment,
+				fm,x,painter,0);
 		}
 		/* If syntax coloring is enabled, we have to do this because
 		 * tokens can vary in width */
 		else
 		{
-			// XXX: token list is computed twice for lines
-			// that are highlighted
 			Token tokens = tokenMarker.markTokens(lineSegment,line);
 
-			int x = 0;
 			Toolkit toolkit = painter.getToolkit();
 			Font defaultFont = painter.getFont();
 			SyntaxStyle[] styles = painter.getStyles();
@@ -147,13 +145,11 @@ public class TextAreaModel
 		lineSegment.offset = segmentOffset;
 		lineSegment.count = segmentCount;
 
-		return returnValue + textArea.getHorizontalOffset();
+		return returnValue;
 	}
 
 	public int xToOffset(int line, int x)
 	{
-		x -= textArea.getHorizontalOffset();
-
 		TokenMarker tokenMarker = getTokenMarker();
 
 		/* Use painter's cached info for speed */
@@ -162,18 +158,16 @@ public class TextAreaModel
 		Segment lineSegment = painter.currentLine;
 			
 		if(painter.currentLineIndex != line)
-		{
 			getLineText(line,lineSegment);
-			painter.currentLineIndex = line;
-		}
 
 		char[] segmentArray = lineSegment.array;
 		int segmentOffset = lineSegment.offset;
 		int segmentCount = lineSegment.count;
 
+		int width = textArea.getHorizontalOffset();
+
 		if(tokenMarker == null)
 		{
-			int width = 0;
 			for(int i = 0; i < segmentCount; i++)
 			{
 				char c = segmentArray[i + segmentOffset];
@@ -202,17 +196,12 @@ public class TextAreaModel
 		}
 		else
 		{
-			// XXX: token list is computed twice for lines
-			// that are highlighted
-			Token tokens = tokenMarker.markTokens(
-				lineSegment,line);
+			Token tokens = tokenMarker.markTokens(lineSegment,line);
 
 			int offset = 0;
 			Toolkit toolkit = painter.getToolkit();
 			Font defaultFont = painter.getFont();
 			SyntaxStyle[] styles = painter.getStyles();
-
-			int width = 0;
 
 			for(;;)
 			{
@@ -370,7 +359,7 @@ public class TextAreaModel
 
 	public void setSelectionStart(int selectionStart)
 	{
-		select(selectionStart,selectionEnd);
+		select(selectionStart,getSelectionEnd());
 	}
 
 	public int getSelectionEnd()
@@ -385,7 +374,32 @@ public class TextAreaModel
 
 	public void setSelectionEnd(int selectionEnd)
 	{
-		select(selectionStart,selectionEnd);
+		select(getSelectionStart(),selectionEnd);
+	}
+
+	public int getCaretPosition()
+	{
+		return (biasLeft ? selectionStart : selectionEnd);
+	}
+
+	public int getCaretLine()
+	{
+		return (biasLeft ? selectionStartLine : selectionEndLine);
+	}
+
+	public int getMarkPosition()
+	{
+		return (biasLeft ? selectionEnd : selectionStart);
+	}
+
+	public int getMarkLine()
+	{
+		return (biasLeft ? selectionEndLine : selectionStartLine);
+	}
+
+	public void setCaretPosition(int caret)
+	{
+		select(caret,caret);
 	}
 
 	public void select(int start, int end)
@@ -435,47 +449,49 @@ public class TextAreaModel
 		selectionEndLine = newEndLine;
 		biasLeft = newBias;
 
-		int line = (newBias ? newStartLine : newEndLine);
+		int line = getCaretLine();
 		int lineStart = getLineStartOffset(line);
-		if(!textArea.scrollTo(line,end - lineStart))
+		if(!textArea.scrollTo(line,getCaretPosition() - lineStart))
 			textArea.getPainter().repaint();
 	}
 
-	public int getCaretPosition()
+	public String getSelectedText()
 	{
-		return (biasLeft ? selectionStart : selectionEnd);
+		return getText(selectionStart,selectionEnd);
 	}
 
-	public int getCaretLine()
+	public void setSelectedText(String selectedText)
 	{
-		return (biasLeft ? selectionStartLine : selectionEndLine);
+		if(!editable)
+		{
+			throw new InternalError("Text component"
+				+ " read only");
+		}
+
+		try
+		{
+			document.remove(selectionStart,selectionEnd);
+			document.insertString(selectionStart,
+				selectedText,null);
+		}
+		catch(BadLocationException bl)
+		{
+			bl.printStackTrace();
+			throw new InternalError("Cannot replace"
+				+ " selection");
+		}
 	}
 
-	public int getMarkPosition()
+	public boolean isEditable()
 	{
-		return (biasLeft ? selectionEnd : selectionStart);
+		return editable;
 	}
 
-	public int getMarkLine()
+	public void setEditable(boolean editable)
 	{
-		return (biasLeft ? selectionEndLine : selectionStartLine);
+		this.editable = editable;
 	}
-
-	public void setCaretPosition(int caret)
-	{
-		select(caret,caret);
-	}
-
-	public boolean getLeftBias()
-	{
-		return biasLeft;
-	}
-
-	public void setLeftBias(boolean biasLeft)
-	{
-		this.biasLeft = biasLeft;
-	}
-
+	
 	public int getBracketPosition()
 	{
 		return bracketPosition;
@@ -506,9 +522,10 @@ public class TextAreaModel
 	protected int bracketLine;
 	protected char bracket;
 
+	protected boolean editable;
+
 	protected void updateBracketHighlight(int newCaretPosition)
 	{
-		Document doc = getDocument();
 		try
 		{
 			if(newCaretPosition != 0)
@@ -522,32 +539,32 @@ public class TextAreaModel
 				{
 				case '(':
 					match = TextUtilities.locateBracketForward(
-						doc,newCaretPosition,'(',')');
+						document,newCaretPosition,'(',')');
 					bracket = ')';
 					break;
 				case ')':
 					match = TextUtilities.locateBracketBackward(
-						doc,newCaretPosition,'(',')');
+						document,newCaretPosition,'(',')');
 					bracket = '(';
 					break;
 				case '[':
 					match = TextUtilities.locateBracketForward(
-						doc,newCaretPosition,'[',']');
+						document,newCaretPosition,'[',']');
 					bracket = ']';
 					break;
 				case ']':
 					match = TextUtilities.locateBracketBackward(
-						doc,newCaretPosition,'[',']');
+						document,newCaretPosition,'[',']');
 					bracket = '[';
 					break;
 				case '{':
 					match = TextUtilities.locateBracketForward(
-						doc,newCaretPosition,'{','}');
+						document,newCaretPosition,'{','}');
 					bracket = '}';
 					break;
 				case '}':
 					match = TextUtilities.locateBracketBackward(
-						doc,newCaretPosition,'{','}');
+						document,newCaretPosition,'{','}');
 					bracket = '{';
 					break;
 				default:
@@ -565,7 +582,9 @@ public class TextAreaModel
 		}
 		catch(BadLocationException bl)
 		{
-			//bl.printStackTrace();
+			bl.printStackTrace();
+			throw new InternalError("Error with"
+				+ " bracket matching");
 		}
 
 		bracketLine = bracketPosition = -1;
@@ -655,6 +674,9 @@ public class TextAreaModel
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.8  1999/06/30 05:01:55  sp
+ * Lots of text area bug fixes and optimizations
+ *
  * Revision 1.7  1999/06/29 09:01:24  sp
  * Text area now does bracket matching, eol markers, also xToOffset() and
  * offsetToX() now work better

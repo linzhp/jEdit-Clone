@@ -230,9 +230,10 @@ public class TextAreaPainter extends Component implements TabExpander
 		 * for the current line, we must invalidate that info
 		 * if the current line changes.
 		 */
-		if(currentLineIndex >= firstInvalid &&
+		// This doesn't seem to be necessary, and it causes problems
+		/*if(currentLineIndex >= firstInvalid &&
 			currentLineIndex <= lastInvalid)
-			currentLineIndex = -1;
+			currentLineIndex = -1;*/
 	}
 
 	public void invalidateLineRange(int firstLine, int lastLine)
@@ -264,8 +265,8 @@ public class TextAreaPainter extends Component implements TabExpander
 
 		if(oldFirstLine < newFirstLine)
 		{
-			invalidateLineRange(oldFirstLine + visibleLines,
-				newFirstLine + visibleLines);
+			invalidateLineRange(oldFirstLine + visibleLines - 1,
+				newFirstLine + visibleLines + 1);
 		}
 		else
 		{
@@ -283,6 +284,12 @@ public class TextAreaPainter extends Component implements TabExpander
 		int lastLine = textArea.getModel().yToLine(bounds.height);
 
 		offscreenRepaintLineRange(firstLine,lastLine);
+	}
+
+	public void invalidateOffscreen()
+	{
+		offImg = null;
+		offGfx = null;
 	}
 
 	public float nextTabStop(float x, int tabOffset)
@@ -337,11 +344,9 @@ public class TextAreaPainter extends Component implements TabExpander
 
 	protected boolean ensureOffscreenValid()
 	{
-		Dimension dim = getSize();
-		if(offImg == null || offGfx == null
-			|| offImg.getWidth(null) != dim.width
-			|| offImg.getHeight(null) != dim.height)
+		if(offImg == null || offGfx == null)
 		{
+			Dimension dim = getSize();
 			offImg = textArea.createImage(dim.width,dim.height);
 			offGfx = offImg.getGraphics();
 			offscreenRepaint();
@@ -367,54 +372,41 @@ public class TextAreaPainter extends Component implements TabExpander
 		int y = model.lineToY(firstLine);
 
 		currentLineIndex = firstLine;
-		while(currentLineIndex <= lastLine)
+		for(;;)
 		{
-			currentLineIndex += paintLine(model,offGfx,x,y);
+			paintLine(model,offGfx,x,y);
 			y += model.getLineHeight();
+			if(currentLineIndex == lastLine)
+				break;
+			else
+				currentLineIndex++;
 		}
 
 		return currentLineIndex - firstLine;
 	}
 
-	protected int paintLine(TextAreaModel model, Graphics gfx,
-		int x, int y)
+	protected int paintLine(TextAreaModel model, Graphics gfx, int x, int y)
 	{
 		TokenMarker tokenMarker = model.getTokenMarker();
 		Font defaultFont = getFont();
 		Color defaultColor = getForeground();
-
-		/* Clear the line's bounding rectangle */
-		FontMetrics fm = getFontMetrics();
-		int gap = fm.getMaxDescent() + fm.getLeading();
-		gfx.setColor(getBackground());
-		gfx.fillRect(0,y + gap,offImg.getWidth(this),fm.getHeight());
 				
 		gfx.setFont(defaultFont);
 
 		if(currentLineIndex < 0 || currentLineIndex >= model.getLineCount())
 		{
+			paintHighlight(model,gfx,y += model.getLineHeight());
 			gfx.setColor(defaultColor);
-			gfx.drawString("~",0,y + model.getLineHeight());
+			gfx.drawString("~",0,y);
 			return 1;
 		}
 
 		// Get the text
 		model.getLineText(currentLineIndex,currentLine);
 
-		// draw the highlights
-		if(currentLineIndex >= model.getSelectionStartLine()
-			&& currentLineIndex <= model.getSelectionEndLine())
-			paintLineHighlight(model,gfx,y);
-
-		if(bracketHighlight && currentLineIndex == model.getBracketLine())
-			paintBracketHighlight(model,gfx,y);
-
-		gfx.setColor(defaultColor);
-
 		if(tokenMarker == null)
 		{
-			paintPlainLine(model,gfx,defaultFont,defaultColor,
-				x,y + model.getLineHeight());
+			paintPlainLine(model,gfx,defaultFont,defaultColor,x,y);
 			return 1;
 		}
 		else
@@ -424,16 +416,20 @@ public class TextAreaPainter extends Component implements TabExpander
 				+ textArea.getVisibleLines();
 			do
 			{
-				model.getLineText(currentLineIndex,currentLine);
+				if(count != 0)
+				{
+					currentLineIndex++;
+					model.getLineText(currentLineIndex,currentLine);
+				}
+
 				currentLineTokens = tokenMarker.markTokens(
-					currentLine,currentLineIndex);
-				currentLineIndex++;
+						currentLine,currentLineIndex);
 
 				if(currentLineIndex <= lastVisibleLine)
 				{
-					y += model.getLineHeight();
 					paintSyntaxLine(model,gfx,defaultFont,
 						defaultColor,x,y);
+					y += model.getLineHeight();
 				}
 
 				count++;
@@ -446,7 +442,13 @@ public class TextAreaPainter extends Component implements TabExpander
 	protected void paintPlainLine(TextAreaModel model, Graphics gfx,
 		Font defaultFont, Color defaultColor, int x, int y)
 	{
+		paintHighlight(model,gfx,y);
+
+		gfx.setColor(defaultColor);
+
+		y += model.getLineHeight();
 		x = Utilities.drawTabbedText(currentLine,x,y,gfx,this,0);
+
 		if(eolMarkers)
 		{
 			gfx.setColor(eolMarkerColor);
@@ -457,14 +459,19 @@ public class TextAreaPainter extends Component implements TabExpander
 	protected void paintSyntaxLine(TextAreaModel model, Graphics gfx,
 		Font defaultFont, Color defaultColor, int x, int y)
 	{
+		paintHighlight(model,gfx,y);
+
+		y += model.getLineHeight();
+
 		int offset = 0;
+		Token tokens = currentLineTokens;
 		for(;;)
 		{
-			byte id = currentLineTokens.id;
+			byte id = tokens.id;
 			if(id == Token.END)
 				break;
 
-			int length = currentLineTokens.length;
+			int length = tokens.length;
 			if(id == Token.NULL)
 			{
 				if(!defaultColor.equals(gfx.getColor()))
@@ -480,13 +487,29 @@ public class TextAreaPainter extends Component implements TabExpander
 			currentLine.offset += length;
 			offset += length;
 
-			currentLineTokens = currentLineTokens.next;
+			tokens = tokens.next;
 		}
 		if(eolMarkers)
 		{
 			gfx.setColor(eolMarkerColor);
 			gfx.drawString(".",x,y);
 		}
+	}
+
+	protected void paintHighlight(TextAreaModel model, Graphics gfx, int y)
+	{
+		/* Clear the line's bounding rectangle */
+		FontMetrics fm = getFontMetrics();
+		int gap = fm.getMaxDescent() + fm.getLeading();
+		gfx.setColor(getBackground());
+		gfx.fillRect(0,y + gap,offImg.getWidth(this),fm.getHeight());
+
+		if(currentLineIndex >= model.getSelectionStartLine()
+			&& currentLineIndex <= model.getSelectionEndLine())
+			paintLineHighlight(model,gfx,y);
+
+		if(bracketHighlight && currentLineIndex == model.getBracketLine())
+			paintBracketHighlight(model,gfx,y);
 	}
 
 	protected void paintLineHighlight(TextAreaModel model, Graphics gfx, int y)
@@ -573,6 +596,9 @@ public class TextAreaPainter extends Component implements TabExpander
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.8  1999/06/30 05:01:55  sp
+ * Lots of text area bug fixes and optimizations
+ *
  * Revision 1.7  1999/06/29 09:01:24  sp
  * Text area now does bracket matching, eol markers, also xToOffset() and
  * offsetToX() now work better
