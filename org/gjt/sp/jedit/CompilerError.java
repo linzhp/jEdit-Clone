@@ -53,9 +53,9 @@ import org.gjt.sp.jedit.event.*;
  *
  * @see org.gjt.sp.jedit.gui.Console
  * @see org.gjt.sp.jedit.gui.Console#getErrorList()
- * @see org.gjt.sp.jedit.gui.Console#getError()
+ * @see org.gjt.sp.jedit.gui.Console#getError(int)
  * @see org.gjt.sp.jedit.gui.Console#getCurrentError()
- * @see org.gjt.sp.jedit.gui.Console#setCurrentError()
+ * @see org.gjt.sp.jedit.gui.Console#setCurrentError(int)
  * @see org.gjt.sp.jedit.View#getConsole()
  */
 public class CompilerError implements EditorListener
@@ -203,6 +203,9 @@ public class CompilerError implements EditorListener
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.11  1999/05/22 08:33:53  sp
+ * FAQ updates, mode selection tweak, patch mode update, javadoc updates, JDK 1.1.8 fix
+ *
  * Revision 1.10  1999/04/01 04:13:00  sp
  * Bug fixing for 1.5final
  *

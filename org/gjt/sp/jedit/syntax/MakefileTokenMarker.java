@@ -42,20 +42,11 @@ loop:		for(int i = offset; i < length; i++)
 			case '\\':
 				backslash = !backslash;
 				break;
-			case ':': case '=': case ' ':
+			case ':': case '=': case ' ': case '\t':
 				backslash = false;
 				if(token == Token.NULL && lastOffset == offset)
 				{
 					addToken((i+1) - lastOffset,Token.KEYWORD1);
-					lastOffset = i + 1;
-				}
-				break;
-			case '\t':
-				// silly hack
-				backslash = false;
-				if(token == Token.NULL && lastOffset == offset)
-				{
-					addToken((i+1) - lastOffset,Token.NULL);
 					lastOffset = i + 1;
 				}
 				break;
@@ -163,6 +154,9 @@ loop:		for(int i = offset; i < length; i++)
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.14  1999/05/22 08:33:53  sp
+ * FAQ updates, mode selection tweak, patch mode update, javadoc updates, JDK 1.1.8 fix
+ *
  * Revision 1.13  1999/04/22 06:03:26  sp
  * Syntax colorizing change
  *

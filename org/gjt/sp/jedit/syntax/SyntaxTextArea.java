@@ -571,8 +571,7 @@ public class SyntaxTextArea extends JEditorPane
 			int modifiers = evt.getModifiers();
 
 			if(content != null && content.length() != 0
-				&& ((modifiers & ActionEvent.ALT_MASK) == 0)
-				|| ((modifiers & ActionEvent.CTRL_MASK) != 0))
+				&& (modifiers & ActionEvent.ALT_MASK) == 0)
 			{
 				char c = content.charAt(0);
 				if ((c >= 0x20) && (c != 0x7F))
@@ -748,6 +747,9 @@ public class SyntaxTextArea extends JEditorPane
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.27  1999/05/22 08:33:53  sp
+ * FAQ updates, mode selection tweak, patch mode update, javadoc updates, JDK 1.1.8 fix
+ *
  * Revision 1.26  1999/05/15 00:29:19  sp
  * Prev error bug fix, doc updates, tips updates
  *
@@ -777,8 +779,5 @@ public class SyntaxTextArea extends JEditorPane
  *
  * Revision 1.17  1999/04/19 05:38:20  sp
  * Syntax API changes
- *
- * Revision 1.16  1999/04/01 04:13:00  sp
- * Bug fixing for 1.5final
  *
  */

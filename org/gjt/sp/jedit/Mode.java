@@ -73,7 +73,7 @@ import org.gjt.sp.jedit.*;
  * @see org.gjt.sp.jedit.jEdit#getMode(String)
  * @see org.gjt.sp.jedit.jEdit#getModeName(Mode)
  * @see org.gjt.sp.jedit.jEdit#getModes()
- * @see org.gjt.sp.jedit.jEdit#addMode()
+ * @see org.gjt.sp.jedit.jEdit#addMode(Mode)
  * @see org.gjt.sp.jedit.Buffer#setMode()
  * @see org.gjt.sp.jedit.Buffer#setMode(Mode)
  * @see org.gjt.sp.jedit.syntax.TokenMarker
@@ -287,6 +287,9 @@ public abstract class Mode
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.10  1999/05/22 08:33:53  sp
+ * FAQ updates, mode selection tweak, patch mode update, javadoc updates, JDK 1.1.8 fix
+ *
  * Revision 1.9  1999/04/19 05:47:35  sp
  * ladies and gentlemen, 1.6pre1
  *

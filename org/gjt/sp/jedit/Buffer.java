@@ -387,7 +387,10 @@ public class Buffer extends DefaultSyntaxDocument
 
 		load(view);
 		loadMarkers();
-		
+
+		// Maybe incorrect? Anyway people won't notice
+		setMode();
+
 		tokenizeLines();
 
 		// The anchor gets f*cked across reloads, so clear it
@@ -622,6 +625,17 @@ public class Buffer extends DefaultSyntaxDocument
 	 */
 	public void setMode()
 	{
+		String userMode = (String)getProperty("mode");
+		if(userMode != null)
+		{
+			Mode m = jEdit.getMode(userMode);
+			if(m != null)
+			{
+				setMode(m);
+				return;
+			}
+		}
+			
 		String nogzName = name.substring(0,name.length() -
 			(name.endsWith(".gz") ? 3 : 0)).toLowerCase();
 		Mode mode = jEdit.getMode(jEdit.getProperty(
@@ -893,18 +907,7 @@ loop:		for(int i = 0; i < markers.size(); i++)
 			loadMarkers();
 		}
 
-		// XXX
-		String userMode = (String)getProperty("mode");
-		if(userMode != null)
-		{
-			Mode m = jEdit.getMode(userMode);
-			if(m != null)
-				setMode(m);
-			else
-				setMode();
-		}
-		else
-			setMode();
+		setMode();
 
 		addUndoableEditListener(new UndoHandler());
 		jEdit.addEditorListener(new EditorHandler());
@@ -1463,6 +1466,9 @@ loop:		for(int i = 0; i < markers.size(); i++)
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.77  1999/05/22 08:33:53  sp
+ * FAQ updates, mode selection tweak, patch mode update, javadoc updates, JDK 1.1.8 fix
+ *
  * Revision 1.76  1999/04/24 07:34:46  sp
  * Documentation updates
  *

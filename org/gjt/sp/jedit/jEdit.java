@@ -42,7 +42,7 @@ public class jEdit
 	 */
 	public static String getVersion()
 	{
-		return "1.6final";
+		return "1.6.1";
 	}
 
 	/**
@@ -52,7 +52,7 @@ public class jEdit
 	public static String getBuild()
 	{
 		// (major) (minor) (<99 = preX, 99 = final) (bug fix)
-		return "01.06.99.00";
+		return "01.06.99.01";
 	}
 
 	/**
@@ -1526,6 +1526,9 @@ public class jEdit
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.102  1999/05/22 08:33:53  sp
+ * FAQ updates, mode selection tweak, patch mode update, javadoc updates, JDK 1.1.8 fix
+ *
  * Revision 1.101  1999/05/18 07:26:40  sp
  * HelpViewer cursor tweak, minor view bug fix
  *

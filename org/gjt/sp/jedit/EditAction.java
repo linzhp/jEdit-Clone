@@ -59,8 +59,8 @@ import java.util.EventObject;
  * @see jEdit#getProperty(String,String)
  * @see jEdit#getAction(String)
  * @see jEdit#getActions()
- * @see jEdit#addAction(Action)
- * @see GUIUtilities#loadMenubar(View,String)
+ * @see jEdit#addAction(org.gjt.sp.jedit.EditAction)
+ * @see GUIUtilities#loadMenubar(org.gjt.sp.jedit.View,String)
  */
 public abstract class EditAction implements ActionListener 
 {
@@ -132,6 +132,9 @@ public abstract class EditAction implements ActionListener
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.10  1999/05/22 08:33:53  sp
+ * FAQ updates, mode selection tweak, patch mode update, javadoc updates, JDK 1.1.8 fix
+ *
  * Revision 1.9  1999/03/24 05:45:27  sp
  * Juha Lidfors' backup directory patch, removed debugging messages from various locations, documentation updates
  *

@@ -163,7 +163,9 @@ public class JARClassLoader extends ClassLoader
 		if(!checkDependencies(name))
 			return;
 
-		Class clazz = loadClass(name,false);
+		// JDK 1.1.8 throws a GPF when we do an isAssignableFrom()
+		// on an unresolved class
+		Class clazz = loadClass(name,true);
 		int modifiers = clazz.getModifiers();
 		if(Plugin.class.isAssignableFrom(clazz)
 			&& !Modifier.isInterface(modifiers)
@@ -322,6 +324,9 @@ public class JARClassLoader extends ClassLoader
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.11  1999/05/22 08:33:53  sp
+ * FAQ updates, mode selection tweak, patch mode update, javadoc updates, JDK 1.1.8 fix
+ *
  * Revision 1.10  1999/05/15 00:29:19  sp
  * Prev error bug fix, doc updates, tips updates
  *

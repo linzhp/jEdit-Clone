@@ -40,7 +40,7 @@ public class PatchTokenMarker extends TokenMarker
 		case '-': case '<':
 			addToken(line.count,Token.KEYWORD2);
 			break;
-		case '@':
+		case '@': case '*':
 			addToken(line.count,Token.KEYWORD3);
 			break;
 	        default:
@@ -54,6 +54,9 @@ public class PatchTokenMarker extends TokenMarker
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.4  1999/05/22 08:33:53  sp
+ * FAQ updates, mode selection tweak, patch mode update, javadoc updates, JDK 1.1.8 fix
+ *
  * Revision 1.3  1999/04/19 05:38:20  sp
  * Syntax API changes
  *
