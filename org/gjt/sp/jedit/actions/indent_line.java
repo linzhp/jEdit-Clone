@@ -36,10 +36,11 @@ public class indent_line extends EditAction
                 Buffer buffer = view.getBuffer();
                 SyntaxTextArea textArea = view.getTextArea();
                 Mode mode = buffer.getMode();
+		int selStart = textArea.getSelectionStart();
+		int selEnd = textArea.getSelectionEnd();
 
-                if(mode != null && jEdit.getAutoIndent()
-				&& mode.indentLine(buffer,view,textArea
-				.getCaretPosition()))
+                if(mode != null && selStart == selEnd && jEdit.getAutoIndent()
+				&& mode.indentLine(buffer,view,selStart))
                 {
 				return;
                 }

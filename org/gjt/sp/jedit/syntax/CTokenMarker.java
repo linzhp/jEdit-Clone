@@ -60,7 +60,8 @@ loop:		for(int i = offset; i < length; i++)
 					break;
 				}
 			case ';': case '.': case ',': case ' ': case '\t':
-			case '(': case ')': case '[': case ']':
+			case '(': case ')': case '[': case ']': case '{':
+			case '}':
 				backslash = false;
 				if(token == null)
 				{

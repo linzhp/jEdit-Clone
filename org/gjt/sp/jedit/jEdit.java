@@ -116,7 +116,7 @@ public class jEdit
 		usrProps = System.getProperty("user.home") + File.separator
 			+ ".jedit-props";
 		portFile = new File(userHome,".jedit-server");
-		desktopFile = new File(userHome,".jedit-desktop");
+		boolean desktop = true;
 		boolean showSplash = true;
 		
 		for(int i = 0; i < args.length; i++)
@@ -142,15 +142,13 @@ public class jEdit
 				else if(arg.equals("-noserver"))
 					portFile = null;
 				else if(arg.equals("-nodesktop"))
-					desktopFile = null;
+					desktop = false;
 				else if(arg.equals("-nosplash"))
 					showSplash = false;
 				else if(arg.startsWith("-usrprops="))
 					usrProps = arg.substring(10);
 				else if(arg.startsWith("-portfile="))
 					portFile = new File(arg.substring(10));
-				else if(arg.startsWith("-desktopfile="))
-					desktopFile = new File(arg.substring(13));
 				else if(arg.equals("-readonly"))
 					readOnly = true;
 				else
@@ -442,31 +440,8 @@ public class jEdit
 		}
 		if(buffer == null)
 		{
-			if("on".equals(getProperty("saveDesktop"))
-				&& desktopFile != null && desktopFile.exists())
-			{
-				try
-				{
-					BufferedReader in = new BufferedReader(
-						new FileReader(desktopFile));
-					String line;
-					while((line = in.readLine()) != null)
-					{
-						Buffer b = parseDesktopEntry(line);
-						if(b != null)
-							buffer = b;
-					}
-					in.close();
-				}
-				catch(FileNotFoundException fnf)
-				{
-				}
-				catch(IOException io)
-				{
-					System.err.println("Error while loading desktop:");
-					io.printStackTrace();
-				}
-			}
+			if("on".equals(getProperty("saveDesktop")) && desktop)
+				buffer = loadDesktop();
 		}
 		if(buffer == null)
 			buffer = newFile(null);
@@ -1117,51 +1092,32 @@ public class jEdit
 	 */
 	public static void exit(View view)
 	{
-		// Write the `desktop' file
-		if("on".equals(getProperty("saveDesktop"))
-			&& desktopFile != null)
+		// Save the `desktop'
+		if("on".equals(getProperty("saveDesktop")))
 		{
+			int i;
 			view.saveCaretInfo();
-			try
+			for(i = 0; i < buffers.size(); i++)
 			{
-				FileWriter out = new FileWriter(desktopFile);
-				for(int i = 0; i < buffers.size(); i++)
-				{
-					Buffer buffer = (Buffer)buffers.elementAt(i);
-					if(buffer.isNewFile())
-						continue;
-					out.write(buffer.getPath());
-					out.write('\t');
-					out.write(buffer.isReadOnly() ? "readOnly" : "");
-					out.write('\t');
-					Mode mode = buffer.getMode();
-					String clazz;
-					if(mode != null)
-					{
-						clazz = buffer.getMode()
-							.getClass().getName();
-						clazz = clazz.substring(clazz
-							.lastIndexOf('.') + 1);
-					}
-					else
-						clazz = "";
-					out.write(clazz);
-					out.write('\t');
-					out.write(String.valueOf(buffer.getSavedSelStart()));
-					out.write('\t');
-					out.write(String.valueOf(buffer.getSavedSelEnd()));
-					out.write('\t');
-					if(view.getBuffer() == buffer)
-						out.write('*');
-					out.write("\r\n");
-				}
-				out.close();
+				Buffer buffer = (Buffer)buffers.elementAt(i);
+				setProperty("desktop." + i + ".path",
+					buffer.getPath());
+				Mode mode = buffer.getMode();
+				String clazz = (mode == null ? "none"
+					: mode.getClass().getName());
+				setProperty("desktop." + i + ".mode",
+					clazz.substring(clazz.lastIndexOf('.')
+					+ 1));
+				setProperty("desktop." + i + ".readOnly",
+					buffer.isReadOnly() ? "yes" : "no");
+				setProperty("desktop." + i + ".current",
+					view.getBuffer() == buffer ? "yes" : "no");
+				setProperty("desktop." + i + ".selStart",
+					String.valueOf(buffer.getSavedSelStart()));
+				setProperty("desktop." + i + ".selEnd",
+					String.valueOf(buffer.getSavedSelEnd()));
 			}
-			catch(IOException io)
-			{
-				System.err.println("Error while saving desktop:");
-				io.printStackTrace();
-			}
+			unsetProperty("desktop." + i + ".path");
 		}
 
 		// Close all buffers
@@ -1216,7 +1172,6 @@ public class jEdit
 	private static String jEditHome;
 	private static String usrProps;
 	private static File portFile;
-	private static File desktopFile;
 	private static Properties props;
 	private static boolean autoindent;
 	private static boolean syntax;
@@ -1256,8 +1211,6 @@ public class jEdit
 			+ " from <file>");
 		System.err.println("    -portfile=<file>: Write server port to"
 			+ " <file>");
-		System.err.println("    -desktopfile=<file>: Save desktop to"
-			+ " <file>");
 		System.err.println("    -readonly: Open files read-only");
 		System.err.println();
 		System.err.println("Report bugs to Slava Pestov <sp@gjt.org>.");
@@ -1268,36 +1221,35 @@ public class jEdit
 		System.err.println("jEdit " + VERSION + " build " + BUILD);
 	}
 
-	private static Buffer parseDesktopEntry(String line)
+	private static Buffer loadDesktop()
 	{
 		try
 		{
-			int pathIndex = line.indexOf('\t');
-			String path = line.substring(0,pathIndex);
-			int roIndex = line.indexOf('\t',
-				pathIndex+1);
-			boolean readOnly = (roIndex - pathIndex > 1);
-			int modeIndex = line.indexOf('\t',
-				roIndex+1);
-			String mode = line.substring(roIndex+1,modeIndex);
-			int selStartIndex = line.indexOf('\t',
-				modeIndex+1);
-			int selStart = Integer.parseInt(line.substring(modeIndex+1,
-				selStartIndex));
-			int selEndIndex = line.indexOf('\t',
-				selStartIndex+1);
-			int selEnd = Integer.parseInt(line.substring(selStartIndex+1,
-				selEndIndex));
-			boolean current = (line.length() - selEndIndex > 1);
-			Buffer buffer = openFile(null,null,path,readOnly,false);
-			buffer.setCaretInfo(selStart,selEnd);
-			buffer.setMode(getMode(mode));
-			if(current)
-				return buffer;
+			int i = 0;
+			String path;
+			while((path = getProperty("desktop." + i + ".path")) != null)
+			{
+				String mode = getProperty("desktop." + i + ".mode");
+				boolean readOnly = getProperty("desktop." + i + ".readOnly")
+					.equals("yes");
+				boolean current = getProperty("desktop." + i + ".current")
+					.equals("yes");
+				int selStart = Integer.parseInt(getProperty(
+					"desktop." + i + ".selStart"));
+				int selEnd = Integer.parseInt(getProperty(
+					"desktop." + i + ".selEnd"));
+				Buffer buffer = openFile(null,null,path,readOnly,
+					false);
+				buffer.setCaretInfo(selStart,selEnd);
+				buffer.setMode(getMode(mode));
+				if(current)
+					return buffer;
+				i++;
+			}
 		}
 		catch(Exception e)
 		{
-			System.err.println("Error while parsing desktop file:");
+			System.err.println("Error while loading desktop:");
 			e.printStackTrace();
 		}
 		return null;
