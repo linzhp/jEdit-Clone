@@ -88,7 +88,7 @@ loop:		for(int i = line.offset; i < length; i++)
 			case ' ':
 				if(lastOffset == offset)
 				{
-					if(jEdit.regionMatches(true,line,
+					if(i > 2 && jEdit.regionMatches(true,line,
 							       i - 3,"rem"))
 					{
 						addToken(length - lastOffset,

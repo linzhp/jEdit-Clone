@@ -39,13 +39,13 @@ public class jEdit
 	/**
 	 * The jEdit version.
 	 */
-	public static final String VERSION = "1.4pre3";
+	public static final String VERSION = "1.4pre4";
 	
 	/**
 	 * The date when a change was last made to the source code,
 	 * in <code>YYYYMMDD</code> format.
 	 */
-	public static final String BUILD = "19990211";
+	public static final String BUILD = "19990212";
 
 	/**
 	 * AWK regexp syntax.
@@ -267,8 +267,8 @@ public class jEdit
 		}
 
 		// Load edit modes
-		addMode(new org.gjt.sp.jedit.mode.amstex());
 		addMode(new org.gjt.sp.jedit.mode.autoindent());
+		addMode(new org.gjt.sp.jedit.mode.amstex());
 		addMode(new org.gjt.sp.jedit.mode.bat());
                 addMode(new org.gjt.sp.jedit.mode.c());
                 addMode(new org.gjt.sp.jedit.mode.cc());
@@ -281,6 +281,7 @@ public class jEdit
 		addMode(new org.gjt.sp.jedit.mode.props());
 		addMode(new org.gjt.sp.jedit.mode.sh());
 		addMode(new org.gjt.sp.jedit.mode.tex());
+		addMode(new org.gjt.sp.jedit.mode.tsql());
 
 		// Load actions
 		addAction(new org.gjt.sp.jedit.actions.about());

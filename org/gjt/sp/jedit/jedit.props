@@ -213,6 +213,7 @@ mode.extension.props=props
 mode.extension.properties=props
 mode.extension.ini=props
 mode.extension.kdelnk=props
+mode.extension.reg=props
 mode.filename.properties=props
 mode.filename.config.sys=props
 mode.filename..jedit-props=props
@@ -253,3 +254,13 @@ mode.amstex.compiler=amstex %p
 mode.latex.name=LaTeX
 mode.latex.blockComment=%
 mode.latex.compiler=latex %p
+
+# Transact-SQL mode (written by Mike Dillon <mdillon@uclink4.berkeley.edu>)
+mode.tsql.name=Transact-SQL
+mode.extension.sql=tsql
+mode.tsql.commentStart=/*
+mode.tsql.commentEnd=*/
+mode.tsql.blockComment=--
+mode.tsql.boxComment=**
+mode.tsql.colors.operator=orange
+mode.tsql.colors.punctuation=gray

@@ -1,6 +1,7 @@
 /*
  * KeywordMap.java - Fast keyword->id map
  * Copyright (C) 1998, 1999 Slava Pestov
+ * Copyright (C) 1999 Mike Dillon
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -39,8 +40,15 @@ public class KeywordMap
 	 */
 	public KeywordMap(boolean ignoreCase)
 	{
-		map = new Keyword[26];
+		this(ignoreCase, 52);
 		this.ignoreCase = ignoreCase;
+	}
+
+	protected KeywordMap(boolean ignoreCase, int mapLength)
+	{
+		this.mapLength = mapLength;
+		this.ignoreCase = ignoreCase;
+		map = new Keyword[mapLength];
 	}
 
 	/**
@@ -53,17 +61,15 @@ public class KeywordMap
 	{
 		if(length == 0)
 			return null;
-		char key = text.array[offset];
-		Keyword k = map[Character.toUpperCase(key) % 26];
+		Keyword k = map[getSegmentMapKey(text, offset, length)];
 		while(k != null)
 		{
-			String keyword = k.keyword;
-			if(length != keyword.length())
+			if(length != k.keyword.length())
 			{
 				k = k.next;
 				continue;
 			}
-			if(jEdit.regionMatches(ignoreCase,text,offset,keyword))
+			if(jEdit.regionMatches(ignoreCase,text,offset,k.keyword))
 				return k.id;
 			k = k.next;
 		}
@@ -77,8 +83,25 @@ public class KeywordMap
 	 */
 	public void add(String keyword, String id)
 	{
-		int key = Character.toUpperCase(keyword.charAt(0)) % 26;
+		int key = getStringMapKey(keyword);
 		map[key] = new Keyword(keyword,id,map[key]);
+	}
+
+	// protected members
+	protected int mapLength;
+
+	protected int getStringMapKey(String s)
+	{
+		return (Character.toUpperCase(s.charAt(0)) +
+				Character.toUpperCase(s.charAt(s.length()-1)))
+				% mapLength;
+	}
+
+	protected int getSegmentMapKey(Segment s, int off, int len)
+	{
+		return (Character.toUpperCase(s.array[off]) +
+				Character.toUpperCase(s.array[off + len - 1]))
+				% mapLength;
 	}
 
 	// private members
