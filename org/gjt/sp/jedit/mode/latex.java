@@ -1,6 +1,6 @@
 /*
- * help.java
- * Copyright (C) 1998, 1999 Slava Pestov
+ * latex.java - LaTeX editing mode
+ * Copyright (C) 1999 Slava Pestov
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -17,23 +17,14 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-package org.gjt.sp.jedit.actions;
+package org.gjt.sp.jedit.mode;
 
-import java.awt.event.ActionEvent;
-import org.gjt.sp.jedit.EditAction;
-import org.gjt.sp.jedit.gui.HelpViewer;
+import org.gjt.sp.jedit.Buffer;
 
-public class help extends EditAction
+public class latex extends tex
 {
-	public help()
+	public void enter(Buffer buffer)
 	{
-		super("help");
-	}
-	
-	public void actionPerformed(ActionEvent evt)
-	{
-		new HelpViewer(getView(evt),getClass().getResource(
-			"/doc/".concat(evt.getActionCommand())));
-			
+		// override tex mode's implementation
 	}
 }

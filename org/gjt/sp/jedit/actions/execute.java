@@ -1,6 +1,6 @@
 /*
  * execute.java
- * Copyright (C) 1998 Slava Pestov
+ * Copyright (C) 1998, 1999 Slava Pestov
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -21,6 +21,7 @@ package org.gjt.sp.jedit.actions;
 
 import java.awt.event.ActionEvent;
 import java.io.*;
+import org.gjt.sp.jedit.gui.CommandOutput;
 import org.gjt.sp.jedit.*;
 
 public class execute extends EditAction
@@ -66,23 +67,9 @@ public class execute extends EditAction
 		}
 		try
 		{
-			Process p = Runtime.getRuntime().exec(buf.toString());
-			BufferedReader err = new BufferedReader(
-				new InputStreamReader(p.getErrorStream()));
-			buf.setLength(0);
-			String line;
-			while((line = err.readLine()) != null)
-			{
-				buf.append(line);
-				buf.append('\n');
-			}
-			err.close();
-			if(buf.length() != 0)
-			{
-				Object[] args = { buf.toString() };
-				jEdit.error(view,"cmderr",args);
-				return;
-			}
+			String cmd = buf.toString();
+			Process proc = Runtime.getRuntime().exec(cmd);
+			new CommandOutput(view,cmd,proc);
 		}
 		catch(IOException io)
 		{

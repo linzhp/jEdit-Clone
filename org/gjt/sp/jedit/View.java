@@ -1,6 +1,6 @@
 /*
  * View.java - jEdit view
- * Copyright (C) 1998 Slava Pestov
+ * Copyright (C) 1998, 1999 Slava Pestov
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -41,7 +41,6 @@ implements CaretListener, KeyListener, WindowListener
 	 */
 	public void propertiesChanged()
 	{
-		SwingUtilities.updateComponentTreeUI(this);
 		String family = jEdit.getProperty("view.font");
 		int size;
 		try
@@ -92,6 +91,7 @@ implements CaretListener, KeyListener, WindowListener
 			textArea.setCaretBlinkRate(0);
 		}
 		updateOpenRecentMenu();
+		updateStatus(true);
 	}
 	
 	/**
@@ -276,8 +276,8 @@ implements CaretListener, KeyListener, WindowListener
 		updateBuffersMenu();
 		updateMarkerMenus();
 		updateModeMenu();
-		updateStatus(true);
 		updateTitle();
+		updateStatus(true);
 	}
 
 	/**

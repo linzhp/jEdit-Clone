@@ -29,6 +29,9 @@ saveDesktop=on
 # Number of backups to make, 0=no backups
 backups=1
 
+# Default WWW browser
+browser=jedit_moz_remote
+
 ###
 ### BUFFER SETTINGS
 ###
@@ -57,7 +60,7 @@ buffer.margin.right=0.5
 buffer.syntax=on
 
 # `Make' tool
-buffer.make=make -k
+buffer.make=make
 
 # Colors
 buffer.colors.comment1=red
@@ -125,14 +128,18 @@ mode.extension.bat=bat
 # C mode
 mode.c.name=C
 mode.c.noWordSep=._
+mode.c.compiler=cc -O2 %p
 mode.extension.c=c
 mode.extension.h=c
-mode.extension.cc=c
-mode.extension.cpp=c
 
-# Help mode
-mode.help.name=Help
-mode.help.colors=heading@magenta link@blue
+# C++ mode
+mode.cc.name=C++
+mode.cc.noWordSep=._
+mode.cc.compiler=c++ -O2 %p
+mode.extension.cc=cc
+mode.extension.cpp=cc
+mode.extension.cxx=cc
+mode.extension.C=cc
 
 # HTML mode
 mode.html.name=HTML
@@ -143,6 +150,7 @@ mode.extension.htm=html
 # Java mode
 mode.java_mode.name=Java
 mode.java_mode.noWordSep=._
+mode.java_mode.compiler=javac %p
 mode.extension.java=java_mode
 
 # JavaScript mode
@@ -175,6 +183,15 @@ mode.firstline.#!/usr/local/bin/tcsh=sh
 
 # TeX mode
 mode.tex.name=TeX
+mode.tex.compiler=tex %p
 mode.extension.tex=tex
 mode.extension.sty=tex
 mode.extension.aux=tex
+
+# AMSTeX mode
+mode.amstex.name=AMS-TeX
+mode.amstex.compiler=amstex %p
+
+# LaTeX mode
+mode.latex.name=LaTeX
+mode.latex.compiler=latex %p

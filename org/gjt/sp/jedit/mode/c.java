@@ -1,6 +1,6 @@
 /*
  * c.java - C editing mode
- * Copyright (C) 1998 Slava Pestov
+ * Copyright (C) 1998, 1999 Slava Pestov
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -33,9 +33,7 @@ public class c extends autoindent
 		if(keywords == null)
 		{
 			keywords = new KeywordMap(false);
-			keywords.add("bool",Token.KEYWORD3);
 			keywords.add("char",Token.KEYWORD3);
-			keywords.add("class",Token.KEYWORD3);
 			keywords.add("double",Token.KEYWORD3);
 			keywords.add("enum",Token.KEYWORD3);
 			keywords.add("float",Token.KEYWORD3);
@@ -44,7 +42,6 @@ public class c extends autoindent
 			keywords.add("short",Token.KEYWORD3);
 			keywords.add("signed",Token.KEYWORD3);
 			keywords.add("struct",Token.KEYWORD3);
-			keywords.add("template",Token.KEYWORD3);
 			keywords.add("typedef",Token.KEYWORD3);
 			keywords.add("union",Token.KEYWORD3);
 			keywords.add("unsigned",Token.KEYWORD3);
@@ -52,30 +49,21 @@ public class c extends autoindent
 			keywords.add("auto",Token.KEYWORD1);
 			keywords.add("const",Token.KEYWORD1);
 			keywords.add("extern",Token.KEYWORD1);
-			keywords.add("private",Token.LABEL);
-			keywords.add("public",Token.LABEL);
 			keywords.add("register",Token.KEYWORD1);
 			keywords.add("static",Token.KEYWORD1);
-			keywords.add("virtual",Token.KEYWORD1);
 			keywords.add("volatile",Token.KEYWORD1);
 			keywords.add("break",Token.KEYWORD1);
 			keywords.add("case",Token.LABEL);
-			keywords.add("catch",Token.KEYWORD1);
 			keywords.add("continue",Token.KEYWORD1);
 			keywords.add("default",Token.LABEL);
-			keywords.add("delete",Token.KEYWORD1);
 			keywords.add("do",Token.KEYWORD1);
 			keywords.add("else",Token.KEYWORD1);
 			keywords.add("for",Token.KEYWORD1);
-			keywords.add("friend",Token.KEYWORD1);
 			keywords.add("goto",Token.KEYWORD1);
 			keywords.add("if",Token.KEYWORD1);
-			keywords.add("new",Token.KEYWORD1);
 			keywords.add("return",Token.KEYWORD1);
 			keywords.add("sizeof",Token.KEYWORD1);
 			keywords.add("switch",Token.KEYWORD1);
-			keywords.add("throw",Token.KEYWORD1);
-			keywords.add("try",Token.KEYWORD1);
 			keywords.add("while",Token.KEYWORD1);
 			keywords.add("asm",Token.KEYWORD2);
 			keywords.add("asmlinkage",Token.KEYWORD2);
@@ -91,5 +79,5 @@ public class c extends autoindent
 		return keywords;
 	}
 
-	private static KeywordMap keywords;
+	protected static KeywordMap keywords;
 }

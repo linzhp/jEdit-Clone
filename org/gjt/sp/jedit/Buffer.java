@@ -33,13 +33,12 @@ import org.gjt.sp.jedit.gui.SyntaxTextArea;
 import org.gjt.sp.jedit.syntax.TokenMarker;
 
 /**
- * 
- * @see BufferMgr
- * @see BufferMgr#openFile(View)
- * @see BufferMgr#openURL(View)
- * @see BufferMgr#openFile(View,String,String,boolean,boolean)
- * @see BufferMgr#closeBuffer(View)
- * @see BufferMgr#getBuffers()
+ * An in-memory copy of an open file.
+ *
+ * @see jEdit#openFile(View)
+ * @see jEdit#openFile(View,String,String,boolean,boolean)
+ * @see jEdit#closeBuffer(View)
+ * @see jEdit#getBuffers()
  */
 public class Buffer extends PlainDocument
 implements DocumentListener, UndoableEditListener
@@ -294,9 +293,14 @@ implements DocumentListener, UndoableEditListener
 			saveMarkers();
 			dirty = newFile = readOnly = false;
 			autosaveFile.delete();
-			updateStatus();
 			updateTitles();
-			updateBufferMenus();
+			if(mode == null)
+				setMode();
+			else
+			{
+				updateStatus();
+				updateBufferMenus();
+			}
 			return true;
 		}
 		catch(IOException io)
@@ -317,6 +321,7 @@ implements DocumentListener, UndoableEditListener
 	 * @param dot The starting position
 	 * @param openBracket The opening bracket
 	 * @param closeBracket The closing bracket
+	 * @exception BadLocationException if `dot' is out of range
 	 */
 	 public int locateBracketBackward(int dot, char openBracket,
 		char closeBracket)
@@ -356,6 +361,7 @@ implements DocumentListener, UndoableEditListener
 	 * @param dot The starting position
 	 * @param openBracket The opening bracket
 	 * @param closeBracket The closing bracket
+	 * @exception BadLocationException if `dot' is out of range
 	 */
 	public int locateBracketForward(int dot, char openBracket,
 		char closeBracket)
@@ -563,6 +569,31 @@ implements DocumentListener, UndoableEditListener
 			setTokenMarker(mode.createTokenMarker());
 			colors.clear();
 			mode.enter(this);
+		}
+	}
+
+	/**
+	 * Sets this buffer's edit mode by looking at the extension,
+	 * file name and first line.
+	 */
+	public void setMode()
+	{
+		String nogzName = name.substring(0,name.length() -
+			(name.endsWith(".gz") ? 3 : 0));
+		Mode mode = jEdit.getMode(jEdit.getProperty(
+			"mode.filename.".concat(nogzName)));
+		if(mode != null)
+			setMode(mode);
+		else
+		{
+			int index = nogzName.lastIndexOf('.') + 1;
+			mode = jEdit.getMode(jEdit.getProperty(
+				"mode.extension.".concat(nogzName
+				.substring(index))));
+			if(mode != null)
+				setMode(mode);
+			else
+				setMode(null);
 		}
 	}
 
@@ -883,6 +914,10 @@ implements DocumentListener, UndoableEditListener
 		String userMode = (String)getProperty("mode");
 		if(userMode != null)
 			setMode(jEdit.getMode(userMode));
+		else
+		{
+			setMode();
+		}
 		addDocumentListener(this);
 		addUndoableEditListener(this);
 		updateMarkers();
@@ -921,24 +956,6 @@ implements DocumentListener, UndoableEditListener
 		if(autosaveFile != null)
 			autosaveFile.delete();
 		autosaveFile = new File(file.getParent(),'#' + name + '#');
-		if(mode == null)
-		{
-			String nogzName = name.substring(0,name.length() -
-				(name.endsWith(".gz") ? 3 : 0));
-			Mode mode = jEdit.getMode(jEdit.getProperty(
-				"mode.filename.".concat(nogzName)));
-			if(mode != null)
-				setMode(mode);
-			else
-			{
-				int index = nogzName.lastIndexOf('.') + 1;
-				mode = jEdit.getMode(jEdit.getProperty(
-					"mode.extension.".concat(nogzName
-					.substring(index))));
-				if(mode != null)
-					setMode(mode);
-			}
-		}
 	}
 	
 	private void load()
@@ -986,11 +1003,6 @@ implements DocumentListener, UndoableEditListener
 				buf.setLength(buf.length() - 1);
 			insertString(0,buf.toString(),null);
 			newFile = false;
-			/* Although this is done in setPath(),
-			 * setPath() is called before the lines are
-			 * available, so we do it here as well.
-			 */
-			tokenizeLines();
 		}
 		catch(BadLocationException bl)
 		{
@@ -1167,7 +1179,6 @@ implements DocumentListener, UndoableEditListener
 			int start = line.getStartOffset();
 			out.write(getText(start,line.getEndOffset() - start
 				- 1));
-			//if(++i != map.getElementCount())
 			out.write(newline);
 		}
 		out.close();

@@ -1,6 +1,6 @@
 /*
  * SyntaxTextArea.java - jEdit's own text component
- * Copyright (C) 1998 Slava Pestov
+ * Copyright (C) 1998, 1999 Slava Pestov
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -47,18 +47,6 @@ public class SyntaxTextArea extends JEditorPane
 	{
 		setCaret(new SyntaxCaret());
 
-		try
-		{
-			lineHighlightTag = getHighlighter().addHighlight(0,0,
-				new CurrentLineHighlighter());
-			bracketHighlightTag = getHighlighter().addHighlight(
-				0,0,new BracketHighlighter());
-		}
-		catch(BadLocationException bl)
-		{
-			bl.printStackTrace();
-		}
-		
 		lineHighlightColor = new Color(0xe0e0e0);
 		bracketHighlightColor = new Color(0xffaaaa);
 		lineSegment = new Segment();
@@ -79,6 +67,9 @@ public class SyntaxTextArea extends JEditorPane
 	 */
 	public void setHighlightedLine(int lineStart, int lineEnd)
 	{
+		if(lineHighlightTag == null)
+			return;
+
 		try
 		{
 			getHighlighter().changeHighlight(lineHighlightTag,
@@ -106,7 +97,23 @@ public class SyntaxTextArea extends JEditorPane
 	 */
 	public void setLineHighlight(boolean lineHighlight)
 	{
-		this.lineHighlight = lineHighlight;
+		if(lineHighlightTag != null)
+			getHighlighter().removeHighlight(lineHighlightTag);
+		
+		if(lineHighlight)
+		{
+			try
+			{
+				lineHighlightTag = getHighlighter().addHighlight(
+					0,0,new CurrentLineHighlighter());
+			}
+			catch(BadLocationException bl)
+			{
+				bl.printStackTrace();
+			}
+		}
+		else
+			lineHighlightTag = null;
 	}
 
 	/**
@@ -115,6 +122,9 @@ public class SyntaxTextArea extends JEditorPane
 	 */
 	public void setHighlightedBracket(int bracketPos)
 	{
+		if(bracketHighlightTag == null)
+			return;
+
 		try
 		{
 			if(bracketPos == -1)
@@ -147,7 +157,23 @@ public class SyntaxTextArea extends JEditorPane
 	 */
 	public void setBracketHighlight(boolean bracketHighlight)
 	{
-		this.bracketHighlight = bracketHighlight;
+		if(bracketHighlightTag != null)
+			getHighlighter().removeHighlight(bracketHighlightTag);
+		
+		if(bracketHighlight)
+		{
+			try
+			{
+				bracketHighlightTag = getHighlighter().addHighlight(
+					0,0,new BracketHighlighter());
+			}
+			catch(BadLocationException bl)
+			{
+				bl.printStackTrace();
+			}
+		}
+		else
+			bracketHighlightTag = null;
 	}
 
 	/**
@@ -211,10 +237,8 @@ public class SyntaxTextArea extends JEditorPane
 	}
 
 	// private members
-	private boolean lineHighlight;
 	private Color lineHighlightColor;
 	private Object lineHighlightTag;
-	private boolean bracketHighlight;
 	private Color bracketHighlightColor;
 	private Object bracketHighlightTag;
 	private Segment lineSegment;
@@ -240,23 +264,18 @@ public class SyntaxTextArea extends JEditorPane
 			if(newValue instanceof Buffer)
 			{
 				Buffer buf = (Buffer)newValue;
-				int height = getToolkit().getFontMetrics(
-					getFont()).getHeight();
 				int selStart = buf.getSavedSelStart();
 				int selEnd = buf.getSavedSelEnd();
-				select(selStart,selEnd);
+				setDot(selStart);
+				moveDot(selEnd);
 				Element map = getDocument().getDefaultRootElement();
 				int startLine = map.getElementIndex(selStart);
 				int endLine = map.getElementIndex(selEnd) + 1;
-				final Rectangle rect = new Rectangle(0,
-					startLine * height,0,(endLine - startLine)
-					* height);
-				SwingUtilities.invokeLater(new Runnable() {
-					public void run()
-					{
-						scrollRectToVisible(rect);
-					}
-				});
+				int height = Toolkit.getDefaultToolkit()
+					.getFontMetrics(getFont()).getHeight();
+				Rectangle rect = new Rectangle(0,startLine * height,
+					0,(endLine - startLine) * height);
+				adjustVisibility(rect);
 			}
 		}
 
@@ -274,7 +293,7 @@ public class SyntaxTextArea extends JEditorPane
 		public void paint(Graphics g, int p0, int p1, Shape bounds,
 			JTextComponent textComponent)
 		{
-			if(!lineHighlight || getSelectionStart()
+			if(lineHighlightTag == null || getSelectionStart()
 				!= getSelectionEnd())
 				return;
 			FontMetrics metrics = g.getFontMetrics();
@@ -296,11 +315,10 @@ public class SyntaxTextArea extends JEditorPane
 			JTextComponent textComponent)
 		{
 			if(getSelectionStart() != getSelectionEnd()
-				|| !bracketHighlight)
+				|| bracketHighlightTag == null)
 				return;
 			if(p0 == p1)
 				return;
-			Rectangle rect = (Rectangle)bounds;
 			Rectangle bracket;
 			Document doc = getDocument();
 			FontMetrics metrics = g.getFontMetrics();
@@ -317,7 +335,7 @@ public class SyntaxTextArea extends JEditorPane
 				return;
 			}
 			g.setColor(bracketHighlightColor);
-			g.fillRect(rect.x + bracket.x,rect.y + bracket.y,
+			g.fillRect(bracket.x,bracket.y,
 				bracket.width,bracket.height);
 		}
 	}

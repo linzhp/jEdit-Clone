@@ -138,6 +138,39 @@ public class GeneralOptionPane extends OptionPane
 
 		cons.gridx = 0;
 		cons.gridy = 6;
+		cons.gridwidth = 3;
+		label = new JLabel(jEdit.getProperty("options.general.make"),
+			SwingConstants.RIGHT);
+		layout.setConstraints(label,cons);
+		add(label);
+		cons.gridx = 3;
+		cons.gridwidth = 1;
+		String[] makes = { "make", "nmake" };
+		make = new JComboBox(makes);
+		make.setEditable(true);
+		make.setSelectedItem(jEdit.getProperty("buffer.make"));
+		layout.setConstraints(make,cons);
+		add(make);
+
+		cons.gridx = 0;
+		cons.gridy = 7;
+		cons.gridwidth = 3;
+		label = new JLabel(jEdit.getProperty("options.general.browser"),
+			SwingConstants.RIGHT);
+		layout.setConstraints(label,cons);
+		add(label);
+		cons.gridx = 3;
+		cons.gridwidth = 1;
+		String[] browsers = { "jedit_moz_remote",
+			"jedit_moz_remote.bat", "netscape.exe" };
+		browser = new JComboBox(browsers);
+		browser.setEditable(true);
+		browser.setSelectedItem(jEdit.getProperty("browser"));
+		layout.setConstraints(browser,cons);
+		add(browser);
+
+		cons.gridx = 0;
+		cons.gridy = 8;
 		cons.gridwidth = cons.REMAINDER;
 		saveDesktop = new JCheckBox(jEdit.getProperty(
 			"options.general.saveDesktop"));
@@ -146,7 +179,7 @@ public class GeneralOptionPane extends OptionPane
 		layout.setConstraints(saveDesktop,cons);
 		add(saveDesktop);
 
-		cons.gridy = 7;
+		cons.gridy = 9;
 		server = new JCheckBox(jEdit.getProperty(
 			"options.general.server"));
 		server.getModel().setSelected("on".equals(jEdit.getProperty(
@@ -181,6 +214,8 @@ public class GeneralOptionPane extends OptionPane
 		else if("MacOS (\\r)".equals(lineSep))
 			lineSep = "\r";
 		jEdit.setProperty("buffer.lineSeparator",lineSep);
+		jEdit.setProperty("browser",(String)browser.getSelectedItem());
+		jEdit.setProperty("buffer.make",(String)make.getSelectedItem());
 	}
 
 	// private members
@@ -189,7 +224,9 @@ public class GeneralOptionPane extends OptionPane
 	private JTextField recent;
 	private JTextField clipHistory;
 	private JTextField backups;
+	private JComboBox make;
 	private JComboBox lineSeparator;
+	private JComboBox browser;
 	private JCheckBox saveDesktop;
 	private JCheckBox server;
 }

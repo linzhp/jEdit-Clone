@@ -25,14 +25,14 @@ goto-anchor.shortcut=C+y
 expand-abbrev.shortcut=C+b
 locate-bracket.shortcut=C+\\
 hypersearch.shortcut=C+h
-goto-line.shortcut=C+l
+join-lines.shortcut=C+j
 compile.shortcut=C+k
+goto-line.shortcut=C+l
 make.shortcut=C+m
 
 ### The scary stuff
 new-view.shortcut=C+e C+n
 open-url.shortcut=C+e C+o
-open-link.shortcut=C+e C+l
 close-view.shortcut=C+e C+w
 select-anchor.shortcut=C+[ C+y
 select-next-line.shortcut=C+] C+]
@@ -42,7 +42,6 @@ delete-line.shortcut=C+d C+d
 delete-no-indent.shortcut=C+d C+n
 delete-start-line.shortcut=C+d C+s
 delete-end-line.shortcut=C+d C+f
-join-lines.shortcut=C+j
 next-paragraph.shortcut=A+DOWN
 prev-paragraph.shortcut=A+UP
 select-next-paragraph.shortcut=C+] C+ENTER

@@ -1,6 +1,6 @@
 /*
- * make.java
- * Copyright (C) 1998 Slava Pestov
+ * compile.java
+ * Copyright (C) 1998, 1999 Slava Pestov
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -25,30 +25,58 @@ import javax.swing.JOptionPane;
 import org.gjt.sp.jedit.gui.CommandOutput;
 import org.gjt.sp.jedit.*;
 
-public class make extends EditAction
+public class compile extends EditAction
 {
-	public make()
+	public compile()
 	{
-		super("make");
+		super("compile");
 	}
 
 	public void actionPerformed(ActionEvent evt)
 	{
 		View view = getView(evt);
 		Buffer buffer = view.getBuffer();
-		String makeTool = (String)buffer.getProperty("make");
-		makeTool = (String)JOptionPane.showInputDialog(view,
-			jEdit.getProperty("make.message"),
-			jEdit.getProperty("make.title"),
+		String compiler = (String)buffer.getProperty("compiler");
+		compiler = (String)JOptionPane.showInputDialog(view,
+			jEdit.getProperty("compile.message"),
+			jEdit.getProperty("compile.title"),
 			JOptionPane.QUESTION_MESSAGE,null,null,
-			makeTool);
-		if(makeTool == null)
+			compiler);
+		if(compiler == null)
 			return;
-		buffer.putProperty("make",makeTool);
+		buffer.putProperty("compile",compiler);
+		StringBuffer buf = new StringBuffer();
+		for(int i = 0; i < compiler.length(); i++)
+		{
+			switch(compiler.charAt(i))
+			{
+			case '%':
+				if(i != compiler.length() - 1)
+				{
+					switch(compiler.charAt(++i))
+					{
+					case 'u':
+						buf.append(buffer.getPath());
+						break;
+					case 'p':
+						buf.append(buffer.getFile()
+							.getPath());
+						break;
+					default:
+						buf.append('%');
+						break;
+					}
+					break;
+				}
+			default:
+				buf.append(compiler.charAt(i));
+			}
+		}
+		compiler = buf.toString();
 		try
 		{
-			new CommandOutput(view,makeTool,Runtime.getRuntime()
-				.exec(makeTool));
+			new CommandOutput(view,compiler,Runtime.getRuntime()
+				.exec(compiler));
 		}
 		catch(IOException io)
 		{

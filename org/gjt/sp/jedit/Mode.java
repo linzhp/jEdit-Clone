@@ -23,8 +23,8 @@ import org.gjt.sp.jedit.syntax.TokenMarker;
 /**
  * An edit mode. At the moment, edit modes can define indent behaviour
  * and syntax colorizing rules. Other uses will exist in the future.
- * @see CommandMgr#getMode
- * @see CommandMgr#getModeName
+ * @see jEdit#getMode
+ * @see jEdit#getModeName
  * @see Buffer#getMode
  * @see Buffer#getModeName
  * @see Buffer#setMode

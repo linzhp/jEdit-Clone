@@ -1,6 +1,6 @@
 /*
  * tex.java - TeX editing mode
- * Copyright (C) 1998 Slava Pestov
+ * Copyright (C) 1998, 1999 Slava Pestov
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -19,11 +19,54 @@
 
 package org.gjt.sp.jedit.mode;
 
+import javax.swing.text.*;
 import org.gjt.sp.jedit.syntax.*;
 import org.gjt.sp.jedit.*;
 
 public class tex extends autoindent
 {
+	public void enter(Buffer buffer)
+	{
+		/* We use a really simple algorithm to determine
+		 * if the file is AMSTeX, LaTeX, or plain TeX.
+		 *
+		 * If the first 100 lines contain \begin, LaTeX
+		 * mode is assumed. Otherwise, if \documentclass
+		 * is found, AMSTeX is used. If both fail, plain
+		 * TeX is used.
+		 */
+		Element map = buffer.getDefaultRootElement();
+		int count = Math.min(100,map.getElementCount());
+		boolean beginFound = false;
+		boolean docClassFound = false;
+		
+		try
+		{
+			for(int i = 0; i < count; i++)
+			{
+				Element lineElement = map.getElement(i);
+				int start = lineElement.getStartOffset();
+				int end = lineElement.getEndOffset();
+				String line = buffer.getText(start,
+					end - start - 1);
+				if(line.indexOf("\\begin") != -1)
+					beginFound = true;
+				else if(line.indexOf("\\documentclass") != -1)
+					docClassFound = true;
+			}
+		}
+		catch(BadLocationException bl)
+		{
+			System.out.println("WARNING: Your computer's CPU is"
+				+ " on fire. Reboot NOW!!!");
+		}
+
+		if(beginFound)
+			buffer.setMode(jEdit.getMode("latex"));
+		else if(docClassFound)
+			buffer.setMode(jEdit.getMode("amstex"));
+	}
+			
 	public TokenMarker createTokenMarker()
 	{
 		return new TeXTokenMarker();
