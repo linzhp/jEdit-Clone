@@ -19,6 +19,8 @@
 
 package org.gjt.sp.jedit.cmd;
 
+import gnu.regexp.*;
+import com.sun.java.swing.text.BadLocationException;
 import java.util.Hashtable;
 import org.gjt.sp.jedit.*;
 

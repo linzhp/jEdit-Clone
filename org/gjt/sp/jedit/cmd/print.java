@@ -24,7 +24,7 @@ import com.sun.java.swing.text.Element;
 import java.awt.*;
 import java.util.Hashtable;
 import org.gjt.sp.jedit.*;
-import org.gjt.sp.jedit.syntax.SyntaxTextArea;
+import org.gjt.sp.jedit.syntax.*;
 
 public class print implements Command
 {
@@ -83,6 +83,7 @@ public class print implements Command
 		}
 		String header = view.getTitle();
 		Element map = buffer.getDefaultRootElement();
+		SyntaxView syntaxView = new SyntaxView(map);
 		SyntaxTextArea textArea = view.getTextArea();
 		Graphics gfx = null;
 		Font font = textArea.getFont();
@@ -110,18 +111,7 @@ public class print implements Command
 				gfx.drawString(header,leftMargin,y);
 				y += fontHeight;
 			}
-			Element line = map.getElement(i);
-			try
-			{
-				int start = line.getStartOffset();
-				gfx.drawString(jEdit.untab(tabSize,buffer
-					.getText(start,line.getEndOffset()
-						- start - 1)),leftMargin,
-						y += fontHeight);
-			}
-			catch(BadLocationException bl)
-			{
-			}
+			syntaxView.drawLine(i,gfx,leftMargin,y += fontHeight);
 			if((y > pageHeight - bottomMargin) ||
 				(i == map.getElementCount() - 1))
 			{

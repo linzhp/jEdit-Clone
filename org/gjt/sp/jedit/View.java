@@ -28,7 +28,9 @@ import java.util.*;
 import org.gjt.sp.jedit.syntax.SyntaxTextArea;
 
 /**
- * A view is <code>JFrame</code> subclass that edits buffers.
+ * A <code>View</code> edits buffers. There is no public constructor in the
+ * View class. Views are created and destroyed by the <code>BufferMgr</code>
+ * class.
  * @see Buffer
  * @see BufferMgr
  * @see BufferMgr#newView(View)
@@ -263,14 +265,6 @@ implements ActionListener, CaretListener, KeyListener, WindowListener
 	{
 		updateStatus(textArea.getCaretPosition(),force);
 	}
-
-	/**
-	 * Updates the status bar.
-	 */
-	public void updateStatus()
-	{
-		updateStatus(false);
-	}
 	
 	/**
 	 * Returns the buffer being edited by this view.
@@ -430,8 +424,7 @@ implements ActionListener, CaretListener, KeyListener, WindowListener
 		textArea.addKeyListener(this);
 		textArea.setBorder(null);
 		updatePluginsMenu();
-		menuBar = jEdit.loadMenubar(this,"view.mbar");
-		setJMenuBar(menuBar);
+		setJMenuBar(jEdit.loadMenubar(this,"view.mbar"));
 		propertiesChanged();
 		FontMetrics fm = getToolkit().getFontMetrics(textArea
 			.getFont());
@@ -478,7 +471,6 @@ implements ActionListener, CaretListener, KeyListener, WindowListener
 	private SyntaxTextArea textArea;
 	private JLabel status;
 	private int lastLine;
-	private JMenuBar menuBar;
 	private Buffer buffer;
 
 	private void updateStatus(int dot, boolean force)

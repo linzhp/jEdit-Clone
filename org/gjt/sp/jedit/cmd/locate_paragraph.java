@@ -1,5 +1,5 @@
 /*
- * word_count.java - Command
+ * locate_paragraph.java - Command
  * Copyright (C) 1998 Slava Pestov
  *
  * This program is free software; you can redistribute it and/or
@@ -20,63 +20,41 @@
 package org.gjt.sp.jedit.cmd;
 
 import com.sun.java.swing.text.BadLocationException;
+import com.sun.java.swing.text.Element;
 import java.util.Hashtable;
 import org.gjt.sp.jedit.*;
 
-public class word_count implements Command
+public class locate_paragraph implements Command
 {
 	public void exec(Buffer buffer, View view, String arg, Hashtable args)
 	{
-		if(view != null)
+		int dot = view.getTextArea().getCaretPosition();
+		Element map = buffer.getDefaultRootElement();
+		int lineNo = map.getElementIndex(dot);
+		int start = 0;
+		int end = buffer.getLength();
+		// scan backward, looking for zero-length element
+		for(int i = lineNo; i >= 0; i--)
 		{
-			String selection = view.getTextArea()
-				.getSelectedText();
-			if(selection != null)
+			Element line = map.getElement(i);
+			int elemStart = line.getStartOffset();
+			if(elemStart + 1 == line.getEndOffset())
 			{
-				doWordCount(view,selection);
-				return;
-			}
-		}
-		try
-		{
-			doWordCount(view,buffer.getText(0,buffer.getLength()));
-		}
-		catch(BadLocationException bl)
-		{
-		}
-	}
-
-	private void doWordCount(View view, String text)
-	{
-		char[] chars = text.toCharArray();
-		int characters = chars.length;
-		int words;
-		if(characters == 0)
-			words = 0;
-		else
-			words = 1;
-		int lines = 1;
-		boolean word = false;
-		for(int i = 0; i < chars.length; i++)
-		{
-			switch(chars[i])
-			{
-			case '\r': case '\n':
-				lines++;
-			case ' ': case '\t':
-				if(word)
-				{
-					words++;
-					word = false;
-				}
-				break;
-			default:
-				word = true;
+				start = elemStart;
 				break;
 			}
 		}
-		Object[] args = { new Integer(characters), new Integer(words),
-			new Integer(lines) };
-		jEdit.message(view,"wordcount",args);
+		// scan forward, loowing for zero-length element
+		for(int i = lineNo + 1; i < map.getElementCount(); i++)
+		{
+			Element line = map.getElement(i);
+			int elemStart = line.getStartOffset();
+			if(elemStart + 1 == line.getEndOffset())
+			{
+				end = elemStart;
+				break;
+			}
+		}
+		view.getTextArea().select(start,end);
 	}
 }

@@ -34,28 +34,52 @@ public class SyntaxView extends PlainView
 		super(elem);
 	}
 	
-	protected void drawLine(int lineIndex, Graphics g, int x, int y)
+	public void drawLine(int lineIndex, Graphics g, int x, int y)
 	{
 		Buffer buffer = (Buffer)getDocument();
+		FontMetrics metrics = g.getFontMetrics();
 		Hashtable colors = buffer.getColors();
-		if(buffer.getTokenMarker() == null)
-			super.drawLine(lineIndex,g,x,y);
-		else
+		JSTokenMarker tokenMarker = buffer.getTokenMarker();
+		try
 		{
-			Enumeration enum = buffer.markTokens(lineIndex);
-			while(enum.hasMoreElements())
+			Element lineElement = getElement().getElement(
+				lineIndex);
+			int start = lineElement.getStartOffset();
+			String line = jEdit.untab(getTabSize(),
+				buffer.getText(start,lineElement.getEndOffset()
+					       - start));
+			if(tokenMarker == null)
 			{
-				JSToken token = (JSToken)enum.nextElement();
-				Object id = token.id;
-				if(id == null)
-					id = "default";
-				String sequence = token.sequence;
-				Color color = (Color)colors.get(id);
-				g.setColor(color == null ?
-					Color.black : color);
-				g.drawString(sequence,x,y);
-				x += metrics.stringWidth(sequence);
+				Color color = (Color)colors.get("default");
+				if(color == null)
+					color = Color.black;
+				g.setColor(color);
+				g.drawString(line,x,y);
 			}
+			else
+			{
+				Enumeration enum = tokenMarker.markTokens(line,
+					lineIndex,buffer.isNextLine(lineIndex));
+				while(enum.hasMoreElements())
+				{
+					JSToken token = (JSToken)enum
+						.nextElement();
+					Object id = token.id;
+					if(id == null)
+						id = "default";
+					String sequence = token.sequence;
+					Color color = (Color)colors.get(id);
+					g.setColor(color == null ?
+						   Color.black : color);
+					g.drawString(sequence,x,y);
+					x += metrics.stringWidth(sequence);
+				}
+			}
+		}
+		catch(BadLocationException bl)
+		{
+			// shouldn't happen
+			bl.printStackTrace();
 		}
 	}
 }

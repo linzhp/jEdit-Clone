@@ -26,6 +26,8 @@ public class save_url implements Command
 {
 	public void exec(Buffer buffer, View view, String arg, Hashtable args)
 	{
-		buffer.saveToURL(view);
+		String path = jEdit.input(view,"saveurl","openurl.url");
+		if(path != null)
+			buffer.save(view,path);
 	}
 }

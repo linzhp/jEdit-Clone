@@ -21,20 +21,16 @@ package org.gjt.sp.jedit.syntax;
 
 import com.sun.java.swing.text.*;
 
-public class SyntaxEditorKit extends DefaultEditorKit
+public class SyntaxEditorKit extends DefaultEditorKit implements ViewFactory
 {
 	// public members
 	public ViewFactory getViewFactory()
 	{
-		return new SyntaxViewFactory();
+		return this;
 	}
 
-	// inner classes
-	class SyntaxViewFactory implements ViewFactory
+	public View create(Element elem)
 	{
-		public View create(Element elem)
-		{
-			return new SyntaxView(elem);
-		}
+		return new SyntaxView(elem);
 	}
 }

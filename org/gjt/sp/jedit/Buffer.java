@@ -33,7 +33,9 @@ import jstyle.JSTokenMarker;
 import org.gjt.sp.jedit.syntax.SyntaxTextArea;
 
 /**
- * A buffer is an in-memory copy of an open file.
+ * A <code>Buffer</code> is an open file. The buffer class doesn't
+ * have a public constructor. Buffers are created and destroyed by the
+ * <code>BufferMgr</code> class.
  * @see BufferMgr
  * @see BufferMgr#openFile(View)
  * @see BufferMgr#openURL(View)
@@ -48,6 +50,9 @@ implements DocumentListener, UndoableEditListener
 	
 	/**
 	 * Finds the next instance of the search string in this buffer.
+	 * <p>
+	 * The search string is obtained from the
+	 * <code>search.find.value</code> property.
 	 * @param view The view
 	 * @param done For internal use really. False if a `keep searching'
 	 * dialog should be shown if no more matches have been found.
@@ -102,6 +107,9 @@ implements DocumentListener, UndoableEditListener
 
 	/**
 	 * Replaces the current selection with the replacement string.
+	 * <p>
+	 * The replacement string is obtained from the
+	 * <code>search.replace.value</code> property.
 	 * @param view The view
 	 */
 	public void replace(View view)
@@ -149,6 +157,7 @@ implements DocumentListener, UndoableEditListener
 			}
 			REMatch match;
 			int index = 0;
+			boolean found = false;
 			while((match = regexp.getMatch(getText(index,
 				getLength() - index))) != null)
 			{
@@ -158,39 +167,17 @@ implements DocumentListener, UndoableEditListener
 				index += len;
 				String str = getText(start,len);
 				remove(start,len);
-				insertString(start,regexp.substitute(str,
-					replaceStr),null);
+				insertString(start,regexp.substitute(
+					str,replaceStr),null);
+				found = true;
 			}
+			if(!found)
+				view.getToolkit().beep();
 		}
 		catch(REException re)
 		{
-			Object[] args = { re.getMessage() };
-			jEdit.error(view,"reerror",args);
-		}
-		catch(BadLocationException bl)
-		{
-		}
-	}
-	
-	/**
-	 * Does a word count and displays the results in a dialog box.
-	 * @param view The view
-	 */
-	public void wordCount(View view)
-	{
-		if(view != null)
-		{
-			String selection = view.getTextArea()
-				.getSelectedText();
-			if(selection != null)
-			{
-				wordCount(view,selection);
-				return;
-			}
-		}
-		try
-		{
-			wordCount(view,getText(0,getLength()));
+			Object[] _args = { re.getMessage() };
+			jEdit.error(view,"reerror",_args);
 		}
 		catch(BadLocationException bl)
 		{
@@ -210,10 +197,10 @@ implements DocumentListener, UndoableEditListener
 			}
 			catch(FileNotFoundException fnf)
 			{
-				// this could happen if eg, the directory
-				// containing this file was renamed.
-				// we ignore the error then so save the user
-				// from seeing pages and pages of exceptions :)
+				/* this could happen if eg, the directory
+				 * containing this file was renamed.
+				 * we ignore the error then so the user
+				 * isn't flooded with exceptions. */
 			}
 			catch(Exception e)
 			{
@@ -242,18 +229,6 @@ implements DocumentListener, UndoableEditListener
 		else
 			return save(view,fileDialog.getDirectory() + file);
 		
-	}
-
-	/**
-	 * Prompts the user for a URL to save this buffer to.
-	 * @param view The view
-	 */
-	public boolean saveToURL(View view)
-	{
-		String path = jEdit.input(view,"saveurl","openurl.url");
-		if(path != null)
-			return save(view,path);
-		return false;
 	}
 
 	/**
@@ -405,7 +380,18 @@ implements DocumentListener, UndoableEditListener
 		if(mode != null)
 			mode.enter(this);
 	}
-	
+
+	/**
+	 * Returns the token marker for this buffer.
+	 */
+	public JSTokenMarker getTokenMarker()
+	{
+		if(jEdit.getSyntaxColorizing())
+			return tokenMarker;
+		else
+			return null;
+	}
+
 	/**
 	 * Sets the token marker for this buffer.
 	 * @param tokenMarker the new token marker
@@ -436,41 +422,21 @@ implements DocumentListener, UndoableEditListener
 	}
 
 	/**
-	 * Returns the token marker for this buffer.
+	 * Returns true if the specified line is the next line after the
+	 * previous line passed to this method.
+	 * @param lineIndex the line
 	 */
-	public JSTokenMarker getTokenMarker()
+	public boolean isNextLine(int lineIndex)
 	{
-		if(jEdit.getSyntaxColorizing())
-			return tokenMarker;
+		boolean retVal;
+		if((lineIndex - oldLineIndex) == -1)
+			retVal = true;
 		else
-			return null;
+			retVal = false;
+		oldLineIndex = lineIndex;
+		return retVal;
 	}
-	
-	/**
-	 * Marks the specified line up into tokens.
-	 * @param lineIndex The line number
-	 */
-	public Enumeration markTokens(int lineIndex)
-	{
-		if(tokenMarker == null)
-			return null;
-		Element map = getDefaultRootElement();
-		try
-		{
-			Element lineElement = map.getElement(lineIndex);
-			int start = lineElement.getStartOffset();
-			String line = jEdit.untab(getTabSize(),getText(start,
-				lineElement.getEndOffset() - start - 1));
-			boolean next = (lineIndex - oldLineIndex == 1);
-			oldLineIndex = lineIndex;
-			return tokenMarker.markTokens(line,lineIndex,next);
-		}
-		catch(BadLocationException bl)
-		{
-			return null;
-		}
-	}
-	
+
 	/**
 	 * Loads the colors used for syntax colorizing from the properties.
 	 * <p>
@@ -991,49 +957,10 @@ implements DocumentListener, UndoableEditListener
 		}
 	}
 
-	private void wordCount(View view, String text)
-	{
-		char[] chars = text.toCharArray();
-		int characters = chars.length;
-		int words;
-		if(characters == 0)
-			words = 0;
-		else
-			words = 1;
-		int lines = 1;
-		boolean word = false;
-		for(int i = 0; i < chars.length; i++)
-		{
-			switch(chars[i])
-			{
-			case '\r': case '\n':
-				lines++;
-			case ' ': case '\t':
-				if(word)
-				{
-					words++;
-					word = false;
-				}
-				break;
-			default:
-				word = true;
-				break;
-			}
-		}
-		Object[] args = { new Integer(characters), new Integer(words),
-			new Integer(lines) };
-		jEdit.message(view,"wordcount",args);
-	}
-
-	private void save(OutputStream out)
+	private void save(OutputStream _out)
 		throws IOException, BadLocationException
 	{
-		save(new OutputStreamWriter(out));
-	}
-
-	private void save(Writer out)
-		throws IOException, BadLocationException
-	{
+		OutputStreamWriter out = new OutputStreamWriter(_out);
 		String newline = jEdit.props.getProperty("buffer.line."
 			+ "separator",System.getProperty("line.separator"));
 		Element map = getDefaultRootElement();
