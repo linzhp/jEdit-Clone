@@ -40,6 +40,6 @@ public class replace_next extends EditAction
 			return;
 		}
 		SearchAndReplace.replace(view,buffer);
-		SearchAndReplace.find(view,buffer,false);
+		SearchAndReplace.find(view);
 	}
 }
