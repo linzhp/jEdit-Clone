@@ -242,3 +242,11 @@ public class HistoryModel extends DefaultComboBoxModel
 		return buf.toString();
 	}
 }
+
+/*
+ * ChangeLog:
+ * $Log$
+ * Revision 1.4  1999/05/08 00:13:00  sp
+ * Splash screen change, minor documentation update, toolbar API fix
+ *
+ */

@@ -46,7 +46,7 @@ public class View extends JFrame
 	/**
 	 * Tool bar position at the bottom of the view.
 	 */
-	public static final int BOTTOM = 0;
+	public static final int BOTTOM = 1;
 
 	/**
 	 * Reloads various settings from the properties.
@@ -848,6 +848,9 @@ public class View extends JFrame
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.71  1999/05/08 00:13:00  sp
+ * Splash screen change, minor documentation update, toolbar API fix
+ *
  * Revision 1.70  1999/05/04 04:51:25  sp
  * Fixed HistoryTextField for Swing 1.1.1
  *

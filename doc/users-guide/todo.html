@@ -22,13 +22,14 @@ This is what needs to be done as soon as possible:
 <ul>
 
 <li>In addition to the history data itself, the selected index
-is shared between all history text fields.
+is shared between all history text fields. This must be fixed
+ASAP.
 
-<li>Caps lock doesn't work ??? !!!<p>
+<li>Caps lock doesn't work.<p>
 This appears to be a JDK/Swing bug. Should check if this occurs
 on Windows as well.
 
-<li>After the first find, the wrong text is selected ?<p>
+<li>Sometimes Search &amp; Replace selects the wrong text.<p>
 This only seems to happen with Swing 1.1.1. So, it either a
 problem with Swing, or a bug in JEditTextArea.PropertyHandler
 or SyntaxTextArea.doElectricScroll().
@@ -44,8 +45,7 @@ series:
 
 <ul>
 <li>Console's stdin stuff needs to be fixed.<p>
-Probably a silly bug in Console.java. ... or maybe not. It looks
-like an implementation bug.
+It looks like a Java bug.
 
 <li>Multiline token colorization needs some work.<p>
 The C+END `bug' still exists.
@@ -76,7 +76,7 @@ following workarounds should be removed from jEdit:
 </ul>
 
 <li>More syntax modes.<p>
-Perl, SQLJ and TCL are the most frequently requested ones.
+Perl and TCL are the most frequently requested ones.
 
 <li>Editor needs to be embeddable in other applications.<p>
 There are several levels of integration that should be looked into:
@@ -185,9 +185,6 @@ pure Java, no matter what we do. Also, installing a .jar is much
 easier than a whole bunch of .py or whatever files.
 </ul>
 
-The `Paste Predefined' command can be removed when a macro
-language is available.
-
 <li>Piece content.<p>
 Mike Dillon once said he was planning on implementing a piece
 content similar to one used in Microsoft Word and many other
@@ -195,12 +192,6 @@ programs.<p>
 
 This will lead to faster autosave, better undo, and faster
 editing in general.
-
-<li>Option system rewrite.<p>
-As more and more settable properties appear, maintaining GUI
-panels to edit them will become very difficult. Instead,
-HTML pages with forms and a special jeditoptions: protocol
-for setting properties should be used.
 
 </ul>
 

@@ -97,6 +97,9 @@ public class HistoryTextField extends JComboBox
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.26  1999/05/08 00:13:00  sp
+ * Splash screen change, minor documentation update, toolbar API fix
+ *
  * Revision 1.25  1999/05/05 07:20:45  sp
  * jEdit 1.6pre5
  *
@@ -127,14 +130,5 @@ public class HistoryTextField extends JComboBox
  *
  * Revision 1.16  1999/03/20 01:55:42  sp
  * New color option pane, fixed search & replace bug
- *
- * Revision 1.15  1999/03/20 00:26:48  sp
- * Console fix, backed out new JOptionPane code, updated tips
- *
- * Revision 1.14  1999/03/19 21:50:16  sp
- * Made HistoryTextField compile
- *
- * Revision 1.13  1999/03/19 06:08:45  sp
- * Fixed conflicts from incomplete commit, removed obsolete files
  *
  */

@@ -404,6 +404,8 @@ public class GUIUtilities
 	 */
 	public static void message(JFrame frame, String name, Object[] args)
 	{
+		hideSplashScreen();
+
 		JOptionPane.showMessageDialog(frame,
 			jEdit.getProperty(name.concat(".message"),args),
 			jEdit.getProperty(name.concat(".title"),args),
@@ -424,6 +426,8 @@ public class GUIUtilities
 	 */
 	public static void error(JFrame frame, String name, Object[] args)
 	{
+		hideSplashScreen();
+
 		JOptionPane.showMessageDialog(frame,
 			jEdit.getProperty(name.concat(".message"),args),
 			jEdit.getProperty(name.concat(".title"),args),
@@ -441,6 +445,8 @@ public class GUIUtilities
 	 */
 	public static String input(JFrame frame, String name, Object def)
 	{
+		hideSplashScreen();
+
 		String retVal = (String)JOptionPane.showInputDialog(frame,
 			jEdit.getProperty(name.concat(".message")),
 			jEdit.getProperty(name.concat(".title")),
@@ -459,6 +465,8 @@ public class GUIUtilities
 	 */
 	public static String inputProperty(JFrame frame, String name, String def)
 	{
+		hideSplashScreen();
+
 		String retVal = (String)JOptionPane.showInputDialog(frame,
 			jEdit.getProperty(name.concat(".message")),
 			jEdit.getProperty(name.concat(".title")),
@@ -593,13 +601,33 @@ public class GUIUtilities
 
 	}
 
+	// package-private members
+
+	static void showSplashScreen()
+	{
+		splash = new SplashScreen();
+	}
+
+	static void hideSplashScreen()
+	{
+		if(splash != null)
+		{
+			splash.dispose();
+			splash = null;
+		}
+	}
+
 	// private members
+	private static SplashScreen splash;
 	private GUIUtilities() {}
 }
 
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.19  1999/05/08 00:13:00  sp
+ * Splash screen change, minor documentation update, toolbar API fix
+ *
  * Revision 1.18  1999/05/04 04:51:25  sp
  * Fixed HistoryTextField for Swing 1.1.1
  *

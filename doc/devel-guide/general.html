@@ -10,6 +10,7 @@
 <li><a href=#jar>Contents of JAR Files</a>
 <li><a href=#plugin>Plugin Interface</a>
 <li><a href=#props>Plugin Properties</a>
+<li><a href=#thread>Thread Safety in jEdit</a>
 </ul>
 
 <a name=intro>
@@ -32,7 +33,14 @@ class for details.<p>
 
 Class files whose names end with `Plugin' (eg, Rot13Plugin) are loaded,
 instantiated and added to the plugin list. Other class files are loaded
-only when they're referenced by another class.
+only when they're referenced by another class.<p>
+
+Any other entires in the JAR can be loaded using the standard Java
+resource loading routines, for example:
+
+<pre>
+	InputStream in = getClass().getResourceAsStream("splash.gif");
+</pre>
 
 <a name=plugin>
 <h1>Plugin Interface</h1>
@@ -75,5 +83,13 @@ is stored
 
 All of these properties must be defined for the plugin to have an entry
 in the help system.
+
+<a name=thread>
+<h1>Thread Safety in jEdit</h1>
+</a>
+
+Most jEdit methods are not thread safe. For now, all jEdit methods
+should be called from the AWT Event Queue thread. Thread safety will
+be addressed in a future release of jEdit.
 </body>
 </html>

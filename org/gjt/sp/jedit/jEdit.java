@@ -46,7 +46,7 @@ public class jEdit
 	 * The date when a change was last made to the source code,
 	 * in <code>YYYYMMDD</code> format.
 	 */
-	public static final String BUILD = "19990506";
+	public static final String BUILD = "19990508";
 
 	/**
 	 * The main method of the jEdit application.
@@ -169,9 +169,8 @@ public class jEdit
 		// Ok, server isn't running; start jEdit
 
 		// Show the kool splash screen
-		SplashScreen splash = null;
 		if(showSplash)
-			splash = new SplashScreen();
+			GUIUtilities.showSplashScreen();
 
 		// Get things rolling
 		initMisc();
@@ -220,8 +219,7 @@ public class jEdit
 		newView(null,buffer);
 
 		// Dispose of the splash screen
-		if(splash != null)
-			splash.dispose();
+		GUIUtilities.hideSplashScreen();
 	}
 
 	/**
@@ -1519,6 +1517,9 @@ public class jEdit
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.96  1999/05/08 00:13:00  sp
+ * Splash screen change, minor documentation update, toolbar API fix
+ *
  * Revision 1.95  1999/05/06 07:16:14  sp
  * Plugins can use classes from other loaded plugins
  *
@@ -1549,11 +1550,5 @@ public class jEdit
  * Revision 1.86  1999/04/27 06:53:38  sp
  * JARClassLoader updates, shell script token marker update, token marker compiles
  * now
- *
- * Revision 1.85  1999/04/26 07:54:59  sp
- * Event multicaster tweak, console shows exit code of processes
- *
- * Revision 1.84  1999/04/25 07:23:36  sp
- * Documentation updates, reload bug fix, console bug fix
  *
  */
