@@ -29,7 +29,12 @@ import java.io.IOException;
 import org.gjt.sp.jedit.textarea.*;
 
 /**
- * This class records and plays macros.
+ * This class records and plays macros. Thanks to Romain Guy for writing
+ * the S<sup>3</sup> plugin, which provided the insparation for this
+ * class.
+ *
+ * @author Slava Pestov
+ * @version $Id$
  */
 public class Macros
 {
