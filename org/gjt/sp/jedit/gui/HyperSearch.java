@@ -86,7 +86,7 @@ public class HyperSearch extends JDialog
 		KeyHandler keyListener = new KeyHandler();
 		ActionHandler actionListener = new ActionHandler();
 
-		find.getEditor().getEditorComponent().addKeyListener(keyListener);
+		find.addKeyListener(keyListener);
 		addKeyListener(keyListener);
 		find.addActionListener(actionListener);
 		findBtn.addActionListener(actionListener);
@@ -103,8 +103,7 @@ public class HyperSearch extends JDialog
 	public void save()
 	{
 		find.addCurrentToHistory();
-		jEdit.setProperty("search.find.value",(String)
-			find.getSelectedItem());
+		jEdit.setProperty("search.find.value",find.getText());
 		jEdit.setProperty("search.ignoreCase.toggle",ignoreCase
 			.getModel().isSelected() ? "on" : "off");
 		jEdit.setProperty("search.regexp.value",(String)regexpSyntax
@@ -244,6 +243,9 @@ public class HyperSearch extends JDialog
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.30  1999/05/09 03:50:17  sp
+ * HistoryTextField is now a text field again
+ *
  * Revision 1.29  1999/04/23 07:35:11  sp
  * History engine reworking (shared history models, history saved to
  * .jedit-history)

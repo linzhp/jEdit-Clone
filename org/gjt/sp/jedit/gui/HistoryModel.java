@@ -24,7 +24,7 @@ import java.io.*;
 import java.util.*;
 import org.gjt.sp.jedit.jEdit;
 
-public class HistoryModel extends DefaultComboBoxModel
+public class HistoryModel
 {
 	public HistoryModel(String name)
 	{
@@ -38,6 +38,8 @@ public class HistoryModel extends DefaultComboBoxModel
 		{
 			max = 25;
 		}
+
+		data = new Vector(max);
 	}
 
 	public void addItem(String text)
@@ -45,14 +47,24 @@ public class HistoryModel extends DefaultComboBoxModel
 		if(text == null || text.length() == 0)
 			return;
 
-		int index = getIndexOf(text);
+		int index = data.indexOf(text);
 		if(index != -1)
-			removeElementAt(index);
+			data.removeElementAt(index);
 
-		insertElementAt(text,0);
+		data.insertElementAt(text,0);
 
 		if(getSize() > max)
-			removeElementAt(getSize() - 1);
+			data.removeElementAt(getSize() - 1);
+	}
+
+	public String getItem(int index)
+	{
+		return (String)data.elementAt(index);
+	}
+
+	public int getSize()
+	{
+		return data.size();
 	}
 
 	public String getName()
@@ -106,7 +118,7 @@ public class HistoryModel extends DefaultComboBoxModel
 				}
 				else
 				{
-					currentModel.addElement(
+					currentModel.addItemToEnd(
 						escapesToChars(line));
 				}
 			}
@@ -153,8 +165,7 @@ public class HistoryModel extends DefaultComboBoxModel
 
 				for(int i = 0; i < model.getSize(); i++)
 				{
-					out.write(charsToEscapes((String)model
-						.getElementAt(i)));
+					out.write(charsToEscapes(model.getItem(i)));
 					out.write('\n');
 				}
 			}
@@ -171,7 +182,13 @@ public class HistoryModel extends DefaultComboBoxModel
 	// private members
 	private String name;
 	private int max;
+	private Vector data;
 	private static Hashtable models;
+
+	private void addItemToEnd(String item)
+	{
+		data.addElement(item);
+	}
 
 	private static String escapesToChars(String str)
 	{
@@ -246,6 +263,9 @@ public class HistoryModel extends DefaultComboBoxModel
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.5  1999/05/09 03:50:17  sp
+ * HistoryTextField is now a text field again
+ *
  * Revision 1.4  1999/05/08 00:13:00  sp
  * Splash screen change, minor documentation update, toolbar API fix
  *

@@ -1,5 +1,5 @@
 /*
- * HistoryTextField.java - Text field with a combo box history
+ * HistoryTextField.java - Text field with a history
  * Copyright (C) 1999 Slava Pestov
  *
  * This program is free software; you can redistribute it and/or
@@ -22,63 +22,130 @@ package org.gjt.sp.jedit.gui;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import org.gjt.sp.jedit.*;
 
 /**
- * Text field with a combo box component listing previously entered
- * strings.
+ * Text field with an arrow-key accessable history.
  * @author Slava Pestov
  * @version $Id$
  */
-public class HistoryTextField extends JComboBox
+public class HistoryTextField extends JTextField
 {
 	public HistoryTextField(String name)
 	{
-		super(HistoryModel.getModel(name));
-		this.name = name;
+		historyModel = HistoryModel.getModel(name);
+		addKeyListener(new KeyHandler());
 
-		setEditable(true);
-		setMaximumRowCount(20);
-		setSelectedItem(null);
-
-		getEditor().getEditorComponent()
-			.addKeyListener(new KeyHandler());
+		index = -1;
 	}
 
-	public Object getSelectedItem()
-	{
-		Object obj = getEditor().getItem();
-		if(obj == null)
-			obj = super.getSelectedItem();
-		return obj;
-	}
-	
 	public void addCurrentToHistory()
 	{
-		String str = (String)getEditor().getItem();
-		if(str == null)
-			str = (String)getSelectedItem();
-		if(str != null && str.length() != 0)
+		historyModel.addItem(getText());
+		index = 0;
+	}
+
+	public void setText(String text)
+	{
+		super.setText(text);
+		index = -1;
+	}
+
+	// private members
+	HistoryModel historyModel;
+	String current;
+	int index;
+
+	private void doBackwardSearch()
+	{
+		if(getSelectionEnd() != getDocument().getLength())
 		{
-			((HistoryModel)getModel()).addItem(str);
-			setSelectedIndex(0);
+			setCaretPosition(getDocument().getLength());
+		}
+
+		String text = getText().substring(0,getSelectionStart());
+		if(text == null)
+		{
+			historyPrevious();
+			return;
+		}
+
+		for(int i = index + 1; i < historyModel.getSize(); i++)
+		{
+			String item = historyModel.getItem(i);
+			if(item.startsWith(text))
+			{
+				replaceSelection(item.substring(text.length()));
+				select(text.length(),getDocument().getLength());
+				index = i;
+				return;
+			}
+		}
+
+		getToolkit().beep();
+	}
+
+	private void doForwardSearch()
+	{
+		if(getSelectionEnd() != getDocument().getLength())
+		{
+			setCaretPosition(getDocument().getLength());
+		}
+
+		String text = getText().substring(0,getSelectionStart());
+		if(text == null)
+		{
+			historyNext();
+			return;
+		}
+
+		for(int i = index - 1; i >= 0; i--)
+		{
+			String item = historyModel.getItem(i);
+			if(item.startsWith(text))
+			{
+				replaceSelection(item.substring(text.length()));
+				select(text.length(),getDocument().getLength());
+				index = i;
+				return;
+			}
+		}
+
+		getToolkit().beep();
+	}
+
+	private void historyPrevious()
+	{
+		if(index == historyModel.getSize() - 1)
+			getToolkit().beep();
+		else if(index == -1)
+		{
+			current = getText();
+			setText(historyModel.getItem(0));
+			index = 0;
+		}
+		else
+		{
+			// have to do this because setText() sets index to -1
+			int newIndex = index + 1;
+			setText(historyModel.getItem(newIndex));
+			index = newIndex;
 		}
 	}
 
-	/**
-	 * Stupid workaround so that selecting an item or losing
-	 * focus won't fire an action event
-	 */
-	public void _fireActionEvent()
+	private void historyNext()
 	{
-		super.fireActionEvent();
+		if(index == -1)
+			getToolkit().beep();
+		else if(index == 0)
+			setText(current);
+		else
+		{
+			// have to do this because setText() sets index to -1
+			int newIndex = index - 1;
+			setText(historyModel.getItem(newIndex));
+			index = newIndex;
+		}
 	}
-
-	public void fireActionEvent() {}
-
-	// private members
-	private String name;
-	private int max;
 
 	class KeyHandler extends KeyAdapter
 	{
@@ -86,9 +153,29 @@ public class HistoryTextField extends JComboBox
 		{
 			if(evt.getKeyCode() == KeyEvent.VK_ENTER)
 			{
-				Object current = getEditor().getItem();
-				setSelectedItem(current);
-				_fireActionEvent();
+				addCurrentToHistory();
+			}
+			else if(evt.getKeyCode() == KeyEvent.VK_UP)
+			{
+				if((evt.getModifiers() & InputEvent.CTRL_MASK) != 0)
+					doBackwardSearch();
+				else
+					historyPrevious();
+				evt.consume();
+			}
+			else if(evt.getKeyCode() == KeyEvent.VK_DOWN)
+			{
+				if((evt.getModifiers() & InputEvent.CTRL_MASK) != 0)
+					doForwardSearch();
+				else
+					historyNext();
+				evt.consume();
+			}
+			else if(evt.getKeyCode() == KeyEvent.VK_TAB
+				&& (evt.getModifiers() & InputEvent.CTRL_MASK) != 0)
+			{
+				doBackwardSearch();
+				evt.consume();
 			}
 		}
 	}
@@ -97,6 +184,9 @@ public class HistoryTextField extends JComboBox
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.27  1999/05/09 03:50:17  sp
+ * HistoryTextField is now a text field again
+ *
  * Revision 1.26  1999/05/08 00:13:00  sp
  * Splash screen change, minor documentation update, toolbar API fix
  *
@@ -127,8 +217,5 @@ public class HistoryTextField extends JComboBox
  *
  * Revision 1.17  1999/03/21 08:37:16  sp
  * Slimmer action system, history text field update
- *
- * Revision 1.16  1999/03/20 01:55:42  sp
- * New color option pane, fixed search & replace bug
  *
  */

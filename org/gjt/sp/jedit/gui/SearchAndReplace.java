@@ -37,7 +37,7 @@ public class SearchAndReplace extends JDialog
 		this.view = view;
 
 		find = new HistoryTextField("find");
-		find.setSelectedItem(defaultFind);
+		find.setText(defaultFind);
 
 		replace = new HistoryTextField("replace");
 		keepDialog = new JCheckBox(jEdit.getProperty(
@@ -108,14 +108,10 @@ public class SearchAndReplace extends JDialog
 		KeyHandler keyListener = new KeyHandler();
 		addKeyListener(keyListener);
 
-		find.getEditor().getEditorComponent()
-			.addKeyListener(keyListener);
-		replace.getEditor().getEditorComponent()
-			.addKeyListener(keyListener);
+		find.addKeyListener(keyListener);
+		replace.addKeyListener(keyListener);
 
 		ActionHandler actionListener = new ActionHandler();
-		find.addActionListener(actionListener);
-		replace.addActionListener(actionListener);
 		findBtn.addActionListener(actionListener);
 		replaceSelection.addActionListener(actionListener);
 		replaceAll.addActionListener(actionListener);
@@ -143,11 +139,9 @@ public class SearchAndReplace extends JDialog
 	private void save()
 	{
 		find.addCurrentToHistory();
-		jEdit.setProperty("search.find.value",(String)find
-			.getSelectedItem());
+		jEdit.setProperty("search.find.value",find.getText());
 		replace.addCurrentToHistory();
-		jEdit.setProperty("search.replace.value",(String)replace
-			.getSelectedItem());
+		jEdit.setProperty("search.replace.value",replace.getText());
 		jEdit.setProperty("search.keepDialog.toggle",keepDialog
 			.getModel().isSelected() ? "on" : "off");
 		jEdit.setProperty("search.ignoreCase.toggle",ignoreCase
@@ -171,8 +165,7 @@ public class SearchAndReplace extends JDialog
 			Object source = evt.getSource();
 			if(source == cancel)
 				dispose();
-			else if(source == findBtn || source == find
-				|| source == replace)
+			else if(source == findBtn)
 			{
 				save();
 				if(view.getBuffer().find(view,false))
@@ -213,7 +206,13 @@ public class SearchAndReplace extends JDialog
 	{
 		public void keyPressed(KeyEvent evt)
 		{
-			if(evt.getKeyCode() == KeyEvent.VK_ESCAPE)
+			if(evt.getKeyCode() == KeyEvent.VK_ENTER)
+			{
+				save();
+				if(view.getBuffer().find(view,false))
+					disposeOrKeepDialog();
+			}
+			else if(evt.getKeyCode() == KeyEvent.VK_ESCAPE)
 			{
 				dispose();
 			}
@@ -224,6 +223,9 @@ public class SearchAndReplace extends JDialog
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.29  1999/05/09 03:50:17  sp
+ * HistoryTextField is now a text field again
+ *
  * Revision 1.28  1999/04/23 22:37:55  sp
  * Tips updated, TokenMarker.LineInfo is public now
  *

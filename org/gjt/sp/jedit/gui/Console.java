@@ -223,7 +223,6 @@ implements ActionListener, ListSelectionListener
 				errorColor);
 			return;
 		}
-		stdin = new StdinThread();
 		stdout = new StdoutThread();
 		stderr = new StderrThread();
 	}
@@ -237,7 +236,6 @@ implements ActionListener, ListSelectionListener
 	{
 		if(process != null)
 		{
-			stdin.stop();
 			stdout.stop();
 			stderr.stop();
 			process.destroy();
@@ -362,11 +360,11 @@ implements ActionListener, ListSelectionListener
 	{
 		if(evt.getSource() == cmd)
 		{
-			String s = (String)cmd.getSelectedItem();
+			String s = cmd.getText(); 
 			if(s != null && s.length() != 0)
 			{
 				cmd.addCurrentToHistory();
-				cmd.setSelectedItem(null);
+				cmd.setText(null);
 
 				run(s);
 			}
@@ -418,7 +416,6 @@ implements ActionListener, ListSelectionListener
 
 	private String processName;
 	private Process process;
-	private StdinThread stdin;
 	private StdoutThread stdout;
 	private StderrThread stderr;
 
@@ -541,36 +538,6 @@ implements ActionListener, ListSelectionListener
 		errors.addElement(new CompilerError(path,lineNo,error));
 	}
 
-	class StdinThread extends Thread
-	{
-		StdinThread()
-		{
-			super("*** jEdit stdin write thread ***");
-			start();
-		}
-
-		public void run()
-		{
-			String selection = view.getTextArea().getSelectedText();
-			if(selection == null)
-				return;
-
-//			try
-//			{
-//				OutputStreamWriter out = new OutputStreamWriter(
-//					process.getOutputStream());
-//
-//				out.write(selection);
-//				out.close();
-//			}
-//			catch(IOException io)
-//			{
-//				Object[] args = { io.getMessage() };
-//				GUIUtilities.error(view,"ioerror",args);
-//			}
-		}
-	}
-	
 	class StdoutThread extends Thread
 	{
 		StdoutThread()
@@ -648,6 +615,9 @@ implements ActionListener, ListSelectionListener
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.29  1999/05/09 03:50:17  sp
+ * HistoryTextField is now a text field again
+ *
  * Revision 1.28  1999/04/26 07:55:00  sp
  * Event multicaster tweak, console shows exit code of processes
  *

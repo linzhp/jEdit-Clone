@@ -37,7 +37,7 @@ implements ActionListener, KeyListener, MouseListener
 		String[] abbrevClipHistory = new String[clipHistory.getSize()];
 		for(int i = 0; i < clipHistory.getSize(); i++)
 		{
-			String clip = (String)clipHistory.getElementAt(i);
+			String clip = (String)clipHistory.getItem(i);
 			clip = clip.replace('\n',' ');
 			if(clip.length() > 60)
 			{
@@ -53,7 +53,8 @@ implements ActionListener, KeyListener, MouseListener
 		insert = new JButton(jEdit.getProperty("common.insert"));
 		cancel = new JButton(jEdit.getProperty("common.cancel"));
 		content.setLayout(new BorderLayout());
-		content.add(new JLabel(jEdit.getProperty("pasteprev.caption")), BorderLayout.NORTH);
+		content.add(new JLabel(jEdit.getProperty("pasteprev.caption")),
+			BorderLayout.NORTH);
 		content.add(new JScrollPane(clips), BorderLayout.CENTER);
 		JPanel panel = new JPanel();
 		panel.add(insert);
@@ -122,8 +123,7 @@ implements ActionListener, KeyListener, MouseListener
 		int selected = clips.getSelectedIndex();
 		if(selected != -1)
 		{
-			String clip = (String)clipHistory.getElementAt(
-				selected);
+			String clip = clipHistory.getItem(selected);
 			view.getTextArea().replaceSelection(clip);
 		}
 		dispose();

@@ -21,13 +21,12 @@ This is what needs to be done as soon as possible:
 
 <ul>
 
-<li>In addition to the history data itself, the selected index
-is shared between all history text fields. This must be fixed
-ASAP.
+<li>Caps lock doesn't work on Blackdown JDK.<p>
+This is most likely a JDK bug.
 
-<li>Caps lock doesn't work.<p>
-This appears to be a JDK/Swing bug. Should check if this occurs
-on Windows as well.
+<li>Overwrite mode doesn't work on JDK 1.2.<p>
+I have no idea why. Maybe Keymap.setDefaultKeyTypedAction() doesn't work
+properly?
 
 <li>Sometimes Search &amp; Replace selects the wrong text.<p>
 This only seems to happen with Swing 1.1.1. So, it either a
@@ -44,8 +43,6 @@ This is what needs to be done sometime during the 1.6preX
 series:
 
 <ul>
-<li>Console's stdin stuff needs to be fixed.<p>
-It looks like a Java bug.
 
 <li>Multiline token colorization needs some work.<p>
 The C+END `bug' still exists.

@@ -60,6 +60,6 @@ public class compile extends EditAction
 		view.showConsole();
 
 		view.getConsole().getCommandField()
-			.setSelectedItem(compiler);
+			.setText(compiler);
 	}
 }

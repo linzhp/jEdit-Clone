@@ -7,6 +7,7 @@
 <li><a href=#intro>Introduction</a>
 <li><a href=#server>The jEdit Server</a>
 <li><a href=#desktop>Session Management</a>
+<li><a href=#history>History Text Fields</a>
 <li><a href=#lineSep>Line Separator Characters</a>
 <li><a href=#modes>Edit Modes</a>
 <li><a href=#markers>Markers and the Anchor</a>
@@ -45,6 +46,25 @@ command line parameters, it can reopen those files.<p>
 
 Session management can be disabled either on a `one-time' basis with the
 `-nodesktop' switch, or permanently in `Tools-&gt;Global Options-&gt;General'.
+
+<a name=history>
+<h1>History Text Fields</h1>
+</a>
+
+To make it easier to reuse previous commands and search strings, jEdit's
+console, (see <a href=console.html>The Console</a>), Search &amp; Replace
+and HyperSearch dialogs use text fields with history lists.<p>
+
+The up and down arrow keys can be used to recall the previous and next
+entries.<p>
+
+Pressing Control in addition to up or down will search for the previous
+or next entry that starts with the currently entered text; for example,
+if the used previously entered `ls /etc', and they enter `ls' and press
+Control+UP, `ls /etc' will be entered.<p>
+
+The maximum number of entires in a history list is 25 by default; it can
+be changed in `Tools-&gt;Global Options-&gt;General'.
 
 <a name=lineSep>
 <h1>Line Separator Characters</h1>

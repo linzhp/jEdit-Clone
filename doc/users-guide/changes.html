@@ -21,11 +21,18 @@
 <li>Plugins can now use classes from other loaded plugins
 <li>Plugins can now specify the jEdit/JDK version and any classes they
 depend on
+<li>History combo boxes are now text fields, with up/down arrow key
+recall as in jEdit 1.4. Also, pressing Control with up/down will search
+in the appropriate direction for entires starting with the currently
+entered text
 </ul>
 
 <h2>Enhancements</h2>
 
 <ul>
+<li><b>API change:</b> jEdit.VERSION and jEdit.BUILD renamed to
+jEdit.getVersion() and jEdit.getBuild()
+<li>Updated to gnu.regexp 1.0.8
 <li>FAQ updated
 <li>Splash screen is hidden if a dialog box is displayed at startup
 (for example, a file not found message)

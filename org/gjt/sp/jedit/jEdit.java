@@ -980,7 +980,7 @@ public class jEdit
 	private static void initSystemProperties()
 	{
 		defaultProps = props = new Properties();
-		
+
 		try
 		{
 			loadProps(jEdit.class.getResourceAsStream(
@@ -1526,6 +1526,9 @@ public class jEdit
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.98  1999/05/09 03:50:16  sp
+ * HistoryTextField is now a text field again
+ *
  * Revision 1.97  1999/05/08 06:37:21  sp
  * jEdit.VERSION/BUILD becomes jEdit.getVersion()/getBuild(), plugin dependencies
  *
