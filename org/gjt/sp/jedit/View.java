@@ -216,7 +216,7 @@ public class View extends JFrame
 	{
 		if(plugins.getMenuComponentCount() != 0)
 			plugins.removeAll();
-		Action[] pluginArray = jEdit.getPlugins();
+		Action[] pluginArray = jEdit.getPluginActions();
 		if(pluginArray.length == 0)
 		{
 			plugins.add(GUIUtilities.loadMenuItem(this,"no-plugins"));
@@ -819,6 +819,10 @@ public class View extends JFrame
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.52  1999/03/21 07:53:14  sp
+ * Plugin doc updates, action API change, new method in MiscUtilities, new class
+ * loader, new plugin interface
+ *
  * Revision 1.51  1999/03/20 05:23:32  sp
  * Code cleanups
  *

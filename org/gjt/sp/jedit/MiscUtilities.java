@@ -33,10 +33,8 @@ import java.io.*;
 public class MiscUtilities
 {
 	/**
-	 * Converts a file name to a class name.
-	 * <p>
-	 * All slashes characters are replaced with periods and the trailing
-	 * '.class' is removed.
+	 * Converts a file name to a class name. All slash characters are
+	 * replaced with periods and the trailing '.class' is removed.
 	 * @param name The file name
 	 */
 	public static String fileToClass(String name)
@@ -46,6 +44,16 @@ public class MiscUtilities
 			if(clsName[i] == '/')
 				clsName[i] = '.';
 		return new String(clsName,0,clsName.length - 6);
+	}
+
+	/**
+	 * Converts a clas name to a file name. All periods are replaced
+	 * with slashes and the '.class' extension is added.
+	 * @param name The class name
+	 */
+	public static String classToFile(String name)
+	{
+		return name.replace('.','/').concat(".class");
 	}
 
 	/**
@@ -168,6 +176,10 @@ loop:		for(int i = 0; i < str.length(); i++)
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.6  1999/03/21 07:53:14  sp
+ * Plugin doc updates, action API change, new method in MiscUtilities, new class
+ * loader, new plugin interface
+ *
  * Revision 1.5  1999/03/19 07:12:10  sp
  * JOptionPane changes, did a fromdos of the source
  *

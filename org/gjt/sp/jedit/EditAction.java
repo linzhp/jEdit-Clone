@@ -31,17 +31,14 @@ import java.util.EventObject;
  *
  * The <i>internal</i> name of an action is the class name without the
  * package prefix. An action instance can be obtained from it's internal
- * name with the <code>jEdit.getAction()</code> method. An array of
- * available actions can be obtained with the <code>jEdit.getActions()</code>
- * method.<p>
+ * name with the <code>jEdit.getAction()</code> method.
  *
- * When jEdit loads a plugin (JAR file) any implementations of
- * <code>EditAction</code> are added to the action table. Additionally,
- * any implementations that define the <code>PLUGIN</code> property
- * are added to the plugin list. The `Plugins' menu is later built
- * from the plugin list. While jEdit is running, additional actions
- * can also be added with the <code>jEdit.addAction()</code> method.
- * <p>
+ * Actions can be added at run-time with the <code>jEdit.addAction()</code>
+ * method, or the <code>jEdit.addPluginAction()</code> method if the action
+ * is to appear in the plugins menu.<p>
+ *
+ * An array of available actions can be obtained with the
+ * <code>jEdit.getActions()</code> method.<p>
  *
  * The following properties relate to actions:
  * <ul>
@@ -65,30 +62,12 @@ import java.util.EventObject;
 public abstract class EditAction extends AbstractAction
 {
 	/**
-	 * Property that can be set to Boolean.TRUE for the action
-	 * to appear in the plugins menu.
-	 */
-	public static String PLUGIN = "_Plugin";
-
-	/**
 	 * Creates a new <code>EditAction</code>.
 	 * @param name The name of the action
 	 */
 	public EditAction(String name)
 	{
 		super(name);
-	}
-
-	/**
-	 * Creates a new <code>EditAction</code>.
-	 * @param name The name of the action
-	 * @param plugin True if the action should appear in the plugins
-	 * menu
-	 */
-	public EditAction(String name, boolean plugin)
-	{
-		super(name);
-		putValue(PLUGIN,new Boolean(plugin));
 	}
 
 	/**
@@ -139,6 +118,10 @@ public abstract class EditAction extends AbstractAction
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.7  1999/03/21 07:53:14  sp
+ * Plugin doc updates, action API change, new method in MiscUtilities, new class
+ * loader, new plugin interface
+ *
  * Revision 1.6  1999/03/16 04:34:45  sp
  * HistoryTextField updates, moved generate-text to a plugin, fixed spelling mistake in EditAction Javadocs
  *

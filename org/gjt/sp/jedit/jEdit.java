@@ -47,7 +47,7 @@ public class jEdit
 	 * The date when a change was last made to the source code,
 	 * in <code>YYYYMMDD</code> format.
 	 */
-	public static final String BUILD = "19990320";
+	public static final String BUILD = "19990321";
 
 	/**
 	 * AWK regexp syntax.
@@ -225,8 +225,8 @@ public class jEdit
 		props = new Properties();
 		actionHash = new Hashtable();
 		modes = new Vector();
-		loader = new JarClassLoader();
 		plugins = new Vector();
+		pluginActions = new Vector();
 		buffers = new Vector();
 		views = new Vector();
 		recent = new Vector();
@@ -616,9 +616,10 @@ public class jEdit
 		{
 			try
 			{
-				loadPlugin(directory + File.separator + plugins[i]);
+				new JARClassLoader(directory + File.separator
+					+ plugins[i]);
 			}
-			catch(Exception e)
+			catch(Throwable e)
 			{
 				System.err.println("Error loading plugin: "
 					+ plugins[i]);
@@ -628,43 +629,13 @@ public class jEdit
 	}
 
 	/**
-	 * Loads a plugin.
-	 * @param name The plugin path name
-	 * @exception IOException if an I/O error occured
-	 * @exception ClassNotFoundException if a referenced class is not
-	 * contained within the plugin
-	 * @exception InstantiationException if a mode or command doesn't
-	 * have a zero-argument constructor
-	 * @exception IllegalAccessException if a mode or command constructor
-	 * isn't declared <code>public</code>.
+	 * Registers a plugin with the editor.
+	 * @param plugin The plugin
 	 */
-	public static void loadPlugin(String name)
-		throws IOException, ClassNotFoundException,
-		InstantiationException, IllegalAccessException
+	public static void addPlugin(Plugin plugin)
 	{
-		if(!name.endsWith(".jar"))
-			return;
-		System.out.print("Loading plugin ");
-		System.out.println(name);
-		Vector classes = new Vector();
-		ZipFile jar = new ZipFile(name);
-		Enumeration entries = jar.entries();
-		while(entries.hasMoreElements())
-		{
-			String cls = loader.loadEntry(jar,(ZipEntry)entries
-				.nextElement());
-			if(cls != null)
-				classes.addElement(cls);
-		}
-		Enumeration enum = classes.elements();
-		while(enum.hasMoreElements())
-		{
-			Class clazz = loader.loadClass((String)enum.nextElement());
-			if(EditAction.class.isAssignableFrom(clazz))
-				addAction((EditAction)clazz.newInstance());
-			else if(Mode.class.isAssignableFrom(clazz))
-				addMode((Mode)clazz.newInstance());
-		}
+		plugins.addElement(plugin);
+		plugin.start();
 	}
 
 	/**
@@ -674,8 +645,27 @@ public class jEdit
 	public static void addAction(Action action)
 	{
 		actionHash.put(action.getValue(Action.NAME),action);
-		if(Boolean.TRUE.equals(action.getValue(EditAction.PLUGIN)))
-			plugins.addElement(action);
+	}
+
+	/**
+	 * Returns an array of installed plugins.
+	 */
+	public static Plugin[] getPlugins()
+	{
+		Plugin[] pluginArray = new Plugin[plugins.size()];
+		plugins.copyInto(pluginArray);
+		return pluginArray;
+	}
+
+	/**
+	 * Registers an action with the editor and adds it to the plugin
+	 * action list (so it will appear in the plugins menu).
+	 * @param action The action
+	 */
+	public static void addPluginAction(Action action)
+	{
+		actionHash.put(action.getValue(Action.NAME),action);
+		pluginActions.addElement(action);
 	}
 
 	/**
@@ -706,12 +696,12 @@ public class jEdit
 	}
 
 	/**
-	 * Returns an array of installed plugins.
+	 * Returns an array of installed plugin actions.
 	 */
-	public static Action[] getPlugins()
+	public static Action[] getPluginActions()
 	{
-		Action[] array = new Action[plugins.size()];
-		plugins.copyInto(array);
+		Action[] array = new Action[pluginActions.size()];
+		pluginActions.copyInto(array);
 		return array;
 	}
 
@@ -915,18 +905,20 @@ public class jEdit
 	 */
 	public static void closeView(View view)
 	{
-		view.close();
-
-		fireEditorEvent(new EditorEvent(EditorEvent.VIEW_CLOSED,
-			view,view.getBuffer()));
-
 		if(views.size() == 1)
-			exit(view);
+			exit(view); /* exit does editor event & save */
 		else
 		{
+			fireEditorEvent(new EditorEvent(EditorEvent.VIEW_CLOSED,
+				view,view.getBuffer()));
+
+			view.close();
+
 			view.dispose();
 			views.removeElement(view);
 		}
+
+
 	}
 
 	/**
@@ -1067,8 +1059,6 @@ public class jEdit
 	 */
 	public static void exit(View view)
 	{
-		view.close();
-
 		// Save the `desktop'
 		if("on".equals(getProperty("saveDesktop")))
 		{
@@ -1105,6 +1095,17 @@ public class jEdit
 		{
 			if(!_closeBuffer(view,(Buffer)buffers.elementAt(i)))
 				return;
+		}
+		
+		// Only save view properties here - save unregisters
+		// listeners, and we would have problems if the user
+		// closed a view but cancelled an unsaved buffer close
+		view.close();
+
+		// Stop all plugins
+		for(int i = 0; i < plugins.size(); i++)
+		{
+			((Plugin)plugins.elementAt(i)).stop();
 		}
 
 		// Stop the server
@@ -1158,11 +1159,11 @@ public class jEdit
 	private static boolean syntax;
 	private static Server server;
 	private static Autosave autosave;
-	private static JarClassLoader loader;
 	private static Hashtable actionHash;
 	private static Action[] actions;
 	private static Vector modes;
 	private static Vector plugins;
+	private static Vector pluginActions;
 	private static int untitledCount;
 	private static Vector buffers;
 	private static Vector views;
@@ -1289,64 +1290,6 @@ public class jEdit
 		{
 			jEdit.propertiesChanged();
 		}
-	}
-
-	private static class JarClassLoader extends ClassLoader
-	{
-		JarClassLoader()
-		{
-			classes = new Hashtable();
-		}
-	
-		public Class loadClass(String name, boolean resolveIt)
-			throws ClassNotFoundException
-		{
-			Class clazz = findLoadedClass(name);
-			if(clazz != null)
-				return clazz;
-			byte[] data = (byte[])classes.get(name);
-			if(data == null)
-				return findSystemClass(name);
-			Class cls = defineClass(name,data,0,data.length);
-			if(resolveIt)
-				resolveClass(cls);
-			return cls;
-		}
-
-		public String loadEntry(ZipFile jar, ZipEntry entry)
-			throws IOException
-		{
-			InputStream in = jar.getInputStream(entry);
-			String entryName = entry.getName();
-			if(entryName.endsWith(".class"))
-			{
-				int len = (int)entry.getSize();
-				byte[] cls = new byte[len];
-				int success = 0;
-				int offset = 0;
-				String clsName = MiscUtilities.fileToClass(entryName);
-				while (success < len) {
-					len -= success;
-					offset += success;
-					success = in.read(cls,offset,len);
-					if (success == -1)
-					{
-						System.err.println("Error loading class "
-							+ clsName + " from "
-							+ jar.getName());
-						return null;
-					}
-				}
-				classes.put(clsName,cls);
-				return clsName;
-			}
-			else if(entryName.endsWith(".props"))
-				jEdit.loadProps(in,entryName);
-			in.close();
-			return null;
-		}
-
-		private Hashtable classes;
 	}
 
 	private static class Autosave extends Thread
@@ -1575,6 +1518,10 @@ public class jEdit
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.58  1999/03/21 07:53:14  sp
+ * Plugin doc updates, action API change, new method in MiscUtilities, new class
+ * loader, new plugin interface
+ *
  * Revision 1.57  1999/03/20 04:52:55  sp
  * Buffer-specific options panel finished, attempt at fixing OS/2 caret bug, code
  * cleanups

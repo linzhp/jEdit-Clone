@@ -13,9 +13,8 @@
 </a>
 
 <ul>
-<li>New classloader that loads classes as they are referenced and supports
-resources
-<li>Add some sort of API that plugins can use to register themselves
+<li>JARClassLoader should be able to load resources
+<li>Some sort of way to get information about installed plugins
 <li>Major mode/indent mode/minor mode system
 <li>Modularize SyntaxTextArea, make JEditTextArea subclass that handles
 jEdit-specific stuff
@@ -35,12 +34,17 @@ jEdit-specific stuff
 <ul>
 <li>New color editor in options (Mike Dillon)
 <li>Buffer-specific options dialog added
+<li>New, faster JAR class loader that only loads classes as they're
+referenced
+<li>New plugin interface, implementations of which are responsible for
+adding actions and modes to the editor
 </ul>
 
 <h2>Enhancements</h2>
 
 <ul>
 <li>Miscallaneous code cleanups
+<li>Plugin documentation updates
 </ul>
 
 <h2>Bug Fixes</h2>

@@ -33,13 +33,9 @@ import org.gjt.sp.jedit.syntax.TokenMarker;
  * <code>jEdit.getModeName()</code> method returns the user visible
  * name of a mode instance.<p>
  *
- * An array of currently installed edit modes can be obtained with the
- * <code>jEdit.getModes()</code> method.<p>
- *
- * When jEdit loads a plugin (JAR file) all classes that implement the
- * Mode interface are automatically added to the mode list. While jEdit is
- * running, modes can also be added with the <code>jEdit.addMode()</code>
- * method.<p>
+ * Modes can be added at run-time with the <code>jEdit.addMode()</code>
+ * method. An array of currently installed edit modes can be obtained
+ * with the <code>jEdit.getModes()</code> method.<p>
  *
  * Currently, edit modes can influence the following:
  * <ul>
@@ -126,6 +122,10 @@ public interface Mode
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.8  1999/03/21 07:53:14  sp
+ * Plugin doc updates, action API change, new method in MiscUtilities, new class
+ * loader, new plugin interface
+ *
  * Revision 1.7  1999/03/12 07:23:19  sp
  * Fixed serious view bug, Javadoc updates
  *
