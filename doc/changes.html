@@ -54,11 +54,11 @@ matching, etc to TextUtilities
 comments/quoted literals that might contain unmatched brackets. This might
 require a rewrite of Buffer.locateBracketBackward() and
 Buffer.locateBracketForward().
-<li>Sticky file format (open DOS file, saved as DOS file)
 <li>For some reason splash screen doesn't appear until the first view is
 created
 <li>Backup directory feature, where all ...~ files are placed
 <li>Syntax colorizing is still slow
+<li>Buffer local properties don't currently work
 </ul>
 
 <a name=14pre4>
@@ -71,6 +71,9 @@ created
 <li>Added TSQL mode  (written by
 Mike Dillon &lt;mdillon@uclink4.berkeley.edu&gt;)
 <li>Added Block Caret setting in Tools-&gt;Options-&gt;Editor
+<li>Sticky file format (when a file is loaded, jEdit tries to guess the
+line separators. When it is saved, the original line separators are used.
+Makes it easier for people who deal with both DOS and Unix files)
 </ul>
 
 <h2>Enhancements</h2>
@@ -94,6 +97,9 @@ Mike Dillon &lt;mdillon@uclink4.berkeley.edu&gt; for the fix)
 <li>AltGR key should now work on Windows (thanks to
 Juha Lindfors &lt;jplindfo@cc.helsinki.fi&gt; for the fix)
 <li>Shift Indent Left/Right had problems when shifting empty lines
+<li>Line separator setting in Options dialog box didn't work
+<li>README.txt referenced non-existent COPYING.txt (as of jEdit 1.3, it
+is COPYING.html on the doc/ directory)
 </ul>
 
 <a name=14pre3>

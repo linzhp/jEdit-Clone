@@ -133,8 +133,9 @@ public class GeneralOptionPane extends OptionPane
 		add(label);
 		cons.gridx = 3;
 		cons.gridwidth = 1;
-		String[] lineSeps = { "Unix (\\n)", "Windows (\\r\\n)",
-			"MacOS (\\r)" };
+		String[] lineSeps = { jEdit.getProperty("lineSep.unix"),
+			jEdit.getProperty("lineSep.windows"),
+			jEdit.getProperty("lineSep.mac") };
 		lineSeparator = new JComboBox(lineSeps);
 		String lineSep = jEdit.getProperty("buffer.lineSeparator",
 			System.getProperty("line.separator"));

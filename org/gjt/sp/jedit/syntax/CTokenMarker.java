@@ -88,7 +88,8 @@ loop:		for(int i = offset; i < length; i++)
 			case ':':
 				backslash = false;
 				if(token == null && i > offset &&
-					Character.isLetter(line.array[i-1]))
+					(Character.isLetter(line.array[i-1]) ||
+					line.array[i-1] == ':'))
 				{
 					addToken((i+1) - lastOffset,Token.LABEL);
 					lastOffset = i + 1;

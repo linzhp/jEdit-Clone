@@ -352,6 +352,7 @@ public class jEdit
 		addAction(new org.gjt.sp.jedit.actions.select_block());
 		addAction(new org.gjt.sp.jedit.actions.select_buffer());
 		addAction(new org.gjt.sp.jedit.actions.select_line_range());
+		addAction(new org.gjt.sp.jedit.actions.select_line_sep());
 		addAction(new org.gjt.sp.jedit.actions.select_mode());
 		addAction(new org.gjt.sp.jedit.actions.select_next_paragraph());
 		addAction(new org.gjt.sp.jedit.actions.select_no_indent());

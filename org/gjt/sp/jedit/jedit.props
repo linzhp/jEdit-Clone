@@ -41,7 +41,7 @@ browser=jedit_moz_remote
 # Unix=\n
 # Windows=\r\n
 # MacOS=\r
-#buffer.line.separator=\n
+#buffer.lineSeparator=\n
 
 # Tab width
 buffer.tabSize=8

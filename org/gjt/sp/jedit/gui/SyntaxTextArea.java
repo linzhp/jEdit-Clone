@@ -342,10 +342,11 @@ public class SyntaxTextArea extends JEditorPane
 				int dot = getDot();
 				getDocument().getText(dot,1,lineSegment);
 				Rectangle r = modelToView(dot);
-				width = g.getFontMetrics().charWidth('m') + 2;
-				r.width = block ? width - 2 : 0;
+				width = g.getFontMetrics().charWidth('m');
+				r.width = block ? width - 1 : 0;
+				width += 2;
 				g.setColor(getCaretColor());
-				g.drawRect(r.x - 1,r.y,r.width,r.height - 1);
+				g.drawRect(r.x,r.y,r.width,r.height - 1);
 			}
 			catch(BadLocationException bl)
 			{

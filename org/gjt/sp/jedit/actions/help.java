@@ -1,5 +1,5 @@
 /*
- * help.java
+ * help.java - Action
  * Copyright (C) 1998, 1999 Slava Pestov
  *
  * This program is free software; you can redistribute it and/or
@@ -34,6 +34,5 @@ public class help extends EditAction
 	{
 		new HelpViewer(getClass().getResource("/doc/"
 			.concat(evt.getActionCommand())));
-			
 	}
 }

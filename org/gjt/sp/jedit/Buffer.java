@@ -49,6 +49,11 @@ implements DocumentListener, UndoableEditListener
 	public static final int IOBUFSIZE = 32768;
 
 	/**
+	 * Line separator property.
+	 */
+	public static final String LINESEP = "lineSeparator";
+
+	/**
 	 * Finds the next instance of the search string in this buffer.
 	 * The search string is obtained from the
 	 * <code>search.find.value</code> property.
@@ -990,21 +995,20 @@ implements DocumentListener, UndoableEditListener
 	
 	private void load()
 	{
-		InputStream in;
+		InputStream _in;
 		URLConnection connection = null;
-		StringBuffer buf = new StringBuffer();
+		StringBuffer sbuf = new StringBuffer();
 		try
 		{
 			
 			if(url != null)
-				in = url.openStream();
+				_in = url.openStream();
 			else
-				in = new FileInputStream(file);
+				_in = new FileInputStream(file);
 			if(name.endsWith(".gz"))
-				in = new GZIPInputStream(in);
-			BufferedReader bin = new BufferedReader(
-				new InputStreamReader(in),IOBUFSIZE);
-			String line;
+				_in = new GZIPInputStream(_in);
+			InputStreamReader in = new InputStreamReader(_in);
+			/*String line;
 			int count = 0;
 			while ((line = bin.readLine()) != null)
 			{
@@ -1021,11 +1025,76 @@ implements DocumentListener, UndoableEditListener
 					processProperty(line.substring(index,
 						end + 1));
 				}
+			}*/
+			char[] buf = new char[IOBUFSIZE];
+			int len; // Number of characters in buffer
+			boolean CRLF = false; // Windows line endings
+			boolean CROnly = false; // MacOS line endings
+			boolean lastWasCR = false; // Was the previous character CR?
+
+			while((len = in.read(buf,0,buf.length)) != -1)
+			{
+				int lastLine = 0; // Offset of last line
+				for(int i = 0; i < len; i++)
+				{
+					char c = buf[i];
+					switch(c)
+					{
+					case '\r':
+						if(lastWasCR) // \r\r, probably Mac
+						{
+							CROnly = true;
+							CRLF = false;
+						}
+						else
+						{
+							lastWasCR = true;
+						}
+						sbuf.append(buf,lastLine,i -
+							lastLine);
+						sbuf.append('\n');
+						lastLine = i + 1;
+						break;
+					case '\n':
+						if(lastWasCR) // \r\n, probably DOS
+						{
+							CROnly = false;
+							CRLF = true;
+							lastWasCR = false;
+							lastLine = i + 1;
+						}
+						else // Unix
+						{
+							CROnly = false;
+							CRLF = false;
+							sbuf.append(buf,lastLine,
+								i - lastLine);
+							sbuf.append('\n');
+							lastLine = i + 1;
+						}
+						break;
+					default:
+						if(lastWasCR)
+						{
+							CROnly = true;
+							CRLF = false;
+							lastWasCR = false;
+						}
+						break;
+					}
+				}
+				sbuf.append(buf,lastLine,len - lastLine);
 			}
-			bin.close();
-                        if(buf.length() != 0 && buf.charAt(buf.length() - 1) == '\n')
-				buf.setLength(buf.length() - 1);
-			insertString(0,buf.toString(),null);
+			if(CRLF)
+				putProperty(LINESEP,"\r\n");
+			else if(CROnly)
+				putProperty(LINESEP,"\r");
+			else
+				putProperty(LINESEP,"\n");
+			in.close();
+                        if(sbuf.length() != 0 && sbuf.charAt(sbuf.length() - 1) == '\n')
+				sbuf.setLength(sbuf.length() - 1);
+			insertString(0,sbuf.toString(),null);
 			newFile = false;
 			modTime = file.lastModified();
 		}
@@ -1196,8 +1265,9 @@ implements DocumentListener, UndoableEditListener
 	{
 		BufferedWriter out = new BufferedWriter(
 			new OutputStreamWriter(_out),IOBUFSIZE);
-		String newline = jEdit.getProperty("buffer.lineSeparator",
-			System.getProperty("line.separator"));
+		String newline = (String)getProperty(LINESEP);
+		if(newline == null)
+			newline = System.getProperty("line.separator");
 		Element map = getDefaultRootElement();
 		for(int i = 0; i < map.getElementCount(); i++)
 		{

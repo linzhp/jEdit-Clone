@@ -279,6 +279,41 @@ implements CaretListener, KeyListener, WindowListener
 	}
 	
 	/**
+	 * Recreates the line separator menu.
+	 */
+	public void updateLineSepMenu()
+	{
+		if(lineSep.getMenuComponentCount() != 0)
+			lineSep.removeAll();
+		Action action = jEdit.getAction("select-line-sep");
+		String newline = (String)buffer.getProperty(Buffer.LINESEP);
+		if(newline == null)
+			newline = System.getProperty("line.separator");
+		ButtonGroup grp = new ButtonGroup();
+		JMenuItem menuItem = new JRadioButtonMenuItem(jEdit.getProperty(
+			"lineSep.unix"));
+		menuItem.setActionCommand("\n");
+		menuItem.addActionListener(action);
+		menuItem.getModel().setSelected("\n".equals(newline));
+		grp.add(menuItem);
+		lineSep.add(menuItem);
+		menuItem = new JRadioButtonMenuItem(jEdit.getProperty(
+			"lineSep.windows"));
+		menuItem.setActionCommand("\r\n");
+		menuItem.addActionListener(action);
+		menuItem.getModel().setSelected("\r\n".equals(newline));
+		grp.add(menuItem);
+		lineSep.add(menuItem);
+		menuItem = new JRadioButtonMenuItem(jEdit.getProperty(
+			"lineSep.mac"));
+		menuItem.setActionCommand("\r");
+		menuItem.addActionListener(action);
+		menuItem.getModel().setSelected("\r".equals(newline));
+		grp.add(menuItem);
+		lineSep.add(menuItem);
+	}
+
+	/**
 	 * Updates the line number indicator.
 	 * @param force True if it should be updated even if the caret
 	 * hasn't moved since the last update
@@ -339,6 +374,7 @@ implements CaretListener, KeyListener, WindowListener
 			saveCaretInfo();
 		this.buffer = buffer;
 		textArea.setDocument(buffer);
+		updateLineSepMenu();
 		updateMarkerMenus();
 		updateModeMenu();
 		updateTitle();
@@ -525,6 +561,7 @@ implements CaretListener, KeyListener, WindowListener
 		errors = jEdit.loadMenu(this,"errors");
 		plugins = jEdit.loadMenu(this,"plugins");
 		mode = jEdit.loadMenu(this,"mode");
+		lineSep = jEdit.loadMenu(this,"line-separator");
 
 		bindings = new Hashtable();
 		currentPrefix = bindings;
@@ -608,6 +645,8 @@ implements CaretListener, KeyListener, WindowListener
 			return plugins;
 		else if(name.equals("mode"))
 			return mode;
+		else if(name.equals("line-separator"))
+			return lineSep;
 		else
 			return null;
 	}
@@ -620,6 +659,7 @@ implements CaretListener, KeyListener, WindowListener
 	private JMenu errors;
 	private JMenu plugins;
 	private JMenu mode;
+	private JMenu lineSep;
 	private Hashtable bindings;
 	private Hashtable currentPrefix;
 	private JScrollPane scroller;
