@@ -126,13 +126,15 @@ implements ActionListener, KeyListener, WindowListener
 			dispose();
 		else if(source == findBtn)
 		{
-			view.getBuffer().find(view,false);
-			dispose();
+			if(view.getBuffer().find(view,false))
+				dispose();
 		}
 		else if(source == replaceAll)
 		{
-			view.getBuffer().replaceAll(view);
-			dispose();
+			if(view.getBuffer().replaceAll(view))
+				dispose();
+			else
+				getToolkit().beep();
 		}
 	}
 
@@ -142,8 +144,8 @@ implements ActionListener, KeyListener, WindowListener
 		{
 		case KeyEvent.VK_ENTER:
 			save();
-			view.getBuffer().find(view,false);
-			dispose();
+			if(view.getBuffer().find(view,false));
+				dispose();
 			break;
 		case KeyEvent.VK_ESCAPE:
 			save();

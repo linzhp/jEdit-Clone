@@ -1,5 +1,5 @@
 /*
- * replace_all.java
+ * select_prev_paragraph.java
  * Copyright (C) 1998 Slava Pestov
  *
  * This program is free software; you can redistribute it and/or
@@ -20,20 +20,30 @@
 package org.gjt.sp.jedit.actions;
 
 import javax.swing.text.BadLocationException;
+import javax.swing.text.Element;
 import java.awt.event.ActionEvent;
 import org.gjt.sp.jedit.*;
+import org.gjt.sp.jedit.syntax.SyntaxTextArea;
 
-public class replace_all extends EditAction
+public class select_prev_paragraph extends EditAction
 {
-	public replace_all()
+	public select_prev_paragraph()
 	{
-		super("replace-all");
+		super("select-prev-paragraph");
 	}
 	
 	public void actionPerformed(ActionEvent evt)
 	{
 		View view = getView(evt);
-		if(!view.getBuffer().replaceAll(view))
-			view.getToolkit().beep();
+		Buffer buffer = view.getBuffer();
+		Element map = buffer.getDefaultRootElement();
+		SyntaxTextArea textArea = view.getTextArea();
+		int lineNo = map.getElementIndex(textArea.getSelectionStart());
+		int start = map.getElement(buffer.locateParagraphStart(lineNo))
+			.getStartOffset();
+		int end = map.getElement(buffer.locateParagraphEnd(lineNo))
+			.getEndOffset();
+		textArea.select(Math.max(0,start-1),Math.max(textArea
+			.getSelectionEnd(),end));
 	}
 }

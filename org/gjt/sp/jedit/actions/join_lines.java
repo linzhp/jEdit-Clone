@@ -1,5 +1,5 @@
 /*
- * replace_all.java
+ * join_lines.java
  * Copyright (C) 1998 Slava Pestov
  *
  * This program is free software; you can redistribute it and/or
@@ -20,20 +20,36 @@
 package org.gjt.sp.jedit.actions;
 
 import javax.swing.text.BadLocationException;
+import javax.swing.text.Element;
 import java.awt.event.ActionEvent;
 import org.gjt.sp.jedit.*;
 
-public class replace_all extends EditAction
+public class join_lines extends EditAction
 {
-	public replace_all()
+	public join_lines()
 	{
-		super("replace-all");
+		super("join-lines");
 	}
-	
+
 	public void actionPerformed(ActionEvent evt)
 	{
 		View view = getView(evt);
-		if(!view.getBuffer().replaceAll(view))
+		Buffer buffer = view.getBuffer();
+		Element map = buffer.getDefaultRootElement();
+		Element lineElement = map.getElement(map.getElementIndex(
+			view.getTextArea().getCaretPosition()));
+		if(lineElement.getEndOffset() + 1 >= buffer.getLength())
+		{
 			view.getToolkit().beep();
+			return;
+		}
+		try
+		{
+			buffer.remove(lineElement.getEndOffset()-1,1);
+		}
+		catch(BadLocationException bl)
+		{
+			bl.printStackTrace();
+		}
 	}
 }

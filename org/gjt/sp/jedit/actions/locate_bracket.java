@@ -37,12 +37,8 @@ public class locate_bracket extends EditAction
 		Buffer buffer = view.getBuffer();
 		String openBrackets = (String)buffer
 			.getProperty("openBrackets");
-		if(openBrackets == null)
-			openBrackets = "([{";
 		String closeBrackets = (String)buffer
 			.getProperty("closeBrackets");
-		if(closeBrackets == null)
-			closeBrackets = ")]}";
 		if(closeBrackets.length() != openBrackets.length())
 		{
 			view.getToolkit().beep();

@@ -261,7 +261,7 @@ implements CaretListener, KeyListener, WindowListener
 	 */
 	public void addKeyBinding(KeyStroke key1, String cmd)
 	{
-		prefixes.put(key1,cmd);
+		bindings.put(key1,cmd);
 	}
 
 	/**
@@ -273,11 +273,11 @@ implements CaretListener, KeyListener, WindowListener
 	public void addKeyBinding(KeyStroke key1, KeyStroke key2,
 		String cmd)
 	{
-		Object o = prefixes.get(key1);
+		Object o = bindings.get(key1);
 		if(!(o instanceof Hashtable))
 		{
 			o = new Hashtable();
-			prefixes.put(key1,o);
+			bindings.put(key1,o);
 		}
 		((Hashtable)o).put(key2,cmd);
 	}
@@ -298,9 +298,10 @@ implements CaretListener, KeyListener, WindowListener
 			KeyStroke keyStroke = KeyStroke.getKeyStroke(keyCode,
 				evt.getModifiers());
 			Object o = currentPrefix.get(keyStroke);
-			if(o == null && currentPrefix != prefixes)
+			if(o == null && currentPrefix != bindings)
 			{
 				getToolkit().beep();
+				currentPrefix = bindings;
 				evt.consume();
 				return;
 			}
@@ -320,13 +321,15 @@ implements CaretListener, KeyListener, WindowListener
 				if(action == null)
 				{
 					System.out.println("Invalid key"
-						+ " binding:" + s);
+						+ " binding: " + s);
+					currentPrefix = bindings;
+					evt.consume();
 					return;
 				}
 				jEdit.getAction(s).actionPerformed(
 					new ActionEvent(this,ActionEvent
 					.ACTION_PERFORMED,cmd));
-				currentPrefix = prefixes;
+				currentPrefix = bindings;
 				evt.consume();
 				return;
 			}
@@ -341,7 +344,7 @@ implements CaretListener, KeyListener, WindowListener
 			&& keyCode != KeyEvent.VK_CONTROL
 			&& keyCode != KeyEvent.VK_ALT)
 		{
-			currentPrefix = prefixes;
+			currentPrefix = bindings;
 		}
 				
 		Mode mode = buffer.getMode();
@@ -397,8 +400,8 @@ implements CaretListener, KeyListener, WindowListener
 		clearMarker = jEdit.loadMenu(this,"clear-marker");
 		gotoMarker = jEdit.loadMenu(this,"goto-marker");
 		mode = jEdit.loadMenu(this,"mode");
-		prefixes = new Hashtable();
-		currentPrefix = prefixes;
+		bindings = new Hashtable();
+		currentPrefix = bindings;
 		int x;
 		int y;
 		try
@@ -492,7 +495,7 @@ implements CaretListener, KeyListener, WindowListener
 	private JMenu clearMarker;
 	private JMenu gotoMarker;
 	private JMenu mode;
-	private Hashtable prefixes;
+	private Hashtable bindings;
 	private Hashtable currentPrefix;
 	private JScrollPane scroller;
 	private SyntaxTextArea textArea;

@@ -95,9 +95,7 @@ implements DocumentListener, UndoableEditListener
 				JOptionPane.YES_NO_OPTION,
 				JOptionPane.QUESTION_MESSAGE);
 			if(result == JOptionPane.YES_OPTION)
-			{
 				return find(view,0,true);
-			}
 		}
 		catch(Exception e)
 		{
@@ -143,21 +141,20 @@ implements DocumentListener, UndoableEditListener
 	 * Replaces all occurances of the search string with the replacement
 	 * string.
 	 * @param view The view
+	 * @return True if the replace operation was successful, false
+	 * if no matches were found
 	 */
-	public void replaceAll(View view)
+	public boolean replaceAll(View view)
 	{
+		boolean found = false;
 		try
 		{
 			RE regexp = jEdit.getRE();
 			String replaceStr = jEdit.getProperty("search.replace.value");
 			if(regexp == null)
-			{
-				view.getToolkit().beep();
-				return;
-			}
+				return false;
 			REMatch match;
 			int index = 0;
-			boolean found = false;
 			while((match = regexp.getMatch(getText(index,
 				getLength() - index))) != null)
 			{
@@ -171,8 +168,6 @@ implements DocumentListener, UndoableEditListener
 				insertString(start,subst,null);
 				found = true;
 			}
-			if(!found)
-				view.getToolkit().beep();
 		}
 		catch(REException re)
 		{
@@ -182,6 +177,7 @@ implements DocumentListener, UndoableEditListener
 		catch(BadLocationException bl)
 		{
 		}
+		return found;
 	}
 
 	/**
@@ -284,7 +280,15 @@ implements DocumentListener, UndoableEditListener
 		return false;
 	}
 	
-	public int locateBracketBackward(int dot, char openBracket,
+	/**
+	 * Finds the previous instance of an opening bracket in the buffer.
+	 * The closing bracket is needed as well to handle nested brackets
+	 * properly.
+	 * @param dot The starting position
+	 * @param openBracket The opening bracket
+	 * @param closeBracket The closing bracket
+	 */
+	 public int locateBracketBackward(int dot, char openBracket,
 		char closeBracket)
 		throws BadLocationException
 	{
@@ -315,6 +319,14 @@ implements DocumentListener, UndoableEditListener
 		return -1;
 	}
 
+	/**
+	 * Finds the next instance of a closing bracket in the buffer.
+	 * The opening bracket is needed as well to handle nested brackets
+	 * properly.
+	 * @param dot The starting position
+	 * @param openBracket The opening bracket
+	 * @param closeBracket The closing bracket
+	 */
 	public int locateBracketForward(int dot, char openBracket,
 		char closeBracket)
 		throws BadLocationException
@@ -345,6 +357,43 @@ implements DocumentListener, UndoableEditListener
 		}
 		// not found
 		return -1;
+	}
+
+	/**
+	 * Returns the line number where the paragraph of specified
+	 * location starts. Paragraphs are separated by double newlines.
+	 * @param lineNo The line number
+	 */
+	public int locateParagraphStart(int lineNo)
+	{
+		Element map = getDefaultRootElement();
+		for(int i = lineNo; i >= 0; i--)
+		{
+			Element lineElement = map.getElement(i);
+			if(lineElement.getEndOffset() - lineElement
+				.getStartOffset() == 1)
+				return i;
+		}
+		return 0;
+	}
+
+	/**
+	 * Returns the line number where the paragraph of specified
+	 * location ends. Paragraphs are separated by double newlines.
+	 * @param lineNo The line number
+	 */
+	public int locateParagraphEnd(int lineNo)
+	{
+		Element map = getDefaultRootElement();
+		int lineCount = map.getElementCount();
+		for(int i = lineNo; i < lineCount; i++)
+		{
+			Element lineElement = map.getElement(i);
+			if(lineElement.getEndOffset() - lineElement
+				.getStartOffset() == 1)
+				return i-1;
+		}
+		return lineCount-1;
 	}
 
 	/**
@@ -1227,7 +1276,7 @@ implements DocumentListener, UndoableEditListener
 				return null;
 			String clazz = mode.getClass().getName();
 			String value = jEdit.getProperty("mode." + clazz
-				.substring(clazz.lastIndexOf('.')) + "." + key);
+				.substring(clazz.lastIndexOf('.')+1) + "." + key);
 			if(value == null)
 			{
 				value = jEdit.getProperty("buffer." + key);

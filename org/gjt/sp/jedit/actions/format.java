@@ -66,79 +66,74 @@ public class format extends EditAction
 		StringBuffer word = new StringBuffer();
 		int lineLength = 0;
 		boolean newline = true;
-		boolean newlineIgnore = false;
-		boolean space = true;
+		boolean space = false;
 		char[] chars = text.toCharArray();
 		for(int i = 0; i < chars.length; i++)
 		{
 			char c = chars[i];
-			lineLength++;
 			switch(c)
 			{
 			case '\n':
-				buf.append(word);
-				word.setLength(0);
-				boolean oldSpace = space;
-				space = true;
-				if(i == 0)
+				if(i == 0 || chars.length - i == 1)
 				{
+					if(lineLength + word.length() >= maxLineLength)
+						buf.append('\n');
+					else if(space)
+						buf.append(' ');
+					buf.append(word);
+					word.setLength(0);
 					buf.append('\n');
-					newline = false;
-					newlineIgnore = true;
+					space = false;
 					break;
 				}
-				if(newlineIgnore)
+				else if(newline)
 				{
-					lineLength--;
-					break;
-				}
-				if(newline || i == chars.length - 2)
-				{
-					// already seen a newline.
-					// start a new paragraph
+					if(lineLength + word.length() >= maxLineLength)
+						buf.append('\n');
+					else if(space)
+						buf.append(' ');
+					buf.append(word);
+					word.setLength(0);
 					buf.append("\n\n");
-					newline = false;
-					newlineIgnore = true;
+					newline = space = false;
 					lineLength = 0;
 					break;
 				}
-				if(lineLength >= maxLineLength ||
-					i == chars.length - 1)
+				else
+					newline = true;
+			case ' ':
+				if(lineLength + word.length() >= maxLineLength)
 				{
 					buf.append('\n');
-					newline = false;
-					newlineIgnore = false;
 					lineLength = 0;
-					break;
+					newline = true;
 				}
-				newline = true;
-				newlineIgnore = false;
-				if(!oldSpace)
-					buf.append(' ');
-				break;
-			case ' ':
-				if(space)
+				else if(space)
 				{
-					lineLength--;
-					break;
+					buf.append(' ');
+					lineLength++;
+					space = false;
 				}
+				else
+					space = true;
 				buf.append(word);
+				lineLength += word.length();
 				word.setLength(0);
-				buf.append(' ');
-				space = true;
 				break;
 			default:
-				newline = newlineIgnore = space = false;
+				newline = false;
+				// without this test, we would have spaces
+				// at the start of lines
+				if(lineLength != 0)
+					space = true;
 				word.append(c);
-				// do word wrap
-				if(lineLength >= maxLineLength)
-				{
-					buf.append('\n');
-					lineLength = word.length();
-				}
 				break;
 			}
 		}
+		if(lineLength + word.length() >= maxLineLength)
+			buf.append('\n');
+		else if(space)
+			buf.append(' ');
 		buf.append(word);
 		return buf.toString();
 	}

@@ -35,9 +35,7 @@ public class expand_abbrev extends EditAction
 	{
 		View view = getView(evt);
 		Buffer buffer = view.getBuffer();
-		String separators = (String)buffer.getProperty("wordSep");
-		if(separators == null)
-			separators = ".,:;!?";
+		String separators = (String)buffer.getProperty("noWordSep");
 		int dot = view.getTextArea().getSelectionStart();
 		Element map = buffer.getDefaultRootElement();
 		int lineNo = map.getElementIndex(dot);
@@ -60,7 +58,8 @@ loop:			for(int i = dot - 1; i >= start; i--)
 					wordStart = i + 1;
 					break loop;
 				default:
-					if(separators.indexOf(c) != -1)
+					if(!Character.isLetterOrDigit(c)
+						&& separators.indexOf(c) == -1)
 					{
 						wordStart = i;
 						break loop;
@@ -97,8 +96,8 @@ loop2:					for(int j = index + 1; j < lineLen; j++)
 							wordEnd = j;
 							break loop2;
 						default:
-							if(separators.indexOf(c)
-								!= -1)
+							if(!Character.isLetterOrDigit(c)
+								&& separators.indexOf(c) == -1)
 							{
 								wordEnd = j;
 								break loop2;
