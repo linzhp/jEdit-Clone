@@ -45,6 +45,9 @@ public class HistoryTextField extends JComboBox
 		setEditable(true);
 		setMaximumRowCount(10);
 		setSelectedItem(null);
+
+		getEditor().getEditorComponent()
+			.addKeyListener(new HistoryKeyListener());
 	}
 
 	public void save()
@@ -72,11 +75,56 @@ public class HistoryTextField extends JComboBox
 			removeItemAt(getItemCount() - 1);
 	}
 
+	public void actionPerformed(ActionEvent evt)
+	{
+		Object current = getEditor().getItem();
+		setSelectedItem(current);
+
+		// Don't fire actionEvent here
+	}
+
+	public void selectedItemChanged()
+	{
+		if(selectedItemReminder != null)
+		{
+			fireItemStateChanged(new ItemEvent(this,
+				ItemEvent.ITEM_STATE_CHANGED,
+				selectedItemReminder,ItemEvent.DESELECTED));
+		}
+
+		selectedItemReminder = getModel().getSelectedItem();
+
+		if(selectedItemReminder != null)
+		{
+			fireItemStateChanged(new ItemEvent(this,
+				ItemEvent.ITEM_STATE_CHANGED,
+				selectedItemReminder,ItemEvent.SELECTED));
+		}
+		
+		// Don't fire actionEvent here
+	}
+	
 	// private members
 	private String name;
+
+	class HistoryKeyListener extends KeyAdapter
+	{
+		public void keyPressed(KeyEvent evt)
+		{
+			if(evt.getKeyCode() == KeyEvent.VK_ENTER)
+			{
+				Object current = getEditor().getItem();
+				setSelectedItem(current);
+				fireActionEvent();
+			}
+		}
+	}
 }
 
 /*
  * ChangeLog:
- * $Id$
+ * $Log$
+ * Revision 1.12  1999/03/19 06:03:35  sp
+ * Fixed history text field bug, some other small changes maybe
+ *
  */
