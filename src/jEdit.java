@@ -35,8 +35,8 @@ import com.sun.java.swing.UIManager;
 
 public class jEdit
 {
-	public static final String VERSION = "0.2";
-	public static final String BUILD = "19980929";
+	public static final String VERSION = "0.3";
+	public static final String BUILD = "19980930";
 	public static final PropsMgr props = new PropsMgr();
 	public static final CommandMgr cmds = new CommandMgr();
 	public static final BufferMgr buffers = new BufferMgr();
@@ -109,7 +109,7 @@ public class jEdit
 		if(!noUsrProps)
 			props.loadUserProps();	
 		propertiesChanged();
-		buffers.openBuffers(args);
+		buffers.openFiles(args);
 	}
 
 	public static void propertiesChanged()
@@ -126,10 +126,10 @@ public class jEdit
 			else
 				UIManager.setLookAndFeel(lf);
 		}
-		catch(Exception ex)
+		catch(Exception e)
 		{
 			System.err.println("Error loading L&F!");
-			ex.printStackTrace();
+			e.printStackTrace();
 		}
 		if(server != null)
 			server.stopServer();

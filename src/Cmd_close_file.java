@@ -23,18 +23,14 @@ public class Cmd_close_file implements Command
 {
 	public Object init(Hashtable args)
 	{
-		return Boolean.TRUE;
+		return null;
 	}
 
 	public Object exec(Hashtable args)
 	{
 		View view = (View)args.get(VIEW);
-		if(view == null)
-			return Boolean.FALSE;
-		else
-		{
+		if(view != null)
 			jEdit.buffers.closeBuffer(view,view.getBuffer());
-			return Boolean.TRUE;
-		}
+		return null;
 	}
 }

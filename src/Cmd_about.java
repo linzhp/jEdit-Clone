@@ -23,13 +23,13 @@ public class Cmd_about implements Command
 {
 	public Object init(Hashtable args)
 	{
-		return Boolean.TRUE;
+		return null;
 	}
 
 	public Object exec(Hashtable args)
 	{
 		Object[] _args = { jEdit.VERSION, jEdit.BUILD };
 		jEdit.message((View)args.get(VIEW),"about",_args);
-		return Boolean.TRUE;
+		return null;
 	}
 }

@@ -46,7 +46,7 @@ public class BufferMgr
 			maxRecent = Integer.parseInt(jEdit.props
 				.getProperty("maxrecent"));
 		}
-		catch(NumberFormatException ex)
+		catch(NumberFormatException nf)
 		{
 			maxRecent = 8;
 		}
@@ -69,7 +69,7 @@ public class BufferMgr
 		jEdit.props.remove("recent." + maxRecent);
 	}
 	
-	public void openBuffers(String[] files)
+	public void openFiles(String[] files)
 	{
 		boolean opened = false;
 		for(int i = 0; i < files.length; i++)
@@ -77,65 +77,65 @@ public class BufferMgr
 			if(files[i] == null)
 				continue;
 			opened = true;
-			openBuffer(files[i]);
+			openFile(files[i]);
 		}
 		if(!opened)
-			newBuffer();
+			newFile();
 		newView(null);
 	}
-	
-	public Buffer openBuffer(String name)
+
+	public Buffer openURL(View view)
 	{
-		return openBuffer(null,name,true);
+		String path = (String)JOptionPane.showInputDialog(view,
+			jEdit.props.getProperty("openurl.message"),
+			jEdit.props.getProperty("openurl.title"),
+			JOptionPane.QUESTION_MESSAGE,
+			null,
+			null,
+			jEdit.props.getProperty("lasturl"));
+		if(path == null)
+			return null;
+		jEdit.props.put("lasturl",path);
+		return openFile(view,path,true);
 	}
 	
-	public Buffer openBuffer(View view, String name)
+	public Buffer openFile(View view)
 	{
-		return openBuffer(view,name,true);
+		JFileChooser fileChooser = new JFileChooser();
+		if(view != null)
+		{
+			String parent = view.getBuffer().getFile().getParent();
+			if(parent != null)
+				fileChooser.setCurrentDirectory(
+					new File(parent));
+		}
+		fileChooser.setDialogTitle(jEdit.props
+			.getProperty("openfile.title"));
+		int retVal = fileChooser.showOpenDialog(view);
+		if(retVal == JFileChooser.APPROVE_OPTION)
+			return openFile(view,fileChooser.getSelectedFile()
+				.getPath(),true);
+		else
+			return null;
 	}
 
-	public Buffer openBuffer(View view, String name, boolean load)
+	public Buffer openFile(String path)
 	{
-		if(name == null)
-		{
-			JFileChooser fileChooser = new JFileChooser();
-			if(view != null)
-			{
-				String parent = view.getBuffer().getFile()
-					.getParent();
-				if(parent != null)
-					fileChooser.setCurrentDirectory(
-						new File(parent));
-			}
-			fileChooser.setDialogTitle(jEdit.props
-				.getProperty("openfile.title"));
-			int retVal = fileChooser.showOpenDialog(view);
-			if(retVal == JFileChooser.APPROVE_OPTION)
-			{
-				name = fileChooser.getSelectedFile().getPath();
-			}
-			else
-				return null;
-		}
-		else if(name.equals("/url"))
-		{
-			name = (String)JOptionPane.showInputDialog(view,
-				jEdit.props.getProperty("openurl.message"),
-				jEdit.props.getProperty("openurl.title"),
-				JOptionPane.QUESTION_MESSAGE,
-				null,
-				null,
-				jEdit.props.getProperty("lasturl"));
-			if(name == null)
-				return null;
-			else
-				jEdit.props.put("lasturl",name);
-		}
+		return openFile(null,path,true);
+	}
+	
+	public Buffer openFile(View view, String path)
+	{
+		return openFile(view,path,true);
+	}
+
+	public Buffer openFile(View view, String path, boolean load)
+	{
 		Enumeration enum = getBuffers();
 		while(enum.hasMoreElements())
 		{
 			Buffer buffer = (Buffer)enum.nextElement();
-			if(buffer.getPath().equals(name))
+			if(buffer.getPath().equals(path))
 			{
 				if(view != null)
 					view.setBuffer(buffer);
@@ -144,14 +144,14 @@ public class BufferMgr
 		}
 		if(load)
 		{
-			if(!recent.contains(name))
+			if(!recent.contains(path))
 			{
-				recent.addElement(name);
+				recent.addElement(path);
 				if(recent.size() > maxRecent)
 					recent.removeElementAt(0);
 			}
 		}
-		Buffer buffer = new Buffer(view,name,load);
+		Buffer buffer = new Buffer(view,path,load);
 		if(view != null)
 			view.setBuffer(buffer);
 		buffers.addElement(buffer);
@@ -165,15 +165,15 @@ public class BufferMgr
 		return buffer;
 	}
 
-	public Buffer newBuffer()
+	public Buffer newFile()
 	{
-		return newBuffer(null);
+		return newFile(null);
 	}
 	
-	public Buffer newBuffer(View view)
+	public Buffer newFile(View view)
 	{
 		Object[] args = { new Integer(++untitledCount) };
-		return openBuffer(view,jEdit.props.getProperty("untitled",
+		return openFile(view,jEdit.props.getProperty("untitled",
 			args),false);
 	}
 
@@ -193,6 +193,8 @@ public class BufferMgr
 				if(!buffer.save(view))
 					return false;
 			}
+			else if(result == JOptionPane.NO_OPTION)
+				buffer.autosave();
 			else if(result == JOptionPane.CANCEL_OPTION)
 				return false;
 		}	
@@ -220,13 +222,13 @@ public class BufferMgr
 		return true;
 	}
 	
-	public Buffer getBuffer(String name)
+	public Buffer getBuffer(String path)
 	{
 		Enumeration enum = getBuffers();
 		while(enum.hasMoreElements())
 		{
 			Buffer buffer = (Buffer)enum.nextElement();
-			if(buffer.getPath().equals(name))
+			if(buffer.getPath().equals(path))
 				return buffer;
 		}
 		return null;

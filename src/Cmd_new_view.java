@@ -23,18 +23,14 @@ public class Cmd_new_view implements Command
 {
 	public Object init(Hashtable args)
 	{
-		return Boolean.FALSE;
+		return null;
 	}
 
 	public Object exec(Hashtable args)
 	{
 		View view = (View)args.get(VIEW);
-		if(view == null)
-			return Boolean.FALSE;
-		else
-		{
+		if(view != null)
 			jEdit.buffers.newView(view);
-			return Boolean.TRUE;
-		}
+		return null;
 	}
 }

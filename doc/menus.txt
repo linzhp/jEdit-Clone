@@ -1,4 +1,4 @@
-JEDIT MENU REFERENCE (menus.txt, last modified 29 Sep 1998)
+JEDIT MENUS (menus.txt, last modified 30 Sep 1998)
 
 Contents
 --------
@@ -7,6 +7,7 @@ Contents
 3. Plugins Menu
 4. Buffers Menu
 5. Help Menu
+6. Customising Menus
 
 1. Format
 ---------
@@ -34,8 +35,11 @@ Creates a new view of the current file.
 - Open File (open) (C-o)
 Prompts the user for a file to open in the current view.
 
-- Open URL (open@/url) (C-u)
+- Open URL (open_url) (C-u)
 Prompts the user for a URL or path name to open in the current view.
+
+- Open Selection (open_selection) (CS-o)
+Opens the file named by the selected text.
 
 - Open Recent (%open_recent)
 A menu of recently opened files and URLs. The maximum number of items is set
@@ -56,10 +60,10 @@ Closes the current view, and exists jEdit if there are no more open views.
 - Save (save) (C-s)
 Saves the current file.
 
-- Save As (save@/as) (CS-s)
+- Save As (save_as) (CS-s)
 Prompts the user for an alternative name under which to save the current file.
 
-- Save To URL (save@/url) (CS-u)
+- Save To URL (save_url) (CS-u)
 Prompts the user for a URL or path name to save the file to.
 
 -- SEPARATOR --
@@ -75,6 +79,45 @@ Exits jEdit, asking if any unsaved files should be saved first.
 2. Edit Menu
 ------------
 
+- Undo (undo) (C-z)
+Undoes the previous edit action.
+
+- Redo (redo) (CS-z)
+Redoes the previous edit action.
+
+- Cut (cut) (C-x)
+Deletes the current selection and copies it to the clipboard.
+
+- Copy (copy) (C-c)
+Copies the current selection to the keyboard.
+
+- Paste (paste) (C-v)
+Pastes the contents of the clipboard at the caret position.
+
+- Clear (clear) (CS-x)
+Deletes the current selection.
+
+- Select All (select_all) (C-a)
+Selects all the text in the current file.
+
+-- SEPARATOR --
+
+-- search/replace not done yet --
+
+- Go To Line (goto_line) (C-l)
+Moves the caret to the specified line.
+
+- Set Marker (set_marker) (C-m)
+Defines a marker at the current caret position.
+
+- Clear Marker (%clear_marker)
+A submenu with a list of currently defined markers. Selecting one will remove
+it.
+
+- Go To Marker (%goto_marker)
+A submenu with a lsit of currently defined markers. Selecting one will go to
+it.
+
 3. Plugins Menu
 ---------------
 This menu contains one entry for each plugin you have installed.
@@ -82,12 +125,44 @@ This menu contains one entry for each plugin you have installed.
 4. Buffers Menu
 ---------------
 This menu contains one entry for each open file. The current file will have a
-filled in circle beside it's name, the others will have a hollow one.
+marker next to it.
 
 5. Help Menu
 ------------
-This menu contains a list of help files. A list of what each one is for can be
-found by selecting `Help Index'.
+This menu contains a list of help files. A description of each one is for can
+be found by selecting `Help Index'.
+
+6. Customising Menus
+--------------------
+If you don't like jEdit's default menus, it is possible to change them. This
+involves changing properties, so read props.txt first.
+
+The main menubar is stored in editor_mbar. It is a white space separated list
+of menus.
+
+	editor_mbar=file edit plugins buffers help
+
+For each menu, there is one property with the list of menu items, and one for
+the menu's label.
+
+	file=new_file new_view open_file open_url open_selection \
+	%open_recent - ... and so on ...
+
+If a menu item `-' is found, a separator is inserted. If a menu item starts
+with `%', a menu is inserted in it's place. For example, `%open_recent' will
+insert the `open_recent' submenu.
+
+Each menu item which is not a separator or a submenu has one property which
+contains it's label and one which contains it's shortcut.
+
+	new_file.label=New File
+	new_file.shortcut=C-n
+
+When that menu item is selected, it's name is executed as a command - the
+`new_file' menu item, when selected, will invoke the `new_file' command. See
+commands.txt for more information about commands.
+
+The shortcut format is described in section 1.
 
 -- Slava Pestov
 <slava_pestov@geocities.com>

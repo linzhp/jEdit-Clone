@@ -24,7 +24,7 @@ public class Cmd_redo implements Command
 {
 	public Object init(Hashtable args)
 	{
-		return Boolean.TRUE;
+		return null;
 	}
 
 	public Object exec(Hashtable args)
@@ -35,13 +35,12 @@ public class Cmd_redo implements Command
 			try
 			{
 				view.getBuffer().getUndo().redo();
-				return Boolean.TRUE;
 			}
-			catch(CannotRedoException e)
+			catch(CannotRedoException cr)
 			{
 				view.getToolkit().beep();
 			}
 		}
-		return Boolean.FALSE;
+		return null;
 	}
 }

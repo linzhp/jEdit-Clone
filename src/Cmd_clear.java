@@ -23,18 +23,14 @@ public class Cmd_clear implements Command
 {
 	public Object init(Hashtable args)
 	{
-		return Boolean.TRUE;
+		return null;
 	}
 
 	public Object exec(Hashtable args)
 	{
 		View view = (View)args.get(VIEW);
-		if(view == null)
-			return Boolean.FALSE;
-		else
-		{
+		if(view != null)
 			view.getTextArea().replaceSelection("");
-			return Boolean.TRUE;
-		}
+		return null;
 	}
 }

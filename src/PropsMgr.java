@@ -67,12 +67,12 @@ public class PropsMgr extends Properties
 			in.close();
 			return true;
 		}
-		catch(FileNotFoundException e)
+		catch(FileNotFoundException fnf)
 		{
 		}
-		catch(IOException e)
+		catch(IOException io)
 		{
-			e.printStackTrace();
+			io.printStackTrace();
 		}
 
 		return false;
@@ -109,9 +109,9 @@ public class PropsMgr extends Properties
 			out.close();
 			return true;
 		}
-		catch(IOException e)
+		catch(IOException io)
 		{
-			e.printStackTrace();
+			io.printStackTrace();
 		}
 
 		return false;

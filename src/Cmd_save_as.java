@@ -1,5 +1,5 @@
 /*
- * Cmd_copy.java - Command
+ * Cmd_save_as.java - Command
  * Copyright (C) 1998 Slava Pestov
  *
  * This program is free software; you can redistribute it and/or
@@ -17,9 +17,12 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+import com.sun.java.swing.JOptionPane;
+import com.sun.java.swing.preview.JFileChooser;
+import java.io.File;
 import java.util.Hashtable;
 
-public class Cmd_copy implements Command
+public class Cmd_save_as implements Command
 {
 	public Object init(Hashtable args)
 	{
@@ -30,7 +33,7 @@ public class Cmd_copy implements Command
 	{
 		View view = (View)args.get(VIEW);
 		if(view != null)
-			view.getTextArea().copy();
+			view.getBuffer().saveAs(view);
 		return null;
 	}
 }

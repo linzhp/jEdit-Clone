@@ -1,5 +1,5 @@
 /*
- * Cmd_copy.java - Command
+ * Cmd_open_selection.java - Command
  * Copyright (C) 1998 Slava Pestov
  *
  * This program is free software; you can redistribute it and/or
@@ -17,9 +17,10 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+import java.io.File;
 import java.util.Hashtable;
 
-public class Cmd_copy implements Command
+public class Cmd_open_selection implements Command
 {
 	public Object init(Hashtable args)
 	{
@@ -29,8 +30,11 @@ public class Cmd_copy implements Command
 	public Object exec(Hashtable args)
 	{
 		View view = (View)args.get(VIEW);
-		if(view != null)
-			view.getTextArea().copy();
+		String selection = view.getTextArea().getSelectedText();
+		if(selection == null)
+			view.getToolkit().beep();
+		else
+			jEdit.buffers.openFile(view,selection);
 		return null;
 	}
 }

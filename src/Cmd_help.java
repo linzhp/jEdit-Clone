@@ -23,7 +23,7 @@ public class Cmd_help implements Command
 {
 	public Object init(Hashtable args)
 	{
-		return Boolean.TRUE;
+		return null;
 	}
 
 	public Object exec(Hashtable args)
@@ -32,12 +32,8 @@ public class Cmd_help implements Command
 		if(arg == null)
 			arg = "index.txt";
 		View view = (View)args.get(VIEW);
-		if(view != null)
-		{
-			jEdit.buffers.openBuffer(view,jEdit.props
-				.getProperty("helpdir") + arg);
-			return Boolean.TRUE;
-		}
-		return Boolean.FALSE;
+		jEdit.buffers.openFile(view,jEdit.props.getProperty("helpdir")
+			+ arg);
+		return null;
 	}
 }

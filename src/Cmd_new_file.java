@@ -23,18 +23,14 @@ public class Cmd_new_file implements Command
 {
 	public Object init(Hashtable args)
 	{
-		return Boolean.TRUE;
+		return null;
 	}
 
 	public Object exec(Hashtable args)
 	{
 		View view = (View)args.get(VIEW);
-		if(view == null)
-			return Boolean.FALSE;
-		else
-		{
-			jEdit.buffers.newBuffer(view);
-			return Boolean.TRUE;
-		}
+		if(view != null)
+			jEdit.buffers.newFile(view);
+		return null;
 	}
 }

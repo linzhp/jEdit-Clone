@@ -24,7 +24,7 @@ public class Cmd_undo implements Command
 {
 	public Object init(Hashtable args)
 	{
-		return Boolean.TRUE;
+		return null;
 	}
 
 	public Object exec(Hashtable args)
@@ -35,13 +35,12 @@ public class Cmd_undo implements Command
 			try
 			{
 				view.getBuffer().getUndo().undo();
-				return Boolean.TRUE;
 			}
-			catch(CannotUndoException e)
+			catch(CannotUndoException cu)
 			{
 				view.getToolkit().beep();
 			}
 		}
-		return Boolean.FALSE;
+		return null;
 	}
 }

@@ -1,5 +1,12 @@
 JEDIT PROPERTY MANAGER
 
+Contents
+--------
+1. Introduction
+2. Startup
+3. Format
+4. Changing Properties
+
 1. Introduction
 ---------------
 jEdit's settings, strings and menus are stored in property files. This makes
@@ -11,23 +18,25 @@ jEdit loads the following property files on startup:
 - The default property file. It is located in the jEdit JAR. If it could not
   be found or if there is an error loading it, jEdit will exit.
 - The user's property file, unless the -nousrprops switch is specified on the
-  command line. By default, this is ~/.jedit on Unix, and some JVM-dependent
-  directory on Windows 95/NT.
+  command line. By default, this is ~/.jedit-props on Unix, and some
+  JVM-dependent directory on Windows 95/NT.
 - Any *.props files in the plugin JARs.
 
-Because the properties from the plugins are loaded after the other property
-files, you can't just put some properties into your user props file to override
-them. You must create your own plugin and ensure that it loads after the plugin
-whose properties you want to override.
+CAVEAT: Because the properties from the plugins are loaded after the other
+property files, you can't just put some properties into your user props file to
+override them. You must create your own plugin and ensure that it loads after
+the plugin whose properties you want to override.
 
 3. Format
 ---------
-Property files are in the standard Java property format. Generally, it goes
+Property files are in the standard Java property format. Generally, they look
 like this:
+
 opt1=value
 opt2=value2
 module.opt1=some value
 module.opt2=some other value
+
 When creating your own property files, you should group related items under a
 single module name.
 
@@ -37,10 +46,12 @@ The easiest way to change a property is to add it to your user property file.
 But finding the name of the property might be tricky. If you have the full JDK
 installed, you can use the jar program to extract the default properties and
 copy the appropriate values to your user properties file. Use this command to
-accomplish this:
-jar xf <path to jedit.jar>/jedit.jar properties
-Then you can copy properties to your user properties file and delete the
-properties you don't want to change.
+do this:
+
+	jar xf <path to jedit.jar>/jedit.jar properties
+
+Then you can copy the properties taht you want to change to your user properties
+file.
 
 -- Slava Pestov
 <slava_pestov@geocities.com>

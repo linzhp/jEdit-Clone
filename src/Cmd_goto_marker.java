@@ -25,7 +25,7 @@ public class Cmd_goto_marker implements Command
 {
 	public Object init(Hashtable args)
 	{
-		return Boolean.TRUE;
+		return null;
 	}
 
 	public Object exec(Hashtable args)
@@ -33,33 +33,25 @@ public class Cmd_goto_marker implements Command
 		String arg = (String)args.get(ARG);
 		View view = (View)args.get(VIEW);
 		if(view == null)
-			return Boolean.FALSE;
+			return null;
 		JTextArea textArea = view.getTextArea();
-		try
+		if(arg == null)
 		{
-			if(arg == null)
-			{
-				arg = (String)JOptionPane.showInputDialog(view,
-					jEdit.props.getProperty(
-					"gotomarker.message"),
-					jEdit.props.getProperty(
-					"gotomarker.title"),
-					JOptionPane.QUESTION_MESSAGE);
-			}
-			if(arg != null)
-			{
-				int[] pos = view.getBuffer().getMarker(arg);
-				if(pos != null)
-					textArea.select(pos[0],pos[1]);
-				else
-					view.getToolkit().beep();
-			}
+			arg = (String)JOptionPane.showInputDialog(view,
+				jEdit.props.getProperty(
+				"gotomarker.message"),
+				jEdit.props.getProperty(
+				"gotomarker.title"),
+				JOptionPane.QUESTION_MESSAGE);
 		}
-		catch(Exception e)
+		if(arg != null)
 		{
-			throw new IllegalArgumentException("Aiee!!! Text area"
-				+ " out of sync");
+			int[] pos = view.getBuffer().getMarker(arg);
+			if(pos != null)
+				textArea.select(pos[0],pos[1]);
+			else
+				view.getToolkit().beep();
 		}
-		return Boolean.TRUE;
+		return null;
 	}
 }

@@ -65,7 +65,10 @@ implements DocumentListener, UndoableEditListener
 		undo = new UndoManager();
 		markers = new Vector();
 		newFile = !load;
-		setPath(name);
+		String parent = null;
+		if(view != null)
+			parent = view.getBuffer().getFile().getParent();
+		setPath(parent,name);
 		if(load)
 		{
 			if(autosaveFile.exists())
@@ -110,15 +113,20 @@ implements DocumentListener, UndoableEditListener
 			Object[] args = { path };
 			jEdit.error(view,"notfounderror",args);
 		}
-		catch(Exception io)
+		catch(IOException io)
 		{
 			Object[] args = { path, io.toString() };
 			jEdit.error(view,"ioerror",args);
 		}
+		catch(BadLocationException bl)
+		{
+			Object[] args = { bl.toString() };
+			jEdit.error(view,"error",args);
+		}
 		updateStatus();
 	}
 
-	public void autosave()
+	public synchronized void autosave()
 	{
 		if(dirty)
 		{
@@ -131,53 +139,61 @@ implements DocumentListener, UndoableEditListener
 			}
 		}
 	}
-
+	
 	public boolean save(View view)
 	{
 		return save(view,null);
 	}
+	
+	public boolean saveAs(View view)
+	{
+		JFileChooser fileChooser = new JFileChooser();
+		if(view != null)
+		{
+			File fileN = view.getBuffer().getFile();
+			String parent = fileN.getParent();
+			if(parent != null)
+				fileChooser.setCurrentDirectory(
+					new File(parent));
+			fileChooser.setSelectedFile(fileN);
+		}
+		fileChooser.setDialogTitle(jEdit.props
+			.getProperty("savefile.title"));
+		int retVal = fileChooser.showSaveDialog(view);
+		if(retVal == JFileChooser.APPROVE_OPTION)
+		{
+			path = fileChooser.getSelectedFile().getPath();
+			return save(view,path);
+		}
+		else
+			return false;
+	}
+
+	public boolean saveToURL(View view)
+	{
+		String path = (String)JOptionPane.showInputDialog(view,
+			jEdit.props.getProperty("saveurl.message"),
+			jEdit.props.getProperty("saveurl.title"),
+			JOptionPane.QUESTION_MESSAGE,
+			null,
+			null,
+			jEdit.props.getProperty("lasturl"));
+		if(path != null)
+		{
+			jEdit.props.put("lasturl",path);
+			return save(view,path);
+		}
+		return false;
+	}
 
 	public boolean save(View view, String path)
 	{
-		if(path == null && !newFile)
-			path = this.path;
-		else if(newFile || "/as".equals(path))
+		if(path == null)
 		{
-			JFileChooser fileChooser = new JFileChooser();
-			if(view != null)
-			{
-				File fileN = view.getBuffer().getFile();
-				String parent = fileN.getParent();
-				if(parent != null)
-					fileChooser.setCurrentDirectory(
-						new File(parent));
-				fileChooser.setSelectedFile(fileN);
-			}
-			fileChooser.setDialogTitle(jEdit.props
-				.getProperty("savefile.title"));
-			int retVal = fileChooser.showSaveDialog(view);
-			if(retVal == JFileChooser.APPROVE_OPTION)
-			{
-				path = fileChooser.getSelectedFile().getPath();
-				setPath(path);
-			}
+			if(newFile)
+				return saveAs(view);
 			else
-				return false;
-		}
-		else if(path.equals("/url"))
-		{
-			path = (String)JOptionPane.showInputDialog(view,
-				jEdit.props.getProperty("saveurl.message"),
-				jEdit.props.getProperty("saveurl.title"),
-				JOptionPane.QUESTION_MESSAGE,
-				null,
-				null,
-				jEdit.props.getProperty("lasturl"));
-			if(path != null)
-			{
-				jEdit.props.put("lasturl",path);
-				setPath(path);
-			}
+				path = this.path;
 		}
 		backup();
 		try
@@ -195,14 +211,19 @@ implements DocumentListener, UndoableEditListener
 			updateStatus();
 			return true;
 		}
+		catch(IOException io)
+		{
+			Object[] args = { getPath(), io.toString() };
+			jEdit.error(view,"ioerror",args);
+		}
 		catch(Exception e)
 		{
-			Object[] args = { getPath(), e.toString() };
-			jEdit.error(view,"ioerror",args);
+			Object[] args = { e.toString() };
+			jEdit.error(view,"error",args);
 		}
 		return false;
 	}
-
+	
 	private void save(Writer out)
 		throws Exception
 	{
@@ -334,6 +355,11 @@ implements DocumentListener, UndoableEditListener
 	
 	public void setPath(String path)
 	{
+		setPath("",path);
+	}
+
+	public void setPath(String parent, String path)
+	{
 		url = null;
 		try
 		{
@@ -342,17 +368,21 @@ implements DocumentListener, UndoableEditListener
 			name = url.getFile();
 			if(name.length() == 0)
 				name = url.getHost();
-			file = new File(name);
+			if(name.startsWith(File.separator))
+				parent = "";
+			file = new File(parent,name);
 			name = file.getName();
 		}
 		catch(MalformedURLException mu)
 		{
-			file = new File(path);
+			if(path.startsWith(File.separator))
+				parent = "";
+			file = new File(parent,path);
 			try
 			{
 				this.path = file.getCanonicalPath();
 			}
-			catch(IOException e)
+			catch(IOException io)
 			{
 				this.path = path;
 			}

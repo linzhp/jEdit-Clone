@@ -1,14 +1,27 @@
-VERSION INFORMATION (VERSION, last modified 29 Sep 1998)
+VERSION INFORMATION (VERSION, last modified 30 Sep 1998)
 
--- Version 0.2 To Do:
+-- To Do:
 - Search and replace
 - Printing
 - Options dialog
 - Better documentation
 - Persistent markers
-- Fix handling of obscure errors
 - Make code thread safe
-- Make null pointer handling better
+
+-- Version 0.3:
+- Fixed save to url with new file bug
+- save and open commands split into save, save_as, save_url, open and open_url
+- save() and openFile() methods split into save(), saveAs(), saveToURL(),
+  openURL() and openFile().
+- Commands cleaned up
+- Renamed open/newBuffer() to open/newFile()
+- open_selection command
+- Files are opened relative the current file's directory
+- More documentation
+- By default, views are 80 columns wide
+- Obscure erros are handled better
+
+-- Version 0.2 - change log started
 
 -- Slava Pestov
 <slava_pestov@geocities.com>

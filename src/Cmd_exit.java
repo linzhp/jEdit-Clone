@@ -23,12 +23,12 @@ public class Cmd_exit implements Command
 {
 	public Object init(Hashtable args)
 	{
-		return Boolean.TRUE;
+		return null;
 	}
 
 	public Object exec(Hashtable args)
 	{
 		jEdit.exit((View)args.get(VIEW));
-		return Boolean.FALSE;
+		return null;
 	}
 }

@@ -97,6 +97,11 @@ ioerror.message=An I/O error occured in buffer {0} ({1})
 notfounderror.title=File Not Found
 notfounderror.message=The file could not be found: {0}
 
+### Unknown error dialog
+# {0} - the error
+error.title=Unknown Error
+error.message=An error occured: {0}
+
 ### Open URL dialog
 openurl.title=Open URL
 openurl.message=URL to open:
@@ -149,17 +154,19 @@ status=({1,choice,0#--|1#**}:{2,choice,0#--|1#**}) {0} (Line {3}/{4} {5}%)
 
 ### Menubar
 editor_mbar=file edit plugins buffers help
-file=new_file new_view open open@/url %open_recent - close_file \
-	close_view - save save@/as save@/url - print - exit
+file=new_file new_view open_file open_url open_selection %open_recent - \
+	close_file close_view - save save_as save_url - print - exit
 file.label=File
 new_file.label=New File
 new_file.shortcut=C-n
 new_view.label=New View
 new_view.shortcut=CS-n
-open.label=Open File...
-open.shortcut=C-o
-open@/url.label=Open URL...
-open@/url.shortcut=C-u
+open_file.label=Open File...
+open_file.shortcut=C-o
+open_url.label=Open URL...
+open_url.shortcut=C-u
+open_selection.label=Open Selection
+open_selection.shortcut=CS-o
 open_recent.label=Open Recent
 no_recent.label=No Recent Files
 close_file.label=Close File
@@ -168,16 +175,16 @@ close_view.label=Close View
 close_view.shortcut=CS-w
 save.label=Save
 save.shortcut=C-s
-save@/as.label=Save As...
-save@/as.shortcut=CS-s
-save@/url.label=Save To URL...
-save@/url.shortcut=CS-u
+save_as.label=Save As...
+save_as.shortcut=CS-s
+save_url.label=Save To URL...
+save_url.shortcut=CS-u
 print.label=Print...
 print.shortcut=C-p
 exit.label=Exit
 exit.shortcut=C-q
-edit=undo redo - cut copy paste clear select_all - find find@/next \
-	find@/selection replace replace@/all goto_line - set_marker \
+edit=undo redo - cut copy paste clear select_all - find find_next \
+	find_selection replace replace_all goto_line - set_marker \
 	%clear_marker %goto_marker
 edit.label=Edit
 undo.label=Undo
@@ -196,14 +203,14 @@ select_all.label=Select All
 select_all.shortcut=C-a
 find.label=Find...
 find.shortcut=C-f
-find@/next.label=Find Next
-find@/next.shortcut=C-g
-find@/selection.label=Find Selection
-find@/selection.shortcut=C-h
+find_next.label=Find Next
+find_next.shortcut=C-g
+find_selection.label=Find Selection
+find_selection.shortcut=C-h
 replace.label=Replace
 replace.shortcut=C-r
-replace@/all.label=Replace All
-replace@/all.shortcut=CS-r
+replace_all.label=Replace All
+replace_all.shortcut=CS-r
 goto_line.label=Go To Line...
 goto_line.shortcut=C-l
 set_marker.label=Set Marker...
@@ -215,7 +222,7 @@ plugins.label=Plugins
 no_plugins.label=No Plugins
 buffers.label=Buffers
 help=about help - help@README help@COPYING help@VERSION - \
-	help@installing.txt help@starting.txt help@menus.txt
+	help@installing.txt help@starting.txt help@menus.txt help@props.txt
 help.label=Help
 about.label=About jEdit...
 help@README.label=Readme
@@ -224,3 +231,4 @@ help@VERSION.label=Version Info
 help@installing.txt.label=Installation
 help@starting.txt.label=Starting
 help@menus.txt.label=Menus
+help@props.txt.label=Properties

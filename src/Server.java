@@ -78,7 +78,7 @@ public class Server extends Thread
 					.getInputStream()));
 			String filename;
 			while((filename = in.readLine()) != null)
-				jEdit.buffers.openBuffer(view,filename);
+				jEdit.buffers.openFile(view,filename);
 		}
 		catch(IOException io)
 		{

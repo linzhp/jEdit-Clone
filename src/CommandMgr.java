@@ -65,9 +65,9 @@ public class CommandMgr extends ClassLoader
 			while(entries.hasMoreElements())
 				loadEntry(jar,(ZipEntry)entries.nextElement());
 		}
-		catch(IOException e)
+		catch(IOException io)
 		{
-			e.printStackTrace();
+			io.printStackTrace();
 		}
 	}
 

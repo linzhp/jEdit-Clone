@@ -23,7 +23,7 @@ public class Cmd_select_buffer implements Command
 {
 	public Object init(Hashtable args)
 	{
-		return Boolean.TRUE;
+		return null;
 	}
 
 	public Object exec(Hashtable args)
@@ -31,11 +31,7 @@ public class Cmd_select_buffer implements Command
 		String name = (String)args.get(ARG);
 		View view = (View)args.get(VIEW);
 		if(view != null && name != null)
-		{
 			view.setBuffer(jEdit.buffers.getBuffer(name));
-			return Boolean.TRUE;
-		}
-		else
-			return Boolean.FALSE;
+		return null;
 	}
 }

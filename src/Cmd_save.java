@@ -26,19 +26,16 @@ public class Cmd_save implements Command
 {
 	public Object init(Hashtable args)
 	{
-		return Boolean.TRUE;
+		return null;
 	}
 
 	public Object exec(Hashtable args)
 	{
 		String arg = (String)args.get(ARG);
 		View view = (View)args.get(VIEW);
-		if(view == null)
-			return Boolean.FALSE;
-		else
-		{
-			view.getBuffer().save(view,arg);
-			return Boolean.TRUE;
-		}
+		if(view != null)
+			return view.getBuffer().save(view,arg) ?
+				Boolean.TRUE : Boolean.FALSE;
+		return null;
 	}
 }

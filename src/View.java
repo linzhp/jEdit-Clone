@@ -75,7 +75,7 @@ implements ActionListener, KeyListener, CaretListener, WindowListener
 			.loadMenu(this,"clear_marker"));
 		dynamicMenus.put("goto_marker",gotoMarker = jEdit
 			.loadMenu(this,"goto_marker"));
-		textArea = new JTextArea();
+		textArea = new JTextArea(40,80);
 		status = new JLabel();
 		if(view == null)
 			setBuffer(null);
@@ -94,46 +94,43 @@ implements ActionListener, KeyListener, CaretListener, WindowListener
 		getContentPane().add("Center",new JScrollPane(textArea));
 		getContentPane().add("South",status);
 		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+		pack();
 		addWindowListener(this);
 		Dimension screen = getToolkit().getScreenSize();
-		int x,y,w,h;
+		int x,y,w = getSize().width,h = getSize().height;	
+		try
+		{
+			w = Integer.parseInt(jEdit.props
+				.getProperty("editor.w"));
+		}
+		catch(NumberFormatException nf)
+		{
+		}
+		try
+		{
+			h = Integer.parseInt(jEdit.props
+				.getProperty("editor.h"));
+		}
+		catch(NumberFormatException nf)
+		{
+		}
 		try
 		{
 			x = Integer.parseInt(jEdit.props
 				.getProperty("editor.x"));
 		}
-		catch(NumberFormatException e)
+		catch(NumberFormatException nf)
 		{
-			x = screen.width / 2 - 300;
+			x = (screen.width - w) / 2;
 		}
 		try
 		{
 			y = Integer.parseInt(jEdit.props
 				.getProperty("editor.y"));
 		}
-		catch(NumberFormatException e)
+		catch(NumberFormatException nf)
 		{
-			y = screen.height / 2 - 200;
-		}
-
-		try
-		{
-			w = Integer.parseInt(jEdit.props
-				.getProperty("editor.w"));
-		}
-		catch(NumberFormatException e)
-		{
-			w = 600;
-		}
-
-		try
-		{
-			h = Integer.parseInt(jEdit.props
-				.getProperty("editor.h"));
-		}
-		catch(NumberFormatException e)
-		{
-			h = 400;
+			y = (screen.height - h) / 2;
 		}
 		setBounds(x,y,w,h);
 		show();
@@ -149,7 +146,7 @@ implements ActionListener, KeyListener, CaretListener, WindowListener
 			size = Integer.parseInt(jEdit.props
 				.getProperty("editor.fontsize"));
 		}
-		catch(NumberFormatException e)
+		catch(NumberFormatException nf)
 		{
 			size = 12;
 		}
@@ -158,7 +155,7 @@ implements ActionListener, KeyListener, CaretListener, WindowListener
 			style = Integer.parseInt(jEdit.props
 				.getProperty("editor.fontstyle"));
 		}
-		catch(NumberFormatException e)
+		catch(NumberFormatException nf)
 		{
 			style = 0;
 		}
@@ -390,6 +387,8 @@ loop:				for(i = 0; i < line.length; i++)
 					case '#':
 					case '%':
 					case '-':
+					case '*':
+					case '/':
 					break;
 					default:
 					break loop;
@@ -401,7 +400,8 @@ loop:				for(i = 0; i < line.length; i++)
 			}
 			catch(BadLocationException bl)
 			{
-				bl.printStackTrace();
+				Object[] args = { bl.toString() };
+				jEdit.error(this,"error",args);
 			}
 		}
 	}

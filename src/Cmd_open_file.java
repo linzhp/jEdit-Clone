@@ -1,5 +1,5 @@
 /*
- * Cmd_open.java - Command
+ * Cmd_open_file.java - Command
  * Copyright (C) 1998 Slava Pestov
  *
  * This program is free software; you can redistribute it and/or
@@ -20,17 +20,21 @@
 import java.io.File;
 import java.util.Hashtable;
 
-public class Cmd_open implements Command
+public class Cmd_open_file implements Command
 {
 	public Object init(Hashtable args)
 	{
-		return Boolean.TRUE;
+		return null;
 	}
 
 	public Object exec(Hashtable args)
 	{
-		return (jEdit.buffers.openBuffer((View)args.get(VIEW),
-			(String)args.get(ARG)) == null) ? Boolean.FALSE
-				: Boolean.TRUE;
+		View view = (View)args.get(VIEW);
+		String arg = (String)args.get(ARG);
+		if(arg == null)
+			jEdit.buffers.openFile(view);
+		else
+			jEdit.buffers.openFile(view,arg);
+		return null;
 	}
 }

@@ -25,7 +25,7 @@ public class Cmd_clear_marker implements Command
 {
 	public Object init(Hashtable args)
 	{
-		return Boolean.TRUE;
+		return null; 
 	}
 
 	public Object exec(Hashtable args)
@@ -33,27 +33,19 @@ public class Cmd_clear_marker implements Command
 		String arg = (String)args.get(ARG);
 		View view = (View)args.get(VIEW);
 		if(view == null)
-			return Boolean.FALSE;
+			return null;
 		JTextArea textArea = view.getTextArea();
-		try
+		if(arg == null)
 		{
-			if(arg == null)
-			{
-				arg = (String)JOptionPane.showInputDialog(view,
-					jEdit.props.getProperty(
-					"clearmarker.message"),
-					jEdit.props.getProperty(
-					"clearmarker.title"),
-					JOptionPane.QUESTION_MESSAGE);
-			}
-			if(arg != null)
-				view.getBuffer().removeMarker(arg);
+			arg = (String)JOptionPane.showInputDialog(view,
+				jEdit.props.getProperty(
+				"clearmarker.message"),
+				jEdit.props.getProperty(
+				"clearmarker.title"),
+				JOptionPane.QUESTION_MESSAGE);
 		}
-		catch(Exception e)
-		{
-			throw new IllegalArgumentException("Aiee!!! Text area"
-				+ " out of sync");
-		}
-		return Boolean.TRUE;
+		if(arg != null)
+			view.getBuffer().removeMarker(arg);
+		return null;
 	}
 }

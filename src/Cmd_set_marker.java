@@ -19,13 +19,14 @@
 
 import com.sun.java.swing.JOptionPane;
 import com.sun.java.swing.JTextArea;
+import com.sun.java.swing.text.BadLocationException;
 import java.util.Hashtable;
 
 public class Cmd_set_marker implements Command
 {
 	public Object init(Hashtable args)
 	{
-		return Boolean.TRUE;
+		return null;
 	}
 
 	public Object exec(Hashtable args)
@@ -33,7 +34,7 @@ public class Cmd_set_marker implements Command
 		String arg = (String)args.get(ARG);
 		View view = (View)args.get(VIEW);
 		if(view == null)
-			return Boolean.FALSE;
+			return null;
 		JTextArea textArea = view.getTextArea();
 		try
 		{
@@ -52,12 +53,10 @@ public class Cmd_set_marker implements Command
 					.getSelectionStart(),textArea
 					.getSelectionEnd());
 			}
-			return Boolean.TRUE;
 		}
-		catch(Exception e)
+		catch(BadLocationException bl)
 		{
-			throw new IllegalArgumentException("Aiee!!! Text area"
-				+ " out of sync");
 		}
+		return null;
 	}
 }
