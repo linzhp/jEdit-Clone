@@ -32,9 +32,7 @@ import java.util.zip.*;
 import org.gjt.sp.jedit.syntax.*;
 
 /**
- * A <code>Buffer</code> is an open file. The buffer class doesn't
- * have a public constructor. Buffers are created and destroyed by the
- * <code>BufferMgr</code> class.
+ * 
  * @see BufferMgr
  * @see BufferMgr#openFile(View)
  * @see BufferMgr#openURL(View)
@@ -53,7 +51,7 @@ implements DocumentListener, UndoableEditListener
 	 * The search string is obtained from the
 	 * <code>search.find.value</code> property.
 	 * @param view The view
-	 * @param done For internal use really. False if a `keep searching'
+	 * @param done For internal use. False if a `keep searching'
 	 * dialog should be shown if no more matches have been found.
 	 */
 	public boolean find(View view, boolean done)
@@ -283,6 +281,69 @@ implements DocumentListener, UndoableEditListener
 		return false;
 	}
 	
+	public int locateBracketBackward(int dot, char openBracket,
+		char closeBracket)
+		throws BadLocationException
+	{
+		int count;
+		Element map = getDefaultRootElement();
+		// check current line
+		int lineNo = map.getElementIndex(dot);
+		Element lineElement = map.getElement(lineNo);
+		int start = lineElement.getStartOffset();
+		int offset = scanBackwardLine(getText(start,dot - start),
+			openBracket,closeBracket,0);
+		count = -offset - 1;
+		if(offset >= 0)
+			return start + offset;
+		// check previous lines
+		for(int i = lineNo - 1; i >= 0; i--)
+		{
+			lineElement = map.getElement(i);
+			start = lineElement.getStartOffset();
+			offset = scanBackwardLine(getText(start,lineElement
+				.getEndOffset() - start),openBracket,
+				closeBracket,count);
+			count = -offset - 1;
+			if(offset >= 0)
+				return start + offset;
+		}
+		// not found
+		return -1;
+	}
+
+	public int locateBracketForward(int dot, char openBracket,
+		char closeBracket)
+		throws BadLocationException
+	{
+		int count;
+		Element map = getDefaultRootElement();
+		// check current line
+		int lineNo = map.getElementIndex(dot);
+		Element lineElement = map.getElement(lineNo);
+		int start = lineElement.getStartOffset();
+		int end = lineElement.getEndOffset();
+		int offset = scanForwardLine(getText(dot + 1,end - (dot + 1)),
+			openBracket,closeBracket,0);
+		count = -offset - 1;
+		if(offset >= 0)
+			return dot + offset + 1;
+		// check following lines
+		for(int i = lineNo + 1; i < map.getElementCount(); i++)
+		{
+			lineElement = map.getElement(i);
+			start = lineElement.getStartOffset();
+			offset = scanForwardLine(getText(start,lineElement
+				.getEndOffset() - start),openBracket,
+				closeBracket,count);
+			count = -offset - 1;
+			if(offset >= 0)
+				return start + offset;
+		}
+		// not found
+		return -1;
+	}
+
 	/**
 	 * Returns the file this buffer is editing.
 	 */
@@ -581,7 +642,7 @@ implements DocumentListener, UndoableEditListener
 			if(oldSize == null)
 			{
 				Integer tabSize = new Integer(jEdit.props
-					.getProperty("buffer.tabsize"));
+					.getProperty("buffer.tabSize"));
 				putProperty(tabSizeAttribute,tabSize);
 			}
 		}
@@ -687,7 +748,9 @@ implements DocumentListener, UndoableEditListener
 	private void init()
 	{	
 		init = true;
-		setDocumentProperties(new BufferProps(getDocumentProperties()));
+		setDocumentProperties(new BufferProps());
+		// silly hack for backspace to work
+		putProperty("i18n",Boolean.FALSE);
 		undo = new UndoManager();
 		markers = new Vector();
 		colors = new Hashtable();
@@ -1049,6 +1112,46 @@ implements DocumentListener, UndoableEditListener
 		file.renameTo(backup);
 	}
 
+	// the return value is as follows:
+	// >= 0: offset in line where bracket was found
+	// < 0: -1 - count
+	private int scanBackwardLine(String line, char openBracket,
+		char closeBracket, int count)
+	{
+		for(int i = line.length() - 1; i >= 0; i--)
+		{
+			char c = line.charAt(i);
+			if(c == closeBracket)
+				count++;
+			else if(c == openBracket)
+			{
+				if(--count < 0)
+					return i;
+			}
+		}
+		return -1 - count;
+	}
+
+	// the return value is as follows:
+	// >= 0: offset in line where bracket was found
+	// < 0: -1 - count
+	private int scanForwardLine(String line, char openBracket,
+		char closeBracket, int count)
+	{
+		for(int i = 0; i < line.length(); i++)
+		{
+			char c = line.charAt(i);
+			if(c == openBracket)
+				count++;
+			else if(c == closeBracket)
+			{
+				if(--count < 0)
+					return i;
+			}
+		}
+		return -1 - count;
+	}
+
 	private void updateStatus()
 	{
 		Enumeration enum = jEdit.buffers.getViews();
@@ -1085,40 +1188,30 @@ implements DocumentListener, UndoableEditListener
 
 	private class BufferProps extends Hashtable
 	{
-		BufferProps(Dictionary defaults)
-		{
-			this.defaults = defaults;
-		}
-
 		public Object get(Object key)
 		{
 			Object o = super.get(key);
-			if(o != null)
-				return o;
-			o = defaults.get(key);
 			if(o != null)
 				return o;
 			if(mode == null)
 				return null;
 			String clazz = mode.getClass().getName();
 			String value = jEdit.props.getProperty("mode." + clazz
-				.substring(clazz.lastIndexOf('.') + 1) + "."
-				+ key);
+				.substring(clazz.lastIndexOf('.')) + "." + key);
 			if(value == null)
-				return null;
+			{
+				value = jEdit.props.getProperty("buffer." + key);
+				if(value == null)
+					return null;
+			}
 			try
 			{
-				Integer i = new Integer(value);
-				put(key,i);
-				return i;
+				return new Integer(value);
 			}
 			catch(NumberFormatException nf)
 			{
-				put(key,value);
 				return value;
 			}
 		}
-
-		private Dictionary defaults;
 	}		
 }

@@ -44,6 +44,7 @@ public class c extends autoindent
 			keywords.add("short","type");
 			keywords.add("signed","type");
 			keywords.add("struct","type");
+			keywords.add("template","type");
 			keywords.add("typedef","type");
 			keywords.add("union","type");
 			keywords.add("unsigned","type");

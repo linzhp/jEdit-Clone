@@ -76,6 +76,7 @@ public class java_mode extends autoindent
 			keywords.add("throws","keyword");
 			keywords.add("this","constant");
 			keywords.add("null","constant");
+			keywords.add("super","constant");
 			keywords.add("true","constant");
 			keywords.add("false","constant");
 		}

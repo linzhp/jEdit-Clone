@@ -21,15 +21,27 @@ package org.gjt.sp.jedit;
 
 import java.util.Enumeration;
 
+/**
+ * The jEdit autosave thread wakes up at fixed intervals specified by the
+ * <code>daemon.autosave.interval</code> property and calls the
+ * <code>autosave()</code> method of each buffer.
+ * @see Buffer#autosave()
+ */
 public class Autosave extends Thread
 {
-	// public members
+	/**
+	 * Creates a new autosave thread. This should never be called
+	 * directly.
+	 */
 	public Autosave()
 	{
 		super("***jEdit autosave thread***");
 		start();
 	}
 
+	/**
+	 * The main method of the autosave thread.
+	 */
 	public void run()
 	{
 		int interval;

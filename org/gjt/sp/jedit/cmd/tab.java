@@ -60,33 +60,38 @@ public class tab implements Command
 	private String doTab(String in, int tabSize)
 	{
 		StringBuffer buf = new StringBuffer();
-		int whitespace = 0;
-		for(int i = 0; i < in.length(); i++)
+		for(int i = 0, width = 0, whitespace = 0;
+			i < in.length(); i++, width++)
 		{
 			switch(in.charAt(i))
 			{
 			case ' ':
 				whitespace++;
 				break;
-			case '\t':
-				int tabStop = (tabSize - (i % tabSize));
-				whitespace += tabStop;
-				break;
 			case '\n':
-				whitespace = 0;
+				whitespace = width = 0;
 				buf.append('\n');
 				break;
 			default:
 				if(whitespace != 0)
 				{
-					if(whitespace >= tabSize)
-						whitespace += (i - tabSize) % tabSize;
-					int tabs = whitespace / tabSize;
-					int spaces = whitespace % tabSize;
-					while(tabs-- > 0)
-						buf.append('\t');
-					while(spaces-- > 0)
-						buf.append(' ');
+					if(whitespace >= tabSize / 2)
+					{
+						int indent = whitespace +
+							((width-whitespace)
+							% tabSize);
+						int tabs = indent / tabSize;
+						int spaces = indent % tabSize;
+						while(tabs-- > 0)
+							buf.append('\t');
+						while(spaces-- > 0)
+							buf.append(' ');
+					}
+					else
+					{
+						while(whitespace-- > 0)
+							buf.append(' ');
+					}
 					whitespace = 0;
 				}
 				buf.append(in.charAt(i));

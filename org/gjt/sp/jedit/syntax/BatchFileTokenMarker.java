@@ -26,6 +26,7 @@ public class BatchFileTokenMarker extends TokenMarker
 	// public members
 	public static final String COMMAND = "command";
 	public static final String COMMENT = "comment";
+	public static final String LABEL = "label";
 	public static final String VARIABLE = "variable";
 	public static final String QUOTE = "quote";
 
@@ -81,6 +82,14 @@ loop:		for(int i = line.offset; i < length; i++)
 				{
 					addToken(i - lastOffset,null);
 					lastOffset = i;
+				}
+				break;
+			case ':':
+				if(lastOffset == offset && token == null)
+				{
+					addToken(length - offset,LABEL);
+					lastOffset = length;
+					break loop;
 				}
 				break;
 			case ' ':

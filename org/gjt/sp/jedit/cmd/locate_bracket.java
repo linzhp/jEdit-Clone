@@ -31,11 +31,11 @@ public class locate_bracket implements Command
 		String openBrackets = (String)buffer
 			.getProperty("openBrackets");
 		if(openBrackets == null)
-			openBrackets = "<([{";
+			openBrackets = "([{";
 		String closeBrackets = (String)buffer
 			.getProperty("closeBrackets");
 		if(closeBrackets == null)
-			closeBrackets = ">)]}";
+			closeBrackets = ")]}";
 		if(closeBrackets.length() != openBrackets.length())
 		{
 			view.getToolkit().beep();
@@ -52,8 +52,14 @@ public class locate_bracket implements Command
 			if(index != -1)
 			{
 				char closeBracket = closeBrackets.charAt(index);
-				scanForward(buffer,view,dot,bracket,
-					closeBracket);
+				int offset = buffer.locateBracketForward(dot,
+					bracket,closeBracket);
+				if(offset == -1)
+					view.getToolkit().beep();
+				else
+					view.getTextArea().setCaretPosition(
+						offset + 1);
+				return;
 			}
 			else
 			{
@@ -64,133 +70,17 @@ public class locate_bracket implements Command
 					return;
 				}
 				char openBracket = openBrackets.charAt(index);
-				scanBackward(buffer,view,dot,openBracket,
-					bracket);
+				int offset = buffer.locateBracketBackward(dot,
+					openBracket,bracket);
+				if(offset == -1)
+					view.getToolkit().beep();
+				else
+					view.getTextArea().setCaretPosition(
+						offset + 1);
 			}
 		}
 		catch(BadLocationException bl)
 		{
-			view.getToolkit().beep();
-			return;
 		}
-	}
-
-	private void scanBackward(Buffer buffer, View view, int dot,
-		char openBracket, char closeBracket)
-		throws BadLocationException
-	{
-		int count;
-		Element map = buffer.getDefaultRootElement();
-		// check current line
-		int lineNo = map.getElementIndex(dot);
-		Element lineElement = map.getElement(lineNo);
-		int start = lineElement.getStartOffset();
-		int offset = scanBackwardLine(buffer.getText(start,dot
-			- start),openBracket,closeBracket,0);
-		count = -offset - 1;
-		if(offset >= 0)
-		{
-			offset += start;
-			view.getTextArea().setCaretPosition(offset + 1);
-			return;
-		}
-		// check previous lines
-		for(int i = lineNo - 1; i >= 0; i--)
-		{
-			lineElement = map.getElement(i);
-			start = lineElement.getStartOffset();
-			offset = scanBackwardLine(buffer.getText(start,
-				lineElement.getEndOffset() - start),
-				openBracket,closeBracket,count);
-			count = -offset - 1;
-			if(offset >= 0)
-			{
-				offset += start;
-				view.getTextArea().setCaretPosition(offset+1);
-				return;
-			}
-		}
-		// not found
-		view.getToolkit().beep();
-	}
-	
-	// the return value is as follows:
-	// >= 0: offset in line where bracket was found
-	// < 0: -1 - count
-	private int scanBackwardLine(String line, char openBracket,
-		char closeBracket, int count)
-	{
-		for(int i = line.length() - 1; i >= 0; i--)
-		{
-			char c = line.charAt(i);
-			if(c == closeBracket)
-				count++;
-			else if(c == openBracket)
-			{
-				if(--count < 0)
-					return i;
-			}
-		}
-		return -1 - count;
-	}
-
-	private void scanForward(Buffer buffer, View view, int dot,
-		char openBracket, char closeBracket)
-		throws BadLocationException
-	{
-		int count;
-		Element map = buffer.getDefaultRootElement();
-		// check current line
-		int lineNo = map.getElementIndex(dot);
-		Element lineElement = map.getElement(lineNo);
-		int start = lineElement.getStartOffset();
-		int end = lineElement.getEndOffset();
-		int offset = scanForwardLine(buffer.getText(dot + 1,end
-			- (dot + 1)),openBracket,closeBracket,0);
-		count = -offset - 1;
-		if(offset >= 0)
-		{
-			offset += (dot + 1);
-			view.getTextArea().setCaretPosition(offset + 1);
-			return;
-		}
-		// check following lines
-		for(int i = lineNo + 1; i < map.getElementCount(); i++)
-		{
-			lineElement = map.getElement(i);
-			start = lineElement.getStartOffset();
-			offset = scanForwardLine(buffer.getText(start,
-				lineElement.getEndOffset() - start),
-				openBracket,closeBracket,count);
-			count = -offset - 1;
-			if(offset >= 0)
-			{
-				offset += start;
-				view.getTextArea().setCaretPosition(offset+1);
-				return;
-			}
-		}
-		// not found
-		view.getToolkit().beep();
-	}
-
-	// the return value is as follows:
-	// >= 0: offset in line where bracket was found
-	// < 0: -1 - count
-	private int scanForwardLine(String line, char openBracket,
-		char closeBracket, int count)
-	{
-		for(int i = 0; i < line.length(); i++)
-		{
-			char c = line.charAt(i);
-			if(c == openBracket)
-				count++;
-			else if(c == closeBracket)
-			{
-				if(--count < 0)
-					return i;
-			}
-		}
-		return -1 - count;
 	}
 }
