@@ -1080,6 +1080,21 @@ implements DocumentListener, UndoableEditListener
 			insertString(0,sbuf.toString(),null);
 			newFile = false;
 			modTime = file.lastModified();
+
+			// One day, we should interleave this code into
+			// the above loop for top hat efficency. But for
+			// now, this will suffice.
+			Element map = getDefaultRootElement();
+			for(int i = 0; i < 10; i++)
+			{
+				Element lineElement = map.getElement(i);
+				if(lineElement == null)
+					break;
+				String line = getText(lineElement.getStartOffset(),
+					lineElement.getEndOffset()
+					- lineElement.getStartOffset());
+				processProperty(line);
+			}
 		}
 		catch(BadLocationException bl)
 		{
@@ -1094,6 +1109,73 @@ implements DocumentListener, UndoableEditListener
 		{
 			Object[] args = { io.toString() };
 			jEdit.error(null,"ioerror",args);
+		}
+	}
+
+	private void processProperty(String prop)
+	{
+		StringBuffer buf = new StringBuffer();
+		String name = null;
+		boolean escape = false;
+		for(int i = 0; i < prop.length(); i++)
+		{
+			char c = prop.charAt(i);
+			switch(c)
+			{
+			case ':':
+				if(escape)
+				{
+					escape = false;
+					buf.append(':');
+					break;
+				}
+				if(name != null)
+				{
+					String value = buf.toString();
+					try
+					{
+						putProperty(name,new Integer(
+							value));
+					}
+					catch(NumberFormatException nf)
+					{
+						putProperty(name,value);
+					}
+				}
+				buf.setLength(0);
+				break;
+			case '=':
+				if(escape)
+				{
+					escape = false;
+					buf.append('=');
+					break;
+				}
+				name = buf.toString();
+				buf.setLength(0);
+				break;
+			case '\\':
+				if(escape)
+					buf.append('\\');
+				escape = !escape;
+				break;
+			case 'n':
+				if(escape)
+				{	buf.append('\n');
+					escape = false;
+					break;
+				}
+			case 't':
+				if(escape)
+				{
+					buf.append('\t');
+					escape = false;
+					break;
+				}
+			default:
+				buf.append(c);
+				break;
+			}
 		}
 	}
 

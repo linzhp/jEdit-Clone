@@ -58,8 +58,6 @@ Buffer.locateBracketForward().
 created
 <li>Backup directory feature, where all ...~ files are placed
 <li>Syntax colorizing is still slow
-<li><b>Urgent:</b> buffer-local properties need to be updated to work with
-the new file loading code
 </ul>
 
 <a name=14pre4>
@@ -86,6 +84,9 @@ has the same effect as pressing `Insert' (Mike Dillon)
 and loading faster
 <li>Removed redundant scanning pass from CTokenMarker - should be about
 50% faster
+<li>(, ) characters are now optional in buffer-local properties, for example
+you can now write :tabSize=4: instead of (:tabSize=4:) in the first 10 lines
+of a file
 </ul>
 
 <h2>Bug Fixes</h2>
