@@ -151,6 +151,8 @@ newline.</td>
 
 </table>
 
+<h2>Code Block Operations Submenu</h2>
+
 <table width=100% border=3>
 <tr>
 <th bgcolor=#ccccff>Command</th> <th bgcolor=#ccccff>Shortcut</th>
@@ -164,6 +166,33 @@ Select Code Block
 block containing the caret. Brackets are often used to delimit code blocks
 in programming languages.</td>
 </tr>
+
+<tr>
+<td>Shift Indent Left</td> <td>A+LEFT</td> <td>Removes one level of
+indentation from the start of every line in the selection, or the
+current line if the selection is empty. Tabs will not be used if the
+`noTabs' buffer-local property is set - see the
+<a href=using.html#buffer-props>Buffer-Local Properties</a>
+help topic for details.</td>
+</tr>
+
+<tr>
+<td>Shift Indent Right</td> <td>A+RIGHT</td> <td>Adds one level of
+indentation to the start of every line in the selection, or the
+current line if the selection is empty. Tabs will not be used if the
+`noTabs' buffer-local property is set - see the
+<a href=using.html#buffer-props>Buffer-Local Properties</a>
+help topic for details.</td>
+</tr>
+
+</table>
+
+<table width=100% border=3>
+<tr>
+<th bgcolor=#ccccff>Command</th> <th bgcolor=#ccccff>Shortcut</th>
+<th bgcolor=#ccccff>Description</th>
+</tr>
+
 
 <tr>
 <td>To Uppercase</td> <td></td> <td>Converts all characters in the selection

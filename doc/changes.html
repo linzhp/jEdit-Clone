@@ -33,7 +33,8 @@ help system
 <ul>
 <li>Strings like /**/int/**/ aren't colorized correctly by CTokenMarker
 <li>Caret doesn't blink after buffer change
-<li>Relative path calculations broken with URLs
+<li>Relative path calculations broken with URLs (since this only affects
+`Open Selection', is it really important?
 </ul>
 
 <a name=13pre5>
@@ -43,6 +44,7 @@ help system
 
 <ul>
 <li>Plugin documentation added
+<li>`Shift Indent Left' and `Shift Indent Right' commands added
 </ul>
 
 <h2>Bug Fixes</h2>
@@ -52,6 +54,8 @@ help system
 <li>Exceptions are no longer printed if .jedit-desktop contains
 non-existent files
 <li>First buffer opened by desktop has wrong scroll/caret position
+<li>Auto indent doesn't work properly with tab sizes other than 8
+<li>Removed debug message from `Spaces to Tabs' command
 </ul>
 
 <a name=13pre4>
