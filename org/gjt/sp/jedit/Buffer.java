@@ -696,8 +696,10 @@ implements DocumentListener, UndoableEditListener
 			String nogzName = name.substring(0,name.length() -
 				(name.endsWith(".gz") ? 3 : 0));
 			int index = nogzName.lastIndexOf('.') + 1;
-			setMode(jEdit.cmds.getMode(jEdit.props.getProperty(
-				"mode.".concat(nogzName.substring(index)))));
+			Mode mode = jEdit.cmds.getMode(jEdit.props.getProperty(
+				"mode.".concat(nogzName.substring(index))));
+			if(mode != null) // silly hack for shell script mode
+				setMode(mode);
 		}
 		addDocumentListener(this);
 		addUndoableEditListener(this);

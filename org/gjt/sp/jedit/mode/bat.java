@@ -1,5 +1,5 @@
 /*
- * sh.java - Bourne shell editing mode
+ * bat.java - DOS Batch file editing mode
  * Copyright (C) 1998 Slava Pestov
  *
  * This program is free software; you can redistribute it and/or
@@ -19,15 +19,15 @@
 
 package org.gjt.sp.jedit.mode;
 
-import jstyle.ShellScriptTokenMarker;
+import jstyle.BatchFileTokenMarker;
 import org.gjt.sp.jedit.*;
 
-public class sh extends autoindent
+public class bat extends autoindent
 {
 	public void enter(Buffer buffer)
 	{
-		buffer.setTokenMarker(new ShellScriptTokenMarker());
-		buffer.loadColors("sh");
+		buffer.setTokenMarker(new BatchFileTokenMarker());
+		buffer.loadColors("bat");
 	}
 
 	public void leave(Buffer buffer)
