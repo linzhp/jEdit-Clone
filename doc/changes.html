@@ -58,7 +58,8 @@ Buffer.locateBracketForward().
 created
 <li>Backup directory feature, where all ...~ files are placed
 <li>Syntax colorizing is still slow
-<li>Buffer local properties don't currently work
+<li><b>Urgent:</b> buffer-local properties need to be updated to work with
+the new file loading code
 </ul>
 
 <a name=14pre4>
@@ -68,8 +69,7 @@ created
 <h2>New Features</h2>
 
 <ul>
-<li>Added TSQL mode  (written by
-Mike Dillon &lt;mdillon@uclink4.berkeley.edu&gt;)
+<li>Added TSQL mode (Mike Dillon)
 <li>Added Block Caret setting in Tools-&gt;Options-&gt;Editor
 <li>Sticky file format (when a file is loaded, jEdit tries to guess the
 line separators. When it is saved, the original line separators are used.
@@ -79,8 +79,9 @@ Makes it easier for people who deal with both DOS and Unix files)
 <h2>Enhancements</h2>
 
 <ul>
-<li>Improved KeywordMap, might make C/C++/Java mode faster (written by
-Mike Dillon &lt;mdillon@uclink4.berkeley.edu&gt;)
+<li>Improved KeywordMap, might make C/C++/Java mode faster (Mike Dillon)
+<li>Double clicking on items in `Paste Previous' and `Paste Predefined'
+has the same effect as pressing `Insert' (Mike Dillon)
 <li>Size of I/O buffers increased from 8K to 32K - should make file saving
 and loading faster
 <li>Removed redundant scanning pass from CTokenMarker - should be about
@@ -90,12 +91,9 @@ and loading faster
 <h2>Bug Fixes</h2>
 
 <ul>
-<li>Batch file mode had an ArrayIndexOutOfBounds condition (thanks to 
-Mike Dillon &lt;mdillon@uclink4.berkeley.edu&gt; for the fix)
-<li>HyperSearch dialog didn't resize properly (thanks to 
-Mike Dillon &lt;mdillon@uclink4.berkeley.edu&gt; for the fix)
-<li>AltGR key should now work on Windows (thanks to
-Juha Lindfors &lt;jplindfo@cc.helsinki.fi&gt; for the fix)
+<li>Batch file mode had an ArrayIndexOutOfBounds condition (Mike Dillon)
+<li>HyperSearch dialog didn't resize properly (Mike Dillon)
+<li>AltGR key should now work on Windows (Juha Lindfors)
 <li>Shift Indent Left/Right had problems when shifting empty lines
 <li>Line separator setting in Options dialog box didn't work
 <li>README.txt referenced non-existent COPYING.txt (as of jEdit 1.3, it

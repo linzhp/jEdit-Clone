@@ -1008,30 +1008,13 @@ implements DocumentListener, UndoableEditListener
 			if(name.endsWith(".gz"))
 				_in = new GZIPInputStream(_in);
 			InputStreamReader in = new InputStreamReader(_in);
-			/*String line;
-			int count = 0;
-			while ((line = bin.readLine()) != null)
-			{
-				buf.append(line);
-				buf.append('\n');
-				if(count++ < 10)
-				{
-					int index = line.indexOf("(:");
-					if(index == -1)
-						continue;
-					int end = line.indexOf(":)",index + 6);
-					if(end == -1)
-						continue;
-					processProperty(line.substring(index,
-						end + 1));
-				}
-			}*/
 			char[] buf = new char[IOBUFSIZE];
 			int len; // Number of characters in buffer
+			int lineCount = 0;
 			boolean CRLF = false; // Windows line endings
 			boolean CROnly = false; // MacOS line endings
 			boolean lastWasCR = false; // Was the previous character CR?
-
+			
 			while((len = in.read(buf,0,buf.length)) != -1)
 			{
 				int lastLine = 0; // Offset of last line
@@ -1111,73 +1094,6 @@ implements DocumentListener, UndoableEditListener
 		{
 			Object[] args = { io.toString() };
 			jEdit.error(null,"ioerror",args);
-		}
-	}
-
-	private void processProperty(String prop)
-	{
-		StringBuffer buf = new StringBuffer();
-		String name = null;
-		boolean escape = false;
-		for(int i = 0; i < prop.length(); i++)
-		{
-			char c = prop.charAt(i);
-			switch(c)
-			{
-			case ':':
-				if(escape)
-				{
-					escape = false;
-					buf.append(':');
-					break;
-				}
-				if(name != null)
-				{
-					String value = buf.toString();
-					try
-					{
-						putProperty(name,new Integer(
-							value));
-					}
-					catch(NumberFormatException nf)
-					{
-						putProperty(name,value);
-					}
-				}
-				buf.setLength(0);
-				break;
-			case '=':
-				if(escape)
-				{
-					escape = false;
-					buf.append('=');
-					break;
-				}
-				name = buf.toString();
-				buf.setLength(0);
-				break;
-			case '\\':
-				if(escape)
-					buf.append('\\');
-				escape = !escape;
-				break;
-			case 'n':
-				if(escape)
-				{	buf.append('\n');
-					escape = false;
-					break;
-				}
-			case 't':
-				if(escape)
-				{
-					buf.append('\t');
-					escape = false;
-					break;
-				}
-			default:
-				buf.append(c);
-				break;
-			}
 		}
 	}
 

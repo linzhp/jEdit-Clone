@@ -26,7 +26,7 @@ import java.util.*;
 import org.gjt.sp.jedit.*;
 
 public class PastePredefined extends JDialog
-implements ActionListener, KeyListener
+implements ActionListener, KeyListener, MouseListener
 {
 	public PastePredefined(View view)
 	{
@@ -35,8 +35,8 @@ implements ActionListener, KeyListener
 		Container content = getContentPane();
 		content.setLayout(new BorderLayout());
 
-		content.add("North",new JLabel(jEdit.getProperty(
-			"pastepredef.caption")));
+		content.add(new JLabel(jEdit.getProperty(
+			"pastepredef.caption")), BorderLayout.NORTH);
 
 		clipModel = new DefaultListModel();
 		clipVector = new Vector();
@@ -53,7 +53,8 @@ implements ActionListener, KeyListener
 		clips = new JList(clipModel);
 		clips.setVisibleRowCount(10);
 		clips.setFont(view.getTextArea().getFont());
-		content.add("Center",new JScrollPane(clips));
+		clips.addMouseListener(this);
+		content.add(new JScrollPane(clips), BorderLayout.CENTER);
 
 		JPanel buttons = new JPanel();
 		insert = new JButton(jEdit.getProperty("pastepredef.insert"));
@@ -71,7 +72,7 @@ implements ActionListener, KeyListener
 		cancel = new JButton(jEdit.getProperty("pastepredef.cancel"));
 		cancel.addActionListener(this);
 		buttons.add(cancel);
-		content.add("South",buttons);
+		content.add(buttons, BorderLayout.SOUTH);
 
 		getRootPane().setDefaultButton(insert);
 		addKeyListener(this);
@@ -105,11 +106,7 @@ implements ActionListener, KeyListener
 		
 		if(source == insert)
 		{
-			int index = clips.getSelectedIndex();
-			if(index != -1)
-				view.getTextArea().replaceSelection((String)
-					clipVector.elementAt(index));
-			dispose();
+			doInsert();
 		}
 		else if(source == add)
 		{
@@ -162,6 +159,19 @@ implements ActionListener, KeyListener
 	public void keyReleased(KeyEvent evt) {}
 	public void keyTyped(KeyEvent evt) {}
 
+	public void mouseClicked(MouseEvent evt)
+	{
+		if (evt.getClickCount() == 2)
+		{
+			doInsert();
+		}
+	}
+
+	public void mouseEntered(MouseEvent evt) {}
+	public void mouseExited(MouseEvent evt) {}
+	public void mousePressed(MouseEvent evt) {}
+	public void mouseReleased(MouseEvent evt) {}
+
 	// private members
 	private View view;
 	private JList clips;
@@ -184,5 +194,14 @@ implements ActionListener, KeyListener
 				str.length() - 30);
 		}
 		return str;
+	}
+
+	private void doInsert()
+	{
+		int index = clips.getSelectedIndex();
+		if(index != -1)
+			view.getTextArea().replaceSelection((String)
+				clipVector.elementAt(index));
+		dispose();
 	}
 }
