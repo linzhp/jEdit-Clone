@@ -19,7 +19,7 @@
 
 package org.gjt.sp.jedit.syntax;
 
-import com.sun.java.swing.text.*;
+import javax.swing.text.*;
 
 public class SyntaxEditorKit extends DefaultEditorKit implements ViewFactory
 {

@@ -1,5 +1,5 @@
 /*
- * MakefileTokenMarker.java - Makefile token marker
+ * CTokenMarker.java - C/C++/Java token marker
  * Copyright (C) 1998 Slava Pestov
  *
  * This program is free software; you can redistribute it and/or
@@ -20,14 +20,19 @@ package org.gjt.sp.jedit.syntax;
 
 import javax.swing.text.Segment;
 
-public class MakefileTokenMarker extends TokenMarker
+public class CTokenMarker extends TokenMarker
 {
 	// public members
-	public static final String MAKE_CMD = "make_cmd";
+	public static final String LABEL = "label";
+	public static final String CPP_CMD = "cpp_cmd";
 	public static final String COMMENT = "comment";
-	public static final String VARIABLE = "variable";
 	public static final String DQUOTE = "dquote";
 	public static final String SQUOTE = "squote";
+
+	public CTokenMarker(boolean cpp)
+	{
+		this.cpp = cpp;
+	}
 
 	public Token markTokens(Segment line, int lineIndex)
 	{
@@ -36,6 +41,7 @@ public class MakefileTokenMarker extends TokenMarker
 		String token = lineIndex == 0 ? null : lineInfo[lineIndex - 1];
 		int offset = line.offset;
 		int lastOffset = offset;
+		int lastKeyword = offset;
 		int length = line.count + offset;
 		boolean backslash = false;
 loop:		for(int i = offset; i < length; i++)
@@ -46,69 +52,88 @@ loop:		for(int i = offset; i < length; i++)
 			case '\\':
 				backslash = !backslash;
 				break;
-			case ':': case '=': case ' ':
+			case ';': case '.': case ',': case ' ': case '\t':
+			case '(': case ')':
 				backslash = false;
-				if(token == null && lastOffset == offset)
+				if(token == null)
 				{
-					addToken((i+1) - lastOffset,MAKE_CMD);
-					lastOffset = i + 1;
+					int off = lastOffset-1;
+loop2:					while(++off < i)
+					{
+						switch(line.array[off])
+						{
+						case ' ': case '\t':
+						case '(': case ')':
+							break;
+						default:
+							break loop2;
+						}
+					}
+					int len = i - off;
+					if(off != lastOffset)
+						addToken(off - lastOffset,
+							 null);
+					addToken(len,new String(line
+						.array,off,len));
+					lastOffset = i;
 				}
 				break;
-			case '\t':
-				// silly hack
+			case ':':
 				backslash = false;
-				if(token == null && lastOffset == offset)
+				if(token == null)
 				{
-					addToken((i+1) - lastOffset,null);
-					lastOffset = i + 1;
+					addToken(i - lastOffset,LABEL);
+					lastOffset = i;
 				}
 				break;
 			case '#':
-				if(backslash)
-					backslash = false;
-				else if(token == null)
+				backslash = false;
+				if(cpp & token == null)
 				{
+					token = CPP_CMD;
 					addToken(i - lastOffset,null);
-					addToken(length - i,COMMENT);
+					addToken(length - i,CPP_CMD);
 					lastOffset = length;
 					break loop;
 				}
 				break;
-			case '$':
-				if(backslash)
-					backslash = false;
-				else if(token == null && lastOffset != offset)
+			case '/':
+				backslash = false;
+				if(token == null && length - i >= 1)
 				{
-					addToken(i - lastOffset,null);
-					lastOffset = i;
-					if(length - i > 1)
-	 				{
-				      		if(line.array[i + 1] == '(')
-							token = VARIABLE;
-						else
-						{
-							addToken(2,VARIABLE);
-							lastOffset += 2;
-						}
+					switch(line.array[i+1])
+					{
+					case '*':
+						token = COMMENT;
+						addToken(i - lastOffset,null);
+						lastOffset = i;
+						i++;
+						break;
+					case '/':
+						addToken(i - lastOffset,token);
+						addToken(length - i,COMMENT);
+						lastOffset = length;
+						break loop;
 					}
 				}
 				break;
-			case ')':
+			case '*':
 				backslash = false;
-				if(token == VARIABLE)
+				if(token == COMMENT && length - i >= 1)
 				{
-					token = null;
-					addToken((i+1) - lastOffset,VARIABLE);
-					lastOffset = i + 1;
+					if(line.array[i+1] == '/')
+					{
+						token = null;
+						i++;
+						addToken((i+1) - lastOffset,COMMENT);
+						lastOffset = i + 1;
+					}
 				}
 				break;
 			case '"':
 				if(backslash)
-				{
 					backslash = false;
-					break;
-				}
-				if(token == null)
+				else if(token == null)
 				{
 					token = DQUOTE;
 					addToken(i - lastOffset,null);
@@ -123,11 +148,8 @@ loop:		for(int i = offset; i < length; i++)
 				break;
 			case '\'':
 				if(backslash)
-				{
 					backslash = false;
-					break;
-				}
-				if(token == null)
+				else if(token == null)
 				{
 					token = SQUOTE;
 					addToken(i - lastOffset,null);
@@ -146,10 +168,10 @@ loop:		for(int i = offset; i < length; i++)
 			}
 		}
 		if(lastOffset != length)
-			addToken(length - lastOffset,lastOffset == offset ?
-				 MAKE_CMD : token);
-		lineInfo[lineIndex] = (token == DQUOTE || token == SQUOTE ?
-			token : null);
+			addToken(length - lastOffset,token);
+		if(token == CPP_CMD && !backslash)
+			token = null;
+		lineInfo[lineIndex] = token;
 		lastLine = lineIndex;
 		if(lastToken != null)
 		{
@@ -159,4 +181,7 @@ loop:		for(int i = offset; i < length; i++)
 		else
 			return null;
 	}
+
+	// private members
+	private boolean cpp;
 }

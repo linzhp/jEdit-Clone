@@ -1,5 +1,5 @@
 /*
- * goto_marker.java - Command
+ * Token.java - Generic token
  * Copyright (C) 1998 Slava Pestov
  *
  * This program is free software; you can redistribute it and/or
@@ -16,29 +16,25 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+package org.gjt.sp.jedit.syntax;
 
-package org.gjt.sp.jedit.cmd;
-
-import javax.swing.*;
-import java.util.Hashtable;
-import org.gjt.sp.jedit.syntax.SyntaxTextArea;
-import org.gjt.sp.jedit.*;
-
-public class goto_marker implements Command
+public class Token
 {
-	public void exec(Buffer buffer, View view, String arg, Hashtable args)
+	// public members
+	public int length;
+	public String id;
+	public Token next;
+	public boolean nextValid;
+
+	public Token(int length, String id)
 	{
-		SyntaxTextArea textArea = view.getTextArea();
-		if(arg == null)
-			arg = jEdit.input(view,"gotomarker","lastmarker");
-		if(arg != null)
-		{
-			Marker marker = view.getBuffer().getMarker(arg);
-			if(marker != null)
-				textArea.select(marker.getStart(),
-					marker.getEnd());
-			else
-				view.getToolkit().beep();
-		}
+		this.length = length;
+		this.id = id;
+	}
+
+	public String toString()
+	{
+		return id + "[length=" + length + (nextValid ? ",nextValid]"
+						   : "nextInvalid]");
 	}
 }

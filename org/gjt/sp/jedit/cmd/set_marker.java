@@ -19,7 +19,7 @@
 
 package org.gjt.sp.jedit.cmd;
 
-import com.sun.java.swing.*;
+import javax.swing.*;
 import java.util.Hashtable;
 import org.gjt.sp.jedit.syntax.SyntaxTextArea;
 import org.gjt.sp.jedit.*;

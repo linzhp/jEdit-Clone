@@ -19,7 +19,7 @@
 
 package org.gjt.sp.jedit.gui;
 
-import com.sun.java.swing.*;
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import org.gjt.sp.jedit.*;

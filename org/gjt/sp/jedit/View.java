@@ -19,9 +19,9 @@
 
 package org.gjt.sp.jedit;
 
-import com.sun.java.swing.*;
-import com.sun.java.swing.event.*;
-import com.sun.java.swing.text.*;
+import javax.swing.*;
+import javax.swing.event.*;
+import javax.swing.text.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
@@ -287,12 +287,7 @@ implements ActionListener, CaretListener, KeyListener, WindowListener
 			this.buffer.setCaretInfo(h.getValue(),v.getValue(),
 				textArea.getSelectionStart(),
 				textArea.getSelectionEnd());
-				
-		if(buffer == null)
-			this.buffer = (Buffer)jEdit.buffers.getBuffers()
-				.nextElement();
-		else
-			this.buffer = buffer;
+		this.buffer = buffer;
 		textArea.setDocument(this.buffer);
 		updateBuffersMenu();
 		updateMarkerMenus();
@@ -411,13 +406,13 @@ implements ActionListener, CaretListener, KeyListener, WindowListener
 		catch(Exception e)
 		{
 		}
-		textArea = new SyntaxTextArea();
+		textArea = new SyntaxTextArea(w,h);
 		scroller = new JScrollPane(textArea,ScrollPaneConstants
 			.VERTICAL_SCROLLBAR_ALWAYS,ScrollPaneConstants
 			.HORIZONTAL_SCROLLBAR_AS_NEEDED);	
 		status = new JLabel("Tastes like chicken!");
 		if(view == null)
-			setBuffer(null);
+			setBuffer((Buffer)jEdit.buffers.getBuffers().nextElement());
 		else
 			setBuffer(view.getBuffer());
 		textArea.addCaretListener(this);

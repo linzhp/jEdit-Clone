@@ -19,8 +19,8 @@
 
 package org.gjt.sp.jedit.gui;
 
-import com.sun.java.swing.*;
-import com.sun.java.swing.border.*;
+import javax.swing.*;
+import javax.swing.border.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.Enumeration;
@@ -29,7 +29,7 @@ import org.gjt.sp.jedit.*;
 public class Options extends JDialog
 implements ActionListener
 {
-	public static final String METAL = "com.sun.java.swing.plaf.metal"
+	public static final String METAL = "javax.swing.plaf.metal"
 		+ ".MetalLookAndFeel";
 	public static final String MOTIF = "com.sun.java.swing.plaf.motif"
 		+ ".MotifLookAndFeel";

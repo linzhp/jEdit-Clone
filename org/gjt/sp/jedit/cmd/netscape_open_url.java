@@ -19,7 +19,7 @@
 
 package org.gjt.sp.jedit.cmd;
 
-import com.sun.java.swing.JOptionPane;
+import javax.swing.JOptionPane;
 import java.io.IOException;
 import java.util.Hashtable;
 import org.gjt.sp.jedit.*;

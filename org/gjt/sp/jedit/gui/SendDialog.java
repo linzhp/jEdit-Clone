@@ -19,8 +19,8 @@
 
 package org.gjt.sp.jedit.gui;
 
-import com.sun.java.swing.*;
-import com.sun.java.swing.text.*;
+import javax.swing.*;
+import javax.swing.text.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;

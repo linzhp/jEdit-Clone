@@ -19,10 +19,10 @@
 
 package org.gjt.sp.jedit;
 
-import com.sun.java.swing.*;
-import com.sun.java.swing.event.*;
-import com.sun.java.swing.text.*;
-import com.sun.java.swing.undo.UndoManager;
+import javax.swing.*;
+import javax.swing.event.*;
+import javax.swing.text.*;
+import javax.swing.undo.UndoManager;
 import gnu.regexp.*;
 import java.awt.*;
 import java.io.*;
@@ -215,19 +215,18 @@ implements DocumentListener, UndoableEditListener
 	 */
 	public boolean saveAs(View view)
 	{
-		FileDialog fileDialog = new FileDialog(view,jEdit.props
-			.getProperty("savefile.title"),FileDialog.LOAD);
-		String parent = getFile().getParent();
-		if(parent != null)
-			fileDialog.setDirectory(parent);
-		fileDialog.setFile(name);
-		fileDialog.show();
-		String file = fileDialog.getFile();
-		if(file == null)
-			return false;
-		else
-			return save(view,fileDialog.getDirectory() + file);
-		
+		JFileChooser chooser = new JFileChooser(file.getParent());
+		chooser.setSelectedFile(file);
+		chooser.setDialogType(JFileChooser.SAVE_DIALOG);
+		chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+		int retVal = chooser.showDialog(view,null);
+		if(retVal == JFileChooser.APPROVE_OPTION)
+		{
+			File file = chooser.getSelectedFile();
+			if(file != null)
+				return save(view,file.getAbsolutePath());
+		}
+		return false;
 	}
 
 	/**

@@ -19,7 +19,7 @@
 
 package org.gjt.sp.jedit.syntax;
 
-import com.sun.java.swing.text.*;
+import javax.swing.text.*;
 import java.awt.*;
 import java.util.*;
 import org.gjt.sp.jedit.jEdit;
@@ -49,10 +49,7 @@ public class SyntaxView extends PlainView
 				- (start + 1),line);
 			if(tokenMarker == null)
 			{
-				Color color = (Color)colors.get("default");
-				if(color == null)
-					color = Color.black;
-				g.setColor(color);
+				g.setColor(Color.black);
 				Utilities.drawTabbedText(line,x,y,g,this,0);
 			}
 			else
@@ -63,10 +60,13 @@ public class SyntaxView extends PlainView
 				for(; tokens != null; tokens = tokens.next)
 				{
 					int length = tokens.length;
+					Color color;
 					String id = tokens.id;
+//System.out.println(id);
 					if(id == null)
-						id = "default";
-					Color color = (Color)colors.get(id);
+						color = Color.black;
+					else
+						color = (Color)colors.get(id);
 					g.setColor(color == null ?
 						   Color.black : color);
 				   	line.count = length;

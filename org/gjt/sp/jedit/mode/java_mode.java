@@ -19,9 +19,9 @@
 
 package org.gjt.sp.jedit.mode;
 
-import com.sun.java.swing.text.Element;
+import javax.swing.text.Element;
 import jstyle.*;
-import org.gjt.sp.jedit.syntax.TokenMarker;
+import org.gjt.sp.jedit.syntax.*;
 import org.gjt.sp.jedit.*;
 
 public class java_mode implements Mode
@@ -48,6 +48,11 @@ public class java_mode implements Mode
 		{
 			beautifier.init();
 			beautifier.setTabIndentation(buffer.getTabSize());
+			Integer maxIndent = (Integer)buffer.getProperty(
+				"maxIndent");
+			if(maxIndent != null)
+				beautifier.setMaxInStatementIndentation(maxIndent
+					.intValue());
 			beautifier.setBracketIndent(buffer.getProperty(
 				"blockIndent")
 				!= null);
@@ -74,7 +79,7 @@ public class java_mode implements Mode
 
 	public TokenMarker createTokenMarker()
 	{
-		return null; //new JavaTokenMarker();
+		return new CTokenMarker(false);
 	}
 
 	public void leave(Buffer buffer)

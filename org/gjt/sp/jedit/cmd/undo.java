@@ -19,7 +19,7 @@
 
 package org.gjt.sp.jedit.cmd;
 
-import com.sun.java.swing.undo.CannotUndoException;
+import javax.swing.undo.CannotUndoException;
 import java.util.Hashtable;
 import org.gjt.sp.jedit.*;
 

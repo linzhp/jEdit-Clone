@@ -18,7 +18,7 @@
  */
 package org.gjt.sp.jedit.syntax;
 
-import com.sun.java.swing.text.Segment;
+import javax.swing.text.Segment;
 import org.gjt.sp.jedit.jEdit;
 
 public class HTMLTokenMarker extends TokenMarker

@@ -19,7 +19,7 @@
 
 package org.gjt.sp.jedit;
 
-import com.sun.java.swing.SwingUtilities;
+import javax.swing.SwingUtilities;
 import java.io.*;
 import java.util.*;
 import java.util.zip.*;

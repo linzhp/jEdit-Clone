@@ -18,7 +18,7 @@
  */
 package org.gjt.sp.jedit.syntax;
 
-import com.sun.java.swing.text.Segment;
+import javax.swing.text.Segment;
 import org.gjt.sp.jedit.jEdit;
 
 public class BatchFileTokenMarker extends TokenMarker
@@ -115,10 +115,5 @@ loop:		for(int i = line.offset; i < length; i++)
 		}
 		else
 			return null;
-	}
-
-	public boolean isNextLineRequested()
-	{
-		return false;
 	}
 }

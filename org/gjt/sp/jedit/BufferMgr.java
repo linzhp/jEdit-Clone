@@ -19,8 +19,7 @@
 
 package org.gjt.sp.jedit;
 
-import com.sun.java.swing.*;
-import java.awt.FileDialog;
+import javax.swing.*;
 import java.io.*;
 import java.net.*;
 import java.util.*;
@@ -57,18 +56,19 @@ public class BufferMgr
 	 */
 	public Buffer openFile(View view)
 	{
-		FileDialog fileDialog = new FileDialog(view,jEdit.props
-			.getProperty("openfile.title"),FileDialog.LOAD);
-		String parent = view.getBuffer().getFile().getParent();
-		if(parent != null)
-			fileDialog.setDirectory(parent);
-		fileDialog.show();
-		String file = fileDialog.getFile();
-		if(file == null)
-			return null;
-		else
-			return openFile(view,null,fileDialog.getDirectory()
-				+ file,false,false);
+		JFileChooser chooser = new JFileChooser(view.getBuffer()
+			.getFile().getParent());
+		chooser.setDialogType(JFileChooser.OPEN_DIALOG);
+		chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+		int retVal = chooser.showDialog(view,null);
+		if(retVal == JFileChooser.APPROVE_OPTION)
+		{
+			File file = chooser.getSelectedFile();
+			if(file != null)
+				return openFile(view,null,file
+					.getAbsolutePath(),false,false);
+		}
+		return null;
 	}
 
 	/**

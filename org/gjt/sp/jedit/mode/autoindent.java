@@ -19,7 +19,7 @@
 
 package org.gjt.sp.jedit.mode;
 
-import com.sun.java.swing.text.*;
+import javax.swing.text.*;
 import org.gjt.sp.jedit.syntax.TokenMarker;
 import org.gjt.sp.jedit.jEdit;
 import org.gjt.sp.jedit.Buffer;

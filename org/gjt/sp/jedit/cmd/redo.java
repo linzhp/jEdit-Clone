@@ -19,7 +19,7 @@
 
 package org.gjt.sp.jedit.cmd;
 
-import com.sun.java.swing.undo.CannotRedoException;
+import javax.swing.undo.CannotRedoException;
 import java.util.Hashtable;
 import org.gjt.sp.jedit.*;
 

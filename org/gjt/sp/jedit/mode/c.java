@@ -1,5 +1,5 @@
 /*
- * goto_marker.java - Command
+ * c.java - C editing mode
  * Copyright (C) 1998 Slava Pestov
  *
  * This program is free software; you can redistribute it and/or
@@ -17,28 +17,14 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-package org.gjt.sp.jedit.cmd;
+package org.gjt.sp.jedit.mode;
 
-import javax.swing.*;
-import java.util.Hashtable;
-import org.gjt.sp.jedit.syntax.SyntaxTextArea;
-import org.gjt.sp.jedit.*;
+import org.gjt.sp.jedit.syntax.*;
 
-public class goto_marker implements Command
+public class c extends autoindent
 {
-	public void exec(Buffer buffer, View view, String arg, Hashtable args)
+	public TokenMarker createTokenMarker()
 	{
-		SyntaxTextArea textArea = view.getTextArea();
-		if(arg == null)
-			arg = jEdit.input(view,"gotomarker","lastmarker");
-		if(arg != null)
-		{
-			Marker marker = view.getBuffer().getMarker(arg);
-			if(marker != null)
-				textArea.select(marker.getStart(),
-					marker.getEnd());
-			else
-				view.getToolkit().beep();
-		}
+		return new CTokenMarker(true);
 	}
 }

@@ -19,7 +19,7 @@
 
 package org.gjt.sp.jedit;
 
-import com.sun.java.swing.text.Position;
+import javax.swing.text.Position;
 
 /**
  * A marker is a named location in a buffer.

@@ -19,9 +19,9 @@
 
 package org.gjt.sp.jedit.gui;
 
-import com.sun.java.swing.*;
-import com.sun.java.swing.event.*;
-import com.sun.java.swing.text.*;
+import javax.swing.*;
+import javax.swing.event.*;
+import javax.swing.text.*;
 import gnu.regexp.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -132,8 +132,7 @@ implements ActionListener, ListSelectionListener, WindowListener
 					- 1);
 				if(regexp.getMatch(lineString) != null)
 					data.addElement(i + ":"
-						+ jEdit.untab(tabSize,
-							lineString));
+						+ lineString);
 			}
 			results.setListData(data);
 			pack();

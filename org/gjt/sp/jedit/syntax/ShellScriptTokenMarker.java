@@ -18,7 +18,7 @@
  */
 package org.gjt.sp.jedit.syntax;
 
-import com.sun.java.swing.text.Segment;
+import javax.swing.text.Segment;
 
 public class ShellScriptTokenMarker extends TokenMarker
 {
@@ -40,28 +40,45 @@ public class ShellScriptTokenMarker extends TokenMarker
 		int offset = line.offset;
 		int lastOffset = offset;
 		int length = line.count + offset;
+		boolean backslash = false;
 loop:		for(int i = offset; i < length; i++)
 		{
 			char c = line.array[i];
 			if(token == VARIABLE)
 			{
+				backslash = false;
 				if(!Character.isLetterOrDigit(c) && c != '_')
 				{
 					token = null;
-					addToken((i+1) - lastOffset,VARIABLE);
-					lastOffset = i + 1;
-					continue; // otherwise $# wouldn't work
+					if(i != offset && line.array[i-1] == '$')
+					{
+						addToken((i+1) - lastOffset,
+							VARIABLE);
+						lastOffset = i + 1;
+						continue;
+					}
+					else
+					{
+						addToken(i - lastOffset,
+							VARIABLE);
+						lastOffset = i;
+					}
 				}
 			}
 			else if(token == LVARIABLE && c == '}')
 			{
+				backslash = false;
 				token = null;
 				addToken((i+1) - lastOffset,VARIABLE);
 				lastOffset = i + 1;
 			}
 			switch(c)
 			{
-			case ' ': case '\t': case '(':
+			case '\\':
+				backslash = !backslash;
+				break;
+			case ' ': case '\t': case '(': case ')':
+				backslash = false;
 				if(token == null && cmdState == 1/*insideCmd*/)
 				{
 					addToken(i - lastOffset,COMMAND);
@@ -69,7 +86,8 @@ loop:		for(int i = offset; i < length; i++)
 					cmdState = 2; /*afterCmd*/
 				}
 				break;
-			case '=': case ')':
+			case '=':
+				backslash = false;
 				if(token == null && cmdState == 1/*insideCmd*/)
 				{
 					addToken(i - lastOffset,null);
@@ -78,11 +96,15 @@ loop:		for(int i = offset; i < length; i++)
 				}
 				break;
 			case '&': case '|': case ';':
-				cmdState = 0; /*beforeCmd*/
+				if(backslash)
+					backslash = false;
+				else
+					cmdState = 0; /*beforeCmd*/
 				break;
 			case '#':
-				if(token == null && (i == offset ||
-					line.array[i - 1] != '\\'))
+				if(backslash)
+					backslash = false;
+				else if(token == null)
 				{
 					addToken(i - lastOffset,null);
 					addToken(length - i,COMMENT);
@@ -91,7 +113,9 @@ loop:		for(int i = offset; i < length; i++)
 				}
 				break;
 			case '$':
-				if(token == null)
+				if(backslash)
+					backslash = false;
+				else if(token == null)
 				{
 					if(length - i >= 2)
 					{
@@ -115,9 +139,9 @@ loop:		for(int i = offset; i < length; i++)
 				}
 				break;
 			case '"':
-				if(i != offset && line.array[i - 1] == '\\')
-					break;
-				if(token == null)
+				if(backslash)
+					backslash = false;
+				else if(token == null)
 				{
 					token = DQUOTE;
 					addToken(i - lastOffset,null);
@@ -133,9 +157,9 @@ loop:		for(int i = offset; i < length; i++)
 				}
 				break;
 			case '\'':
-				if(i != offset && line.array[i - 1] == '\\')
-					break;
-				if(token == null)
+				if(backslash)
+					backslash = false;
+				else if(token == null)
 				{
 					token = SQUOTE;
 					addToken(i - lastOffset,null);
@@ -151,6 +175,7 @@ loop:		for(int i = offset; i < length; i++)
 				}
 				break;
 			default:
+				backslash = false;
 				if(Character.isLetter(c))
 				{
 					if(cmdState == 0 /*beforeCmd*/)
