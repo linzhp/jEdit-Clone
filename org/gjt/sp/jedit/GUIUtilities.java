@@ -584,23 +584,26 @@ public class GUIUtilities
 	}
 
 	/**
-	 * Shows the wait cursor in a component.
-	 * @param comp The component
+	 * Shows the wait cursor.
+	 * @param view The view
 	 */
-	public static void showWaitCursor(Component comp)
+	public static void showWaitCursor(View view)
 	{
 		Cursor cursor = Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR);
-		comp.setCursor(cursor);
+		view.setCursor(cursor);
+		view.getTextArea().getPainter().setCursor(cursor);
 	}
 
 	/**
-	 * Hides the wait cursor in a component.
-	 * @param comp The component
+	 * Hides the wait cursor.
+	 * @param view The view
 	 */
-	public static void hideWaitCursor(Component comp)
+	public static void hideWaitCursor(View view)
 	{
 		Cursor cursor = Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR);
-		comp.setCursor(cursor);
+		view.setCursor(cursor);
+		Cursor text = Cursor.getPredefinedCursor(Cursor.TEXT_CURSOR);
+		view.getTextArea().getPainter().setCursor(text);
 	}
 
 	/**
@@ -632,6 +635,9 @@ public class GUIUtilities
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.27  1999/07/08 06:35:41  sp
+ * 1.7pre5, yay
+ *
  * Revision 1.26  1999/07/08 06:06:04  sp
  * Bug fixes and miscallaneous updates
  *

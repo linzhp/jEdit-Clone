@@ -366,7 +366,11 @@ public class JEditTextArea extends Container
 			if(painter.currentLineIndex == line)
 				tokens = painter.currentLineTokens;
 			else
-				tokens = tokenMarker.markTokens(lineSegment,line);
+			{
+				painter.currentLineIndex = line;
+				tokens = painter.currentLineTokens
+					= tokenMarker.markTokens(lineSegment,line);
+			}
 
 			Toolkit toolkit = painter.getToolkit();
 			Font defaultFont = painter.getFont();
@@ -424,6 +428,13 @@ public class JEditTextArea extends Container
 		{
 			for(int i = 0; i < segmentCount; i++)
 			{
+				if(i + offset >= segmentCount)
+				{
+					new Exception().printStackTrace();
+					System.err.println("You've found a"
+						+ " bug. E-mail <sp@gjt.org>");
+					return -1;
+				}
 				char c = segmentArray[i + segmentOffset];
 				int charWidth;
 				if(c == '\t')
@@ -454,7 +465,11 @@ public class JEditTextArea extends Container
 			if(painter.currentLineIndex == line)
 				tokens = painter.currentLineTokens;
 			else
-				tokens = tokenMarker.markTokens(lineSegment,line);
+			{
+				painter.currentLineIndex = line;
+				tokens = painter.currentLineTokens
+					= tokenMarker.markTokens(lineSegment,line);
+			}
 
 			int offset = 0;
 			Toolkit toolkit = painter.getToolkit();
@@ -476,8 +491,6 @@ public class JEditTextArea extends Container
 
 				for(int i = 0; i < length; i++)
 				{
-					if(offset + i >= segmentCount)
-						throw new InternalError("oops");
 					char c = segmentArray[segmentOffset + offset + i];
 					int charWidth;
 					if(c == '\t')
@@ -1484,6 +1497,9 @@ public class JEditTextArea extends Container
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.12  1999/07/08 06:35:41  sp
+ * 1.7pre5, yay
+ *
  * Revision 1.11  1999/07/08 06:06:04  sp
  * Bug fixes and miscallaneous updates
  *
