@@ -122,6 +122,7 @@ public class View extends JFrame
 		updateOpenRecentMenu();
 
 		textArea.updateHighlighters();
+		console.propertiesChanged();
 	}
 	
 	/**
@@ -536,6 +537,8 @@ public class View extends JFrame
 		textArea.setContextMenu(GUIUtilities.loadPopupMenu(this,
 			"view.context"));
 		setJMenuBar(GUIUtilities.loadMenubar(this,"view.mbar"));
+		
+		console = new Console(this);
 
 		propertiesChanged();
 
@@ -543,8 +546,6 @@ public class View extends JFrame
 			setBuffer(bufferArray[bufferArray.length - 1]);
 		else
 			setBuffer(buffer);
-
-		console = new Console(this);
 
 		splitter = new JSplitPane(JSplitPane.VERTICAL_SPLIT,
 			console,scroller);
@@ -791,6 +792,9 @@ public class View extends JFrame
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.66  1999/04/25 03:39:37  sp
+ * Documentation updates, console updates, history text field updates
+ *
  * Revision 1.65  1999/04/24 01:55:28  sp
  * MiscUtilities.constructPath() bug fixed, event system bug(s) fix
  *

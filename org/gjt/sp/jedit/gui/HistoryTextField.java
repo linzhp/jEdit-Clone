@@ -49,14 +49,16 @@ public class HistoryTextField extends JComboBox
 	{
 		Object obj = getEditor().getItem();
 		if(obj == null)
-			return super.getSelectedItem();
-		else
-			return obj;
+			obj = super.getSelectedItem();
+		return obj;
 	}
-
+	
 	public void addCurrentToHistory()
 	{
-		((HistoryModel)getModel()).addItem((String)getSelectedItem());
+		Object obj = getEditor().getItem();
+		if(obj == null)
+			obj = getSelectedItem();
+		((HistoryModel)getModel()).addItem((String)obj);
 	}
 
 	public void actionPerformed(ActionEvent evt)
@@ -117,6 +119,9 @@ public class HistoryTextField extends JComboBox
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.23  1999/04/25 03:39:37  sp
+ * Documentation updates, console updates, history text field updates
+ *
  * Revision 1.22  1999/04/23 07:35:11  sp
  * History engine reworking (shared history models, history saved to
  * .jedit-history)

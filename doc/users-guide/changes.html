@@ -25,12 +25,16 @@ console of one view will appear in the history lists of all open views
 </ul>
 <li>New LineInfo class allows token markers to store whatever they want in the
 TokenMarker.lineInfo[] array
+<li>Error messages, information messages and parsed errors are now
+colorized differently in the console
 </ul>
 
 <h2>Enhancements</h2>
 
 <ul>
 <li>Minor updates to select line range and goto line commands
+<li>Acu plugin is no longer part of jEdit, and instead it is listed on
+Plugin Central
 </ul>
 
 <h2>Bug Fixes</h2>
@@ -41,6 +45,8 @@ TokenMarker.lineInfo[] array
 <li>`Replace in selection' did strange things to the selection start value
 <li>Paths of the form C:blah\blah (with no slash after the drive letter)
 were not handled correctly by jEdit
+<li>Exiting jEdit by closing the last open file did not save the
+desktop correctly
 </ul>
 
 <a name=16pre2>

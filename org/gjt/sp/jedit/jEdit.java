@@ -46,7 +46,7 @@ public class jEdit
 	 * The date when a change was last made to the source code,
 	 * in <code>YYYYMMDD</code> format.
 	 */
-	public static final String BUILD = "19990423";
+	public static final String BUILD = "19990425";
 
 	/**
 	 * The main method of the jEdit application.
@@ -645,7 +645,7 @@ public class jEdit
 	 * @param buffer The buffer
 	 * @return True if the buffer was really closed, false otherwise
 	 */
-	public static boolean exit(View view, Buffer buffer)
+	public static boolean closeBuffer(View view, Buffer buffer)
 	{
 		if(_closeBuffer(view,buffer))
 		{
@@ -1519,6 +1519,9 @@ public class jEdit
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.83  1999/04/25 03:39:37  sp
+ * Documentation updates, console updates, history text field updates
+ *
  * Revision 1.82  1999/04/24 07:34:46  sp
  * Documentation updates
  *
@@ -1553,19 +1556,5 @@ public class jEdit
  * Revision 1.72  1999/04/20 05:11:16  sp
  * jEdit class API change, Acu docs
  *
- * Revision 1.71  1999/04/19 05:47:35  sp
- * ladies and gentlemen, 1.6pre1
- *
- * Revision 1.70  1999/04/08 04:44:51  sp
- * New _setBuffer method in View class, new addTab method in Console class
- *
- * Revision 1.69  1999/04/07 05:01:26  sp
- * Search and replace tweak, UI tweaks
- *
- * Revision 1.68  1999/04/02 02:39:46  sp
- * Updated docs, console fix, getDefaultSyntaxColors() method, hypersearch update
- *
- * Revision 1.67  1999/04/02 00:39:19  sp
- * Fixed console bug, syntax API changes, minor jEdit.java API change
  *
  */

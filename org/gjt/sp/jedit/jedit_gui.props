@@ -467,7 +467,6 @@ pastepredef.edit=Edit
 clipedit.title=Clipping Editor
 
 # Console dialog
-console.cmd=Command:\ 
 console.output=Output
 console.errors=Errors
 console.ioerror=I/O error: {0}
@@ -548,6 +547,9 @@ options.colors.caretColor=Caret
 options.colors.selectionColor=Selection
 options.colors.lineHighlightColor=Line highlight
 options.colors.bracketHighlightColor=Bracket highlight
+options.colors.infoColor=Console info message
+options.colors.errorColor=Console error message
+options.colors.parsedErrorColor=Console parsed error
 options.colors.comment1Color=Comment 1
 options.colors.comment2Color=Comment 2
 options.colors.literal1Color=String literal

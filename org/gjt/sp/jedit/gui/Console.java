@@ -21,7 +21,11 @@ package org.gjt.sp.jedit.gui;
 
 import javax.swing.*;
 import javax.swing.event.*;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Document;
 import javax.swing.text.Element;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
@@ -29,12 +33,16 @@ import java.net.URL;
 import org.gjt.sp.jedit.event.*;
 import org.gjt.sp.jedit.*;
 
-public class Console extends JPanel
+public class Console extends JTabbedPane
 implements ActionListener, ListSelectionListener
 {
+	/**
+	 * Creates a new console. This should never be called directly.
+	 * @param view The view
+	 */
 	public Console(View view)
 	{
-		super(new BorderLayout());
+		super(SwingConstants.BOTTOM);
 
 		String osName = System.getProperty("os.name");
 		appendEXE = (osName.indexOf("Windows") != -1 ||
@@ -43,31 +51,69 @@ implements ActionListener, ListSelectionListener
 		this.view = view;
 
 		JPanel panel = new JPanel(new BorderLayout());
-		panel.add(BorderLayout.WEST,new JLabel(jEdit
-			.getProperty("console.cmd")));
-		panel.add(BorderLayout.CENTER,cmd = new HistoryTextField(
-			"console"));
+		cmd = new HistoryTextField("console");
 		cmd.addActionListener(this);
-		add(BorderLayout.NORTH,panel);
+		panel.add(BorderLayout.NORTH,cmd);
 
-		tabs = new JTabbedPane(SwingConstants.BOTTOM);
+		output = new JTextPane();
+		outputDocument = output.getDocument();
 
-		addTab(jEdit.getProperty("console.output"),
-			new JScrollPane(output = new JTextArea(8,40)));
-		output.append(jEdit.getProperty("console.help"));
+		appendText(jEdit.getProperty("console.help"),null);
 
-		addTab(jEdit.getProperty("console.errors"),
-			new JScrollPane(errorList = new JList(getErrorList())));
+		panel.add(BorderLayout.CENTER,new JScrollPane(output));
+
+		addTab(jEdit.getProperty("console.output"),panel);
+
+		errorList = new JList(getErrorList());
 		errorList.setVisibleRowCount(8);
 		errorList.addListSelectionListener(this);
-		add(BorderLayout.CENTER,tabs);
+		addTab(jEdit.getProperty("console.errors"),new JScrollPane(
+			errorList));
 	}
 
+	/**
+	 * Reloads several values from the properties. This should never
+	 * be called directly.
+	 */
+	public void propertiesChanged()
+	{
+		JEditTextArea textArea = view.getTextArea();
+
+		output.setFont(textArea.getFont());
+		output.setForeground(textArea.getForeground());
+		output.setBackground(textArea.getBackground());
+		output.setCaretColor(textArea.getCaretColor());
+		output.setSelectionColor(textArea.getSelectionColor());
+		output.getCaret().setBlinkRate(textArea.getCaret()
+			.getBlinkRate());
+
+		errorList.setFont(textArea.getFont());
+		errorList.setForeground(textArea.getForeground());
+		errorList.setBackground(textArea.getBackground());
+//		errorList.setSelectionColor(textArea.getSelectionColor());
+
+		infoColor = GUIUtilities.parseColor(jEdit.getProperty(
+			"console.infoColor"));
+		errorColor = GUIUtilities.parseColor(jEdit.getProperty(
+			"console.errorColor"));
+		parsedErrorColor = GUIUtilities.parseColor(jEdit.getProperty(
+			"console.parsedErrorColor"));
+	}
+
+	/**
+	 * Returns the command text field.
+	 */
 	public HistoryTextField getCommandField()
 	{
 		return cmd;
 	}
 
+	/**
+	 * Runs the specified command in the console. This has the same
+	 * effect as entering the command in the command field and
+	 * pressing Enter.
+	 * @param command The command to run
+	 */
 	public void run(String command)
 	{
 		stop();
@@ -140,8 +186,7 @@ implements ActionListener, ListSelectionListener
 
 		command = buf.toString();
 
-		output.append("\n> " + command);
-		output.setCaretPosition(output.getDocument().getLength());
+		appendText("\n> " + command,infoColor);
 
 		if(errors != null)
 		{
@@ -161,9 +206,10 @@ implements ActionListener, ListSelectionListener
 		}
 		catch(IOException io)
 		{
-			output.append("\n");
+			appendText("\n",null);
 			String[] args = { io.getMessage() };
-			output.append(jEdit.getProperty("console.ioerror",args));
+			appendText(jEdit.getProperty("console.ioerror",args),
+				errorColor);
 			return;
 		}
 		stdin = new StdinThread();
@@ -171,6 +217,11 @@ implements ActionListener, ListSelectionListener
 		stderr = new StderrThread();
 	}
 
+	/**
+	 * Detaches the currently running process, if any, from the
+	 * console. The process continues running, however it's output
+	 * isn't displayed.
+	 */
 	public void stop()
 	{
 		if(process != null)
@@ -231,120 +282,66 @@ implements ActionListener, ListSelectionListener
 	}
 
 	/**
-	 * Adds a new tab to the console.
-	 * @param label The tab's label
-	 * @param comp The component to be displayed in the tab
+	 * Appends the specified text to the console's output
+	 * area.
+	 * @param msg The text to print
+	 * @param color The color to display it in
 	 */
-	public void addTab(String label, Component comp)
+	public void appendText(String msg, Color color)
 	{
-		tabs.addTab(label,comp);
-	}
+		SimpleAttributeSet style = new SimpleAttributeSet();
+		if(color != null)
+			style.addAttribute(StyleConstants.Foreground,color);
 
+		try
+		{
+			outputDocument.insertString(
+				outputDocument.getLength(),msg,style);
+		}
+		catch(BadLocationException bl)
+		{
+			bl.printStackTrace();
+		}
+
+		output.setCaretPosition(outputDocument.getLength());
+	}
+				
 	/**
 	 * Prints a line of text in the console. Error parsing
 	 * is performed.
 	 * @param msg The text to print
+	 * @param color The color to display it in
 	 */
-	public synchronized void addOutput(String msg)
+	public synchronized void addOutput(String msg, Color color)
 	{
-		SwingUtilities.invokeLater(new SafeAppend(msg));
+		if(parseError(msg))
+			appendText("\n" + msg,parsedErrorColor);
+		else
+			appendText("\n" + msg,color);
+	}
 
-		// Empty errors are of no use to us or the user
-		if(msg.length() == 0)
-		{
-			errorMode = GENERIC;
-			return;
-		}
+	/**
+	 * Returns the information message color.
+	 */
+	public Color getInfoColor()
+	{
+		return infoColor;
+	}
 
-		// Do the funky error state machine (and hope that the
-		// other thread doesn't sent irrelevant crap our way)
-		switch(errorMode)
-		{
-		case GENERIC:
-			// Check for TeX-style error
-			if(msg.charAt(0) == '!')
-			{
-				errorMode = TEX;
-				error = msg.substring(1);
-				break;
-			}
+	/**
+	 * Returns the error message color.
+	 */
+	public Color getErrorColor()
+	{
+		return errorColor;
+	}
 
-			// Otherwise, check for standard filename:lineno:error
-			// We have to start at offset 3, otherwise DOS drive
-			// letters will be caught (E:\file:12:error)
-			int fileIndex = msg.indexOf(':',2);
-			if(fileIndex == -1)
-				break; /* Oops */
-			file = msg.substring(0,fileIndex);
-
-			int lineNoIndex = msg.indexOf(':',fileIndex + 1);
-			if(lineNoIndex == -1)
-				break; /* Oops */
-			try
-			{
-				lineNo = Integer.parseInt(msg.substring(
-					fileIndex + 1,lineNoIndex));
-			}
-			catch(NumberFormatException nf)
-			{
-				break; /* Oops */
-			}
-
-			// Emacs style errors have
-			// filename:line:column:endline:endcolumn:
-			int emacsIndex = msg.indexOf(':',lineNoIndex + 1);
-			if(emacsIndex != -1)
-			{
-				if(msg.charAt(msg.length() - 1) == ':' &&
-					msg.length() - emacsIndex != 1)
-				{
-					errorMode = EMACS;
-					break;
-				}
-			}
-			
-			// If not, set the error message variable
-			error = msg.substring(lineNoIndex + 1);
-
-			addError(file,lineNo,error);
-			break;
-		case TEX:
-			// Check for l.<line number>
-			if(msg.startsWith("l."))
-			{
-				lineNoIndex = msg.indexOf(' ');
-				if(lineNoIndex == -1)
-				{
-					errorMode = GENERIC;
-					break; /* Oops */
-				}
-
-				try
-				{
-					lineNo = Integer.parseInt(msg
-						.substring(2,lineNoIndex));
-				}
-				catch(NumberFormatException nf)
-				{
-					errorMode = GENERIC;
-					break; /* Oops */
-				}
-
-				error = error.concat(msg.substring(lineNoIndex));
-				errorMode = GENERIC;
-
-				addError(view.getBuffer().getPath(),
-					lineNo,error);
-			}
-			break;
-		case EMACS:
-			// Easy peasy
-			error = msg.trim();
-			errorMode = GENERIC;
-
-			addError(file,lineNo,error);
-			break;
-		}
+	/**
+	 * Returns the parsed error color.
+	 */
+	public Color getParsedErrorColor()
+	{
+		return parsedErrorColor;
 	}
 	
 	public void actionPerformed(ActionEvent evt)
@@ -392,15 +389,18 @@ implements ActionListener, ListSelectionListener
 	// private members
 	private boolean appendEXE;
 
-	private JTabbedPane tabs;
-	
 	private HistoryTextField cmd;
-	private JTextArea output;
+	private JTextPane output;
+	private Document outputDocument;
 	private JList errorList;
 
 	private View view;
 
 	private DefaultListModel errors;
+
+	private Color infoColor;
+	private Color errorColor;
+	private Color parsedErrorColor;
 
 	private Process process;
 	private StdinThread stdin;
@@ -416,12 +416,114 @@ implements ActionListener, ListSelectionListener
 	private int lineNo;
 	private String error;
 
+	private boolean parseError(String msg)
+	{
+		// Empty errors are of no use to us or the user
+		if(msg.length() == 0)
+		{
+			errorMode = GENERIC;
+			return false;
+		}
+
+		// Do the funky error state machine (and hope that the
+		// other thread doesn't sent irrelevant crap our way)
+		switch(errorMode)
+		{
+		case GENERIC:
+			// Check for TeX-style error
+			if(msg.charAt(0) == '!')
+			{
+				errorMode = TEX;
+				error = msg.substring(1);
+				return true;
+			}
+
+			// Otherwise, check for standard filename:lineno:error
+			// We have to start at offset 3, otherwise DOS drive
+			// letters will be caught (E:\file:12:error)
+			int fileIndex = msg.indexOf(':',2);
+			if(fileIndex == -1)
+				return false; /* Oops */
+			file = msg.substring(0,fileIndex);
+
+			int lineNoIndex = msg.indexOf(':',fileIndex + 1);
+			if(lineNoIndex == -1)
+				return false; /* Oops */
+			try
+			{
+				lineNo = Integer.parseInt(msg.substring(
+					fileIndex + 1,lineNoIndex));
+			}
+			catch(NumberFormatException nf)
+			{
+				return false; /* Oops */
+			}
+
+			// Emacs style errors have
+			// filename:line:column:endline:endcolumn:
+			int emacsIndex = msg.indexOf(':',lineNoIndex + 1);
+			if(emacsIndex != -1)
+			{
+				if(msg.charAt(msg.length() - 1) == ':' &&
+					msg.length() - emacsIndex != 1)
+				{
+					errorMode = EMACS;
+					return true;
+				}
+			}
+			
+			// If not, set the error message variable
+			error = msg.substring(lineNoIndex + 1);
+
+			addError(file,lineNo,error);
+			return true;
+		case TEX:
+			// Check for l.<line number>
+			if(msg.startsWith("l."))
+			{
+				lineNoIndex = msg.indexOf(' ');
+				if(lineNoIndex == -1)
+				{
+					errorMode = GENERIC;
+					return false; /* Oops */
+				}
+
+				try
+				{
+					lineNo = Integer.parseInt(msg
+						.substring(2,lineNoIndex));
+				}
+				catch(NumberFormatException nf)
+				{
+					errorMode = GENERIC;
+					return false; /* Oops */
+				}
+
+				error = error.concat(msg.substring(lineNoIndex));
+				errorMode = GENERIC;
+
+				addError(view.getBuffer().getPath(),
+					lineNo,error);
+				return true;
+			}
+			return false;
+		case EMACS:
+			// Easy peasy
+			error = msg.trim();
+			errorMode = GENERIC;
+
+			addError(file,lineNo,error);
+			return true;
+		}
+
+		return false;
+	}
+
 	private void addError(String path, int lineNo, String error)
 	{
 		if(errors == null)
 			errors = new DefaultListModel();
-		SwingUtilities.invokeLater(new SafeAddError(
-			new CompilerError(path,lineNo,error)));
+		errors.addElement(new CompilerError(path,lineNo,error));
 	}
 
 	class StdinThread extends Thread
@@ -438,19 +540,19 @@ implements ActionListener, ListSelectionListener
 			if(selection == null)
 				return;
 
-			try
-			{
-				OutputStreamWriter out = new OutputStreamWriter(
-					process.getOutputStream());
-
-				out.write(selection);
-				out.close();
-			}
-			catch(IOException io)
-			{
-				Object[] args = { io.getMessage() };
-				GUIUtilities.error(view,"ioerror",args);
-			}
+//			try
+//			{
+//				OutputStreamWriter out = new OutputStreamWriter(
+//					process.getOutputStream());
+//
+//				out.write(selection);
+//				out.close();
+//			}
+//			catch(IOException io)
+//			{
+//				Object[] args = { io.getMessage() };
+//				GUIUtilities.error(view,"ioerror",args);
+//			}
 		}
 	}
 	
@@ -473,7 +575,7 @@ implements ActionListener, ListSelectionListener
 				String line;
 				while((line = in.readLine()) != null)
 				{
-					addOutput(line);
+					addOutput(line,null);
 				}
 				in.close();
 					
@@ -505,7 +607,7 @@ implements ActionListener, ListSelectionListener
 				String line;
 				while((line = in.readLine()) != null)
 				{
-					addOutput(line);
+					addOutput(line,errorColor);
 				}
 				in.close();
 			}
@@ -516,42 +618,14 @@ implements ActionListener, ListSelectionListener
 			}
 		}
 	}
-
-	class SafeAppend implements Runnable
-	{
-		private String msg;
-
-		SafeAppend(String msg)
-		{
-			this.msg = msg;
-		}
-
-		public void run()
-		{
-			output.append("\n");
-			output.append(msg);
-		}
-	}
-
-	class SafeAddError implements Runnable
-	{
-		private CompilerError error;
-
-		SafeAddError(CompilerError error)
-		{
-			this.error = error;
-		}
-
-		public void run()
-		{
-			errors.addElement(error);
-		}
-	}
 }
 
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.26  1999/04/25 03:39:37  sp
+ * Documentation updates, console updates, history text field updates
+ *
  * Revision 1.25  1999/04/23 05:02:25  sp
  * new LineInfo[] array in TokenMarker
  *

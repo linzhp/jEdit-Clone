@@ -142,6 +142,19 @@ view.blockCaret=off
 view.electricBorders=3
 
 ###
+### CONSOLE SETTINGS
+###
+
+# Info message color
+console.infoColor=#009600
+
+# Error message color
+console.errorColor=red
+
+# Parsed error color
+console.parsedErrorColor=magenta
+
+###
 ### EDIT MODES
 ###
 
