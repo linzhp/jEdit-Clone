@@ -580,13 +580,13 @@ public class View extends JFrame
 
 		getContentPane().add(BorderLayout.NORTH,topToolBars);
 		org.gjt.sp.jedit.textarea.JEditTextArea ta =
-			new org.gjt.sp.jedit.textarea.JEditTextArea(80,5);
+			new org.gjt.sp.jedit.textarea.JEditTextArea(80,25);
 		ta.getModel().setDocument(getBuffer());
-JSplitPane __aaa = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
-__aaa.setLeftComponent(ta);
-scroller.setMaximumSize(new Dimension(0,0));
-__aaa.setRightComponent(scroller);
-		getContentPane().add(BorderLayout.CENTER,__aaa);
+		textArea.setPreferredSize(ta.getPreferredSize());
+JTabbedPane tabs = new JTabbedPane();
+tabs.addTab("New text area",ta);
+tabs.addTab("Old text area",scroller);
+		getContentPane().add(BorderLayout.CENTER,tabs);
 //		getContentPane().add(BorderLayout.CENTER,scroller);
 
 		JPanel panel = new JPanel(new BorderLayout());
@@ -819,6 +819,9 @@ __aaa.setRightComponent(scroller);
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.82  1999/06/25 06:54:08  sp
+ * Text area updates
+ *
  * Revision 1.81  1999/06/22 06:14:39  sp
  * RMI updates, text area updates, flag to disable geometry saving
  *

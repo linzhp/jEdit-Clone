@@ -178,7 +178,8 @@ public class TextAreaModel
 			int index = ch.getIndex();
 			painter.invalidateLineRange(index,
 				document.getDefaultRootElement()
-				.getElementCount() - index);
+				.getElementCount());
+			textArea.updateScrollBars();
 		}
 	}
 		
@@ -200,3 +201,11 @@ public class TextAreaModel
 		}
 	}
 }
+
+/*
+ * ChangeLog:
+ * $Log$
+ * Revision 1.4  1999/06/25 06:54:08  sp
+ * Text area updates
+ *
+ */

@@ -47,7 +47,9 @@ public class JEditTextArea extends Container
 		add(BOTTOM,horizontal = new JScrollBar(JScrollBar.HORIZONTAL));
 
 		vertical.addAdjustmentListener(new AdjustHandler());
-		addComponentListener(new ComponentHandler());
+		horizontal.addAdjustmentListener(new AdjustHandler());
+
+		painter.addComponentListener(new ComponentHandler());
 	}
 
 	/**
@@ -74,17 +76,24 @@ public class JEditTextArea extends Container
 	 */
 	public void updateScrollBars()
 	{
-		if(vertical == null || horizontal == null)
-			return;
-		vertical.setMinimum(0);
-		int height = getSize().height;
-		int lineHeight = model.getLineHeight();
-		int lines = model.getLineCount();
-		if(height % lineHeight != 0)
-			lines++;
-		vertical.setMaximum(lines);
-		vertical.setValue(firstLine);
-		vertical.setVisibleAmount(height / lineHeight);
+		if(vertical != null)
+		{
+			vertical.setValue(firstLine);
+			vertical.setVisibleAmount(visibleLines);
+			vertical.setBlockIncrement(visibleLines);
+			vertical.setMinimum(0);
+			vertical.setMaximum(model.getLineCount());
+		}
+
+		if(horizontal != null)
+		{
+			horizontal.setValue(-horizontalOffset);
+			horizontal.setVisibleAmount(getSize().width);
+			horizontal.setUnitIncrement(10);
+			horizontal.setBlockIncrement(50);
+			horizontal.setMinimum(0);
+			horizontal.setMaximum(longestLine);
+		}
 	}
 
 	/**
@@ -97,18 +106,18 @@ public class JEditTextArea extends Container
 
 	/**
 	 * Sets the line displayed at the text area's origin. This can
-	 * be used to simulate scrolling.
+	 * be used to implement vertical scrolling.
 	 * @param firstLine The line to display at the origin
 	 */
 	public void setFirstLine(int firstLine)
 	{
 		if(this.firstLine == firstLine)
 			return;
+		int oldFirstLine = this.firstLine;
 		this.firstLine = firstLine;
 		if(vertical.getValue() != firstLine)
 			updateScrollBars();
-		painter.offscreenRepaint();
-		painter.repaint();
+		painter.scrollRepaint(oldFirstLine,firstLine);
 	}
 
 	/**
@@ -117,6 +126,70 @@ public class JEditTextArea extends Container
 	public int getVisibleLines()
 	{
 		return visibleLines;
+	}
+
+	/**
+	 * Returns the horizontal offset of drawn lines.
+	 */
+	public int getHorizontalOffset()
+	{
+		return horizontalOffset;
+	}
+
+	/**
+	 * Sets the horizontal offset of drawn lines. This can be used to
+	 * implement horizontal scrolling.
+	 * @param horizontalOffset offset The new horizontal offset
+	 */
+	public void setHorizontalOffset(int horizontalOffset)
+	{
+		if(this.horizontalOffset == horizontalOffset)
+			return;
+		this.horizontalOffset = horizontalOffset;
+		horizontal.setValue(-horizontalOffset);
+		painter.invalidateLineRange(firstLine,firstLine + visibleLines);
+		painter.repaint();
+	}
+
+	/**
+	 * Returns the width of the longest line (in pixels) in this text
+	 * area.
+	 */
+	public int getLongestLine()
+	{
+		return longestLine;
+	}
+
+	/**
+	 * Should be called after painting or inserting a line.
+	 * @param lineIndex The line number
+	 * @param lineWidth The width of the line
+	 */
+	public void checkLongestLine(int lineIndex, int lineWidth)
+	{
+		if(lineWidth > longestLine)
+		{
+			longestLineIndex = lineIndex;
+			longestLine = lineWidth;
+			updateScrollBars();
+		}
+	}
+
+	/**
+	 * Should be called after removing a line.
+	 * @param lineIndex The line number
+	 */
+	public void removeLongestLine(int lineIndex)
+	{
+		if(lineIndex == longestLineIndex)
+			calculateLongestLine();
+	}
+
+	/**
+	 * Calculates the longest line in the document.
+	 */
+	public void calculateLongestLine()
+	{
 	}
 
 	// protected members
@@ -130,6 +203,10 @@ public class JEditTextArea extends Container
 	protected int firstLine;
 	protected int visibleLines;
 
+	protected int horizontalOffset;
+	protected int longestLine;
+	protected int longestLineIndex;
+	
 	protected JScrollBar vertical;
 	protected JScrollBar horizontal;
 
@@ -217,7 +294,10 @@ public class JEditTextArea extends Container
 	{
 		public void adjustmentValueChanged(AdjustmentEvent evt)
 		{
-			setFirstLine(vertical.getValue());
+			if(evt.getAdjustable() == vertical)
+				setFirstLine(vertical.getValue());
+			else
+				setHorizontalOffset(-horizontal.getValue());
 		}
 	}
 
@@ -225,8 +305,7 @@ public class JEditTextArea extends Container
 	{
 		public void componentResized(ComponentEvent evt)
 		{
-			updateScrollBars();
-			int height = getSize().height;
+			int height = painter.getSize().height;
 			int lineHeight = model.getLineHeight();
 			if(height % lineHeight != 0)
 				height += lineHeight;
@@ -234,6 +313,15 @@ public class JEditTextArea extends Container
 			painter.invalidateLineRange(firstLine + visibleLines,
 				firstLine + newVisibleLines);
 			visibleLines = newVisibleLines;
+			updateScrollBars();
 		}
 	}
 }
+
+/*
+ * ChangeLog:
+ * $Log$
+ * Revision 1.4  1999/06/25 06:54:08  sp
+ * Text area updates
+ *
+ */

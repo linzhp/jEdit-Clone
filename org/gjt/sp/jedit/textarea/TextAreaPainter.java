@@ -68,7 +68,13 @@ public class TextAreaPainter extends Component implements TabExpander
 
 	public void update(Graphics g)
 	{
-		ensureOffscreenValid();
+		// returns true if offscreen was created. When it's created,
+		// all lines, not just the invalid ones, need to be painted.
+		if(ensureOffscreenValid())
+		{
+			firstInvalid = textArea.getFirstLine();
+			lastInvalid = firstInvalid + textArea.getVisibleLines();
+		}
 
 		if(firstInvalid != -1 && lastInvalid != -1)
 		{
@@ -84,37 +90,17 @@ public class TextAreaPainter extends Component implements TabExpander
 		update(g);
 	}
 
-	public void fastRepaint()
-	{
-		// Will need to rewrite it to repaint any range of lines
-
-		/*if(firstInvalid != -1 && lastInvalid != -1
-			&& firstInvalid == lastInvalid)
-		{
-			Graphics gfx = getGraphics();
-			if(gfx != null)
-			{
-				System.out.println("Fast repaint of " + firstInvalid);
-				ensureOffscreenValid();
-				TextAreaModel model = textArea.getModel();
-				int y = model.lineToY(lastInvalid);
-				int width = offImg.getWidth(this);
-				int height = model.getLineHeight();
-				paintLine(model,offGfx,firstInvalid,0,y);
-				gfx.drawImage(offImg,0,y,width,height,
-					0,y,width,height,this);
-				firstInvalid = lastInvalid = -1;
-				return;
-			}
-		}*/
-
-		repaint();
-	}
-
 	public void invalidateLineRange(int firstLine, int lastLine)
 	{
 		int firstVisible = textArea.getFirstLine();
 		int lastVisible = firstVisible + textArea.getVisibleLines();
+
+		if(firstLine > lastLine)
+		{
+			int tmp = firstLine;
+			firstLine = lastLine;
+			lastLine = tmp;
+		}
 
 		if(lastLine < firstVisible || firstLine > lastVisible)
 			return;
@@ -135,7 +121,25 @@ public class TextAreaPainter extends Component implements TabExpander
 			firstInvalid = Math.min(firstInvalid,firstLine);
 			lastInvalid = Math.max(lastInvalid,lastLine);
 		}
-		fastRepaint();
+		repaint();
+	}
+
+	public void scrollRepaint(int oldFirstLine, int newFirstLine)
+	{
+		TextAreaModel model = textArea.getModel();
+		int y = model.getLineHeight() * (oldFirstLine - newFirstLine);
+		offGfx.copyArea(0,0,offImg.getWidth(this),offImg.getHeight(this),0,y);
+		int visibleLines = textArea.getVisibleLines();
+
+		if(oldFirstLine < newFirstLine)
+		{
+			invalidateLineRange(oldFirstLine + visibleLines,
+				newFirstLine + visibleLines);
+		}
+		else
+		{
+			invalidateLineRange(newFirstLine, oldFirstLine);
+		}
 	}
 
 	public void offscreenRepaint()
@@ -184,7 +188,7 @@ public class TextAreaPainter extends Component implements TabExpander
 	protected int firstInvalid;
 	protected int lastInvalid;
 
-	protected void ensureOffscreenValid()
+	protected boolean ensureOffscreenValid()
 	{
 		Dimension dim = getSize();
 		if(offImg == null || offGfx == null
@@ -194,13 +198,16 @@ public class TextAreaPainter extends Component implements TabExpander
 			offImg = textArea.createImage(dim.width,dim.height);
 			offGfx = offImg.getGraphics();
 			offscreenRepaint();
+			return true;
 		}
+		else
+			return false;
 	}
 
-	protected void offscreenRepaintLineRange(int firstLine, int lastLine)
+	protected int offscreenRepaintLineRange(int firstLine, int lastLine)
 	{
 		if(offGfx == null)
-			return;
+			return 0;
 
 		TextAreaModel model = textArea.getModel();
 
@@ -209,13 +216,17 @@ public class TextAreaPainter extends Component implements TabExpander
 			.getProperty(PlainDocument.tabSizeAttribute))
 			.intValue();
 
+		int x = textArea.getHorizontalOffset();
 		int y = model.lineToY(firstLine);
 
-		for(int i = firstLine; i <= lastLine;)
+		int linesPainted = firstLine;
+		while(linesPainted <= lastLine)
 		{
-			i += paintLine(model,offGfx,i,0,y);
+			linesPainted += paintLine(model,offGfx,linesPainted,x,y);
 			y += model.getLineHeight();
 		}
+
+		return linesPainted - firstLine;
 	}
 
 	protected int paintLine(TextAreaModel model, Graphics gfx, int lineIndex,
@@ -236,14 +247,14 @@ public class TextAreaPainter extends Component implements TabExpander
 
 		if(lineIndex >= model.getLineCount())
 		{
-			gfx.drawString("~",x,y);
+			gfx.drawString("~",0,y + model.getLineHeight());
 			return 1;
 		}
 
 		if(tokenMarker == null)
 		{
 			paintPlainLine(model,gfx,defaultFont,defaultColor,
-				lineIndex,0,y);
+				lineIndex,x,y + model.getLineHeight());
 			return 1;
 		}
 		else
@@ -264,7 +275,8 @@ public class TextAreaPainter extends Component implements TabExpander
 		Font defaultFont, Color defaultColor, int lineIndex, int x, int y)
 	{
 		model.getLineText(lineIndex,currentLine);
-		Utilities.drawTabbedText(currentLine,x,y,gfx,this,0);
+		textArea.checkLongestLine(lineIndex,Utilities.drawTabbedText(
+			currentLine,x,y,gfx,this,0));
 	}
 
 	protected boolean paintSyntaxLine(TextAreaModel model, Graphics gfx,
@@ -299,6 +311,16 @@ public class TextAreaPainter extends Component implements TabExpander
 			tokens = tokens.next;
 		}
 
+		textArea.checkLongestLine(lineIndex,x);
+
 		return tokenMarker.isNextLineRequested();
 	}
 }
+
+/*
+ * ChangeLog:
+ * $Log$
+ * Revision 1.4  1999/06/25 06:54:08  sp
+ * Text area updates
+ *
+ */
