@@ -43,7 +43,7 @@ public class jEdit
 	 */
 	public static String getVersion()
 	{
-		return "1.7pre2";
+		return "1.7pre3";
 	}
 
 	/**
@@ -53,7 +53,7 @@ public class jEdit
 	public static String getBuild()
 	{
 		// (major) (minor) (<99 = preX, 99 = final) (bug fix)
-		return "01.07.02.00";
+		return "01.07.03.00";
 	}
 
 	/**
@@ -1532,6 +1532,9 @@ public class jEdit
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.110  1999/06/05 07:17:08  sp
+ * Cascading makefiles, HyperSearch tweak, doc updates
+ *
  * Revision 1.109  1999/06/03 08:24:12  sp
  * Fixing broken CVS
  *

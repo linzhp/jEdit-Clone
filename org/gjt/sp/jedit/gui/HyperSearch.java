@@ -187,9 +187,10 @@ public class HyperSearch extends JDialog
 			int[] match = matcher.nextMatch(lineString);
 			if(match != null)
 			{
-				resultModel.addElement(new SearchResult(
-					buffer,buffer.createPosition(
-					start + match[0])));
+				resultModel.addElement(
+					new SearchResult(buffer,
+					buffer.createPosition(start + match[0]),
+					buffer.createPosition(start + match[1])));
 			}
 		}
 	}
@@ -209,15 +210,17 @@ public class HyperSearch extends JDialog
 	class SearchResult
 	{
 		Buffer buffer;
-		Position pos;
+		Position start;
+		Position end;
 		String str; // cached for speed
 
-		SearchResult(Buffer buffer, Position pos)
+		SearchResult(Buffer buffer, Position start, Position end)
 		{
 			this.buffer = buffer;
-			this.pos = pos;
+			this.start = start;
+			this.end = end;
 			Element map = buffer.getDefaultRootElement();
-			int line = map.getElementIndex(pos.getOffset());
+			int line = map.getElementIndex(start.getOffset());
 			str = buffer.getName() + ":" + (line + 1) + ":"
 				+ getLine(map.getElement(line));
 		}
@@ -304,14 +307,8 @@ public class HyperSearch extends JDialog
 
 			SearchResult result = (SearchResult)results.getSelectedValue();
 			Buffer buffer = result.buffer;
-			Element map = buffer.getDefaultRootElement();
-			Element lineElement = map.getElement(map.getElementIndex(
-				result.pos.getOffset()));
-			if(lineElement == null)
-				return;
-
-			int start = lineElement.getStartOffset();
-			int end = lineElement.getEndOffset() - 1;
+			int start = result.start.getOffset();
+			int end = result.end.getOffset();
 
 			if(view.getBuffer() == buffer)
 			{
@@ -329,6 +326,9 @@ public class HyperSearch extends JDialog
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.34  1999/06/05 07:17:08  sp
+ * Cascading makefiles, HyperSearch tweak, doc updates
+ *
  * Revision 1.33  1999/06/03 08:24:13  sp
  * Fixing broken CVS
  *

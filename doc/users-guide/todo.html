@@ -19,11 +19,7 @@
 This is what needs to be done as soon as possible:
 
 <ul>
-<li>Nested compound edits will cause problems
-<li>Finish Perl mode (more keywords)
-<li>Literal search is far too slow (regexp is pretty slow too, but that's
-not my problem)
-<li>Expand abbreviation doesn't expand from the start of the line
+<li>Finish Perl mode (more keywords, s[][])
 </ul>
 
 <a name=medterm>
@@ -39,19 +35,16 @@ following workarounds should be removed from jEdit:
 
 <ul>
 <li>The removeAll() hack in the View.update*Menu methods
-<li>Various workarounds for &lt;h<i>n</i>&gt; bugs in the HTML help
 <li>... maybe more?
 </ul>
+
+<li>Literal searching is far too slow.<p>
+Should be rewritten to not use String.regionMatches().
 
 <li>Store the scroll bar position along with the cursor position
 when switching buffers.<p>
 jEdit 1.1 and 1.2 did this, but it was removed in 1.3 with the
 buffer switching rewrite.
-
-<li>Multifile search and replace.<p>
-Not many other editors have this - and it's very useful.
-<b>Replace All and HyperSearch have already been MultiFile'd - only Find Next
-needs to be done now.</b>
 
 <li>Multiline token colorization needs some work.<p>
 The C+END `bug' still exists. Changing a large range of lines still
@@ -91,6 +84,9 @@ current getView()/getBuffer() system is limited.
 As more and more documentation is written, this becomes more of
 an issue.
 
+<li>Multi-line search patterns.<p>
+This sort of works with searching; but it would be hard to implement
+with replacement.
 </ul>
 
 <a name=longterm>
@@ -102,6 +98,16 @@ This is what needs to be done eventually:
 <ul>
 <li>jEdit API needs to be made thread-safe.
 <li>Class/method/variable completion.
+
+<li>As it is right now, the toolbar is useless. It would be much handier
+if:
+<ul>
+<li>It was customizable
+<li>It was possible to add buttons that inserted predefined chunks of text,
+a la Paste Predefined
+</ul>
+Since I don't like toolbars myself, this is better implemented as a plugin
+- with the new 1.6 toolbar API, it is very easy.
 
 <li>Folding.
 
