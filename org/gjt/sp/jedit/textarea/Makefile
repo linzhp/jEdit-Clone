@@ -9,6 +9,7 @@ classes=org/gjt/sp/jedit/textarea/JEditTextArea.class \
 	org/gjt/sp/jedit/textarea/TextAreaPainter.class
 
 others='org/gjt/sp/jedit/textarea/JEditTextArea$$AdjustHandler.class' \
+	'org/gjt/sp/jedit/textarea/JEditTextArea$$ComponentHandler.class' \
 	'org/gjt/sp/jedit/textarea/JEditTextArea$$ScrollLayout.class' \
 	'org/gjt/sp/jedit/textarea/TextAreaModel$$DocumentHandler.class'
 

@@ -20,6 +20,7 @@
 package org.gjt.sp.jedit.textarea;
 
 import javax.swing.event.*;
+import javax.swing.text.*;
 import java.awt.FontMetrics;
 import org.gjt.sp.jedit.syntax.SyntaxDocument;
 
@@ -49,19 +50,19 @@ public class TextAreaModel
 
 	public int lineToY(int line)
 	{
-		return (line  - textArea.getFirstLine()) * getLineHeight();
+		FontMetrics fm = textArea.getPainter().getFontMetrics();
+		return (line - textArea.getFirstLine()) * fm.getHeight()
+			- fm.getLeading() - fm.getDescent();
 	}
 
 	public int yToLine(int y)
 	{
-		int height = getLineHeight();
-		int lineCount = document.getDefaultRootElement()
-			.getElementCount();
-		int line = y / height + textArea.getFirstLine();
-		if(line >= lineCount)
-			return lineCount - 1;
-		else
-			return line;
+		FontMetrics fm = textArea.getPainter().getFontMetrics();
+		y += fm.getLeading() + fm.getDescent();
+		int height = fm.getHeight();
+		if(y % height != 0)
+			y += height;
+		return y / height + textArea.getFirstLine();
 	}
 
 	public SyntaxDocument getDocument()
@@ -82,49 +83,116 @@ public class TextAreaModel
 		textArea.repaint();
 	}
 
+	public int getLineCount()
+	{
+		return document.getDefaultRootElement().getElementCount();
+	}
+
+	public int getLineOfOffset(int offset)
+	{
+		return document.getDefaultRootElement().getElementIndex(offset);
+	}
+
+	public int getLineStartOffset(int line)
+	{
+		Element lineElement = document.getDefaultRootElement()
+			.getElement(line);
+		if(lineElement == null)
+			return -1;
+		else
+			return lineElement.getStartOffset();
+	}
+
+	public int getLineEndOffset(int line)
+	{
+		Element lineElement = document.getDefaultRootElement()
+			.getElement(line);
+		if(lineElement == null)
+			return -1;
+		else
+			return lineElement.getEndOffset();
+	}
+
+	public String getText(int start, int end)
+	{
+		try
+		{
+			return document.getText(start,end);
+		}
+		catch(BadLocationException bl)
+		{
+			return null;
+		}
+	}
+
+	public void getText(int start, int end, Segment segment)
+	{
+		try
+		{
+			document.getText(start,end,segment);
+		}
+		catch(BadLocationException bl)
+		{
+			segment.offset = segment.count = 0;
+		}
+	}
+
+	public String getLineText(int lineIndex)
+	{
+		int start = getLineStartOffset(lineIndex);
+		return getText(start,getLineEndOffset(lineIndex) - start);
+	}
+
+	public void getLineText(int lineIndex, Segment segment)
+	{
+		int start = getLineStartOffset(lineIndex);
+		getText(start,getLineEndOffset(lineIndex) - start,segment);
+	}
+
 	// protected members
 	protected JEditTextArea textArea;
 	protected SyntaxDocument document;
 	protected DocumentHandler documentHandler;
 
-	protected void insertLines(int index, int length)
+	protected void updateDisplay(DocumentEvent evt)
 	{
-		TextAreaPainter painter = textArea.getPainter();
-		painter.offscreenRepaintLineRange(this,index,
-			document.getDefaultRootElement()
-			.getElementCount() - index);
-		painter.repaint();
-	}
+		DocumentEvent.ElementChange ch = evt.getChange(
+			document.getDefaultRootElement());
 
-	protected void deleteLines(int index, int length)
-	{
 		TextAreaPainter painter = textArea.getPainter();
-		painter.offscreenRepaintLineRange(this,index,
-			document.getDefaultRootElement()
-			.getElementCount() - index);
-		painter.repaint();
-	}
 
+		int count;
+		if(ch == null)
+			count = 0;
+		else
+			count = ch.getChildrenAdded().length +
+			ch.getChildrenRemoved().length;
+
+		if(count == 0)
+		{
+			int line = getLineOfOffset(evt.getOffset());
+			painter.invalidateLineRange(line,line);
+		}
+		else
+		{
+			int index = ch.getIndex();
+			painter.invalidateLineRange(index,
+				document.getDefaultRootElement()
+				.getElementCount() - index);
+		}
+	}
+		
 	class DocumentHandler implements DocumentListener
 	{
 		public void insertUpdate(DocumentEvent evt)
 		{
-			DocumentEvent.ElementChange ch = evt.getChange(
-				document.getDefaultRootElement());
-			if(ch == null)
-				return;
-			insertLines(ch.getIndex() + 1,ch.getChildrenAdded().length
-				- ch.getChildrenRemoved().length);
+			updateDisplay(evt);
 		}
 	
 		public void removeUpdate(DocumentEvent evt)
+	
 		{
-			DocumentEvent.ElementChange ch = evt.getChange(
-				document.getDefaultRootElement());
-			if(ch == null)
-				return;
-			deleteLines(ch.getIndex() + 1,ch.getChildrenRemoved().length
-				- ch.getChildrenAdded().length);
+			updateDisplay(evt);
 		}
 
 		public void changedUpdate(DocumentEvent evt)

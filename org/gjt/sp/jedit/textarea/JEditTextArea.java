@@ -77,10 +77,14 @@ public class JEditTextArea extends Container
 		if(vertical == null || horizontal == null)
 			return;
 		vertical.setMinimum(0);
-		vertical.setMaximum(model.getDocument().getDefaultRootElement()
-			.getElementCount());
+		int height = getSize().height;
+		int lineHeight = model.getLineHeight();
+		int lines = model.getLineCount();
+		if(height % lineHeight != 0)
+			lines++;
+		vertical.setMaximum(lines);
 		vertical.setValue(firstLine);
-		vertical.setVisibleAmount(getSize().height / model.getLineHeight() + 1);
+		vertical.setVisibleAmount(height / lineHeight);
 	}
 
 	/**
@@ -107,6 +111,14 @@ public class JEditTextArea extends Container
 		painter.repaint();
 	}
 
+	/**
+	 * Returns the number of lines visible in this text area.
+	 */
+	public int getVisibleLines()
+	{
+		return visibleLines;
+	}
+
 	// protected members
 	protected static String CENTER = "center";
 	protected static String RIGHT = "right";
@@ -116,6 +128,7 @@ public class JEditTextArea extends Container
 	protected TextAreaModel model;
 
 	protected int firstLine;
+	protected int visibleLines;
 
 	protected JScrollBar vertical;
 	protected JScrollBar horizontal;
@@ -213,6 +226,14 @@ public class JEditTextArea extends Container
 		public void componentResized(ComponentEvent evt)
 		{
 			updateScrollBars();
+			int height = getSize().height;
+			int lineHeight = model.getLineHeight();
+			if(height % lineHeight != 0)
+				height += lineHeight;
+			int newVisibleLines = height / lineHeight;
+			painter.invalidateLineRange(firstLine + visibleLines,
+				firstLine + newVisibleLines);
+			visibleLines = newVisibleLines;
 		}
 	}
 }

@@ -1,6 +1,5 @@
 /*
  * TextAreaPainter.java - Performs double buffering and paints the text area
- * Copyright (C) 1999 Slava Pestov
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -45,6 +44,8 @@ public class TextAreaPainter extends Component implements TabExpander
 		this.rows = rows;
 		currentLine = new Segment();
 
+		firstInvalid = lastInvalid = -1;
+
 		setFont(new Font("Monospaced",Font.PLAIN,14));
 		setForeground(Color.black);
 		setBackground(Color.white);
@@ -68,6 +69,13 @@ public class TextAreaPainter extends Component implements TabExpander
 	public void update(Graphics g)
 	{
 		ensureOffscreenValid();
+
+		if(firstInvalid != -1 && lastInvalid != -1)
+		{
+			offscreenRepaintLineRange(firstInvalid,lastInvalid);
+			firstInvalid = lastInvalid = -1;
+		}
+
 		g.drawImage(offImg,0,0,null);
 	}
 
@@ -76,83 +84,70 @@ public class TextAreaPainter extends Component implements TabExpander
 		update(g);
 	}
 
+	public void fastRepaint()
+	{
+		// Will need to rewrite it to repaint any range of lines
+
+		/*if(firstInvalid != -1 && lastInvalid != -1
+			&& firstInvalid == lastInvalid)
+		{
+			Graphics gfx = getGraphics();
+			if(gfx != null)
+			{
+				System.out.println("Fast repaint of " + firstInvalid);
+				ensureOffscreenValid();
+				TextAreaModel model = textArea.getModel();
+				int y = model.lineToY(lastInvalid);
+				int width = offImg.getWidth(this);
+				int height = model.getLineHeight();
+				paintLine(model,offGfx,firstInvalid,0,y);
+				gfx.drawImage(offImg,0,y,width,height,
+					0,y,width,height,this);
+				firstInvalid = lastInvalid = -1;
+				return;
+			}
+		}*/
+
+		repaint();
+	}
+
+	public void invalidateLineRange(int firstLine, int lastLine)
+	{
+		int firstVisible = textArea.getFirstLine();
+		int lastVisible = firstVisible + textArea.getVisibleLines();
+
+		if(lastLine < firstVisible || firstLine > lastVisible)
+			return;
+
+		firstLine = Math.max(firstLine,firstVisible);
+		lastLine = Math.min(lastLine,lastVisible);
+
+		if(firstInvalid == -1 && lastInvalid == -1)
+		{
+			firstInvalid = firstLine;
+			lastInvalid = lastLine;
+		}
+		else
+		{
+			if(firstLine > firstInvalid && lastLine < lastInvalid)
+				return;
+
+			firstInvalid = Math.min(firstInvalid,firstLine);
+			lastInvalid = Math.max(lastInvalid,lastLine);
+		}
+		fastRepaint();
+	}
+
 	public void offscreenRepaint()
 	{
 		if(offGfx == null)
 			return;
 		Rectangle bounds = getBounds();
 
-		TextAreaModel model = textArea.getModel();
-
 		int firstLine = textArea.getFirstLine();
-		int lastLine = model.yToLine(bounds.height) + 1; // XXX
+		int lastLine = textArea.getModel().yToLine(bounds.height);
 
-		offscreenRepaintLineRange(model,firstLine,lastLine);
-	}
-
-	public void offscreenRepaintLineRange(TextAreaModel model, int firstLine,
-		int lastLine)
-	{
-		if(offGfx == null)
-			return;
-
-		FontMetrics fm = getFontMetrics();
-		tabSize = fm.charWidth('w') * ((Integer)model.getDocument()
-			.getProperty(PlainDocument.tabSizeAttribute))
-			.intValue();
-
-		int y = model.lineToY(firstLine);
-
-		for(int i = firstLine; i < lastLine;)
-		{
-			i += offscreenRepaintLine(model,i,0,y);
-			y += model.getLineHeight();
-		}
-	}
-
-	public int offscreenRepaintLine(TextAreaModel model, int lineIndex,
-		int x, int y)
-	{
-		SyntaxDocument document = model.getDocument();
-		TokenMarker tokenMarker = document.getTokenMarker();
-		Font defaultFont = getFont();
-		Color defaultColor = getForeground();
-
-		FontMetrics fm = getFontMetrics();
-
-		offGfx.clearRect(x,y + fm.getLeading() + fm.getDescent(),
-			getSize().width,fm.getAscent());
-
-		offGfx.setFont(defaultFont);
-		offGfx.setColor(defaultColor);
-
-		try
-		{
-			if(tokenMarker == null)
-			{
-				paintPlainLine(model,document,defaultFont,
-					defaultColor,lineIndex,0,y);
-				return 1;
-			}
-			else
-			{
-				int count = 0;
-				do
-				{
-					count++;
-					y += model.getLineHeight();
-				}
-				while(paintSyntaxLine(model,document,tokenMarker,
-					defaultFont,defaultColor,lineIndex++,x,y));
-				return count;
-			}
-		}
-		catch(BadLocationException bl)
-		{
-			// shouldn't happen
-			bl.printStackTrace();
-		}
-		return 1;
+		offscreenRepaintLineRange(firstLine,lastLine);
 	}
 
 	public float nextTabStop(float x, int tabOffset)
@@ -186,6 +181,9 @@ public class TextAreaPainter extends Component implements TabExpander
 	protected Graphics offGfx;
 	protected Image offImg;
 
+	protected int firstInvalid;
+	protected int lastInvalid;
+
 	protected void ensureOffscreenValid()
 	{
 		Dimension dim = getSize();
@@ -199,31 +197,81 @@ public class TextAreaPainter extends Component implements TabExpander
 		}
 	}
 
-	protected void paintPlainLine(TextAreaModel model, SyntaxDocument document,
-		Font defaultFont, Color defaultColor, int lineIndex, int x, int y)
-		throws BadLocationException
+	protected void offscreenRepaintLineRange(int firstLine, int lastLine)
 	{
-		Element lineElement = document.getDefaultRootElement()
-			.getElement(lineIndex);
-		int start = lineElement.getStartOffset();
-		int end = lineElement.getEndOffset();
+		if(offGfx == null)
+			return;
 
-		document.getText(start,end - (start + 1),currentLine);
+		TextAreaModel model = textArea.getModel();
 
-		Utilities.drawTabbedText(currentLine,x,y,offGfx,this,0);
+		FontMetrics fm = getFontMetrics();
+		tabSize = fm.charWidth('w') * ((Integer)model.getDocument()
+			.getProperty(PlainDocument.tabSizeAttribute))
+			.intValue();
+
+		int y = model.lineToY(firstLine);
+
+		for(int i = firstLine; i <= lastLine;)
+		{
+			i += paintLine(model,offGfx,i,0,y);
+			y += model.getLineHeight();
+		}
 	}
 
-	protected boolean paintSyntaxLine(TextAreaModel model, SyntaxDocument document,
+	protected int paintLine(TextAreaModel model, Graphics gfx, int lineIndex,
+		int x, int y)
+	{
+		TokenMarker tokenMarker = model.getDocument().getTokenMarker();
+		Font defaultFont = getFont();
+		Color defaultColor = getForeground();
+
+		/* Clear the line's bounding rectangle */
+		FontMetrics fm = getFontMetrics();
+		int gap = fm.getMaxDescent() + fm.getLeading();
+		gfx.setColor(getBackground());
+		gfx.fillRect(0,y + gap,offImg.getWidth(this),fm.getHeight());
+				
+		gfx.setFont(defaultFont);
+		gfx.setColor(defaultColor);
+
+		if(lineIndex >= model.getLineCount())
+		{
+			gfx.drawString("~",x,y);
+			return 1;
+		}
+
+		if(tokenMarker == null)
+		{
+			paintPlainLine(model,gfx,defaultFont,defaultColor,
+				lineIndex,0,y);
+			return 1;
+		}
+		else
+		{
+			int count = 0;
+			do
+			{
+				count++;
+				y += model.getLineHeight();
+			}
+			while(paintSyntaxLine(model,gfx,tokenMarker,defaultFont,
+				defaultColor,lineIndex++,x,y));
+			return count;
+		}
+	}
+
+	protected void paintPlainLine(TextAreaModel model, Graphics gfx,
+		Font defaultFont, Color defaultColor, int lineIndex, int x, int y)
+	{
+		model.getLineText(lineIndex,currentLine);
+		Utilities.drawTabbedText(currentLine,x,y,gfx,this,0);
+	}
+
+	protected boolean paintSyntaxLine(TextAreaModel model, Graphics gfx,
 		TokenMarker tokenMarker, Font defaultFont, Color defaultColor,
 		int lineIndex, int x, int y)
-		throws BadLocationException
 	{
-		Element lineElement = document.getDefaultRootElement()
-			.getElement(lineIndex);
-		int start = lineElement.getStartOffset();
-		int end = lineElement.getEndOffset();
-
-		document.getText(start,end - (start + 1),currentLine);
+		model.getLineText(lineIndex,currentLine);
 		Token tokens = tokenMarker.markTokens(currentLine,lineIndex);
 		int offset = 0;
 		for(;;)
@@ -235,16 +283,16 @@ public class TextAreaPainter extends Component implements TabExpander
 			int length = tokens.length;
 			if(id == Token.NULL)
 			{
-				if(!defaultColor.equals(offGfx.getColor()))
-					offGfx.setColor(defaultColor);
-				if(!defaultFont.equals(offGfx.getFont()))
-					offGfx.setFont(defaultFont);
+				if(!defaultColor.equals(gfx.getColor()))
+					gfx.setColor(defaultColor);
+				if(!defaultFont.equals(gfx.getFont()))
+					gfx.setFont(defaultFont);
 			}
 			else
-				styles[id].setGraphicsFlags(offGfx,defaultFont);
+				styles[id].setGraphicsFlags(gfx,defaultFont);
 
 			currentLine.count = length;
-			x = Utilities.drawTabbedText(currentLine,x,y,offGfx,this,offset);
+			x = Utilities.drawTabbedText(currentLine,x,y,gfx,this,offset);
 			currentLine.offset += length;
 			offset += length;
 

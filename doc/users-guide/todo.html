@@ -30,11 +30,7 @@
 <ul>
 <li>New text component. To reach next stage:
 <ul>
-<li>In offscreenRepaintLine(): clearRect() is clearing the wrong rectangle
-<li>model/view translation: doesn't translate partial lines
-<li>model/view translation: everything is translated += fm.getLeading?
-<li>TextAreaModel: handle case when line is changed with no removal or
-deletion
+<li>TextAreaPainter: write fastRepaint()
 <li><b>Then add horizontal scrolling and translation</b>
 </ul>
 </ul>

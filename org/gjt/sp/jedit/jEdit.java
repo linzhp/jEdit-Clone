@@ -80,7 +80,7 @@ public class jEdit
 		boolean desktop = true;
 		boolean showSplash = true;
 		int lineNo = -1;
-		
+
 		for(int i = 0; i < args.length; i++)
 		{
 			String arg = args[i];
@@ -154,7 +154,7 @@ public class jEdit
 				RemoteEditor editor = (RemoteEditor)Naming
 					.lookup(serverPath);
 				RemoteBuffer buf = null;
-	
+
 				for(int i = 0; i < args.length; i++)
 				{
 					String file = args[i];
@@ -163,10 +163,10 @@ public class jEdit
 					buf = editor.openFile(null,userDir,file,
 						readOnly,false);
 				}
-	
+
 				if(buf == null)
 					buf = editor.newFile(null);
-	
+
 				RemoteView view = editor.newView(null,buf);
 				if(lineNo != -1)
 				{
@@ -319,7 +319,7 @@ public class jEdit
 	public static final void setProperty(String name, String value)
 	{
 		props.put(name,value);
-	
+
 	}
 
 	/**
@@ -363,7 +363,7 @@ public class jEdit
 			maxRecent = 8;
 		}
 	}
-	
+
 	/**
 	 * Loads all plugins in a directory.
 	 * @param directory The directory
@@ -623,7 +623,7 @@ public class jEdit
 		catch(MalformedURLException mu)
 		{
 			path = MiscUtilities.constructPath(parent,path);
-			
+
 		}
 		Buffer buffer = buffersFirst;
 		while(buffer != null)
@@ -648,7 +648,7 @@ public class jEdit
 			gotoMarker(buffer,null,marker);
 		if(view != null)
 			view.setBuffer(buffer);
-		
+
 		fireEditorEvent(new EditorEvent(EditorEvent.BUFFER_CREATED,
 			view,buffer));
 
@@ -822,7 +822,7 @@ public class jEdit
 		recent.copyInto(array);
 		return array;
 	}
-	
+
 	/**
 	 * Returns the jEdit install directory.
 	 */
@@ -1019,26 +1019,26 @@ public class jEdit
 	{
 		System.err.println("Usage: jedit [<options>] [<files>]");
 		System.err.println("Valid options:");
-		System.err.println("    --: End of options");
-		System.err.println("    -version: Print jEdit version and"
+		System.err.println("	--: End of options");
+		System.err.println("	-version: Print jEdit version and"
 			+ " exit");
-		System.err.println("    -usage: Print this message and exit");
-		System.err.println("    -nosettings: Don't load user-specific"
+		System.err.println("	-usage: Print this message and exit");
+		System.err.println("	-nosettings: Don't load user-specific"
 			+ " settings");
-		System.err.println("    -settings=<path>: Load user-specific"
+		System.err.println("	-settings=<path>: Load user-specific"
 			+ " settings from <path>");
-		System.err.println("    -normi: Don't start RMI service");
-		System.err.println("    -rmi: Start RMI service");
-		System.err.println("    -rmi=<path>: Start RMI service bound"
+		System.err.println("	-normi: Don't start RMI service");
+		System.err.println("	-rmi: Start RMI service");
+		System.err.println("	-rmi=<path>: Start RMI service bound"
 			+ " to <path>");
-		System.err.println("    -wait: If connecting to another"
+		System.err.println("	-wait: If connecting to another"
 			+ " running instance, wait until");
-		System.err.println("    the user closes the new view before"
+		System.err.println("	the user closes the new view before"
 			+ " exiting");
-		System.err.println("    -nodesktop: Ignore saved desktop");
-		System.err.println("    -nosplash: Don't show splash screen");
-		System.err.println("    -readonly: Open files read-only");
-		System.err.println("    -+<line>: Go to line number <line> of"
+		System.err.println("	-nodesktop: Ignore saved desktop");
+		System.err.println("	-nosplash: Don't show splash screen");
+		System.err.println("	-readonly: Open files read-only");
+		System.err.println("	-+<line>: Go to line number <line> of"
 			+ " opened file");
 		System.err.println();
 		System.err.println("Report bugs to Slava Pestov <sp@gjt.org>.");
@@ -1066,7 +1066,7 @@ public class jEdit
 
 		// Add PROPERTIES_CHANGED listener
 		addEditorListener(new EditorHandler());
-		
+
 		// Determine installation directory
 		jEditHome = System.getProperty("jedit.home");
 		if(jEditHome == null)
@@ -1087,13 +1087,13 @@ public class jEdit
 		}
 		jEditHome = jEditHome + File.separator;
 
-		
+
 		if(settingsDirectory != null)
 		{
 			File _settingsDirectory = new File(settingsDirectory);
 			if(!_settingsDirectory.exists())
 				_settingsDirectory.mkdir();
-	
+
 			File _jarsDirectory = new File(settingsDirectory,"jars");
 			if(!_jarsDirectory.exists())
 				_jarsDirectory.mkdir();
@@ -1116,7 +1116,7 @@ public class jEdit
 			loadProps(jEdit.class.getResourceAsStream(
 				"/org/gjt/sp/jedit/jedit_keys.props"));
 			loadProps(jEdit.class.getResourceAsStream(
-				"/org/gjt/sp/jedit/jedit_tips.props"));	
+				"/org/gjt/sp/jedit/jedit_tips.props"));
 		}
 		catch(Exception e)
 		{
@@ -1130,7 +1130,7 @@ public class jEdit
 			System.exit(1);
 		}
 	}
-	
+
 	/**
 	 * Load edit modes.
 	 */
@@ -1141,8 +1141,8 @@ public class jEdit
 		addMode(new org.gjt.sp.jedit.mode.text());
 		addMode(new org.gjt.sp.jedit.mode.amstex());
 		addMode(new org.gjt.sp.jedit.mode.bat());
-                addMode(new org.gjt.sp.jedit.mode.c());
-                addMode(new org.gjt.sp.jedit.mode.cc());
+		addMode(new org.gjt.sp.jedit.mode.c());
+		addMode(new org.gjt.sp.jedit.mode.cc());
 		addMode(new org.gjt.sp.jedit.mode.html());
 		addMode(new org.gjt.sp.jedit.mode.java_mode());
 		addMode(new org.gjt.sp.jedit.mode.javascript());
@@ -1194,8 +1194,8 @@ public class jEdit
 		addAction(new org.gjt.sp.jedit.actions.help());
 		addAction(new org.gjt.sp.jedit.actions.hypersearch());
 		addAction(new org.gjt.sp.jedit.actions.hypersearch_selection());
-                addAction(new org.gjt.sp.jedit.actions.indent_on_enter());
-                addAction(new org.gjt.sp.jedit.actions.indent_on_tab());	
+		addAction(new org.gjt.sp.jedit.actions.indent_on_enter());
+		addAction(new org.gjt.sp.jedit.actions.indent_on_tab());
 		addAction(new org.gjt.sp.jedit.actions.insert_date());
 		addAction(new org.gjt.sp.jedit.actions.join_lines());
 		addAction(new org.gjt.sp.jedit.actions.locate_bracket());
@@ -1353,7 +1353,7 @@ public class jEdit
 						+ " machine's host name, and is aliased");
 					System.err.println("to localhost.");
 					a.printStackTrace();
-					
+
 				}
 				catch(java.rmi.ConnectException c)
 				{
@@ -1409,8 +1409,8 @@ public class jEdit
 		if(b == null && buffersLast != null)
 			b = buffersLast;
 		return b;
-	}		
-			
+	}
+
 	private static void gotoMarker(Buffer buffer, View view,
 		String marker)
 	{
@@ -1559,56 +1559,59 @@ public class jEdit
 /*
  * ChangeLog:
  * $Log$
- * Revision 1.118  1999/06/22 06:14:39  sp
+ * Revision 1.119  1999/06/23 08:02:14  sp
+ * Text area updates
+ *
+ * Revision 1.118  1999/06/22 06:14:39	sp
  * RMI updates, text area updates, flag to disable geometry saving
  *
- * Revision 1.117  1999/06/20 02:15:45  sp
+ * Revision 1.117  1999/06/20 02:15:45	sp
  * Syntax coloring optimizations
  *
- * Revision 1.116  1999/06/16 03:29:59  sp
+ * Revision 1.116  1999/06/16 03:29:59	sp
  * Added <title> tags to docs, configuration data is now stored in a
  * ~/.jedit directory, style option pane finished
  *
- * Revision 1.115  1999/06/15 05:03:54  sp
+ * Revision 1.115  1999/06/15 05:03:54	sp
  * RMI interface complete, save all hack, views & buffers are stored as a link
  * list now
  *
- * Revision 1.114  1999/06/14 08:21:07  sp
+ * Revision 1.114  1999/06/14 08:21:07	sp
  * Started rewriting `jEdit server' to use RMI (doesn't work yet)
  *
- * Revision 1.113  1999/06/13 05:47:02  sp
+ * Revision 1.113  1999/06/13 05:47:02	sp
  * Minor changes required for LatestVersion plugin
  *
- * Revision 1.112  1999/06/12 02:30:27  sp
+ * Revision 1.112  1999/06/12 02:30:27	sp
  * Find next can now perform multifile searches, multifile-search command added,
  * new style option pane
  *
- * Revision 1.111  1999/06/07 06:36:32  sp
+ * Revision 1.111  1999/06/07 06:36:32	sp
  * Syntax `styling' (bold/italic tokens) added,
  * plugin options dialog for plugin option panes
  *
- * Revision 1.110  1999/06/05 07:17:08  sp
+ * Revision 1.110  1999/06/05 07:17:08	sp
  * Cascading makefiles, HyperSearch tweak, doc updates
  *
- * Revision 1.109  1999/06/03 08:24:12  sp
+ * Revision 1.109  1999/06/03 08:24:12	sp
  * Fixing broken CVS
  *
- * Revision 1.110  1999/05/31 08:11:10  sp
+ * Revision 1.110  1999/05/31 08:11:10	sp
  * Syntax coloring updates, expand abbrev bug fix
  *
- * Revision 1.109  1999/05/31 04:38:51  sp
+ * Revision 1.109  1999/05/31 04:38:51	sp
  * Syntax optimizations, HyperSearch for Selection added (Mike Dillon)
  *
- * Revision 1.108  1999/05/30 04:57:15  sp
+ * Revision 1.108  1999/05/30 04:57:15	sp
  * Perl mode started
  *
- * Revision 1.107  1999/05/29 08:06:56  sp
+ * Revision 1.107  1999/05/29 08:06:56	sp
  * Search and replace overhaul
  *
- * Revision 1.106  1999/05/27 03:09:22  sp
+ * Revision 1.106  1999/05/27 03:09:22	sp
  * Console unbundled
  *
- * Revision 1.105  1999/05/27 00:02:50  sp
+ * Revision 1.105  1999/05/27 00:02:50	sp
  * Documentation updates, minor tweaks for WWW browser command unbundling
  *
  */
