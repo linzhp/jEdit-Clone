@@ -59,6 +59,7 @@ loop:			for(int i = dot - 1; i >= start; i--)
 					break loop;
 				default:
 					if(!Character.isLetterOrDigit(c)
+						&& separators != null
 						&& separators.indexOf(c) == -1)
 					{
 						wordStart = i;
@@ -97,6 +98,7 @@ loop2:					for(int j = index + 1; j < lineLen; j++)
 							break loop2;
 						default:
 							if(!Character.isLetterOrDigit(c)
+								&& separators != null
 								&& separators.indexOf(c) == -1)
 							{
 								wordEnd = j;

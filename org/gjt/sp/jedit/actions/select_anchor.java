@@ -35,8 +35,15 @@ public class select_anchor extends EditAction
 		View view = getView(evt);
 		SyntaxTextArea textArea = view.getTextArea();
 		int pos = view.getBuffer().getAnchor();
+		int dot = textArea.getCaretPosition();
+		if(dot > pos)
+		{
+			int tmp = pos;
+			pos = dot;
+			dot = tmp;
+		}
 		if(pos != -1)
-			textArea.select(textArea.getCaretPosition(),pos);
+			textArea.select(dot,pos);
 		else
 			view.getToolkit().beep();
 	}

@@ -47,7 +47,11 @@ loop:		for(int i = offset; i < length; i++)
 			// the non-alpha char. If we have a backslash,
 			// some text, and then a non-alpha char,
 			// the command ends before the non-alpha char.
-			if(!Character.isLetter(c))
+			if(Character.isLetter(c))
+			{
+				backslash = false;
+			}
+			else
 			{
 				if(backslash)
 				{
@@ -110,7 +114,7 @@ loop:		for(int i = offset; i < length; i++)
 				}
 				else if(token == FORMULA) // $$aaa
 				{
-					if(i != offset && line.array[i-1] == '$')
+					if(i - lastOffset == 1 && line.array[i-1] == '$')
 					{
 						token = BDFORMULA;
 						break;

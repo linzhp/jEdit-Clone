@@ -86,14 +86,14 @@ public class print extends EditAction
 		String header = view.getTitle();
 		Element map = buffer.getDefaultRootElement();
 		SyntaxTextArea textArea = view.getTextArea();
-		final int tabSize = buffer.getTabSize() *
+		final int _tabSize = buffer.getTabSize() *
 			textArea.getToolkit().getFontMetrics(textArea.getFont())
 			.charWidth('m');
 		SyntaxView syntaxView = new SyntaxView(map) {
 			public float nextTabStop(float x, int tabOffset)
 			{
-				return ((((int)x - leftMargin) / tabSize + 1)
-					* tabSize) + leftMargin;
+				return ((((int)x - leftMargin) / _tabSize + 1)
+					* _tabSize) + leftMargin;
 			}
 		};
 		Graphics gfx = null;

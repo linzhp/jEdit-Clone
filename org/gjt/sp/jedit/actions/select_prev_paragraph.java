@@ -42,8 +42,7 @@ public class select_prev_paragraph extends EditAction
 		int start = map.getElement(buffer.locateParagraphStart(lineNo))
 			.getStartOffset();
 		int end = map.getElement(buffer.locateParagraphEnd(lineNo))
-			.getEndOffset();
-		textArea.select(Math.max(0,start-1),Math.max(textArea
-			.getSelectionEnd(),end));
+			.getStartOffset();
+		textArea.select(start,Math.max(textArea.getSelectionEnd(),end));
 	}
 }

@@ -74,15 +74,16 @@ public class format extends EditAction
 			switch(c)
 			{
 			case '\n':
-				if(i == 0 || chars.length - i == 1)
+				if(i == 0 || chars.length - i <= 2)
 				{
 					if(lineLength + word.length() >= maxLineLength)
 						buf.append('\n');
-					else if(space)
+					else if(space && word.length() != 0)
 						buf.append(' ');
 					buf.append(word);
 					word.setLength(0);
 					buf.append('\n');
+					newline = true;
 					space = false;
 					break;
 				}
@@ -90,7 +91,7 @@ public class format extends EditAction
 				{
 					if(lineLength + word.length() >= maxLineLength)
 						buf.append('\n');
-					else if(space)
+					else if(space && word.length() != 0)
 						buf.append(' ');
 					buf.append(word);
 					word.setLength(0);
@@ -108,7 +109,7 @@ public class format extends EditAction
 					lineLength = 0;
 					newline = true;
 				}
-				else if(space)
+				else if(space && lineLength != 0 && word.length() != 0)
 				{
 					buf.append(' ');
 					lineLength++;
@@ -132,7 +133,7 @@ public class format extends EditAction
 		}
 		if(lineLength + word.length() >= maxLineLength)
 			buf.append('\n');
-		else if(space)
+		else if(space && word.length() != 0)
 			buf.append(' ');
 		buf.append(word);
 		return buf.toString();

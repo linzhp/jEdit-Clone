@@ -22,7 +22,7 @@ package org.gjt.sp.jedit;
 import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.text.*;
-import javax.swing.undo.UndoManager;
+import javax.swing.undo.*;
 import gnu.regexp.*;
 import java.awt.*;
 import java.io.*;
@@ -147,12 +147,16 @@ implements DocumentListener, UndoableEditListener
 	public boolean replaceAll(View view)
 	{
 		boolean found = false;
+		beginCompoundEdit();
 		try
 		{
 			RE regexp = jEdit.getRE();
 			String replaceStr = jEdit.getProperty("search.replace.value");
 			if(regexp == null)
+			{
+				endCompoundEdit();
 				return false;
+			}
 			REMatch match;
 			int index = 0;
 			while((match = regexp.getMatch(getText(index,
@@ -177,6 +181,7 @@ implements DocumentListener, UndoableEditListener
 		catch(BadLocationException bl)
 		{
 		}
+		endCompoundEdit();
 		return found;
 	}
 
@@ -372,7 +377,12 @@ implements DocumentListener, UndoableEditListener
 			Element lineElement = map.getElement(i);
 			if(lineElement.getEndOffset() - lineElement
 				.getStartOffset() == 1)
-				return i;
+			{
+				if(i == lineNo)
+					continue;
+				else
+					return i;
+			}
 		}
 		return 0;
 	}
@@ -391,9 +401,14 @@ implements DocumentListener, UndoableEditListener
 			Element lineElement = map.getElement(i);
 			if(lineElement.getEndOffset() - lineElement
 				.getStartOffset() == 1)
-				return i-1;
+			{
+				if(i == lineNo)
+					continue;
+				else
+					return i;
+			}
 		}
-		return lineCount-1;
+		return lineCount;
 	}
 
 	/**
@@ -459,6 +474,29 @@ implements DocumentListener, UndoableEditListener
 	public UndoManager getUndo()
 	{
 		return undo;
+	}
+
+	/**
+	 * Starts a compound edit that can be undone in one go.
+	 */
+	public void beginCompoundEdit()
+	{
+		if(compoundEdit == null)
+			compoundEdit = new CompoundEdit();
+	}
+
+	/**
+	 * Ends a compound edit.
+	 */
+	public void endCompoundEdit()
+	{
+		if(compoundEdit != null)
+		{
+			compoundEdit.end();
+			if(compoundEdit.canUndo())
+				undo.addEdit(compoundEdit);
+			compoundEdit = null;
+		}
 	}
 
 	/**
@@ -729,7 +767,10 @@ implements DocumentListener, UndoableEditListener
 	// event handlers
 	public void undoableEditHappened(UndoableEditEvent evt)
 	{
-		undo.addEdit(evt.getEdit());
+		if(compoundEdit != null)
+			compoundEdit.addEdit(evt.getEdit());
+		else
+			undo.addEdit(evt.getEdit());
 	}
 
 	public void insertUpdate(DocumentEvent evt)
@@ -815,6 +856,7 @@ implements DocumentListener, UndoableEditListener
 	private boolean readOnly;
 	private Mode mode;
 	private UndoManager undo;
+	private CompoundEdit compoundEdit;
 	private Vector markers;
 	private Position anchor;
 	private int[] caretInfo;

@@ -38,11 +38,11 @@ public class select_next_paragraph extends EditAction
 		Buffer buffer = view.getBuffer();
 		Element map = buffer.getDefaultRootElement();
 		SyntaxTextArea textArea = view.getTextArea();
-		int lineNo = map.getElementIndex(textArea.getSelectionEnd())+1;
+		int lineNo = map.getElementIndex(textArea.getSelectionEnd());
 		int start = map.getElement(buffer.locateParagraphStart(lineNo))
-			.getStartOffset() + 1;
+			.getStartOffset();
 		int end = map.getElement(buffer.locateParagraphEnd(lineNo))
-			.getEndOffset();
+			.getStartOffset();
 		textArea.select(Math.min(textArea.getSelectionStart(),start),end);
 	}
 }
