@@ -29,6 +29,7 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 import java.util.zip.*;
+import jstyle.JSTokenMarker;
 import org.gjt.sp.jedit.syntax.SyntaxTextArea;
 
 /**
@@ -543,6 +544,68 @@ loop:		for(int i = 0; i < map.getElementCount(); i++)
 	}
 	
 	/**
+	 * Sets the token marker for this buffer.
+	 * @param tokenMarker the new token marker
+	 */
+	public void setTokenMarker(JSTokenMarker tokenMarker)
+	{
+		if("on".equals(jEdit.props.getProperty("buffer.syntax")))
+			this.tokenMarker = tokenMarker;
+	}
+
+	/**
+	 * Returns the token marker for this buffer.
+	 */
+	public JSTokenMarker getTokenMarker()
+	{
+		return tokenMarker;
+	}
+	
+	/**
+	 * Loads the colors used for syntax colorizing from the properties.
+	 * <p>
+	 * The colors are stored in the property as a white space separated
+	 * list of <i>name</i>@<i>value</i> pairs. <i>name</i> is mode
+	 * specific, <i>value</i> is the name of a predefined color in
+	 * the <code>java.awt.Color</code> class.
+	 * @param name The name of the property to load the colors from
+	 */
+	public void loadColors(String name)
+	{
+		colors.clear();
+		String prop = jEdit.props.getProperty("colors.".concat(name));
+		if(prop == null)
+			return;
+		StringTokenizer st = new StringTokenizer(prop);
+		while(st.hasMoreTokens())
+		{
+			String color = st.nextToken();
+			int index = color.indexOf('@');
+			if(index == -1)
+				continue;
+			String id = color.substring(0,index);
+			color = color.substring(index + 1);
+			colors.put(id,jEdit.parseColor(color));
+		}
+	}
+
+	/**
+	 * Clears the color table.
+	 */
+	public void clearColors()
+	{
+		colors.clear();
+	}
+
+	/**
+	 * Returns the colors for syntax colorizing.
+	 */
+	public Hashtable getColors()
+	{
+		return colors;
+	}
+
+	/**
 	 * Returns an enumeration of set markers.
 	 */
 	public Enumeration getMarkers()
@@ -637,7 +700,6 @@ loop:		for(int i = 0; i < map.getElementCount(); i++)
 		}
 	}
 
-
 	// event handlers
 	public void undoableEditHappened(UndoableEditEvent evt)
 	{
@@ -665,6 +727,7 @@ loop:		for(int i = 0; i < map.getElementCount(); i++)
 		init = true;
 		undo = new UndoManager();
 		markers = new Vector();
+		colors = new Hashtable();
 		this.newFile = newFile;
 		this.readOnly = readOnly;
 		setPath(parent,path);
@@ -729,6 +792,8 @@ loop:		for(int i = 0; i < map.getElementCount(); i++)
 	private UndoManager undo;
 	private Vector markers;
 	private int[] caretInfo;
+	private JSTokenMarker tokenMarker;
+	private Hashtable colors;
 
 	private void load()
 	{

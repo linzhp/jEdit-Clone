@@ -92,7 +92,9 @@ public class BufferMgr
 			path = path.substring(0,index);
 		}
 		Enumeration enum = getBuffers();
-		while(enum.hasMoreElements())
+		// This is severely broken (think about parent != null
+		// for a second to see what I mean)
+		/*while(enum.hasMoreElements())
 		{
 			Buffer buffer = (Buffer)enum.nextElement();
 			if(buffer.getPath().equals(path))
@@ -101,7 +103,7 @@ public class BufferMgr
 					view.setBuffer(buffer);
 				return buffer;
 			}
-		}
+		}*/
 		Buffer buffer = new Buffer(parent,path,readOnly,newFile);
 		if(!newFile)
 		{

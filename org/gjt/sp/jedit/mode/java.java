@@ -20,7 +20,7 @@
 package org.gjt.sp.jedit.mode;
 
 import com.sun.java.swing.text.Element;
-import jstyle.JSLineBeautifier;
+import jstyle.*;
 import org.gjt.sp.jedit.*;
 
 public class java implements Mode
@@ -34,10 +34,14 @@ public class java implements Mode
 
 	public void enter(Buffer buffer)
 	{
+		buffer.setTokenMarker(new JSJavaTokenMarker());
+		buffer.loadColors("java");
 	}
 
 	public void leave(Buffer buffer)
 	{
+		buffer.setTokenMarker(null);
+		buffer.clearColors();
 	}
 
 	public boolean indentLine(Buffer buffer, View view, int caret)

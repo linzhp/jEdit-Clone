@@ -1,5 +1,5 @@
 /*
- * SyntaxTextArea.java - jEdit's own text component
+ * SyntaxEditorKit.java - jEdit's own editor kit
  * Copyright (C) 1998 Slava Pestov
  *
  * This program is free software; you can redistribute it and/or
@@ -19,34 +19,22 @@
 
 package org.gjt.sp.jedit.syntax;
 
-import com.sun.java.swing.JEditorPane;
-import java.awt.*;
+import com.sun.java.swing.text.*;
 
-public class SyntaxTextArea extends JEditorPane
+public class SyntaxEditorKit extends DefaultEditorKit
 {
 	// public members
-	public SyntaxTextArea(int rows, int columns)
+	public ViewFactory getViewFactory()
 	{
-		this.rows = rows;
-		this.columns = columns;
-		setEditorKit(new SyntaxEditorKit());
+		return new SyntaxViewFactory();
 	}
 
-	public Dimension getPreferredSize()
+	// inner classes
+	class SyntaxViewFactory implements ViewFactory
 	{
-		Dimension d = super.getPreferredSize();
-		FontMetrics fm = getToolkit().getFontMetrics(getFont());
-		d.width = Math.max(d.width,fm.charWidth('m') * columns);
-		d.height = Math.max(d.height,fm.getHeight() * rows);
-		return d;
+		public View create(Element elem)
+		{
+			return new SyntaxView(elem);
+		}
 	}
-
-	public Dimension getMinimumSize()
-	{
-		return getPreferredSize();
-	}
-
-	// private members
-	private int columns;
-	private int rows;
 }

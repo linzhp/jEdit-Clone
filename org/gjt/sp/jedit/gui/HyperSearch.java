@@ -156,8 +156,12 @@ implements ActionListener, ListSelectionListener, WindowListener
 		int line = Integer.parseInt(selected.substring(0,selected
 			.indexOf(':')));
 		SyntaxTextArea textArea = view.getTextArea();
-		textArea.setCaretPosition(view.getBuffer()
-			.getDefaultRootElement().getElementIndex(line - 1));
+		Element lineElement = view.getBuffer().getDefaultRootElement()
+			.getElement(line - 1);
+		if(lineElement == null)
+			return;
+		textArea.select(lineElement.getStartOffset(),
+			lineElement.getEndOffset());
 	}
 	
 	public void windowOpened(WindowEvent evt) {}
