@@ -1370,20 +1370,30 @@ implements DocumentListener, UndoableEditListener
 	{
 		public Object get(Object key)
 		{
+			// First try the buffer-local properties
 			Object o = super.get(key);
 			if(o != null)
 				return o;
-			if(mode == null)
-				return null;
-			String clazz = mode.getClass().getName();
-			String value = jEdit.getProperty("mode." + clazz
-				.substring(clazz.lastIndexOf('.')+1) + "." + key);
+
+			// Now try mode.<mode>.<property>
+			String value = null;
+			if(mode != null)
+			{
+				String clazz = mode.getClass().getName();
+				value = jEdit.getProperty("mode."
+					+ clazz.substring(clazz
+					.lastIndexOf('.')+1) + "." + key);
+			}
+
+			// Now try buffer.<property>
 			if(value == null)
 			{
 				value = jEdit.getProperty("buffer." + key);
 				if(value == null)
 					return null;
 			}
+
+			// Try returning it as an integer first
 			try
 			{
 				return new Integer(value);

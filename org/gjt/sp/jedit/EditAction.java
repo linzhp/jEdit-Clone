@@ -1,6 +1,6 @@
 /*
  * EditAction.java - Swing action subclass
- * Copyright (C) 1998 Slava Pestov
+ * Copyright (C) 1998, 1999 Slava Pestov
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -31,12 +31,30 @@ import java.util.EventObject;
 public abstract class EditAction extends AbstractAction
 {
 	/**
+	 * Property that can be set to Boolean.TRUE for the action
+	 * to appear in the plugins menu.
+	 */
+	public static String PLUGIN = "_Plugin";
+
+	/**
 	 * Creates a new <code>EditAction</code>.
 	 * @param name The name of the action
 	 */
 	public EditAction(String name)
 	{
 		super(name);
+	}
+
+	/**
+	 * Creates a new <code>EditAction</code>.
+	 * @param name The name of the action
+	 * @param plugin True if the action should appear in the plugins
+	 * menu
+	 */
+	public EditAction(String name, boolean plugin)
+	{
+		super(name);
+		putValue(PLUGIN,new Boolean(plugin));
 	}
 
 	/**
