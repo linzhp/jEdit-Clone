@@ -39,13 +39,13 @@ public class jEdit
 	/**
 	 * The jEdit version.
 	 */
-	public static final String VERSION = "1.4pre2";
+	public static final String VERSION = "1.4pre3";
 	
 	/**
 	 * The date when a change was last made to the source code,
 	 * in <code>YYYYMMDD</code> format.
 	 */
-	public static final String BUILD = "19990207";
+	public static final String BUILD = "19990208";
 
 	/**
 	 * AWK regexp syntax.
@@ -1318,10 +1318,10 @@ public class jEdit
 	public static boolean regionMatches(boolean ignoreCase, Segment text,
 					    int offset, String match)
 	{
-		if(text.count + offset < match.length())
-			return false;
 		int length = offset + match.length();
 		char[] textArray = text.array;
+		if(length > textArray.length)
+			return false;
 		for(int i = offset, j = 0; i < length; i++, j++)
 		{
 			char c1 = textArray[i];

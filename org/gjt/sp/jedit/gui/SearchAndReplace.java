@@ -36,11 +36,18 @@ implements ActionListener, KeyListener, WindowListener
 	private JButton replaceSelection;
 	private JButton replaceAll;
 	private JButton cancel;
+	private int selStart;
+	private int selEnd;
 	
 	public SearchAndReplace(View view)
 	{
 		super(view,jEdit.getProperty("search.title"),false);
 		this.view = view;
+
+		// silly hack :)
+		selStart = view.getTextArea().getSelectionStart();
+		selEnd = view.getTextArea().getSelectionEnd();
+
 		find = new JTextField(jEdit.getProperty("search.find"
 			+ ".value"),30);
 		replace = new JTextField(jEdit
@@ -141,9 +148,7 @@ implements ActionListener, KeyListener, WindowListener
 		}
 		else if(source == replaceSelection)
 		{
-			if(view.getBuffer().replaceAll(view,
-				view.getTextArea().getSelectionStart(),
-				view.getTextArea().getSelectionEnd()))
+			if(view.getBuffer().replaceAll(view,selStart,selEnd))
 				dispose();
 			else
 				getToolkit().beep();

@@ -36,7 +36,9 @@ public class save_all extends EditAction
 		Enumeration buffers = jEdit.getBuffers();
 		while(buffers.hasMoreElements())
 		{
-			((Buffer)buffers.nextElement()).save(view,null);
+			Buffer buffer = (Buffer)buffers.nextElement();
+			if(buffer.isDirty())
+				buffer.save(view,null);
 		}
 	}
 }
