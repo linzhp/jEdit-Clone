@@ -46,6 +46,12 @@ public abstract class TokenMarker
 	 */
 	public Token markTokens(Segment line, int lineIndex)
 	{
+		if(lineIndex >= length)
+		{
+			throw new IllegalArgumentException("Tokenizing invalid line: "
+				+ lineIndex);
+		}
+
 		lastToken = null;
 
 		LineInfo info = lineInfo[lineIndex];
@@ -341,6 +347,9 @@ public abstract class TokenMarker
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.28  1999/07/29 08:50:21  sp
+ * Misc stuff for 1.7pre7
+ *
  * Revision 1.27  1999/07/16 23:45:49  sp
  * 1.7pre6 BugFree version
  *
@@ -372,23 +381,5 @@ public abstract class TokenMarker
  * Revision 1.18  1999/04/27 06:53:38  sp
  * JARClassLoader updates, shell script token marker update, token marker compiles
  * now
- *
- * Revision 1.17  1999/04/26 07:55:00  sp
- * Event multicaster tweak, console shows exit code of processes
- *
- * Revision 1.16  1999/04/23 22:37:55  sp
- * Tips updated, TokenMarker.LineInfo is public now
- *
- * Revision 1.15  1999/04/23 05:06:43  sp
- * TokenMarker.markTokens bug fix
- *
- * Revision 1.14  1999/04/23 05:02:25  sp
- * new LineInfo[] array in TokenMarker
- *
- * Revision 1.13  1999/04/19 05:38:20  sp
- * Syntax API changes
- *
- * Revision 1.12  1999/03/15 03:40:23  sp
- * Search and replace updates, TSQL mode/token marker updates
  *
  */

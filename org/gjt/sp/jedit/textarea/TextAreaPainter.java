@@ -287,7 +287,6 @@ public class TextAreaPainter extends JComponent implements TabExpander
 	{
 		super.setFont(font);
 		fm = Toolkit.getDefaultToolkit().getFontMetrics(font);
-		tabSize = 0;
 		textArea.recalculateVisibleLines();
 	}
 
@@ -309,6 +308,22 @@ public class TextAreaPainter extends JComponent implements TabExpander
 	}
 
 	/**
+	 * Queues a repaint of the changed lines only.
+	 */
+	public final void fastRepaint()
+	{
+		if(firstInvalid == -1 && lastInvalid == -1)
+			repaint();
+		else
+		{
+			repaint(0,textArea.lineToY(firstInvalid)
+				+ fm.getLeading() + fm.getMaxDescent(),
+				getWidth(),(lastInvalid - firstInvalid + 1)
+				* fm.getHeight());
+		}
+	}
+
+	/**
 	 * Paints any lines that changed since the last paint to the offscreen
 	 * graphics, then repaints the offscreen to the specified graphics
 	 * context.
@@ -326,16 +341,27 @@ public class TextAreaPainter extends JComponent implements TabExpander
 
 		if(firstInvalid != -1 && lastInvalid != -1)
 		{
+			int lineCount;
 			try
 			{
 				if(firstInvalid == lastInvalid)
 				{
-					paintLine(offGfx,firstInvalid,textArea
+					lineCount = paintLine(offGfx,
+						firstInvalid,textArea
 						.getHorizontalOffset());
 				}
 				else
-					offscreenRepaintLineRange(firstInvalid,
-						lastInvalid);
+				{
+					lineCount = offscreenRepaintLineRange(
+						firstInvalid,lastInvalid);
+				}
+				if(lastInvalid - firstInvalid + 1 != lineCount)
+				{
+					// XXX stupid hack
+					Rectangle clip = g.getClipBounds();
+					if(!clip.equals(getBounds()))
+						repaint();
+				}
 			}
 			catch(Exception e)
 			{
@@ -392,7 +418,7 @@ public class TextAreaPainter extends JComponent implements TabExpander
 	public final void invalidateLine(int line)
 	{
 		_invalidateLine(line);
-		repaint();
+		fastRepaint();
 	}
 
 	/**
@@ -443,7 +469,7 @@ public class TextAreaPainter extends JComponent implements TabExpander
 	public final void invalidateLineRange(int firstLine, int lastLine)
 	{
 		_invalidateLineRange(firstLine,lastLine);
-		repaint();
+		fastRepaint();
 	}
 
 	/**
@@ -588,12 +614,9 @@ public class TextAreaPainter extends JComponent implements TabExpander
 		if(offGfx == null)
 			return 0;
 
-		if(tabSize == 0)
-		{
-			tabSize = fm.charWidth('w') * ((Integer)textArea
-				.getDocument().getProperty(
-				PlainDocument.tabSizeAttribute)).intValue();
-		}
+		tabSize = fm.charWidth('w') * ((Integer)textArea
+			.getDocument().getProperty(
+			PlainDocument.tabSizeAttribute)).intValue();
 
 		int x = textArea.getHorizontalOffset();
 
@@ -808,6 +831,9 @@ public class TextAreaPainter extends JComponent implements TabExpander
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.13  1999/07/29 08:50:21  sp
+ * Misc stuff for 1.7pre7
+ *
  * Revision 1.12  1999/07/16 23:45:49  sp
  * 1.7pre6 BugFree version
  *

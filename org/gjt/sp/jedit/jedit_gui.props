@@ -348,15 +348,15 @@ view.hintBar=Hint: {0}
 about.title=About jEdit
 about.message=jEdit version {0} (JDK {1}, {2} {3})\n\
 	jEdit was written by Slava Pestov with the help of several others.\n\
-	See Help->Help Contents->Introduction for redistribution\n\
-	information and warranty disclamer.\n\
+	See the README.txt file for redistribution information and warranty\n\
+	disclamer.\n\
 	\n\
 	I would like to thank the following people:\n\
 	Mike Dillon - code contributor, plugin central maintainer\n\
 	Juha Lindfors - code contributor\n\
 	Nathan Tenney - FTP site\n\
 	... plus all the users, plugin authors, and people who sent me\n\
-	feedback.
+	feedback. jEdit would be dead were it not for you... thanks.
 
 # IO Error dialog, {0}=the error message
 ioerror.title=I/O Error

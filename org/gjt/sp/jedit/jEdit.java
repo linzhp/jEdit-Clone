@@ -1086,9 +1086,9 @@ public class jEdit
 			+ " to <path>");
 		System.err.println("	-wait: If connecting to another"
 			+ " running instance, wait until");
-		System.err.println("    -quit: Quit the current instance using RMI");
 		System.err.println("	the user closes the new view before"
 			+ " exiting");
+		System.err.println("	-quit: Quit the current instance using RMI");
 		System.err.println("	-nodesktop: Ignore saved desktop");
 		System.err.println("	-nosplash: Don't show splash screen");
 		System.err.println("	-readonly: Open files read-only");
@@ -1650,6 +1650,9 @@ public class jEdit
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.124  1999/07/29 08:50:21  sp
+ * Misc stuff for 1.7pre7
+ *
  * Revision 1.123  1999/07/21 05:45:14  sp
  * AltGr fix, documentation restructuring
  *

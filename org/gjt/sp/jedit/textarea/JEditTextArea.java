@@ -274,6 +274,7 @@ public class JEditTextArea extends JComponent
 		int oldVisibleLines = visibleLines;
 		visibleLines = height / lineHeight;
 		painter.invalidateOffscreen();
+		painter.repaint();
 		updateScrollBars();
 	}
 
@@ -1017,7 +1018,7 @@ public class JEditTextArea extends JComponent
 		magicCaret = -1;
 
 		if(!scrollToCaret())
-			painter.repaint();
+			painter.fastRepaint();
 	}
 
 	/**
@@ -1588,7 +1589,7 @@ public class JEditTextArea extends JComponent
 			select(newStart,newEnd);
 
 			if(repaint)
-				painter.repaint();
+				painter.fastRepaint();
 		}
 	
 		public void removeUpdate(DocumentEvent evt)
@@ -1628,7 +1629,7 @@ public class JEditTextArea extends JComponent
 			select(newStart,newEnd);
 
 			if(repaint)
-				painter.repaint();
+				painter.fastRepaint();
 		}
 
 		public void changedUpdate(DocumentEvent evt)
@@ -1798,6 +1799,9 @@ public class JEditTextArea extends JComponent
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.16  1999/07/29 08:50:21  sp
+ * Misc stuff for 1.7pre7
+ *
  * Revision 1.15  1999/07/21 05:45:14  sp
  * AltGr fix, documentation restructuring
  *
