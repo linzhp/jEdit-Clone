@@ -1,6 +1,6 @@
 /*
  * Mode.java - jEdit editing mode
- * Copyright (C) 1998 Slava Pestov
+ * Copyright (C) 1998, 1999 Slava Pestov
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -23,11 +23,6 @@ import org.gjt.sp.jedit.syntax.TokenMarker;
 /**
  * An edit mode. At the moment, edit modes can define indent behaviour
  * and syntax colorizing rules. Other uses will exist in the future.
- * @see jEdit#getMode
- * @see jEdit#getModeName
- * @see Buffer#getMode
- * @see Buffer#getModeName
- * @see Buffer#setMode
  */
 public interface Mode
 {
@@ -35,8 +30,14 @@ public interface Mode
 	 * Called when a buffer enters this mode.
 	 * @param buffer The buffer that entered this mode
 	 */
-	public abstract void enter(Buffer buffer);
+	public void enter(Buffer buffer);
 	
+	/**
+	 * Called when a view enters this mode.
+	 * @param view The view that entered this mode
+	 */
+	public void enterView(View view);
+
 	/**
 	 * Called when the `Tab' key is pressed. This should perform
 	 * mode-specific indentation and return true, or return false if a
@@ -47,18 +48,23 @@ public interface Mode
 	 * @return true if the tab key event should be swallowed (ignored)
 	 * false if a real tab should be inserted
 	 */
-	public abstract boolean indentLine(Buffer buffer, View view,
-		int caret);
+	public boolean indentLine(Buffer buffer, View view, int caret);
 
 	/**
 	 * Returns a <code>TokenMarker</code> for this mode. Can return null
 	 * if this mode doesn's support syntax colorizing.
 	 */
-	public abstract TokenMarker createTokenMarker();
+	public TokenMarker createTokenMarker();
 
 	/**
 	 * Called when a buffer leaves this mode.
 	 * @param buffer The buffer that left this mode
 	 */
-	public abstract void leave(Buffer buffer);
+	public void leave(Buffer buffer);
+	
+	/**
+	 * Called when a view leaves this mode.
+	 * @param view The view that left this mode
+	 */
+	public void leaveView(View view);
 }

@@ -1,5 +1,5 @@
 /*
- * ViewListener.java - View event listener
+ * AbstractEditorAdapter.java - Abstract listener adapter
  * Copyright (C) 1999 Slava Pestov
  *
  * This program is free software; you can redistribute it and/or
@@ -19,20 +19,16 @@
 
 package org.gjt.sp.jedit.event;
 
-import org.gjt.sp.jedit.*;
+import java.util.EventListener;
 
 /**
- * The view event listener interface.
+ * There are two ways to implement an event listener - either to
+ * directory implement a listener interface, possibly inserting
+ * empty stubs for unused methods, or to subclass an <i>adapter</i>
+ * - an abstract class, implementing that interface, with empty
+ * stubs for all required methods. If an adapter is subclassed,
+ * only the used methods need to be implemented.
  */
-public interface ViewListener extends AbstractEditorListener
+public abstract class AbstractEditorAdapter implements AbstractEditorListener
 {
-	/**
-	 * Method invoked when a view's current error number changes.
-	 */
-	public void viewCurrentErrorChanged(ViewEvent evt);
-
-	/**
-	 * Method invoked when a view's buffer changes.
-	 */
-	public void viewBufferChanged(ViewEvent evt);
 }

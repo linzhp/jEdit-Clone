@@ -36,8 +36,6 @@ import org.gjt.sp.jedit.gui.*;
  * @see Buffer
  */
 public class View extends JFrame
-implements BufferListener, EditorListener,
-CaretListener, KeyListener, WindowListener
 {	
 	/**
 	 * Reloads various settings from the properties.
@@ -361,7 +359,10 @@ CaretListener, KeyListener, WindowListener
 		if(oldBuffer != null)
 		{
 			saveCaretInfo();
-			oldBuffer.removeBufferListener(this);
+			oldBuffer.removeBufferListener(bufferListener);
+			Mode mode = oldBuffer.getMode();
+			if(mode != null)
+				mode.leaveView(this);
 		}
 		this.buffer = buffer;
 		textArea.setDocument(buffer);
@@ -370,7 +371,11 @@ CaretListener, KeyListener, WindowListener
 		updateModeMenu();
 		updateTitle();
 		updateLineNumber(true);
-		buffer.addBufferListener(this);
+		buffer.addBufferListener(bufferListener);
+
+		Mode mode = buffer.getMode();
+		if(mode != null)
+			mode.enterView(this);
 
 		// Fire event
 		fireViewEvent(new ViewEvent(ViewEvent.BUFFER_CHANGED,this,
@@ -506,153 +511,6 @@ CaretListener, KeyListener, WindowListener
 		multicaster.fire(evt);
 	}
 
-	// event handlers
-
-	// BEGIN CARET LISTENER
-	public void caretUpdate(CaretEvent evt)
-	{
-		updateLineNumber(evt.getDot(),false);
-	}
-	// END CARET LISTENER
-
-	// BEGIN EDITOR LISTENER
-	public void bufferCreated(EditorEvent evt)
-	{
-		updateBuffersMenu();
-	}
-
-	public void bufferClosed(EditorEvent evt)
-	{
-		// Files are added to the recent list when they are closed
-		updateOpenRecentMenu();
-
-		// XXX: should revert to 1.2 behaviour
-		Buffer[] bufferArray = jEdit.getBuffers();
-		if(bufferArray.length != 0)
-			setBuffer(bufferArray[0]);
-
-		updateBuffersMenu();
-	}
-
-	public void viewCreated(EditorEvent evt) {}
-	public void viewClosed(EditorEvent evt) {}
-
-	public void bufferDirtyChanged(EditorEvent evt)
-	{
-		updateTitle();
-		updateBuffersMenu();
-	}
-	// END EDITOR LISTENER
-
-	// BEGIN BUFFER LISTENER
-	public void bufferMarkersChanged(BufferEvent evt)
-	{
-		updateMarkerMenus();
-	}
-
-	public void bufferLineSepChanged(BufferEvent evt)
-	{
-		updateLineSepMenu();
-	}
-
-	public void bufferModeChanged(BufferEvent evt)
-	{
-		updateModeMenu();
-		textArea.repaint();
-	}
-	// END BUFFER LISTENER
-
-	public void keyPressed(KeyEvent evt)
-	{
-		int keyCode = evt.getKeyCode();
-		int modifiers = evt.getModifiers();
-		if((modifiers & ~InputEvent.SHIFT_MASK) != 0 ||
-			evt.isActionKey() || keyCode == KeyEvent.VK_TAB)
-		{
-			KeyStroke keyStroke = KeyStroke.getKeyStroke(keyCode,
-				modifiers);
-			Object o = currentPrefix.get(keyStroke);
-			if(o == null && currentPrefix != bindings)
-			{
-				getToolkit().beep();
-				currentPrefix = bindings;
-				evt.consume();
-				return;
-			}
-			else if(o instanceof String)
-			{
-				String s = (String)o;
-				int index = s.indexOf('@');
-				String cmd;
-				if(index != -1)
-				{
-					cmd = s.substring(index+1);
-					s = s.substring(0,index);
-				}
-				else
-					cmd = null;
-				Action action = jEdit.getAction(s);
-				if(action == null)
-				{
-					System.out.println("Invalid key"
-						+ " binding: " + s);
-					currentPrefix = bindings;
-					evt.consume();
-					return;
-				}
-				jEdit.getAction(s).actionPerformed(
-					new ActionEvent(this,ActionEvent
-					.ACTION_PERFORMED,cmd));
-				currentPrefix = bindings;
-				evt.consume();
-				return;
-			}
-			else if(o instanceof Hashtable)
-			{
-				currentPrefix = (Hashtable)o;
-				evt.consume();
-				return;
-			}
-		}
-		else if(keyCode != KeyEvent.VK_SHIFT
-			&& keyCode != KeyEvent.VK_CONTROL
-			&& keyCode != KeyEvent.VK_ALT)
-		{
-			currentPrefix = bindings;
-		}
-				
-		Mode mode = buffer.getMode();
-		if(mode instanceof KeyListener)
-			((KeyListener)mode).keyTyped(evt);
-	}
-
-	public void keyTyped(KeyEvent evt)
-	{
-		Mode mode = buffer.getMode();
-		if(mode instanceof KeyListener)
-			((KeyListener)mode).keyTyped(evt);
-	}
-
-	public void keyReleased(KeyEvent evt)
-	{
-		Mode mode = buffer.getMode();
-		if(mode instanceof KeyListener)
-			((KeyListener)mode).keyReleased(evt);
-	}
-
-	public void windowOpened(WindowEvent evt) {}
-	
-	public void windowClosing(WindowEvent evt)
-	{
-		jEdit.closeView(this);
-	}
-	
-	public void windowClosed(WindowEvent evt) {}
-	public void windowIconified(WindowEvent evt) {}
-	public void windowDeiconified(WindowEvent evt) {}
-	public void windowActivated(WindowEvent evt) {}
-	public void windowDeactivated(WindowEvent evt) {}
-
 	// package-private members
 	View(View view, Buffer buffer)
 	{
@@ -684,9 +542,6 @@ CaretListener, KeyListener, WindowListener
 		lastLine = -1;
 
 		lineNumber = new JLabel();
-		textArea.addKeyListener(this);
-		textArea.addCaretListener(this);
-		textArea.setBorder(null);
 		updatePluginsMenu();
 
 		textArea.setContextMenu(GUIUtilities.loadPopupMenu(this,
@@ -718,8 +573,6 @@ CaretListener, KeyListener, WindowListener
 		getContentPane().add("Center",splitter);
 
 		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
-		addKeyListener(this);
-		addWindowListener(this);
 		pack();
 		if(view != null)
 		{
@@ -745,8 +598,14 @@ CaretListener, KeyListener, WindowListener
 		}
 		splitter.setDividerLocation(0.0);
 
-		jEdit.addEditorListener(this);
+		bufferListener = new ViewBufferListener();
 
+		jEdit.addEditorListener(editorListener = new ViewEditorListener());
+		textArea.addKeyListener(new ViewKeyListener());
+		textArea.addCaretListener(new ViewCaretListener());
+		addKeyListener(new ViewKeyListener());
+		addWindowListener(new ViewWindowListener());
+		
 		show();
 	}
 
@@ -780,8 +639,8 @@ CaretListener, KeyListener, WindowListener
 		jEdit.setProperty("view.divider",String.valueOf(location));
 		console.getCommandField().save();
 
-		buffer.removeBufferListener(this);
-		jEdit.removeEditorListener(this);
+		buffer.removeBufferListener(bufferListener);
+		jEdit.removeEditorListener(editorListener);
 	}
 
 	// private members
@@ -805,6 +664,8 @@ CaretListener, KeyListener, WindowListener
 	private boolean showTip;
 	private JToolBar toolBar;
 	private EventMulticaster multicaster;
+	private BufferListener bufferListener;
+	private EditorListener editorListener;
 
 	private void updateLineNumber(int dot, boolean force)
 	{
@@ -878,6 +739,136 @@ CaretListener, KeyListener, WindowListener
 		catch(BadLocationException bl)
 		{
 			//bl.printStackTrace();
+		}
+	}
+
+	// event listeners
+	private class ViewBufferListener implements BufferListener
+	{
+		public void bufferMarkersChanged(BufferEvent evt)
+		{
+			updateMarkerMenus();
+		}
+	
+		public void bufferLineSepChanged(BufferEvent evt)
+		{
+			updateLineSepMenu();
+		}
+	
+		public void bufferModeChanged(BufferEvent evt)
+		{
+			updateModeMenu();
+			textArea.repaint();
+		}
+	}
+
+	private class ViewEditorListener extends EditorAdapter
+	{
+		public void bufferCreated(EditorEvent evt)
+		{
+			updateBuffersMenu();
+		}
+	
+		public void bufferClosed(EditorEvent evt)
+		{
+			updateOpenRecentMenu();
+	
+			// XXX: should revert to 1.2 behaviour
+			Buffer[] bufferArray = jEdit.getBuffers();
+			if(bufferArray.length != 0)
+				setBuffer(bufferArray[0]);
+	
+			updateBuffersMenu();
+		}
+	
+		public void bufferDirtyChanged(EditorEvent evt)
+		{
+			updateTitle();
+			updateBuffersMenu();
+		}
+	
+		public void propertiesChanged(EditorEvent evt)
+		{
+			propertiesChanged();
+		}
+	}
+
+	private class ViewCaretListener implements CaretListener
+	{
+		public void caretUpdate(CaretEvent evt)
+		{
+			updateLineNumber(evt.getDot(),false);
+		}
+	}
+
+	private class ViewKeyListener extends KeyAdapter
+	{
+		public void keyPressed(KeyEvent evt)
+		{
+			int keyCode = evt.getKeyCode();
+			int modifiers = evt.getModifiers();
+			if((modifiers & ~InputEvent.SHIFT_MASK) != 0 ||
+				evt.isActionKey() || keyCode == KeyEvent.VK_TAB)
+			{
+				KeyStroke keyStroke = KeyStroke.getKeyStroke(keyCode,
+					modifiers);
+				Object o = currentPrefix.get(keyStroke);
+				if(o == null && currentPrefix != bindings)
+				{
+					getToolkit().beep();
+					currentPrefix = bindings;
+					evt.consume();
+					return;
+				}
+				else if(o instanceof String)
+				{
+					String s = (String)o;
+					int index = s.indexOf('@');
+					String cmd;
+					if(index != -1)
+					{
+						cmd = s.substring(index+1);
+						s = s.substring(0,index);
+					}
+					else
+						cmd = null;
+					Action action = jEdit.getAction(s);
+					if(action == null)
+					{
+						System.out.println("Invalid key"
+							+ " binding: " + s);
+						currentPrefix = bindings;
+						evt.consume();
+						return;
+					}
+					jEdit.getAction(s).actionPerformed(
+						new ActionEvent(this,ActionEvent
+						.ACTION_PERFORMED,cmd));
+					currentPrefix = bindings;
+					evt.consume();
+					return;
+				}
+				else if(o instanceof Hashtable)
+				{
+					currentPrefix = (Hashtable)o;
+					evt.consume();
+					return;
+				}
+			}
+			else if(keyCode != KeyEvent.VK_SHIFT
+				&& keyCode != KeyEvent.VK_CONTROL
+				&& keyCode != KeyEvent.VK_ALT)
+			{
+				currentPrefix = bindings;
+			}
+		}
+	}
+
+	private class ViewWindowListener extends WindowAdapter
+	{
+		public void windowClosing(WindowEvent evt)
+		{
+			jEdit.closeView(View.this);
 		}
 	}
 }

@@ -23,6 +23,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
+import org.gjt.sp.jedit.event.*;
 import org.gjt.sp.jedit.options.*;
 import org.gjt.sp.jedit.*;
 
@@ -65,15 +66,8 @@ implements ActionListener, KeyListener, WindowListener
 		while(enum.hasMoreElements())
 			((OptionPane)enum.nextElement()).save();
 
-		jEdit.propertiesChanged();
-
-		Buffer[] buffers = jEdit.getBuffers();
-		for(int i = 0; i < buffers.length; i++)
-			((Buffer)enum.nextElement()).propertiesChanged();
-		
-		View[] views = jEdit.getViews();
-		for(int i = 0; i < views.length; i++)
-			((View)enum.nextElement()).propertiesChanged();
+		jEdit.fireEditorEvent(new EditorEvent(EditorEvent
+			.PROPERTIES_CHANGED,null,null));
 
 		dispose();
 	}

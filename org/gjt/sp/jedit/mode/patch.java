@@ -26,6 +26,8 @@ public class patch implements Mode
 {
 	public void enter(Buffer buffer) {}
 	public void leave(Buffer buffer) {}
+	public void enterView(View view) {}
+	public void leaveView(View view) {}
 	
 	public boolean indentLine(Buffer buffer, View view, int dot)
 	{

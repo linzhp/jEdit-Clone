@@ -1,5 +1,5 @@
 /*
- * ViewListener.java - View event listener
+ * BufferAdapter.java - Empty buffer listener that can be subclassed
  * Copyright (C) 1999 Slava Pestov
  *
  * This program is free software; you can redistribute it and/or
@@ -22,17 +22,25 @@ package org.gjt.sp.jedit.event;
 import org.gjt.sp.jedit.*;
 
 /**
- * The view event listener interface.
+ * An implementation of BufferListener with all empty methods. It can be
+ * subclassed instead of BufferListener so that empty stubs for unused
+ * methods are not necessary.
  */
-public interface ViewListener extends AbstractEditorListener
+public abstract class BufferAdapter extends AbstractEditorAdapter
+implements BufferListener
 {
 	/**
-	 * Method invoked when a view's current error number changes.
+	 * Method invoked when a marker has been added or removed.
 	 */
-	public void viewCurrentErrorChanged(ViewEvent evt);
+	public void bufferMarkersChanged(BufferEvent evt) {}
 
 	/**
-	 * Method invoked when a view's buffer changes.
+	 * Method invoked when a buffer's line separator has changed.
 	 */
-	public void viewBufferChanged(ViewEvent evt);
+	public void bufferLineSepChanged(BufferEvent evt) {}
+
+	/**
+	 * Method invoked when a buffer's edit mode has changed.
+	 */
+	public void bufferModeChanged(BufferEvent evt) {}
 }

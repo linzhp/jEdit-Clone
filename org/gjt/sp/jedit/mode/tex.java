@@ -71,9 +71,9 @@ public class tex implements Mode
 			buffer.setMode(jEdit.getMode("amstex"));
 	}
 
-	public void leave(Buffer buffer)
-	{
-	}
+	public void leave(Buffer buffer) {}
+	public void enterView(View view) {}
+	public void leaveView(View view) {}
 
 	public boolean indentLine(Buffer buffer, View view, int dot)
 	{

@@ -47,7 +47,7 @@ public class jEdit
 	 * The date when a change was last made to the source code,
 	 * in <code>YYYYMMDD</code> format.
 	 */
-	public static final String BUILD = "19990311";
+	public static final String BUILD = "19990312";
 
 	/**
 	 * AWK regexp syntax.
@@ -232,6 +232,14 @@ public class jEdit
 		recent = new Vector();
 		clipHistory = new Vector();
 		multicaster = new EventMulticaster();
+
+		// Add PROPERTIES_CHANGED listener
+		addEditorListener(new EditorAdapter() {
+			public void propertiesChanged(EditorEvent evt)
+			{
+				propertiesChanged();
+			}
+		});
 		
 		// Determine installation directory
 		jEditHome = System.getProperty("jedit.home");

@@ -129,6 +129,7 @@ public class CompilerError implements EditorListener
 	public void viewCreated(EditorEvent evt) {}
 	public void viewClosed(EditorEvent evt) {}
 	public void bufferDirtyChanged(EditorEvent evt) {}
+	public void propertiesChanged(EditorEvent evt) {}
 	// END EDITOR LISTENER
 
 	// private members

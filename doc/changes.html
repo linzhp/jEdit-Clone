@@ -12,11 +12,9 @@
 <ul>
 <li>org.gjt.sp.jedit.syntax package should be usable on it's own
 <li>Integrate Gonzoo class browser
-<li>New splash screen
-<li>PROPERTIES_CHANGED editor event, triggers jEdit.propertiesChanged(),
-View.propertiesChanged(), Buffer.propertiesChanged()
 <li>Color options panel should be a JTable
 <li><b>HistoryTextField doesn't work well sometimes</b>
+<li><b>Uncomment doesn't work very well</b>
 </ul>
 
 <a name=15pre1>
@@ -27,7 +25,7 @@ View.propertiesChanged(), Buffer.propertiesChanged()
 
 <ul>
 <li>Each view now has it's own console and error list
-<li>Accent converter plugin now accepts German accents as well
+<li>Accent converter plugin now accepts German accents
 <li>Event system added
 </ul>
 
@@ -37,6 +35,11 @@ View.propertiesChanged(), Buffer.propertiesChanged()
 <li>New tool bar icons
 <li>Documentation updates
 <li>API change: jEdit.getBuffers()/getViews()/etc return arrays, not enumerations
+<li>API change: Key and document events aren't automatically forwarded to
+modes anymore, you must manually add listeners now
+<li>API change: enterView()/leaveView() methods added to Mode interface,
+called when a view enters or leaves the mode
+<li>Code cleanups
 </ul>
 
 <h2>Bug Fixes</h2>
@@ -46,6 +49,7 @@ View.propertiesChanged(), Buffer.propertiesChanged()
 code
 <li>Removed CVS temporary files (.#... and .new...)
 <li>Removed unused acu.java file
+<li>Fixed minor bug with the `File-&gt;Line Separator' menu
 </ul>
 
 </body>

@@ -63,14 +63,24 @@ public class EditorEvent extends AbstractEditorEvent
 
 	/**
 	 * The return value of the <code>getID()</code> function when
-	 * a buffer's dirty status has been changed.
+	 * a buffer's dirty status has been changed. This event is fired
+	 * when the buffer is saved, and the first time it is changed
+	 * after a save.
 	 */
 	public static final int BUFFER_DIRTY_CHANGED = EDITOR_FIRST + 4;
 
 	/**
+	 * The return value of the <code>getID()</code> function when
+	 * value of properties that might require settings to be
+	 * reloaded have changed. At the moment, this is fired by
+	 * the Options dialog box only.
+	 */
+	public static final int PROPERTIES_CHANGED = EDITOR_FIRST + 5;
+
+	/**
 	 * The last event id that denotes an editor event.
 	 */
-	public static final int EDITOR_LAST = EDITOR_FIRST + 4;
+	public static final int EDITOR_LAST = EDITOR_FIRST + 5;
 
 	/**
 	 * Creates a new editor event.
@@ -91,7 +101,8 @@ public class EditorEvent extends AbstractEditorEvent
 	}
 
 	/**
-	 * Returns the buffer involved. This is set for all event types.
+	 * Returns the buffer involved. This is set for all event types
+	 * except PROPERTIES_CHANGED.
 	 */
 	public Buffer getBuffer()
 	{
@@ -99,10 +110,10 @@ public class EditorEvent extends AbstractEditorEvent
 	}
 
 	/**
-	 * Returns the view involved. This is set in all cases except
-	 * for the buffers being created before the initial view is
-	 * shown, and those created by the server. Also, this is not
-	 * set for BUFFER_DIRTY_CHANGED events.
+	 * Returns the view involved. This not set for some event
+	 * types, namely BUFFER_DIRTY_CHANGED and PROPERTIES_CHANGED.
+	 * Also, this is not set for BUFFER_CREATED events at
+	 * startup, and BUFFER_CREATED events caused by the server.
 	 */
 	public View getView()
 	{
@@ -138,6 +149,9 @@ public class EditorEvent extends AbstractEditorEvent
 			break;
 		case BUFFER_DIRTY_CHANGED:
 			l.bufferDirtyChanged(this);
+			break;
+		case PROPERTIES_CHANGED:
+			l.propertiesChanged(this);
 			break;
 		default:
 			// shouldn't happen

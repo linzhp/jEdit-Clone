@@ -35,14 +35,8 @@ import org.gjt.sp.jedit.syntax.*;
 
 /**
  * An in-memory copy of an open file.
- *
- * @see jEdit#openFile(View)
- * @see jEdit#openFile(View,String,String,boolean,boolean)
- * @see jEdit#closeBuffer(View)
- * @see jEdit#getBuffers()
  */
 public class Buffer extends PlainDocument
-implements DocumentListener, UndoableEditListener
 {
 	/**
 	 * Size of I/O buffers.
@@ -842,15 +836,6 @@ loop:		for(int i = 0; i < markers.size(); i++)
 		else
 			return 8;
 	}
-
-	/**
-	 * Reloads the tab size setting from the properties.
-	 */
-	public void propertiesChanged()
-	{
-		// reset the color cache
-		colors.clear();
-	}
 	
 	/**
 	 * Saves the caret information.
@@ -905,61 +890,6 @@ loop:		for(int i = 0; i < markers.size(); i++)
 	{
 		multicaster.fire(evt);
 	}
-
-	// event handlers
-
-	// BEGIN UNDO LISTENER
-	public void undoableEditHappened(UndoableEditEvent evt)
-	{
-		if(compoundEdit != null)
-			compoundEdit.addEdit(evt.getEdit());
-		else
-			undo.addEdit(evt.getEdit());
-	}
-	// END UNDO LISTENER
-
-	// BEGIN DOCUMENT LISTENER
-	public void insertUpdate(DocumentEvent evt)
-	{
-		dirty();
-		if(mode instanceof DocumentListener)
-			((DocumentListener)mode).insertUpdate(evt);
-		if(tokenMarker == null)
-			return;
-		DocumentEvent.ElementChange ch = evt.getChange(
-			getDefaultRootElement());
-		if(ch == null)
-			return;
-		Element[] children = ch.getChildrenAdded();
-		if(children == null)
-			return;
-		tokenMarker.insertLines(ch.getIndex(),children.length);
-	}
-
-	public void removeUpdate(DocumentEvent evt)
-	{
-		dirty();
-		if(mode instanceof DocumentListener)
-			((DocumentListener)mode).removeUpdate(evt);
-		if(tokenMarker == null)
-			return;
-		DocumentEvent.ElementChange ch = evt.getChange(
-			getDefaultRootElement());
-		if(ch == null)
-			return;
-		Element[] children = ch.getChildrenRemoved();
-		if(children == null)
-			return;
-		tokenMarker.deleteLines(ch.getIndex(),children.length);
-	}
-
-	public void changedUpdate(DocumentEvent evt)
-	{
-		dirty();
-		if(mode instanceof DocumentListener)
-			((DocumentListener)mode).changedUpdate(evt);
-	}
-	// END DOCUMENT LISTENER
 
 	/**
 	 * Returns a string representation of this buffer.
@@ -1016,7 +946,7 @@ loop:		for(int i = 0; i < markers.size(); i++)
 		markers = new Vector();
 		colors = new ColorList();
 		multicaster = new EventMulticaster();
-		addDocumentListener(this);
+		addDocumentListener(new BufferDocumentListener());
 		setPath();
 		if(!newFile)
 		{
@@ -1035,8 +965,8 @@ loop:		for(int i = 0; i < markers.size(); i++)
 			setMode(jEdit.getMode(userMode));
 		else
 			setMode();
-		addUndoableEditListener(this);
-		propertiesChanged();
+		addUndoableEditListener(new BufferUndoableEditListener());
+		jEdit.addEditorListener(new BufferEditorListener());
 		init = false;
 	}
 	
@@ -1559,6 +1489,67 @@ loop:		for(int i = 0; i < markers.size(); i++)
 				return null;
 			put(key,color);
 			return color;
+		}
+	}
+
+	// event handlers
+	private class BufferEditorListener
+	extends EditorAdapter
+	{
+		public void propertiesChanged(EditorEvent evt)
+		{
+			getColors().clear();
+		}
+	}
+
+	private class BufferUndoableEditListener
+	implements UndoableEditListener
+	{
+		public void undoableEditHappened(UndoableEditEvent evt)
+		{
+			if(compoundEdit != null)
+				compoundEdit.addEdit(evt.getEdit());
+			else
+				getUndo().addEdit(evt.getEdit());
+		}
+	}
+
+	private class BufferDocumentListener
+	implements DocumentListener
+	{
+		public void insertUpdate(DocumentEvent evt)
+		{
+			dirty();
+			if(tokenMarker == null)
+				return;
+			DocumentEvent.ElementChange ch = evt.getChange(
+				getDefaultRootElement());
+			if(ch == null)
+				return;
+			Element[] children = ch.getChildrenAdded();
+			if(children == null)
+				return;
+			tokenMarker.insertLines(ch.getIndex(),children.length);
+		}
+	
+		public void removeUpdate(DocumentEvent evt)
+		{
+			dirty();
+			if(tokenMarker == null)
+				return;
+			DocumentEvent.ElementChange ch = evt.getChange(
+				getDefaultRootElement());
+			if(ch == null)
+				return;
+			Element[] children = ch.getChildrenRemoved();
+			if(children == null)
+				return;
+			tokenMarker.deleteLines(ch.getIndex(),children.length);
+		}
+	
+		public void changedUpdate(DocumentEvent evt)
+		{
+			dirty();
 		}
 	}
 }

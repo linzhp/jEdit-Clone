@@ -1,5 +1,5 @@
 /*
- * EditorListener.java - Editor event listener
+ * EditorAdapter.java - Empty editor event listener that can be subclassed
  * Copyright (C) 1999 Slava Pestov
  *
  * This program is free software; you can redistribute it and/or
@@ -22,41 +22,44 @@ package org.gjt.sp.jedit.event;
 import org.gjt.sp.jedit.*;
 
 /**
- * The editor event listener interface.
+ * An implementation of EditorListener with all empty methods. It can be
+ * subclassed instead of EditorListener so that empty stubs for unused
+ * methods are not necessary.
  */
-public interface EditorListener extends AbstractEditorListener
+public abstract class EditorAdapter extends AbstractEditorAdapter
+implements EditorListener
 {
 	/**
 	 * Method invoked when a buffer has been created.
 	 */
-	public void bufferCreated(EditorEvent evt);
+	public void bufferCreated(EditorEvent evt) {}
 
 	/**
 	 * Method invoked when a buffer has been closed.
 	 */
-	public void bufferClosed(EditorEvent evt);
+	public void bufferClosed(EditorEvent evt) {}
 
 	/**
 	 * Method invoked when a view has been created.
 	 */
-	public void viewCreated(EditorEvent evt);
+	public void viewCreated(EditorEvent evt) {}
 
 	/**
 	 * Method invoked when a view has been closed.
 	 */
-	public void viewClosed(EditorEvent evt);
+	public void viewClosed(EditorEvent evt) {}
 
 	/**
 	 * Method invoked when a buffer's dirty flag changes.
 	 * This is invoked when a buffer is saved, or changed
 	 * for the first time since the last save.
 	 */
-	public void bufferDirtyChanged(EditorEvent evt);
+	public void bufferDirtyChanged(EditorEvent evt) {}
 
 	/**
 	 * Method invoked when the value of properties that
 	 * might require settings to be reloaded are changed.
 	 * This is invoked by the Options dialog box.
 	 */
-	public void propertiesChanged(EditorEvent evt);
+	public void propertiesChanged(EditorEvent evt) {}
 }

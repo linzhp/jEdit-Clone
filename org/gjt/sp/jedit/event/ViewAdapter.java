@@ -1,5 +1,5 @@
 /*
- * ViewListener.java - View event listener
+ * ViewAdapter.java - Empty view event listener that can be subclassed
  * Copyright (C) 1999 Slava Pestov
  *
  * This program is free software; you can redistribute it and/or
@@ -22,17 +22,20 @@ package org.gjt.sp.jedit.event;
 import org.gjt.sp.jedit.*;
 
 /**
- * The view event listener interface.
+ * An implementation of ViewListener with all empty methods. It can be
+ * subclassed instead of ViewListener so that empty stubs for unused
+ * methods are not necessary.
  */
-public interface ViewListener extends AbstractEditorListener
+public abstract class ViewAdapter extends AbstractEditorAdapter
+implements ViewListener
 {
 	/**
 	 * Method invoked when a view's current error number changes.
 	 */
-	public void viewCurrentErrorChanged(ViewEvent evt);
+	public void viewCurrentErrorChanged(ViewEvent evt) {}
 
 	/**
 	 * Method invoked when a view's buffer changes.
 	 */
-	public void viewBufferChanged(ViewEvent evt);
+	public void viewBufferChanged(ViewEvent evt) {}
 }

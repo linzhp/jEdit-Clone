@@ -20,6 +20,7 @@
 package org.gjt.sp.jedit.gui;
 
 import javax.swing.*;
+
 import javax.swing.event.*;
 import javax.swing.text.Element;
 import java.awt.*;
@@ -124,7 +125,8 @@ implements ActionListener, ListSelectionListener
 	public void setCurrentError(int error)
 	{
 		currentError = error;
-		errorList.setSelectedIndex(error);
+		// XXX: causes valueChanged() to be called twice
+		//errorList.setSelectedIndex(error);
 
 		// Fire event
 		view.fireViewEvent(new ViewEvent(ViewEvent.CURRENT_ERROR_CHANGED,
@@ -156,7 +158,6 @@ implements ActionListener, ListSelectionListener
 
 	public void valueChanged(ListSelectionEvent evt)
 	{
-		System.out.println("HELLO");
 		if(errorList.isSelectionEmpty())
 			return;
 
