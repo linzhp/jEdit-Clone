@@ -1,0 +1,94 @@
+<html>
+<body>
+<h1>What's New In jEdit 1.5</h1>
+
+<ul>
+<li><a href=#ui>User Interface Improvements</a>
+<li><a href=#buffer>Buffer Options Dialog Box</a>
+<li><a href=#plugin>New Plugin Loader and API</a>
+<li><a href=#syntax>Modular Syntax Colorizing Package</a>
+<li><a href=#bugs>Bug Fixes</a>
+</ul>
+
+<a name=ui>
+<h1>User Interface Improvements</h1>
+</a>
+
+<ul>
+<li>
+The `console' (component for invoking external commands) is no longer a
+separate window, instead each view has one built in. The
+`Tools-&gt;Show/Hide Console' command can be used to toggle it's visibility.
+
+<li>
+The history text field component has been changed to display it's choices
+as a combo box, instead of the non-intutive arrow key system previous
+versions used.
+
+<li>
+In previous versions, `Search-&gt;Find Selection' searched for the
+selected string immediately. Now, it displays a new search &amp; replace
+dialog, with the selected string already entered.
+
+<li>
+URLs entered in the console are now opened in the editor (for example,
+try entering file:C:\autoexec.bat).
+
+<li>
+The options dialog box has a new color settings pane.
+
+<li>
+Menu items and the tool bar have a new look.
+
+</ul>
+
+<a name=buffer>
+<h1>Buffer Options Dialog Box</h1>
+</a>
+
+A new `Tools-&gt;Buffer Options' command displays a dialog box for setting
+the tab size and soft tabs setting on a per-buffer basis. The edit mode
+and line separator can also be set in that dialog.
+
+<a name=plugin>
+<h1>New Plugin Loader and API</h1>
+</a>
+
+A new interface is provided that plugins must implement. It allows for
+greater flexibility, and provides hooks for future features such as
+enabling/disabling plugins on the fly and getting information about
+plugins at runtime.<p>
+
+The class loader has been completely overhauled. It is now much faster
+because it only loads classes as they're needed - previous versions loaded
+all classes in one go.
+
+<a name=syntax>
+<h1>Modular Syntax Colorizing Package</h1>
+</a>
+
+The syntax colorizing code is now completely modular and independent of
+jEdit, which means that other Java applications can use it to get
+syntax colorizing capabilities.
+
+<a name=bugs>
+<h1>Bug Fixes</h1>
+</a>
+
+jEdit 1.5 fixes the following bugs present in 1.4:
+
+<ul>
+<li>The current file wasn't restored properly by the session management
+code
+<li>Print command would sometimes print stuff other than the file name in
+page headers
+<li>`.cmd' files are no longer edited in batch file mode because they
+have a different syntax
+<li>Batch file token marker colorized stuff like C:\bob\fred.exe incorrectly
+<li>Invalid file names in compiler errors caused problems
+<li>Reload command didn't clear the dirty flag and could throw an array
+index out of bounds exception
+</ul>
+
+</body>
+</html>
