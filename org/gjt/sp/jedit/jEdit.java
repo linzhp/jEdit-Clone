@@ -42,7 +42,7 @@ public class jEdit
 	 */
 	public static String getVersion()
 	{
-		return "1.6.1";
+		return "1.7pre1";
 	}
 
 	/**
@@ -52,7 +52,7 @@ public class jEdit
 	public static String getBuild()
 	{
 		// (major) (minor) (<99 = preX, 99 = final) (bug fix)
-		return "01.06.99.01";
+		return "01.07.01.00";
 	}
 
 	/**
@@ -1526,6 +1526,9 @@ public class jEdit
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.103  1999/05/26 04:46:03  sp
+ * Minor API change, soft tabs fixed ,1.7pre1
+ *
  * Revision 1.102  1999/05/22 08:33:53  sp
  * FAQ updates, mode selection tweak, patch mode update, javadoc updates, JDK 1.1.8 fix
  *

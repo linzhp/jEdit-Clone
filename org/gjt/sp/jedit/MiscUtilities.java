@@ -182,14 +182,12 @@ loop:		for(int i = 0; i < str.length(); i++)
 	/**
 	 * Creates a string of white space with the specified length.
 	 * @param len The length
-	 * @param tabSize The tab size
-	 * @param noTabs True if tabs should not be used
+	 * @param tabSize The tab size, or 0 if tabs are not to be used
 	 */
-	public static String createWhiteSpace(int len, int tabSize,
-		boolean noTabs)
+	public static String createWhiteSpace(int len, int tabSize)
 	{
 		StringBuffer buf = new StringBuffer();
-		if(noTabs)
+		if(tabSize == 0)
 		{
 			while(len-- > 0)
 				buf.append(' ');
@@ -265,6 +263,9 @@ loop:		for(int i = 0; i < str.length(); i++)
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.10  1999/05/26 04:46:03  sp
+ * Minor API change, soft tabs fixed ,1.7pre1
+ *
  * Revision 1.9  1999/04/24 01:55:28  sp
  * MiscUtilities.constructPath() bug fixed, event system bug(s) fix
  *

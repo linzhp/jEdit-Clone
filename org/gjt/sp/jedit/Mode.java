@@ -242,7 +242,7 @@ public abstract class Mode
 			// Do it
 			buffer.remove(start,lineWidth);
 			buffer.insertString(start,MiscUtilities.createWhiteSpace(
-				prevLineIndent,tabSize,noTabs),null);
+				prevLineIndent,(noTabs ? 0 : tabSize)),null);
 			return true;
 		}
 		catch(BadLocationException bl)
@@ -287,6 +287,9 @@ public abstract class Mode
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.11  1999/05/26 04:46:03  sp
+ * Minor API change, soft tabs fixed ,1.7pre1
+ *
  * Revision 1.10  1999/05/22 08:33:53  sp
  * FAQ updates, mode selection tweak, patch mode update, javadoc updates, JDK 1.1.8 fix
  *

@@ -19,6 +19,8 @@
 
 package org.gjt.sp.jedit.actions;
 
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Element;
 import java.awt.event.ActionEvent;
 import org.gjt.sp.jedit.gui.JEditTextArea;
 import org.gjt.sp.jedit.*;
@@ -47,14 +49,46 @@ public class indent_on_tab extends EditAction
                 }
                 if("yes".equals(buffer.getProperty("noTabs")))
                 {
-                        StringBuffer buf = new StringBuffer();
-                        for(int i = buffer.getTabSize(); i > 0; i--)
-                        {
-                                buf.append(' ');
-                        }
-                        textArea.replaceSelection(buf.toString());
+			Element map = buffer.getDefaultRootElement();
+			Element lineElement = map.getElement(map.getElementIndex(
+				selStart));
+
+			try
+			{
+				String line = buffer.getText(lineElement
+					.getStartOffset(),selStart -
+					lineElement.getStartOffset());
+
+				textArea.replaceSelection(createSoftTab(line,
+					buffer.getTabSize()));
+			}
+			catch(BadLocationException bl)
+			{
+				bl.printStackTrace();
+			}
                 }
                 else
                         textArea.replaceSelection("\t");
         }
+
+	private String createSoftTab(String line, int tabSize)
+	{
+		int pos = 0;
+
+		for(int i = 0; i < line.length(); i++)
+		{
+			switch(line.charAt(pos))
+			{
+			case '\t':
+				pos = 0;
+				break;
+			default:
+				if(++pos >= tabSize)
+					pos = 0;
+				break;
+			}
+		}
+
+		return MiscUtilities.createWhiteSpace(tabSize - pos,0);
+	}
 }

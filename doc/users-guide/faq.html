@@ -8,11 +8,13 @@
 <li><a href=#cd>Why can't I change directories in the console?</a>
 <li><a href=#wincommands>Why do certain commands not work in the console on Windows?</a>
 <li><a href=#memory>Why do I get OutOfMemoryErrors?</a>
+<li><a href=#noswing>Why do I get a ClassDefNotFoundError on startup?</a>
 <li><a href=#exithang>Why does jEdit hang when exiting?</a>
 <li><a href=#bigfile>Why does the display mess up when editing large files?</a>
 <li><a href=#overwrite>Why doesn't overwrite mode work?</a>
 <li><a href=#altgr>Why doesn't the AltGr key work?</a>
 <li><a href=#www>Why doesn't the `Open in WWW Browser' command work?</a>
+<li><a href=#homeend>Why don't C+HOME/C+END work properly?</a>
 <li><a href=#alt>Why don't the Alt key mnemonics work?</a>
 <li><a href=#slow>Why is jEdit so slow?</a>
 </ul>
@@ -88,6 +90,17 @@ Where <i>nn</i> is the size of the Java heap, in megabytes. The
 default is 32 Mb - if you like to open lots of files at once, 64
 might be better.<p>
 
+<a name=noswing>
+<h1>Why do I get a ClassDefNotFoundError on startup?</h1>
+</a>
+
+If you get a ClassDefNotFoundError: org.gjt.sp.jedit.gui.SplashScreen when
+jEdit is starting up, the most likely problem is that you do not have
+Swing installed properly. For jEdit to work, Swing 1.1beta3 or later
+must be installed, and it's swingall.jar file must be in the CLASSPATH.<p>
+
+Swing can be downloaded from &lt;java.sun.com/products/jfc/index.html&gt;.
+
 <a name=exithang>
 <h1>Why does jEdit hang when exiting?</h1>
 </a>
@@ -147,6 +160,15 @@ executable being in the PATH.<p>
 On the MacOS, the `Open in WWW Browser' feature does not work at
 all. If anybody can confirm otherwise, I will be happy to post
 information here.
+
+<a name=homeend>
+<h1>Why don't C+HOME/C+END work properly?</h1>
+</a>
+
+Swing versions earlier than 1.1.1beta2 had broken C+HOME/C+END actions.
+Upgrade to a later Swing release.<p>
+
+Swing can be downloaded from &lt;java.sun.com/products/jfc/index.html&gt;.
 
 <a name=alt>
 <h1>Why don't the Alt key mnemonics work?</h1>

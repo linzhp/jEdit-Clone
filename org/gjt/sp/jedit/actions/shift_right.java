@@ -67,7 +67,7 @@ public class shift_right extends EditAction
 				buffer.remove(lineStart,whiteSpace);
 				buffer.insertString(lineStart,MiscUtilities
 					.createWhiteSpace(whiteSpaceWidth,
-					tabSize,noTabs),null);
+					(noTabs ? 0 : tabSize)),null);
 			}
 		}
 		catch(BadLocationException bl)
