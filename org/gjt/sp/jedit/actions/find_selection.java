@@ -20,7 +20,7 @@
 package org.gjt.sp.jedit.actions;
 
 import java.awt.event.ActionEvent;
-import org.gjt.sp.jedit.gui.SearchAndReplace;
+import org.gjt.sp.jedit.gui.SearchDialog;
 import org.gjt.sp.jedit.*;
 
 public class find_selection extends EditAction
@@ -34,6 +34,6 @@ public class find_selection extends EditAction
 	{
 		View view = getView(evt);
 		Buffer buffer = view.getBuffer();
-		new SearchAndReplace(view,view.getTextArea().getSelectedText());
+		new SearchDialog(view,view.getTextArea().getSelectedText());
 	}
 }

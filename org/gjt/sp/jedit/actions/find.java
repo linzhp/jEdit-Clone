@@ -20,7 +20,7 @@
 package org.gjt.sp.jedit.actions;
 
 import java.awt.event.ActionEvent;
-import org.gjt.sp.jedit.gui.SearchAndReplace;
+import org.gjt.sp.jedit.gui.SearchDialog;
 import org.gjt.sp.jedit.*;
 
 public class find extends EditAction
@@ -32,6 +32,6 @@ public class find extends EditAction
 	
 	public void actionPerformed(ActionEvent evt)
 	{
-		new SearchAndReplace(getView(evt),null);
+		new SearchDialog(getView(evt),null);
 	}
 }

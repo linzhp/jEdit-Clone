@@ -21,6 +21,7 @@ package org.gjt.sp.jedit.actions;
 
 import javax.swing.text.BadLocationException;
 import java.awt.event.ActionEvent;
+import org.gjt.sp.jedit.search.SearchAndReplace;
 import org.gjt.sp.jedit.*;
 
 public class replace_all extends EditAction
@@ -33,8 +34,7 @@ public class replace_all extends EditAction
 	public void actionPerformed(ActionEvent evt)
 	{
 		View view = getView(evt);
-		if(!view.getBuffer().replaceAll(view,0,view.getBuffer()
-			.getLength()))
-			view.getToolkit().beep();
+		Buffer buffer = view.getBuffer();
+		SearchAndReplace.replace(view,buffer,0,buffer.getLength());
 	}
 }

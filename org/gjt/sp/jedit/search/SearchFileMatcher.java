@@ -19,7 +19,7 @@
 
 package org.gjt.sp.jedit.search;
 
-import org.gjt.sp.jedit.Buffer;
+import org.gjt.sp.jedit.*;
 
 /**
  * An abstract interface for matching files.
@@ -36,7 +36,7 @@ public interface SearchFileMatcher
 	 * @param view The view that invoked this search &amp; replace
 	 * operation.
 	 */
-	public Buffer getNextBuffer();
+	public Buffer getNextBuffer(View view);
 
 	/**
 	 * Returns true if the end if the buffer list has been reached,
@@ -49,6 +49,9 @@ public interface SearchFileMatcher
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.2  1999/05/29 08:06:56  sp
+ * Search and replace overhaul
+ *
  * Revision 1.1  1999/05/27 09:55:21  sp
  * Search and replace overhaul started
  *

@@ -20,6 +20,7 @@
 package org.gjt.sp.jedit.actions;
 
 import java.awt.event.ActionEvent;
+import org.gjt.sp.jedit.search.SearchAndReplace;
 import org.gjt.sp.jedit.*;
 
 public class replace_in_selection extends EditAction
@@ -32,16 +33,7 @@ public class replace_in_selection extends EditAction
 	public void actionPerformed(ActionEvent evt)
 	{
 		View view = getView(evt);
-		int selStart = view.getTextArea().getSelectionStart();
-		int selEnd = view.getTextArea().getSelectionEnd();
-		if(view.getBuffer().replaceAll(view,selStart,selEnd))
-		{
-			/* workaround for weird Position.Bias behaviour */
-			view.getTextArea().setSelectionStart(selStart);
-		}
-		else
-		{
-			view.getToolkit().beep();
-		}
+		Buffer buffer = view.getBuffer();
+		SearchAndReplace.replace(view,buffer);
 	}
 }

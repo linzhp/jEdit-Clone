@@ -27,26 +27,18 @@ package org.gjt.sp.jedit.search;
 public interface SearchMatcher
 {
 	/**
-	 * Returns true if the specified text completely matches the text
-	 * within this matcher.
-	 * @param text The text to match
-	 */
-	public boolean completeMatch(String text);
-
-	/**
 	 * Returns the offset of the first match of the specified text
 	 * within this matcher.
-	 * @param start The offset within this matcher from which to
-	 * start searching from
+	 * @param text The text to search in
 	 * @return an array where the first element is the start offset
 	 * of the match, and the second element is the end offset of
 	 * the match
 	 */
-	public int[] getMatch(int start, String text);
+	public int[] nextMatch(String text);
 
 	/**
-	 * Returns the specified text, with any substitution within this
-	 * matcher performed.
+	 * Returns the specified text, with any substitution specified
+	 * within this matcher performed.
 	 * @param text The text
 	 */
 	public String substitute(String text);
@@ -55,6 +47,9 @@ public interface SearchMatcher
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.2  1999/05/29 08:06:56  sp
+ * Search and replace overhaul
+ *
  * Revision 1.1  1999/05/27 09:55:21  sp
  * Search and replace overhaul started
  *

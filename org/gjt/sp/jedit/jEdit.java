@@ -31,6 +31,7 @@ import java.util.zip.*;
 import java.util.*;
 import org.gjt.sp.jedit.event.*;
 import org.gjt.sp.jedit.gui.*;
+import org.gjt.sp.jedit.search.SearchAndReplace;
 
 /**
  * The main class of the jEdit text editor.
@@ -192,6 +193,7 @@ public class jEdit
 		initRecent();
 		if(historyFile != null)
 			HistoryModel.loadHistory(historyFile);
+		SearchAndReplace.load();
 
 		// Start plugins
 		JARClassLoader.initPlugins();
@@ -857,6 +859,9 @@ public class jEdit
 		// Save the history lists
 		HistoryModel.saveHistory(historyFile);
 
+		// Save search and replace state
+		SearchAndReplace.save();
+
 		// Write the user properties file
 		if(usrProps != null)
 		{
@@ -1092,7 +1097,6 @@ public class jEdit
 		addAction(new org.gjt.sp.jedit.actions.print());
 		addAction(new org.gjt.sp.jedit.actions.redo());
 		addAction(new org.gjt.sp.jedit.actions.reload());
-		addAction(new org.gjt.sp.jedit.actions.replace());
 		addAction(new org.gjt.sp.jedit.actions.replace_all());
 		addAction(new org.gjt.sp.jedit.actions.replace_in_selection());
 		addAction(new org.gjt.sp.jedit.actions.replace_next());
@@ -1524,6 +1528,9 @@ public class jEdit
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.107  1999/05/29 08:06:56  sp
+ * Search and replace overhaul
+ *
  * Revision 1.106  1999/05/27 03:09:22  sp
  * Console unbundled
  *
@@ -1553,8 +1560,5 @@ public class jEdit
  *
  * Revision 1.97  1999/05/08 06:37:21  sp
  * jEdit.VERSION/BUILD becomes jEdit.getVersion()/getBuild(), plugin dependencies
- *
- * Revision 1.96  1999/05/08 00:13:00  sp
- * Splash screen change, minor documentation update, toolbar API fix
  *
  */

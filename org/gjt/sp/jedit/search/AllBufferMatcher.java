@@ -51,7 +51,7 @@ public class AllBufferMatcher implements SearchFileMatcher
 				}
 				else
 				{
-					lastBuffer == false;
+					lastBuffer = false;
 					i++;
 				}
 				return buffers[i];
@@ -79,6 +79,9 @@ public class AllBufferMatcher implements SearchFileMatcher
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.2  1999/05/29 08:06:56  sp
+ * Search and replace overhaul
+ *
  * Revision 1.1  1999/05/27 09:55:21  sp
  * Search and replace overhaul started
  *

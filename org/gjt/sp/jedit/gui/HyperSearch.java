@@ -27,7 +27,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.Vector;
 import org.gjt.sp.jedit.event.*;
-import org.gjt.sp.jedit.gui.JEditTextArea;
+import org.gjt.sp.jedit.search.*;
 import org.gjt.sp.jedit.jEdit;
 import org.gjt.sp.jedit.Buffer;
 import org.gjt.sp.jedit.GUIUtilities;
@@ -63,7 +63,7 @@ public class HyperSearch extends JDialog
 			"on".equals(jEdit.getProperty("search.ignoreCase.toggle")));
 		panel.add(ignoreCase);
 		panel.add(new JLabel(jEdit.getProperty("search.regexp")));
-		regexpSyntax = new JComboBox(MiscUtilities.SYNTAX_LIST);
+		regexpSyntax = new JComboBox(RESearchMatcher.SYNTAX_LIST);
 		regexpSyntax.setSelectedItem(jEdit.getProperty("search"
 			+ ".regexp.value"));
 		panel.add(regexpSyntax);
@@ -103,11 +103,9 @@ public class HyperSearch extends JDialog
 	public void save()
 	{
 		find.addCurrentToHistory();
-		jEdit.setProperty("search.find.value",find.getText());
-		jEdit.setProperty("search.ignoreCase.toggle",ignoreCase
-			.getModel().isSelected() ? "on" : "off");
-		jEdit.setProperty("search.regexp.value",(String)regexpSyntax
-			.getSelectedItem());
+		SearchAndReplace.setSearchString(find.getText());
+		SearchAndReplace.setIgnoreCase(ignoreCase.getModel().isSelected());
+		SearchAndReplace.setSyntax((String)regexpSyntax.getSelectedItem());
 		GUIUtilities.saveGeometry(this,"hypersearch");
 	}
 	
@@ -137,7 +135,13 @@ public class HyperSearch extends JDialog
 			buffer = view.getBuffer();
 			int tabSize = buffer.getTabSize();
 			Vector data = new Vector();
-			RE regexp = MiscUtilities.getRE();
+			SearchMatcher matcher = SearchAndReplace
+				.getSearchMatcher();
+			if(matcher == null)
+			{
+				view.getToolkit().beep();
+				return;
+			}
 			Element map = buffer.getDefaultRootElement();
 			int lines = map.getElementCount();
 			for(int i = 1; i <= lines; i++)
@@ -147,14 +151,13 @@ public class HyperSearch extends JDialog
 				String lineString = buffer.getText(start,
 					lineElement.getEndOffset() - start
 					- 1);
-				REMatch match = regexp.getMatch(lineString);
+				int[] match = matcher.nextMatch(lineString);
 				if(match != null)
 				{
 					data.addElement(i + ":"
 						+ lineString);
 					positions.addElement(buffer
-						.createPosition(start + match
-						.getStartIndex()));
+						.createPosition(start + match[0]));
 				}
 			}
 			if(data.isEmpty())
@@ -166,7 +169,7 @@ public class HyperSearch extends JDialog
 			Object[] args = { e.getMessage() };
 			if(args[0] == null)
 				args[0] = e.toString();
-			GUIUtilities.error(view,"reerror",args);
+			GUIUtilities.error(view,"searcherror",args);
 		}
 	}
 
@@ -243,6 +246,9 @@ public class HyperSearch extends JDialog
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.31  1999/05/29 08:06:56  sp
+ * Search and replace overhaul
+ *
  * Revision 1.30  1999/05/09 03:50:17  sp
  * HistoryTextField is now a text field again
  *

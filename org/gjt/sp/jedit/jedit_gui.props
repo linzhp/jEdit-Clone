@@ -243,9 +243,8 @@ search=find \
        find-next \
        find-selection \
        - \
-       replace \
-       replace-next \
        replace-in-selection \
+       replace-next \
        replace-all \
        - \
        hypersearch \
@@ -260,7 +259,6 @@ search.label=$Search
 find.label=$Find...
 find-next.label=Fin$d Next
 find-selection.label=F$ind Selection...
-replace.label=$Replace
 replace-next.label=Replace & Find Ne$xt
 replace-in-selection.label=Replace in Selecti$on
 replace-all.label=Replace $All
@@ -436,10 +434,10 @@ hypersearch.find=Search For:\
 hypersearch.findBtn=Find All
 hypersearch.ignoreCase=Ignore Case
 
-# Invalid regexp dialog
-reerror.title=Invalid Regular Expression
+# Search and replace error dialog
+searcherror.title=Search and Replace Error
 # {0} - error message
-reerror.message=The regular expression is invalid. ({0})
+searcherror.message=An error occured while performing this operation. ({0})
 
 # Paste previous dialog
 pasteprev.title=Paste Previous

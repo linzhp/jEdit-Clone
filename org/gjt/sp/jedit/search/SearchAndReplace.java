@@ -1,5 +1,5 @@
 /*
- * SearchAndReplace.java - Search and replace manager
+ * SearchAndReplace.java - Search and replace
  * Copyright (C) 1999 Slava Pestov
  *
  * This program is free software; you can redistribute it and/or
@@ -19,58 +19,316 @@
 
 package org.gjt.sp.jedit.search;
 
+import javax.swing.text.Element;
+import javax.swing.JOptionPane;
+import org.gjt.sp.jedit.gui.JEditTextArea;
+import org.gjt.sp.jedit.*;
+
 /**
- * The main class of the jEdit search and replace system.
- * @author Slava Pestov
- * @version $Id$
+ * Class that implements regular expression and literal search within
+ * jEdit buffers.
  */
 public class SearchAndReplace
 {
 	/**
-	 * Returns the string matcher.
+	 * Literal search regexp syntax
 	 */
-	public static SearchMatcher getMatcher()
+	public static final String NONE = "none";
+
+	/**
+	 * Sets the current search string.
+	 * @param search The new search string
+	 */
+	public static void setSearchString(String search)
 	{
-		return matcher;
+		SearchAndReplace.search = search;
+		matcher = null;
 	}
 
 	/**
-	 * Sets the string matcher.
-	 * @param matcher The new matcher
+	 * Returns the current search string.
 	 */
-	public static void setMatcher(SearchMatcher matcher)
+	public static String getSearchString()
 	{
-		SearchAndReplace.matcher = matcher;
+		return search;
 	}
 
 	/**
-	 * Returns the file matcher.
+	 * Sets the current replacement string.
+	 * @param search The new replacement string
 	 */
-	public static SearchFileMatcher getFileMatcher()
+	public static void setReplaceString(String replace)
 	{
-		return fileMatcher;
+		SearchAndReplace.replace = replace;
+		matcher = null;
 	}
 
 	/**
-	 * Sets the file matcher.
-	 * @param fileMatcher The file matcher
+	 * Returns the current replacement string.
 	 */
-	public static void setFileMatcher(SearchFileMatcher fileMatcher)
+	public static String getReplaceString()
 	{
-		SearchAndReplace.fileMatcher = fileMatcher;
+		return replace;
 	}
 
+	/**
+	 * Sets the ignore case flag.
+	 * @param ignoreCase True if searches should be case insensitive,
+	 * false otherwise
+	 */
+	public static void setIgnoreCase(boolean ignoreCase)
+	{
+		SearchAndReplace.ignoreCase = ignoreCase;
+		matcher = null;
+	}
+
+	/**
+	 * Returns the state of the ignore case flag.
+	 * @return True if searches should be case insensitive,
+	 * false otherwise
+	 */
+	public static boolean getIgnoreCase()
+	{
+		return ignoreCase;
+	}
+
+	/**
+	 * Sets the regular expression syntax.
+	 * @param syntax The regular expression syntax, or null if a literal
+	 * search is to be performed
+	 */
+	public static void setSyntax(String syntax)
+	{
+		SearchAndReplace.syntax = syntax;
+		matcher = null;
+	}
+
+	/**
+	 * Returns the regular expression syntax.
+	 * @return The regular expression syntax, or null if literal
+	 * searches are to be performed
+	 */
+	public static String getSyntax()
+	{
+		return syntax;
+	}
+
+	/**
+	 * Returns the current <code>SearchMatcher</code>.
+	 */
+	public static SearchMatcher getSearchMatcher()
+	{
+		if(matcher != null)
+			return matcher;
+
+		if(search == null || "".equals(search))
+			return null;
+
+		if(syntax == null || NONE.equals(syntax))
+			return new LiteralSearchMatcher(search,replace,ignoreCase);
+		else
+			return new RESearchMatcher(search,replace,ignoreCase,syntax);
+	}
+
+	/**
+	 * Finds the next instance of the search string in this buffer,
+	 * starting at the end of the selected text, or the caret position
+	 * if nothing is selected.
+	 * @param view The view
+	 * @param buffer The buffer
+	 * @param done For internal use. False if a `keep searching'
+	 * dialog should be shown if no more matches have been found.
+	 */
+	public static boolean find(View view, Buffer buffer, boolean done)
+	{
+		return find(view,buffer,view.getTextArea().getSelectionEnd(),done);
+	}
+
+	/**
+	 * Finds the next instance of the search string in the specified buffer.
+	 * @param view The view
+	 * @param buffer The buffer
+	 * @param start Location where to start the search
+	 * @param done For internal use. False if a `keep searching'
+	 * dialog should be shown if no more matches have been found.
+	 */
+	public static boolean find(View view, Buffer buffer, int start, boolean done)
+	{
+		try
+		{
+			SearchMatcher matcher = getSearchMatcher();
+			if(matcher == null)
+			{
+				view.getToolkit().beep();
+				return false;
+			}
+
+			String text = buffer.getText(start,
+				buffer.getLength() - start);
+			int[] match = matcher.nextMatch(text);
+			if(match != null)
+			{
+				view.getTextArea().select(start + match[0],
+					start + match[1]);
+				return true;
+			}
+			if(done)
+			{
+				view.getToolkit().beep();
+				return false;
+			}
+
+			int result = JOptionPane.showConfirmDialog(view,
+				jEdit.getProperty("keepsearching.message"),
+				jEdit.getProperty("keepsearching.title"),
+				JOptionPane.YES_NO_OPTION,
+				JOptionPane.QUESTION_MESSAGE);
+			if(result == JOptionPane.YES_OPTION)
+				return find(view,buffer,0,true);
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+			Object[] args = { e.getMessage() };
+			if(args[0] == null)
+				args[0] = e.toString();
+			GUIUtilities.error(view,"searcherror",args);
+		}
+		return false;
+	}
+
+	/**
+	 * Replaces the current selection with the replacement string.
+	 * @param view The view
+	 * @param buffer The buffer
+	 * @return True if the operation was successful, false otherwise
+	 */
+	public static boolean replace(View view, Buffer buffer)
+	{
+		JEditTextArea textArea = view.getTextArea();
+		int selStart = textArea.getSelectionStart();
+		boolean retVal = replace(view,buffer,selStart,
+			textArea.getSelectionEnd());
+		textArea.setSelectionStart(selStart);
+		return retVal;
+	}
+
+	/**
+	 * Replaces all occurances of the search string with the replacement
+	 * string.
+	 * @param view The view
+	 * @param buffer The buffer
+	 * @param start The index where to start the search
+	 * @param end The end offset of the search
+	 * @return True if the replace operation was successful, false
+	 * if no matches were found
+	 */
+	public static boolean replace(View view, Buffer buffer,
+		int start, int end)
+	{
+		if(!view.getTextArea().isEditable())
+		{
+			view.getToolkit().beep();
+			return false;
+		}
+		boolean found = false;
+		buffer.beginCompoundEdit();
+		try
+		{
+			SearchMatcher matcher = getSearchMatcher();
+			if(matcher == null)
+			{
+				view.getToolkit().beep();
+				return false;
+			}
+
+			int[] match;
+
+			Element map = buffer.getDefaultRootElement();
+			int startLine = map.getElementIndex(start);
+			int endLine = map.getElementIndex(end);
+
+			for(int i = startLine; i <= endLine; i++)
+			{
+				Element lineElement = map.getElement(i);
+				int lineStart;
+				int lineEnd;
+
+				if(i == startLine)
+					lineStart = start;
+				else
+					lineStart = lineElement.getStartOffset();
+
+				if(i == endLine)
+					lineEnd = end;
+				else
+					lineEnd = lineElement.getEndOffset() - 1;
+
+				lineEnd -= lineStart;
+				String line = buffer.getText(lineStart,lineEnd);
+				String newLine = matcher.substitute(line);
+				if(line.equals(newLine)) // XXX slow
+					continue;
+				buffer.remove(lineStart,lineEnd);
+				buffer.insertString(lineStart,newLine,null);
+
+				end += (newLine.length() - lineEnd);
+				found = true;
+			}
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+			found = false;
+			Object[] args = { e.getMessage() };
+			if(args[0] == null)
+				args[0] = e.toString();
+			GUIUtilities.error(view,"searcherror",args);
+		}
+		buffer.endCompoundEdit();
+		return found;
+	}
+
+	/**
+	 * Loads search and replace state from the properties.
+	 */
+	public static void load()
+	{
+		search = jEdit.getProperty("search.find.value");
+		replace = jEdit.getProperty("search.replace.value");
+		syntax = jEdit.getProperty("search.syntax.value");
+		if("".equals(syntax))
+			syntax = null;
+		ignoreCase = "on".equals(jEdit.getProperty("search.ignoreCase.toggle"));
+	}
+
+	/**
+	 * Saves search and replace state to the properties.
+	 */
+	public static void save()
+	{
+		jEdit.setProperty("search.find.value",(search == null ? ""
+			: search));
+		jEdit.setProperty("search.replace.value",(replace == null ? ""
+			: replace));
+		jEdit.setProperty("search.ignoreCase.toggle",
+			ignoreCase ? "on" : "off");
+		jEdit.setProperty("search.regexp.value",(syntax == null ? ""
+			: syntax));
+	}
+		
 	// private members
+	private static String search;
+	private static String replace;
+	private static String syntax;
+	private static boolean ignoreCase;
 	private static SearchMatcher matcher;
-	private static SearchFileMatcher fileMatcher;
-
-	private SearchAndReplace() {}
 }
 
 /*
  * ChangeLog:
  * $Log$
- * Revision 1.1  1999/05/27 09:55:21  sp
- * Search and replace overhaul started
+ * Revision 1.2  1999/05/29 08:06:56  sp
+ * Search and replace overhaul
  *
  */

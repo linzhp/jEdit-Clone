@@ -19,7 +19,7 @@
 
 package org.gjt.sp.jedit.search;
 
-import org.gjt.sp.jedit.Buffer;
+import org.gjt.sp.jedit.*;
 
 /**
  * A SearchFileMatcher implementation that can be used when the current buffer
@@ -57,6 +57,9 @@ public class CurrentBufferMatcher implements SearchFileMatcher
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.2  1999/05/29 08:06:56  sp
+ * Search and replace overhaul
+ *
  * Revision 1.1  1999/05/27 09:55:21  sp
  * Search and replace overhaul started
  *

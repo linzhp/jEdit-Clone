@@ -13,6 +13,11 @@
 <h2>New Features</h2>
 
 <ul>
+<li>Search and replace overhaul:
+<ul>
+<li>Replace command is gone, use Replace in Selection instead
+<li>Literal search is now supported
+</ul>
 </ul>
 
 <h2>Enhancements</h2>
@@ -40,6 +45,8 @@ ViewEvent.CURRENT_ERROR_CHANGED, ViewListener.currentErrorChanged() have
 been removed
 <li>Because the console is no longer part of jEdit, and instead a plugin,
 other plugins that use it will have to be changed
+<li>Any code using jEdit's search and replace code will have to be
+rewritten
 </ul>
 
 <h2>Bug Fixes</h2>
@@ -48,7 +55,7 @@ other plugins that use it will have to be changed
 <li>Soft tabs now go to the next tab stop, rather than always inserting a
 fixed number of spaces
 <li>Sometimes multiline tokens weren't repainted properly
-<li>C mode had problems colorizing * characters
+<li>C mode had problems coloring * characters
 </ul>
 
 </body>

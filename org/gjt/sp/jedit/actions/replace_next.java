@@ -20,6 +20,7 @@
 package org.gjt.sp.jedit.actions;
 
 import java.awt.event.ActionEvent;
+import org.gjt.sp.jedit.search.SearchAndReplace;
 import org.gjt.sp.jedit.*;
 
 public class replace_next extends EditAction
@@ -32,13 +33,13 @@ public class replace_next extends EditAction
 	public void actionPerformed(ActionEvent evt)
 	{
 		View view = getView(evt);
+		Buffer buffer = view.getBuffer();
 		if(!view.getTextArea().isEditable())
 		{
 			view.getToolkit().beep();
 			return;
 		}
-		Buffer buffer = view.getBuffer();
-		buffer.replace(view);
-		buffer.find(view,false);
+		SearchAndReplace.replace(view,buffer);
+		SearchAndReplace.find(view,buffer,false);
 	}
 }
