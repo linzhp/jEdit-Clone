@@ -35,6 +35,8 @@ import org.gjt.sp.jedit.syntax.*;
 
 /**
  * An in-memory copy of an open file.
+ * @author Slava Pestov
+ * @version $Id$
  */
 public class Buffer extends DefaultSyntaxDocument
 {
@@ -1326,6 +1328,9 @@ loop:		for(int i = 0; i < markers.size(); i++)
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.84  1999/06/13 05:47:02  sp
+ * Minor changes required for LatestVersion plugin
+ *
  * Revision 1.83  1999/06/12 02:30:27  sp
  * Find next can now perform multifile searches, multifile-search command added,
  * new style option pane

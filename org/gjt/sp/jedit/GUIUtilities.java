@@ -640,20 +640,25 @@ public class GUIUtilities
 
 	}
 
-	// package-private members
-
-	static void showSplashScreen()
-	{
-		splash = new SplashScreen();
-	}
-
-	static void hideSplashScreen()
+	/**
+	 * Ensures that the splash screen is not visible. This should be
+	 * called before displaying any dialog boxes or windows at
+	 * startup.
+	 */
+	public static void hideSplashScreen()
 	{
 		if(splash != null)
 		{
 			splash.dispose();
 			splash = null;
 		}
+	}
+
+	// package-private members
+
+	static void showSplashScreen()
+	{
+		splash = new SplashScreen();
 	}
 
 	// private members
@@ -664,6 +669,9 @@ public class GUIUtilities
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.22  1999/06/13 05:47:02  sp
+ * Minor changes required for LatestVersion plugin
+ *
  * Revision 1.21  1999/06/12 02:30:27  sp
  * Find next can now perform multifile searches, multifile-search command added,
  * new style option pane

@@ -35,6 +35,8 @@ import org.gjt.sp.jedit.search.SearchAndReplace;
 
 /**
  * The main class of the jEdit text editor.
+ * @author Slava Pestov
+ * @version $Id$
  */
 public class jEdit
 {
@@ -43,7 +45,7 @@ public class jEdit
 	 */
 	public static String getVersion()
 	{
-		return "1.7pre3";
+		return "1.7pre4";
 	}
 
 	/**
@@ -53,7 +55,7 @@ public class jEdit
 	public static String getBuild()
 	{
 		// (major) (minor) (<99 = preX, 99 = final) (bug fix)
-		return "01.07.03.00";
+		return "01.07.04.00";
 	}
 
 	/**
@@ -1529,6 +1531,9 @@ public class jEdit
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.113  1999/06/13 05:47:02  sp
+ * Minor changes required for LatestVersion plugin
+ *
  * Revision 1.112  1999/06/12 02:30:27  sp
  * Find next can now perform multifile searches, multifile-search command added,
  * new style option pane
