@@ -29,7 +29,7 @@ import org.gjt.sp.jedit.TextUtilities;
  * <p>
  * This class is used by <code>CTokenMarker</code> to map keywords to ids.
  *
- * @author Slava Pestov
+ * @author Slava Pestov, Mike Dillon
  * @version $Id$
  */
 public class KeywordMap
@@ -123,3 +123,11 @@ public class KeywordMap
 	private Keyword[] map;
 	private boolean ignoreCase;
 }
+
+/*
+ * ChangeLog:
+ * $Log$
+ * Revision 1.9  1999/03/13 00:09:07  sp
+ * Console updates, uncomment removed cos it's too buggy, cvs log tags added
+ *
+ */

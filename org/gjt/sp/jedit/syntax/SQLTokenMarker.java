@@ -23,7 +23,7 @@ import javax.swing.text.Segment;
 /**
  * SQL token marker.
  *
- * @author Slava Pestov
+ * @author mike dillon
  * @version $Id$
  */
 public class SQLTokenMarker extends TokenMarker
@@ -225,6 +225,9 @@ loop:
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.4  1999/03/13 00:09:07  sp
+ * Console updates, uncomment removed cos it's too buggy, cvs log tags added
+ *
  * Revision 1.3  1999/03/12 23:51:00  sp
  * Console updates, uncomment removed cos it's too buggy, cvs log tags added
  *
