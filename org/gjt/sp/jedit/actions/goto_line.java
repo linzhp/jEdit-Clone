@@ -38,8 +38,8 @@ public class goto_line extends EditAction
 		Buffer buffer = view.getBuffer();
 		SyntaxTextArea textArea = view.getTextArea();
 		Element map = buffer.getDefaultRootElement();
-		String line = GUIUtilities.input(view,"gotoline",String.valueOf(
-			map.getElementIndex(textArea.getCaretPosition()) + 1));
+		String line = GUIUtilities.input(view,"gotoline","line",null);
+
 		if(line != null)
 		{
 			try

@@ -981,6 +981,9 @@ public class TSQLTokenMarker extends SQLTokenMarker
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.7  1999/03/19 07:12:11  sp
+ * JOptionPane changes, did a fromdos of the source
+ *
  * Revision 1.6  1999/03/15 03:40:23  sp
  * Search and replace updates, TSQL mode/token marker updates
  *

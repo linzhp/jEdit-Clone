@@ -32,6 +32,11 @@ import org.gjt.sp.jedit.Buffer;
 import org.gjt.sp.jedit.GUIUtilities;
 import org.gjt.sp.jedit.View;
 
+/**
+ * HyperSearch dialog.
+ * @author Slava Pestov
+ * @version $Id$
+ */
 public class HyperSearch extends JDialog
 implements ActionListener, KeyListener, ListSelectionListener, WindowListener
 {
@@ -101,27 +106,20 @@ implements ActionListener, KeyListener, ListSelectionListener, WindowListener
 	
 	public void actionPerformed(ActionEvent evt)
 	{
-		save();
 		Object source = evt.getSource();
 		if(source == close)
 			dispose();
-		else if(source == findBtn)
+		else if(source == findBtn || source == find)
+		{
+			save();
 			doHyperSearch();
+		}
 	}
 
 	public void keyPressed(KeyEvent evt)
 	{
-		switch(evt.getKeyCode())
-		{
-		case KeyEvent.VK_ENTER:
-			save();
-			doHyperSearch();
-			break;
-		case KeyEvent.VK_ESCAPE:
-			save();
+		if(evt.getKeyCode() == KeyEvent.VK_ESCAPE)	
 			dispose();
-			break;
-		}
 	}
 
 	public void keyReleased(KeyEvent evt) {}
@@ -208,3 +206,11 @@ implements ActionListener, KeyListener, ListSelectionListener, WindowListener
 		}
 	}
 }
+
+/*
+ * ChangeLog:
+ * $Log$
+ * Revision 1.20  1999/03/19 07:12:11  sp
+ * JOptionPane changes, did a fromdos of the source
+ *
+ */

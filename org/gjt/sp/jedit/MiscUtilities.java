@@ -61,8 +61,8 @@ public class MiscUtilities
 			return canonPath(path);
 		// windows pathnames, eg C:\document
 		else if(path.length() >= 3 && path.charAt(1) == ':'
-			&& path.charAt(2) == '\\'
-			|| path.charAt(2) == '/')
+			&& (path.charAt(2) == '\\'
+			|| path.charAt(2) == '/'))
 			return canonPath(path);
 		// relative pathnames
 		else if(parent == null)
@@ -168,6 +168,9 @@ loop:		for(int i = 0; i < str.length(); i++)
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.5  1999/03/19 07:12:10  sp
+ * JOptionPane changes, did a fromdos of the source
+ *
  * Revision 1.4  1999/03/13 08:50:39  sp
  * Syntax colorizing updates and cleanups, general code reorganizations
  *

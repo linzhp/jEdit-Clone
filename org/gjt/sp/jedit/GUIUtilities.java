@@ -24,7 +24,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.net.URL;
 import java.util.StringTokenizer;
-import org.gjt.sp.jedit.gui.EnhancedMenuItem;
+import org.gjt.sp.jedit.gui.*;
 
 /**
  * Class with several useful GUI functions.<p>
@@ -422,36 +422,30 @@ public class GUIUtilities
 	 * from the <code><i>name</i>.message</code> property.
 	 * @param frame The frame to display the dialog for
 	 * @param name The name of the dialog
-	 * @param def The text to display by default in the input field
+	 * @param history The name of the history list to use
+	 * @param def The text that appears by default
 	 */
-	public static String input(JFrame frame, String name, Object def)
+	public static String input(JFrame frame, String name, String history,
+		String def)
 	{
-		String retVal = (String)JOptionPane.showInputDialog(frame,
-			jEdit.getProperty(name.concat(".message")),
-			jEdit.getProperty(name.concat(".title")),
-			JOptionPane.QUESTION_MESSAGE,null,null,def);
-		return retVal;
-	}
+		HistoryTextField textField = new HistoryTextField(history);
+		textField.setSelectedItem(def);
+		Object[] message = { jEdit.getProperty(name.concat(".message")),
+			textField };
 
-	/**
-	 * Displays an input dialog box and returns any text the user entered.
-	 * The title of the dialog is fetched from
-	 * the <code><i>name</i>.title</code> property. The message is fetched
-	 * from the <code><i>name</i>.message</code> property.
-	 * @param frame The frame to display the dialog for
-	 * @param name The name of the dialog
-	 * @param def The property whose text to display in the input field
-	 */
-	public static String inputProperty(JFrame frame, String name, String def)
-	{
-		String retVal = (String)JOptionPane.showInputDialog(frame,
-			jEdit.getProperty(name.concat(".message")),
+		textField.requestDefaultFocus();
+
+		int retVal = JOptionPane.showConfirmDialog(frame,message,
 			jEdit.getProperty(name.concat(".title")),
-			JOptionPane.QUESTION_MESSAGE,
-			null,null,jEdit.getProperty(def));
-		if(retVal != null)
-			jEdit.setProperty(def,retVal);
-		return retVal;
+			JOptionPane.OK_CANCEL_OPTION);
+
+		if(retVal == JOptionPane.OK_OPTION)
+		{
+			textField.save();
+			return (String)textField.getSelectedItem();
+		}
+		else
+			return null;
 	}
 
 	/**
@@ -573,6 +567,9 @@ public class GUIUtilities
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.11  1999/03/19 07:12:10  sp
+ * JOptionPane changes, did a fromdos of the source
+ *
  * Revision 1.10  1999/03/12 23:51:00  sp
  * Console updates, uncomment removed cos it's too buggy, cvs log tags added
  *

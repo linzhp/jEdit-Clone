@@ -169,18 +169,19 @@ public class SearchAndReplace extends JDialog
 	{
 		public void actionPerformed(ActionEvent evt)
 		{
-			save();
 			Object source = evt.getSource();
 			if(source == cancel)
 				dispose();
 			else if(source == findBtn || source == find
 				|| source == replace)
 			{
+				save();
 				if(view.getBuffer().find(view,false))
 					disposeOrKeepDialog();
 			}
 			else if(source == replaceSelection)
 			{
+				save();
 				if(view.getBuffer().replaceAll(view,
 					selStart,selEnd))
 					disposeOrKeepDialog();
@@ -189,6 +190,7 @@ public class SearchAndReplace extends JDialog
 			}
 			else if(source == replaceAll)
 			{
+				save();
 				if(view.getBuffer().replaceAll(view,0,
 					view.getBuffer().getLength()))
 					disposeOrKeepDialog();
@@ -221,6 +223,9 @@ public class SearchAndReplace extends JDialog
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.20  1999/03/19 07:12:11  sp
+ * JOptionPane changes, did a fromdos of the source
+ *
  * Revision 1.19  1999/03/17 05:32:52  sp
  * Event system bug fix, history text field updates (but it still doesn't work), code cleanups, lots of banging head against wall
  *

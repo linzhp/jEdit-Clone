@@ -15,7 +15,6 @@
 <ul>
 <li>Document and clean up org.gjt.sp.jedit.gui package
 <li>Color options panel should be a JTable
-<li>JOptionPanes should have history widgets
 <li>Fix uncomment command
 <li><b>view.splitter property doesn't work properly</b>
 <li><b>insertLines()/deleteLines() still acts weird</b>
@@ -31,6 +30,7 @@
 <ul>
 <li>History text field now has a combo box widget for graphically
 selecting previous strings
+<li>Text input dialog boxes now have history text fields
 <li>When a new view is created, it takes the caret position from the
 view that created it
 </ul>
@@ -42,6 +42,8 @@ view that created it
 classes
 <li>Minor documentation updates
 <li>Distribution slimmed down a bit
+<li>Open URL now opens relative to the current file's directory, instead
+of user.dir
 </ul>
 
 <h2>Bug Fixes</h2>
@@ -50,6 +52,7 @@ classes
 <li>VIEW_CREATED events returned the wrong value with the getView() method
 <li>ViewEvent would throw an InternalError when firing a VIEW_BUFFER_CHANGED
 event
+<li>Possible fix for weird path name construction on Windows
 </ul>
 
 <a name=15pre1>

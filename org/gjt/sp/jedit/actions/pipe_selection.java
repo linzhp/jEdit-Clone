@@ -39,8 +39,8 @@ public class pipe_selection extends EditAction
 		int start = textArea.getSelectionStart();
 		int end = textArea.getSelectionEnd();
 		Buffer buffer = view.getBuffer();
-		String command = GUIUtilities.inputProperty(view,"execute",
-			"execute.cmd");
+		String command = GUIUtilities.input(view,"execute","console",
+			null);
 		if(command == null)
 			return;
 		StringBuffer buf = new StringBuffer();
