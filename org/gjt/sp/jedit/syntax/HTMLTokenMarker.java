@@ -220,8 +220,8 @@ loop:		for(int i = offset; i < length; i++)
 		}
 		if(lastOffset != length)
 		{
-			if(token != null && token != Token.ALTTXT
-				&& token != Token.KEYWORD1)
+			if(token == Token.LITERAL1 || token == Token.LITERAL2
+				|| token == Token.KEYWORD2)
 			{
 				addToken(length - lastOffset,Token.INVALID);
 				if(token == Token.KEYWORD2)
