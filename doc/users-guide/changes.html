@@ -19,7 +19,6 @@
 <li>Auto indent should line up opening and closing brackets
 <li>Auto indent should remove indent from empty lines
 <li>New input dialog that uses HistoryTextField
-<li>Shared history models
 <li>Create Javadocs with Java 2
 <li>Inter-plugin class dependencies
 <li>jeditplugins: protocol uses deprecates
@@ -30,6 +29,7 @@
 are closed before exiting
 <li>HelpViewer should support bookmarks
 <li>Console's stdin stuff doesn't work
+<li>Should the recent file list use the history engine as well?
 </ul>
 
 <a name=16pre3>
@@ -39,8 +39,23 @@ are closed before exiting
 <h2>New Features</h2>
 
 <ul>
+<li>Major reworking of history list engine:
+<ul>
+<li>History lists are now saved to a seprate file ($HOME/.jedit-history).
+Loading this file is much faster than loading hundreds of properties
+<li>History lists are now shared. For example, a command entered into the
+console of one view will appear in the history lists of all open views
+<li>The clipboard history is stored using this method as well
+</ul>
 <li>New LineInfo class allows token markers to store whatever they want in the
 TokenMarker.lineInfo[] array
+</ul>
+
+<h2>Bug Fixes</h2>
+
+<ul>
+<li>The -usrprops= command line parameter didn't work
+<li>Fixed minor bug when saving recent file list
 </ul>
 
 <a name=16pre2>

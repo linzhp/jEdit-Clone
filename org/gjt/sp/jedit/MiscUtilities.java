@@ -215,7 +215,7 @@ loop:		for(int i = 0; i < str.length(); i++)
 	public static RE getRE()
 		throws REException
 	{
-		String pattern = jEdit.getProperty("history.find.0");
+		String pattern = jEdit.getProperty("search.find.value");
 		if(pattern == null || "".equals(pattern))
 			return null;
 		return new RE(pattern,("on".equals(jEdit.getProperty(
@@ -267,6 +267,10 @@ loop:		for(int i = 0; i < str.length(); i++)
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.8  1999/04/23 07:35:10  sp
+ * History engine reworking (shared history models, history saved to
+ * .jedit-history)
+ *
  * Revision 1.7  1999/04/19 05:47:35  sp
  * ladies and gentlemen, 1.6pre1
  *

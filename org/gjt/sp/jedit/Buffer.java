@@ -134,7 +134,7 @@ public class Buffer extends DefaultSyntaxDocument
 		try
 		{
 			RE regexp = MiscUtilities.getRE();
-			String replaceStr = jEdit.getProperty("history.replace.0");
+			String replaceStr = jEdit.getProperty("search.replace.value");
 			if(regexp == null)
 			{
 				view.getToolkit().beep();
@@ -180,7 +180,7 @@ public class Buffer extends DefaultSyntaxDocument
 				return false;
 			}
 
-			String replaceStr = jEdit.getProperty("history.replace.0");
+			String replaceStr = jEdit.getProperty("search.replace.value");
 			if(replaceStr == null)
 				replaceStr = "";
 			
@@ -1457,6 +1457,10 @@ loop:		for(int i = 0; i < markers.size(); i++)
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.75  1999/04/23 07:35:10  sp
+ * History engine reworking (shared history models, history saved to
+ * .jedit-history)
+ *
  * Revision 1.74  1999/04/21 07:39:18  sp
  * FAQ added, plugins can now add panels to the options dialog
  *

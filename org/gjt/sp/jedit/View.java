@@ -618,8 +618,6 @@ public class View extends JFrame
 		int location = splitter.getDividerLocation();
 		jEdit.setProperty("view.divider",String.valueOf(location));
 
-		console.getCommandField().save();
-
 		console.stop();
 
 		saveCaretInfo();
@@ -793,6 +791,10 @@ public class View extends JFrame
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.64  1999/04/23 07:35:10  sp
+ * History engine reworking (shared history models, history saved to
+ * .jedit-history)
+ *
  * Revision 1.63  1999/04/21 07:39:18  sp
  * FAQ added, plugins can now add panels to the options dialog
  *

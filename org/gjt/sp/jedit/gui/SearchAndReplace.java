@@ -142,8 +142,12 @@ public class SearchAndReplace extends JDialog
 	
 	private void save()
 	{
-		find.save();
-		replace.save();
+		find.addCurrentToHistory();
+		jEdit.setProperty("search.find.value",(String)find
+			.getSelectedItem());
+		replace.addCurrentToHistory();
+		jEdit.setProperty("search.replace.value",(String)replace
+			.getSelectedItem());
 		jEdit.setProperty("search.keepDialog.toggle",keepDialog
 			.getModel().isSelected() ? "on" : "off");
 		jEdit.setProperty("search.ignoreCase.toggle",ignoreCase
@@ -211,6 +215,10 @@ public class SearchAndReplace extends JDialog
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.27  1999/04/23 07:35:11  sp
+ * History engine reworking (shared history models, history saved to
+ * .jedit-history)
+ *
  * Revision 1.26  1999/04/19 05:44:34  sp
  * GUI updates
  *

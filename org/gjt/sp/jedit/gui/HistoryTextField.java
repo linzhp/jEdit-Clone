@@ -34,27 +34,8 @@ public class HistoryTextField extends JComboBox
 {
 	public HistoryTextField(String name)
 	{
+		super(HistoryModel.getModel(name));
 		this.name = name;
-
-		try
-		{
-			max = Integer.parseInt(jEdit.getProperty("history"));
-		}
-		catch(NumberFormatException nf)
-		{
-			max = 25;
-		}
-
-		String line;
-		int i = 0;
-		while((line = jEdit.getProperty("history." + name + "." + i)) != null)
-		{
-			if(i >= max)
-				break;
-			if(line.length() != 0)
-				addItem(line);
-			i++;
-		}
 
 		setEditable(true);
 		setMaximumRowCount(20);
@@ -64,44 +45,18 @@ public class HistoryTextField extends JComboBox
 			.addKeyListener(new KeyHandler());
 	}
 
-	public void save()
+	public Object getSelectedItem()
 	{
-		String text = (String)getEditor().getItem();
-		if(text == null)
-			text = (String)getSelectedItem();
-		if(text == null || text.length() == 0)
-			text = "";
+		Object obj = getEditor().getItem();
+		if(obj == null)
+			return super.getSelectedItem();
 		else
-		{
-			DefaultComboBoxModel m = (DefaultComboBoxModel)getModel();
-			int index = m.getIndexOf(text);
-			if(index != -1)
-				removeItemAt(index);
-			insertItemAt(text,0);
-			if(getItemCount() > max)
-				removeItemAt(getItemCount() - 1);
-		}
-		for(int i = 0; i < getItemCount(); i++)
-		{
-			jEdit.setProperty("history." + name + "." +
-				i,(String)getItemAt(i));
-		}
+			return obj;
 	}
 
 	public void addCurrentToHistory()
 	{
-		String text = (String)getEditor().getItem();
-		if(text == null)
-			text = (String)getSelectedItem();
-		if(text == null || text.length() == 0)
-			return;
-		DefaultComboBoxModel m = (DefaultComboBoxModel)getModel();
-		int index = m.getIndexOf(text);
-		if(index != -1)
-			removeItemAt(index);
-		insertItemAt(text,0);
-		if(getItemCount() > max)
-			removeItemAt(getItemCount() - 1);
+		((HistoryModel)getModel()).addItem((String)getSelectedItem());
 	}
 
 	public void actionPerformed(ActionEvent evt)
@@ -162,6 +117,10 @@ public class HistoryTextField extends JComboBox
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.22  1999/04/23 07:35:11  sp
+ * History engine reworking (shared history models, history saved to
+ * .jedit-history)
+ *
  * Revision 1.21  1999/04/19 05:44:34  sp
  * GUI updates
  *

@@ -30,7 +30,7 @@ import java.text.MessageFormat;
 import java.util.zip.*;
 import java.util.*;
 import org.gjt.sp.jedit.event.*;
-import org.gjt.sp.jedit.gui.SplashScreen;
+import org.gjt.sp.jedit.gui.*;
 
 /**
  * The main class of the jEdit text editor.
@@ -49,12 +49,6 @@ public class jEdit
 	public static final String BUILD = "19990423";
 
 	/**
-	 * The user properties file.
-	 */
-	public static final String USER_PROPS = System.getProperty("user.home")
-		+ File.separator + ".jedit-props";
-
-	/**
 	 * The main method of the jEdit application.
 	 * <p>
 	 * This should never be invoked directly.
@@ -68,6 +62,7 @@ public class jEdit
 		String userHome = System.getProperty("user.home");
 		String userDir = System.getProperty("user.dir");
 		usrProps = userHome + File.separator + ".jedit-props";
+		historyFile = userHome + File.separator + ".jedit-history";
 		portFile = userHome + File.separator + ".jedit-server";
 		boolean desktop = true;
 		boolean showSplash = true;
@@ -94,6 +89,8 @@ public class jEdit
 				}
 				else if(arg.equals("-nousrprops"))
 					usrProps = null;
+				else if(arg.equals("-nohistory"))
+					historyFile = null;
 				else if(arg.equals("-noserver"))
 					portFile = null;
 				else if(arg.equals("-nodesktop"))
@@ -102,6 +99,8 @@ public class jEdit
 					showSplash = false;
 				else if(arg.startsWith("-usrprops="))
 					usrProps = arg.substring(10);
+				else if(arg.startsWith("-history="))
+					historyFile = arg.substring(9);
 				else if(arg.startsWith("-portfile="))
 					portFile = arg.substring(10);
 				else if(arg.equals("-readonly"))
@@ -185,7 +184,8 @@ public class jEdit
 		initPLAF();
 		propertiesChanged();
 		initRecent();
-		initClipHistory();
+		if(historyFile != null)
+			HistoryModel.loadHistory(historyFile);
 
 		// Start plugins
 		for(int i = 0; i < plugins.size(); i++)
@@ -336,15 +336,6 @@ public class jEdit
 		catch(NumberFormatException nf)
 		{
 			maxRecent = 8;
-		}
-		try
-		{
-			maxClipHistory = Integer.parseInt(getProperty(
-				"history"));
-		}
-		catch(NumberFormatException nf)
-		{
-			maxClipHistory = 25;
 		}
 	}
 	
@@ -792,31 +783,6 @@ public class jEdit
 	}
 
 	/**
-	 * Adds a string to the clipboard history.
-	 * @param str The string
-	 */
-	public static void addToClipHistory(String str)
-	{
-		int index = clipHistory.indexOf(str);
-		if(index != -1)
-			clipHistory.removeElementAt(index);
-		clipHistory.addElement(str);
-		for(int i = clipHistory.size() - maxClipHistory - 1;
-			i >= 0; i--)
-		{
-			clipHistory.removeElementAt(i);
-		}
-	}
-
-	/**
-	 * Returns an enumeration of the clipboard history.
-	 */
-	public static Vector getClipHistory()
-	{
-		return clipHistory;
-	}
-
-	/**
 	 * Exits cleanly from jEdit, prompting the user if any unsaved files
 	 * should be saved first.
 	 * @param view The view from which this exit was called
@@ -880,13 +846,8 @@ public class jEdit
 		}
 		unsetProperty("recent." + maxRecent);
 
-		// Save the clip history
-		for(int i = 0; i < clipHistory.size(); i++)
-		{
-			String clip = (String)clipHistory.elementAt(i);
-			setProperty("clipHistory." + i,clip);
-		}
-		unsetProperty("recent." + maxClipHistory);
+		// Save the history lists
+		HistoryModel.saveHistory(historyFile);
 
 		// Write the user properties file
 		if(usrProps != null)
@@ -914,6 +875,7 @@ public class jEdit
 	// private members
 	private static String jEditHome;
 	private static String usrProps;
+	private static String historyFile;
 	private static String portFile;
 	private static Properties defaultProps;
 	private static Properties props;
@@ -931,8 +893,6 @@ public class jEdit
 	private static Vector views;
 	private static Vector recent;
 	private static int maxRecent;
-	private static Vector clipHistory;
-	private static int maxClipHistory;
 	private static EventMulticaster multicaster;
 
 	private jEdit() {}
@@ -983,7 +943,7 @@ public class jEdit
 			System.getProperty("java.protocol.handler.pkgs",""));
 
 		// Add PROPERTIES_CHANGED listener
-		addEditorListener(new JEditEditorListener());
+		addEditorListener(new EditorHandler());
 		
 		// Determine installation directory
 		jEditHome = System.getProperty("jedit.home");
@@ -1192,7 +1152,7 @@ public class jEdit
 		{
 			try
 			{
-				loadProps(new FileInputStream(USER_PROPS));
+				loadProps(new FileInputStream(usrProps));
 			}
 			catch(FileNotFoundException fnf)
 			{
@@ -1236,23 +1196,6 @@ public class jEdit
 			String recentFile = getProperty("recent." + i);
 			if(recentFile != null)
 				recent.addElement(recentFile);
-		}
-	}
-
-	/**
-	 * Loads the clip history.
-	 */
-	private static void initClipHistory()
-	{
-		clipHistory = new Vector();
-
-		for(int i = 0; i < maxClipHistory; i++)
-		{
-			String clip = getProperty("clipHistory." + i);
-			if(clip != null)
-				clipHistory.addElement(clip);
-			else
-				break;
 		}
 	}
 
@@ -1339,7 +1282,7 @@ public class jEdit
 		return true;
 	}
 
-	private static class JEditEditorListener extends EditorAdapter
+	private static class EditorHandler extends EditorAdapter
 	{
 		public void propertiesChanged(EditorEvent evt)
 		{
@@ -1571,6 +1514,10 @@ public class jEdit
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.81  1999/04/23 07:35:10  sp
+ * History engine reworking (shared history models, history saved to
+ * .jedit-history)
+ *
  * Revision 1.80  1999/04/23 05:02:25  sp
  * new LineInfo[] array in TokenMarker
  *

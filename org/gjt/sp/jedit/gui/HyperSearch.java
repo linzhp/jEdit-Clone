@@ -102,7 +102,9 @@ public class HyperSearch extends JDialog
 	
 	public void save()
 	{
-		find.save();
+		find.addCurrentToHistory();
+		jEdit.setProperty("search.find.value",(String)
+			find.getSelectedItem());
 		jEdit.setProperty("search.ignoreCase.toggle",ignoreCase
 			.getModel().isSelected() ? "on" : "off");
 		jEdit.setProperty("search.regexp.value",(String)regexpSyntax
@@ -242,6 +244,10 @@ public class HyperSearch extends JDialog
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.29  1999/04/23 07:35:11  sp
+ * History engine reworking (shared history models, history saved to
+ * .jedit-history)
+ *
  * Revision 1.28  1999/04/19 05:44:34  sp
  * GUI updates
  *

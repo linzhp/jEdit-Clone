@@ -33,19 +33,18 @@ implements ActionListener, KeyListener, MouseListener
 		super(view,jEdit.getProperty("pasteprev.title"),true);
 		this.view = view;
 		Container content = getContentPane();
-		clipHistory = jEdit.getClipHistory();
-		String[] abbrevClipHistory = new String[clipHistory.size()];
-		for(int i = 0, j = clipHistory.size() - 1;
-			i < clipHistory.size(); i++, j--)
+		clipHistory = HistoryModel.getModel("clipboard");
+		String[] abbrevClipHistory = new String[clipHistory.getSize()];
+		for(int i = 0; i < clipHistory.getSize(); i++)
 		{
-			String clip = (String)clipHistory.elementAt(i);
+			String clip = (String)clipHistory.getElementAt(i);
 			clip = clip.replace('\n',' ');
 			if(clip.length() > 60)
 			{
 				clip = clip.substring(0,30) + " ... "
 					+ clip.substring(clip.length() - 30);
 			}
-			abbrevClipHistory[j] = clip;
+			abbrevClipHistory[i] = clip;
 		}
 		clips = new JList(abbrevClipHistory);
 		clips.setVisibleRowCount(10);
@@ -114,7 +113,7 @@ implements ActionListener, KeyListener, MouseListener
 	// private members
 	private View view;
 	private JList clips;
-	private Vector clipHistory;
+	private HistoryModel clipHistory;
 	private JButton insert;
 	private JButton cancel;
 
@@ -123,10 +122,8 @@ implements ActionListener, KeyListener, MouseListener
 		int selected = clips.getSelectedIndex();
 		if(selected != -1)
 		{
-			String clip = (String)clipHistory.elementAt(
-				clipHistory.size() - selected - 1);
-			clipHistory.removeElementAt(selected);
-			clipHistory.addElement(clip);
+			String clip = (String)clipHistory.getElementAt(
+				selected);
 			view.getTextArea().replaceSelection(clip);
 		}
 		dispose();

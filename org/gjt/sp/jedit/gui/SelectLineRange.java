@@ -140,8 +140,8 @@ implements ActionListener, KeyListener
 
 		((View)getParent()).getTextArea().select(startOffset,endOffset);
 
-		start.save();
-		end.save();
+		start.addCurrentToHistory();
+		end.addCurrentToHistory();
 
 		dispose();
 	}
@@ -150,6 +150,10 @@ implements ActionListener, KeyListener
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.6  1999/04/23 07:35:11  sp
+ * History engine reworking (shared history models, history saved to
+ * .jedit-history)
+ *
  * Revision 1.5  1999/04/19 05:44:34  sp
  * GUI updates
  *

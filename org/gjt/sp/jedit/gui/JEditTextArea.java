@@ -63,7 +63,7 @@ public class JEditTextArea extends SyntaxTextArea
 			{
 				String text = (String)content.getTransferData(
 					DataFlavor.stringFlavor);
-				jEdit.addToClipHistory(text);
+				HistoryModel.getModel("clipboard").addItem(text);
 				replaceSelection(text);
 			}
 			catch(Exception e)
@@ -142,6 +142,10 @@ public class JEditTextArea extends SyntaxTextArea
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.3  1999/04/23 07:35:11  sp
+ * History engine reworking (shared history models, history saved to
+ * .jedit-history)
+ *
  * Revision 1.2  1999/04/19 05:44:34  sp
  * GUI updates
  *
