@@ -13,12 +13,14 @@
 </a>
 
 <ul>
-<li>Document and clean up org.gjt.sp.jedit.gui package
-<li>Color options panel should be a JTable
+<li>New classloader that loads classes as they are referenced and supports
+resources
+<li>Add some sort of API that plugins can use to register themselves
+<li>Finish plugin documentation
+<li>Color options panel should have a JTable for editing the colors
 <li>Fix uncomment command
 <li><b>view.splitter property doesn't work properly</b>
-<li><b>insertLines()/deleteLines() still acts weird</b>
-<li><b>HistoryTextField consumes Escape keystrokes</b>
+<li><b>Buffer calls insertLines()/deleteLines() twice for each new line</b>
 </ul>
 
 <a name=15pre2>
@@ -30,7 +32,8 @@
 <ul>
 <li>History text field now has a combo box widget for graphically
 selecting previous strings
-<li>Text input dialog boxes now have history text fields
+<li>Text input dialog boxes now use history text fields
+<li>Select line range dialog now uses history text fields
 <li>When a new view is created, it takes the caret position from the
 view that created it
 </ul>
@@ -44,6 +47,8 @@ classes
 <li>Distribution slimmed down a bit
 <li>Open URL now opens relative to the current file's directory, instead
 of user.dir
+<li>New status bar component, shows hints and current line number (instead
+of them being in the title bar and menu bar, respectively)
 </ul>
 
 <h2>Bug Fixes</h2>

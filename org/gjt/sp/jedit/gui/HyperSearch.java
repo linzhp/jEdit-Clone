@@ -81,7 +81,8 @@ implements ActionListener, KeyListener, ListSelectionListener, WindowListener
 		content.add(stretchPanel, BorderLayout.CENTER);
 
 		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
-		find.addKeyListener(this);
+		find.getEditor().getEditorComponent().addKeyListener(this);
+		find.addActionListener(this);
 		addKeyListener(this);
 		addWindowListener(this);
 		findBtn.addActionListener(this);
@@ -210,6 +211,9 @@ implements ActionListener, KeyListener, ListSelectionListener, WindowListener
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.21  1999/03/19 08:32:22  sp
+ * Added a status bar to views, Escape key now works in dialog boxes
+ *
  * Revision 1.20  1999/03/19 07:12:11  sp
  * JOptionPane changes, did a fromdos of the source
  *

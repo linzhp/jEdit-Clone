@@ -25,6 +25,11 @@ import javax.swing.text.Element;
 import javax.swing.*;
 import org.gjt.sp.jedit.*;
 
+/**
+ * Select line range dialog.
+ * @author Slava Pestov
+ * @version $Id$
+ */
 public class SelectLineRange extends JDialog
 implements ActionListener, KeyListener
 {
@@ -33,8 +38,6 @@ implements ActionListener, KeyListener
 		super(view,jEdit.getProperty("selectlinerange.title"),true);
 
 		buffer = view.getBuffer();
-		int lineNo = buffer.getDefaultRootElement().getElementIndex(
-			view.getTextArea().getCaretPosition()) + 1;
 		
 		getContentPane().add("North",new JLabel(jEdit.getProperty(
 			"selectlinerange.caption")));
@@ -43,13 +46,13 @@ implements ActionListener, KeyListener
 		panel.setLayout(new GridLayout(2,2));		
 		panel.add(new JLabel(jEdit.getProperty("selectlinerange.start"),
 			SwingConstants.RIGHT));
-		panel.add(start = new JTextField(String.valueOf(lineNo)));
-		start.addKeyListener(this);
+		panel.add(start = new HistoryTextField("line"));
+		start.getEditor().getEditorComponent().addKeyListener(this);
 
 		panel.add(new JLabel(jEdit.getProperty("selectlinerange.end"),
 			SwingConstants.RIGHT));
-		panel.add(end = new JTextField(String.valueOf(lineNo)));
-		end.addKeyListener(this);
+		panel.add(end = new HistoryTextField("line"));
+		end.getEditor().getEditorComponent().addKeyListener(this);
 		getContentPane().add("Center",panel);
 
 		panel = new JPanel();
@@ -75,7 +78,7 @@ implements ActionListener, KeyListener
 	{
 		Object source = evt.getSource();
 
-		if(source == ok)
+		if(source == ok || source == start || source == end)
 			doSelectLineRange();
 		else if(source == cancel)
 			dispose();
@@ -85,9 +88,6 @@ implements ActionListener, KeyListener
 	{
 		switch(evt.getKeyCode())
 		{
-		case KeyEvent.VK_ENTER:
-			doSelectLineRange();
-			break;
 		case KeyEvent.VK_ESCAPE:
 			dispose();
 			break;
@@ -99,8 +99,8 @@ implements ActionListener, KeyListener
 
 	// private members
 	private Buffer buffer;
-	private JTextField start;
-	private JTextField end;
+	private HistoryTextField start;
+	private HistoryTextField end;
 	private JButton ok;
 	private JButton cancel;
 
@@ -111,8 +111,10 @@ implements ActionListener, KeyListener
 
 		try
 		{
-			startLine = Integer.parseInt(start.getText()) - 1;
-			endLine = Integer.parseInt(end.getText()) - 1;
+			startLine = Integer.parseInt((String)start.getSelectedItem())
+				- 1;
+			endLine = Integer.parseInt((String)end.getSelectedItem())
+				- 1;
 		}
 		catch(NumberFormatException nf)
 		{
@@ -141,3 +143,11 @@ implements ActionListener, KeyListener
 		dispose();
 	}
 }
+
+/*
+ * ChangeLog:
+ * $Log$
+ * Revision 1.2  1999/03/19 08:32:22  sp
+ * Added a status bar to views, Escape key now works in dialog boxes
+ *
+ */

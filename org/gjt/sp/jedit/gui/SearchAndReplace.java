@@ -111,8 +111,11 @@ public class SearchAndReplace extends JDialog
 
 		SearchKeyListener keyListener = new SearchKeyListener();
 		addKeyListener(keyListener);
-		find.addKeyListener(keyListener);
-		replace.addKeyListener(keyListener);
+
+		find.getEditor().getEditorComponent()
+			.addKeyListener(keyListener);
+		replace.getEditor().getEditorComponent()
+			.addKeyListener(keyListener);
 
 		addWindowListener(new SearchWindowListener());
 
@@ -223,6 +226,9 @@ public class SearchAndReplace extends JDialog
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.21  1999/03/19 08:32:22  sp
+ * Added a status bar to views, Escape key now works in dialog boxes
+ *
  * Revision 1.20  1999/03/19 07:12:11  sp
  * JOptionPane changes, did a fromdos of the source
  *

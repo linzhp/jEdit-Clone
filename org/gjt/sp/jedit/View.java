@@ -314,29 +314,9 @@ public class View extends JFrame
 	 */
 	public void updateTitle()
 	{
-		String tip;
-		if(showTip)
-		{
-			try
-			{
-				tip = jEdit.getProperty("tip." +
-					(Math.abs(new Random().nextInt()) %
-					Integer.parseInt(jEdit.getProperty(
-						"tip.count"))));
-			}
-			catch(Exception e)
-			{
-				tip = "Oops";
-			}
-			showTip = false;
-		}
-		else
-			tip = null;
 		Object[] args = { buffer.getName(),
 			new Integer(buffer.isReadOnly() ? 1 : 0),
-			new Integer(buffer.isDirty() ? 1: 0),
-			new Integer(tip != null ? 1 : 0),
-			tip };
+			new Integer(buffer.isDirty() ? 1: 0)};
 		setTitle(jEdit.getProperty("view.title",args));
 		textArea.setEditable(!buffer.isReadOnly());
 	}
@@ -514,8 +494,6 @@ public class View extends JFrame
 	{
 		multicaster = new EventMulticaster();
 
-		showTip = ("on".equals(jEdit.getProperty("view.showTips")));
-		
 		buffers = GUIUtilities.loadMenu(this,"buffers");
 		openRecent = GUIUtilities.loadMenu(this,"open-recent");
 		clearMarker = GUIUtilities.loadMenu(this,"clear-marker");
@@ -540,14 +518,39 @@ public class View extends JFrame
 		lastLine = -1;
 
 		lineNumber = new JLabel();
+		String tip;
+		if("on".equals(jEdit.getProperty("view.showTips")))
+		{
+			try
+			{
+				tip = jEdit.getProperty("tip." +
+					(Math.abs(new Random().nextInt()) %
+					Integer.parseInt(jEdit.getProperty(
+						"tip.count"))));
+			}
+			catch(Exception e)
+			{
+				tip = "Oops";
+			}
+
+			String[] args = { tip };
+			tip = jEdit.getProperty("view.hintBar",args);
+		}
+		else
+			tip = null;
+	
+		hintBar = new JLabel(tip);
+
+		Box status = Box.createHorizontalBox();
+		status.add(hintBar);
+		status.add(Box.createHorizontalGlue());
+		status.add(lineNumber);
+
 		updatePluginsMenu();
 
 		textArea.setContextMenu(GUIUtilities.loadPopupMenu(this,
 			"view.context"));
-		JMenuBar mbar = GUIUtilities.loadMenubar(this,"view.mbar");
-		mbar.add(Box.createGlue()); // silly hack to move ruler to right side
-		mbar.add(lineNumber);
-		setJMenuBar(mbar);
+		setJMenuBar(GUIUtilities.loadMenubar(this,"view.mbar"));
 
 		propertiesChanged();
 
@@ -555,7 +558,10 @@ public class View extends JFrame
 			.getFont());
 
 		if(buffer == null)
-			setBuffer(jEdit.getBuffers()[0]);
+		{
+			Buffer[] buffers = jEdit.getBuffers();
+			setBuffer(buffers[buffers.length - 1]);
+		}
 		else
 			setBuffer(buffer);
 		updateBuffersMenu();
@@ -569,6 +575,7 @@ public class View extends JFrame
 			26 * fm.getHeight()));
 
 		getContentPane().add("Center",splitter);
+		getContentPane().add("South",status);
 
 		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 		pack();
@@ -669,6 +676,7 @@ public class View extends JFrame
 	private Console console;
 	private JSplitPane splitter;
 	private JLabel lineNumber;
+	private JLabel hintBar;
 	private Segment lineSegment;
 	private int lastLine;
 	private Buffer buffer;
@@ -801,7 +809,7 @@ public class View extends JFrame
 			// XXX: should revert to 1.2 behaviour
 			Buffer[] bufferArray = jEdit.getBuffers();
 			if(bufferArray.length != 0)
-				setBuffer(bufferArray[0]);
+				setBuffer(bufferArray[bufferArray.length - 1]);
 	
 			updateBuffersMenu();
 
@@ -898,6 +906,9 @@ public class View extends JFrame
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.49  1999/03/19 08:32:22  sp
+ * Added a status bar to views, Escape key now works in dialog boxes
+ *
  * Revision 1.48  1999/03/18 04:24:57  sp
  * HistoryTextField hacking, some other minor changes
  *
