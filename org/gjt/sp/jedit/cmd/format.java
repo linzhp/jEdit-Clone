@@ -33,17 +33,11 @@ public class format implements Command
 			maxLineLength = ((Integer)o).intValue();
 		else
 			maxLineLength = 72;
-		o = buffer.getProperty("minLineLen");
-		int minLineLength;
-		if(o instanceof Integer)
-			minLineLength = ((Integer)o).intValue();
-		else
-			minLineLength = 20;
 		if(arg == null)
 			arg = view.getTextArea().getSelectedText();
 		if(arg != null)
 			view.getTextArea().replaceSelection(doFormat(arg,
-				minLineLength,maxLineLength));
+				maxLineLength));
 		else
 		{
 			try
@@ -51,7 +45,7 @@ public class format implements Command
 				arg = buffer.getText(0,buffer.getLength());
 				buffer.remove(0,buffer.getLength());
 				buffer.insertString(0,doFormat(arg,
-					minLineLength,maxLineLength),null);
+					maxLineLength),null);
 			}
 			catch(BadLocationException bl)
 			{
@@ -60,15 +54,13 @@ public class format implements Command
 		}
 	}
 
-	private String doFormat(String text, int minLineLength,
-		int maxLineLength)
+	private String doFormat(String text, int maxLineLength)
 	{
 		StringBuffer buf = new StringBuffer();
 		StringBuffer word = new StringBuffer();
 		int lineLength = 0;
 		boolean newline = false;
 		boolean newlineIgnore = false;
-		// remove spaces from start of text
 		boolean space = true;
 		char[] chars = text.toCharArray();
 		for(int i = 0; i < chars.length; i++)
@@ -80,20 +72,27 @@ public class format implements Command
 			case '\n':
 				buf.append(word);		
 				word.setLength(0);
+				space = true;
 				if(newlineIgnore)
+				{
+					lineLength--;
 					break;
-				if(newline)
+				}
+				if(newline || i == chars.length - 2)
 				{
 					// already seen a newline.
 					// start a new paragraph
 					buf.append("\n\n");
 					newline = false;
 					newlineIgnore = true;
-					lineLength = 0;
+					// this is NOT 0, but rather the
+					// number of characters already read
+					// before the wrap
+					lineLength = word.length();
 					break;
 				}
-				if(lineLength > maxLineLength ||
-					lineLength < minLineLength)
+				if(lineLength >= maxLineLength ||
+					i == chars.length - 1)
 				{
 					buf.append(c);
 					newline = false;
@@ -103,30 +102,28 @@ public class format implements Command
 				}
 				newline = true;
 				newlineIgnore = false;
-				space = true;
 				buf.append(' ');
 				break;
 			case ' ':
-				// multiple spaces are ignored
 				if(space)
+				{
+					lineLength--;
 					break;
-				// append word
+				}
 				buf.append(word);
 				word.setLength(0);
-				space = true;
 				buf.append(' ');
+				space = true;
 				break;
 			default:
-				space = newline = newlineIgnore = false;
+				newline = newlineIgnore = space = false;
 				word.append(c);
 				// do word wrap
-				if(lineLength > maxLineLength)
+				if(lineLength >= maxLineLength)
 				{
 					buf.append('\n');
-					// remove all spaces from start
-					// of next line
-					space = true;
-					lineLength = 0;
+					// see case '\n' for explanation
+					lineLength = word.length();
 				}
 				break;
 			}

@@ -22,6 +22,7 @@ package org.gjt.sp.jedit;
 import com.sun.java.swing.*;
 import java.awt.FileDialog;
 import java.io.*;
+import java.net.*;
 import java.util.*;
 
 /**
@@ -91,23 +92,29 @@ public class BufferMgr
 			marker = path.substring(index + 1);
 			path = path.substring(0,index);
 		}
-		Enumeration enum = getBuffers();
-		// This is severely broken (think about parent != null
-		// for a second to see what I mean)
-		/*while(enum.hasMoreElements())
+		URL url = null;
+		try
 		{
-			Buffer buffer = (Buffer)enum.nextElement();
-			if(buffer.getPath().equals(path))
+			url = new URL(path);
+		}
+		catch(MalformedURLException mu)
+		{
+			path = jEdit.constructPath(parent,path);
+			Enumeration enum = getBuffers();
+			while(enum.hasMoreElements())
 			{
-				if(view != null)
-					view.setBuffer(buffer);
-				return buffer;
+				Buffer buffer = (Buffer)enum.nextElement();
+				if(buffer.getPath().equals(path))
+				{
+					if(view != null)
+						view.setBuffer(buffer);
+					return buffer;
+				}
 			}
-		}*/
-		Buffer buffer = new Buffer(parent,path,readOnly,newFile);
+		}
+		Buffer buffer = new Buffer(url,path,readOnly,newFile);
 		if(!newFile)
 		{
-			path = buffer.getPath();
 			if(recent.contains(path))
 				recent.removeElement(path);
 			recent.addElement(path);
@@ -117,7 +124,7 @@ public class BufferMgr
 		if(view != null)
 			view.setBuffer(buffer);
 		buffers.addElement(buffer);
-		enum = getViews();
+		Enumeration enum = getViews();
 		while(enum.hasMoreElements())
 		{
 			View v = (View)enum.nextElement();

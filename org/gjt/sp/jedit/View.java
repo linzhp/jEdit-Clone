@@ -435,8 +435,11 @@ implements ActionListener, CaretListener, KeyListener, WindowListener
 		propertiesChanged();
 		FontMetrics fm = getToolkit().getFontMetrics(textArea
 			.getFont());
-		scroller.getViewport().setPreferredSize(new Dimension(
-			w * fm.charWidth('m'),h * fm.getHeight()));
+		JViewport viewport = scroller.getViewport();
+		viewport.setPreferredSize(new Dimension(w * fm.charWidth('m'),
+			h * fm.getHeight()));
+		// testing
+		// viewport.setBackingStoreEnabled(true);
 		getContentPane().add("Center",scroller);
 		getContentPane().add("South",status);
 		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);

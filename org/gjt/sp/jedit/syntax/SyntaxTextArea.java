@@ -29,5 +29,11 @@ public class SyntaxTextArea extends JEditorPane
 	{
 		setEditorKit(new SyntaxEditorKit());
 	}
+
+	// fix for horizontal scrollbar
+	public boolean getScrollableTracksViewportWidth()
+	{
+		return false;
+	}
 }
 

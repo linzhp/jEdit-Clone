@@ -267,7 +267,18 @@ implements DocumentListener, UndoableEditListener
 		if(path == null && newFile)
 			return saveAs(view);
 		if(path != null)
-			setPath(null,path);
+		{
+			try
+			{
+				url = new URL(path);
+			}
+			catch(MalformedURLException mu)
+			{
+				url = null;
+			}
+			this.path = path;
+			setPath();
+		}
 		backup();
 		try
 		{
@@ -666,44 +677,13 @@ implements DocumentListener, UndoableEditListener
 	}
 
 	// package-private methods
-	Buffer(String parent, String path, boolean readOnly, boolean newFile)
+	Buffer(URL url, String path, boolean readOnly, boolean newFile)
 	{
-		init = true;
-		undo = new UndoManager();
-		markers = new Vector();
-		colors = new Hashtable();
+		this.url = url;
+		this.path = path;
 		this.newFile = newFile;
 		this.readOnly = readOnly;
-		setPath(parent,path);
-		if(!newFile)
-		{
-			if(file.exists())
-				this.readOnly |= !file.canWrite();
-			if(autosaveFile.exists())
-			{
-				Object[] args = { autosaveFile.getPath() };
-				jEdit.message(null,"autosaveexists",args);
-			}
-			load();
-			loadMarkers();
-		}
-		String userMode = (String)getProperty("mode");
-		if(userMode != null)
-			setMode(jEdit.cmds.getMode(userMode));
-		else
-		{
-			String nogzName = name.substring(0,name.length() -
-				(name.endsWith(".gz") ? 3 : 0));
-			int index = nogzName.lastIndexOf('.') + 1;
-			setMode(jEdit.cmds.getMode(jEdit.props.getProperty(
-				"mode.".concat(nogzName.substring(index)))));
-		}
-		addDocumentListener(this);
-		addUndoableEditListener(this);
-		updateMarkers();
-		propertiesChanged();
-		caretInfo = new int[4];
-		init = false;
+		init();
 	}
 	
 	void setCaretInfo(int scrollH, int scrollV, int selStart,
@@ -740,6 +720,80 @@ implements DocumentListener, UndoableEditListener
 	private int oldLineIndex;
 	private Hashtable colors;
 
+	private void init()
+	{	
+		init = true;
+		undo = new UndoManager();
+		markers = new Vector();
+		colors = new Hashtable();
+		setPath();
+		if(!newFile)
+		{
+			if(file.exists())
+				this.readOnly |= !file.canWrite();
+			if(autosaveFile.exists())
+			{
+				Object[] args = { autosaveFile.getPath() };
+				jEdit.message(null,"autosaveexists",args);
+			}
+			load();
+			loadMarkers();
+		}
+		String userMode = (String)getProperty("mode");
+		if(userMode != null)
+			setMode(jEdit.cmds.getMode(userMode));
+		else
+		{
+			String nogzName = name.substring(0,name.length() -
+				(name.endsWith(".gz") ? 3 : 0));
+			int index = nogzName.lastIndexOf('.') + 1;
+			setMode(jEdit.cmds.getMode(jEdit.props.getProperty(
+				"mode.".concat(nogzName.substring(index)))));
+		}
+		addDocumentListener(this);
+		addUndoableEditListener(this);
+		updateMarkers();
+		propertiesChanged();
+		caretInfo = new int[4];
+		init = false;
+	}
+	
+	private void setPath()
+	{
+		if(url == null)
+		{
+			file = new File(path);
+			name = file.getName();
+			markersFile = new File(file.getParent(),'.' + name
+				+ ".marks");
+			try
+			{
+				path = file.getCanonicalPath();
+			}
+			catch(IOException io)
+			{
+			}
+		}
+		else
+		{
+			name = url.getFile();
+			if(name.length() == 0)
+				name = url.getHost();
+			file = new File(name);
+			name = file.getName();
+			try
+			{
+				markersUrl = new URL(url,'.' + new File(name)
+					.getName() + ".marks");
+			}
+			catch(MalformedURLException mu)
+			{
+				markersUrl = null;
+			}
+		}
+		autosaveFile = new File(file.getParent(),'#' + name + '#');
+	}
+	
 	private void load()
 	{
 		InputStream in;
@@ -1066,63 +1120,6 @@ implements DocumentListener, UndoableEditListener
 			if(view.getBuffer() == this)
 				view.updateStatus(true);
 		}
-	}
-
-	private void setPath(String parent, String path)
-	{
-		// absolute pathnames
-		if(path.startsWith(File.separator))
-			parent = null;
-		// windows pathnames, eg C:\document
-		else if(path.length() >= 3 && path.charAt(1) == ':'
-			&& path.charAt(2) == '\\')
-			parent = null;
-		// relative pathnames
-		else if(parent == null)
-			parent = System.getProperty("user.dir");
-		url = null;
-		try
-		{
-			url = new URL(path);
-			name = url.getFile();
-			if(name.length() == 0)
-				name = url.getHost();
-			if(name.startsWith(File.separator))
-				parent = null;
-			if(parent == null)
-				file = new File(name);
-			else
-				file = new File(parent,name);
-			name = file.getName();
-			markersUrl = new URL(url,'.' + new File(name)
-				.getName() + ".marks");
-			this.path = path;
-		}
-		catch(MalformedURLException mu)
-		{
-			if(parent == null)
-				file = new File(path);
-			else
-				file = new File(parent,path);
-			name = file.getName();
-			markersFile = new File(file.getParent(),'.' + name
-				+ ".marks");
-			// sledgehammer fix
-			/*if(newFile)
-				this.path = name;
-			else
-			{*/
-			try
-			{
-				this.path = file.getCanonicalPath();
-			}
-			catch(IOException io)
-			{
-				this.path = file.getPath();
-			}
-		}
-		autosaveFile = new File(file.getParent(),'#' + name + '#');
-
 	}
 
 	private void updateMarkers()
