@@ -69,22 +69,24 @@ public class MultiFileSearchDialog extends JDialog
 		ListModel bufferListModel = bufferList.getModel();
 		bufferList.setSelectionMode(ListSelectionModel
 			.MULTIPLE_INTERVAL_SELECTION);
+
 		if(fileset instanceof BufferListSet)
 		{
 			bufferList.setEnabled(true);
-			Buffer[] buffers = fileset.getSearchBuffers(view);
-			for(int i = 0; i < buffers.length; i++)
+			Buffer buffer = fileset.getFirstBuffer(view);
+			do
 			{
-				Buffer buffer = buffers[i];
 				for(int j = 0; j < bufferListModel.getSize(); j++)
 				{
 					if(bufferListModel.getElementAt(j) == buffer)
 						bufferList.addSelectionInterval(j,j);
 				}
 			}
+			while((buffer = buffer.getNext()) != null);
 		}
 		else
 			bufferList.setEnabled(false);
+
 		getContentPane().add(BorderLayout.CENTER,
 			new JScrollPane(bufferList));
 

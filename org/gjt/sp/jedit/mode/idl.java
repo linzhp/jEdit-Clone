@@ -1,5 +1,5 @@
 /*
- * latex.java - LaTeX editing mode
+ * idl.java - IDL editing mode
  * Copyright (C) 1999 Slava Pestov
  *
  * This program is free software; you can redistribute it and/or
@@ -19,17 +19,18 @@
 
 package org.gjt.sp.jedit.mode;
 
-import org.gjt.sp.jedit.Buffer;
+import org.gjt.sp.jedit.syntax.*;
+import org.gjt.sp.jedit.Mode;
 
-public class latex extends tex
+public class idl extends Mode
 {
-	public latex()
+	public idl()
 	{
-		super("latex");
+		super("idl");
 	}
 	
-	public void enter(Buffer buffer)
+	public TokenMarker createTokenMarker()
 	{
-		// override tex mode's implementation
+		return new IDLTokenMarker();
 	}
 }

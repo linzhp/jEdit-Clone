@@ -1800,39 +1800,6 @@
    </para>
    <screen>new Widget(Foo.createDefaultFoo());</screen>
   </sect2>
-  <sect2><title>Text Manipulation Commands</>
-   <indexterm><primary>selection</></indexterm>
-   <para>
-    <indexterm><primary>To Uppercase command</></indexterm>
-    <guimenu>Edit</>&gt;<guimenuitem>To Uppercase</> converts the current
-    selection to upper case.
-   </para>
-   <para>
-    <indexterm><primary>To Lowercase command</></indexterm>
-    <guimenu>Edit</>&gt;<guimenuitem>To Lowercase</> converts the current
-    selection to lower case.
-   </para>
-   <para>
-    <indexterm><primary>Format command</></indexterm>
-    <indexterm><primary>filling paragraphs</></indexterm>
-    <indexterm><primary>formatting text</></indexterm>
-    <indexterm><primary>buffer-local properties</>
-    <secondary>maxLineLen</></indexterm>
-    <guimenu>Edit</>&gt;<guimenuitem>Format Text</> (keyboard equivalent:
-    <keycombo><keycap>Control</><keycap>E</></keycombo>
-    <keycombo><keycap>Control</><keycap>F</></keycombo>) fills all paragraphs
-    in the selection to a specified text width. The text width
-    can be changed using buffer-local properties by placing the
-    following in the first 10 lines of the buffer,
-    where <replaceable>width</> is the width, the default being 72:
-   </para>
-   <screen>:maxLineLen=<replaceable>width</>:</screen>
-   <para>
-    <indexterm><primary>Insert Date command</></indexterm>
-    <guimenu>Edit</>&gt;<guimenuitem>Insert Date</> inserts the current
-    date and time at the caret position.
-   </para>
-  </sect2>
   <sect2><title>Dynamic Abbreviation Expansion</>
    <para>
     <indexterm><primary>Expand Abbreviation command</></indexterm>
@@ -2800,6 +2767,10 @@ The following is required to use this plugin:
   look at examples and experiment; having the source to a couple of
   plugins might help.
  </para>
+ <para>
+  This section is still under construction; information about edit modes,
+  option panes, views, buffers and the text area is still to come.
+ </para>
  <indexterm><primary>old jEdit versions</></indexterm>
  <sidebar>
   <bridgehead renderas=sect3>jEdit 2.0 Users</>
@@ -3162,6 +3133,77 @@ import org.gjt.sp.jedit.View;</>
     they can always assign it a key in the shortcut editor.
    </para>
   </note>
+ </sect1>
+ <sect1 id=plugin-options><title>Plugin Option Panes</>
+  <para>
+   The Plugin Options dialog box is a common location for changing plugin settings.
+   Each tab in the dialog box is implemented as a subclass of
+   <classname>org.gjt.sp.jedit.OptionPane</>.
+  </para>
+  <indexterm><primary>old jEdit versions</></indexterm>
+  <sidebar>
+   <bridgehead renderas=sect3>jEdit 2.0 Users</>
+   <para>
+    jEdit 2.0 and earlier took a different approach to option panes.
+    The old <function>jEdit.addOptionPane()</> method is still supported
+    for backwards compatibility, but should not be used in new plugins.
+   </para>
+  </sidebar>
+  <indexterm><primary>class</><secondary>OptionPane</></indexterm>
+  <bridgehead renderas=sect3>OptionPane class</>
+  <programlisting>public abstract class OptionPane extends JPanel
+{
+        public OptionPane(String name);
+        public String getName();
+        public void save();
+        public void addComponent(String label, Component comp);
+        public void addComponent(Component comp);
+}</programlisting>
+  <para>
+   <classname>OptionPane</> instances, like many other jEdit objects, have
+   <quote>names</> which are used to query properties. In the case of
+   option panes, the only property currently supported is
+   <property>options.<replaceable>name</>.label</property>, which stores
+   the label for the option pane's tab in the options dialog box.
+  </para>
+  <para>
+   The two <function>addComponent()</> methods can be used to add components
+   to the option pane using the default layout manager. Nothing prevents you
+   from calling <function>setLayout()</> and <function>add()</> to implement
+   your own appearance, though.
+  </para>
+  <indexterm><primary>class</><secondary>OptionsDialog</></indexterm>
+  <indexterm><primary>method</><secondary>addOptionPane() of OptionsDialog class</></indexterm>
+  <bridgehead renderas=sect3>OptionsDialog.addOptionPane() method</>
+  <funcsynopsis>
+   <funcsynopsisinfo>import org.gjt.sp.jedit.OptionPane;</>
+   <funcprototype>
+    <funcdef>public void <function>addOptionPane</></funcdef>
+    <paramdef>OptionPane <parameter>pane</></paramdef>
+   </funcprototype>
+  </funcsynopsis>
+  <para>
+   The <function>addOptionPane()</> method adds the specified option pane to an
+   options dialog instance. You will almost always call this method from a
+   plugin's <function>createOptionPanes()</> method, which is invoked every
+   time the Plugin Options dialog box is displayed.
+  </para>
+  <indexterm><primary>class</><secondary>EditPlugin</></indexterm>
+  <indexterm><primary>method</><secondary>createOptionPanes() of EditPlugin class</></indexterm>
+  <bridgehead renderas=sect3>EditPlugin.createOptionPanes() method</>
+  <funcsynopsis>
+   <funcsynopsisinfo>import org.gjt.sp.jedit.OptionsDialog;</>
+   <funcprototype>
+    <funcdef>public void <function>createOptionPanes</></funcdef>
+    <paramdef>OptionsDialog <parameter>dialoge</></paramdef>
+   </funcprototype>
+  </funcsynopsis>
+  <para>
+   The <function>createOptionPanes()</> method is invoked every time the
+   Plugin Options dialog box is displayed. The canonical implementation
+   would add a new <classname>OptionPane</> instance to the options dialog
+   using the <function>addOptionPane()</> method.
+  </para>
  </sect1>
 </chapter>
 

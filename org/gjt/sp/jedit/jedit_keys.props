@@ -84,7 +84,6 @@ replace-all.shortcut=C+e C+a
 box-comment.shortcut=C+e C+b
 wing-comment.shortcut=C+e C+c
 select-none.shortcut=C+e C+d
-format.shortcut=C+e C+f
 scroll-line.shortcut=C+e C+j
 block-comment.shortcut=C+e C+k
 select-line-range.shortcut=C+e C+l

@@ -415,6 +415,22 @@ public class View extends JFrame
 		listenerList.remove(ViewListener.class,listener);
 	}
 
+	/**
+	 * Returns the next view in the list.
+	 */
+	public final View getNext()
+	{
+		return next;
+	}
+
+	/**
+	 * Returns the previous view in the list.
+	 */
+	public final View getPrev()
+	{
+		return prev;
+	}
+
 	// package-private members
 	View prev;
 	View next;
@@ -679,6 +695,9 @@ public class View extends JFrame
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.90  1999/10/03 03:47:15  sp
+ * Minor stupidity, IDL mode
+ *
  * Revision 1.89  1999/10/01 07:31:39  sp
  * RMI server replaced with socket-based server, minor changes
  *

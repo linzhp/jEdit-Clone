@@ -640,6 +640,22 @@ loop:		for(int i = 0; i < markers.size(); i++)
 	}
 
 	/**
+	 * Returns the next buffer in the list.
+	 */
+	public final Buffer getNext()
+	{
+		return next;
+	}
+
+	/**
+	 * Returns the previous buffer in the list.
+	 */
+	public final Buffer getPrev()
+	{
+		return prev;
+	}
+
+	/**
 	 * Returns a string representation of this buffer.
 	 * This simply returns the path name.
 	 */
@@ -1248,6 +1264,9 @@ loop:		for(int i = 0; i < markers.size(); i++)
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.95  1999/10/03 03:47:15  sp
+ * Minor stupidity, IDL mode
+ *
  * Revision 1.94  1999/10/01 07:31:39  sp
  * RMI server replaced with socket-based server, minor changes
  *

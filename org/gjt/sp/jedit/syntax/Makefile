@@ -8,6 +8,7 @@ classes=org/gjt/sp/jedit/syntax/BatchFileTokenMarker.class \
 	org/gjt/sp/jedit/syntax/CCTokenMarker.class \
 	org/gjt/sp/jedit/syntax/CTokenMarker.class \
 	org/gjt/sp/jedit/syntax/HTMLTokenMarker.class \
+	org/gjt/sp/jedit/syntax/IDLTokenMarker.class \
 	org/gjt/sp/jedit/syntax/JavaScriptTokenMarker.class \
 	org/gjt/sp/jedit/syntax/JavaTokenMarker.class \
 	org/gjt/sp/jedit/syntax/KeywordMap.class \

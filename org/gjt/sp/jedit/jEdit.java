@@ -698,16 +698,30 @@ public class jEdit
 	 */
 	public static Buffer[] getBuffers()
 	{
-		Vector buffers = new Vector();
+		Buffer[] buffers = new Buffer[bufferCount];
 		Buffer buffer = buffersFirst;
-		while(buffer != null)
+		for(int i = 0; i < bufferCount; i++)
 		{
-			buffers.addElement(buffer);
+			buffers[i] = buffer;
 			buffer = buffer.next;
 		}
-		Buffer[] array = new Buffer[buffers.size()];
-		buffers.copyInto(array);
-		return array;
+		return buffers;
+	}
+
+	/**
+	 * Returns the first buffer.
+	 */
+	public static Buffer getFirstBuffer()
+	{
+		return buffersFirst;
+	}
+
+	/**
+	 * Returns the last buffer.
+	 */
+	public static Buffer getLastBuffer()
+	{
+		return buffersLast;
 	}
 
 	/**
@@ -786,16 +800,30 @@ public class jEdit
 	 */
 	public static View[] getViews()
 	{
-		Vector views = new Vector();
+		View[] views = new View[viewCount];
 		View view = viewsFirst;
-		while(view != null)
+		for(int i = 0; i < viewCount; i++)
 		{
-			views.addElement(view);
+			views[i] = view;
 			view = view.next;
 		}
-		View[] array = new View[views.size()];
-		views.copyInto(array);
-		return array;
+		return views;
+	}
+
+	/**
+	 * Returns the first view.
+	 */
+	public static View getFirstView()
+	{
+		return viewsFirst;
+	}
+
+	/**
+	 * Returns the last view.
+	 */
+	public static View getLastView()
+	{
+		return viewsLast;
 	}
 
 	/**
@@ -998,10 +1026,12 @@ public class jEdit
 	private static WindowHandler windowHandler;
 
 	// buffer link list
+	private static int bufferCount;
 	private static Buffer buffersFirst;
 	private static Buffer buffersLast;
 
 	// view link list
+	private static int viewCount;
 	private static View viewsFirst;
 	private static View viewsLast;
 
@@ -1126,18 +1156,17 @@ public class jEdit
 	{
 		/* Try to guess the eventual size to avoid unnecessary
 		 * copying */
-		modes = new Vector(18 /* modes built into jEdit */
+		modes = new Vector(17 /* modes built into jEdit */
 			+ 10 /* give plugins some space */);
 
 		addMode(new org.gjt.sp.jedit.mode.text());
-		addMode(new org.gjt.sp.jedit.mode.amstex());
 		addMode(new org.gjt.sp.jedit.mode.bat());
 		addMode(new org.gjt.sp.jedit.mode.c());
 		addMode(new org.gjt.sp.jedit.mode.cc());
 		addMode(new org.gjt.sp.jedit.mode.html());
+		addMode(new org.gjt.sp.jedit.mode.idl());
 		addMode(new org.gjt.sp.jedit.mode.java_mode());
 		addMode(new org.gjt.sp.jedit.mode.javascript());
-		addMode(new org.gjt.sp.jedit.mode.latex());
 		addMode(new org.gjt.sp.jedit.mode.makefile());
 		addMode(new org.gjt.sp.jedit.mode.patch());
 		addMode(new org.gjt.sp.jedit.mode.perl());
@@ -1415,6 +1444,8 @@ public class jEdit
 
 	private static void addBufferToList(Buffer buffer)
 	{
+		bufferCount++;
+
 		if(buffersFirst == null)
 			buffersFirst = buffersLast = buffer;
 		else
@@ -1427,6 +1458,8 @@ public class jEdit
 
 	private static void removeBufferFromList(Buffer buffer)
 	{
+		bufferCount--;
+
 		if(buffer == buffersFirst && buffer == buffersLast)
 		{
 			buffersFirst = buffersLast = null;
@@ -1456,6 +1489,8 @@ public class jEdit
 
 	private static void addViewToList(View view)
 	{
+		viewCount++;
+
 		if(viewsFirst == null)
 			viewsFirst = viewsLast = view;
 		else
@@ -1468,6 +1503,8 @@ public class jEdit
 
 	private static void removeViewFromList(View view)
 	{
+		viewCount--;
+
 		if(view == viewsFirst)
 		{
 			viewsFirst = view.next;
@@ -1614,6 +1651,9 @@ public class jEdit
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.130  1999/10/03 03:47:15  sp
+ * Minor stupidity, IDL mode
+ *
  * Revision 1.129  1999/10/02 01:12:36  sp
  * Search and replace updates (doesn't work yet), some actions moved to TextTools
  *

@@ -171,10 +171,6 @@ view.style.invalid=color:red style:b
 # Text mode
 mode.text.name=Text
 
-# AMSTeX mode
-mode.amstex.name=AMS-TeX
-mode.amstex.blockComment=%
-
 # Batch File mode
 mode.bat.name=Batch File
 mode.bat.blockComment=rem
@@ -215,6 +211,17 @@ mode.extension.html=html
 mode.extension.shtml=html
 mode.extension.htm=html
 
+# IDL mode
+mode.java.name=IDL
+mode.java.noWordSep=_
+mode.java.indentOpenBrackets={
+mode.java.indentCloseBrackets=}
+mode.java.commentStart=/*
+mode.java.commentEnd=*/
+mode.java.blockComment=//
+mode.java.boxComment=\ *
+mode.extension.idl=idl
+
 # Java mode
 mode.java.name=Java
 mode.java.noWordSep=_
@@ -237,10 +244,6 @@ mode.javascript.commentEnd=*/
 mode.javascript.blockComment=//
 mode.javascript.boxComment=\ *
 mode.extension.js=javascript
-
-# LaTeX mode
-mode.latex.name=LaTeX
-mode.latex.blockComment=%
 
 # Makefile mode
 mode.makefile.name=Makefile

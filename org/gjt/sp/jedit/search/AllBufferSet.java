@@ -35,21 +35,22 @@ public class AllBufferSet implements SearchFileSet
 	 */
 	public Buffer getNextBuffer(View view, Buffer buffer)
 	{
-		Buffer[] buffers = jEdit.getBuffers();
 		if(buffer == null)
 			return view.getBuffer();
 		else
 		{
-			for(int i = 0; i < buffers.length; i++)
+			Buffer buf = jEdit.getFirstBuffer();
+			do
 			{
-				if(buffers[i] == buffer)
+				if(buf == buffer)
 				{
-					if(buffers.length - i > 1)
-						return buffers[i+1];
+					if(buf.getNext() != null)
+						return buf.getNext();
 					else
 						return null;
 				}
 			}
+			while((buf = buf.getNext()) != null);
 		}
 		throw new InternalError("Huh? Buffer not on list?");
 	}
@@ -60,12 +61,15 @@ public class AllBufferSet implements SearchFileSet
 	 */
 	public Buffer getFirstBuffer(View view)
 	{
-		return jEdit.getBuffers()[0];
+		return jEdit.getFirstBuffer();
 	}
 }
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.5  1999/10/03 03:47:16  sp
+ * Minor stupidity, IDL mode
+ *
  * Revision 1.4  1999/10/02 01:12:36  sp
  * Search and replace updates (doesn't work yet), some actions moved to TextTools
  *
