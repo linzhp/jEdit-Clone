@@ -59,7 +59,7 @@ public class SyntaxView extends PlainView
 			else
 			{
 				Enumeration enum = tokenMarker.markTokens(line,
-					lineIndex,buffer.isNextLine(lineIndex));
+					lineIndex);
 				while(enum.hasMoreElements())
 				{
 					JSToken token = (JSToken)enum

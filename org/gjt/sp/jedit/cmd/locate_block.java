@@ -31,11 +31,11 @@ public class locate_block implements Command
 		String openBrackets = (String)buffer
 			.getProperty("openBrackets");
 		if(openBrackets == null)
-			openBrackets = "<([{";
+			openBrackets = "([{";
 		String closeBrackets = (String)buffer
 			.getProperty("closeBrackets");
 		if(closeBrackets == null)
-			closeBrackets = ">)]}";
+			closeBrackets = ")]}";
 		int count;
 		int blockStart = 0;
 		int blockEnd = buffer.getLength();
@@ -79,10 +79,8 @@ public class locate_block implements Command
 			lineNo = map.getElementIndex(selEnd);
 			lineElement = map.getElement(lineNo);
 			offset = scanForwardLine(buffer.getText(selEnd,
-								lineElement
-								 .getEndOffset()
-				- selEnd),
-						 openBrackets,closeBrackets,0);
+				lineElement.getEndOffset() - selEnd),
+				openBrackets,closeBrackets,count);
 			count = -1 - offset;
 			if(offset >= 0)
 			{

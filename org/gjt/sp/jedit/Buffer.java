@@ -412,29 +412,13 @@ implements DocumentListener, UndoableEditListener
 				String line = getText(start,lineElement
 					.getEndOffset() - start);
 				// a void version of markTokens() would be nice
-				tokenMarker.markTokens(line,i,i != 0);
+				tokenMarker.markTokens(line,i);
 			}
 		}
 		catch(BadLocationException bl)
 		{
 			bl.printStackTrace();
 		}
-	}
-
-	/**
-	 * Returns true if the specified line is the next line after the
-	 * previous line passed to this method.
-	 * @param lineIndex the line
-	 */
-	public boolean isNextLine(int lineIndex)
-	{
-		boolean retVal;
-		if((lineIndex - oldLineIndex) == -1)
-			retVal = true;
-		else
-			retVal = false;
-		oldLineIndex = lineIndex;
-		return retVal;
 	}
 
 	/**
@@ -683,7 +667,6 @@ implements DocumentListener, UndoableEditListener
 	private Vector markers;
 	private int[] caretInfo;
 	private JSTokenMarker tokenMarker;
-	private int oldLineIndex;
 	private Hashtable colors;
 
 	private void init()
@@ -782,7 +765,17 @@ implements DocumentListener, UndoableEditListener
 			{
 				buf.append(line);
 				buf.append('\n');
-				if(count++ < 10)
+				if(count++ == 0)
+				{
+					if(mode == null)
+					{
+						setMode(jEdit.cmds.getMode(
+							jEdit.props
+							.getProperty("mode."
+								     + line)));
+					}
+				}
+				if(count < 10)
 				{
 					int index = line.indexOf("(:");
 					if(index == -1)
