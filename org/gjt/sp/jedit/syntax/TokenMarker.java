@@ -48,11 +48,30 @@ public abstract class TokenMarker
 	{
 		lastToken = null;
 
-		byte token = (lineIndex == 0 ? Token.NULL
-			: lineInfo[lineIndex - 1]);
+		byte token;
+
+		if(lineIndex == 0)
+			token = Token.NULL;
+		else
+		{
+			LineInfo info = lineInfo[lineIndex - 1];
+			if(info != null)
+				token = info.token;
+			else
+				token = Token.NULL;
+		}
+
 		token = markTokensImpl(token,line,lineIndex);
 
-		lineInfo[lineIndex] = token;
+		LineInfo info = lineInfo[lineIndex];
+		if(info != null)
+			info.token = token;
+		else
+		{
+			info = new LineInfo(token,null);
+			lineInfo[lineIndex] = info;
+		}
+
 		addToken(0,Token.END);
 
 		return firstToken;
@@ -132,7 +151,7 @@ public abstract class TokenMarker
 	 * shrunk automatically by the <code>insertLines()</code> and
 	 * <code>deleteLines()</code> methods.
 	 */
-	protected byte[] lineInfo;
+	protected LineInfo[] lineInfo;
 
 	/**
 	 * The length of the <code>lineInfo</code> array.
@@ -162,10 +181,10 @@ public abstract class TokenMarker
 	protected void ensureCapacity(int index)
 	{
 		if(lineInfo == null)
-			lineInfo = new byte[index + 1];
+			lineInfo = new LineInfo[index + 1];
 		else if(lineInfo.length <= index)
 		{
-			byte[] lineInfoN = new byte[(index + 1) * 2];
+			LineInfo[] lineInfoN = new LineInfo[(index + 1) * 2];
 			System.arraycopy(lineInfo,0,lineInfoN,0,
 					 lineInfo.length);
 			lineInfo = lineInfoN;
@@ -202,11 +221,42 @@ public abstract class TokenMarker
 			lastToken.id = id;
 		}
 	}
+
+	/**
+	 * Inner class for storing information about tokenized lines.
+	 */
+	protected class LineInfo
+	{
+		/**
+		 * Creates a new LineInfo object.
+		 */
+		public LineInfo(byte token, Object obj)
+		{
+			this.token = token;
+			this.obj = obj;
+		}
+
+		/**
+		 * The id of the last token of the line.
+		 */
+		public byte token;
+
+		/**
+		 * This is for use by the token marker implementations
+		 * themselves. It can be used to store anything that
+		 * is an object and that needs to exist on a per-line
+		 * basis.
+		 */
+		public Object obj;
+	}
 }
 
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.14  1999/04/23 05:02:25  sp
+ * new LineInfo[] array in TokenMarker
+ *
  * Revision 1.13  1999/04/19 05:38:20  sp
  * Syntax API changes
  *

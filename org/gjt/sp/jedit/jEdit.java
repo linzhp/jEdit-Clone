@@ -40,13 +40,13 @@ public class jEdit
 	/**
 	 * The jEdit version.
 	 */
-	public static final String VERSION = "1.6pre2";
+	public static final String VERSION = "1.6pre3";
 	
 	/**
 	 * The date when a change was last made to the source code,
 	 * in <code>YYYYMMDD</code> format.
 	 */
-	public static final String BUILD = "19990422";
+	public static final String BUILD = "19990423";
 
 	/**
 	 * The user properties file.
@@ -1571,6 +1571,9 @@ public class jEdit
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.80  1999/04/23 05:02:25  sp
+ * new LineInfo[] array in TokenMarker
+ *
  * Revision 1.79  1999/04/22 06:20:06  sp
  * Minor API change for XMode
  *

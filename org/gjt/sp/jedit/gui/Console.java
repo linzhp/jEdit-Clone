@@ -444,7 +444,6 @@ implements ActionListener, ListSelectionListener
 					process.getOutputStream());
 
 				out.write(selection);
-				out.write('\n');
 				out.close();
 			}
 			catch(IOException io)
@@ -553,6 +552,9 @@ implements ActionListener, ListSelectionListener
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.25  1999/04/23 05:02:25  sp
+ * new LineInfo[] array in TokenMarker
+ *
  * Revision 1.24  1999/04/22 06:12:49  sp
  * Minor doc updates, console.addOutput() now public
  *
