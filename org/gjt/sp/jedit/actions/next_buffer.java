@@ -1,6 +1,6 @@
 /*
- * about.java
- * Copyright (C) 1998 Slava Pestov
+ * next_buffer.java
+ * Copyright (C) 1999 Slava Pestov
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -22,20 +22,25 @@ package org.gjt.sp.jedit.actions;
 import java.awt.event.ActionEvent;
 import org.gjt.sp.jedit.*;
 
-public class about extends EditAction
+public class next_buffer extends EditAction
 {
-	public about()
+	public next_buffer()
 	{
-		super("about");
+		super("next-buffer");
 	}
 
 	public void actionPerformed(ActionEvent evt)
 	{
-		Object[] aboutArgs = { jEdit.VERSION, jEdit.BUILD,
-			System.getProperty("java.version"),
-			System.getProperty("os.name"),
-			System.getProperty("os.version"),
-			System.getProperty("os.arch") };
-		GUIUtilities.message(getView(evt),"about",aboutArgs);
+		View view = getView(evt);
+		Buffer buffer = view.getBuffer();
+		Buffer[] buffers = jEdit.getBuffers();
+		for(int i = 0; i < buffers.length; i++)
+		{
+			if(buffers[i] == buffer)
+			{
+				view.setBuffer(buffers[(i+1) % buffers.length]);
+				return;
+			}
+		}
 	}
 }

@@ -1,5 +1,5 @@
 /*
- * indent_line.java - Action
+ * indent_on_enter.java - Action
  * Copyright (C) 1999 Slava Pestov
  *
  * This program is free software; you can redistribute it and/or
@@ -23,11 +23,11 @@ import java.awt.event.ActionEvent;
 import org.gjt.sp.jedit.gui.JEditTextArea;
 import org.gjt.sp.jedit.*;
 
-public class indent_line extends EditAction
+public class indent_on_enter extends EditAction
 {
-        public indent_line()
+        public indent_on_enter()
         {
-                super("indent-line");
+                super("indent-on-enter");
         }
 
         public void actionPerformed(ActionEvent evt)
@@ -35,25 +35,23 @@ public class indent_line extends EditAction
                 View view = getView(evt);
                 Buffer buffer = view.getBuffer();
                 JEditTextArea textArea = view.getTextArea();
+
+		textArea.replaceSelection("\n");
+
                 Mode mode = buffer.getMode();
 		int selStart = textArea.getSelectionStart();
 		int selEnd = textArea.getSelectionEnd();
 
-                if(mode != null && selStart == selEnd && jEdit.getAutoIndent()
-				&& mode.indentLine(buffer,view,selStart))
-                {
-				return;
+                if(selStart == selEnd
+			&& "on".equals(buffer.getProperty("indentOnEnter")))
+		{
+			mode.indentLine(buffer,view,selStart);
+			/*
+			Element map = buffer.getDefaultRootElement();
+			Element lineElement = map.getElement(
+				map.getElementOffset(selStart));
+			textArea.setCaretPosition(lineElement.getEndOffset() - 1);
+			*/
                 }
-                if("yes".equals(buffer.getProperty("noTabs")))
-                {
-                        StringBuffer buf = new StringBuffer();
-                        for(int i = buffer.getTabSize(); i > 0; i--)
-                        {
-                                buf.append(' ');
-                        }
-                        textArea.replaceSelection(buf.toString());
-                }
-                else
-                        textArea.replaceSelection("\t");
         }
 }

@@ -37,6 +37,12 @@ public class compile extends EditAction
 		Buffer buffer = view.getBuffer();
 		String compiler = (String)buffer.getProperty("compiler");
 
+		if(compiler == null)
+		{
+			view.getToolkit().beep();
+			return;
+		}
+
 		if(buffer.isDirty())
 		{
 			String[] args = { buffer.getName() };
@@ -51,43 +57,9 @@ public class compile extends EditAction
 				return;
 		}
 
-		StringBuffer buf = new StringBuffer();
-
-		if(compiler != null)
-		{
-			for(int i = 0; i < compiler.length(); i++)
-			{
-				switch(compiler.charAt(i))
-				{
-				case '%':
-					if(i != compiler.length() - 1)
-					{
-						switch(compiler.charAt(++i))
-						{
-						case 'u':
-							buf.append(buffer
-								.getPath());
-							break;
-						case 'p':
-							buf.append(buffer
-								.getFile()
-								.getPath());
-							break;
-						default:
-							buf.append('%');
-							break;
-						}
-						break;
-					}
-				default:
-					buf.append(compiler.charAt(i));
-				}
-			}
-		}
-
 		view.showConsole();
 
 		view.getConsole().getCommandField()
-			.setSelectedItem(buf.toString());
+			.setSelectedItem(compiler);
 	}
 }
