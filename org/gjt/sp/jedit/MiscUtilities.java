@@ -22,7 +22,13 @@ package org.gjt.sp.jedit;
 import java.io.*;
 
 /**
- * Class with several useful miscallaneous functions.
+ * Class with several useful miscallaneous functions.<p>
+ *
+ * Currently, it only has two methods, for converting file names to
+ * class names, and creating path names from a directory/path pair.
+ *
+ * @author Slava Pestov
+ * @version $Id$
  */
 public class MiscUtilities
 {
@@ -83,3 +89,11 @@ public class MiscUtilities
 		}
 	}
 }
+
+/*
+ * ChangeLog:
+ * $Log$
+ * Revision 1.3  1999/03/12 07:54:47  sp
+ * More Javadoc updates
+ *
+ */

@@ -27,14 +27,25 @@ import java.util.StringTokenizer;
 import org.gjt.sp.jedit.gui.EnhancedMenuItem;
 
 /**
- * Class with several useful GUI functions.
+ * Class with several useful GUI functions.<p>
+ *
+ * It provides methods for:
+ * <ul>
+ * <li>Loading menu bars, menus and menu items from the properties
+ * <li>Loading popup menus from the properties
+ * <li>Loading tool bars and tool bar buttons from the properties
+ * <li>Displaying various common dialog boxes
+ * <li>Converting string representations of colors to color objects
+ * <li>Loading and saving window geometry from the properties
+ * </ul>
  */
 public class GUIUtilities
 {
 	/**
 	 * Loads a menubar from the properties for the specified view.
 	 * @param view The view to load the menubar for
-	 * @param name The property with the list of menus
+	 * @param name The property with the white space separated
+	 * list of menus
 	 */
 	public static JMenuBar loadMenubar(View view, String name)
 	{
@@ -57,6 +68,9 @@ public class GUIUtilities
 
 	/**
 	 * Loads a menu from the properties for the specified view.
+	 * The white space separated list of menu items is obtained from
+	 * the property named <code><i>name</i></code>. The menu label is
+	 * obtained from the <code><i>name</i>.label</code> property.
 	 * @param view The view to load the menu for
 	 * @param name The menu name
 	 */
@@ -110,7 +124,8 @@ public class GUIUtilities
 	/**
 	 * Loads a popup menu from the properties for the specified view.
 	 * @param view The view to load the popup menu for
-	 * @param name The popup menu name
+	 * @param name The property with the white space separated list of
+	 * menu items
 	 */
 	public static JPopupMenu loadPopupMenu(View view, String name)
 	{
@@ -138,6 +153,9 @@ public class GUIUtilities
 
 	/**
 	 * Loads a menu item from the properties for the specified view.
+	 * The menu label is obtained from the <code><i>name</i>.label</code>
+	 * property. The keyboard shortcut is obtained from the
+	 * <code><i>name</i>.shortcut</code> property.
 	 * @param view The view to load the menu for
 	 * @param name The menu item name
 	 */
@@ -198,7 +216,12 @@ public class GUIUtilities
 	}
 
 	/**
-	 * Converts a string to a keystroke.
+	 * Converts a string to a keystroke. The string should be of the
+	 * form <i>modifiers</i>+<i>shortcut</i> where <i>modifiers</i>
+	 * is any combination of A for Alt, C for Control, S for Shift
+	 * or M for Meta, and <i>shortcut</i> is either a single character,
+	 * or a keycode name from the <code>KeyEvent</code> class, without
+	 * the <code>VK_</code> prefix.
 	 * @param keyStroke A string description of the key stroke
 	 */
 	public static KeyStroke parseKeyStroke(String keyStroke)
@@ -256,8 +279,8 @@ public class GUIUtilities
 
 	/**
 	 * Loads a toolbar from the properties.
-	 *
-	 * @param name The name of the toolbar
+	 * @param name The property with the white space separated list
+	 * of tool bar buttons
 	 */
 	public static JToolBar loadToolBar(String name)
 	{
@@ -286,8 +309,11 @@ public class GUIUtilities
 	}
 
 	/**
-	 * Loads a tool bar button.
-	 *
+	 * Loads a tool bar button. The tooltip is constructed from
+	 * the <code><i>name</i>.label</code> and
+	 * <code><i>name</i>.shortcut</code> properties and the icon is loaded
+	 * from the resource named '/org/gjt/sp/jedit/toolbar/' suffixed
+	 * with the value of the <code><i>name</i>.icon</code> property.
 	 * @param name The name of the button
 	 */
 	public static JButton loadToolButton(String name)
@@ -348,7 +374,6 @@ public class GUIUtilities
 
 	/**
 	 * Displays a dialog box.
-	 * <p>
 	 * The title of the dialog is fetched from
 	 * the <code><i>name</i>.title</code> property. The message is fetched
 	 * from the <code><i>name</i>.message</code> property. The message
@@ -369,7 +394,6 @@ public class GUIUtilities
 
 	/**
 	 * Displays an error dialog box.
-	 * <p>
 	 * The title of the dialog is fetched from
 	 * the <code><i>name</i>.title</code> property. The message is fetched
 	 * from the <code><i>name</i>.message</code> property. The message
@@ -390,7 +414,6 @@ public class GUIUtilities
 
 	/**
 	 * Displays an input dialog box and returns any text the user entered.
-	 * <p>
 	 * The title of the dialog is fetched from
 	 * the <code><i>name</i>.title</code> property. The message is fetched
 	 * from the <code><i>name</i>.message</code> property.
@@ -409,7 +432,6 @@ public class GUIUtilities
 
 	/**
 	 * Displays an input dialog box and returns any text the user entered.
-	 * <p>
 	 * The title of the dialog is fetched from
 	 * the <code><i>name</i>.title</code> property. The message is fetched
 	 * from the <code><i>name</i>.message</code> property.
@@ -430,7 +452,10 @@ public class GUIUtilities
 	}
 
 	/**
-	 * Converts a color name to a color object.
+	 * Converts a color name to a color object. The name must either be
+	 * a known string, such as `red', `green', etc (complete list is in
+	 * the <code>java.awt.Color</code> class) or a hex color value
+	 * prefixed with `#', for example `#ff0088'.
 	 * @param name The color name
 	 */
 	public static Color parseColor(String name)
@@ -480,6 +505,9 @@ public class GUIUtilities
 
 	/**
 	 * Loads a windows's geometry from the properties.
+	 * The geometry is loaded from the <code><i>name</i>.x</code>,
+	 * <code><i>name</i>.y</code>, <code><i>name</i>.width</code> and
+	 * <code><i>name</i>.height</code> properties.
 	 *
 	 * @param win The window
 	 * @param name The window name
@@ -518,7 +546,9 @@ public class GUIUtilities
 
 	/**
 	 * Saves a window's geometry to the properties.
-	 *
+	 * The geometry is saved to the <code><i>name</i>.x</code>,
+	 * <code><i>name</i>.y</code>, <code><i>name</i>.width</code> and
+	 * <code><i>name</i>.height</code> properties.
 	 * @param win The window
 	 * @param name The window name
 	 */
@@ -536,3 +566,11 @@ public class GUIUtilities
 	// private members
 	private GUIUtilities() {}
 }
+
+/*
+ * ChangeLog:
+ * $Log$
+ * Revision 1.9  1999/03/12 07:54:47  sp
+ * More Javadoc updates
+ *
+ */

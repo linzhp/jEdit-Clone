@@ -22,7 +22,16 @@ package org.gjt.sp.jedit;
 import javax.swing.text.Segment;
 
 /**
- * Class with several useful text related functions.
+ * Class with several useful text related functions.<p>
+ *
+ * It provides methods for comparing Swing <code>Segment</code>
+ * instances with strings and other segments. They are used by the
+ * syntax colorizing subsystem. Also, several indentation-related
+ * methods are defined. They are used by the auto indent mode
+ * and various commands.
+ *
+ * @author Slava Pestov
+ * @version $Id$
  */
 public class TextUtilities
 {
@@ -164,3 +173,11 @@ loop:		for(int i = 0; i < str.length(); i++)
 	// private members
 	private TextUtilities() {}
 }
+
+/*
+ * ChangeLog:
+ * $Log$
+ * Revision 1.2  1999/03/12 07:54:47  sp
+ * More Javadoc updates
+ *
+ */

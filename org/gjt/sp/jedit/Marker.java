@@ -1,6 +1,6 @@
 /*
- * Marker.java - Named location
- * Copyright (C) 1998 Slava Pestov
+ * Marker.java - Named location in a document
+ * Copyright (C) 1998, 1999 Slava Pestov
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -22,18 +22,36 @@ package org.gjt.sp.jedit;
 import javax.swing.text.Position;
 
 /**
- * A marker is a named location in a buffer.
- * <p>
- * There is no public constructor for this class. Markers are created by
- * <code>Buffer.addMarker()</code>.
+ * A marker is a name/position pair, that can be used to name locations
+ * in Swing <code>Document</code> instances.<p>
+ *
+ * Markers are primarily used in buffers. They can be added with
+ * <code>Buffer.addMarker()</code>, removed with
+ * <code>Buffer.removeMarker()</code>, and a marker instance can be
+ * obtained by calling <code>Buffer.getMarker()</code> with the marker's
+ * name.
+ *
+ * @author Slava Pestov
+ * @version $Id$
+ *
  * @see Buffer#addMarker(String,int,int)
  * @see Buffer#getMarker(String)
  * @see Buffer#removeMarker(String)
  */
 public class Marker
 {
-	// public members
-	
+	/**
+	 * Creates a new marker. This should not be called under
+	 * normal circumstances - use <code>Buffer.addMarker()</code>
+	 * instead.
+	 */
+	public Marker(String name, Position start, Position end)
+	{
+		this.name = name;
+		this.start = start;
+		this.end = end;
+	}
+
 	/**
 	 * Returns the name of this marker.
 	 */
@@ -58,16 +76,16 @@ public class Marker
 		return end.getOffset();
 	}
 
-	// package-private members
-	Marker(String name, Position start, Position end)
-	{
-		this.name = name;
-		this.start = start;
-		this.end = end;
-	}
-
 	// private members
 	private String name;
 	private Position start;
 	private Position end;
 }
+
+/*
+ * ChangeLog:
+ * $Log$
+ * Revision 1.3  1999/03/12 07:54:47  sp
+ * More Javadoc updates
+ *
+ */
