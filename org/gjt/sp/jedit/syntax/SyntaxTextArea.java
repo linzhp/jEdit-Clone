@@ -63,7 +63,7 @@ public class SyntaxTextArea extends JEditorPane
 		lineHighlightColor = new Color(0xe0e0e0);
 		bracketHighlightColor = new Color(0xffaaaa);
 		lineSegment = new Segment();
-
+		scroller = new SyntaxSafeScroller();
 		addCaretListener(new CaretHandler());
 	}
 
@@ -161,6 +161,11 @@ public class SyntaxTextArea extends JEditorPane
 	{
 		if(bracketHighlightTag == null)
 			return;
+
+		if(bracketPos == lastBracket)
+			return;
+
+		lastBracket = bracketPos;
 
 		try
 		{
@@ -372,18 +377,6 @@ public class SyntaxTextArea extends JEditorPane
 	}
 
 	/**
-	 * Works like Caret.adjustVisibility(), but does `electric'
-	 * border scrolling (caret is never on the first or last
-	 * visible line, if it ends up there the display is scrolled
-	 * up or down)
-	 * @param rect The rectangle to scroll to
-	 */
-	public void doElectricScroll(Rectangle rect)
-	{
-		SwingUtilities.invokeLater(new SyntaxSafeScroller(rect));
-	}
-
-	/**
 	 * Sets the document edited by this text area. This method
 	 * makes sure that it implements the <code>SyntaxDocument</code>
 	 * interface.
@@ -480,6 +473,13 @@ public class SyntaxTextArea extends JEditorPane
 		getSyntaxDocument().tokenizeLines(start,len);
 	}
 
+	// protected members
+	protected void doElectricScroll(Rectangle rect)
+	{
+		scroller.rect = rect;
+		SwingUtilities.invokeLater(scroller);
+	}
+
 	// private members
 	private Color lineHighlightColor;
 	private Object lineHighlightTag;
@@ -490,6 +490,9 @@ public class SyntaxTextArea extends JEditorPane
 	private boolean overwrite;
 	private Segment lineSegment;
 	private int lastLine = -1;
+	private int lastBracket = -1;
+	/* Don't create a new instance every time we need to scroll */
+	private SyntaxSafeScroller scroller;
 
 	private void _replaceSelection(String content)
 	{
@@ -626,12 +629,7 @@ public class SyntaxTextArea extends JEditorPane
 
 	class SyntaxSafeScroller implements Runnable
 	{
-		private Rectangle rect;
-
-		SyntaxSafeScroller(Rectangle rect)
-		{
-			this.rect = rect;
-		}
+		public Rectangle rect;
 
 		public void run()
 		{
@@ -721,6 +719,9 @@ public class SyntaxTextArea extends JEditorPane
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.21  1999/05/03 04:28:01  sp
+ * Syntax colorizing bug fixing, console bug fix for Swing 1.1.1
+ *
  * Revision 1.20  1999/05/02 00:07:21  sp
  * Syntax system tweaks, console bugfix for Swing 1.1.1
  *

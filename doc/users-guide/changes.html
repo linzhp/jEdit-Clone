@@ -22,6 +22,7 @@ SyntaxDocument
 <li>Text components using SyntaxEditorKit now must have a document
 that implements SyntaxDocument; this leads to simpler code
 <li>New focusOnTextArea() method in View class sets focus on text area
+<li>Minor optimizations in SyntaxTextArea
 </ul>
 
 <h2>Bug Fixes</h2>
@@ -29,6 +30,8 @@ that implements SyntaxDocument; this leads to simpler code
 <ul>
 <li>Less reduntant repainting in SyntaxView
 <li>Console can now be moved in Swing 1.1.1
+<li>HTML mode threw an exception when colorizing &lt;script&gt; blocks
+<li>Shell script mode threw an exception when colorizing ${...} variables
 </ul>
 
 <a name=16pre4>

@@ -46,7 +46,7 @@ public class jEdit
 	 * The date when a change was last made to the source code,
 	 * in <code>YYYYMMDD</code> format.
 	 */
-	public static final String BUILD = "19990501";
+	public static final String BUILD = "19990503";
 
 	/**
 	 * The main method of the jEdit application.
@@ -1522,6 +1522,9 @@ public class jEdit
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.90  1999/05/03 04:28:01  sp
+ * Syntax colorizing bug fixing, console bug fix for Swing 1.1.1
+ *
  * Revision 1.89  1999/05/02 00:07:21  sp
  * Syntax system tweaks, console bugfix for Swing 1.1.1
  *

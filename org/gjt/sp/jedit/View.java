@@ -707,7 +707,7 @@ public class View extends JFrame
 					return;
 				}
 				jEdit.getAction(s).actionPerformed(
-					new ActionEvent(View.this,
+					new ActionEvent(this,
 					ActionEvent.ACTION_PERFORMED,cmd));
 				currentPrefix = bindings;
 				evt.consume();
@@ -811,6 +811,9 @@ public class View extends JFrame
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.68  1999/05/03 04:28:01  sp
+ * Syntax colorizing bug fixing, console bug fix for Swing 1.1.1
+ *
  * Revision 1.67  1999/05/02 00:07:21  sp
  * Syntax system tweaks, console bugfix for Swing 1.1.1
  *

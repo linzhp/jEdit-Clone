@@ -229,6 +229,8 @@ loop:		for(int i = offset; i < length; i++)
 		{
 			if(token == Token.NULL && cmdState == 1)
 				token = Token.KEYWORD1;
+			else if(token == LVARIABLE)
+				token = Token.INVALID;
 			addToken(length - lastOffset,token);
 		}
 		return (token == Token.LITERAL2 || token == Token.LITERAL1
@@ -239,6 +241,9 @@ loop:		for(int i = offset; i < length; i++)
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.12  1999/05/03 04:28:01  sp
+ * Syntax colorizing bug fixing, console bug fix for Swing 1.1.1
+ *
  * Revision 1.11  1999/04/27 06:53:38  sp
  * JARClassLoader updates, shell script token marker update, token marker compiles
  * now

@@ -4,14 +4,15 @@
 <h1>jEdit Frequently Asked Questions</h1>
 
 <ul>
-<li><a href=#memory>I get OutOfMemoryErrors even though I have lots of free RAM!</a>
-<li><a href=#alt>The Alt-key mnemonics act weird!</a>
-<li><a href=#www>The `Open in WWW Browser' command doesn't work!</a>
+<li><a href=#memory>Why do I get OutOfMemoryErrors?</a>
 <li><a href=#bigfile>Why does the display mess up when editing large files?</a>
+<li><a href=#www>Why doesn't the `Open in WWW Browser' command work?</a>
+<li><a href=#alt>Why don't the Alt key mnemonics work?</a>
+<li><a href=#slow>Why is jEdit so slow?</a>
 </ul>
 
 <a name=memory>
-<h1>I get OutOfMemoryErrors even though I have lots of free RAM!</h1>
+<h1>Why do I get OutOfMemoryErrors?</h1>
 </a>
 
 When you have lots of buffers open, there might not be enough free
@@ -46,18 +47,19 @@ Where <i>nn</i> is the size of the Java heap, in megabytes. The
 default is 32 Mb - if you like to open lots of files at once, 64
 might be better.<p>
 
-<a name=alt>
-<h1>The Alt-key mnemonics act weird!</h1>
+<a name=bigfile>
+<h1>Why does the display mess up when editing large files?</h1>
 </a>
 
-On some JDK versions, the AWT incorrectly sets the modifiers of
-KEY_TYPED events to 0 even if the Alt key is pressed. The end
-result is that the keystroke is inserted in the document. This
-is an AWT bug, and as far as I know the only way to fix it is
-to upgrade to a later JDK version.
+Due to an AWT limitation or Swing bug (or maybe both) the
+Swing JTextComponent component has problems editing documents greater
+than about 2000 lines. The problem is that the viewscreen turns gray
+and GUI elements are repainted incorrectly. Until Sun fixes
+this, other editors will have to be used to edit very large
+files.
 
 <a name=www>
-<h1>The `Open in WWW Browser' command doesn't work!</h1>
+<h1>Why doesn't the `Open in WWW Browser' command work?</h1>
 </a>
 
 On Unix and Windows, make sure that either the full path to
@@ -72,16 +74,33 @@ On the MacOS, the `Open in WWW Browser' feature does not work. If
 anybody can confirm otherwise, I will be happy to post information
 here.
 
-<a name=bigfile>
-<h1>Why does the display mess up when editing large files?</h1>
+<a name=alt>
+<h1>Why don't the Alt key mnemonics work?</h1>
 </a>
 
-Due to an AWT limitation or Swing bug (or maybe both) the
-Swing JTextComponent component has problems editing documents greater
-than about 2000 lines. The problem is that the viewscreen turns gray
-and GUI elements are repainted incorrectly. Until Sun fixes
-this, other editors will have to be used to edit very large
-files.
+On some JDK versions, the AWT incorrectly sets the modifiers of
+KEY_TYPED events to 0 even if the Alt key is pressed. The end
+result is that the keystroke is inserted in the document. This
+is an AWT bug, and as far as I know the only way to fix it is
+to upgrade to a later JDK version.
+
+<a name=slow>
+<h1>Why is jEdit so slow?</h1>
+</a>
+
+Because jEdit is written in Java, it's performance will always be
+slower than native applications. A fast system with a good JVM
+will narrow the performance gap.<p>
+
+On all systems, a speedup can be achieved by installing the latest
+Swing version. Swing 1.1.1 seems to be much faster than either
+Swing 1.1beta3 or Swing 1.1final.<p>
+
+Installing more RAM may improve performance - more RAM will
+result in less garbage collection.<p>
+
+On Linux, try installing the TYA JIT
+&lt;ftp://gonzales.cyberus.ca/pub/Linux/java&gt;.
 
 </body>
 </html>

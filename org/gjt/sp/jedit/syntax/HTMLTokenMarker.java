@@ -161,12 +161,12 @@ loop:		for(int i = offset; i < length; i++)
 					{
 					case '*':
 						token = Token.COMMENT2;
-						addToken(i - lastOffset,JAVASCRIPT);
+						addToken(i - lastOffset,Token.NULL);
 						lastOffset = i;
 						i++;
 						break;
 					case '/':
-						addToken(i - lastOffset,token);
+						addToken(i - lastOffset,Token.NULL);
 						addToken(length - i,Token.COMMENT2);
 						lastOffset = length;
 						break loop;
@@ -179,7 +179,7 @@ loop:		for(int i = offset; i < length; i++)
 				else if(token == JAVASCRIPT)
 				{
 					token = Token.LITERAL1;
-					addToken(i - lastOffset,JAVASCRIPT);
+					addToken(i - lastOffset,Token.NULL);
 					lastOffset = i;
 				}
 				else if(token == Token.LITERAL1)
@@ -195,7 +195,7 @@ loop:		for(int i = offset; i < length; i++)
 				else if(token == JAVASCRIPT)
 				{
 					token = Token.LITERAL2;
-					addToken(i - lastOffset,JAVASCRIPT);
+					addToken(i - lastOffset,Token.NULL);
 					lastOffset = i;
 				}
 				else if(token == Token.LITERAL2)
@@ -228,11 +228,10 @@ loop:		for(int i = offset; i < length; i++)
 				|| token == Token.KEYWORD2)
 			{
 				addToken(length - lastOffset,Token.INVALID);
-				if(token == Token.KEYWORD2)
-					token = Token.NULL;
-				else
-					token = JAVASCRIPT;
+				token = Token.NULL;
 			}
+			else if(token == JAVASCRIPT)
+				addToken(length - lastOffset,Token.NULL);
 			else
 				addToken(length - lastOffset,token);
 		}
@@ -246,6 +245,9 @@ loop:		for(int i = offset; i < length; i++)
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.24  1999/05/03 04:28:01  sp
+ * Syntax colorizing bug fixing, console bug fix for Swing 1.1.1
+ *
  * Revision 1.23  1999/04/22 06:03:26  sp
  * Syntax colorizing change
  *

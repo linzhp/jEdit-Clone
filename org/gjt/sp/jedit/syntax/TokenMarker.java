@@ -202,6 +202,9 @@ public abstract class TokenMarker
 	 */
 	protected void addToken(int length, byte id)
 	{
+		if(id >= INTERNAL_FIRST && id != Token.END)
+			throw new InternalError("Invalid id: " + id);
+
 		if(firstToken == null)
 		{
 			firstToken = new Token(length,id);
@@ -267,6 +270,9 @@ public abstract class TokenMarker
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.22  1999/05/03 04:28:01  sp
+ * Syntax colorizing bug fixing, console bug fix for Swing 1.1.1
+ *
  * Revision 1.21  1999/05/02 00:07:21  sp
  * Syntax system tweaks, console bugfix for Swing 1.1.1
  *
