@@ -21,10 +21,12 @@ import com.sun.java.swing.JButton;
 import com.sun.java.swing.JDialog;
 import com.sun.java.swing.JLabel;
 import com.sun.java.swing.JPanel;
+import com.sun.java.swing.JScrollPane;
 import com.sun.java.swing.JSeparator;
 import com.sun.java.swing.JTextArea;
 import com.sun.java.swing.JTextField;
 import com.sun.java.swing.SwingConstants;
+import com.sun.java.swing.text.Element;
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
@@ -40,10 +42,11 @@ import java.io.Writer;
 import java.net.Socket;
 
 public class SendDialog extends JDialog
-implements ActionListener, WindowListener
+implements ActionListener, WindowListener, Runnable
 {
 	public static final String CRLF = "\r\n";
 	private View view;
+	private Thread thread;
 	private JTextField smtp;
 	private JTextField from;
 	private JTextField to;
@@ -129,15 +132,7 @@ implements ActionListener, WindowListener
 		show();
 	}
 
-	public void save()
-	{
-		jEdit.props.put("send.lastsmtp",smtp.getText());
-		jEdit.props.put("send.lastfrom",from.getText());
-		jEdit.props.put("send.lastto",to.getText());
-		jEdit.props.put("send.lastsubject",subject.getText());
-	}
-	
-	public void doSend()
+	public void run()
 	{
 		String smtp = this.smtp.getText();
 		String from = this.from.getText();
@@ -157,11 +152,12 @@ implements ActionListener, WindowListener
 		transcript.setRows(10);
 		transcript.setEditable(false);
 		getContentPane().remove(buttons);
-		getContentPane().add("South",transcript);
+		getContentPane().add("South",new JScrollPane(transcript));
 		pack();
 		Object[] args = { smtp };
 		transcript.append(jEdit.props.getProperty("send.connect",
 			args));
+		transcript.append(CRLF);
 		try
 		{
 			int index = smtp.indexOf(':');
@@ -186,6 +182,7 @@ implements ActionListener, WindowListener
 				.getHostName() + CRLF;
 			transcript.append(command);
 			out.write(command);
+			out.flush();
 			response = in.readLine();
 			transcript.append(response);
 			transcript.append(CRLF);
@@ -194,6 +191,7 @@ implements ActionListener, WindowListener
 			command = "MAIL FROM: " + from + CRLF;
 			transcript.append(command);
 			out.write(command);
+			out.flush();
 			response = in.readLine();
 			transcript.append(response);
 			transcript.append(CRLF);
@@ -202,6 +200,7 @@ implements ActionListener, WindowListener
 			command = "RCPT TO: " + to + CRLF;
 			transcript.append(command);
 			out.write(command);
+			out.flush();
 			response = in.readLine();
 			transcript.append(response);
 			transcript.append(CRLF);
@@ -210,15 +209,35 @@ implements ActionListener, WindowListener
 			command = "DATA" + CRLF;
 			transcript.append(command);
 			out.write(command);
-			out.write("bob\r\n.\r\n");
+			out.flush();
 			response = in.readLine();
 			transcript.append(response);
 			transcript.append(CRLF);
 			if(!response.startsWith("354"))
 				throw new IOException("Invalid message");
+			Buffer buffer = view.getBuffer();
+			Element map = buffer.getDefaultRootElement();
+			int lines = map.getElementCount();
+			for(int i = 0; i < lines; i++)
+			{
+				Element lineElement = map.getElement(i);
+				int start = lineElement.getStartOffset();
+				out.write(buffer.getText(start,
+					lineElement.getEndOffset() -
+						(start + 1)));
+				out.write(CRLF);
+			}
+			out.write("." + CRLF);
+			out.flush();
+			response = in.readLine();
+			transcript.append(response);
+			transcript.append(CRLF);
+			if(!response.startsWith("250"))
+				throw new IOException("Invalid message");
 			command = "QUIT" + CRLF;
 			transcript.append(command);
 			out.write(command);
+			out.flush();
 			response = in.readLine();
 			transcript.append(response);
 			transcript.append(CRLF);
@@ -240,25 +259,33 @@ implements ActionListener, WindowListener
 			args[0] = e.toString();
 			jEdit.error(view,"error",args);
 		}
-		save();
 		dispose();
 	}
 
+	public void dispose()
+	{
+		jEdit.props.put("send.lastsmtp",smtp.getText());
+		jEdit.props.put("send.lastfrom",from.getText());
+		jEdit.props.put("send.lastto",to.getText());
+		jEdit.props.put("send.lastsubject",subject.getText());
+		super.dispose();
+		if(thread != null)
+			thread.stop();
+	}
+	
 	public void actionPerformed(ActionEvent evt)
 	{
-		save();
 		Object source = evt.getSource();
 		if(source == cancel)
 			dispose();
 		else if(source == send)
-			doSend();
+			(thread = new Thread(this)).start();
 	}
 
 	public void windowOpened(WindowEvent evt) {}
 	
 	public void windowClosing(WindowEvent evt)
 	{
-		save();
 		dispose();
 	}
 	

@@ -1,12 +1,18 @@
-VERSION INFORMATION (VERSION, last modified 5 Oct 1998)
+VERSION INFORMATION (VERSION, last modified 6 Oct 1998)
 
-CURRENT VERSION: 0.6
+CURRENT VERSION: 0.7
 
 -- To Do:
 - Options dialog
-- Better documentation
-- Make code thread safe
-- Word wrap isn't done when printing
+- Word wrap when printing
+- API documentation for plugin authors
+
+-- Version 0.7:
+- Several bug fixes
+- Changed to use JRE by default
+- Send plugin
+- Rot13 plugin
+- Improved documentation
 
 -- Version 0.6:
 - Several bug fixes

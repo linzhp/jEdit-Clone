@@ -1,9 +1,9 @@
 HELP INDEX (index.txt, last modified 2 Oct 1998)
 
-If you're viewing this file with jEdit, you can open a file by double clicking
-on its name and pressing CS-o - that is pressing `o' while holding down the
-Control and Shift keys. Also, most help files have defined markers. Check out
-the `Edit->Go To Marker' menu.
+If you're viewing this file with jEdit, you can open a topic by double
+clicking its name and pressing CS-o - that is, `o' while holding down the
+Control and Shift keys. Most help files have markers. Check out the
+`Edit->Go To Marker' menu.
 
 General
 -------
@@ -15,8 +15,8 @@ Using jEdit
 -----------
 installing.txt  Installing jEdit
 starting.txt    Getting started with jEdit
-editing.txt     Advanced text editing with jEdit
 menus.txt       A description of jEdit's menus and how to customize them
+shortcuts.txt   A `cheat sheet' of jEdit's shortcuts
 props.txt       A description of property files and how to change them
 plugins.txt     A description of jEdit plugins, and how to install, use and
                 write them

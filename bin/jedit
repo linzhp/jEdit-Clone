@@ -2,7 +2,7 @@
 
 if [ "$JAVA" = "" ]
 then
-    JAVA="java"
+    JAVA="jre"
 fi
 
 if [ "$JEDIT_HOME" = "" ]

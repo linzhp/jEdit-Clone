@@ -1,8 +1,8 @@
-JEDIT README (README, last modified 29 Sep 1998)
+JEDIT README (README, last modified 6 Oct 1998)
 
 jEdit is a text editor written in Java. I wrote it to learn more about JFC
-programming. This is a pre-release version. Currently, it can do simple text
-editing, but more advanced features such as search and replace aren't done yet.
+programming. This is a pre-release version. See the VERSION file to see what
+remains to be done.
 
 To get started with jEdit, I suggest you take a look at doc/index.txt. You
 might also want to take a look at the contents of the etc/ directory, it

@@ -3,21 +3,22 @@ INSTALLING JEDIT (installing.txt, last modified 29 Sep 1998)
 Contents
 --------
 1. General
-2. Unix and Unix-workalikes
+2. Unix
 3. Windows 95, 98 and NT
-4. Starting jEdit
+4. MacOS
 
 1. General
 ----------
 jEdit requires a Java VM and Sun's Java Foundation Classes. A Java VM for
-Solaris and Windows 95/NT can be found at <http://java.sun.com>. A Linux
-version is available at <http://java.blackdown.org>. JFC can be downloaded
-from <http://java.sun.com>.
+Solaris and Windows can be found at <http://java.sun.com>. A Linux version
+is available at <http://java.blackdown.org>. JFC can be obtained from
+<http://java.sun.com>.
 
-2. Unix & Clones
-----------------
-Use the supplied Makefile. If you want to recompile the source, type `make' at
-a shell prompt in the jEdit directory. Then log in as root and `make install'.
+2. Unix
+-------
+Use the supplied Makefile. Log in as root and `make install' in the jEdit
+directory. If for some reason you want to recompile the source, do a `make'
+before the `make install'.
 
 By default, everything will be installed under /opt/slava. If you want to
 install jEdit elsewhere, edit the Make.rules file.
@@ -26,8 +27,7 @@ install jEdit elsewhere, edit the Make.rules file.
 ------------------------
 Use the makeit.bat batch file to compile it if necessary and the installit.bat
 batch file to install it. By default, everything will be installed under
-C:\Program Files\jEdit. If you don't like this, edit the top level
-installit.bat file.
+C:\Program Files\jEdit. If you don't like this, edit installit.bat file.
 
 4. MacOS
 --------

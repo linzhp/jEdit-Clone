@@ -6,6 +6,8 @@ cd ..\InsertDate
 call installit.bat %JAR_DIR%
 cd ..\Reverse
 call installit.bat %JAR_DIR%
+cd ..\Rot13
+call installit.bat %JAR_DIR%
 cd ..\Send
 call installit.bat %JAR_DIR%
 cd ..\ToLower

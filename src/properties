@@ -253,7 +253,6 @@ copy.shortcut=C-c
 paste.label=Paste
 paste.shortcut=C-v
 clear.label=Clear
-clear.shortcut=CS-x
 select_all.label=Select All
 select_all.shortcut=C-a
 goto_line.label=Go To Line...
@@ -285,8 +284,8 @@ plugins.label=Plugins
 no_plugins.label=No Plugins
 buffers.label=Buffers
 help=about help - help@README help@COPYING help@VERSION - \
-	help@installing.txt help@starting.txt help@editing.txt help@menus.txt \
-	help@props.txt help@plugins.txt
+	help@installing.txt help@starting.txt help@menus.txt \
+	help@shortcuts.txt help@props.txt help@plugins.txt
 help.label=Help
 about.label=About jEdit...
 help@README.label=Readme
@@ -294,7 +293,7 @@ help@COPYING.label=Copying
 help@VERSION.label=Version Info
 help@installing.txt.label=Installation
 help@starting.txt.label=Getting Started
-help@editing.txt.label=Advanced Editing
 help@menus.txt.label=Menus
+help@shortcuts.txt.label=Shortcuts
 help@props.txt.label=Properties
 help@plugins.txt.label=Plugins

@@ -1,4 +1,4 @@
-JEDIT PLUGINS (plugins.txt, last modified 1 Oct 1998)
+JEDIT PLUGINS (plugins.txt, last modified 6 Oct 1998)
 
 Contents
 --------
@@ -28,24 +28,25 @@ a plugin directory in $HOME/.jedit-jars.
 
 On Windows 95 and 98, the system plugin directory is
 C:\Program Files\jEdit\jars. The user plugin directory is
-$JAVAHOME\.jedit-jars.
+%JAVAHOME%\.jedit-jars.
 
 On Windows NT, the system plugin directory is the same as that on
-Windows 95/98, but each user has a plugin directory in $HOME\.jedit-jars.
+Windows 95/98, but each user has a plugin directory in %HOME%\.jedit-jars.
 
 3. Using Plugins
 ----------------
 Once a plugin is installed, jEdit will say so during startup.
 
-	Loading plugin /opt/slava/share/jedit-1.00/jars/HelloWorld.jar
-	Loading plugin /opt/slava/share/jedit-1.00/jars/ToLowercase.jar
-	Loading plugin /opt/slava/share/jedit-1.00/jars/ToUppercase.jar
+	Loading plugin /opt/slava/share/jedit-1.00/jars/hello_world.jar
+	Loading plugin /opt/slava/share/jedit-1.00/jars/to_lower.jar
+	Loading plugin /opt/slava/share/jedit-1.00/jars/to_upper.jar
 
-If a newly installed plugin doesn't appear to be loaded, check that it's in
-the correct directory and that it's a JAR file. Also, a message such as this
-indicates that the plugin is probably corrupted:
+If all goes well during startup, the plugins should also appear in the 
+`Plugins' menu. If a newly installed plugin doesn't appear to be loaded, check
+that it's in the correct directory and that it's a JAR file. A message such as
+this indicates that the plugin is corrupted:
 
-	Loading plugin /opt/slava/share/jedit-1.00/jars/WordCount.jar
+	Loading plugin /opt/slava/share/jedit-1.00/jars/word_count.jar
 	java.util.zip.ZipException: not a ZIP file (END header not found)
 		at java.util.zip.ZipFile.findEND(ZipFile.java)
 		at java.util.zip.ZipFile.readCEN(ZipFile.java)
@@ -54,10 +55,8 @@ indicates that the plugin is probably corrupted:
 		at CommandMgr.loadPlugins(CommandMgr.java:52)
 		at jEdit.main(jEdit.java:95)
 
-If all goes well during startup, the plugins should also appear in the 
-`Plugins' menu. If a plugin doesn't appear in the plugins menu but a
-`Loading...' is printed, check that the plugin is valid and compatible with
-the current version of jEdit.
+If a plugin doesn't appear in the plugins menu but a `Loading...' message is
+printed, the plugin might be incompatible with your version of jEdit.
 
 4. Developing Plugins
 ---------------------
@@ -68,11 +67,10 @@ Property entries have a .props extension and should be in standard Java
 property file format. Any property files in a plugin are loaded by the
 jEdit property manager automatically.
 
-Class entries have a .class extension. They are standard Java classes. The
-jEdit command manager loads any classes in a plugin automatically. Also,
-classes which implement the `Command' interface and have a name prefixed with
-`Cmd_' are added to the plugins menu. To find out how to give the plugin's
-menu item a shortcut and label, see menus.txt.
+Class entries have a .class extension. The jEdit command manager loads any
+classes in a plugin automatically. Classes which implement the `Command'
+interface and have a name prefixed with `Cmd_' are added to the plugins menu.
+To find out how to give the plugin's menu item a label, see menus.txt.
 
 The Command interface defines the following methods:
 
@@ -88,17 +86,14 @@ The Command interface defines the following methods:
   that was active when the plugin was invoked. As with init(), the return
   value is unused. For forward compatibility, it should be null.
 
-- Also, all commands must have a public constructor which accepts no
-  arguments.
+- A public constructor which accepts no arguments must also be defined.
 
 5. Creating a Simple Plugin
 ---------------------------
-The previous section probably doesn't make any sense at all. That's okay :).
 This section contains step by step instructions for creating a simple
-plugin. Hopefully, you'll be able to get the hang of this after reading this
-section.
+plugin.
 
-You will need a java compiler and the jar tool to do this example.
+You will need a java compiler and the jar tool to follow this example.
 
 Step 1 - Create the source file
 
@@ -153,7 +148,7 @@ An error such as this during compilation means that the classpath is wrong:
 	Cmd_SimplePlugin.java:4: Interface Command of class SimplePlugin
 		not found.
 	public class Cmd_SimplePlugin implements Command
-	                                     ^
+	                                         ^
 	1 error
 
 If all goes well, go onto the next step.
@@ -163,12 +158,10 @@ Step 3 - Create the properties file
 Create a file, SimplePlugin.props, with the following in it:
 
 # SimplePlugin.props: properties for simple plugin
+
 # The menu item label that will appear in the Plugins menu
 SimplePlugin.label=Simple Plugin
-# The menu item's shortcut (Control-Shift-H)
-# It is discouraged to give your plugins shortcuts, because
-# collisions are very likely
-SimplePlugin.shortcut=CS-h
+
 # End of SimplePlugin.props
 
 Step 4 - Create the JAR file
@@ -178,7 +171,7 @@ Use the jar tool to create the JAR file:
 	jar cf0 SimplePlugin.jar Cmd_SimplePlugin.class SimplePlugin.props
 
 There should now be a file called SimplePlugin.jar. It is the finished
-plugin. Note that the first parameter is c-f-zero, not c-f-capital-o.
+plugin. Note that the first parameter is c-f-zero, not c-f-capital-o.
 
 Step 4 - Install the test plugin
 
@@ -199,7 +192,7 @@ On Windows NT:
 
 Step 5 - Test it!
 
-Fire up jEdit. A message such as this should be printed:
+Start jEdit. A message such as this should be printed:
 
 	Loading plugin /home/slava/.jedit-jars/SimplePlugin.jar
 	Hello from SimplePlugin.init()!

@@ -402,6 +402,7 @@ loop:				for(i = 0; i < line.length; i++)
 					break loop;
 					}
 				}
+				i = Math.min(i,caret - start);
 				buffer.insertString(caret,"\n".concat(
 					new String(line,0,i)),null);
 				evt.consume();

@@ -4,6 +4,8 @@ cd ..\InsertDate
 call makeit.bat
 cd ..\Reverse
 call makeit.bat
+cd ..\Rot13
+call makeit.bat
 cd ..\Send
 call makeit.bat
 cd ..\ToLower

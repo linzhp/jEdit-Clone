@@ -23,11 +23,6 @@ jEdit loads the following property files on startup:
   Windows NT. 
 - Any *.props files in the plugin JARs.
 
-CAVEAT: Because the properties from the plugins are loaded after the other
-property files, you can't just put some properties into your user props file to
-override them. You must create your own plugin and ensure that it loads after
-the plugin whose properties you want to override.
-
 3. Format
 ---------
 Property files are in the standard Java property format. Generally, they look
@@ -37,9 +32,6 @@ opt1=value
 opt2=value2
 module.opt1=some value
 module.opt2=some other value
-
-When creating your own property files, you should group related items under a
-single module name.
 
 4. Changing Properties
 ----------------------
@@ -51,8 +43,8 @@ do this:
 
 	jar xf <path to jedit.jar>/jedit.jar properties
 
-Then you can copy the properties that you want to change to your user properties
-file.
+Then you can copy the properties that you want to change to your user
+properties file.
 
 -- Slava Pestov
 <slava_pestov@geocities.com>

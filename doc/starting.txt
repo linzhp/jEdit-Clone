@@ -1,9 +1,9 @@
-GETTING STARTED WITH JEDIT (starting.txt, last modified 4 Oct 1998)
+GETTING STARTED WITH JEDIT (starting.txt, last modified 6 Oct 1998)
 
 Contents
 --------
 1. Starting jEdit
-1.2. Unix And Unix-workalikes
+1.2. Unix & clones
 1.3. Windows 95 and 98
 1.4. Windows NT
 1.5. MacOS
@@ -11,6 +11,8 @@ Contents
 3. Autosave and backups
 4. Views
 5. Editing Files
+6. Markers
+7. Auto Indent
 
 1. Starting jEdit
 -----------------
@@ -36,7 +38,7 @@ jEdit can also be started with no arguments:
 In that case, it will open a new `Untitled' file. If jOpen is started with no
 arguments, it opens a new view of the first buffer.
 
-A number of options can also be given to jEdit:
+A number of options can be given to jEdit:
 
 	-version: Print jEdit version and exit
 	-usage: Print a command line usage
@@ -44,7 +46,7 @@ A number of options can also be given to jEdit:
 	-portfile=<file>: Write server port to <file>
 	-readonly: Open files read only
 
-jOpen also accepts certain options:
+jOpen accepts these options:
 
 	-version: Print jOpen version and exit
 	-usage: Print command line usage
@@ -65,11 +67,11 @@ jEdit's working directory, not jOpen's. For example, if jEdit was started from
 directory /home/bob/Play, jEdit will try to open /home/bob/Work/filename, not
 /home/bob/Play/filename as expected.
 
-1.1. Unix
----------
+1.1. Unix & Clones
+------------------
 You need to set the PATH variable to point to the directory with the jedit and
-jedit shell scripts so that the shell can locate them. The default location is
-/opt/slava/bin. If you're using a Bourne shell (sh, ash, jsh, bash, zsh) The
+jopen scripts so that the shell can locate them. The default location is
+/opt/slava/bin. If you're using a Bourne shell (sh, ash, jsh, bash, zsh) the
 command to add /opt/slava/bin to the PATH is:
 
 	set PATH=$PATH:/opt/slava/bin; export PATH
@@ -120,7 +122,7 @@ Files can be saved back to disk in one of three ways:
 - With the `File->Save' command, which saves the file immediately.
 - With the `File->Save As' command, which shows a file selection dialog,
   allowing a different name for the file to be chosen.
-- With the `File->Save To URL' command, which lets you type in a path name or
+- With the `File->Save To URL' command, which prompts for a path name or
   URL to save the file to.
 
 4. Autosave and Backups
@@ -128,13 +130,12 @@ Files can be saved back to disk in one of three ways:
 jEdit has two features which protect against stupid things that the computer
 or the user might do.
 
-The autosave feature protects against computer crashes. It saves currently
-edited files at fixed intervals, 30 seconds by default. When a file is
-autosaved, its name is prefixed and suffixed with `#' characters - for
-example, if you were editing the file `HelloWorld.java', it would be
-autosaved to `#HelloWorld.java#'. If jEdit crashes during an editing session,
-you can open the autosave file, and if it contains important information,
-overwrite the original file with it.
+The autosave feature protects against computer crashes. It saves open files at
+fixed intervals, 30 seconds by default. When a file is autosaved, its name is
+prefixed and suffixed with `#' characters - for example, if you were editing
+the file `HelloWorld.java', it would be autosaved to `#HelloWorld.java#'. If
+jEdit crashes during an editing session, you can open the autosave file, and
+if it contains important information, overwrite the original file with it.
 
 The backup feature protects against the user's mistakes. When you save a
 file, a tilde (`~') is added to the name of the original version before the
@@ -154,7 +155,7 @@ The `File->New View' command creates a new view, set to the edit the same
 file as the current one.
 
 The `File->Close View' command closes the current view and exits jEdit if
-there aren't open ones left.
+there aren't any left.
 
 The Buffers menu can be used to select which file the current view should be
 editing.
@@ -165,20 +166,38 @@ Each view has a status bar. A sample status bar looks like this:
  ^ ^ ^        ^                   ^   ^   ^
  | | |        |                   |   |   |
  | | |        |                   |   |  The caret position, as a percentage
+ | | |        |                   |   |
  | | |        |                   |  The total number of lines in the file
+ | | |        |                   |
  | | |        |                  The line number the caret is on
+ | | |        |
  | | |       The full pathname of the file
+ | | |
  | |(**) if the is dirty, (--) if it's not
+ | |
  | (/) if the file is read only, (:) if it's not
+ |
 (**) if the file is new, (--) if it's not
 
 6. Editing Files
 ----------------
 If you've ever used an editor such as nedit on Unix, Notepad on Windows
-or SimpleText on the Mac you'll feel right at home in jEdit. jEdit's
-commands work similarly as in the above editors. The menu item shortcuts are
-also very similar. However, jEdit is much more powerful. See editing.txt to
-find out why.
+or SimpleText on the Mac you'll feel right at home in jEdit. jEdit works in
+much the same way as the above editors. The menu item shortcuts are similar
+as well. Read the other help topics to find out why.
+
+7. Markers
+----------
+Most other editors can set `markers' in the text, and go to those markers.
+jEdit's markers, however are persistent across editing sessions and can have
+names of any length. Markers are set with the `Edit->Set Marker' command,
+cleared with `Edit->Clear Marker' and jumped to with `Edit->Go To Marker'.
+
+8. Auto Indent
+--------------
+This feature is useful for editing source code. When you press return, white
+space and comment characters from the start of the previous line are copied to
+the the new one. 
 
 -- Slava Pestov
 <slava_pestov@geocities.com>

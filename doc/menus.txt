@@ -1,4 +1,4 @@
-JEDIT MENUS (menus.txt, last modified 5 Oct 1998)
+JEDIT MENUS (menus.txt, last modified 6 Oct 1998)
 
 Contents
 --------
@@ -13,12 +13,12 @@ Contents
 
 1. Format
 ---------
-The following format for describing menu items is used in this file:
+Each menu item description in this file looks like this:
 
-- <Default label> <command name> <key binding>
+- <Default label> <command name> <shortcut>
 <Description>
 
-The key binding is one or more modifiers, followed by a dash, followed by the
+The shortcut is one or more modifiers, followed by a dash, followed by the
 character than must be pressed with the modifiers. The modifiers are:
 
 C - control
@@ -29,31 +29,29 @@ M - meta (on PC keyboards, right alt)
 2. File Menu
 ------------
 - New File (new_file) (C-n)
-Creates a new, untitled file
+Creates a new, untitled file.
 
 - New View (new_view) (CS-n)
 Creates a new view of the current file.
 
 - Open File (open) (C-o)
-Prompts the user for a file to open in the current view.
+Prompts for a file to open.
 
 - Open URL (open_url) (C-u)
-Prompts the user for a URL or path name to open in the current view.
+Prompts for a URL or path name to open.
 
 - Open Selection (open_selection) (CS-o)
 Opens the file named by the selected text.
 
 - Open Recent (%open_recent)
-A menu of recently opened files and URLs. The maximum number of items is set
-with the `maxrecent' property.
+A menu of recently opened files and URLs.
 
 -- SEPARATOR --
 
 - Close File (close_file) (C-w)
-Closes the file in the current view, and exits jEdit if there are no more open
-files. If the file has unsaved data, a dialog box will appear asking if it
-should
- be saved first.
+Closes the current file and exits jEdit if there are no more open files. If
+the file has unsaved data, a dialog box will appear asking if it should be
+saved first.
 
 - Close View (close_view) (CS-w)
 Closes the current view, and exists jEdit if there are no more open views.
@@ -64,10 +62,10 @@ Closes the current view, and exists jEdit if there are no more open views.
 Saves the current file.
 
 - Save As (save_as) (CS-s)
-Prompts the user for an alternative name under which to save the current file.
+Prompts for a new name to save the current file as.
 
 - Save To URL (save_url) (CS-u)
-Prompts the user for a URL or path name to save the file to.
+Prompts for a URL or path name to save the file to.
 
 -- SEPARATOR --
 
@@ -83,21 +81,21 @@ Exits jEdit, asking if any unsaved files should be saved first.
 ------------
 
 - Undo (undo) (C-z)
-Undoes the previous edit action.
+Undoes the previous editing action.
 
 - Redo (redo) (CS-z)
-Redoes the previous edit action.
+Redoes the previous editing action.
 
 - Cut (cut) (C-x)
 Deletes the current selection and copies it to the clipboard.
 
 - Copy (copy) (C-c)
-Copies the current selection to the keyboard.
+Copies the current selection to the clipboard.
 
 - Paste (paste) (C-v)
-Pastes the contents of the clipboard at the caret position.
+Pastes the contents of the clipboard at the caret.
 
-- Clear (clear) (CS-x)
+- Clear (clear)
 Deletes the current selection.
 
 - Select All (select_all) (C-a)
@@ -112,12 +110,10 @@ Moves the caret to the specified line.
 Defines a marker at the current caret position.
 
 - Clear Marker (%clear_marker)
-A submenu with a list of currently defined markers. Selecting one will remove
-it.
+A submenu with a list of markers. Selecting one will remove it.
 
 - Go To Marker (%goto_marker)
-A submenu with a list of currently defined markers. Selecting one will go to
-it.
+A submenu with a list of markers. Selecting one will go to it.
 
 -- SEPARATOR --
 
@@ -125,7 +121,32 @@ it.
 
 4. Search Menu
 --------------
-Search & replace isn't finished yet.
+
+- Find (find) (C-f)
+Displays the search and replace dialog.
+
+- Find Next (find_next) (C-g)
+Finds the next occurrence of the search string.
+
+- Find Selection (find_selection) (C-h)
+Finds the next occurrence of the selected string.
+
+-- SEPARATOR --
+
+- Replace (replace) (C-r)
+Replaces the current selection with the replacement string.
+
+- Replace & Find Next (replace_next) (CS-g)
+Replaces the current selection with the replacement string and finds the next
+occurrence of the search string.
+
+- Replace All (replace_all) (CS-r)
+Replaces all occurrences of the search string with the replacement string.
+
+-- SEPARATOR --
+
+- HyperSearch (hypersearch) (CS-h)
+Try it!
 
 5. Plugins Menu
 ---------------
@@ -133,26 +154,25 @@ This menu contains one entry for each plugin you have installed.
 
 6. Buffers Menu
 ---------------
-This menu contains one entry for each open file. The current file will have a
-marker next to it.
+This menu contains one entry for each open file.
 
 7. Help Menu
 ------------
-This menu contains a list of help files. A description of each one is for can
-be found by selecting `Help Index'.
+This menu contains a list of help topics. A description of each one can be
+found by selecting `Help Index'.
 
 8. Customizing Menus
 --------------------
 If you don't like jEdit's default menus, it is possible to change them. This
 involves changing properties, so read props.txt first.
 
-The main menubar is stored in editor_mbar. It is a white space separated list
-of menus.
+The main menubar is stored in the editor_mbar property. It is a white space
+separated list of menus.
 
 	editor_mbar=file edit plugins buffers help
 
-For each menu, there is one property with the list of menu items, and one for
-the menu's label.
+For each menu, there is one property with the list of menu items, and one
+with the menu's label.
 
 	file=new_file new_view open_file open_url open_selection \
 	%open_recent - ... and so on ...
@@ -168,8 +188,7 @@ contains it's label and one which contains it's shortcut.
 	new_file.shortcut=C-n
 
 When that menu item is selected, it's name is executed as a command - the
-`new_file' menu item, when selected, will invoke the `new_file' command. See
-commands.txt for more information about commands.
+`new_file' menu item, when selected, will invoke the `new_file' command.
 
 The shortcut format is described in section 1.
 
