@@ -1,6 +1,6 @@
 /*
- * netscape_open_sel.java
- * Copyright (C) 1998 Slava Pestov
+ * browser_open_url.java
+ * Copyright (C) 1998, 1999 Slava Pestov
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -19,47 +19,45 @@
 
 package org.gjt.sp.jedit.actions;
 
-import java.io.IOException;
+import javax.swing.JOptionPane;
 import java.awt.event.ActionEvent;
+import java.io.IOException;
 import org.gjt.sp.jedit.*;
 
-public class netscape_open_sel extends EditAction
+public class browser_open_url extends EditAction
 {
-	public netscape_open_sel()
+	public browser_open_url()
 	{
-		super("netscape-open-sel");
+		super("browser-open-url");
 	}
 	
 	public void actionPerformed(ActionEvent evt)
 	{
 		View view = getView(evt);
 		Buffer buffer = view.getBuffer();
-		String selection = view.getTextArea().getSelectedText();
-		if(selection == null)
+
+		if(buffer.isDirty())
 		{
-			view.getToolkit().beep();
-			return;
+			int result = JOptionPane.showConfirmDialog(view,
+				jEdit.getProperty("savefirst.message"),
+				jEdit.getProperty("savefirst.title"),
+				JOptionPane.YES_NO_CANCEL_OPTION,
+				JOptionPane.WARNING_MESSAGE);
+			if(result == JOptionPane.YES_OPTION)
+				buffer.save(view,null);
+			else if(result == JOptionPane.CANCEL_OPTION)
+				return;
 		}
-		String[] remoteArgs = { "netscape", "-remote",
-			"openURL(" + selection + ")" };
+		String[] args = { jEdit.getProperty("browser"),
+			buffer.getPath() };
 		try
 		{
-			Process remote = Runtime.getRuntime()
-				.exec(remoteArgs);
-			if(remote.waitFor() != 0)
-			{
-				String[] netscapeArgs = { "netscape",
-					selection };
-				Runtime.getRuntime().exec(netscapeArgs);
-			}
+			Runtime.getRuntime().exec(args);
 		}
 		catch(IOException io)
 		{
 			String[] errorArgs = { io.toString() };
-			jEdit.error(view,"ioerror",errorArgs);
-		}
-		catch(InterruptedException i)
-		{
+			jEdit.error(view,"wwwerror",errorArgs);
 		}
 	}
 }
