@@ -1,0 +1,10 @@
+plugin.GenerateTextPlugin.name=Generate Random Text
+plugin.GenerateTextPlugin.author=Slava Pestov
+plugin.GenerateTextPlugin.version=1.6pre1
+plugin.GenerateTextPlugin.docs=index.html
+
+plugin.GenerateTextPlugin.depend.0=jdk 1.1
+plugin.GenerateTextPlugin.depend.1=jedit 01.06.01.00
+plugin.GenerateTextPlugin.depend.2=class org.gjt.sp.jedit.actions.format
+
+generate-text.label=Generate Random Text

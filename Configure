@@ -17,7 +17,7 @@ rulesOut()
 }
 
 # Print version
-VERSION=1.5.1
+VERSION=1.6.1
 echo ">> Configuring jEdit $VERSION"
 echo
 
@@ -31,27 +31,34 @@ trap error 15
 RULES=Rules.make
 exec 8>$RULES
 rulesOut "# Created by Configure on `date`"
+rulesOut ""
+rulesOut "# In a plugin Makefile, set the following variables:"
+rulesOut "# jar: Plugin JAR file name"
+rulesOut "# resources: Class files of plugin"
+rulesOut "# no_compile_res: Inner classes, property files, and resources"
+rulesOut "# deps: Colon-separated list of JARs this one depends on"
+rulesOut ""
 rulesOut ".SUFFIXES: .java .class"
 rulesOut '../$(jar): $(resources)'
 rulesOut '	$(JAR) cf ../$(jar) $(resources) $(no_compile_res)'
 rulesOut ".java.class:"
 rulesOut '	@echo $<:'
-rulesOut '	@$(JAVAC) -classpath $(CLASSPATH):../.. $<'
+rulesOut '	@$(JAVAC) -classpath $(CLASSPATH):$(deps):../.. $<'
 rulesOut VERSION=$VERSION
 
 # Configure installation directory
-echo -n "Where do you want to install jEdit? [/opt/slava/share/jedit-$VERSION] "
+echo -n "Where do you want to install jEdit? [/usr/local/share/jedit-$VERSION] "
 read JEDIT_HOME
 if test "$JEDIT_HOME" = ""
 then
-	JEDIT_HOME="/opt/slava/share/jedit-$VERSION"
+	JEDIT_HOME="/usr/local/share/jedit-$VERSION"
 fi
 
-echo -n "Where do you want to install jEdit's shell script? [/opt/slava/bin] "
+echo -n "Where do you want to install jEdit's shell script? [/usr/local/bin] "
 read JEDIT_BIN
 if test "$JEDIT_BIN" = ""
 then
-	JEDIT_BIN=/opt/slava/bin
+	JEDIT_BIN=/usr/local/bin
 fi
 
 rulesOut "JEDIT_HOME=$JEDIT_HOME"

@@ -21,11 +21,6 @@ import org.gjt.sp.jedit.*;
 
 public class ReversePlugin implements Plugin
 {
-	public String getName()
-	{
-		return "reverse";
-	}
-
 	public void start()
 	{
 		jEdit.addPluginAction(new reverse());

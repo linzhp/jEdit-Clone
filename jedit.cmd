@@ -1,6 +1,7 @@
 /* Filename: jEdit.cmd                                                     */
-/* Description : Simple REXX script to execute Slava Pestov's jEdit, a     */
-/*               free Java Editor under OS/2 with JDK 1.1.4 or higher      */
+/* Description : Simple REXX script to execute jEdit, an Open Source       */
+/*               Java Editor under OS/2 with JDK 1.1.7 and Swing 1.1       */
+/*               or higher                                                 */
 /* Installation: Just place this file in the jEdit directory (this is the  */
 /*               directory which contains the following sub-directories:   */
 /*                    /doc                                               ) */

@@ -1,0 +1,9 @@
+plugin.Rot13Plugin.name=Rot13
+plugin.Rot13Plugin.author=Slava Pestov
+plugin.Rot13Plugin.version=1.6pre1
+plugin.Rot13Plugin.docs=index.html
+
+plugin.Rot13Plugin.depend.0=jdk 1.1
+plugin.Rot13Plugin.depend.1=jedit 01.06.01.00
+
+rot13.label=Rot13

@@ -2,18 +2,18 @@ JEDIT README
 
 * About jEdit
 
-jEdit is a text editor written in 100% Pure Java. It is NOT a word
-processor - it doesn't support styled text. Instead, it can be used for
-editing plain text files, such as HTML, Java source, Perl scripts, LaTeX
-documents, and so on. It has many commands useful for the editing of
-such files.
+jEdit is an Open Source, cross platform text editor written in Java. It
+is NOT a word processor - it doesn't support styled text. Instead, it
+can be used for editing plain text files, such as HTML, Java source,
+Perl scripts, LaTeX documents, and so on. It has many commands useful
+for the editing of such files.
 
-jEdit is released under the GNU General Public License, basically, you
+jEdit is released under the GNU General Public License; basically, you
 can share jEdit and modify it all you want, but you must give away your
-modifications under the same terms. It can be viewed within jEdit by
-selecting Help->Help Contents->Copying. Also, if you have a WWW browser
-such as Netscape, you can view it outside of jEdit by opening
-`copying.html' in the `doc' directory.
+modifications under the same terms. The license can be viewed within
+jEdit by selecting Help->Help Contents->GNU General Public License.
+Also, if you have a WWW browser such as Netscape, you can view it
+outside of jEdit by opening `copying.html' in the `doc' directory.
 
 jEdit uses gnu.regexp by the Free Software Foundation. Only the parts of
 gnu.regexp used by jEdit are included - the complete package can be
@@ -40,8 +40,9 @@ You may also contact the author of jEdit directly.
 
 * Installing jEdit
 
-jEdit requires either JDK/JRE 1.1 with Swing 1.1beta3 or later or
-JDK/JRE 1.2. Earlier JDK and Swing versions will not work.
+jEdit requires either JDK/JRE 1.1 with Swing 1.1beta3 or later (for best
+performance, JDK/JRE 1.1.8 and Swing 1.1.1beta2) or JDK/JRE 1.2. Earlier
+JDK and Swing versions will not work.
 
 Java runtimes for Solaris and Windows:
 <http://java.sun.com/products/jdk/1.2>
@@ -52,24 +53,10 @@ Swing: <http://java.sun.com/products/jfc/index.html>
 ** Unix
 
 Installation of jEdit on Unix is a two step process:
+
 1. Run `sh Configure'. It will prompt for the installation directory and
    various other build parameters.
 2. Run `make install' to install jEdit.
-
-You also need to set the PATH variable to point to the directory with
-the jedit script so that the shell can locate it. The default location
-is /opt/slava/bin. If you're using a Bourne shell (sh, ash, jsh, bash,
-zsh) the command to add /opt/slava/bin to the PATH is:
-
-	set PATH=$PATH:/opt/slava/bin; export PATH
-
-If you're using a C shell (csh, tcsh) the equivalent is:
-
-	setenv PATH $PATH:/opt/slava/bin
-
-It is advisable to place these commands in the .profile script (Bourne
-shell) or the .csh.login script (C shell) so that the PATH will be set
-every time you log in.
 
 To pass options to the Java virtual machine, put them in the JEDIT
 enviroment variable. With a Bourne shell, the command is:
@@ -91,6 +78,9 @@ file by right-clicking on it and selecting `Edit' from the context menu.
 
 It is also a good idea to delete any previous versions of jEdit prior
 to installing, as old files can cause problems.
+
+If you get a `java.exe: not found' error when starting jEdit, you must
+enter the full path to your `java.exe' in install.bat and reinstall.
 
 If you want to use jEdit from the command line, you must add its
 directory to the PATH. By default, jEdit is installed in C:\Program
@@ -114,15 +104,15 @@ directory in the desired place and run jedit.cmd to start jEdit.
 ** MacOS
 
 There are no specific steps that must be taken to install jEdit on the
-MacOS. Simply run the jEdit class from the jedit.jar file with your
-favourite JVM. If you use MRJ, try creating a JBindery file to make
-jEdit easier to start. Sorry, I can't give any more advice, my only Mac
-is an ancient 68040 LC575.
+MacOS. Simply run the `org.gjt.sp.jedit.jEdit' class from the jedit.jar
+file with your favourite JVM. If you use MRJ, try creating a JBindery
+file to make jEdit easier to start. Sorry, I can't give any more advice,
+my only Mac is an ancient 68040 LC575.
 
 * Documentation
 
 Once you have installed jEdit, a list of help topics can be displayed by
-selecting `Help->Help Contents'.
+running jEdit and selecting `Help->Help Contents' from the menu bar.
 
 Have fun!
 <sp@gjt.org>

@@ -21,11 +21,6 @@ import org.gjt.sp.jedit.*;
 
 public class Rot13Plugin implements Plugin
 {
-	public String getName()
-	{
-		return "rot13";
-	}
-
 	public void start()
 	{
 		jEdit.addPluginAction(new rot13());

@@ -21,11 +21,6 @@ import org.gjt.sp.jedit.*;
 
 public class GenerateTextPlugin implements Plugin
 {
-	public String getName()
-	{
-		return "generate-text";
-	}
-
 	public void start()
 	{
 		jEdit.addPluginAction(new generate_text());
