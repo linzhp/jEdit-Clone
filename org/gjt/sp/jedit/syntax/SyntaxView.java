@@ -165,8 +165,6 @@ public class SyntaxView extends PlainView
 		Component host = getContainer();
 		Dimension size = host.getSize();
 
-		System.out.println("Repaint forced");
-
 		host.repaint(x,y,size.width - x,size.height - y);
 	}
 }
@@ -174,6 +172,9 @@ public class SyntaxView extends PlainView
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.20  1999/05/01 02:21:12  sp
+ * 1.6pre4
+ *
  * Revision 1.19  1999/05/01 00:55:11  sp
  * Option pane updates (new, easier API), syntax colorizing updates
  *
