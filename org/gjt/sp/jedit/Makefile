@@ -9,6 +9,7 @@ classes=org/gjt/sp/jedit/jEdit.class \
 	org/gjt/sp/jedit/Buffer.class \
 	org/gjt/sp/jedit/EditAction.class \
 	org/gjt/sp/jedit/EditPlugin.class \
+	org/gjt/sp/jedit/EditServer.class \
 	org/gjt/sp/jedit/GUIUtilities.class \
 	org/gjt/sp/jedit/JARClassLoader.class \
 	org/gjt/sp/jedit/Marker.class \
@@ -21,8 +22,11 @@ classes=org/gjt/sp/jedit/jEdit.class \
 	org/gjt/sp/jedit/View.class
 
 others='org/gjt/sp/jedit/jEdit$$1.class' \
-	'org/gjt/sp/jedit/jEdit$$Autosave.class' \
 	'org/gjt/sp/jedit/jEdit$$WindowHandler.class' \
+	'org/gjt/sp/jedit/EditServer$$1.class' \
+	'org/gjt/sp/jedit/EditServer$$2.class' \
+	'org/gjt/sp/jedit/EditServer$$3.class' \
+	'org/gjt/sp/jedit/EditServer$$4.class' \
 	'org/gjt/sp/jedit/Buffer$$BufferProps.class' \
 	'org/gjt/sp/jedit/Buffer$$DocumentHandler.class' \
 	'org/gjt/sp/jedit/Buffer$$EditorHandler.class' \
@@ -50,7 +54,6 @@ all: $(classes)
 	$(MAKE) -f org/gjt/sp/jedit/mode/Makefile
 	$(MAKE) -f org/gjt/sp/jedit/options/Makefile
 	$(MAKE) -f org/gjt/sp/jedit/proto/Makefile
-	$(MAKE) -f org/gjt/sp/jedit/remote/Makefile
 	$(MAKE) -f org/gjt/sp/jedit/search/Makefile
 	$(MAKE) -f org/gjt/sp/jedit/syntax/Makefile
 	$(MAKE) -f org/gjt/sp/jedit/textarea/Makefile

@@ -148,10 +148,10 @@ public class View extends JFrame
 		{
 			Buffer b = bufferArray[i];
 			String name = b.getPath();
-			Object[] args = { (b.isNewFile() ? b.getName() : name),
+			Object[] args = { name,
 				new Integer(b.isReadOnly() ? 1: 0),
 				new Integer(b.isDirty() ? 1 : 0),
-				new Integer(0), null };
+				new Integer(b.isNewFile() ? 1 : 0) };
 			JRadioButtonMenuItem menuItem =
 				new JRadioButtonMenuItem(jEdit.getProperty(
 					"view.title",args));
@@ -271,7 +271,8 @@ public class View extends JFrame
 		Object[] args = { ((showFullPath && !buffer.isNewFile())
 			? buffer.getPath() : buffer.getName()),
 			new Integer(buffer.isReadOnly() ? 1 : 0),
-			new Integer(buffer.isDirty() ? 1: 0)};
+			new Integer(buffer.isDirty() ? 1: 0),
+			new Integer(buffer.isNewFile() ? 1: 0)};
 		setTitle(jEdit.getProperty("view.title",args));
 		textArea.setEditable(!buffer.isReadOnly());
 	}
@@ -388,22 +389,6 @@ public class View extends JFrame
 	}
 
 	/**
-	 * Returns this view's unique identifier (UID). UIDs are
-	 * guaranteed to be unique during a jEdit session - they
-	 * are not reused (unless more than 2^32 views are created,
-	 * but that isn't a very realistic condition).<p>
-	 *
-	 * A UID can be converted back to a view with the
-	 * jEdit.getView() method.
-	 *
-	 * @see org.gjt.sp.jedit.jEdit#getView(int)
-	 */
-	public final int getUID()
-	{
-		return uid;
-	}
-
-	/**
 	 * Returns true if this view has been closed with
 	 * <code>jEdit.closeView()</code>.
 	 */
@@ -433,11 +418,9 @@ public class View extends JFrame
 	// package-private members
 	View prev;
 	View next;
-	int uid;
 
 	View(View view, Buffer buffer)
 	{
-		uid = UID++;
 		listenerList = new EventListenerList();
 
 		buffers = GUIUtilities.loadMenu(this,"buffers");
@@ -514,8 +497,6 @@ public class View extends JFrame
 	}
 
 	// private members
-	private static int UID;
-
 	private Buffer buffer;
 	private boolean closed;
 
@@ -698,6 +679,9 @@ public class View extends JFrame
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.89  1999/10/01 07:31:39  sp
+ * RMI server replaced with socket-based server, minor changes
+ *
  * Revision 1.88  1999/09/30 12:21:04  sp
  * No net access for a month... so here's one big jEdit 2.1pre1
  *

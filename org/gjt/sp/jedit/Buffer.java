@@ -621,23 +621,6 @@ loop:		for(int i = 0; i < markers.size(); i++)
 	{
 		return rectSelect;
 	}
-
-	/**
-	 * Returns this buffer's unique identifier (UID). UIDs are
-	 * guaranteed to be unique during a jEdit session - they
-	 * are not reused (unless more than 2^32 buffers are created,
-	 * but that isn't a very realistic condition).<p>
-	 *
-	 * A UID can be converted back to a buffer with the
-	 * jEdit.getBuffer() method.
-	 *
-	 * @see org.gjt.sp.jedit.jEdit#getBuffer(int)
-	 */
-	public final int getUID()
-	{
-		return uid;
-	}
-
 	/**
 	 * Adds a buffer event listener to this buffer.
 	 * @param listener The event listener
@@ -668,13 +651,10 @@ loop:		for(int i = 0; i < markers.size(); i++)
 	// package-private members
 	Buffer prev;
 	Buffer next;
-	int uid;
 
 	Buffer(View view, URL url, String path, boolean readOnly, boolean newFile)
 	{
 		init = true;
-
-		uid = UID++;
 
 		this.url = url;
 		this.path = path;
@@ -732,8 +712,6 @@ loop:		for(int i = 0; i < markers.size(); i++)
 	}
 
 	// private members
-	private static int UID;
-
 	private File file;
 	private long modTime;
 	private File autosaveFile;
@@ -921,8 +899,7 @@ loop:		for(int i = 0; i < markers.size(); i++)
 		}
 		catch(FileNotFoundException fnf)
 		{
-			Object[] args = { path };
-			GUIUtilities.error(view,"notfounderror",args);
+			newFile = true;
 		}
 		catch(IOException io)
 		{
@@ -1271,6 +1248,9 @@ loop:		for(int i = 0; i < markers.size(); i++)
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.94  1999/10/01 07:31:39  sp
+ * RMI server replaced with socket-based server, minor changes
+ *
  * Revision 1.93  1999/09/30 12:21:04  sp
  * No net access for a month... so here's one big jEdit 2.1pre1
  *

@@ -74,9 +74,6 @@
   </para>
   <itemizedlist>
    <listitem><para>
-    org.gjt.sp.jedit.rmi (RMI interfaces)
-   </para></listitem>
-   <listitem><para>
     org.gjt.sp.jedit.syntax (Syntax highlighting core and parsers)
    </para></listitem>
    <listitem><para>
@@ -365,7 +362,7 @@
     The status area is at bottom left of the editor window. It
     displays information in the following format:
    </para>
-   <screen>42 - 7/10 - 70%</screen>
+   <screen>col 42 line 7/10 70%</screen>
    <para>
     The first number is the <firstterm>column position</>, or how
     far the caret is from the start of the line. The second pair of
@@ -402,14 +399,14 @@
    one will make the current view edit it.
   </para>
   <para>
-   If a buffer has unsaved changes, the string <quote>(modified)</> will
-   be displayed in the title bar. The string will be displayed until the
-   buffer is saved (or the changes are discarded by reloading).
-  </para>
-  <para>
-   Sometimes the string <quote>(read only)</>
-   will be shown in the title bar. When a buffer is read only, no
-   changes can be made. Markers can be set but they will not be saved.
+   The title bar of views, as well as the entries in the
+   <guimenu>Buffers</> menu display various strings depending on the
+   status of the buffer. If <quote>(modified)</> is displayed, the
+   buffer has unsaved changes. If <quote>(new)</> is displayed, the
+   buffer is new; either it is an <quote>Untitled</> file, or
+   it doesn't exist on disk. If <quote>(read only)</> is displayed,
+   the buffer is read only and no changes can be made. Markers can
+   be set in read only files but they will not be saved.
   </para>
   <para>
    Files that you do not have write access to are automatically opened
@@ -1146,48 +1143,42 @@
   </para>
  </note>
  </sect1>
- <sect1 id=rmi><title>The RMI Interface</>
+ <sect1 id=server><title>The Edit Server</>
   <para>
-   RMI, or Remote Method Invocation, allows Java applications to call
-   each other's methods. This way, they can share services, call
-   each other, etc.
+   Because opening a new copy of jEdit every time it was invoked from the command
+   line, or had a file dropped onto its icon, would waste memory (and consume time),
+   jEdit has a feature known as the <firstterm>edit server</>. When jEdit is
+   started, it attempts to connect to another running jEdit instance. If the connection
+   was
+   successful, it transfers control to that running instance, passing it any
+   necessary file names. Only if no other running instance can be found does
+   jEdit start up for real.
   </para>
   <para>
-   <indexterm><primary>RMI registry</></indexterm>
-   <indexterm><primary>Windows</></indexterm>
-   <indexterm><primary>Unix</></indexterm>
-   <indexterm><primary>AUTOEXEC.bat file</></indexterm>
+   The edit server is implemented using sockets. When a server is started, it
+   picks a random port number and authorization key and writes it to a
+   <firstterm>port file</> (usually in a well-known location). Client instances
+   of jEdit then read the port file and connect to the specified port, passing
+   it the authorization key.
+  </para>
+  <para>
+   The authorization key is required to prevent malicious remote attackers from
+   opening files
+   on your compiler.
+  </para>
+  <para>
+   <indexterm><primary>command line switches</><secondary>-noserver</></indexterm>
    <indexterm><primary>command line</></indexterm>
-   Before RMI will work, the RMI registry daemon must be started. How this
-   is done is operating-system specific; on Unix and Windows, you can
-   type <command>rmiregistry</> in a command line. It is advisable that
-   you place this command in your <filename>AUTOEXEC.BAT</> (on Windows)
-   or a shell initialization file (on Unix) so that the RMI registry
-   is started when you log in.
-  </para>
-  <para>
-   If jEdit's RMI interface is enabled (it is by default), jEdit will
-   register itself as an RMI service on startup. When a new instance of
-   jEdit is opened, it will try connecting to the RMI service first.
-  </para>
-  <para>
-   The end result is that you can start jEdit as many times as necessary,
-   but only one copy will actually be open at once. Also, other applications
-   can use jEdit's editing services (assuming they know about RMI).
-  </para>
-  <para>
-   <indexterm><primary>command line switches</><secondary>-normi</></indexterm>
-   <indexterm><primary>command line</></indexterm>
-   <indexterm><primary>command line switches</><secondary>-rmi</></indexterm>
-   The <command>-normi</> command line switch disables the RMI interface entirely;
+   <indexterm><primary>command line switches</><secondary>-server</></indexterm>
+   The <command>-noserver</> command line switch disables the server features entirely;
    no connection will be attempted, and no sever will be started. The
-   <command>-rmi</> command line switch can be used to change the name
-   jEdit registers itself with in the registry. This can be used when
+   <command>-server</> command line switch can be used to change the file
+   where port information is stored. This can be used when
    you want to run more than one copy of jEdit at once. For example:
   </para>
-  <screen><prompt>$</> <userinput>jedit -rmi=my_jedit_instance_number_2</></screen>
+  <screen><prompt>$</> <userinput>jedit -server=my-server-2</></screen>
   <para>
-   The same <command>-rmi</> parameter must be passed to <emphasis>both</>
+   The same <command>-server</> parameter must be passed to <emphasis>both</>
    the server and client.
   </para>
   <para>
@@ -1198,24 +1189,24 @@
    <indexterm><primary>command line</></indexterm>
    All jEdit command line parameters except those that affect initial
    startup (<command>-nosettings</>, <command>-settings</>, <command>-nosplash</>,
-   and <command>-nodesktop</>) are handled appropriately by the RMI interface.
+   and <command>-nodesktop</>) are handled appropriately by the server.
   </para>
   <para>
-   <indexterm><primary>command line switches</><secondary>-wait</></indexterm>
+   <indexterm><primary>command line switches</><secondary>-reuseview</></indexterm>
    In some circumstances, it might be desirable for the client instance
-   to exit only after the buffers it opened were closed. This can be
-   accomplished by passing the <command>-wait</> switch on the command
-   line to the client.
+   to open the files in an existing view, rather than creating a new one.
+   The <command>-reuseview</> switch can be used for that purpose.
   </para>
-  <important>
+  <indexterm><primary>old jEdit versions</></indexterm>
+  <sidebar>
+   <bridgehead renderas=sect3>jEdit 2.0 Users</>
    <para>
-    <indexterm><primary>stub classes</></indexterm>
-    Because the RMI registry caches <quote>stub</> classes, it must be
-    restarted after a new version of jEdit is installed. If you don't
-    do so, the RMI interface might fail with a <quote>version mismatch</>
-    error.
+    The jEdit 2.1 server replaces the jEdit 2.0 RMI interface. While the RMI
+    interface was more flexible, it had various problems and required the user
+    to run the <command>rmiregistry</> daemon. The 2.1 server is much simpler
+    and problem-free.
    </para>
-  </important>
+  </sidebar>
  </sect1>
  <sect1 id=rect-select><title>Rectangular Selection</>
   <para>
@@ -3203,9 +3194,9 @@ import org.gjt.sp.jedit.View;</>
  <indexterm><primary>command line switches</>
  <secondary>-settings</></indexterm>
  <indexterm><primary>command line switches</>
- <secondary>-normi</></indexterm>
+ <secondary>-noserver</></indexterm>
  <indexterm><primary>command line switches</>
- <secondary>-rmi</></indexterm>
+ <secondary>-server</></indexterm>
  <indexterm><primary>command line switches</>
  <secondary>-wait</></indexterm>
  <indexterm><primary>command line switches</>
@@ -3216,6 +3207,8 @@ import org.gjt.sp.jedit.View;</>
  <secondary>-nosplash</></indexterm>
  <indexterm><primary>command line switches</>
  <secondary>-readonly</></indexterm>
+ <indexterm><primary>command line switches</>
+ <secondary>-reuseview</></indexterm>
  <indexterm><primary>command line switches</>
  <secondary>--</></indexterm>
  <indexterm><primary>moving the caret</>
@@ -3237,9 +3230,9 @@ import org.gjt.sp.jedit.View;</>
      dialog box; see <xref linkend=global-opts>. Has no effect when connecting to another instance.</entry>
     </row>
     <row>
-     <entry>-normi</>
-     <entry>Disables the RMI interface. Does not attempt to
-     connect to the RMI server, and does not start one either.
+     <entry>-noserver</>
+     <entry>Disables the edit server. Does not attempt to
+     connect to the server, and does not start one either.
      Can be used to force another instance of jEdit to start
      if one is already running.</entry>
     </row>
@@ -3266,10 +3259,11 @@ import org.gjt.sp.jedit.View;</>
      <entry>Opens all files specified on the command line read only.</>
     </row>
     <row>
-     <entry>-rmi=<replaceable>name</></entry>
-     <entry>Registers the RMI interface under <replaceable>name</> in
-     the registry, instead of the default
-     <filename>org.gjt.sp.jedit/RemoteEditor/<replaceable>username</></filename>.
+     <entry>-server=<replaceable>name</></entry>
+     <entry>Stores the server port info in the file named <replaceable>name</>,
+     rather than the default <filename>server</> (file names for this
+     parameter are relative to the settings directory, <filename>$HOME/.jedit</>
+     by default).
      Can be used to start more than one instance of jEdit.</entry>
     </row>
     <row>
@@ -3281,18 +3275,11 @@ import org.gjt.sp.jedit.View;</>
      when connecting to another instance.</entry>
     </row>
     <row>
-     <entry>-quit</>
-     <entry>Exits the currently running jEdit instance using RMI.
-     If not connecting to another instance this will cause jEdit
-     to exit immediately.</entry>
-    </row>
-    <row>
-     <entry>-wait</>
-     <entry>Usually when jEdit connects to another running instance, it
-     opens the specified files, and exits. This switch causes the
-     client instance to wait for the new view opened in the server
-     to be closed before exiting. Has no effect if not connecting
-     to another instance.</entry>
+     <entry>-reuseview</>
+     <entry>Only valid when connecing to another instance. When this
+     switch is specified, instead of
+     creating a new view, jEdit will open the files in the first existing
+     view.</entry>
     </row>
     <row>
      <entry>-usage</>

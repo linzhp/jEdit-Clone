@@ -129,7 +129,7 @@ public class GeneralOptionPane extends OptionPane
 
 	public void save()
 	{
-		String lf = lfs[lookAndFeel.getSelectedIndex()].getClass().getName();
+		String lf = lfs[lookAndFeel.getSelectedIndex()].getClassName();
 		jEdit.setProperty("lf",lf);
 		jEdit.setProperty("saveDesktop",saveDesktop.getModel()
 			.isSelected() ? "on" : "off");

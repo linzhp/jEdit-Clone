@@ -339,7 +339,8 @@ toggle-rect.label=Toggle Rectangle Select
 # {0} - file name
 # {1} - 1 if read only, 0 if read-write
 # {2} - 1 if modified, 0 if saved
-view.title={0}{1,choice,0#|1# (read only)}{2,choice,0#|1# (modified)}
+# {3} - 1 if new, 0 if existing
+view.title={0}{1,choice,0#|1# (read only)}{2,choice,0#|1# (modified)}{3,choice,0#|1# (new)}
 
 # Status messages
 view.status.cut-string-register=Cut to register?
@@ -388,11 +389,6 @@ about.message=jEdit version {0} (JDK {1}, {2} {3})\n\
 ioerror.title=I/O Error
 # {0} - the error message
 ioerror.message=An I/O error occured ({0})
-
-# File not found dialog
-notfounderror.title=Not Found
-# {0} - the file name
-notfounderror.message=The file could not be found: {0}
 
 # Open URL dialog
 openurl.title=Open URL

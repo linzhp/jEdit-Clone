@@ -80,8 +80,8 @@ public abstract class AbstractEditorEvent
 	public String toString()
 	{
 		return getClass().getName() + "[id=" + id
-			+ ",view=" + view.getUID() + ",buffer="
-			+ buffer.getUID() + "]";
+			+ ",view=" + view + ",buffer="
+			+ buffer + "]";
 	}
 
 	// protected members
@@ -106,6 +106,9 @@ public abstract class AbstractEditorEvent
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.6  1999/10/01 07:31:39  sp
+ * RMI server replaced with socket-based server, minor changes
+ *
  * Revision 1.5  1999/07/08 06:06:04  sp
  * Bug fixes and miscallaneous updates
  *

@@ -22,20 +22,15 @@ package org.gjt.sp.jedit;
 import gnu.regexp.REException;
 import javax.swing.event.EventListenerList;
 import javax.swing.text.Element;
-import javax.swing.text.Segment;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import java.net.*;
-import java.rmi.*;
 import java.text.MessageFormat;
-import java.util.zip.*;
 import java.util.*;
 import org.gjt.sp.jedit.event.*;
 import org.gjt.sp.jedit.gui.HistoryModel;
-import org.gjt.sp.jedit.remote.impl.RemoteEditorImpl;
-import org.gjt.sp.jedit.remote.*;
 import org.gjt.sp.jedit.search.SearchAndReplace;
 import org.gjt.sp.jedit.textarea.DefaultInputHandler;
 import org.gjt.sp.jedit.textarea.InputHandler;
@@ -62,7 +57,7 @@ public class jEdit
 	public static String getBuild()
 	{
 		// (major) (minor) (<99 = preX, 99 = final) (bug fix)
-		return "02.01.01.00";
+		return "02.01.02.00";
 	}
 
 	/**
@@ -76,12 +71,10 @@ public class jEdit
 		// Parse command line
 		boolean endOpts = false;
 		boolean readOnly = false;
-		boolean wait = false;
-		boolean quit = false;
+		boolean reuseView = false;
 		settingsDirectory = System.getProperty("user.home") +
 			File.separator + ".jedit";
-		serverPath = "org.gjt.sp.jedit/RemoteEditor/"
-			+ System.getProperty("user.name");
+		String portFile = "server";
 		boolean desktop = true;
 		boolean showSplash = true;
 
@@ -108,26 +101,18 @@ public class jEdit
 					settingsDirectory = null;
 				else if(arg.startsWith("-settings="))
 					settingsDirectory = arg.substring(10);
-				else if(arg.equals("-rmi"))
-				{
-					if(serverPath != null)
-						serverPath = "org.gjt.sp.jedit/RemoteEditor/" +
-						System.getProperty("user.name");
-				}
-				else if(arg.startsWith("-rmi="))
-					serverPath = arg.substring(5);
-				else if(arg.equals("-normi"))
-					serverPath = null;
-				else if(arg.equals("-wait"))
-					wait = true;
-				else if(arg.equals("-quit"))
-					quit = true;
+				else if(arg.startsWith("-noserver"))
+					portFile = null;
+				else if(arg.startsWith("-server="))
+					portFile = arg.substring(8);
 				else if(arg.equals("-nodesktop"))
 					desktop = false;
 				else if(arg.equals("-nosplash"))
 					showSplash = false;
 				else if(arg.equals("-readonly"))
 					readOnly = true;
+				else if(arg.equals("-reuseview"))
+					reuseView = true;
 				else
 				{
 					System.err.println("Unknown option: "
@@ -140,65 +125,50 @@ public class jEdit
 		}
 
 		String userDir = System.getProperty("user.dir");
+		portFile = settingsDirectory + File.separator + portFile;
 
-		// Try to connect to the RMI server
-		if(serverPath != null)
+		// Connect to server
+		if(portFile != null && new File(portFile).exists())
 		{
+			int port, key;
 			try
 			{
-				RemoteEditor editor = (RemoteEditor)Naming
-					.lookup(serverPath);
+				BufferedReader in = new BufferedReader(new FileReader(portFile));
+				port = Integer.parseInt(in.readLine());
+				key = Integer.parseInt(in.readLine());
+				in.close();
 
-				if(quit)
-				{
-					editor.exit(null);
-					System.exit(0);
-				}
+				Socket socket = new Socket(InetAddress.getLocalHost(),port);
+				Writer out = new OutputStreamWriter(socket.getOutputStream());
+				out.write(String.valueOf(key));
+				out.write('\n');
 
-				RemoteBuffer buf = null;
+				if(readOnly)
+					out.write("readonly\n");
+				if(reuseView)
+					out.write("reuseview\n");
+				out.write("parent=" + userDir + "\n");
+				out.write("--\n");
 
 				for(int i = 0; i < args.length; i++)
 				{
-					String file = args[i];
-					if(file == null)
-						continue;
-					buf = editor.openFile(null,userDir,file,
-						readOnly,false);
+					if(args[i] != null)
+					{
+						out.write(args[i]);
+						out.write('\n');
+					}
 				}
 
-				if(buf == null)
-					buf = editor.newFile(null);
+				out.close();
 
-				RemoteView view = editor.newView(null,buf);
-
-				if(wait)
-					editor.waitForClose(view);
-
-				// Clean up
-				editor = null;
-				buf = null;
-				System.runFinalization();
-				System.gc();
-				return;
-			}
-			catch(java.rmi.ConnectException c)
-			{
-			}
-			catch(NotBoundException nb)
-			{
+				System.exit(0);
 			}
 			catch(Exception e)
 			{
-				System.err.println("Error while contacting jEdit RMI"
-					+ " service:");
+				System.err.println("Error connecting to server:");
 				e.printStackTrace();
 			}
 		}
-
-		// If RMI is disabled and we were passed the -quit, flag,
-		// exit now
-		if(quit)
-			System.exit(0);
 
 		// Show the kool splash screen
 		if(showSplash)
@@ -225,6 +195,10 @@ public class jEdit
 		// Start plugins
 		JARClassLoader.initPlugins();
 
+		// Start server
+		if(portFile != null)
+			server = new EditServer(portFile);
+
 		// Load files specified on the command line
 		Buffer buffer = null;
 		for(int i = 0; i < args.length; i++)
@@ -240,10 +214,6 @@ public class jEdit
 		}
 		if(buffer == null)
 			buffer = newFile(null);
-
-		// Start the RMI service last, to prevent races
-		// if clients connect before we're all done
-		initRMI();
 
 		// Create the view and hide the splash screen.
 		// Paranoid thread safety courtesy of Sun.
@@ -724,23 +694,6 @@ public class jEdit
 	}
 
 	/**
-	 * Returns the buffer with the specified unique identifier.
-	 * @param uid The unique identifier
-	 * @see org.gjt.sp.jedit.Buffer#getUID()
-	 */
-	public static Buffer getBuffer(int uid)
-	{
-		Buffer buffer = buffersFirst;
-		while(buffer != null)
-		{
-			if(buffer.getUID() == uid)
-				return buffer;
-			buffer = buffer.next;
-		}
-		return null;
-	}
-
-	/**
 	 * Returns an array of open buffers.
 	 */
 	public static Buffer[] getBuffers()
@@ -826,23 +779,6 @@ public class jEdit
 			view.close();
 			removeViewFromList(view);
 		}
-	}
-
-	/**
-	 * Returns the view with the specified unique identifier.
-	 * @param uid The unique identifier
-	 * @see org.gjt.sp.jedit.View#getUID()
-	 */
-	public static View getView(int uid)
-	{
-		View view = viewsFirst;
-		while(view != null)
-		{
-			if(view.getUID() == uid)
-				return view;
-			view = view.next;
-		}
-		return null;
 	}
 
 	/**
@@ -972,26 +908,9 @@ public class jEdit
 			buffer = buffer.next;
 		}
 
-		// Stop RMI service
-		if(remoteEditor != null)
-		{
-			try
-			{
-				Naming.unbind(serverPath);
-				remoteEditor.stop();
-			}
-			catch(AccessException a)
-			{
-			}
-			catch(java.rmi.ConnectException c)
-			{
-			}
-			catch(Exception e)
-			{
-				System.err.println("Error stopping RMI service:");
-				e.printStackTrace();
-			}
-		}
+		// Stop server here
+		if(server != null)
+			server.stopServer();
 
 		// Only save view properties here - save unregisters
 		// listeners, and we would have problems if the user
@@ -1064,11 +983,10 @@ public class jEdit
 	// private members
 	private static String jEditHome;
 	private static String settingsDirectory;
-	private static String serverPath;
-	private static RemoteEditorImpl remoteEditor;
 	private static Properties defaultProps;
 	private static Properties props;
 	private static Autosave autosave;
+	private static EditServer server;
 	private static Hashtable actionHash;
 	private static Vector plugins;
 	private static Vector modes;
@@ -1102,26 +1020,25 @@ public class jEdit
 		System.err.println("	-version: Print jEdit version and"
 			+ " exit");
 		System.err.println("	-usage: Print this message and exit");
-		System.err.println("	-normi: Don't start RMI service");
-		System.err.println("	-rmi: Start RMI service");
-		System.err.println("	-rmi=<path>: Start RMI service bound"
-			+ " to <path>");
 		System.err.println("	-readonly: Open files read-only");
+		System.err.println("	-noserver: Don't start editor server");
+		System.err.println("	-server=<path>: Reads/writes server"
+			+ " info to file <path>");
 
-		System.err.println("Initial instance-only options:");
+		System.err.println();
+		System.err.println("Server-only options:");
 		System.err.println("	-nosettings: Don't load user-specific"
 			+ " settings");
 		System.err.println("	-settings=<path>: Load user-specific"
 			+ " settings from <path>");
 		System.err.println("	-nodesktop: Ignore saved desktop");
 		System.err.println("	-nosplash: Don't show splash screen");
-
-		System.err.println("RMI client-only options:");
-		System.err.println("	-wait: Wait until the new view is"
-			+ " closed before exiting");
-		System.err.println("	-quit: Quit the current instance");
 		System.err.println();
+		System.err.println("Client-only options:");
+		System.err.println("	-reuseview: Don't open new view in"
+			+ " server jEdit");
 
+		System.err.println();
 		System.err.println("Report bugs to Slava Pestov <sp@gjt.org>.");
 	}
 
@@ -1403,51 +1320,6 @@ public class jEdit
 	}
 
 	/**
-	 * Initializes the jEdit RMI service.
-	 */
-	private static void initRMI()
-	{
-		if(serverPath != null)
-		{
-			if(remoteEditor == null)
-			{
-				try
-				{
-					remoteEditor = new RemoteEditorImpl();
-					Naming.rebind(serverPath,remoteEditor);
-					System.out.println("Started RMI service on "
-						+ serverPath);
-				}
-				catch(AccessException a)
-				{
-					System.err.println("The RMI registry cannot"
-						+ " determine the local host.");
-					System.err.println("On Unix, try changing the"
-						+ "/etc/hosts file so that");
-					System.err.println("127.0.0.1 is mapped to this"
-						+ " machine's host name, and is aliased");
-					System.err.println("to localhost.");
-					a.printStackTrace();
-
-				}
-				catch(java.rmi.ConnectException c)
-				{
-					System.err.println("Error starting RMI service "
-						+ serverPath + ":");
-					System.err.println("rmiregistry not running");
-				}
-				catch(Exception e)
-				{
-					System.err.println("Error starting RMI service "
-						+ serverPath + ":");
-					e.printStackTrace();
-					remoteEditor = null;
-				}
-			}
-		}
-	}
-
-	/**
 	 * Loads the key bindings.
 	 */
 	private static void initKeyBindings()
@@ -1655,49 +1527,6 @@ public class jEdit
 		return true;
 	}
 
-	private static class Autosave extends Thread
-	{
-		Autosave()
-		{
-			super("***jEdit autosave thread***");
-			setDaemon(true);
-			start();
-		}
-
-		public void run()
-		{
-			int interval;
-			try
-			{
-				interval = Integer.parseInt(jEdit.getProperty(
-					"autosave"));
-			}
-			catch(NumberFormatException nf)
-			{
-				interval = 15;
-			}
-			if(interval == 0)
-				return;
-			interval *= 1000;
-			for(;;)
-			{
-				try
-				{
-					Thread.sleep(interval);
-				}
-				catch(InterruptedException i)
-				{
-					return;
-				}
-				if(interrupted())
-					return;
-				Buffer[] bufferArray = jEdit.getBuffers();
-				for(int i = 0; i < bufferArray.length; i++)
-					bufferArray[i].autosave();
-			}
-		}
-	}
-
 	// Since window closing is handled by the editor itself,
 	// and is the same for all views, it is ok to do it here
 	static class WindowHandler extends WindowAdapter
@@ -1789,6 +1618,9 @@ public class jEdit
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.128  1999/10/01 07:31:39  sp
+ * RMI server replaced with socket-based server, minor changes
+ *
  * Revision 1.127  1999/09/30 12:21:04  sp
  * No net access for a month... so here's one big jEdit 2.1pre1
  *
