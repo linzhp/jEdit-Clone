@@ -46,8 +46,11 @@ implements CaretListener, KeyListener, WindowListener
 		{
 			if(toolBar == null)
 				toolBar = GUIUtilities.loadToolBar("view.toolbar");
-			getContentPane().add("North",toolBar);
-			validate();
+			if(toolBar.getParent() == null)
+			{
+				getContentPane().add("North",toolBar);
+				validate();
+			}
 		}
 		else if(toolBar != null)
 		{
@@ -201,37 +204,6 @@ implements CaretListener, KeyListener, WindowListener
 			menuItem.setActionCommand(name);
 			menuItem.addActionListener(gotoMarkerAction);
 			gotoMarker.add(menuItem);
-		}
-	}
-
-	/**
-	 * Recreates the error list menu.
-	 */
-	public void updateErrorListMenu()
-	{
-		if(errors.getMenuComponentCount() != 0)
-			errors.removeAll();
-		Action gotoError = jEdit.getAction("goto-error");
-		Enumeration enum = jEdit.getErrors();
-		if(enum == null)
-		{
-			errors.add(GUIUtilities.loadMenuItem(this,"no-errors"));
-			return;
-		}
-		int count = 0;
-		while(enum.hasMoreElements())
-		{
-			CompilerError error = (CompilerError)enum.nextElement();
-			String path = error.getPath();
-			int index = path.lastIndexOf(File.separatorChar);
-			if(index != -1)
-				path = path.substring(index + 1);
-			JMenuItem menuItem = new JMenuItem(path
-				+ ":" + (error.getLineNo() + 1) + ":"
-				+ error.getError());
-			menuItem.setActionCommand(String.valueOf(count++));
-			menuItem.addActionListener(gotoError);
-			errors.add(menuItem);
 		}
 	}
 
@@ -546,7 +518,6 @@ implements CaretListener, KeyListener, WindowListener
 		openRecent = GUIUtilities.loadMenu(this,"open-recent");
 		clearMarker = GUIUtilities.loadMenu(this,"clear-marker");
 		gotoMarker = GUIUtilities.loadMenu(this,"goto-marker");
-		errors = GUIUtilities.loadMenu(this,"errors");
 		plugins = GUIUtilities.loadMenu(this,"plugins");
 		mode = GUIUtilities.loadMenu(this,"mode");
 		lineSep = GUIUtilities.loadMenu(this,"line-separator");
@@ -568,7 +539,6 @@ implements CaretListener, KeyListener, WindowListener
 		textArea.addKeyListener(this);
 		textArea.addCaretListener(this);
 		textArea.setBorder(null);
-		updateErrorListMenu();
 		updatePluginsMenu();
 
 		textArea.setContextMenu(GUIUtilities.loadPopupMenu(this,
@@ -612,8 +582,6 @@ implements CaretListener, KeyListener, WindowListener
 			return clearMarker;
 		else if(name.equals("goto-marker"))
 			return gotoMarker;
-		else if(name.equals("errors"))
-			return errors;
 		else if(name.equals("plugins"))
 			return plugins;
 		else if(name.equals("mode"))
@@ -629,7 +597,6 @@ implements CaretListener, KeyListener, WindowListener
 	private JMenu openRecent;
 	private JMenu clearMarker;
 	private JMenu gotoMarker;
-	private JMenu errors;
 	private JMenu plugins;
 	private JMenu mode;
 	private JMenu lineSep;

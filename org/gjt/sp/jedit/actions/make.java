@@ -1,6 +1,6 @@
 /*
  * make.java
- * Copyright (C) 1998 Slava Pestov
+ * Copyright (C) 1998, 1999 Slava Pestov
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -21,7 +21,7 @@ package org.gjt.sp.jedit.actions;
 
 import java.awt.event.ActionEvent;
 import java.io.*;
-import org.gjt.sp.jedit.gui.CommandOutput;
+import org.gjt.sp.jedit.gui.Console;
 import org.gjt.sp.jedit.*;
 
 public class make extends EditAction
@@ -35,21 +35,6 @@ public class make extends EditAction
 	{
 		View view = getView(evt);
 		Buffer buffer = view.getBuffer();
-		String makeTool = (String)buffer.getProperty("make");
-		makeTool = GUIUtilities.input(view,"make",makeTool);
-		if(makeTool == null)
-			return;
-		buffer.putProperty("make",makeTool);
-		try
-		{
-			Process proc = Runtime.getRuntime().exec(makeTool);
-			proc.getOutputStream().close();
-			new CommandOutput(view,makeTool,proc);
-		}
-		catch(IOException io)
-		{
-			Object[] args = { io.getMessage() };
-			GUIUtilities.error(view,"ioerror",args);
-		}
+		new Console(view,(String)buffer.getProperty("make"));
 	}
 }

@@ -1,6 +1,6 @@
 /*
  * execute.java
- * Copyright (C) 1998, 1999 Slava Pestov
+ * Copyright (C) 1999 Slava Pestov
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -21,8 +21,8 @@ package org.gjt.sp.jedit.actions;
 
 import java.awt.event.ActionEvent;
 import java.io.*;
-import org.gjt.sp.jedit.gui.CommandOutput;
-import org.gjt.sp.jedit.*;
+import org.gjt.sp.jedit.gui.Console;
+import org.gjt.sp.jedit.EditAction;
 
 public class execute extends EditAction
 {
@@ -33,50 +33,6 @@ public class execute extends EditAction
 
 	public void actionPerformed(ActionEvent evt)
 	{
-		View view = getView(evt);
-		Buffer buffer = view.getBuffer();
-		String command = GUIUtilities.inputProperty(view,"execute",
-			"execute.cmd");
-		if(command == null)
-			return;
-		StringBuffer buf = new StringBuffer();
-		for(int i = 0; i < command.length(); i++)
-		{
-			switch(command.charAt(i))
-			{
-			case '%':
-				if(i != command.length() - 1)
-				{
-					switch(command.charAt(++i))
-					{
-					case 'u':
-						buf.append(buffer.getPath());
-						break;
-					case 'p':
-						buf.append(buffer.getFile()
-							.getPath());
-						break;
-					default:
-						buf.append('%');
-						break;
-					}
-					break;
-				}
-			default:
-				buf.append(command.charAt(i));
-			}
-		}
-		try
-		{
-			String cmd = buf.toString();
-			Process proc = Runtime.getRuntime().exec(cmd);
-			proc.getOutputStream().close();
-			new CommandOutput(view,cmd,proc);
-		}
-		catch(IOException io)
-		{
-			Object[] error = { io.toString() };
-			GUIUtilities.error(view,"ioerror",error);
-		}
+		new Console(getView(evt),null);
 	}
 }

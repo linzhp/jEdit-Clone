@@ -45,7 +45,7 @@ public class jEdit
 	 * The date when a change was last made to the source code,
 	 * in <code>YYYYMMDD</code> format.
 	 */
-	public static final String BUILD = "19990221";
+	public static final String BUILD = "19990222";
 
 	/**
 	 * AWK regexp syntax.
@@ -314,7 +314,6 @@ public class jEdit
 		addAction(new org.gjt.sp.jedit.actions.generate_text());
 		addAction(new org.gjt.sp.jedit.actions.goto_anchor());
 		addAction(new org.gjt.sp.jedit.actions.goto_end_indent());
-		addAction(new org.gjt.sp.jedit.actions.goto_error());
 		addAction(new org.gjt.sp.jedit.actions.goto_line());
 		addAction(new org.gjt.sp.jedit.actions.goto_marker());
 		addAction(new org.gjt.sp.jedit.actions.help());
@@ -1031,7 +1030,8 @@ public class jEdit
 	 */
 	public static void clearErrors()
 	{
-		errors = null;
+		if(errors != null)
+			errors.removeAllElements();
 		currentError = -1;
 	}
 
@@ -1044,7 +1044,7 @@ public class jEdit
 	public static void addError(String path, int lineNo, String error)
 	{
 		if(errors == null)
-			errors = new Vector();
+			errors = new DefaultListModel();
 		errors.addElement(new CompilerError(path,lineNo,error));
 	}
 
@@ -1067,6 +1067,17 @@ public class jEdit
 	public static Enumeration getErrors()
 	{
 		return (errors == null ? null : errors.elements());
+	}
+
+	/**
+	 * Returns the compiler error list as a Swing ListModel.
+	 * Guaranteed to return non-null (as a JList requires).
+	 */
+	public static DefaultListModel getErrorList()
+	{
+		if(errors == null)
+			errors = new DefaultListModel();
+		return errors;
 	}
 
 	/**
@@ -1189,7 +1200,7 @@ public class jEdit
 	private static int maxRecent;
 	private static Vector clipHistory;
 	private static int maxClipHistory;
-	private static Vector errors;
+	private static DefaultListModel errors;
 	private static int currentError;
 
 	private jEdit() {}

@@ -221,8 +221,6 @@ tools=execute \
       - \
       compile \
       make \
-      - \
-      %errors \
       prev-error \
       next-error \
       - \
@@ -236,13 +234,11 @@ pipe-selection.label=Fi$lter Selection...
 browser-open-sel.label=$Open Selection in WWW Browser
 browser-open-url.label=Open in $WWW Browser
 word-count.label=Word Co$unt...
-generate-text.label=$Generate Random Text...
+generate-text.label=Generate Random Text...
 compile.label=$Compile...
 make.label=$Make...
 prev-error.label=Go to Pre$vious Error
 next-error.label=Go to $Next Error
-errors.label=Compile$r Errors
-no-errors.label=No Errors
 options.label=Opt$ions...
 
 ### Mode menu
@@ -370,10 +366,6 @@ wwwerror.message=There was an error while starting the WWW browser.\n\
 saveurl.title=Save To URL
 saveurl.message=URL to save file to:
 
-# Execute dialog
-execute.title=Execute
-execute.message=Command (%p = file path, %u = file URL):
-
 # Command error dialog
 cmderr.title=Command Output
 # {0} - command output
@@ -416,14 +408,6 @@ wordcount.message=Characters: {0}\nWords: {1}\nLines: {2}
 # Set marker dialog
 setmarker.title=Set Marker
 setmarker.message=Marker name:
-
-# Compile dialog
-compile.title=Compile
-compile.message=Compiler command line (%p = file path, %u = file URL):
-
-# Make dialog
-make.title=Make
-make.message=Make command line:
 
 # File not saved dialog
 notsaved.title=File Not Saved
@@ -493,11 +477,14 @@ clipedit.title=Clipping Editor
 clipedit.ok=OK
 clipedit.cancel=Cancel
 
-# Command output dialog
-output.title=Command Output
-# {0} - command
-# {1} - date
-output.caption=Output of {0} at {1}:\ 
+# Console dialog
+console.title=Console
+console.cmd=Command:\ 
+console.output=Output
+console.errors=Errors
+console.run=Run
+console.stop=Stop
+console.close=Close
 
 # Compile error dialog
 error.title=Compiler Error

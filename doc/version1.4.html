@@ -3,47 +3,28 @@
 
 <h1>New Features in jEdit 1.4</h1>
 
-<a href=#commands>New Commands</a><br>
-<a href=#sticky>Sticky File Format</a><br>
+<a href=#externals>External Command Support Improvements</a><br>
 <a href=#syntax>Syntax Colorizing Improvements</a><br>
 <a href=#search>Search And Replace Improvements</a><br>
 <a href=#indent>Auto Indent Improvements</a><br>
 <a href=#status>User Interface Improvements</a><br>
 <a href=#desktop>Session Management (Desktop) Improvements</a><br>
 <a href=#help>Documentation Improvements</a><br>
+<a href=#sticky>Sticky File Format</a><br>
+<a href=#commands>New Commands</a><br>
 <a href=#bugs>Bug Fixes</a><br>
 
-<a name=commands>
-<h1>New Commands</h1>
+<a name=externals>
+<h1>External Command Improvements</h1>
 </a>
 
-The following new commands have been added to jEdit 1.4:
-<ul>
-<li>Commands for quick compile-edit-fix cycles (they parse compiler errors,
-allowing you to jump to the file and line number where the error occurred)
-<li>Paste Predefined (for inserting predefined strings)
-<li>Wing/Box/Block Comment (comments the selection in various ways, using
-mode-specific comment characters)
-<li>Uncomment (removes comment characters from the selection)
-<li>Exchange Anchor and Caret (does what it says)
-<li>Go to End of Indent (moves the caret to the first non-whitespace character
-of the current line)
-<li>Scroll to Line (scrolls the text area so that the current line is
-in the middle)
-<li>Select Line Range (selects a range of lines)
-<li>Reload (reloads the current file from disk)
-<li>Commands for converting French accents to HTML entities and vice versa
-- Because it's not very general, this command is distributed as a .jar file
-separately from the main jedit.jar. Contributed by
-Romain Guy &lt;RomainGuy@aol.com&gt;.
-</ul>
+jEdit's support for external commands has improved significantly. A new
+`console' window replaces the old `command output' - it adds a command line
+history and the ability to reuse the same window for several commands.<p>
 
-<a name=sticky>
-<h1>Sticky File Format</h1>
-</a>
-
-jEdit now saves files with their original line separators - previous versions
-always used the line separator set in Tools-&gt;Options-&gt;General.
+jEdit also attempts to locate file names and line numbers in the command output,
+building an error list which can be navigated with the new `Previous Error'
+and `Next Error' commands and the `Errors' tab in the console window.
 
 <a name=syntax>
 <h1>Syntax Colorizing Improvements</h1>
@@ -111,6 +92,8 @@ An Emacs/VIM-style block caret can be enabled in Tools-&gt;Options-&gt;Editor.
 
 A right click context menu is now available for quick mouse-based editing.<p>
 
+A toolbar is now available for access to the most frequently used commands.<p>
+
 When a new view is created, a random usage hint is displayed in the title bar.
 When you start typing, it will disappear. This is intended to help you get the
 most out of jEdit's features.
@@ -129,6 +112,35 @@ file, rather than a separate `.jedit-desktop' file.
 As with every previous jEdit version, 1.4 has slightly better documentation.
 Separate help topics are available for plain text and program source editing,
 each outlining the commands most useful for each.
+
+<a name=sticky>
+<h1>Sticky File Format</h1>
+</a>
+
+jEdit now saves files with their original line separators - previous versions
+always used the line separator set in Tools-&gt;Options-&gt;General.
+
+<a name=commands>
+<h1>New Commands</h1>
+</a>
+
+The following new commands have been added to jEdit 1.4:
+<ul>
+<li>Wing/Box/Block Comment (comments the selection in various ways, using
+mode-specific comment characters)
+<li>Uncomment (removes comment characters from the selection)
+<li>Exchange Anchor and Caret (does what it says)
+<li>Go to End of Indent (moves the caret to the first non-whitespace character
+of the current line)
+<li>Scroll to Line (scrolls the text area so that the current line is
+in the middle)
+<li>Select Line Range (selects a range of lines)
+<li>Reload (reloads the current file from disk)
+<li>Commands for converting French accents to HTML entities and vice versa
+- Because it's not very general, this command is distributed as a .jar file
+separately from the main jedit.jar. Contributed by
+Romain Guy &lt;RomainGuy@aol.com&gt;.
+</ul>
 
 <a name=bugs>
 <h1>Bug Fixes</h1>

@@ -170,7 +170,6 @@ file:
 <blockquote><code>:commentStart=(*:commentEnd=*):<br>
 :blockComment=->:boxComment=**:</code></blockquote>
 
-
 <a name=compile>
 <h1>Compiling and Fixing Errors</h1>
 </a>
@@ -181,8 +180,7 @@ commands:
 <ul>
 <li><b>Tools-&gt;Compile</b> - used to compile the current file. Invokes
 a mode specific compiler - for example, in C mode, this is cc, in Java
-this is javac, etc. A list of which edit mode uses which compiler can be
-found in the <a href=advanced.html#modes>Edit Modes</a> help topic.<p>
+this is javac, etc.<p>
 
 The compiler can also be set on a file-by-file basis by setting the
 `compiler' buffer-local property, for example by putting this in one of
@@ -200,8 +198,8 @@ this in one of the first 10 lines of the file:
 Of course pmake should be replaced by your make tool.
 </ul>
 
-jEdit attempts to parse compiler errors and build an
-error list in `Tools-&gt;Compiler Errors'. Currently, jEdit parses the
+While a command is running, jEdit attempts to parse any errors and lists them
+in the `Errors' tab. Currently, jEdit parses the
 following error formats:
 <ul>
 <li>Generic format used by many compilers and utilities:
@@ -217,7 +215,7 @@ l.line number, error message continued
 </code></blockquote>
 </ul>
 
-Selecting an error from `Tools-&gt;Compiler Errors' will open the file
+Selecting an error from `Errors' tab of the console window will open the file
 involved and move the caret to the line where the error occurred.
 The `Tools-&gt;Next Error' and `Tools-&gt;Previous Error' commands can also
 be used to go to the next and the previous error, respectively.

@@ -40,7 +40,8 @@ public class CTokenMarker extends TokenMarker
 		boolean backslash = false;
 loop:		for(int i = offset; i < length; i++)
 		{
-			switch(line.array[i])
+			char c = line.array[i];
+			switch(c)
 			{
 			case '\\':
 				backslash = !backslash;
@@ -56,33 +57,17 @@ loop:		for(int i = offset; i < length; i++)
 						addToken((i+1) - lastOffset,token);
 						token = null;
 						lastOffset = i + 1;
+						lastKeyword = lastOffset;
 					}
 					break;
 				}
-			case ';': case '.': case ',': case ' ': case '\t':
-			case '(': case ')': case '[': case ']': case '{':
-			case '}':
-				backslash = false;
-				if(token == null)
-				{
-					int len = i - lastKeyword;
-					String id = keywords.lookup(line,lastKeyword,len);
-					if(id != null)
-					{
-						if(lastKeyword != lastOffset)
-							addToken(lastKeyword - lastOffset,null);
-						addToken(len,id);
-						lastOffset = i;
-					}
-					lastKeyword = i + 1;
-				}
-				break;
 			case ':':
 				backslash = false;
 				if(token == null && lastKeyword == offset)
 				{
 					addToken((i+1) - lastOffset,Token.LABEL);
 					lastOffset = i + 1;
+					lastKeyword = lastOffset;
 				}
 				break;
 			case '#':
@@ -105,6 +90,7 @@ loop:		for(int i = offset; i < length; i++)
 					case '*':
 						addToken(i - lastOffset,token);
 						lastOffset = i;
+						lastKeyword = lastOffset;
 						if(length - i > 2 && line.array[i+2] == '*')
 							token = Token.COMMENT2;
 						else
@@ -114,6 +100,7 @@ loop:		for(int i = offset; i < length; i++)
 						addToken(i - lastOffset,token);
 						addToken(length - i,Token.COMMENT1);
 						lastOffset = length;
+						lastKeyword = lastOffset;
 						break loop;
 					}
 				}
@@ -126,12 +113,14 @@ loop:		for(int i = offset; i < length; i++)
 					token = Token.LITERAL1;
 					addToken(i - lastOffset,null);
 					lastOffset = i;
+					lastKeyword = lastOffset;
 				}
 				else if(token == Token.LITERAL1)
 				{
 					token = null;
 					addToken((i+1) - lastOffset,Token.LITERAL1);
 					lastOffset = i + 1;
+					lastKeyword = lastOffset;
 				}
 				break;
 			case '\'':
@@ -142,16 +131,32 @@ loop:		for(int i = offset; i < length; i++)
 					token = Token.LITERAL2;
 					addToken(i - lastOffset,null);
 					lastOffset = i;
+					lastKeyword = lastOffset;
 				}
 				else if(token == Token.LITERAL2)
 				{
 					token = null;
 					addToken((i+1) - lastOffset,Token.LITERAL2);
 					lastOffset = i + 1;
+					lastKeyword = lastOffset;
 				}
 				break;
 			default:
 				backslash = false;
+				if(token == null && c != '_' &&
+					!Character.isLetter(c))
+				{
+					int len = i - lastKeyword;
+					String id = keywords.lookup(line,lastKeyword,len);
+					if(id != null)
+					{
+						if(lastKeyword != lastOffset)
+							addToken(lastKeyword - lastOffset,null);
+						addToken(len,id);
+						lastOffset = i;
+					}
+					lastKeyword = i + 1;
+				}
 				break;
 			}
 		}

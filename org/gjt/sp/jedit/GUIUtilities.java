@@ -353,14 +353,14 @@ public class GUIUtilities
 	 * from the <code><i>name</i>.message</code> property. The message
 	 * is formatted by the property manager with <code>args</code> as
 	 * positional parameters.
-	 * @param view The view to display the dialog for
+	 * @param frame The frame to display the dialog for
 	 * @param name The name of the dialog
 	 * @param args Positional parameters to be substituted into the
 	 * message text
 	 */
-	public static void message(View view, String name, Object[] args)
+	public static void message(JFrame frame, String name, Object[] args)
 	{
-		JOptionPane.showMessageDialog(view,
+		JOptionPane.showMessageDialog(frame,
 			jEdit.getProperty(name.concat(".message"),args),
 			jEdit.getProperty(name.concat(".title"),args),
 			JOptionPane.INFORMATION_MESSAGE);
@@ -374,14 +374,14 @@ public class GUIUtilities
 	 * from the <code><i>name</i>.message</code> property. The message
 	 * is formatted by the property manager with <code>args</code> as
 	 * positional parameters.
-	 * @param view The view to display the dialog for
+	 * @param frame The frame to display the dialog for
 	 * @param name The name of the dialog
 	 * @param args Positional parameters to be substituted into the
 	 * message text
 	 */
-	public static void error(View view, String name, Object[] args)
+	public static void error(JFrame frame, String name, Object[] args)
 	{
-		JOptionPane.showMessageDialog(view,
+		JOptionPane.showMessageDialog(frame,
 			jEdit.getProperty(name.concat(".message"),args),
 			jEdit.getProperty(name.concat(".title"),args),
 			JOptionPane.ERROR_MESSAGE);
@@ -393,13 +393,13 @@ public class GUIUtilities
 	 * The title of the dialog is fetched from
 	 * the <code><i>name</i>.title</code> property. The message is fetched
 	 * from the <code><i>name</i>.message</code> property.
-	 * @param view The view to display the dialog for
+	 * @param frame The frame to display the dialog for
 	 * @param name The name of the dialog
 	 * @param def The text to display by default in the input field
 	 */
-	public static String input(View view, String name, Object def)
+	public static String input(JFrame frame, String name, Object def)
 	{
-		String retVal = (String)JOptionPane.showInputDialog(view,
+		String retVal = (String)JOptionPane.showInputDialog(frame,
 			jEdit.getProperty(name.concat(".message")),
 			jEdit.getProperty(name.concat(".title")),
 			JOptionPane.QUESTION_MESSAGE,null,null,def);
@@ -412,13 +412,13 @@ public class GUIUtilities
 	 * The title of the dialog is fetched from
 	 * the <code><i>name</i>.title</code> property. The message is fetched
 	 * from the <code><i>name</i>.message</code> property.
-	 * @param view The view to display the dialog for
+	 * @param frame The frame to display the dialog for
 	 * @param name The name of the dialog
 	 * @param def The property whose text to display in the input field
 	 */
-	public static String inputProperty(View view, String name, String def)
+	public static String inputProperty(JFrame frame, String name, String def)
 	{
-		String retVal = (String)JOptionPane.showInputDialog(view,
+		String retVal = (String)JOptionPane.showInputDialog(frame,
 			jEdit.getProperty(name.concat(".message")),
 			jEdit.getProperty(name.concat(".title")),
 			JOptionPane.QUESTION_MESSAGE,

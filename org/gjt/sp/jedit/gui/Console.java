@@ -1,6 +1,6 @@
 /*
- * CommandOutput.java - Command output window
- * Copyright (C) 1998, 1999 Slava Pestov
+ * Console.java - Command output window
+ * Copyright (C) 1999 Slava Pestov
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -21,93 +21,200 @@ package org.gjt.sp.jedit.gui;
 
 import javax.swing.*;
 import javax.swing.event.*;
+import javax.swing.text.Element;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
-import java.util.*;
 import org.gjt.sp.jedit.*;
 
-public class CommandOutput extends JFrame
-implements KeyListener
+public class Console extends JFrame
+implements ActionListener, KeyListener, ListSelectionListener, WindowListener
 {
-	public CommandOutput(View view, String cmd, Process process)
+	public Console(View view, String defaultCmd)
 	{
-		super(jEdit.getProperty("output.title"));
+		super(jEdit.getProperty("console.title"));
 
 		this.view = view;
-		this.process = process;
 
-		jEdit.clearErrors();
+		JPanel panel = new JPanel(new BorderLayout());
+		panel.add("West",new JLabel(jEdit.getProperty("console.cmd")));
+		panel.add("Center",cmd = new HistoryTextField("console",40));
+		cmd.setText(defaultCmd);
+		cmd.addKeyListener(this);
+		getContentPane().add("North",panel);
 
-		getContentPane().setLayout(new BorderLayout());
-		Object[] args = { cmd, new Date().toString() };
-		getContentPane().add("North",new JLabel(jEdit.getProperty(
-			"output.caption",args)));
-
-		output = new JTextArea(10,60);
-		output.setFont(view.getTextArea().getFont());
+		JTabbedPane tabs = new JTabbedPane();
+		tabs.addTab(jEdit.getProperty("console.output"),
+			new JScrollPane(output = new JTextArea(15,40)));
 		output.setEditable(false);
-		output.addKeyListener(this);
-		getContentPane().add("Center",new JScrollPane(output));
+		tabs.addTab(jEdit.getProperty("console.errors"),
+			new JScrollPane(errors = new JList(jEdit.getErrorList())));
+		errors.setVisibleRowCount(15);
+		errors.addListSelectionListener(this);
+		getContentPane().add("Center",tabs);
 
-		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+		panel = new JPanel();
+		panel.add(run = new JButton(jEdit.getProperty("console.run")));
+		getRootPane().setDefaultButton(run);
+		panel.add(stop = new JButton(jEdit.getProperty("console.stop")));
+		panel.add(close = new JButton(jEdit.getProperty("console.close")));
+		run.addActionListener(this);
+		close.addActionListener(this);
+		getContentPane().add("South",panel);
+
 		addKeyListener(this);
-		output.addKeyListener(this);
+		addWindowListener(this);
 
 		pack();
-		GUIUtilities.loadGeometry(this,"output");
+		GUIUtilities.loadGeometry(this,"console");
 		show();
 
+		cmd.requestFocus();
+	}
+
+	public void run(String command)
+	{
+		stop();
+		output.append("> ");
+		output.append(command);
+		output.append("\n");
+		jEdit.clearErrors();
+		try
+		{
+			process = Runtime.getRuntime().exec(command);
+		}
+		catch(IOException io)
+		{
+			String[] args = { io.getMessage() };
+			GUIUtilities.error(this,"ioerror",args);
+			return;
+		}
 		stdout = new StdoutThread();
 		stderr = new StderrThread();
 	}
 
-	public void dispose()
+	public void actionPerformed(ActionEvent evt)
 	{
-		stdout.stop();
-		stderr.stop();
-		process.destroy();
-		GUIUtilities.saveGeometry(this,"output");
-		super.dispose();
-
-		// Update error list menus
-		Enumeration views = jEdit.getViews();
-		while(views.hasMoreElements())
-		{
-			((View)views.nextElement()).updateErrorListMenu();
-		}
+		Object source = evt.getSource();
+		if(source == run)
+			run();
+		else if(source == stop)
+			stop();
+		else if(source == close)
+			close();
 	}
 
 	public void keyPressed(KeyEvent evt)
 	{
-		if(evt.getKeyCode() == KeyEvent.VK_ESCAPE
-			|| evt.getKeyCode() == KeyEvent.VK_ENTER)
+		switch(evt.getKeyCode())
 		{
+		case KeyEvent.VK_ENTER:
+			run();
 			evt.consume();
-			dispose();
+			break;
+		case KeyEvent.VK_ESCAPE:
+			close();
+			evt.consume();
+			break;
 		}
 	}
 
 	public void keyReleased(KeyEvent evt) {}
 	public void keyTyped(KeyEvent evt) {}
 
+	public void valueChanged(ListSelectionEvent evt)
+	{
+		if(errors.isSelectionEmpty())
+			return;
+
+		if(!view.isVisible())
+		{
+			view = jEdit.newView((Buffer)jEdit.getBuffers()
+				.nextElement());
+		}
+
+		int errorNo = errors.getSelectedIndex();
+		jEdit.setCurrentError(errorNo);
+		CompilerError error = jEdit.getError(errorNo);
+		Buffer buffer = error.openFile();
+		int lineNo = error.getLineNo();
+		Element lineElement = buffer.getDefaultRootElement()
+			.getElement(lineNo);
+		int start = (lineElement == null ? 0 : lineElement
+			.getStartOffset());
+		if(view.getBuffer() == buffer)
+			view.getTextArea().setCaretPosition(start);
+		else
+		{
+			buffer.setCaretInfo(start,start);
+			view.setBuffer(buffer);
+			view.updateBuffersMenu();
+		}
+	}
+	
+	public void windowOpened(WindowEvent evt) {}
+	
+	public void windowClosing(WindowEvent evt)
+	{
+		close();
+	}
+	
+	public void windowClosed(WindowEvent evt) {}
+	public void windowIconified(WindowEvent evt) {}
+	public void windowDeiconified(WindowEvent evt) {}
+	public void windowActivated(WindowEvent evt) {}
+	public void windowDeactivated(WindowEvent evt) {}
+
 	// private members
-	private View view;
+	private HistoryTextField cmd;
 	private JTextArea output;
+	private JList errors;
+	private JButton run;
+	private JButton stop;
+	private JButton close;
+
+	private View view;
+
 	private Process process;
 	private StdoutThread stdout;
 	private StderrThread stderr;
 
-	// Error parsing state
 	private static final int GENERIC = 0;
 	private static final int TEX = 1;
 	private static final int EMACS = 2;
 	private int errorMode;
 
-	// Intermediate data for TeX and Emacs mode
 	private String file;
 	private int lineNo;
 	private String error;
+
+	private void run()
+	{
+		String s = cmd.getText();
+		if(s != null && s.length() != 0)
+		{
+			cmd.addCurrentToHistory();
+			run(s);
+		}
+	}
+
+	private void stop()
+	{
+		if(process != null)
+		{
+			stdout.stop();
+			stderr.stop();
+			process.destroy();
+			process = null;
+		}
+	}
+
+	private void close()
+	{
+		GUIUtilities.saveGeometry(this,"console");
+		cmd.save();
+		dispose();
+	}
 
 	private synchronized void addOutput(final String msg)
 	{
@@ -121,9 +228,12 @@ implements KeyListener
 
 		// Empty errors are of no use to us or the user
 		if(msg.length() == 0)
+		{
+			errorMode = GENERIC;
 			return;
+		}
 
-		// Go the funky error state machine (and hope that the
+		// Do the funky error state machine (and hope that the
 		// other thread doesn't sent irrelevant crap our way)
 		switch(errorMode)
 		{

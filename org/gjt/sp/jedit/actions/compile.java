@@ -19,10 +19,9 @@
 
 package org.gjt.sp.jedit.actions;
 
-import java.awt.event.ActionEvent;
-import java.io.*;
 import javax.swing.JOptionPane;
-import org.gjt.sp.jedit.gui.CommandOutput;
+import java.awt.event.ActionEvent;
+import org.gjt.sp.jedit.gui.Console;
 import org.gjt.sp.jedit.*;
 
 public class compile extends EditAction
@@ -65,9 +64,6 @@ public class compile extends EditAction
 			}
 		}
 
-		compiler = GUIUtilities.input(view,"compile",compiler);
-		if(compiler == null)
-			return;
 		buffer.putProperty("compiler",compiler);
 		StringBuffer buf = new StringBuffer();
 		for(int i = 0; i < compiler.length(); i++)
@@ -96,17 +92,7 @@ public class compile extends EditAction
 				buf.append(compiler.charAt(i));
 			}
 		}
-		compiler = buf.toString();
-		try
-		{
-			Process proc = Runtime.getRuntime().exec(compiler);
-			proc.getOutputStream().close();
-			new CommandOutput(view,compiler,proc);
-		}
-		catch(IOException io)
-		{
-			Object[] args = { io.getMessage() };
-			GUIUtilities.error(view,"ioerror",args);
-		}
+
+		new Console(view,buf.toString());
 	}
 }

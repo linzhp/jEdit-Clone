@@ -21,6 +21,7 @@ package org.gjt.sp.jedit;
 
 import javax.swing.text.Element;
 import javax.swing.text.Position;
+import java.io.File;
 
 /**
  * A compiler error.
@@ -95,6 +96,15 @@ public class CompilerError
 			System.err.println("Report this to Slava Pestov <sp@gjt.org>");
 		}
 		return buffer;
+	}
+
+	/**
+	 * Returns a string representation of this error.
+	 */
+	public String toString()
+	{
+		return new File(getPath()).getName() + ":" + getLineNo()
+			+ ":" + getError();
 	}
 
 	// package private members

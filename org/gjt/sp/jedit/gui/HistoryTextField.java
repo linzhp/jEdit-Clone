@@ -43,14 +43,24 @@ public class HistoryTextField extends JTextField implements KeyListener
 
 	public void save()
 	{
-		jEdit.setProperty("history." + name + ".0",getText());
-		for(int i = 0; i < history.length - 1; i++)
+		addCurrentToHistory();
+		for(int i = 0; i < history.length; i++)
 		{
 			String line = history[i];
 			if(line == null)
 				break;
-			jEdit.setProperty("history." + name + "." + (i + 1),line);
+			jEdit.setProperty("history." + name + "." + i,line);
 		}
+	}
+
+	public void addCurrentToHistory()
+	{
+		String text = getText();
+		if(text == null || text.length() == 0)
+			return;
+		System.arraycopy(history,0,history,1,history.length - 1);
+		history[0] = text;
+		setText(null);
 	}
 
 	public void keyTyped(KeyEvent evt) {}

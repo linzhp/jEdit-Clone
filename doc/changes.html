@@ -56,13 +56,8 @@ mouse is held down
 <li>Typing lags behind on last line of document? I think this is a Swing bug...
 <li>Toolbar options panel
 <li>Toolbar position should be saved (top/left/right/bottom/undocked/x/y)
-<li>New `Console' frame to replace CommandOutput:
-<ul>
-<li>Acquires lock on error list with <code>setErrorListOwner</code>
-<li>Two tabs - output/errors
-<li>History text field
-<li>Execute just creates new console
-<li>Buttons: run, close
+<li>Console should acquire compile `lock' so that there is only one compile
+going at once
 </ul>
 </ul>
 
@@ -74,12 +69,15 @@ mouse is held down
 
 <ul>
 <li>Simple toolbar added
+<li>New `console' window to replace old `command output' - it is much more
+powerful
 </ul>
 
 <h2>Bug Fixes</h2>
 
 <ul>
 <li>Error list menu was created incorrectly sometimes
+<li>Keywords weren't colorized correctly sometimes
 </ul>
 
 <a name=14pre6>
