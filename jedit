@@ -1,16 +1,26 @@
 #!/bin/sh
 
-# Silly hook for configure script
-test "$JAVA" = "" && JAVA="jre"
+# Script for starting jEdit on Unix.
+# Basically, it determines the directory where this script
+# is contained, follows any symbolic links to end up in
+# the jEdit `share' directory where the jedit.jar file
+# resides (assuming you installed jEdit with the supplied
+# Makefile). Once it knows the full path to jedit.jar, 
+# it constructs a Java command line suitable for starting
+# jEdit and `exec's it.
 
-# Find full path of $0
+# Hook for configure script's Java virtual machine setting
+test "$JAVA" = "" && JAVA="java"
+
+# Find full path of $0 (the shell script)
 case $0 in
 	/*) PRG=$0 ;;
 	./*) PRG=`pwd`/`basename $0` ;;
 	*) PRG=`which $0` ;;
 esac
 
-# Determine installation directory
+# Follow symbolic links, if any (/opt/slava/bin/jedit
+# is usually a link to /opt/slava/share/jedit-<version>/jedit)
 if test "$JEDIT_HOME" = ""
 then
 	while test -h "$PRG"
@@ -20,16 +30,25 @@ then
 	JEDIT_HOME="`dirname $PRG`"
 fi
 
-# Call runtime
-if test "$JAVA" = "jre"
+# Create classpath command. JRE supports -cp option to
+# append to classpath, Java does not. (This restriction
+# was lifted with Java 2, but -classpath doesn't hurt
+# anyway)
+if test `basename "$JAVA"` = "jre"
 then
 	cp="-cp $JEDIT_HOME/jedit.jar"
 else
 	cp="-classpath $CLASSPATH:$JEDIT_HOME/jedit.jar"
 fi
 
+# Construct the rather beefy command line. Note the magic
+# we do with sed to chop the screen specification part of
+# $DISPLAY so we end up with exactly one server file per
+# X server
+
+# $JEDIT enviroment variable can be set to any additional
+# virtual machine settings (larger memory size, etc)
 CMDLINE="$JAVA -mx32m $cp $JEDIT org.gjt.sp.jedit.jEdit \
 	-portfile=$HOME/.jedit-server-`echo $DISPLAY|sed 's/\..*//'` $@"
-#echo $CMDLINE
 
 exec $CMDLINE

@@ -8,10 +8,12 @@ editing plain text files, such as HTML, Java source, Perl scripts, LaTeX
 documents, and so on. It has many commands useful for the editing of
 such files.
 
-jEdit is released under the GNU General Public License, read the
-enclosed COPYING.txt file for more information. Basically, you can share
-jEdit and modify it all you want, but you must give away your
-modifications under the same terms.
+jEdit is released under the GNU General Public License, basically, you
+can share jEdit and modify it all you want, but you must give away your
+modifications under the same terms. It can be viewed within jEdit by
+selecting Help->Help Contents->Copying. Also, if you have a WWW browser
+such as Netscape, you can view it outside of jEdit by opening
+`copying.html' in the `doc' directory.
 
 jEdit uses gnu.regexp by the Free Software Foundation. Only the parts of
 gnu.regexp used by jEdit are included - the complete package can be
@@ -55,7 +57,7 @@ Installation of jEdit on Unix is a two step process:
 2. Run `make install' to install jEdit.
 
 You also need to set the PATH variable to point to the directory with
-the  jedit script so that the shell can locate it. The default location
+the jedit script so that the shell can locate it. The default location
 is /opt/slava/bin. If you're using a Bourne shell (sh, ash, jsh, bash,
 zsh) the command to add /opt/slava/bin to the PATH is:
 
@@ -78,13 +80,17 @@ If you're using a C shell the equivalent is:
 
 	setenv JEDIT <options>
 
-** Windows 95, 98 and NT
+** Windows 95 and 98
 
-Installation of jEdit on Windows 95, 98 and NT is a three step process:
-1. Delete any previous versions of jEdit from `C:\Program Files\jEdit'.
-2. Edit `install.bat' to change the default install directory and Java
-   virtual machine.
-3. Run `install.bat' to install jEdit.
+Installation of jEdit on Windows 95 and 98 is a two step process:
+
+1. If you want to install jEdit elsewhere than `C:\Program Files\jEdit',
+or your Java virtual machine is not named `java.exe', edit the install.bat
+file by right-clicking on it and selecting `Edit' from the context menu.
+2. Run `install.bat' to install jEdit.
+
+It is also a good idea to delete any previous versions of jEdit prior
+to installing, as old files can cause problems.
 
 If you want to use jEdit from the command line, you must add its
 directory to the PATH. By default, jEdit is installed in C:\Program
@@ -100,6 +106,11 @@ enviroment variable, like this:
 
 	set JEDIT=<options>
 
+** Windows NT and OS/2
+
+On Windows NT or OS/2, the installation process is the same, except
+that install.cmd should be run instead of install.bat.
+
 ** MacOS
 
 There are no specific steps that must be taken to install jEdit on the
@@ -114,3 +125,4 @@ Once you have installed jEdit, a list of help topics can be displayed by
 selecting `Help->Help Contents'.
 
 Have fun!
+<sp@gjt.org>

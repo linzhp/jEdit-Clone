@@ -1,17 +1,48 @@
+/*
+ *  gnu/regexp/util/REApplet.java
+ *  Copyright (C) 1998 Wes Biggs
+ *
+ *  This program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published
+ *  by the Free Software Foundation; either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program; if not, write to the Free Software
+ *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
+
 package gnu.regexp.util;
 import java.applet.*;
 import java.awt.*;
 import gnu.regexp.*;
 
+/**
+ * This is a simple applet to demonstrate the capabilities of gnu.regexp.
+ * To run it, use appletviewer on the reapplet.html file included in the
+ * documentation directory.
+ *
+ * @author <A HREF="mailto:wes@cacas.org">Wes Biggs</A>
+ * @version 1.01
+ */
 public class REApplet extends Applet {
-  Label l1, l2, l3;
-  Button b;
-  TextField tf;
-  TextArea input, output;
-  Checkbox insens;
+  private Label l1, l2, l3;
+  private Button b;
+  private TextField tf;
+  private TextArea input, output;
+  private Checkbox insens;
 
+  /** Creates an REApplet. */
+  public REApplet() { super(); }
+
+  /** Initializes the applet and constructs GUI elements. */
   public void init() {
-    // test run RE stuff so it doesn't appear slow on first search.
+    // test run RE stuff to cache gnu.regexp.* classes.
     try {
       RE x = new RE("^.*(w[x])\1$");
       REMatchEnumeration xx = x.getMatchEnumeration("wxwx");
@@ -78,6 +109,10 @@ public class REApplet extends Applet {
     add(output);
   }
 
+  /**
+   * Handles events in the applet.  Returns true if the indicated event
+   * was handled, false for all other events.
+   */
   public boolean action(Event e, Object arg) {
     Object target = e.target;
 

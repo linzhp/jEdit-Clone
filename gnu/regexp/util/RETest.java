@@ -2,50 +2,48 @@
  *  gnu/regexp/util/RETest.java
  *  Copyright (C) 1998 Wes Biggs
  *
- *  This library is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU Library General Public License as published
- *  by the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This library is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU Library General Public License for more details.
- *
- *  You should have received a copy of the GNU Library General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ *  This file is in the public domain.  However, the gnu.regexp library
+ *  proper is licensed under the terms of the GNU Library General Public
+ *  License (see the file LICENSE for details).
  */
-
 package gnu.regexp.util;
 import gnu.regexp.*;
 
+/**
+ *  RETest provides a simple way to test regular expressions.
+ *  It runs from the command line using the Java interpreter.
+ *  To use it, enter the following from a command prompt (provided
+ *  that the Java system knows where to find the RETest bytecodes):
+ *  <BR><CODE>java gnu.regexp.util.RETest [regExp] [inputString]</CODE><BR>
+ *  where <i>regExp</i> is a regular expression (you'll probably have
+ *  to escape shell meta-characters) and <i>inputString</i> is the string
+ *  to match against (again, put it in quotes or escape any shell meta-
+ *  characters).
+ *  <P>
+ *  The test function will report the package version number, whether
+ *  the expression matches the input string, what the match it found was,
+ *  and the contents of any subexpressions, if applicable.
+ *  <P>
+ *  You may optionally add a third integer argument which is the number of
+ *  times to repeat the test.  When this option is used, RETest will report
+ *  average compile and match times.
+ *
+ * @author <A HREF="mailto:wes@cacas.org">Wes Biggs</A>
+ * @version 1.01
+ */
 public class RETest {
-  // Redefined so javadoc doesn't generate an entry...
-  RETest() { }
-  
+  private RETest() { }
+
   /**
-   *  RETest provides a simple way to test regular expressions.
-   *  It runs from the command line using the Java interpreter.
-   *  To use it, enter the following from a command prompt (provided
-   *  that the Java system knows where to find the RETest bytecodes):
-   *  <BR><CODE>java gnu.regexp.util.RETest [regExp] [inputString]</CODE><BR>
-   *  where <i>regExp</i> is a regular expression (you'll probably have
-   *  to escape shell meta-characters) and <i>inputString</i> is the string
-   *  to match against (again, put it in quotes or escape any shell meta-
-   *  characters.
-   *  <P>
-   *  The test function will report the package version number, whether
-   *  the expression matches the input string, what the match it found was,
-   *  and the contents of any subexpressions, if applicable.
+   * Invokes the test function with the command line arguments specified.
+   * See class description for usage notes.
    *
-   *  @param argv
-   *  The command line arguments (an array of Strings).
+   * @param argv
+   * The command line arguments.
    *
-   *  @exception REException
-   *  There was an error compiling or executing the regular expression.
-   **/
-  
+   * @exception REException
+   * There was an error compiling or executing the regular expression.
+   */
   public static void main(String argv[]) throws REException {
     System.out.println("gnu.regexp version "+RE.version());
     

@@ -1,15 +1,33 @@
+/*
+ * gnu/regexp/util/Tests.java -- Simple testsuite for gnu.regexp package
+ * Copyright (C) 1998 Wes Biggs
+ *
+ * This file is in the public domain.  However, the gnu.regexp library
+ * proper is licensed under the terms of the GNU Library General Public
+ * License (see the file LICENSE for details).
+ */
+
 package gnu.regexp.util;
 import gnu.regexp.*;
 
+/**
+ * This is a very basic testsuite application for gnu.regexp.
+ *
+ * @author <A HREF="mailto:wes@cacas.org">Wes Biggs</A>
+ * @version 1.01
+ */
 public class Tests {
-  public static void check(REMatch m, String expect, int x) {
+  private Tests() { }
+
+  private static void check(REMatch m, String expect, int x) {
     if ((m == null) || !m.toString().equals(expect)) System.out.print("Failed");
     else System.out.print("Passed");
     System.out.println(" test #"+x);
   }
 
+  /** Runs the testsuite.  No command line arguments are necessary. */
   public static void main(String[] argv) throws REException {
-    RE e = null;
+    RE e;
 
     e = new RE("(.*)z");
     check(e.getMatch("xxz"),"xxz",1);
@@ -56,6 +74,9 @@ public class Tests {
 
     e = new RE("zow",RE.REG_ICASE);
     check(e.getMatch("ZoW"),"ZoW",16);
+
+    e = new RE("(\\d+)\\D*(\\d+)\\D*(\\d)+");
+    check(e.getMatch("size--10 by 20 by 30 feet"),"10 by 20 by 30",17);
   }
 }      
     

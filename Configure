@@ -1,42 +1,45 @@
 #!/bin/sh
-# Configure script for jEdit
+# Configure script for jEdit on Unix
+# Asks the user several questions and creates a Rules.make
+# file based on the responses
 
-# Functions
+# Called if an error occurs, cleans up
 error()
 {
 	rm -f $RULES testmakefile
 	exit $1
 }
 
+# Print something to the Rules.make file
 rulesOut()
 {
 	echo "$@" >&8
 }
 
-# Print message
-VERSION=1.3final
+# Print version
+VERSION=1.4final
 echo ">> Configuring jEdit $VERSION"
 echo
 
-# Trap signals
+# Clean up if user kills us
 trap error 1
 trap error 2
 trap error 3
 trap error 15
 
-# Create rules file
+# Print `constant' stuff that doesn't change - rules, suffixes, etc
 RULES=Rules.make
 exec 8>$RULES
 rulesOut "# Created by Configure on `date`"
 rulesOut ".SUFFIXES: .java .class"
 rulesOut '../$(jar): $(resources)'
-rulesOut '	$(JAR) cf0 ../$(jar) $(resources) $(no_compile_res)'
+rulesOut '	$(JAR) cf ../$(jar) $(resources) $(no_compile_res)'
 rulesOut ".java.class:"
 rulesOut '	@echo $<:'
 rulesOut '	@$(JAVAC) -classpath $(CLASSPATH):../.. $<'
 rulesOut VERSION=$VERSION
 
-# Configure paths
+# Configure installation directory
 echo -n "Where do you want to install jEdit? [/opt/slava/share/jedit-$VERSION] "
 read JEDIT_HOME
 if test "$JEDIT_HOME" = ""
@@ -54,16 +57,18 @@ fi
 rulesOut "JEDIT_HOME=$JEDIT_HOME"
 rulesOut "JEDIT_BIN=$JEDIT_BIN"
 
-# Configure java
-echo -n "What is the name of your Java virtual machine? [jre] "
+# Configure Java virtual machine
+echo "-- If you are using JRE 1.1 (not JDK 1.1 or 1.2 or JRE 1.2)"
+echo "-- answer \`jre' to the next question."
+echo -n "What is the name of your Java virtual machine? [java] "
 read JAVA
 if test "$JAVA" = ""
 then
-	JAVA=jre
+	JAVA=java
 fi
 rulesOut JAVA=$JAVA
 
-# Configure javac
+# Configure Java compiler
 echo -n "What is the name of your Java compiler? [javac] "
 read JAVAC
 if test "$JAVAC" = ""
@@ -72,7 +77,7 @@ then
 fi
 rulesOut JAVAC=$JAVAC
 
-# Configure jar
+# Configure JAR tool
 echo -n "What is the name of your JAR tool? [jar] "
 read JAR
 if test "$JAR" = ""
@@ -81,8 +86,8 @@ then
 fi
 rulesOut JAR=$JAR
 
-# Configure KDE
-echo -n "Are you running the K Desktop Enviroment? [yN] "
+# Configure KDE applnk
+echo -n "Are you running the K Desktop Enviroment? (KDE) [yN] "
 read KDE
 case $KDE in
 	y*|Y*)
@@ -96,15 +101,26 @@ esac
 
 rulesOut KDE_DIR=$KDE_DIR
 
-# Some makes don't set $MAKE
+# (In the future) Configure GNOME app record
+echo -n "Are you running the GNU Network Object Model Enviroment? (GNOME) [yN] "
+read GNOME
+case $GNOME in
+	y*|Y*)
+		echo ">> This is not done yet. Anyone want to help me here\?"
+		;;
+esac
+
+# Some makes don't set $MAKE - this is rare, but test just
+# in case
 echo 'all:' > testmakefile
 echo '	@echo $(MAKE)' >> testmakefile
 test "`make -f testmakefile`" = "" && rulesOut MAKE=make
 rm -f testmakefile
 
-# Set Java VM
+# Sed the jedit shell script to set the Java virtual machine
 cp jedit jedit.cf_tmp
-sed "s/JAVA=.*/JAVA=\"$JAVA\"/g" < jedit.cf_tmp > jedit
+sed "s|JAVA=.*|JAVA=\"$JAVA\"|g" < jedit.cf_tmp > jedit
+
 chmod +x jedit
 rm -f jedit.cf_tmp
 

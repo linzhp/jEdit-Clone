@@ -1,9 +1,47 @@
+/*
+ *  gnu/regexp/util/Grep.java
+ *  Copyright (C) 1998 Wes Biggs
+ *
+ *  This program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published
+ *  by the Free Software Foundation; either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program; if not, write to the Free Software
+ *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
+
 package gnu.regexp.util;
 
-import gnu.regexp.*;
-import gnu.getopt.*;
-import java.io.*;
+import gnu.getopt.Getopt;
+import gnu.getopt.LongOpt;
+import gnu.regexp.RE;
+import gnu.regexp.REException;
+import gnu.regexp.REMatch;
+import gnu.regexp.RESyntax;
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.IOException;
+import java.io.PrintStream;
 
+/**
+ * Grep is a pure-Java clone of the GNU grep utility.  As such, it is much
+ * slower and not as full-featured, but it has the advantage of being
+ * available on any system with a Java virtual machine.
+ *
+ * @author <A HREF="mailto:wes@cacas.org">Wes Biggs</A>
+ * @version 1.01
+ * @use gnu.getopt
+ */
 public class Grep {
   private static final int BYTE_OFFSET = 0;
   private static final int COUNT = 1;
@@ -17,13 +55,26 @@ public class Grep {
   private static final int FILES_WITHOUT_MATCH = 9;
 
   private static final String PROGNAME = "gnu.regexp.util.Grep";
-  private static final String PROGVERSION = "1.00";
+  private static final String PROGVERSION = "1.01";
 
+  private Grep() { }
+  /**
+   * Invokes the grep() function below with the command line arguments
+   * and using the RESyntax.RE_SYNTAX_GREP syntax, which attempts to
+   * emulate the traditional UNIX grep syntax.
+   */
   public static void main(String[] argv) {
-    System.exit(grep(argv,RESyntax.RE_SYNTAX_GREP));
+    System.exit(grep(argv, RESyntax.RE_SYNTAX_GREP, System.out));
   }
 
-  public static int grep(String[] argv, RESyntax syntax) {
+  /**
+   * Runs Grep with the specified arguments.  For a list of 
+   * supported options, specify "--help".
+   *
+   * This is the meat of the grep routine, but unlike main(), you can
+   * specify your own syntax and PrintStream to use for output.
+   */
+  public static int grep(String[] argv, RESyntax syntax, PrintStream out) {
     // use gnu.getopt to read arguments
     int cflags = 0;
     
@@ -104,12 +155,11 @@ public class Grep {
 	String line;
 	try {
 	  while ((line = br.readLine()) != null)
-	    System.out.println(line);
+	    out.println(line);
 	} catch (IOException ie) { }
 	return 0;
       }
     }	      
-    
     
     InputStream is = null;
     RE pattern = null;
@@ -129,13 +179,13 @@ public class Grep {
     if (argv.length >= g.getOptind()+2) {
       for (int i = g.getOptind() + 1; i < argv.length; i++) {
 	if (argv[i].equals("-")) {
-	  if (processStream(pattern,System.in,options,(argv.length == g.getOptind()+2) || options[NO_FILENAME] ? null : "(standard input)")) {
+	  if (processStream(pattern,System.in,options,(argv.length == g.getOptind()+2) || options[NO_FILENAME] ? null : "(standard input)",out)) {
 	    retval = 0;
 	  }
 	} else {
 	  try {
 	    is = new FileInputStream(argv[i]);
-	    if (processStream(pattern,is,options,(argv.length == g.getOptind()+2) || options[NO_FILENAME] ? null : argv[i]))
+	    if (processStream(pattern,is,options,(argv.length == g.getOptind()+2) || options[NO_FILENAME] ? null : argv[i],out))
 	      retval = 0;
 	  } catch (FileNotFoundException e) {
 	    if (!options[SILENT])
@@ -144,13 +194,13 @@ public class Grep {
 	}
       }
     } else {
-      if (processStream(pattern,System.in,options,null))
+      if (processStream(pattern,System.in,options,null,out))
 	retval = 1;
     }
     return retval;
   }
 
-  private static boolean processStream(RE pattern, InputStream is, boolean[] options, String filename) {
+  private static boolean processStream(RE pattern, InputStream is, boolean[] options, String filename, PrintStream out) {
     int newlineLen = System.getProperty("line.separator").length();
     BufferedReader br = new BufferedReader(new InputStreamReader(is));
     int count = 0;
@@ -172,25 +222,25 @@ public class Grep {
 	    }
 	    if (options[FILES_WITH_MATCHES]) {
 	      if (filename != null)
-		System.out.println(filename);
+		out.println(filename);
 	      return true;
 	    }
 	    if (options[FILES_WITHOUT_MATCH]) {
 	      return false;
 	    }
 	    if (filename != null) {
-	      System.out.print(filename);
-	      System.out.print(':');
+	      out.print(filename);
+	      out.print(':');
 	    }
 	    if (options[LINE_NUMBER]) {
-	      System.out.print(atLine);
-	      System.out.print(':');
+	      out.print(atLine);
+	      out.print(':');
 	    }
 	    if (options[BYTE_OFFSET]) {
-	      System.out.print(atByte + match.getStartIndex() );
-	      System.out.print(':');
+	      out.print(atByte + match.getStartIndex() );
+	      out.print(':');
 	    }
-	    System.out.println(line);
+	    out.println(line);
 	  }
 	} // a match
 	atByte += line.length() + newlineLen; // could be troublesome...
@@ -200,12 +250,12 @@ public class Grep {
 
       if (options[COUNT]) {
 	if (filename != null)
-	  System.out.println(filename+':');
-	System.out.println(count);
+	  out.println(filename+':');
+	out.println(count);
       }
       if (options[FILES_WITHOUT_MATCH] && count==0) {
 	if (filename != null)
-	  System.out.println(filename);
+	  out.println(filename);
       }
     } catch (IOException e) {
       System.err.println(PROGNAME+": "+e);

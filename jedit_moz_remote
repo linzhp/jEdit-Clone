@@ -1,6 +1,7 @@
 #!/bin/sh
 
-# Netscape/Mozilla remote helper app for jEdit
+# Netscape/Mozilla remote helper app for jEdit on Unix
+# Used by jEdit's `Open in WWW Browser' feature
 # (C) 1999 by Slava Pestov <sp@gjt.org>
 
 netscape -remote openURL\($1\) || netscape $1

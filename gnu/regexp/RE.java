@@ -79,12 +79,12 @@ class CharUnit {
  * combination of execution flags (constants listed below).
  *
  * @author <A HREF="mailto:wes@cacas.org">Wes Biggs</A>
- * @version 1.0.5
+ * @version 1.0.6, 18 November 1998
  */
 
 public class RE extends REToken {
   // This String will be returned by getVersion()
-  private static final String s_version = "1.0.5";
+  private static final String s_version = "1.0.6";
 
   // These are, respectively, the first and last tokens in our linked list
   // If there is only one token, firstToken == lastToken
@@ -672,6 +672,8 @@ public class RE extends REToken {
   }
 
   private boolean isMatchImpl(CharIndexed input, int index, int eflags) {
+    if (firstToken == null)  // Trivial case
+      return (input.charAt(0) == CharIndexed.OUT_OF_BOUNDS);
     int[] i = firstToken.match(input,0,eflags,new REMatch(m_numSubs,index));
     return (i != null) && (input.charAt(i[0]) == CharIndexed.OUT_OF_BOUNDS);
   }
@@ -693,7 +695,7 @@ public class RE extends REToken {
   // Overrides REToken.chain
   boolean chain(REToken f_next) {
     super.chain(f_next);
-    lastToken.setUncle(f_next);
+    if (lastToken != null) lastToken.setUncle(f_next);
     return true;
   }
     
@@ -704,6 +706,7 @@ public class RE extends REToken {
   public int getMinimumLength() {
     int min = 0;
     REToken t = firstToken;
+    if (t == null) return 0;
     do {
       min += t.getMinimumLength();
     } while ((t = t.m_next) != null);
@@ -767,7 +770,9 @@ public class RE extends REToken {
   
   /* Implements abstract method REToken.match() */
   int[] match(CharIndexed input, int index, int eflags, REMatch mymatch) { 
-    if (mymatch.start[m_subIndex] == -1)
+    if (firstToken == null) return new int[] { index }; // Trivial case
+    if ((mymatch.start[m_subIndex] == -1) 
+	|| (mymatch.start[m_subIndex] > index))
       mymatch.start[m_subIndex] = index;
     int[] newIndex = firstToken.match(input,index,eflags,mymatch);
     if (newIndex == null) { } // mymatch.start[m_subIndex] = -1;
@@ -1100,7 +1105,8 @@ public class RE extends REToken {
     os.append('(');
     if (m_subIndex == 0)
       os.append("?:");
-    firstToken.dumpAll(os);
+    if (firstToken != null)
+      firstToken.dumpAll(os);
     os.append(')');
   }
 

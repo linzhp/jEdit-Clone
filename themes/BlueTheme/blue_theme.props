@@ -9,13 +9,15 @@
 
 # Syntax colors
 buffer.colors.comment1=#00ffff
-buffer.colors.comment2=#00ffff
+buffer.colors.comment2=#990033
 buffer.colors.literal1=#c8c8c8
 buffer.colors.literal2=#c8c8c8
 buffer.colors.label=#8888ff
 buffer.colors.keyword1=#ffaaaa
 buffer.colors.keyword2=#fe55ff
 buffer.colors.keyword3=#00ff00
+buffer.colors.operator=orange
+buffer.colors.invalid=#990033
 
 # Misc colors
 view.bgColor=#000080
