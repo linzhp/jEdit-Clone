@@ -107,6 +107,8 @@ public class EditorOptionPane extends OptionPane
 		cons.gridx = 0;
 		cons.gridy = 4;
 		cons.gridwidth = cons.REMAINDER;
+		cons.fill = GridBagConstraints.NONE;
+		cons.anchor = GridBagConstraints.WEST;
 		lineHighlight = new JCheckBox(jEdit.getProperty("options.editor"
 			+ ".lineHighlight"));
 		lineHighlight.getModel().setSelected("on".equals(jEdit

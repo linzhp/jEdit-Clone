@@ -55,6 +55,7 @@ implements CaretListener, KeyListener, WindowListener
 		else if(toolBar != null)
 		{
 			getContentPane().remove(toolBar);
+			toolBar = null;
 			validate();
 		}
 

@@ -19,6 +19,7 @@
 
 package org.gjt.sp.jedit;
 
+import javax.swing.text.Element;
 import javax.swing.text.Segment;
 import javax.swing.*;
 import gnu.regexp.*;
@@ -45,7 +46,7 @@ public class jEdit
 	 * The date when a change was last made to the source code,
 	 * in <code>YYYYMMDD</code> format.
 	 */
-	public static final String BUILD = "19990223";
+	public static final String BUILD = "19990224";
 
 	/**
 	 * AWK regexp syntax.
@@ -118,6 +119,7 @@ public class jEdit
 		portFile = new File(userHome,".jedit-server");
 		boolean desktop = true;
 		boolean showSplash = true;
+		int lineNo = -1;
 		
 		for(int i = 0; i < args.length; i++)
 		{
@@ -151,6 +153,17 @@ public class jEdit
 					portFile = new File(arg.substring(10));
 				else if(arg.equals("-readonly"))
 					readOnly = true;
+				else if(arg.startsWith("-+"))
+				{
+					try
+					{
+						lineNo = Integer.parseInt(arg
+							.substring(2));
+					}
+					catch(NumberFormatException nf)
+					{
+					}
+				}
 				else
 				{
 					System.err.println("Unknown option: "
@@ -178,6 +191,8 @@ public class jEdit
 				if(readOnly)
 					out.writeBytes("-readonly\n");
 				out.writeBytes("-cwd=" + userDir + "\n");
+				if(lineNo != -1)
+					out.writeBytes("-+" + lineNo + "\n");
 				boolean opened = false;
 				for(int i = 0; i < args.length; i++)
 				{
@@ -436,6 +451,16 @@ public class jEdit
 			if(args[i] == null)
 				continue;
 			buffer = openFile(null,userDir,args[i],readOnly,false);
+			if(lineNo != -1)
+			{
+				Element lineElement = buffer.getDefaultRootElement()
+					.getElement(lineNo - 1);
+				if(lineElement != null)
+				{
+					buffer.setCaretInfo(lineElement.getStartOffset(),
+						lineElement.getStartOffset());
+				}
+			}
 		}
 		if(buffer == null)
 		{
@@ -1228,6 +1253,7 @@ public class jEdit
 		System.err.println("    -portfile=<file>: Write server port to"
 			+ " <file>");
 		System.err.println("    -readonly: Open files read-only");
+		System.err.println("    -+<line>: Go to line <line>");
 		System.err.println();
 		System.err.println("Report bugs to Slava Pestov <sp@gjt.org>.");
 	}
@@ -1473,6 +1499,7 @@ public class jEdit
 		{
 			View view = null;
 			String authString = null;
+			int lineNo = -1;
 			try
 			{
 				BufferedReader in = new BufferedReader(
@@ -1504,6 +1531,17 @@ public class jEdit
 						else if(filename.startsWith(
 							"-cwd="))
 							cwd = filename.substring(5);
+						else if(filename.startsWith("-+"))
+						{
+							try
+							{
+								lineNo = Integer.parseInt(
+									filename.substring(2));
+							}
+							catch(NumberFormatException nf)
+							{
+							}
+						}
 					}
 					else
 					{
@@ -1518,7 +1556,22 @@ public class jEdit
 					}
 				}
 				if(buffer != null)
+				{
+					if(lineNo != -1)
+					{
+						Element lineElement = buffer
+							.getDefaultRootElement()
+							.getElement(lineNo - 1);
+						if(lineElement != null)
+						{
+							buffer.setCaretInfo(lineElement
+								.getStartOffset(),
+								lineElement
+								.getStartOffset());
+						}
+					}
 					jEdit.newView(buffer);
+				}
 			}
 			catch(NumberFormatException nf)
 			{

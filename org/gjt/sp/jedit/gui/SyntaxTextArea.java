@@ -37,7 +37,7 @@ import org.gjt.sp.jedit.jEdit;
  * @see org.gjt.sp.jedit.syntax.SyntaxEditorKit
  */
 public class SyntaxTextArea extends JEditorPane
-implements MouseListener
+implements MouseListener, MouseMotionListener
 {
 	// public members
 
@@ -53,6 +53,7 @@ implements MouseListener
 		lineSegment = new Segment();
 
 		addMouseListener(this);
+		addMouseMotionListener(this);
 	}
 
 	/**
@@ -276,6 +277,18 @@ implements MouseListener
 	public void mouseReleased(MouseEvent evt) {}
 	public void mouseEntered(MouseEvent evt) {}
 	public void mouseExited(MouseEvent evt) {}
+
+	public void mouseMoved(MouseEvent evt)
+	{
+		if((evt.getModifiers() & InputEvent.BUTTON3_MASK) != 0)
+			evt.consume();
+	}
+
+	public void mouseDragged(MouseEvent evt)
+	{
+		if((evt.getModifiers() & InputEvent.BUTTON3_MASK) != 0)
+			evt.consume();
+	}
 
 	// private members
 	private JPopupMenu menu;

@@ -75,19 +75,6 @@ public class GeneralOptionPane extends OptionPane
 		cons.gridx = 0;
 		cons.gridy = 2;
 		cons.gridwidth = 3;
-		label = new JLabel(jEdit.getProperty("options.general.autosave"),
-			SwingConstants.RIGHT);
-		layout.setConstraints(label,cons);
-		add(label);
-		cons.gridx = 3;
-		cons.gridwidth = 1;
-		autosave = new JTextField(jEdit.getProperty("autosave"));
-		layout.setConstraints(autosave,cons);
-		add(autosave);
-
-		cons.gridx = 0;
-		cons.gridy = 3;
-		cons.gridwidth = 3;
 		label = new JLabel(jEdit.getProperty("options.general.recent"),
 			SwingConstants.RIGHT);
 		layout.setConstraints(label,cons);
@@ -99,7 +86,7 @@ public class GeneralOptionPane extends OptionPane
 		add(recent);
 
 		cons.gridx = 0;
-		cons.gridy = 4;
+		cons.gridy = 3;
 		cons.gridwidth = 3;
 		label = new JLabel(jEdit.getProperty("options.general.clipHistory"),
 			SwingConstants.RIGHT);
@@ -110,6 +97,19 @@ public class GeneralOptionPane extends OptionPane
 		clipHistory = new JTextField(jEdit.getProperty("clipHistory"));
 		layout.setConstraints(clipHistory,cons);
 		add(clipHistory);
+
+		cons.gridx = 0;
+		cons.gridy = 4;
+		cons.gridwidth = 3;
+		label = new JLabel(jEdit.getProperty("options.general.autosave"),
+			SwingConstants.RIGHT);
+		layout.setConstraints(label,cons);
+		add(label);
+		cons.gridx = 3;
+		cons.gridwidth = 1;
+		autosave = new JTextField(jEdit.getProperty("autosave"));
+		layout.setConstraints(autosave,cons);
+		add(autosave);
 
 		cons.gridx = 0;
 		cons.gridy = 5;
@@ -184,6 +184,8 @@ public class GeneralOptionPane extends OptionPane
 		cons.gridx = 0;
 		cons.gridy = 9;
 		cons.gridwidth = cons.REMAINDER;
+		cons.fill = GridBagConstraints.NONE;
+		cons.anchor = GridBagConstraints.WEST;
 		saveDesktop = new JCheckBox(jEdit.getProperty(
 			"options.general.saveDesktop"));
 		saveDesktop.getModel().setSelected("on".equals(jEdit.getProperty(
