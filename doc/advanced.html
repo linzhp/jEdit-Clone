@@ -4,18 +4,44 @@
 <h1>Advanced Text Editing</h1>
 
 <a href=#intro>Introduction</a><br>
+<a href=#server>The jEdit Server</a><br>
+<a href=#desktop>The Desktop File</a><br>
 <a href=#modes>Edit Modes</a><br>
 <a href=#markers>Markers and the Anchor</a><br>
 <a href=#search>Search &amp; Replace</a><br>
-<a href=#misc>Miscallaneous Commands</a><br>
+<a href=#misc>Miscallaneous Commands</a>
 
 <a name=intro>
 <h1>Introduction</h1>
 </a>
 
 This file outlines some of the more advanced features available in jEdit
-such as edit modes, the anchor and markers, various line-based commands
-and search and replace.<p>
+such as the server and desktop file, edit modes, the anchor and markers,
+various `advanced' commands and search and replace.
+
+<a name=server>
+<h1>The jEdit Server</h1>
+</a>
+
+When jEdit is first started, it creates a new server thread that listens
+on a free TCP/IP socket. Subsequent invocations of jEdit connect to that
+socket and inform it of any files that are to be opened. This technique
+cuts down on memory usage because there is only one instance of jEdit open
+at any one time.
+
+The server can be disabled either on a `one-time' basis with the
+`-noserver' switch, or permanently in `Tools-&gt;Options-&gt;General'.
+
+<a name=desktop>
+<h1>The Desktop File</h1>
+</a>
+
+When jEdit exits it saves the list of open files to the `desktop' file,
+so that the next time jEdit is started with no command line parameters,
+it can reopen those files.<p>
+
+The desktop can be disabled either on a `one-time' basis with the
+`-nodesktop' switch, or permanently in `Tools-&gt;Options-&gt;General'.
 
 <a name=modes>
 <h1>Edit Modes</h1>
@@ -28,15 +54,16 @@ comment strings, and so on.<p>
 
 To determine which edit mode to use for a file, jEdit looks at the file
 name, file extension, and first line of the file. If neither of these
-methods are suitable, the mode can be specified `manually', by entering
-the following in one of the first 10 lines of the file:
-<pre>
-	(:mode=sh:)
-</pre>
-Of course, sh should be the <b>internal</b> name of the desired edit mode.<p>
+methods are suitable, the mode can be specified `manually'; either for
+the current session by selecting it from the `Tools-&gt;Mode' menu, or
+permanently by entering the following in one of the first 10 lines
+of the file whose edit mode you want to set:
+<blockquote><code>(:mode=sh:)</code></blockquote>
+Of course, <i>sh</i> should be the <b>internal</b> name of the desired edit
+mode.<p>
 
 The following table lists all edit modes included with jEdit; additional
-ones may be available, depending on what plugins are installed.
+ones may be available, depending on the plugins installed.
 
 <table border=3>
 
@@ -198,6 +225,8 @@ as the search string.
 string.
 <li><b>Search-&gt;Replace &amp; Find Next</b> - replaces the selection with
 the replacement string and locates the next occurance of the search string.
+<li><b>Search-&gt;Replace in Selection</b> - replaces all occurances of the
+search string with the replacement string, in the current selection only.
 <li><b>Search-&gt;Replace All</b> - replaces all occurances of the search
 string with the replacement string.
 <li><b>Search-&gt;HyperSearch</b> - displays the HyperSearch dialog. The
@@ -213,6 +242,12 @@ Most commands in jEdit are self-explanatory. However, there are some
 exceptions - they are listed here.
 
 <ul>
+<li><b>Edit-&gt;Paste Previous</b> - displays a list of previously
+copied and pasted strings available for insertion. By default, the last
+100 clippings are remembered - this can be changed in
+`Tools-&gt;Options-&gt;General'.
+<li><b>Edit-&gt;Paste Predefined</b> - displays a list of frequently used
+strings. Strings can be added and removed with the buttons in the dialog.
 <li><b>Edit-&gt;Line Operations-&gt;Go to End Indent</b> - moves the caret to
 the first non-whitespace character of the current line.
 <li><b>Edit-&gt;Line Operations-&gt;Delete No Indent</b> - deletes the current
@@ -221,6 +256,13 @@ line except for any indent at the start.
 line except for any indent at the start.
 <li><b>Edit-&gt;Line Operations-&gt;Join Lines</b> - appends the next line
 without any leading indent to the end of the current line.
+<li><b>Edit-&gt;Expand Abbreviation</b> - attempts to complete the current
+word by scanning backwards in the document looking for strings that start with
+the current word. The word separator characters are defined as all
+non-alphanumeric characters except for those listed in the `noWordSep'
+buffer-local property. For example, if you to complete words containing `-',
+place the following in the first 10 lines of the file:
+<blockquote><code>(:noWordSep=-:)</code></blockquote>
 <li><b>Tools-&gt;Filter Selecton</b> - filters the selection through an
 external command, specified in a text entry dialog.
 </ul>

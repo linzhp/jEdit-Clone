@@ -8,7 +8,7 @@
 <a href=#autoindent>Indentation</a><br>
 <a href=#colorizing>Syntax Colorizing</a><br>
 <a href=#comment>Commenting and Uncommenting</a><br>
-<a href=#compile>Compiling and Fixing Errors</a><br>
+<a href=#compile>Compiling and Fixing Errors</a>
 
 <a name=intro>
 <h1>Introduction</h1>
@@ -63,9 +63,9 @@ in edit modes other than those above, set the `openIndentBrackets' and
 `closeIndentBrackets' buffer-local properties to a list of opening and
 closing brackets to indent. For example, When editing Lisp you might
 specify the following in one of the first 10 lines of your Lisp file:
-<pre>
-	(:openIndentBrackets=(:closingIndentBrackets=):)
-</pre>
+<blockquote><code>
+(:openIndentBrackets=(:closingIndentBrackets=):)
+</code></blockquote>
 The above example doesn't demonstrate this, but multiple brackets can also
 be specified in both lists.
 
@@ -78,9 +78,7 @@ desired width in `Tools-&gt;Options-&gt;Editor'.
 <li>To set the tab width on a file-by-file basis, set the `tabSize'
 buffer-local property to the desired size, for example by putting the
 following in one of the first 10 lines of the file:
-<pre>
-	(:tabSize=4:)
-</pre>
+<blockquote><code>(:tabSize=4:)</code></blockquote>
 Of course replacing 4 with the desired tab size.<p>
 </ul>
 
@@ -94,9 +92,7 @@ you press Tab, you can do one of the following:
 <li>To enable soft tabs on a file-by-file basis, set the `noTabs' buffer-local
 property to `yes', for example by putting the following in one of the first 10
 lines of the file:
-<pre>
-	(:noTabs=yes:)
-</pre>
+<blockquote><code>(:noTabs=yes:)</code></blockquote>
 </ul>
 
 <h2>Indentation-Related Commands</h2>
@@ -134,8 +130,8 @@ jEdit does syntax colorizing for the following file types:
 </ul>
 
 Syntax colorizing makes errors such as misplaced quotes, mispelt
-keywords, etc easier to see. It also makes certain lexical tokens
-stand out more.<p>
+keywords, etc easier to see. It also makes complex program source
+easier to read.<p>
 
 <b>Hint:</b> syntax colorizing is performed when printing, too.
 
@@ -153,27 +149,27 @@ selection with comment start and end strings. Only works in edit
 modes which define comment start and end strings. An example of
 wing commented Java code:
 <pre>
-	/* regurgitator();
-	System.out.println("Hello World");
-	System.exit(1); */
+	/* doSomething();
+	System.out.println("Done.");
+	System.exit(0); */
 </pre>
 <li><b>Edit-&gt;Code Block Operations-&gt;Block Comment</b> - places comment
 to end of line strings at the start of every line of the selection. Only works
 in edit modes which define comment to end of line strings. An
 example of block commented Java code:
 <pre>
-	// regurgitator();
-	// System.out.println("Hello World");
-	// System.exit(1);
+	// doSomething();
+	// System.out.println("Done.");
+	// System.exit(0);
 </pre>
 <li><b>Edit-&gt;Code Block Operations-&gt;Box Comment</b> - surrounds the
 selection with comment start and end strings, and places the box
 comment strings at the start of every line of the selection. An example
 of box commented Java code:
 <pre>
-	/* regurgitator();
-	* System.out.println("Hello World");
-	* System.exit(1); */
+	/* doSomething();
+	* System.out.println("Done.");
+	* System.exit(0); */
 </pre>
 <li><b>Edit-&gt;Code Block Operations-&gt;Uncomment</b> - tries to remove
 any comment strings from the start and end of every line of the selection.
@@ -182,10 +178,8 @@ any comment strings from the start and end of every line of the selection.
 The comment characters can be reassigned on a file-by-file basis by
 placing something like the following in one of the first 10 lines of the
 file:
-<pre>
-	(:commentStart=(*:commentEnd=*):)
-	(:blockComment=->:boxComment=**:)
-</pre>
+<blockquote><code>(:commentStart=(*:commentEnd=*):)<br>
+(:blockComment=->:boxComment=**:)</code></blockquote>
 
 
 <a name=compile>
@@ -201,9 +195,7 @@ a mode specific compiler - for example, in C mode, this is cc, in Java
 this is javac, etc. The compiler can also be set on a file-by-file
 basis by setting the `compiler' buffer-local property, for example by putting
 this in one of the first 10 lines of the file:
-<pre>
-	(:compiler=c89 -O2 %p:)
-</pre>
+<blockquote><code>(:compiler=c89 -O2 %p:)</code></blockquote>
 Of course c89 -O2 should be replaced by your compiler and compilation flags,
 if any. The %p should appear somewhere in the compiler command - it is
 replaced with the file's path name by the compile command.
@@ -212,9 +204,7 @@ build the entire program. The make tool can be set for all files edited within
 jEdit in `Tools-&gt;Options-&gt;General'. Also, it can be set on a file-by-file
 basis by setting the `make' buffer-local property, for example by putting
 this in one of the first 10 lines of the file:
-<pre>
-	(:make=pmake:)
-</pre>
+<blockquote><code>(:make=pmake:)</code></blockquote>
 Of course pmake should be replaced by your make tool.
 </ul>
 
@@ -223,11 +213,16 @@ error list in `Tools-&gt;Compiler Errors'. Currently, jEdit parses the
 following error formats:
 <ul>
 <li>Generic format used by many compilers and utilities:
-<pre>file name:line number:error message</pre>
+<blockquote><code>file name:line number:error message</code></blockquote>
+<lI>Emacs format used by Jikes Java compiler and several others:
+<blockquote><code>
+file name:line number:column number:end line number:end column number:<br>
+error message</code></blockquote>
 <li>TeX-style errors:
-<pre>
-! error message
-l.line number, error message continued</pre>
+<blockquote><code>
+! error message<br>
+l.line number, error message continued
+</code></blockquote>
 </ul>
 
 Selecting an error from `Tools-&gt;Compiler Errors' will open the file

@@ -10,23 +10,25 @@
 <a href=#clipboard>Cut, Copy and Paste</a><br>
 <a href=#undo>Undo and Redo</a><br>
 <a href=#shortcuts>Keyboard Shortcuts</a><br>
-<a href=#views>Using Multiple Editor Windows</a><br>
-<a href=#server>The jEdit Server</a><br>
-<a href=#desktop>The Desktop File</a><br>
+<a href=#views>Using Multiple Editor Windows</a>
 
 <a name=intro>
 <h1>Introduction</h1>
 </a>
 
 This file describes jEdit's most basic functions. It assumes you are
-familiar with another text editor, for example GEdit on Unix, Notepad on
-Windows or SimpleText on the MacOS.<p>
+familiar with basic text editing with another text editor.
 
 <a name=starting>
 <h1>Starting jEdit</h1>
 </a>
 
-jEdit can be started from the command line to edit one or more
+jEdit can be started from a GUI or command line with no parameters,
+in which case it will either open any files that were open in the last
+session, or if the `save desktop' feature is disabled, a blank
+`Untitled' file.<p>
+
+jEdit can also be started from the command line to edit one or more
 files like this:
 
 <blockquote><code>jedit &lt;file1&gt; &lt;file2&gt;...</code></blockquote>
@@ -57,16 +59,10 @@ Because the `-' character is reserved for switches, you must enter the
 
 <blockquote><code>jedit -- -filename</code></blockquote>
 
-jEdit can also be started from a GUI or command line with no parameters,
-in which case it will either open any files that were open in the last
-session, or if the `save desktop' feature is disabled, a blank
-`Untitled' file.<p>
-
 <a name=opening>
 <h1>Opening Files</h1>
 </a>
 
-<p>
 Once jEdit is started, files can be opened in a number of ways:
 
 <ul>
@@ -113,6 +109,8 @@ can be entered or selected.
 a text entry dialog box where a URL to save the file to can be entered.
 As with `Open URL', file path names are accepted too. The available protocols
 and the exact behaviour of URL uploading depend on the Java implementation.
+<li><b>With the `File-&gt;Save All Buffers' command.</b> - This command saves
+all open files to disk.
 </ul>
 
 <h2>Autosave</h2>
@@ -134,7 +132,7 @@ You might also see files named #filename#+tmp+# where <i>filename</i>
 is a file you were editing. A file named that means that jEdit crashed
 while writing out a new autosave - the old one should still be in
 #filename#. The +tmp+ version is probably useless, since it is
-incomplete.<p>
+incomplete.
 
 <h2>Backups</h2>
 
@@ -143,21 +141,18 @@ that you don't like the changes.<p>
 
 The first time you save a file after opening it, jEdit copies the old
 vesion to filename~ where <i>filename</i> is the name of the file being
-saved. Subsequent saves don't update the backup - you must close
-the file and save it again for that to happen. The result is that the
-backup always contains the file, as it was before you started editing it.<p>
+saved. The result is that the backup always contains the file, as it was
+before you started editing it.<p>
 
-Multiple backups (named filename~1~, filename~2~ ... filename~10~ and so on,
-1 being the newest and 10 being the oldest) can enabled in
-`Tools-&gt;Options-&gt;General'.<p>
+Multiple backups (named filename~1~, filename~2~, filename~3~ and so on)
+<i>n</i> can be enabled `Tools-&gt;Options-&gt;General'.
 
 <a name=sendPrint>
 <h1>Sending and Printing Files</h1>
 </a>
 
 Files can be sent via e-mail with the `File-&gt;Send' command.
-`File-&gt;Print' can be used to print the file to a printer (or on some
-operating systems, to a PostScript file).
+`File-&gt;Print' can be used to print the file to a printer.
 
 <a name=clipboard>
 <h1>Cut, Copy and Paste</h1>
@@ -172,10 +167,6 @@ clipboard and removes it from the document.
 clipboard and leaves it in the document.
 <li><b>Edit-&gt;Paste</b> - places the clipboard contents in the
 document, replacing the selection, if any.
-<li><b>Edit-&gt;Paste Previous</b> - displays a list of previously
-copied and pasted strings available for insertion. By default, the last
-100 clippings are remembered - this can be changed in
-`Tools-&gt;Options-&gt;General'.
 </ul>
 
 <a name=undo>
@@ -296,30 +287,6 @@ closed with `File-&gt;Close View'. The `Buffers' menu can be used to select
 which buffer the current view is to edit. Several views can be editing the
 same buffer, in which case changes in one view will propagate to all others
 editing the same buffer.
-
-<a name=server>
-<h1>The jEdit Server</h1>
-</a>
-
-When jEdit is first started, it creates a new server thread that listens
-on a free TCP/IP socket. Subsequent invocations of jEdit connect to that
-socket and inform it of any files that are to be opened. This technique
-cuts down on memory usage because there is only one instance of jEdit open
-at any one time.<p>
-
-The server can be disabled either on a `one-time' basis with the
-`-noserver' switch, or permanently in `Tools-&gt;Options-&gt;General'.
-
-<a name=desktop>
-<h1>The Desktop File</h1>
-</a>
-
-When jEdit exits it saves the list of open files to the `desktop' file,
-so that the next time jEdit is started with no command line parameters,
-it can reopen those files.<p>
-
-The desktop can be disabled either on a `one-time' basis with the
-`-nodesktop' switch, or permanently in `Tools-&gt;Options-&gt;General'.<p>
 
 </body>
 </html>

@@ -8,7 +8,7 @@
 <a href=#format>Formatting Text</a><br>
 <a href=#wordcount>Counting Lines, Words and Characters</a><br>
 <a href=#www>Commands for Editing HTML Files</a><br>
-<a href=#tex>Commands for Editing TeX Files</a><br>
+<a href=#tex>Commands for Editing TeX Files</a>
 
 <a name=intro>
 <h1>Introduction</h1>
@@ -36,7 +36,7 @@ The following commands deal with paragraphs:
 <li><b>Edit-&gt;Paragraph Operations-&gt;Go to Next Paragraph</b> - moves the caret
 to the start of the next paragraph
 <li><b>Edit-&gt;Paragraph Operations-&gt;Go to Previous Paragraph</b> - moves the
-caret to the start ofthe previous paragraph
+caret to the start of the previous paragraph
 <li><b>Edit-&gt;Paragraph Operations-&gt;Select Next Paragraph</b> - extends the
 selection to the start of the next paragraph
 <li><b>Edit-&gt;Paragraph Operations-&gt;Select Previous Paragraph</b> - extends
@@ -54,17 +54,16 @@ using double newlines, the paragraph commands will  be useful then, too.
 
 The `Edit-&gt;Format' command reflows the selected text to the current
 line width, by breaking lines at word boundaries if they are too long and
-rejoining lines if there is room available. The Format command can be invoked
-on several paragraphs, in which case it will format each one independently.<p>
+rejoining lines if there is room available. If there are more than one
+paragraphs in the selection, Format will reflow each one induvidually.<p>
 
 The `maxLineLen' buffer-local property controls the maximum line length
-before word wrap is done; default is 72, which makes for comfortable reading
-in Windows' Notepad default window size and standard 80 column terminals.
+in characters) before it is wrapped; default is 72, which makes for
+comfortable reading in the default window width of most text editors and
+standard 80 column terminals.
 The change it to a different value, set the buffer-local property by placing
 the following in one of the first 10 lines of the file:
-<pre>
-	(:maxLineLen=78:)
-</pre>
+<blockquote><code>(:maxLineLen=78:)</code></blockquote>
 Of course replacing 78 with the desired line length.
 
 <a name=wordcount>
@@ -82,9 +81,9 @@ nothing is selected).
 The following commands are useful when editing HTML files:
 
 <ul>
-<li><b>Tools-&gt;Open Selection in WWW Browser</b> - similar to the
-above, but opens in the WWW browser that can be specified in
-`Tools-&gt;Options-&gt;General'.
+<li><b>Tools-&gt;Open Selection in WWW Browser</b> - opens the URL
+specified by the selection in the WWW browser that can be specified in
+`Tools-&gt;Options-&gt;General'. Good for checking links, etc.
 <li><b>Tools-&gt;Open in WWW Browser</b> - opens the current file in the
 WWW browser.
 </ul>

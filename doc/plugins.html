@@ -6,7 +6,7 @@
 <a href=#plugins>Introduction</a><br>
 <a href=#installing>Installing Plugins</a><br>
 <a href=#using>Using Plugins</a><br>
-<a href=#develop>Developing Plugins</a><br>
+<a href=#develop>Developing Plugins</a>
 
 <a name=plugins>
 <h1>Introduction</h1>
@@ -36,8 +36,8 @@ Files\jEdit\jars. The user plugin directory is %JAVAHOME%\.jedit-jars.<p>
 
 On Windows NT, the system plugin directory is the same as that on
 Windows 95/98, but each user has a plugin directory in
-%HOME%\.jedit-jars.<p>
-
+%HOME%\.jedit-jars.
+<p>
 <a name=using>
 <h1>Using Plugins</h1>
 </a><p>
@@ -56,6 +56,14 @@ If a plugin doesn't appear in the plugins menu but a `Loading...'
 message is printed, the plugin might be incompatible with your version
 of jEdit.<p>
 
+jEdit comes with several plugins that convert french accents to HTML
+entities, reverse text, and rot13 text. They are installed when jEdit
+is installed.<p>
+
+Also, several color schemes (`themes') are included with jEdit in the
+`themes' directory. Move them to a plugin directory to use them (only install
+one at a time).
+
 <a name=develop>
 <h1>Developing Plugins</h1>
 </a>
@@ -67,13 +75,13 @@ Property entries have a .props extension. The property file format is
 described in the API documentation for the <code>java.util.Properties</code>
 class.<p>
 
-Class entries have a .class extension and are standard Java class files.<p>
+Class entries have a .class extension and are standard Java class files.
 
 <h2>Edit Modes</h2>
 
 jEdit edit modes implement the <code><a href=api/org.gjt.sp.jedit.Mode.html>
-org.gjt.sp.jedit.Mode</a></code> interface. Also, the following properties
-apply to edit modes:
+org.gjt.sp.jedit.Mode</a></code> interface. The following table lists
+properties that can be defined for edit modes.
 
 <table border=3>
 <tr>
@@ -86,15 +94,15 @@ the buffer-local property named <code>property</code> for the specified
 edit mode</td>
 <tr>
 <td>mode.extension.&lt;ext&gt;</td> <td>The mode to use for files with
-extension <code>ext</code>.</td>
+extension <code>ext</code></td>
 </tr>
 <tr>
 <td>mode.filename.&lt;filename&gt;</td> <td>The mode to use for files named
-<code>filename</code></td>.
+<code>filename</code></td>
 </tr>
 <tr>
-<td>mode.firstline,&lt;firstline&gt;</td> <td>The mode to use for files whose
-first line is <code>firstline</code>.</td>
+<td>mode.firstline.&lt;firstline&gt;</td> <td>The mode to use for files whose
+first line is <code>firstline</code></td>
 </tr>
 </table>
 
@@ -104,9 +112,7 @@ jEdit commands extend the <code><a href=api/org.gjt.sp.jedit.EditAction.html>
 org.gjt.sp.jedit.EditAction</a></code> class.<p>
 The command's menu label is stored in the <code>&lt;command&gt;.label</code>
 property where <code>command</code> is the command name. The shortcut can
-also be specified with the <code>&lt;command&gt;.shortcut</code> property,
-but doing so isn't recommended since future versions of jEdit might use
-that shortcut.
+also be specified with the <code>&lt;command&gt;.shortcut</code> property.
 
 </body>
 </html>

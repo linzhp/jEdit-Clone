@@ -55,7 +55,7 @@ loop:		for(int i = offset; i < length; i++)
 					break;
 				}
 			case '*':
-				if(token == Token.COMMENT2 && length - i >= 1)
+				if(token == Token.COMMENT2 && length - i > 1)
 				{
 					if(length - i > 1 && line.array[i+1] == '/')
 					{

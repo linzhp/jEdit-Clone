@@ -3,15 +3,43 @@
 
 <h1>New Features in jEdit 1.4</h1>
 
-<a href=#indent>Auto Indent Improvements</a><br>
-<a href=#status>Status Bar Improvements</a><br>
-<a href=#borders>Electric Borders</a><br>
-<a href=#ide>Quick Compile-Edit-Fix Cycles</a><br>
 <a href=#commands>New Commands</a><br>
-<a href=#menuitem>Menu Item Improvements</a><br>
-<a href=#hints>Usage Hints in the Title Bar</a><br>
+<a href=#search>Search And Replace Improvements</a><br>
+<a href=#indent>Auto Indent Improvements</a><br>
+<a href=#status>User Interface Improvements</a><br>
 <a href=#help>Documentation Improvements</a><br>
 <a href=#bugs>Bug Fixes</a><br>
+
+<a name=commands>
+<h1>New Commands</h1>
+</a>
+
+The following new commands have been added to jEdit 1.4:
+<ul>
+<li>Commands for quick compile-edit-fix cycles (they parse compiler errors,
+allowing you to jump to the file and line number where the error occured)
+<li>Paste Predefined (for inserting predefined strings)
+<li>Wing/Box/Block Comment (comments the selection in various ways, using
+mode-specific comment characters)
+<li>Uncomment (removes comment characters from the selection)
+<li>Exchange Anchor and Caret (does what it says)
+<li>Go to End of Indent (moves the caret to the first non-whitespace character
+of the current line)
+<li>Scroll to Line (scrolls the text area so that the current line is
+in the middle)
+<li>Select Line Range (selects a range of lines)
+<li>Accent Converter (converts french accents to HTML entities) - This command
+is distributed as a .jar file seprately from the main jedit.jar.
+Contributed by Romain Guy &lt;RomainGuy@aol.com&gt;.
+</ul>
+
+<a name=search>
+<h1>Search And Replace Improvements</h1>
+</a>
+
+There is now a `Replace in Selection' command that replaces all instances
+the the search string with the replacement string, in the selected text
+only.
 
 <a name=indent>
 <h1>Auto Indent Improvements</h1>
@@ -22,57 +50,22 @@ number of braces ({,}) in the previous and current lines. This functionality
 is used in C, C++, Java and JavaScript modes.
 
 <a name=status>
-<h1>Status Bar Improvements</h1>
+<h1>User Interface Improvements</h1>
 </a>
 
 jEdit 1.3's space wasting and cryptic status bar is no more. The file modified
 and read only status is now displayed in the title bar (`(modified)' or
 `(read only)' is appended to the file name). The line number display has been
 moved to the top right corner of the menu bar. The column number is also
-displayed.
-
-<a name=borders>
-<h1>Electric Borders</h1>
-</a>
+displayed.<p>
 
 In previous versions of jEdit, autoscrolling only started when the caret
 was on the last or first visible line, respectively. In jEdit 1.4, at
-least 4 lines are always visible above and below the caret.
-
-<a name=ide>
-<h1>Quick Compile-Edit-Fix Cycles</h1>
-</a>
-
-jEdit now parses the output of compilers and attempts to build a list
-of errors that can be jumped to be quickly fixed.
-
-<a name=commands>
-<h1>New Commands</h1>
-</a>
-
-The following new commands have been added to jEdit 1.4:
-<ul>
-<li>Exchange Anchor and Caret (does what it says)
-<li>Go to End of Indent (moves the caret to the first non-whitespace character
-of the current line)
-<li>Scroll to Line (scrolls the text area so that the current line is
-in the middle)
-<li>Wing/Box/Block Comment (comments the selection in various ways, using
-mode-specific comment characters)
-<li>Uncomment (removes comment characters from the selection)
-</ul>
-
-<a name=menuitem>
-<h1>Menu Item Improvements</h1>
-</a>
+least 4 lines are always visible above and below the caret.<p>
 
 The keyboard shortcut, if any is now drawn right justified within menu items.
 This results in a much cleaner appearance, and the shortcuts are now easier
-to see and locate.
-
-<a name=hints>
-<h1>Usage Hints in the Title Bar</h1>
-</a>
+to see and locate.<p>
 
 When a new view is created, a random hint is displayed in the title bar.
 When you start typing, it will disappear.
@@ -90,8 +83,5 @@ each outlining the commands most useful for each.
 </a>
 
 jEdit 1.4 fixes the following bugs present in 1.3:
-
-<font color=gray>Fill this in for 1.4final</font>
-
 </body>
 </html>

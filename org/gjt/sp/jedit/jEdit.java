@@ -45,7 +45,7 @@ public class jEdit
 	 * The date when a change was last made to the source code,
 	 * in <code>YYYYMMDD</code> format.
 	 */
-	public static final String BUILD = "19990205";
+	public static final String BUILD = "19990206";
 
 	/**
 	 * AWK regexp syntax.
@@ -226,10 +226,10 @@ public class jEdit
 				.getProperty("java.class.path");
 			int index = classpath.toLowerCase()
 				.indexOf("jedit.jar");
-			if(index > 0)
+			int start = classpath.lastIndexOf(File
+				.pathSeparator,index) + 1;
+			if(index > start)
 			{
-				int start = classpath.lastIndexOf(File
-					.pathSeparator,index) + 1;
 				jEditHome = classpath.substring(start,
 					index - 1);
 			}

@@ -1,6 +1,6 @@
 /*
  * KeywordMap.java - Fast keyword->id map
- * Copyright (C) 1998 Slava Pestov
+ * Copyright (C) 1998, 1999 Slava Pestov
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -39,7 +39,7 @@ public class KeywordMap
 	 */
 	public KeywordMap(boolean ignoreCase)
 	{
-		map = new Keyword[27];
+		map = new Keyword[26];
 		this.ignoreCase = ignoreCase;
 	}
 
@@ -54,11 +54,7 @@ public class KeywordMap
 		if(length == 0)
 			return null;
 		char key = text.array[offset];
-		if(!Character.isLetter(key))
-			key = 26;
-		else
-			key = (char)(Character.toUpperCase(key) - 'A');
-		Keyword k = map[key];
+		Keyword k = map[key % 26];
 		while(k != null)
 		{
 			String keyword = k.keyword;
@@ -81,11 +77,7 @@ public class KeywordMap
 	 */
 	public void add(String keyword, String id)
 	{
-		char key = keyword.charAt(0);
-		if(!Character.isLetter(key))
-			key = 26;
-		else
-			key = (char)(Character.toUpperCase(key) - 'A');
+		int key = keyword.charAt(0) % 26;
 		map[key] = new Keyword(keyword,id,map[key]);
 	}
 
