@@ -36,6 +36,7 @@ public class CTokenMarker extends TokenMarker
 		String token = lineIndex == 0 ? null : lineInfo[lineIndex - 1];
 		int offset = line.offset;
 		int lastOffset = offset;
+		int lastKeyword = offset;
 		int length = line.count + offset;
 		boolean backslash = false;
 loop:		for(int i = offset; i < length; i++)
@@ -64,23 +65,24 @@ loop:		for(int i = offset; i < length; i++)
 				backslash = false;
 				if(token == null)
 				{
-					int off = i;
+					/*int off = i;
 					while(--off >= lastOffset)
 					{
 						char h = line.array[off];
 						if(!Character.isLetter(h) && h != '_')
 							break;
 					}
-					off++;
-					int len = i - off;
-					String id = keywords.lookup(line,off,len);
+					off++;*/
+					int len = i - lastKeyword;
+					String id = keywords.lookup(line,lastKeyword,len);
 					if(id != null)
 					{
-						if(off != lastOffset)
-							addToken(off - lastOffset,null);
+						if(lastKeyword != lastOffset)
+							addToken(lastKeyword - lastOffset,null);
 						addToken(len,id);
 						lastOffset = i;
 					}
+					lastKeyword = i + 1;
 				}
 				break;
 			case ':':
@@ -164,20 +166,20 @@ loop:		for(int i = offset; i < length; i++)
 		}
 		if(token == null)
 		{
-			int off = length;
+			/*int off = length;
 			while(--off >= lastOffset)
 			{
 				char h = line.array[off];
 				if(!Character.isLetter(h) && h != '_')
 					break;
 			}
-			off++;
-			int len = length - off;
-			String id = keywords.lookup(line,off,len);
+			off++;*/
+			int len = length - lastKeyword;
+			String id = keywords.lookup(line,lastKeyword,len);
 			if(id != null)
 			{
-				if(off != lastOffset)
-					addToken(off - lastOffset,null);
+				if(lastKeyword != lastOffset)
+					addToken(lastKeyword - lastOffset,null);
 				addToken(len,id);
 				lastOffset = length;
 			}

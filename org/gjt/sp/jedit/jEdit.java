@@ -45,7 +45,7 @@ public class jEdit
 	 * The date when a change was last made to the source code,
 	 * in <code>YYYYMMDD</code> format.
 	 */
-	public static final String BUILD = "19990212";
+	public static final String BUILD = "19990214";
 
 	/**
 	 * AWK regexp syntax.
@@ -1437,7 +1437,8 @@ public class jEdit
 	 */
 	public static int getLeadingWhiteSpace(String str)
 	{
-		for(int whitespace = 0; whitespace < str.length();)
+		int whitespace = 0;
+loop:		for(;whitespace < str.length();)
 		{
 			switch(str.charAt(whitespace))
 			{
@@ -1445,10 +1446,10 @@ public class jEdit
 				whitespace++;
 				break;
 			default:
-				return whitespace;
+				break loop;
 			}
 		}
-		return 0;
+		return whitespace;
 	}
 
 	/**

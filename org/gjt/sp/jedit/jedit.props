@@ -133,6 +133,7 @@ mode.autoindent.name=Auto Indent
 mode.bat.name=Batch File
 mode.bat.blockComment=rem
 mode.extension.bat=bat
+mode.extension.cmd=bat
 
 # C mode
 mode.c.name=C

@@ -30,7 +30,7 @@ import java.net.*;
 import java.util.*;
 import java.util.zip.*;
 import org.gjt.sp.jedit.gui.SyntaxTextArea;
-import org.gjt.sp.jedit.syntax.TokenMarker;
+import org.gjt.sp.jedit.syntax.*;
 
 /**
  * An in-memory copy of an open file.

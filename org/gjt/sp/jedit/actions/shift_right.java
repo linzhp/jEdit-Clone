@@ -74,4 +74,4 @@ public class shift_right extends EditAction
 		}
 		buffer.endCompoundEdit();
 	}
-}
+}	

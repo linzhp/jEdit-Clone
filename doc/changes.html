@@ -58,7 +58,10 @@ Buffer.locateBracketForward().
 <li>For some reason splash screen doesn't appear until the first view is
 created
 <li>Backup directory feature, where all ...~ files are placed
-<li>Autosave directory feature, where all #...# files are placed
+<li>Scrolling isn't as slow as it was in jEdit 1.2, but still could be
+better. A token cache could be used
+<li>Typing is slow. Can be fixed by storing the last line tokenized, and
+retokenizing from the caret position to the end of the line only
 </ul>
 
 <a name=14pre4>
@@ -79,6 +82,8 @@ Mike Dillon &lt;mdillon@uclink4.berkeley.edu&gt;)
 Mike Dillon &lt;mdillon@uclink4.berkeley.edu&gt;)
 <li>Size of I/O buffers increased from 8K to 32K - should make file saving
 and loading faster
+<li>Removed redundant scanning pass from CTokenMarker - should be about
+50% faster
 </ul>
 
 <h2>Bug Fixes</h2>
@@ -90,6 +95,7 @@ Mike Dillon &lt;mdillon@uclink4.berkeley.edu&gt; for the fix)
 Mike Dillon &lt;mdillon@uclink4.berkeley.edu&gt; for the fix)
 <li>AltGR key should now work on Windows (thanks to
 Juha Lindfors &lt;jplindfo@cc.helsinki.fi&gt; for the fix)
+<li>Shift Indent Left/Right had problems when shifting empty lines
 </ul>
 
 <a name=14pre3>
@@ -157,7 +163,7 @@ it would sometimes be displayed before the command had finished
 <li>`Go to Next/Previous Error' dialog has a proper title now
 <li>Fixed incorrect percentage display in the status bar
 <li>C/C++/Java/JavaScript modes would throw an ArrayIndexOutOfBoundsException
-of an accented character was found
+if an accented character was found
 <li>HTML mode could throw an ArrayIndexOutOfBounds under obscure circumstances
 <li>StringIndexOutOfBoundsException would be thrown if jEdit's CLASSPATH
 was `jedit.jar' with no leading directory name

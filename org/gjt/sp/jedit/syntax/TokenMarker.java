@@ -55,7 +55,6 @@ public abstract class TokenMarker
 		length = 0;
 		lastToken = null;
 	}
-
 	/**
 	 * An abstract method that is called to split a line up into
 	 * tokens.
