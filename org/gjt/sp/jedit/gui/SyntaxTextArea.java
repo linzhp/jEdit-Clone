@@ -345,7 +345,7 @@ public class SyntaxTextArea extends JEditorPane
 				width = g.getFontMetrics().charWidth('m') + 2;
 				r.width = block ? width - 2 : 0;
 				g.setColor(getCaretColor());
-				g.drawRect(r.x,r.y,r.width,r.height - 1);
+				g.drawRect(r.x - 1,r.y,r.width,r.height - 1);
 			}
 			catch(BadLocationException bl)
 			{

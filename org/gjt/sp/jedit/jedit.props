@@ -83,7 +83,7 @@ view.showTips=on
 
 # Geometry
 view.geometry.w=80
-view.geometry.h=30
+view.geometry.h=25
 
 # Font
 view.font=Monospaced
