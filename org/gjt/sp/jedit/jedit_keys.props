@@ -3,43 +3,29 @@
 ### by Slava Pestov <sp@gjt.org>
 ###
 
+# Function keys
+help.shortcut=F1
+paste-previous.shortcut=F2
+paste-predefined.shortcut=F3
+# F4
+hypersearch.shortcut=F5
+compile.shortcut=F6
+toggle-console.shortcut=F7
+prev-error.shortcut=F8
+next-error.shortcut=F9
+browser-open-url.shortcut=F10
+prev-buffer.shortcut=F11
+next-buffer.shortcut=F12
+
+# Single key
 select-all.shortcut=C+a
 expand-abbrev.shortcut=C+b
 copy.shortcut=C+c
-delete-line.shortcut=C+d C+d
-delete-paragraph.shortcut=C+d C+e
-delete-end-line.shortcut=C+d C+f
-delete-no-indent.shortcut=C+d C+i
-delete-start-line.shortcut=C+d C+s
-replace-all.shortcut=C+e C+a
-box-comment.shortcut=C+e C+b
-wing-comment.shortcut=C+e C+c
-paste-predefined.shortcut=C+e C+d
-format.shortcut=C+e C+f
-replace-next.shortcut=C+e C+g
-select-no-indent.shortcut=C+e C+i
-scroll-line.shortcut=C+e C+j
-block-comment.shortcut=C+e C+k
-select-line-range.shortcut=C+e C+l
-new-view.shortcut=C+e C+n
-open-url.shortcut=C+e C+o
-uncomment.shortcut=C+e C+q
-replace.shortcut=C+e C+r
-find-selection.shortcut=C+e C+s
-tab.shortcut=C+e C+t
-untab.shortcut=C+e C+u
-paste-previous.shortcut=C+e C+v
-close-view.shortcut=C+e C+w
-exchange-anchor.shortcut=C+e C+x
-replace-in-selection.shortcut=C+e C+y
-prev-buffer.shortcut=C+e C+[
-next-buffer.shortcut=C+e C+]
 find.shortcut=C+f
 find-next.shortcut=C+g
-hypersearch.shortcut=C+h
+find-selection.shortcut=C+h
 goto-end-indent.shortcut=C+i
 join-lines.shortcut=C+j
-toggle-console.shortcut=C+k
 goto-line.shortcut=C+l
 set-marker.shortcut=C+m
 new-file.shortcut=C+n
@@ -55,6 +41,29 @@ close-file.shortcut=C+w
 cut.shortcut=C+x
 goto-anchor.shortcut=C+y
 undo.shortcut=C+z
+
+# Multi key
+delete-line.shortcut=C+d C+d
+delete-paragraph.shortcut=C+d C+e
+delete-end-line.shortcut=C+d C+f
+delete-no-indent.shortcut=C+d C+i
+delete-start-line.shortcut=C+d C+s
+replace-all.shortcut=C+e C+a
+box-comment.shortcut=C+e C+b
+wing-comment.shortcut=C+e C+c
+format.shortcut=C+e C+f
+select-no-indent.shortcut=C+e C+i
+scroll-line.shortcut=C+e C+j
+block-comment.shortcut=C+e C+k
+select-line-range.shortcut=C+e C+l
+new-view.shortcut=C+e C+n
+open-url.shortcut=C+e C+o
+tab.shortcut=C+e C+t
+untab.shortcut=C+e C+u
+close-view.shortcut=C+e C+w
+exchange-anchor.shortcut=C+e C+x
+
+# Other keys
 select-block.shortcut=C+[
 locate-bracket.shortcut=C+]
 prev-paragraph.shortcut=C+UP
@@ -63,7 +72,3 @@ select-prev-paragraph.shortcut=CS+UP
 select-next-paragraph.shortcut=CS+DOWN
 shift-left.shortcut=A+LEFT
 shift-right.shortcut=A+RIGHT
-prev-error.shortcut=A+UP
-next-error.shortcut=A+DOWN
-help.shortcut=F1
-
