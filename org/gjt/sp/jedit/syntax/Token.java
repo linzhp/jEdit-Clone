@@ -54,8 +54,8 @@ public class Token
 	public static final byte LITERAL1 = 3;
 
 	/**
-	 * Literal 2 token id. This can be used to mark a string
-	 * literal (eg, C mode uses this to mark '...' literals)
+	 * Literal 2 token id. This can be used to mark an object
+	 * literal (eg, Java mode uses this to mark true, false, etc)
 	 */
 	public static final byte LITERAL2 = 4;
 
@@ -160,6 +160,9 @@ public class Token
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.10  1999/04/22 06:03:26  sp
+ * Syntax colorizing change
+ *
  * Revision 1.9  1999/04/19 05:38:20  sp
  * Syntax API changes
  *

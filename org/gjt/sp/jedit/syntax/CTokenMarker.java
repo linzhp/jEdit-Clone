@@ -144,7 +144,7 @@ loop:		for(int i = offset; i < length; i++)
 				else if(token == Token.LITERAL2)
 				{
 					token = Token.NULL;
-					addToken((i+1) - lastOffset,Token.LITERAL2);
+					addToken((i+1) - lastOffset,Token.LITERAL1);
 					lastOffset = i + 1;
 					lastKeyword = lastOffset;
 				}
@@ -239,9 +239,9 @@ loop:		for(int i = offset; i < length; i++)
 			cKeywords.add("inline",Token.KEYWORD2);
 			cKeywords.add("near",Token.KEYWORD2);
 			cKeywords.add("pascal",Token.KEYWORD2);
-			cKeywords.add("true",Token.LABEL);
-			cKeywords.add("false",Token.LABEL);
-			cKeywords.add("NULL",Token.LABEL);
+			cKeywords.add("true",Token.LITERAL2);
+			cKeywords.add("false",Token.LITERAL2);
+			cKeywords.add("NULL",Token.LITERAL2);
 		}
 		return cKeywords;
 	}
@@ -256,6 +256,9 @@ loop:		for(int i = offset; i < length; i++)
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.25  1999/04/22 06:03:26  sp
+ * Syntax colorizing change
+ *
  * Revision 1.24  1999/04/19 05:38:20  sp
  * Syntax API changes
  *

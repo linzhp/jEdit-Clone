@@ -201,7 +201,7 @@ loop:		for(int i = offset; i < length; i++)
 				else if(token == Token.LITERAL2)
 				{
 					token = JAVASCRIPT;
-					addToken((i+1) - lastOffset,Token.LITERAL2);
+					addToken((i+1) - lastOffset,Token.LITERAL1);
 					lastOffset = i + 1;
 				}
 				break;
@@ -246,6 +246,9 @@ loop:		for(int i = offset; i < length; i++)
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.23  1999/04/22 06:03:26  sp
+ * Syntax colorizing change
+ *
  * Revision 1.22  1999/04/19 05:38:20  sp
  * Syntax API changes
  *

@@ -56,6 +56,7 @@ public class ColorTableOptionPane extends OptionPane
 		saveColorChoice("buffer.colors.comment1",i++);
 		saveColorChoice("buffer.colors.comment2",i++);
 		saveColorChoice("buffer.colors.literal1",i++);
+		saveColorChoice("buffer.colors.literal2",i++);
 		saveColorChoice("buffer.colors.label",i++);
 		saveColorChoice("buffer.colors.keyword1",i++);
 		saveColorChoice("buffer.colors.keyword2",i++);
@@ -156,9 +157,12 @@ public class ColorTableOptionPane extends OptionPane
 		types.addElement(jEdit.getProperty("options.colors.comment2Color"));
 		colors.addElement(ColorChoice.choiceForValue(
 			jEdit.getProperty("buffer.colors.comment2")));
-		types.addElement(jEdit.getProperty("options.colors.literalColor"));
+		types.addElement(jEdit.getProperty("options.colors.literal1Color"));
 		colors.addElement(ColorChoice.choiceForValue(
 			jEdit.getProperty("buffer.colors.literal1")));
+		types.addElement(jEdit.getProperty("options.colors.literal2Color"));
+		colors.addElement(ColorChoice.choiceForValue(
+			jEdit.getProperty("buffer.colors.literal2")));
 		types.addElement(jEdit.getProperty("options.colors.labelColor"));
 		colors.addElement(ColorChoice.choiceForValue(
 			jEdit.getProperty("buffer.colors.label")));
@@ -521,6 +525,9 @@ class ColorChoice
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.8  1999/04/22 06:03:26  sp
+ * Syntax colorizing change
+ *
  * Revision 1.7  1999/04/21 07:39:19  sp
  * FAQ added, plugins can now add panels to the options dialog
  *

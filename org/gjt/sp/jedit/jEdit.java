@@ -1558,6 +1558,9 @@ public class jEdit
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.78  1999/04/22 06:03:25  sp
+ * Syntax colorizing change
+ *
  * Revision 1.77  1999/04/22 05:31:17  sp
  * Documentation updates, minor SyntaxTextArea update
  *
@@ -1590,15 +1593,5 @@ public class jEdit
  *
  * Revision 1.67  1999/04/02 00:39:19  sp
  * Fixed console bug, syntax API changes, minor jEdit.java API change
- *
- * Revision 1.66  1999/04/01 04:27:07  sp
- * fixed silly jEdit.java bug
- *
- * Revision 1.65  1999/04/01 04:13:00  sp
- * Bug fixing for 1.5final
- *
- * Revision 1.64  1999/03/29 06:30:25  sp
- * Documentation updates, fixed bug in DefaultSyntaxDocument, fixed bug in
- * goto-line
  *
  */

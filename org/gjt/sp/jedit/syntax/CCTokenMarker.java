@@ -65,7 +65,7 @@ public class CCTokenMarker extends CTokenMarker
 			ccKeywords.add("explicit", Token.KEYWORD1);			
 			ccKeywords.add("export", Token.KEYWORD2);
 			ccKeywords.add("extern", Token.KEYWORD2);	   //
-			ccKeywords.add("false", Token.LABEL);
+			ccKeywords.add("false", Token.LITERAL2);
 			ccKeywords.add("float", Token.KEYWORD3);	   //
 			ccKeywords.add("for", Token.KEYWORD1);		   //
 			ccKeywords.add("friend", Token.KEYWORD1);			
@@ -96,9 +96,9 @@ public class CCTokenMarker extends CTokenMarker
 			ccKeywords.add("struct", Token.KEYWORD3);	   //
 			ccKeywords.add("switch", Token.KEYWORD1);	   //
 			ccKeywords.add("template", Token.KEYWORD3);
-			ccKeywords.add("this", Token.LABEL);
+			ccKeywords.add("this", Token.LITERAL2);
 			ccKeywords.add("throw", Token.KEYWORD1);
-			ccKeywords.add("true", Token.LABEL);
+			ccKeywords.add("true", Token.LITERAL2);
 			ccKeywords.add("try", Token.KEYWORD1);
 			ccKeywords.add("typedef", Token.KEYWORD3);	   //
 			ccKeywords.add("typeid", Token.KEYWORD3);
@@ -115,7 +115,7 @@ public class CCTokenMarker extends CTokenMarker
 			ccKeywords.add("xor_eq", Token.KEYWORD3);            
 
 			// non ANSI keywords
-			ccKeywords.add("NULL", Token.LABEL);
+			ccKeywords.add("NULL", Token.LITERAL2);
 		}
 		return ccKeywords;
 	}
@@ -127,6 +127,9 @@ public class CCTokenMarker extends CTokenMarker
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.3  1999/04/22 06:03:26  sp
+ * Syntax colorizing change
+ *
  * Revision 1.2  1999/04/21 05:00:46  sp
  * New splash screen!!!!!!!!!!! Also, Juha has sent in a new keyword set for C++
  *

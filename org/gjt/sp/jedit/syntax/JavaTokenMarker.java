@@ -80,11 +80,11 @@ public class JavaTokenMarker extends CTokenMarker
 			javaKeywords.add("finally",Token.KEYWORD1);
 			javaKeywords.add("implements",Token.KEYWORD1);
 			javaKeywords.add("throws",Token.KEYWORD1);
-			javaKeywords.add("this",Token.LABEL);
-			javaKeywords.add("null",Token.LABEL);
-			javaKeywords.add("super",Token.LABEL);
-			javaKeywords.add("true",Token.LABEL);
-			javaKeywords.add("false",Token.LABEL);
+			javaKeywords.add("this",Token.LITERAL2);
+			javaKeywords.add("null",Token.LITERAL2);
+			javaKeywords.add("super",Token.LITERAL2);
+			javaKeywords.add("true",Token.LITERAL2);
+			javaKeywords.add("false",Token.LITERAL2);
 		}
 		return javaKeywords;
 	}
@@ -96,6 +96,9 @@ public class JavaTokenMarker extends CTokenMarker
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.2  1999/04/22 06:03:26  sp
+ * Syntax colorizing change
+ *
  * Revision 1.1  1999/03/13 09:11:46  sp
  * Syntax code updates, code cleanups
  *
