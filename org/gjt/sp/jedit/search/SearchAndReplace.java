@@ -110,7 +110,18 @@ public class SearchAndReplace
 	}
 
 	/**
-	 * Returns the current <code>SearchMatcher</code>.
+	 * Sets the current search string matcher. Note that calling
+	 * <code>setSearchString</code>, <code>setReplaceString</code>,
+	 * <code>setIgnoreCase</code> or <code>setRegExp</code> will
+	 * reset the matcher to the default.
+	 */
+	public static void setSearchMatcher(SearchMatcher matcher)
+	{
+		SearchAndReplace.matcher = matcher;
+	}
+
+	/**
+	 * Returns the current search string matcher.
 	 */
 	public static SearchMatcher getSearchMatcher()
 	{
@@ -124,6 +135,23 @@ public class SearchAndReplace
 			return new RESearchMatcher(search,replace,ignoreCase);
 		else
 			return new LiteralSearchMatcher(search,replace,ignoreCase);
+	}
+
+	/**
+	 * Sets the current search file set.
+	 * @param fileset The file set to perform searches in
+	 */
+	public static void setSearchFileSet(SearchFileSet fileset)
+	{
+		SearchAndReplace.fileset = fileset;
+	}
+
+	/**
+	 * Returns the current search file set.
+	 */
+	public static SearchFileSet getSearchFileSet()
+	{
+		return fileset;
 	}
 
 	/**
@@ -203,10 +231,31 @@ public class SearchAndReplace
 	{
 		JEditTextArea textArea = view.getTextArea();
 		int selStart = textArea.getSelectionStart();
-		boolean retVal = replace(view,buffer,selStart,
-			textArea.getSelectionEnd());
+		int selEnd = textArea.getSelectionEnd();
+		if(selStart == selEnd)
+		{
+			view.getToolkit().beep();
+			return false;
+		}
+		boolean retVal = replace(view,buffer,selStart,selEnd);
 		textArea.setSelectionStart(selStart);
 		return retVal;
+	}
+
+	/**
+	 * Replaces all occurances of the search string with the replacement
+	 * string.
+	 */
+	public static boolean replaceAll(View view)
+	{
+		boolean retval = false;
+		Buffer[] buffers = fileset.getSearchBuffers(view);
+		for(int i = 0; i < buffers.length; i++)
+		{
+			Buffer buffer = buffers[i];
+			retval |= replace(view,buffer,0,buffer.getLength());
+		}
+		return retval;
 	}
 
 	/**
@@ -290,6 +339,11 @@ public class SearchAndReplace
 	 */
 	public static void load()
 	{
+		String filesetStr = jEdit.getProperty("search.multifile.value");
+		if("all".equals(filesetStr))
+			fileset = new AllBufferSet();
+		else
+			fileset = new CurrentBufferSet();
 		search = jEdit.getProperty("search.find.value");
 		replace = jEdit.getProperty("search.replace.value");
 		regexp = "on".equals(jEdit.getProperty("search.regexp.toggle"));
@@ -301,6 +355,8 @@ public class SearchAndReplace
 	 */
 	public static void save()
 	{
+		jEdit.setProperty("search.multifile.value",
+			(fileset instanceof AllBufferSet) ? "all" : "current");
 		jEdit.setProperty("search.find.value",(search == null ? ""
 			: search));
 		jEdit.setProperty("search.replace.value",(replace == null ? ""
@@ -308,7 +364,7 @@ public class SearchAndReplace
 		jEdit.setProperty("search.ignoreCase.toggle",
 			ignoreCase ? "on" : "off");
 		jEdit.setProperty("search.regexp.toggle",
-			ignoreCase ? "on" : "off");
+			regexp ? "on" : "off");
 	}
 		
 	// private members
@@ -317,11 +373,18 @@ public class SearchAndReplace
 	private static boolean regexp;
 	private static boolean ignoreCase;
 	private static SearchMatcher matcher;
+	private static SearchFileSet fileset;
 }
 
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.4  1999/06/03 08:24:13  sp
+ * Fixing broken CVS
+ *
+ * Revision 1.4  1999/05/31 04:38:51  sp
+ * Syntax optimizations, HyperSearch for Selection added (Mike Dillon)
+ *
  * Revision 1.3  1999/05/30 01:28:43  sp
  * Minor search and replace updates
  *

@@ -35,6 +35,6 @@ public class replace_all extends EditAction
 	{
 		View view = getView(evt);
 		Buffer buffer = view.getBuffer();
-		SearchAndReplace.replace(view,buffer,0,buffer.getLength());
+		SearchAndReplace.replaceAll(view);
 	}
 }

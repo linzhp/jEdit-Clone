@@ -31,13 +31,16 @@ public class MakefileTokenMarker extends TokenMarker
 	// public members
 	public byte markTokensImpl(byte token, Segment line, int lineIndex)
 	{
+		char[] array = line.array;
 		int offset = line.offset;
 		int lastOffset = offset;
 		int length = line.count + offset;
 		boolean backslash = false;
 loop:		for(int i = offset; i < length; i++)
 		{
-			switch(line.array[i])
+			int i1 = (i+1);
+
+			switch(array[i])
 			{
 			case '\\':
 				backslash = !backslash;
@@ -46,8 +49,8 @@ loop:		for(int i = offset; i < length; i++)
 				backslash = false;
 				if(token == Token.NULL && lastOffset == offset)
 				{
-					addToken((i+1) - lastOffset,Token.KEYWORD1);
-					lastOffset = i + 1;
+					addToken(i1 - lastOffset,Token.KEYWORD1);
+					lastOffset = i1;
 				}
 				break;
 			case '#':
@@ -70,7 +73,7 @@ loop:		for(int i = offset; i < length; i++)
 					lastOffset = i;
 					if(length - i > 1)
 	 				{
-						char c = line.array[i + 1];
+						char c = array[i1];
 				      		if(c == '(' || c == '{')
 							token = Token.KEYWORD2;
 						else
@@ -87,8 +90,8 @@ loop:		for(int i = offset; i < length; i++)
 				if(token == Token.KEYWORD2)
 				{
 					token = Token.NULL;
-					addToken((i+1) - lastOffset,Token.KEYWORD2);
-					lastOffset = i + 1;
+					addToken(i1 - lastOffset,Token.KEYWORD2);
+					lastOffset = i1;
 				}
 				break;
 			case '"':
@@ -106,7 +109,7 @@ loop:		for(int i = offset; i < length; i++)
 				else if(token == Token.LITERAL1)
 				{
 					token = Token.NULL;
-					addToken((i+1) - lastOffset,Token.LITERAL1);
+					addToken(i1 - lastOffset,Token.LITERAL1);
 					lastOffset = i + 1;
 				}
 				break;
@@ -125,8 +128,8 @@ loop:		for(int i = offset; i < length; i++)
 				else if(token == Token.LITERAL2)
 				{
 					token = Token.NULL;
-					addToken((i+1) - lastOffset,Token.LITERAL1);
-					lastOffset = i + 1;
+					addToken(i1 - lastOffset,Token.LITERAL1);
+					lastOffset = i1;
 				}
 				break;
 			default:
@@ -154,6 +157,15 @@ loop:		for(int i = offset; i < length; i++)
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.15  1999/06/03 08:24:14  sp
+ * Fixing broken CVS
+ *
+ * Revision 1.16  1999/05/31 08:11:10  sp
+ * Syntax coloring updates, expand abbrev bug fix
+ *
+ * Revision 1.15  1999/05/31 04:38:51  sp
+ * Syntax optimizations, HyperSearch for Selection added (Mike Dillon)
+ *
  * Revision 1.14  1999/05/22 08:33:53  sp
  * FAQ updates, mode selection tweak, patch mode update, javadoc updates, JDK 1.1.8 fix
  *

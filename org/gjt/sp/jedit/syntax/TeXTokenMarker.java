@@ -34,13 +34,16 @@ public class TeXTokenMarker extends TokenMarker
 	
 	public byte markTokensImpl(byte token, Segment line, int lineIndex)
 	{
+		char[] array = line.array;
 		int offset = line.offset;
 		int lastOffset = offset;
 		int length = line.count + offset;
 		boolean backslash = false;
 loop:		for(int i = offset; i < length; i++)
 		{
-			char c = line.array[i];
+			int i1 = (i+1);
+
+			char c = array[i];
 			// if a backslash is followed immediately
 			// by a non-alpha character, the command at
 			// the non-alpha char. If we have a backslash,
@@ -60,8 +63,8 @@ loop:		for(int i = offset; i < length; i++)
 					backslash = false;
 					if(token == Token.KEYWORD2 || token == EDFORMULA)
 						token = Token.KEYWORD2;
-					addToken((i+1) - lastOffset,token);
-					lastOffset = i+1;
+					addToken(i1 - lastOffset,token);
+					lastOffset = i1;
 					if(token == Token.KEYWORD1)
 						token = Token.NULL;
 					continue;
@@ -117,14 +120,14 @@ loop:		for(int i = offset; i < length; i++)
 				}
 				else if(token == Token.KEYWORD2) // $$aaa
 				{
-					if(i - lastOffset == 1 && line.array[i-1] == '$')
+					if(i - lastOffset == 1 && array[i-1] == '$')
 					{
 						token = BDFORMULA;
 						break;
 					}
 					token = Token.NULL;
-					addToken((i+1) - lastOffset,Token.KEYWORD2);
-					lastOffset = i + 1;
+					addToken(i1 - lastOffset,Token.KEYWORD2);
+					lastOffset = i1;
 				}
 				else if(token == BDFORMULA) // $$aaa$
 				{
@@ -133,8 +136,8 @@ loop:		for(int i = offset; i < length; i++)
 				else if(token == EDFORMULA) // $$aaa$$
 				{
 					token = Token.NULL;
-					addToken((i+1) - lastOffset,Token.KEYWORD2);
-					lastOffset = i + 1;
+					addToken(i1 - lastOffset,Token.KEYWORD2);
+					lastOffset = i1;
 				}
 				break;
 			}
@@ -150,6 +153,15 @@ loop:		for(int i = offset; i < length; i++)
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.14  1999/06/03 08:24:14  sp
+ * Fixing broken CVS
+ *
+ * Revision 1.15  1999/05/31 08:11:10  sp
+ * Syntax coloring updates, expand abbrev bug fix
+ *
+ * Revision 1.14  1999/05/31 04:38:51  sp
+ * Syntax optimizations, HyperSearch for Selection added (Mike Dillon)
+ *
  * Revision 1.13  1999/04/19 05:38:20  sp
  * Syntax API changes
  *

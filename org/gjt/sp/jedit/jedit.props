@@ -233,6 +233,8 @@ mode.extension.patch=patch
 # Perl mode
 mode.perl.name=Perl
 mode.perl.blockComment=#
+mode.perl.indentOpenBrackets={
+mode.perl.indentCloseBrackets=}
 mode.extension.pl=perl
 mode.firstline.#!/usr/bin/perl=perl
 

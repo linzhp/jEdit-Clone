@@ -41,6 +41,7 @@ public class CTokenMarker extends TokenMarker
 
 	public byte markTokensImpl(byte token, Segment line, int lineIndex)
 	{
+		char[] array = line.array;
 		int offset = line.offset;
 		int lastOffset = offset;
 		int lastKeyword = offset;
@@ -48,7 +49,9 @@ public class CTokenMarker extends TokenMarker
 		boolean backslash = false;
 loop:		for(int i = offset; i < length; i++)
 		{
-			char c = line.array[i];
+			int i1 = (i+1);
+
+			char c = array[i];
 			switch(c)
 			{
 			case '\\':
@@ -59,12 +62,12 @@ loop:		for(int i = offset; i < length; i++)
 					&& length - i > 1)
 				{
 					backslash = false;
-					if(length - i > 1 && line.array[i+1] == '/')
+					if(length - i > 1 && array[i1] == '/')
 					{
 						i++;
 						addToken((i+1) - lastOffset,token);
 						token = Token.NULL;
-						lastOffset = i + 1;
+						lastOffset = i+1;
 						lastKeyword = lastOffset;
 					}
 				}
@@ -84,13 +87,13 @@ loop:		for(int i = offset; i < length; i++)
 				backslash = false;
 				if(token == Token.NULL && length - i > 1)
 				{
-					switch(line.array[i+1])
+					switch(array[i1])
 					{
 					case '*':
 						addToken(i - lastOffset,token);
 						lastOffset = i;
 						lastKeyword = lastOffset;
-						if(length - i > 2 && line.array[i+2] == '*')
+						if(length - i > 2 && array[i+2] == '*')
 							token = Token.COMMENT2;
 						else
 							token = Token.COMMENT1;
@@ -117,8 +120,8 @@ loop:		for(int i = offset; i < length; i++)
 				else if(token == Token.LITERAL1)
 				{
 					token = Token.NULL;
-					addToken((i+1) - lastOffset,Token.LITERAL1);
-					lastOffset = i + 1;
+					addToken(i1 - lastOffset,Token.LITERAL1);
+					lastOffset = i1;
 					lastKeyword = lastOffset;
 				}
 				break;
@@ -135,8 +138,8 @@ loop:		for(int i = offset; i < length; i++)
 				else if(token == Token.LITERAL2)
 				{
 					token = Token.NULL;
-					addToken((i+1) - lastOffset,Token.LITERAL1);
-					lastOffset = i + 1;
+					addToken(i1 - lastOffset,Token.LITERAL1);
+					lastOffset = i1;
 					lastKeyword = lastOffset;
 				}
 				break;
@@ -144,8 +147,8 @@ loop:		for(int i = offset; i < length; i++)
 				if(token == Token.NULL && lastKeyword == offset)
 				{
 					backslash = false;
-					addToken((i+1) - lastOffset,Token.LABEL);
-					lastOffset = i + 1;
+					addToken(i1 - lastOffset,Token.LABEL);
+					lastOffset = i1;
 					lastKeyword = lastOffset;
 					break;
 				}
@@ -163,7 +166,7 @@ loop:		for(int i = offset; i < length; i++)
 						addToken(len,id);
 						lastOffset = i;
 					}
-					lastKeyword = i + 1;
+					lastKeyword = i1;
 				}
 				break;
 			}
@@ -256,6 +259,15 @@ loop:		for(int i = offset; i < length; i++)
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.29  1999/06/03 08:24:13  sp
+ * Fixing broken CVS
+ *
+ * Revision 1.30  1999/05/31 08:11:10  sp
+ * Syntax coloring updates, expand abbrev bug fix
+ *
+ * Revision 1.29  1999/05/31 04:38:51  sp
+ * Syntax optimizations, HyperSearch for Selection added (Mike Dillon)
+ *
  * Revision 1.28  1999/05/29 03:46:53  sp
  * CTokenMarker bug fix, new splash screen
  *

@@ -1,6 +1,6 @@
 /*
- * hypersearch.java
- * Copyright (C) 1998 Slava Pestov
+ * AllBufferSet.java - All buffer matcher
+ * Copyright (C) 1999 Slava Pestov
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -17,21 +17,30 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-package org.gjt.sp.jedit.actions;
+package org.gjt.sp.jedit.search;
 
-import java.awt.event.ActionEvent;
-import org.gjt.sp.jedit.gui.HyperSearch;
 import org.gjt.sp.jedit.*;
 
-public class hypersearch extends EditAction
+/**
+ * A file set for searching all open buffers.
+ * @author Slava Pestov
+ * @version $Id$
+ */
+public class AllBufferSet implements SearchFileSet
 {
-	public hypersearch()
+	/**
+	 * Returns the list of buffers to search.
+	 * @param view The view performing the search
+	 */
+	public Buffer[] getSearchBuffers(View view)
 	{
-		super("hypersearch");
-	}
-	
-	public void actionPerformed(ActionEvent evt)
-	{
-		new HyperSearch(getView(evt), null);
+		return jEdit.getBuffers();
 	}
 }
+/*
+ * ChangeLog:
+ * $Log$
+ * Revision 1.1  1999/06/03 08:24:13  sp
+ * Fixing broken CVS
+ *
+ */

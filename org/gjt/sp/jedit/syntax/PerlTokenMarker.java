@@ -41,9 +41,12 @@ public class PerlTokenMarker extends TokenMarker
 
 	public byte markTokensImpl(byte token, Segment line, int lineIndex)
 	{
+		char[] array = line.array;
 		int offset = line.offset;
 		int lastOffset = offset;
 		int lastKeyword = offset;
+		char matchChar = '\0';
+		int matchCount = 0;
 		int length = line.count + offset;
 
 		if(token == Token.LITERAL1 && lineIndex != 0
@@ -68,18 +71,20 @@ public class PerlTokenMarker extends TokenMarker
 		boolean backslash = false;
 loop:		for(int i = offset; i < length; i++)
 		{
-			char c = line.array[i];
+			int i1 = (i+1);
+
+			char c = array[i];
 			if(token == Token.KEYWORD2)
 			{
 				backslash = false;
 				if(!Character.isLetterOrDigit(c) && c != '_')
 				{
 					token = Token.NULL;
-					if(i != offset && line.array[i-1] == '$')
+					if(i != offset && array[i-1] == '$')
 					{
-						addToken((i+1) - lastOffset,
+						addToken(i1 - lastOffset,
 							Token.KEYWORD2);
-						lastOffset = i + 1;
+						lastOffset = i1;
 						continue;
 					}
 					else
@@ -90,6 +95,23 @@ loop:		for(int i = offset; i < length; i++)
 					}
 				}
 			}
+			else if(token == Token.KEYWORD3)
+			{
+				if(backslash)
+					backslash = false;
+				else
+				{
+					if(c == matchChar && --matchCount == 0)
+					{
+						token = Token.NULL;
+						addToken(i1 - lastOffset,
+							Token.KEYWORD3);
+						lastOffset = i1;
+					}
+				}
+				continue;
+			}
+
 			switch(c)
 			{
 			case '\\':
@@ -132,7 +154,7 @@ loop:		for(int i = offset; i < length; i++)
 			case '&': case '$': case '%': case '@':
 				if(token == Token.NULL && length - i > 1)
 				{
-					if(c == '&' && line.array[i+1] == '&')
+					if(c == '&' && array[i+1] == '&')
 						i++;
 					else
 					{
@@ -154,8 +176,8 @@ loop:		for(int i = offset; i < length; i++)
 				else if(token == Token.LITERAL1)
 				{
 					token = Token.NULL;
-					addToken((i+1) - lastOffset,Token.LITERAL1);
-					lastOffset = i + 1;
+					addToken(i1 - lastOffset,Token.LITERAL1);
+					lastOffset = i1;
 				}
 				break;
 			case '\'':
@@ -170,8 +192,8 @@ loop:		for(int i = offset; i < length; i++)
 				else if(token == Token.LITERAL2)
 				{
 					token = Token.NULL;
-					addToken((i+1) - lastOffset,Token.LITERAL1);
-					lastOffset = i + 1;
+					addToken(i1 - lastOffset,Token.LITERAL1);
+					lastOffset = i1;
 				}
 				break;
 			case '`':
@@ -186,8 +208,8 @@ loop:		for(int i = offset; i < length; i++)
 				else if(token == Token.OPERATOR)
 				{
 					token = Token.NULL;
-					addToken((i+1) - lastOffset,Token.OPERATOR);
-					lastOffset = i + 1;
+					addToken(i1 - lastOffset,Token.OPERATOR);
+					lastOffset = i1;
 				}
 				break;
 			case '<':
@@ -195,16 +217,16 @@ loop:		for(int i = offset; i < length; i++)
 					backslash = false;
 				else if(token == Token.NULL)
 				{
-					if(length - i > 1 && line.array[i+1] == '<')
+					if(length - i > 1 && array[i1] == '<')
 					{
 						addToken(i - lastOffset,Token.NULL);
 						lastOffset = i;
 						token = Token.LITERAL1;
 						int len = length - (i+2);
-						if(line.array[length - 1] == ';')
+						if(array[length - 1] == ';')
 							len--;
 						lineInfo[lineIndex].obj =
-							new String(line.array,i + 2,len);
+							new String(array,i + 2,len);
 					}
 				}
 				break;
@@ -212,62 +234,76 @@ loop:		for(int i = offset; i < length; i++)
 				if(token == Token.NULL && lastOffset == i)
 				{
 					backslash = false;
-					addToken((i+1) - lastOffset,Token.LABEL);
-					lastOffset = i + 1;
+					addToken(i1 - lastOffset,Token.LABEL);
+					lastOffset = i1;
 				}
 				break;
-			// odd stuff
-			case '/':
-				if(token == Token.NULL && lastKeyword == i
-					&& length - i > 2)
+			case 's': case 'y': case 't':
+			case 'm': case 'q':
+				if(token == Token.NULL && length - i > 2)
 				{
-					token = Token.KEYWORD3;
-					addToken(i - lastOffset,Token.NULL);
-					lastOffset = i;
-				}
-				else if(token == Token.KEYWORD3)
-				{
-					token = Token.NULL;
-					addToken((i+1) - lastOffset,Token.KEYWORD3);
-					lastOffset = (i+1);
-				}
-				break;
-			case 'q': case 'm':
-				if(token == Token.NULL && lastKeyword == i
-					&& length - i > 2) // XXX
-				{
-					backslash = false;
-					char ch = line.array[i+1];
-					if(ch == 'q' || ch == 'w' || ch == 'x')
+					char ch = array[i1];
+					if(!Character.isLetter(ch) && ch != '_'
+						&& ch != ' ')
 					{
-						ch = line.array[i+2];
+						if(c == 's')
+						{
+							matchCount = 2;
+							i++;
+						}
+						else if(c == 'y')
+						{
+							matchCount = 2;
+							i++;
+						}
+						else if(c == 'm')
+						{
+							matchCount = 1;
+							i++;
+						}
 					}
-					if(ch
-					int end = doWeirdSlashThing(line.array,
-						ch,1,i,length);
-					addToken(i - lastOffset,Token.NULL);
-					addToken(end - lastOffset,Token.KEYWORD3);
-					lastOffset = end;
-					i = end;
-					break;
-				}
-			case 't': case 'y': case 's':
-				if(token == Token.NULL && lastKeyword == offset
-					&& length - i > 2) // XXX
-				{
-					backslash = false;
-					char ch = line.array[i+1];
-					if(ch == 'r')
+					else if(c == 't')
 					{
-						ch = line.array[i+2];
+						if(array[i1] == 'r')
+						{
+							matchCount = 2;
+							i += 2;
+						}
 					}
-					int end = doWeirdSlashThing(line.array,
-						ch,2,i,length);
-					addToken(i - lastOffset,Token.NULL);
-					addToken(end - lastOffset,Token.KEYWORD3);
-					lastOffset = end;
-					i = end;
-					break;
+					else if(c == 'q')
+					{
+						c = array[i1];
+						if(c == 'q' || c == 'w' || c == 'x')
+						{
+							matchCount = 1;
+							i += 2;
+						}
+						else if(!Character.isLetter(c))
+						{
+							matchCount = 1;
+							i++;
+						}
+					}
+				}/*
+				else
+					break;*/ // no m<2 chars> or q<2 chars> keywords
+			case '/': case '?':
+				if(token == Token.NULL && length - i > 1)
+				{
+					matchChar = array[i];
+					if(!Character.isLetter(matchChar))
+					{
+						char ch = array[i+1];
+						if(c == '/' || c == '?')
+						{
+							matchCount = 1;
+							if(ch == '\t' || ch == ' ')
+								break;
+						}
+						token = Token.KEYWORD3;
+						addToken(i - lastOffset,Token.NULL);
+						lastOffset = i;
+					}
 				}
 			default:
 				backslash = false;
@@ -283,7 +319,7 @@ loop:		for(int i = offset; i < length; i++)
 						addToken(len,id);
 						lastOffset = i;
 					}
-					lastKeyword = i + 1;
+					lastKeyword = i1;
 				}
 				break;
 			}
@@ -301,31 +337,20 @@ loop:		for(int i = offset; i < length; i++)
 			}
 		}
 		if(lastOffset != length)
-			addToken(length - lastOffset,token);
+		{
+			if(token == Token.KEYWORD3)
+			{
+				addToken(length - lastOffset,Token.INVALID);
+				token = Token.NULL;
+			}
+			else
+				addToken(length - lastOffset,token);
+		}
 		return token;
 	}
 
 	// private members
 	private KeywordMap keywords;
-	
-	private int doWeirdSlashThing(char[] line, char ch, int count,
-		int start, int length)
-	{
-		boolean backslash = false;
-		for(int i = start; i < length; i++)
-		{
-			if(line[i] == '\\')
-				backslash = !backslash;
-			else if(line[i] == ch)
-			{
-				if(backslash)
-					backslash = false;
-				else if(--count == 0)
-					return i;
-			}
-		}
-		return start;
-	}
 
 	private static KeywordMap perlKeywords;
 
@@ -357,6 +382,15 @@ loop:		for(int i = offset; i < length; i++)
 /**
  * ChangeLog:
  * $Log$
+ * Revision 1.2  1999/06/03 08:24:14  sp
+ * Fixing broken CVS
+ *
+ * Revision 1.3  1999/05/31 08:11:10  sp
+ * Syntax coloring updates, expand abbrev bug fix
+ *
+ * Revision 1.2  1999/05/31 04:38:51  sp
+ * Syntax optimizations, HyperSearch for Selection added (Mike Dillon)
+ *
  * Revision 1.1  1999/05/30 04:57:15  sp
  * Perl mode started
  *

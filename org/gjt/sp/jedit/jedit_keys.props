@@ -11,6 +11,7 @@ send.shortcut=F4
 paste-previous.shortcut=F5
 paste-predefined.shortcut=F6
 hypersearch.shortcut=F7
+hypersearch-selection.shortcut=F8
 prev-buffer.shortcut=F11
 next-buffer.shortcut=F12
 

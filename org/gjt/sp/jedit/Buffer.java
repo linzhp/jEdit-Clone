@@ -176,18 +176,16 @@ public class Buffer extends DefaultSyntaxDocument
 			file = saveFile;
 			setPath();
 			saveMarkers();
-			adirty = dirty = readOnly = false;
+			if(newFile)
+				setMode();
+			adirty = dirty = readOnly = newFile = false;
+
 			autosaveFile.delete();
+			modTime = file.lastModified();
 
 			fireBufferEvent(new BufferEvent(BufferEvent
 				.DIRTY_CHANGED,this));
 
-			if(newFile)
-				setMode();
-
-			newFile = false;
-
-			modTime = file.lastModified();
 			return true;
 		}
 		catch(IOException io)
@@ -312,7 +310,16 @@ public class Buffer extends DefaultSyntaxDocument
 	{
 		return path;
 	}
-	
+
+	/**
+	 * Returns true if this buffer has been closed (with
+	 * <code>jEdit.closeBuffer</code>).
+	 */
+	public boolean isClosed()
+	{
+		return closed;
+	}
+
 	/**
 	 * Returns true if this is an untitled file, false otherwise.
 	 */
@@ -349,7 +356,7 @@ public class Buffer extends DefaultSyntaxDocument
 				return;
 			if(dirty && !adirty)
 				return;
-			dirty = true;
+			dirty = adirty = true;
 		}
 		else
 			dirty = false;
@@ -372,6 +379,8 @@ public class Buffer extends DefaultSyntaxDocument
 	{
 		if(compoundEdit == null)
 			compoundEdit = new CompoundEdit();
+		else
+			throw new InternalError("You can't do this");
 	}
 
 	/**
@@ -743,6 +752,11 @@ loop:		for(int i = 0; i < markers.size(); i++)
 		init = false;
 	}
 
+	void close()
+	{
+		closed = true;
+	}
+
 	// private members
 	private File file;
 	private long modTime;
@@ -752,6 +766,7 @@ loop:		for(int i = 0; i < markers.size(); i++)
 	private URL markersUrl;
 	private String name;
 	private String path;
+	private boolean closed;
 	private boolean init;
 	private boolean newFile;
 	private boolean adirty; /* Has file changed since last *auto* save? */
@@ -1294,6 +1309,9 @@ loop:		for(int i = 0; i < markers.size(); i++)
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.79  1999/06/03 08:24:12  sp
+ * Fixing broken CVS
+ *
  * Revision 1.78  1999/05/29 08:06:56  sp
  * Search and replace overhaul
  *

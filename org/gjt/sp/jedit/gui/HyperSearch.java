@@ -41,17 +41,21 @@ import org.gjt.sp.jedit.View;
  */
 public class HyperSearch extends JDialog
 {
-	public HyperSearch(View view)
+	public HyperSearch(View view, String defaultFind)
 	{
 		super(view,jEdit.getProperty("hypersearch.title"),false);
 		this.view = view;
-		positions = new Vector();
+
+		fileset = SearchAndReplace.getSearchFileSet();
+
+		resultModel = new DefaultListModel();
 		Container content = getContentPane();
 		content.setLayout(new BorderLayout());
 		JPanel panel = new JPanel(new BorderLayout());
 		panel.add(new JLabel(jEdit.getProperty("hypersearch.find")),
 			BorderLayout.WEST);
 		find = new HistoryTextField("find");
+		find.setText(defaultFind);
 		panel.add(find, BorderLayout.CENTER);
 		content.add(panel, BorderLayout.NORTH);
 
@@ -62,7 +66,15 @@ public class HyperSearch extends JDialog
 			"search.ignoreCase"),SearchAndReplace.getIgnoreCase());
 		regexp = new JCheckBox(jEdit.getProperty(
 			"search.regexp"),SearchAndReplace.getRegexp());
+		multifile = new JCheckBox();
+		multifile.getModel().setSelected(!(fileset
+			instanceof CurrentBufferSet));
+		multifileBtn = new JButton(jEdit.getProperty(
+			"search.multifile"));
+		panel.add(ignoreCase);
 		panel.add(regexp);
+		panel.add(multifile);
+		panel.add(multifileBtn);
 		findBtn = new JButton(jEdit.getProperty("hypersearch.findBtn"));
 		panel.add(findBtn);
 		getRootPane().setDefaultButton(findBtn);
@@ -84,6 +96,8 @@ public class HyperSearch extends JDialog
 
 		find.addKeyListener(keyListener);
 		addKeyListener(keyListener);
+		multifile.addActionListener(actionListener);
+		multifileBtn.addActionListener(actionListener);
 		find.addActionListener(actionListener);
 		findBtn.addActionListener(actionListener);
 		close.addActionListener(actionListener);
@@ -102,6 +116,7 @@ public class HyperSearch extends JDialog
 		SearchAndReplace.setSearchString(find.getText());
 		SearchAndReplace.setIgnoreCase(ignoreCase.getModel().isSelected());
 		SearchAndReplace.setRegexp(regexp.getModel().isSelected());
+		SearchAndReplace.setSearchFileSet(fileset);
 		GUIUtilities.saveGeometry(this,"hypersearch");
 	}
 	
@@ -113,24 +128,23 @@ public class HyperSearch extends JDialog
 
 	// private members
 	private View view;
-	private Buffer buffer;
+	private SearchFileSet fileset;
 	private HistoryTextField find;
 	private JCheckBox ignoreCase;
 	private JCheckBox regexp;
+	private JCheckBox multifile;
+	private JButton multifileBtn;
 	private JButton findBtn;
 	private JButton close;
 	private JList results;
-	private Vector positions;
+	private DefaultListModel resultModel;
 	private EditorHandler editorListener;
 
 	private void doHyperSearch()
 	{
 		try
 		{
-			positions.removeAllElements();
-			buffer = view.getBuffer();
-			int tabSize = buffer.getTabSize();
-			Vector data = new Vector();
+			resultModel.removeAllElements();
 			SearchMatcher matcher = SearchAndReplace
 				.getSearchMatcher();
 			if(matcher == null)
@@ -138,27 +152,17 @@ public class HyperSearch extends JDialog
 				view.getToolkit().beep();
 				return;
 			}
-			Element map = buffer.getDefaultRootElement();
-			int lines = map.getElementCount();
-			for(int i = 1; i <= lines; i++)
+			Buffer[] buffers = SearchAndReplace.getSearchFileSet()
+				.getSearchBuffers(view);
+
+			for(int i = 0; i < buffers.length; i++)
 			{
-				Element lineElement = map.getElement(i - 1);
-				int start = lineElement.getStartOffset();
-				String lineString = buffer.getText(start,
-					lineElement.getEndOffset() - start
-					- 1);
-				int[] match = matcher.nextMatch(lineString);
-				if(match != null)
-				{
-					data.addElement(i + ":"
-						+ lineString);
-					positions.addElement(buffer
-						.createPosition(start + match[0]));
-				}
+				doHyperSearch(buffers[i],matcher);
 			}
-			if(data.isEmpty())
+	
+			if(resultModel.isEmpty())
 				view.getToolkit().beep();
-			results.setListData(data);
+			results.setModel(resultModel);
 		}
 		catch(Exception e)
 		{
@@ -166,6 +170,78 @@ public class HyperSearch extends JDialog
 			if(args[0] == null)
 				args[0] = e.toString();
 			GUIUtilities.error(view,"searcherror",args);
+		}
+	}
+
+	private void doHyperSearch(Buffer buffer, SearchMatcher matcher)
+		throws Exception
+	{
+		Element map = buffer.getDefaultRootElement();
+		int lines = map.getElementCount();
+		for(int i = 1; i <= lines; i++)
+		{
+			Element lineElement = map.getElement(i - 1);
+			int start = lineElement.getStartOffset();
+			String lineString = buffer.getText(start,
+				lineElement.getEndOffset() - start - 1);
+			int[] match = matcher.nextMatch(lineString);
+			if(match != null)
+			{
+				resultModel.addElement(new SearchResult(
+					buffer,buffer.createPosition(
+					start + match[0])));
+			}
+		}
+	}
+
+	private void showMultiFileDialog()
+	{
+		SearchFileSet fs = new MultiFileSearchDialog(
+			view,fileset).getSearchFileSet();
+		if(fs != null)
+		{
+			fileset = fs;
+		}
+		multifile.getModel().setSelected(!(
+			fileset instanceof CurrentBufferSet));
+	}
+
+	class SearchResult
+	{
+		Buffer buffer;
+		Position pos;
+		String str; // cached for speed
+
+		SearchResult(Buffer buffer, Position pos)
+		{
+			this.buffer = buffer;
+			this.pos = pos;
+			Element map = buffer.getDefaultRootElement();
+			int line = map.getElementIndex(pos.getOffset());
+			str = buffer.getName() + ":" + (line + 1) + ":"
+				+ getLine(map.getElement(line));
+		}
+
+		String getLine(Element elem)
+		{
+			if(elem == null)
+				return "";
+			try
+			{
+				return buffer.getText(elem.getStartOffset(),
+					elem.getEndOffset() -
+					elem.getStartOffset() - 1);
+			}
+			catch(BadLocationException bl)
+			{
+				bl.printStackTrace();
+				return "";
+			}
+		}
+
+		public String toString()
+		{
+			return str;
 		}
 	}
 
@@ -181,6 +257,17 @@ public class HyperSearch extends JDialog
 				save();
 				doHyperSearch();
 			}
+			else if(source == multifileBtn)
+			{
+				showMultiFileDialog();
+			}
+			else if(source == multifile)
+			{
+				if(multifile.getModel().isSelected())
+					showMultiFileDialog();
+				else
+					fileset = new CurrentBufferSet();
+			}
 		}
 	}
 
@@ -188,13 +275,13 @@ public class HyperSearch extends JDialog
 	{
 		public void bufferClosed(EditorEvent evt)
 		{
-			if(evt.getBuffer() == buffer)
+			Buffer buffer = evt.getBuffer();
+			for(int i = 0; i < resultModel.getSize(); i++)
 			{
-				positions.removeAllElements();
-				// XXX: need empty model
-				results.setModel(new DefaultListModel());
-				// Can't give it a value in the bottom half
-				buffer = null;
+				SearchResult result = (SearchResult)resultModel
+					.elementAt(i);
+				if(result.buffer == buffer)
+					resultModel.removeElementAt(i);
 			}
 		}
 	}
@@ -215,11 +302,11 @@ public class HyperSearch extends JDialog
 			if(results.isSelectionEmpty() || evt.getValueIsAdjusting())
 				return;
 
-			Position pos = (Position)positions.elementAt(results
-				.getSelectedIndex());
+			SearchResult result = (SearchResult)results.getSelectedValue();
+			Buffer buffer = result.buffer;
 			Element map = buffer.getDefaultRootElement();
-			Element lineElement = map.getElement(map.getElementIndex(pos
-				.getOffset()));
+			Element lineElement = map.getElement(map.getElementIndex(
+				result.pos.getOffset()));
 			if(lineElement == null)
 				return;
 
@@ -242,6 +329,15 @@ public class HyperSearch extends JDialog
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.33  1999/06/03 08:24:13  sp
+ * Fixing broken CVS
+ *
+ * Revision 1.34  1999/05/31 08:11:10  sp
+ * Syntax coloring updates, expand abbrev bug fix
+ *
+ * Revision 1.33  1999/05/31 04:38:51  sp
+ * Syntax optimizations, HyperSearch for Selection added (Mike Dillon)
+ *
  * Revision 1.32  1999/05/30 01:28:43  sp
  * Minor search and replace updates
  *
@@ -267,15 +363,5 @@ public class HyperSearch extends JDialog
  *
  * Revision 1.25  1999/04/02 02:39:46  sp
  * Updated docs, console fix, getDefaultSyntaxColors() method, hypersearch update
- *
- * Revision 1.24  1999/04/01 04:13:00  sp
- * Bug fixing for 1.5final
- *
- * Revision 1.23  1999/03/27 02:45:07  sp
- * New JEditTextArea class that adds jEdit-specific features to SyntaxTextArea
- *
- * Revision 1.22  1999/03/20 04:52:55  sp
- * Buffer-specific options panel finished, attempt at fixing OS/2 caret bug, code
- * cleanups
  *
  */

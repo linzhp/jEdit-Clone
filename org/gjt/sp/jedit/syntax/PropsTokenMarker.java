@@ -34,12 +34,15 @@ public class PropsTokenMarker extends TokenMarker
 
 	public byte markTokensImpl(byte token, Segment line, int lineIndex)
 	{
+		char[] array = line.array;
 		int offset = line.offset;
 		int lastOffset = offset;
 		int length = line.count + offset;
 loop:		for(int i = offset; i < length; i++)
 		{
-			switch(line.array[i])
+			int i1 = (i+1);
+
+			switch(array[i])
 			{
 			case '#': case ';':
 				if(i == offset && token == Token.NULL)
@@ -61,9 +64,9 @@ loop:		for(int i = offset; i < length; i++)
 				if(token == Token.KEYWORD2)
 				{
 					token = Token.NULL;
-					addToken((i+1) - lastOffset,
+					addToken(i1 - lastOffset,
 						Token.KEYWORD2);
-					lastOffset = (i+1);
+					lastOffset = i1;
 				}
 				break;
 			case '=':
@@ -85,6 +88,15 @@ loop:		for(int i = offset; i < length; i++)
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.4  1999/06/03 08:24:14  sp
+ * Fixing broken CVS
+ *
+ * Revision 1.5  1999/05/31 08:11:10  sp
+ * Syntax coloring updates, expand abbrev bug fix
+ *
+ * Revision 1.4  1999/05/31 04:38:51  sp
+ * Syntax optimizations, HyperSearch for Selection added (Mike Dillon)
+ *
  * Revision 1.3  1999/04/19 05:38:20  sp
  * Syntax API changes
  *

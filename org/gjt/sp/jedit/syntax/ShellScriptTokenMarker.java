@@ -33,6 +33,7 @@ public class ShellScriptTokenMarker extends TokenMarker
 
 	public byte markTokensImpl(byte token, Segment line, int lineIndex)
 	{
+		char[] array = line.array;
 		byte cmdState = 0; // 0 = space before command, 1 = inside
 				// command, 2 = after command
 		int offset = line.offset;
@@ -61,18 +62,20 @@ public class ShellScriptTokenMarker extends TokenMarker
 		boolean backslash = false;
 loop:		for(int i = offset; i < length; i++)
 		{
-			char c = line.array[i];
+			int i1 = (i+1);
+
+			char c = array[i];
 			if(token == Token.KEYWORD2)
 			{
 				backslash = false;
 				if(!Character.isLetterOrDigit(c) && c != '_')
 				{
 					token = Token.NULL;
-					if(i != offset && line.array[i-1] == '$')
+					if(i != offset && array[i-1] == '$')
 					{
-						addToken((i+1) - lastOffset,
+						addToken(i1 - lastOffset,
 							Token.KEYWORD2);
-						lastOffset = i + 1;
+						lastOffset = i1;
 						continue;
 					}
 					else
@@ -87,8 +90,8 @@ loop:		for(int i = offset; i < length; i++)
 			{
 				backslash = false;
 				token = Token.NULL;
-				addToken((i+1) - lastOffset,Token.KEYWORD2);
-				lastOffset = i + 1;
+				addToken(i1 - lastOffset,Token.KEYWORD2);
+				lastOffset = i1;
 			}
 			switch(c)
 			{
@@ -137,7 +140,7 @@ loop:		for(int i = offset; i < length; i++)
 				{
 					if(length - i >= 2)
 					{
-						switch(line.array[i+1])
+						switch(array[i1])
 						{
 						case '(':
 							continue;
@@ -169,9 +172,9 @@ loop:		for(int i = offset; i < length; i++)
 				else if(token == Token.LITERAL1)
 				{
 					token = Token.NULL;
-					addToken((i+1) - lastOffset,Token.LITERAL1);
+					addToken(i1 - lastOffset,Token.LITERAL1);
 					cmdState = 2; /*afterCmd*/
-					lastOffset = i + 1;
+					lastOffset = i1;
 				}
 				break;
 			case '\'':
@@ -187,9 +190,9 @@ loop:		for(int i = offset; i < length; i++)
 				else if(token == Token.LITERAL2)
 				{
 					token = Token.NULL;
-					addToken((i+1) - lastOffset,Token.LITERAL1);
+					addToken(i1 - lastOffset,Token.LITERAL1);
 					cmdState = 2; /*afterCmd*/
-					lastOffset = i + 1;
+					lastOffset = i1;
 				}
 				break;
 			case '<':
@@ -197,14 +200,14 @@ loop:		for(int i = offset; i < length; i++)
 					backslash = false;
 				else if(token == Token.NULL)
 				{
-					if(length - i > 1 && line.array[i+1] == '<')
+					if(length - i > 1 && array[i1] == '<')
 					{
 						addToken(i - lastOffset,
 							Token.NULL);
 						token = Token.LITERAL1;
 						lastOffset = i;
 						lineInfo[lineIndex].obj =
-							new String(line.array,i + 2,
+							new String(array,i + 2,
 								length - (i+2));
 					}
 				}
@@ -239,6 +242,15 @@ loop:		for(int i = offset; i < length; i++)
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.14  1999/06/03 08:24:14  sp
+ * Fixing broken CVS
+ *
+ * Revision 1.15  1999/05/31 08:11:10  sp
+ * Syntax coloring updates, expand abbrev bug fix
+ *
+ * Revision 1.14  1999/05/31 04:38:51  sp
+ * Syntax optimizations, HyperSearch for Selection added (Mike Dillon)
+ *
  * Revision 1.13  1999/05/30 04:57:15  sp
  * Perl mode started
  *

@@ -30,24 +30,27 @@ public class BatchFileTokenMarker extends TokenMarker
 {
 	public byte markTokensImpl(byte token, Segment line, int lineIndex)
 	{
+		char[] array = line.array;
 		int offset = line.offset;
 		int lastOffset = offset;
 		int length = line.count + offset;
 loop:		for(int i = offset; i < length; i++)
 		{
-			switch(line.array[i])
+			int i1 = (i+1);
+
+			switch(array[i])
 			{
 			case '%':
 				if(token == Token.NULL)
 				{
 					addToken(i - lastOffset,Token.NULL);
 					lastOffset = i;
-					if(length - i <= 3 || line.array[i+2]
+					if(length - i <= 3 || array[i+2]
 					   == ' ')
 					{
 						addToken(2,Token.KEYWORD2);
 						i++;
-						lastOffset = i + 1;
+						lastOffset = i1;
 					}
 					else
 						token = Token.KEYWORD2;
@@ -55,8 +58,8 @@ loop:		for(int i = offset; i < length; i++)
 				else if(token == Token.KEYWORD2)
 				{
 					token = Token.NULL;
-					addToken((i+1) - lastOffset,Token.KEYWORD2);
-					lastOffset = i + 1;
+					addToken(i1 - lastOffset,Token.KEYWORD2);
+					lastOffset = i1;
 				}
 				break;
 			case '"':
@@ -69,8 +72,8 @@ loop:		for(int i = offset; i < length; i++)
 				else if(token == Token.LITERAL1)
 				{
 					token = Token.NULL;
-					addToken((i+1) - lastOffset,Token.LITERAL1);
-					lastOffset = i + 1;
+					addToken(i1 - lastOffset,Token.LITERAL1);
+					lastOffset = i1;
 				}
 				break;
 			case '=':
@@ -125,6 +128,15 @@ loop:		for(int i = offset; i < length; i++)
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.15  1999/06/03 08:24:13  sp
+ * Fixing broken CVS
+ *
+ * Revision 1.16  1999/05/31 08:11:10  sp
+ * Syntax coloring updates, expand abbrev bug fix
+ *
+ * Revision 1.15  1999/05/31 04:38:51  sp
+ * Syntax optimizations, HyperSearch for Selection added (Mike Dillon)
+ *
  * Revision 1.14  1999/04/19 05:38:20  sp
  * Syntax API changes
  *

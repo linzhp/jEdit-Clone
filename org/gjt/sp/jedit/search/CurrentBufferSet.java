@@ -1,5 +1,5 @@
 /*
- * SearchFileMatcher.java - Abstract file matcher interface
+ * CurrentBufferSet.java - Current buffer matcher
  * Copyright (C) 1999 Slava Pestov
  *
  * This program is free software; you can redistribute it and/or
@@ -22,37 +22,27 @@ package org.gjt.sp.jedit.search;
 import org.gjt.sp.jedit.*;
 
 /**
- * An abstract interface for matching files.
+ * A file set for searching the current buffer.
  * @author Slava Pestov
  * @version $Id$
  */
-public interface SearchFileMatcher
+public class CurrentBufferSet implements SearchFileSet
 {
 	/**
-	 * Returns the next buffer in the list of buffers to search in.
-	 * After the last buffer has been returned, the next call to
-	 * <code>getNextBuffer()</code> should return the first buffer
-	 * again.
-	 * @param view The view that invoked this search &amp; replace
-	 * operation.
+	 * Returns the list of buffers to search.
+	 * @param view The view performing the search
 	 */
-	public Buffer getNextBuffer(View view);
-
-	/**
-	 * Returns true if the end if the buffer list has been reached,
-	 * false otherwise. When using this interface, check if this is
-	 * true after calling <code>getNextBuffer()</code>.
-	 */
-	public boolean isLastBuffer();
+	public Buffer[] getSearchBuffers(View view)
+	{
+		Buffer[] buffers = new Buffer[1];
+		buffers[0] = view.getBuffer();
+		return buffers;
+	}
 }
-
 /*
  * ChangeLog:
  * $Log$
- * Revision 1.2  1999/05/29 08:06:56  sp
- * Search and replace overhaul
- *
- * Revision 1.1  1999/05/27 09:55:21  sp
- * Search and replace overhaul started
+ * Revision 1.1  1999/06/03 08:24:13  sp
+ * Fixing broken CVS
  *
  */

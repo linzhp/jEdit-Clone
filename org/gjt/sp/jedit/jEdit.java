@@ -665,6 +665,8 @@ public class jEdit
 		else
 			return false;
 
+		buffer.close();
+
 		fireEditorEvent(new EditorEvent(EditorEvent.BUFFER_CLOSED,
 			view,buffer));
 
@@ -1076,6 +1078,7 @@ public class jEdit
 		addAction(new org.gjt.sp.jedit.actions.goto_marker());
 		addAction(new org.gjt.sp.jedit.actions.help());
 		addAction(new org.gjt.sp.jedit.actions.hypersearch());
+		addAction(new org.gjt.sp.jedit.actions.hypersearch_selection());
                 addAction(new org.gjt.sp.jedit.actions.indent_on_enter());
                 addAction(new org.gjt.sp.jedit.actions.indent_on_tab());	
 		addAction(new org.gjt.sp.jedit.actions.insert_date());
@@ -1529,6 +1532,15 @@ public class jEdit
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.109  1999/06/03 08:24:12  sp
+ * Fixing broken CVS
+ *
+ * Revision 1.110  1999/05/31 08:11:10  sp
+ * Syntax coloring updates, expand abbrev bug fix
+ *
+ * Revision 1.109  1999/05/31 04:38:51  sp
+ * Syntax optimizations, HyperSearch for Selection added (Mike Dillon)
+ *
  * Revision 1.108  1999/05/30 04:57:15  sp
  * Perl mode started
  *
@@ -1555,14 +1567,5 @@ public class jEdit
  *
  * Revision 1.100  1999/05/18 04:40:12  sp
  * $n in console, minor GUI tweak
- *
- * Revision 1.99  1999/05/12 05:23:41  sp
- * Fixed compile % -vs- $ bug, also HistoryModel \ bug
- *
- * Revision 1.98  1999/05/09 03:50:16  sp
- * HistoryTextField is now a text field again
- *
- * Revision 1.97  1999/05/08 06:37:21  sp
- * jEdit.VERSION/BUILD becomes jEdit.getVersion()/getBuild(), plugin dependencies
  *
  */

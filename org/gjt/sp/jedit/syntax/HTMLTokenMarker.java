@@ -37,6 +37,7 @@ public class HTMLTokenMarker extends TokenMarker
 
 	public byte markTokensImpl(byte token, Segment line, int lineIndex)
 	{
+		char[] array = line.array;
 		boolean backslash = false;
 		int offset = line.offset;
 		int lastOffset = offset;
@@ -44,7 +45,9 @@ public class HTMLTokenMarker extends TokenMarker
 		int length = line.count + offset;
 loop:		for(int i = offset; i < length; i++)
 		{
-			switch(line.array[i])
+			int i1 = (i+1);
+
+			switch(array[i])
 			{
 			case '\\':
 				backslash = !backslash;
@@ -53,20 +56,20 @@ loop:		for(int i = offset; i < length; i++)
 				if(token == Token.KEYWORD2)
 				{
 					token = Token.NULL;
-					addToken((i+1) - lastOffset,Token.KEYWORD2);
-					lastOffset = i + 1;
+					addToken(i1 - lastOffset,Token.KEYWORD2);
+					lastOffset = i1;
 					break;
 				}
 			case '*':
 				if(token == Token.COMMENT2 && length - i > 1)
 				{
-					if(length - i > 1 && line.array[i+1] == '/')
+					if(length - i > 1 && array[i1] == '/')
 					{
 						backslash = false;
 						token = JAVASCRIPT;
 						i++;
-						addToken((i+1) - lastOffset,Token.COMMENT2);
-						lastOffset = i + 1;
+						addToken(i1 - lastOffset,Token.COMMENT2);
+						lastOffset = i1;
 						break;
 					}
 				}
@@ -74,8 +77,8 @@ loop:		for(int i = offset; i < length; i++)
 				if(token == JAVASCRIPT && lastKeyword == offset)
 				{
 					backslash = false;
-					addToken((i+1) - lastOffset,Token.LABEL);
-					lastOffset = i + 1;
+					addToken(i1 - lastOffset,Token.LABEL);
+					lastOffset = i1;
 					break;
 				}
 			case '.': case ',': case ' ': case '\t':
@@ -94,7 +97,7 @@ loop:		for(int i = offset; i < length; i++)
 						addToken(len,id);
 						lastOffset = i;
 					}
-					lastKeyword = i + 1;
+					lastKeyword = i1;
 				}
 				break;
 			case '<':
@@ -129,8 +132,8 @@ loop:		for(int i = offset; i < length; i++)
 						token = JAVASCRIPT;
 					else
 						token = Token.NULL;
-					addToken((i+1) - lastOffset,Token.KEYWORD1);
-					lastOffset = i + 1;
+					addToken(i1 - lastOffset,Token.KEYWORD1);
+					lastOffset = i1;
 				}
 				else if(token == Token.COMMENT1)
 				{
@@ -138,9 +141,9 @@ loop:		for(int i = offset; i < length; i++)
 						i - 2,"-->"))
 					{
 						token = Token.NULL;
-						addToken((i+1) - lastOffset,
+						addToken(i1 - lastOffset,
 							 Token.COMMENT1);
-						lastOffset = i + 1;
+						lastOffset = i1;
 					}
 				}
 				break;
@@ -157,7 +160,7 @@ loop:		for(int i = offset; i < length; i++)
 				backslash = false;
 				if(token == JAVASCRIPT && length - i > 1)
 				{
-					switch(line.array[i+1])
+					switch(array[i1])
 					{
 					case '*':
 						token = Token.COMMENT2;
@@ -185,8 +188,8 @@ loop:		for(int i = offset; i < length; i++)
 				else if(token == Token.LITERAL1)
 				{
 					token = JAVASCRIPT;
-					addToken((i+1) - lastOffset,Token.LITERAL1);
-					lastOffset = i + 1;
+					addToken(i1 - lastOffset,Token.LITERAL1);
+					lastOffset = i1;
 				}
 				break;
 			case '\'':
@@ -201,8 +204,8 @@ loop:		for(int i = offset; i < length; i++)
 				else if(token == Token.LITERAL2)
 				{
 					token = JAVASCRIPT;
-					addToken((i+1) - lastOffset,Token.LITERAL1);
-					lastOffset = i + 1;
+					addToken(i1 - lastOffset,Token.LITERAL1);
+					lastOffset = i1;
 				}
 				break;
 			default:
@@ -249,6 +252,15 @@ loop:		for(int i = offset; i < length; i++)
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.27  1999/06/03 08:24:13  sp
+ * Fixing broken CVS
+ *
+ * Revision 1.28  1999/05/31 08:11:10  sp
+ * Syntax coloring updates, expand abbrev bug fix
+ *
+ * Revision 1.27  1999/05/31 04:38:51  sp
+ * Syntax optimizations, HyperSearch for Selection added (Mike Dillon)
+ *
  * Revision 1.26  1999/05/14 04:56:15  sp
  * Docs updated, default: fix in C/C++/Java mode, full path in title bar toggle
  *
