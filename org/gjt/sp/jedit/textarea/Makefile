@@ -27,6 +27,7 @@ others='org/gjt/sp/jedit/textarea/DefaultInputHandler$$backspace.class' \
 	'org/gjt/sp/jedit/textarea/DefaultInputHandler$$prev_page.class' \
 	'org/gjt/sp/jedit/textarea/DefaultInputHandler$$prev_word.class' \
 	'org/gjt/sp/jedit/textarea/DefaultInputHandler$$toggle_rect.class' \
+	'org/gjt/sp/jedit/textarea/InputHandler$$NonRepeatable.class' \
 	'org/gjt/sp/jedit/textarea/JEditTextArea$$1.class' \
 	'org/gjt/sp/jedit/textarea/JEditTextArea$$AdjustHandler.class' \
 	'org/gjt/sp/jedit/textarea/JEditTextArea$$CaretBlinker.class' \

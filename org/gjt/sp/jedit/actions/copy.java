@@ -20,10 +20,11 @@
 package org.gjt.sp.jedit.actions;
 
 import java.awt.event.ActionEvent;
-import org.gjt.sp.jedit.textarea.JEditTextArea;
+import org.gjt.sp.jedit.textarea.*;
 import org.gjt.sp.jedit.*;
 
 public class copy extends EditAction
+implements InputHandler.NonRepeatable
 {
 	public copy()
 	{

@@ -25,6 +25,7 @@ import org.gjt.sp.jedit.gui.HistoryModel;
 import org.gjt.sp.jedit.*;
 
 public class paste_string_register extends EditAction
+implements InputHandler.NonRepeatable
 {
 	public paste_string_register()
 	{
@@ -72,7 +73,13 @@ public class paste_string_register extends EditAction
 					view.getToolkit().beep();
 					return;
 				}
-				textArea.setSelectedText(selection);
+
+				int repeatCount = textArea.getInputHandler().getRepeatCount();
+				StringBuffer buf = new StringBuffer();
+				for(int i = 0; i < repeatCount; i++)
+					buf.append(selection);
+
+				textArea.setSelectedText(buf.toString());
 				HistoryModel.getModel("clipboard").addItem(selection);
 			}
 		}

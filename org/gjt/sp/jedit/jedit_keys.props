@@ -31,6 +31,7 @@ prev-line.shortcut=UP
 select-prev-line.shortcut=S+UP
 next-line.shortcut=DOWN
 select-next-line.shortcut=S+DOWN
+repeat.shortcut=C+ENTER
 
 ###
 ### MENU ITEM KEY BINDINGS
@@ -116,3 +117,4 @@ select-prev-paragraph.shortcut=CS+UP
 select-next-paragraph.shortcut=CS+DOWN
 shift-left.shortcut=A+LEFT
 shift-right.shortcut=A+RIGHT
+select-none.shortcut=ESCAPE

@@ -63,6 +63,7 @@ public class DefaultInputHandler implements InputHandler
 	public static final ActionListener SELECT_PREV_LINE = new prev_line(true);
 	public static final ActionListener SELECT_PREV_PAGE = new prev_page(true);
 	public static final ActionListener SELECT_PREV_WORD = new prev_word(true);
+	public static final ActionListener REPEAT = new repeat();
 	public static final ActionListener TOGGLE_RECT = new toggle_rect();
 
 	public static final ActionListener[] ACTIONS = {
@@ -72,7 +73,7 @@ public class DefaultInputHandler implements InputHandler
 		SELECT_NEXT_PAGE, SELECT_NEXT_WORD, OVERWRITE, PREV_CHAR,
 		PREV_LINE, PREV_PAGE, PREV_WORD, SELECT_PREV_CHAR,
 		SELECT_PREV_LINE, SELECT_PREV_PAGE, SELECT_PREV_WORD,
-		TOGGLE_RECT };
+		REPEAT, TOGGLE_RECT };
 
 	public static final String[] ACTION_NAMES = {
 		"backspace", "delete", "end", "select-end", "insert-break",
@@ -80,7 +81,8 @@ public class DefaultInputHandler implements InputHandler
 		"next-page", "next-word", "select-next-char", "select-next-line",
 		"select-next-page", "select-next-word", "overwrite", "prev-char",
 		"prev-line", "prev-page", "prev-word", "select-prev-char",
-		"select-prev-line", "select-prev-page", "select-prev-word", "toggle-rect" };
+		"select-prev-line", "select-prev-page", "select-prev-word",
+		"repeat", "toggle-rect" };
 
 	/**
 	 * Creates a new input handler with no key bindings defined.
@@ -88,6 +90,7 @@ public class DefaultInputHandler implements InputHandler
 	public DefaultInputHandler()
 	{
 		bindings = currentBindings = new Hashtable();
+		repeatCount = 0;
 	}
 
 	/**
@@ -126,6 +129,8 @@ public class DefaultInputHandler implements InputHandler
 		addKeyBinding("S+UP",SELECT_PREV_LINE);
 		addKeyBinding("DOWN",NEXT_LINE);
 		addKeyBinding("S+DOWN",SELECT_NEXT_LINE);
+
+		addKeyBinding("C+ENTER",REPEAT);
 	}
 
 	/**
@@ -194,6 +199,43 @@ public class DefaultInputHandler implements InputHandler
 	}
 
 	/**
+	 * Returns if repeating is enabled. When repeating is enabled,
+	 * actions will be executed multiple times. This is usually
+	 * invoked with a special key stroke in the input handler.
+	 */
+	public boolean isRepeatEnabled()
+	{
+		return repeat;
+	}
+
+	/**
+	 * Enables repeating. When repeating is enabled, actions will be
+	 * executed multiple times. Once repeating is enabled, the input
+	 * handler should read a number from the keyboard.
+	 */
+	public void setRepeatEnabled(boolean repeat)
+	{
+		this.repeat = repeat;
+	}
+
+	/**
+	 * Returns the number of times the next action will be repeated.
+	 */
+	public int getRepeatCount()
+	{
+		return (repeat ? repeatCount : 1);
+	}
+
+	/**
+	 * Sets the number of times the next action will be repeated.
+	 * @param repeatCount The repeat count
+	 */
+	public void setRepeatCount(int repeatCount)
+	{
+		this.repeatCount = repeatCount;
+	}
+
+	/**
 	 * Returns a copy of this input handler that shares the same
 	 * key bindings. Setting key bindings in the copy will also
 	 * set them in the original.
@@ -220,10 +262,7 @@ public class DefaultInputHandler implements InputHandler
 		{
 			if(grabAction != null)
 			{
-				grabAction.actionPerformed(new ActionEvent(
-					evt.getSource(),ActionEvent.ACTION_PERFORMED,
-					"\0",modifiers));
-				grabAction = null;
+				handleGrabAction(evt,'\0');
 				return;
 			}
 
@@ -241,6 +280,8 @@ public class DefaultInputHandler implements InputHandler
 					Toolkit.getDefaultToolkit().beep();
 					// F10 should be passed on, but C+e F10
 					// shouldn't
+					repeatCount = 0;
+					repeat = false;
 					evt.consume();
 				}
 				currentBindings = bindings;
@@ -248,11 +289,33 @@ public class DefaultInputHandler implements InputHandler
 			}
 			else if(o instanceof ActionListener)
 			{
-				((ActionListener)o).actionPerformed(
-					new ActionEvent(evt.getSource(),
-					ActionEvent.ACTION_PERFORMED,
-					null,modifiers));
 				currentBindings = bindings;
+
+				ActionEvent actionEvent = new ActionEvent(
+					evt.getSource(),
+					ActionEvent.ACTION_PERFORMED,
+					null,modifiers);
+				ActionListener listener = ((ActionListener)o);
+
+				// Remember old repeat
+				boolean oldRepeat = repeat;
+				
+				if(listener instanceof InputHandler.NonRepeatable)
+					listener.actionPerformed(actionEvent);
+				else
+				{
+					for(int i = 0; i < Math.max(1,repeatCount); i++)
+						listener.actionPerformed(actionEvent);
+				}
+
+				// Don't clear repeat to false if it changed
+				// from false to true
+				if(oldRepeat == true)
+				{
+					repeat = false;
+					repeatCount = 0;
+				}
+
 				evt.consume();
 				return;
 			}
@@ -297,20 +360,32 @@ public class DefaultInputHandler implements InputHandler
 
 				if(grabAction != null)
 				{
-					grabAction.actionPerformed(new ActionEvent(
-						textArea,ActionEvent.ACTION_PERFORMED,
-						String.valueOf(c)));
-					grabAction = null;
-					return;
-				}
-				
-				if(!textArea.isEditable())
-				{
-					textArea.getToolkit().beep();
+					handleGrabAction(evt,c);
 					return;
 				}
 
-				textArea.overwriteSetSelectedText(String.valueOf(c));
+				// 0-9 adds another 'digit' to the repeat number
+				if(repeat && Character.isDigit(c))
+				{
+					repeatCount *= 10;
+					repeatCount += (c - '0');
+					return;
+				}
+
+				if(textArea.isEditable())
+				{
+					StringBuffer buf = new StringBuffer();
+					for(int i = 0; i < Math.max(1,repeatCount); i++)
+						buf.append(c);
+					textArea.overwriteSetSelectedText(buf.toString());
+				}
+				else
+				{
+					textArea.getToolkit().beep();
+				}
+
+				repeatCount = 0;
+				repeat = false;
 			}
 		}
 	}
@@ -374,7 +449,7 @@ public class DefaultInputHandler implements InputHandler
 					+ keyStroke);
 				return null;
 			}
-		}		
+		}
 		return KeyStroke.getKeyStroke(ch,modifiers);
 	}
 
@@ -412,10 +487,33 @@ public class DefaultInputHandler implements InputHandler
 	private Hashtable bindings;
 	private Hashtable currentBindings;
 	private ActionListener grabAction;
+	private boolean repeat;
+	private int repeatCount;
 
 	private DefaultInputHandler(DefaultInputHandler copy)
 	{
 		bindings = currentBindings = copy.bindings;
+	}
+
+	private void handleGrabAction(KeyEvent evt, char c)
+	{
+		ActionEvent actionEvent = new ActionEvent(evt.getSource(),
+			ActionEvent.ACTION_PERFORMED,
+			String.valueOf(c),
+			evt.getModifiers());
+
+		if(grabAction instanceof InputHandler.NonRepeatable)
+			grabAction.actionPerformed(actionEvent);
+		else
+		{
+			for(int i = 0; i < Math.max(1,repeatCount); i++)
+				grabAction.actionPerformed(actionEvent);
+		}
+
+		repeat = false;
+		repeatCount = 0;
+
+		grabAction = null;
 	}
 
 	public static class backspace implements ActionListener
@@ -949,6 +1047,15 @@ public class DefaultInputHandler implements InputHandler
 		}
 	}
 
+	public static class repeat implements ActionListener
+	{
+		public void actionPerformed(ActionEvent evt)
+		{
+			JEditTextArea textArea = getTextArea(evt);
+			textArea.getInputHandler().setRepeatEnabled(true);
+		}
+	}
+
 	public static class toggle_rect implements ActionListener
 	{
 		public void actionPerformed(ActionEvent evt)
@@ -963,6 +1070,9 @@ public class DefaultInputHandler implements InputHandler
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.7  1999/10/04 06:13:52  sp
+ * Repeat counts now supported
+ *
  * Revision 1.6  1999/09/30 12:21:05  sp
  * No net access for a month... so here's one big jEdit 2.1pre1
  *

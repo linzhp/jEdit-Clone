@@ -57,12 +57,35 @@ public interface InputHandler extends KeyListener
 
 	/**
 	 * Grabs the next key typed event and invokes the specified
-	 * action with the key as a the action command. If the next
-	 * key is invalid then the action command will be
-	 * <code>InputHandler.GRAB_FAILED</code>.
+	 * action with the key as a the action command.
 	 * @param action The action
 	 */
 	public void grabNextKeyStroke(ActionListener listener);
+
+	/**
+	 * Returns if repeating is enabled. When repeating is enabled,
+	 * actions will be executed multiple times. This is usually
+	 * invoked with a special key stroke in the input handler.
+	 */
+	public boolean isRepeatEnabled();
+
+	/**
+	 * Enables repeating. When repeating is enabled, actions will be
+	 * executed multiple times. Once repeating is enabled, the input
+	 * handler should read a number from the keyboard.
+	 */
+	public void setRepeatEnabled(boolean repeat);
+
+	/**
+	 * Returns the number of times the next action will be repeated.
+	 */
+	public int getRepeatCount();
+
+	/**
+	 * Sets the number of times the next action will be repeated.
+	 * @param repeatCount The repeat count
+	 */
+	public void setRepeatCount(int repeatCount);
 
 	/**
 	 * Returns a copy of this input handler that shares the same
@@ -70,4 +93,9 @@ public interface InputHandler extends KeyListener
 	 * set them in the original.
 	 */
 	public InputHandler copy();
+
+	/**
+	 * If an action implements this interface, it should not be repeated.
+	 */
+	public static interface NonRepeatable {}
 }

@@ -1199,6 +1199,41 @@
    </para>
   </sidebar>
  </sect1>
+ <sect1 id=repeats><title>Repeating Commands</>
+  <indexterm><primary>Edit menu</></indexterm>
+  <indexterm><primary>Go to Line command</></indexterm>
+  <para>
+   Quite often while editing text, you need to insert a character or perform
+   a command several times in a row. jEdit's repeat feature facilitates this.
+  </para>
+  <para>
+   Pressing <keycombo><keycap>Control</><keycap>Enter</></keycombo> allows
+   you to enter the numbers 0-9, which add the specified digit to the repeat
+   count. The first non-digit character, or key stroke entered will be
+   repeated the number of times you specify. For example,
+   <quote><keycombo><keycap>Control</><keycap>Enter</></keycombo>
+   <keycap>1</> <keycap>4</>
+   <keycombo><keycap>Control</><keycap>D</></keycombo>
+   <keycombo><keycap>Control</><keycap>D</></keycombo></quote> will delete
+   14 lines, and <quote><keycombo><keycap>Control</><keycap>Enter</></keycombo>
+   <keycap>8</> <keycap>0</>
+   <keycap>#</></quote>
+   will insert the <quote>#</> character 80 times.
+  </para>
+  <para>
+   Most commands behave as expected when repeated, with one exception:
+   if given a repeat count, the <guimenu>Edit</>&gt;<guimenuitem>Go to Line</>
+   command will move the caret to that line. If no repeat count is given, it
+   will display the go to line dialog box.
+  </para>
+  <note>
+   <para>
+    jEdit allows all commands to be repeated, even though not all of them
+    make sense; so don't repeat <guimenuitem>Word Count</> 100 times, because
+    you will have to click through stacks of dialog boxes!
+   </para>
+  </note>
+ </sect1>
  <sect1 id=rect-select><title>Rectangular Selection</>
   <para>
    <indexterm><primary>selecting</><secondary>columns of text</></indexterm>

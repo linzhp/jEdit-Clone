@@ -21,9 +21,11 @@ package org.gjt.sp.jedit.actions;
 
 import java.awt.event.ActionEvent;
 import org.gjt.sp.jedit.gui.PastePrevious;
+import org.gjt.sp.jedit.textarea.InputHandler;
 import org.gjt.sp.jedit.EditAction;
 
 public class paste_previous extends EditAction
+implements InputHandler.NonRepeatable
 {
 	public paste_previous()
 	{

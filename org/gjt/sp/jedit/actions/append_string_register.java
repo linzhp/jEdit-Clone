@@ -24,6 +24,7 @@ import org.gjt.sp.jedit.textarea.*;
 import org.gjt.sp.jedit.*;
 
 public class append_string_register extends EditAction
+implements InputHandler.NonRepeatable
 {
 	public append_string_register()
 	{
@@ -55,6 +56,13 @@ public class append_string_register extends EditAction
 				view.getToolkit().beep();
 				return;
 			}
+
+			int repeatCount = textArea.getInputHandler().getRepeatCount();
+			StringBuffer buf = new StringBuffer();
+			for(int i = 0; i < repeatCount; i++)
+				buf.append(selection);
+			selection = buf.toString();
+
 			Registers.Register register = Registers.getRegister(ch);
 
 			if(register == null || register.toString() == null)

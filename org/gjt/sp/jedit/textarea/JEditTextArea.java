@@ -1406,9 +1406,15 @@ public class JEditTextArea extends JComponent
 		if(selectionStart != selectionEnd)
 		{
 			Clipboard clipboard = getToolkit().getSystemClipboard();
-			StringSelection selection = new StringSelection(
-				getSelectedText());
-			clipboard.setContents(selection,null);
+
+			String selection = getSelectedText();
+
+			int repeatCount = inputHandler.getRepeatCount();
+			StringBuffer buf = new StringBuffer();
+			for(int i = 0; i < repeatCount; i++)
+				buf.append(selection);
+
+			clipboard.setContents(new StringSelection(buf.toString()),null);
 		}
 	}
 
@@ -1422,13 +1428,19 @@ public class JEditTextArea extends JComponent
 			Clipboard clipboard = getToolkit().getSystemClipboard();
 			try
 			{
-				String selection = (String)(clipboard
-					.getContents(this).getTransferData(
-					DataFlavor.stringFlavor));
-
 				// The MacOS MRJ doesn't convert \r to \n,
 				// so do it here
-				setSelectedText(selection.replace('\r','\n'));
+				String selection = ((String)clipboard
+					.getContents(this).getTransferData(
+					DataFlavor.stringFlavor))
+					.replace('\r','\n');
+
+				int repeatCount = inputHandler.getRepeatCount();
+				StringBuffer buf = new StringBuffer();
+				for(int i = 0; i < repeatCount; i++)
+					buf.append(selection);
+				selection = buf.toString();
+				setSelectedText(selection);
 			}
 			catch(Exception e)
 			{
@@ -1999,6 +2011,9 @@ public class JEditTextArea extends JComponent
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.20  1999/10/04 06:13:52  sp
+ * Repeat counts now supported
+ *
  * Revision 1.19  1999/09/30 12:21:05  sp
  * No net access for a month... so here's one big jEdit 2.1pre1
  *

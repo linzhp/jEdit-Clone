@@ -197,10 +197,7 @@ class EditServer extends Thread
 		while((command = in.readLine()) != null)
 		{
 			if(endOpts)
-			{
-				System.out.println(readOnly);
 				buffer = TSopenFile(parent,command,readOnly);
-			}
 			else
 			{
 				if(command.equals("--"))
@@ -235,6 +232,9 @@ class EditServer extends Thread
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.2  1999/10/04 06:13:52  sp
+ * Repeat counts now supported
+ *
  * Revision 1.1  1999/10/01 07:31:39  sp
  * RMI server replaced with socket-based server, minor changes
  *

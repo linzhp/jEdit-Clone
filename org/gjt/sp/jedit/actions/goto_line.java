@@ -22,10 +22,11 @@ package org.gjt.sp.jedit.actions;
 import javax.swing.*;
 import javax.swing.text.Element;
 import java.awt.event.ActionEvent;
-import org.gjt.sp.jedit.textarea.JEditTextArea;
+import org.gjt.sp.jedit.textarea.*;
 import org.gjt.sp.jedit.*;
 
 public class goto_line extends EditAction
+implements InputHandler.NonRepeatable
 {
 	public goto_line()
 	{
@@ -37,26 +38,30 @@ public class goto_line extends EditAction
 		View view = getView(evt);
 		Buffer buffer = view.getBuffer();
 		JEditTextArea textArea = view.getTextArea();
-		String line = GUIUtilities.input(view,"gotoline",null);
 
-		if(line != null)
+		int line = 0;
+
+		if(textArea.getInputHandler().isRepeatEnabled())
+			line = textArea.getInputHandler().getRepeatCount();
+		else
 		{
-			Element map = buffer.getDefaultRootElement();
 			try
 			{
-				Element element = map.getElement(Integer
-					.parseInt(line) - 1);
-				if(element != null)
-				{
-					view.getTextArea().setCaretPosition(
-						element.getStartOffset());
-					return;
-				}
+				line = Integer.parseInt(GUIUtilities.input(view,"gotoline",null));
 			}
 			catch(NumberFormatException nf)
-			{
-			}
-			view.getToolkit().beep();
+			{}
 		}
+
+		Element map = buffer.getDefaultRootElement();
+
+		if(line < 1 || line > map.getElementCount())
+		{
+			view.getToolkit().beep();
+			return;
+		}
+
+		Element element = map.getElement(line - 1);
+		view.getTextArea().setCaretPosition(element.getStartOffset());
 	}
 }

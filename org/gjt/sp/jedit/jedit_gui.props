@@ -320,7 +320,8 @@ prev-line.label=Previous Line
 select-prev-line.label=Select Previous Line
 next-line.label=Next Line
 select-next-line.label=Select Next Line
-toggle-rect.label=Toggle Rectangle Select
+toggle-rect.label=Rectangle Select On/Off
+repeat.label=Enter Repeat Count
 
 ###
 ### VIEW STUFF

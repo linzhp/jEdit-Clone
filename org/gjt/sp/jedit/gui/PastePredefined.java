@@ -184,8 +184,17 @@ implements ActionListener, KeyListener, MouseListener
 	{
 		int index = clips.getSelectedIndex();
 		if(index != -1)
-			view.getTextArea().setSelectedText((String)
-				clipModel.getElementAt(index));
+		{
+			String clip = (String)clipModel.getElementAt(index);
+
+			int repeatCount = view.getTextArea().getInputHandler()
+				.getRepeatCount();
+			StringBuffer buf = new StringBuffer();
+			for(int i = 0; i < repeatCount; i--)
+				buf.append(clip);
+
+			view.getTextArea().setSelectedText(buf.toString());
+		}
 		dispose();
 	}
 }

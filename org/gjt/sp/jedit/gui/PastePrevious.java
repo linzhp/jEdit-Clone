@@ -130,7 +130,14 @@ implements ActionListener, KeyListener, MouseListener
 		if(selected != -1)
 		{
 			String clip = clipHistory.getItem(selected);
-			view.getTextArea().setSelectedText(clip);
+
+			int repeatCount = view.getTextArea().getInputHandler()
+				.getRepeatCount();
+			StringBuffer buf = new StringBuffer();
+			for(int i = 0; i < repeatCount; i--)
+				buf.append(clip);
+
+			view.getTextArea().setSelectedText(buf.toString());
 		}
 		dispose();
 	}
