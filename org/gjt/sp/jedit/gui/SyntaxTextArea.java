@@ -17,7 +17,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-package org.gjt.sp.jedit.syntax;
+package org.gjt.sp.jedit.gui;
 
 import javax.swing.event.*;
 import javax.swing.text.*;
@@ -26,6 +26,7 @@ import java.awt.*;
 import java.awt.datatransfer.*;
 import java.awt.event.FocusEvent;
 import java.beans.*;
+import org.gjt.sp.jedit.syntax.SyntaxEditorKit;
 import org.gjt.sp.jedit.Buffer;
 import org.gjt.sp.jedit.jEdit;
 
