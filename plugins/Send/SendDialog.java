@@ -177,7 +177,7 @@ implements ActionListener, WindowListener, Runnable
 			transcript.append(response);
 			transcript.append(CRLF);
 			if(!response.startsWith("220"))
-				throw new IOException("Server down");
+				error("serverdown");
 			String command = "HELO " + socket.getLocalAddress()
 				.getHostName() + CRLF;
 			transcript.append(command);
@@ -187,7 +187,7 @@ implements ActionListener, WindowListener, Runnable
 			transcript.append(response);
 			transcript.append(CRLF);
 			if(!response.startsWith("250"))
-				throw new IOException("Connection refused");
+				error("badhost");
 			command = "MAIL FROM: " + from + CRLF;
 			transcript.append(command);
 			out.write(command);
@@ -196,7 +196,7 @@ implements ActionListener, WindowListener, Runnable
 			transcript.append(response);
 			transcript.append(CRLF);
 			if(!response.startsWith("250"))
-				throw new IOException("Invalid sender");
+				error("badsender");
 			command = "RCPT TO: " + to + CRLF;
 			transcript.append(command);
 			out.write(command);
@@ -205,7 +205,7 @@ implements ActionListener, WindowListener, Runnable
 			transcript.append(response);
 			transcript.append(CRLF);
 			if(!response.startsWith("250"))
-				throw new IOException("Invalid recepient");
+				error("badrecepient");
 			command = "DATA" + CRLF;
 			transcript.append(command);
 			out.write(command);
@@ -214,7 +214,7 @@ implements ActionListener, WindowListener, Runnable
 			transcript.append(response);
 			transcript.append(CRLF);
 			if(!response.startsWith("354"))
-				throw new IOException("Invalid message");
+				error("badmsg");
 			Buffer buffer = view.getBuffer();
 			Element map = buffer.getDefaultRootElement();
 			int lines = map.getElementCount();
@@ -222,9 +222,13 @@ implements ActionListener, WindowListener, Runnable
 			{
 				Element lineElement = map.getElement(i);
 				int start = lineElement.getStartOffset();
-				out.write(buffer.getText(start,
+				String line = buffer.getText(start,
 					lineElement.getEndOffset() -
-						(start + 1)));
+						(start + 1));
+				if(".".equals(line))
+					out.write(":");
+				else
+					out.write(line);
 				out.write(CRLF);
 			}
 			out.write("." + CRLF);
@@ -233,7 +237,7 @@ implements ActionListener, WindowListener, Runnable
 			transcript.append(response);
 			transcript.append(CRLF);
 			if(!response.startsWith("250"))
-				throw new IOException("Invalid message");
+				error("badmsg");
 			command = "QUIT" + CRLF;
 			transcript.append(command);
 			out.write(command);
@@ -262,6 +266,12 @@ implements ActionListener, WindowListener, Runnable
 		dispose();
 	}
 
+	private void error(String msg)
+	{
+		jEdit.error(view,msg,new Object[0]);
+		dispose();
+	}
+	
 	public void dispose()
 	{
 		jEdit.props.put("send.lastsmtp",smtp.getText());

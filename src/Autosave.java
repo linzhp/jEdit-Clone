@@ -33,7 +33,7 @@ public class Autosave extends Thread
 		try
 		{
 			interval = Integer.parseInt(jEdit.props.getProperty(
-				"autosave.interval"));
+				"autosave"));
 		}
 		catch(NumberFormatException nf)
 		{

@@ -24,9 +24,12 @@ import com.sun.java.swing.JMenu;
 import com.sun.java.swing.JMenuBar;
 import com.sun.java.swing.JMenuItem;
 import com.sun.java.swing.JRadioButtonMenuItem;
+import com.sun.java.swing.JScrollBar;
 import com.sun.java.swing.JScrollPane;
 import com.sun.java.swing.JTextArea;
 import com.sun.java.swing.KeyStroke;
+import com.sun.java.swing.ScrollPaneConstants;
+import com.sun.java.swing.SwingUtilities;
 import com.sun.java.swing.event.CaretEvent;
 import com.sun.java.swing.event.CaretListener;
 import com.sun.java.swing.text.BadLocationException;
@@ -39,6 +42,7 @@ import java.awt.Font;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
@@ -55,6 +59,7 @@ implements ActionListener, KeyListener, CaretListener, WindowListener
 	private JMenu clearMarker;
 	private JMenu gotoMarker;
 	private Hashtable dynamicMenus;
+	private JScrollPane scroller;
 	private JTextArea textArea;
 	private JLabel status;
 	private boolean autoindent;
@@ -75,7 +80,48 @@ implements ActionListener, KeyListener, CaretListener, WindowListener
 			.loadMenu(this,"clear_marker"));
 		dynamicMenus.put("goto_marker",gotoMarker = jEdit
 			.loadMenu(this,"goto_marker"));
-		textArea = new JTextArea(40,80);
+		int x;
+		int y;
+		try
+		{
+			x = Integer.parseInt(jEdit.props.getProperty(
+				"editor.x"));
+		}
+		catch(Exception e)
+		{
+			x = 100;
+		}
+		try
+		{
+			y = Integer.parseInt(jEdit.props.getProperty(
+				"editor.y"));
+		}
+		catch(Exception e)
+		{
+			y = 50;
+		}
+		int w = 80;
+		int h = 30;
+		try
+		{
+			w = Integer.parseInt(jEdit.props.getProperty(
+				"editor.w"));
+		}
+		catch(Exception e)
+		{
+		}
+		try
+		{
+			h = Integer.parseInt(jEdit.props.getProperty(
+				"editor.h"));
+		}
+		catch(Exception e)
+		{
+		}
+		textArea = new JTextArea(h,w);
+		scroller = new JScrollPane(textArea,ScrollPaneConstants
+			.VERTICAL_SCROLLBAR_ALWAYS,ScrollPaneConstants
+			.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		status = new JLabel("Hello world");
 		if(view == null)
 			setBuffer(null);
@@ -91,48 +137,12 @@ implements ActionListener, KeyListener, CaretListener, WindowListener
 		menuBar = jEdit.loadMenubar(this,"editor_mbar");
 		setJMenuBar(menuBar);
 		propertiesChanged();
-		getContentPane().add("Center",new JScrollPane(textArea));
+		getContentPane().add("Center",scroller);
 		getContentPane().add("South",status);
-		pack();
 		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 		addWindowListener(this);
-		Dimension screen = getToolkit().getScreenSize();
-		int x,y,w = getSize().width,h = getSize().height;	
-		try
-		{
-			w = Integer.parseInt(jEdit.props
-				.getProperty("editor.w"));
-		}
-		catch(NumberFormatException nf)
-		{
-		}
-		try
-		{
-			h = Integer.parseInt(jEdit.props
-				.getProperty("editor.h"));
-		}
-		catch(NumberFormatException nf)
-		{
-		}
-		try
-		{
-			x = Integer.parseInt(jEdit.props
-				.getProperty("editor.x"));
-		}
-		catch(NumberFormatException nf)
-		{
-			x = (screen.width - w) / 2;
-		}
-		try
-		{
-			y = Integer.parseInt(jEdit.props
-				.getProperty("editor.y"));
-		}
-		catch(NumberFormatException nf)
-		{
-			y = (screen.height - h) / 2;
-		}
-		setBounds(x,y,w,h);
+		pack();
+		setLocation(x,y);
 		show();
 	}
 
@@ -183,6 +193,7 @@ implements ActionListener, KeyListener, CaretListener, WindowListener
 		}
 		autoindent = "on".equals(jEdit.props.getProperty(
 			"editor.autoindent"));
+		SwingUtilities.updateComponentTreeUI(this);
 		updateOpenRecentMenu();
 	}
 	
@@ -257,6 +268,7 @@ implements ActionListener, KeyListener, CaretListener, WindowListener
 		clearMarker.removeAll();
 		gotoMarker.removeAll();
 		Enumeration enum = buffer.getMarkers();
+		int n = 1;
 		if(!enum.hasMoreElements())
 		{
 			JMenuItem menuItem = jEdit.loadMenuItem(this,
@@ -283,6 +295,16 @@ implements ActionListener, KeyListener, CaretListener, WindowListener
 			menuItem = new JMenuItem(name);
 			menuItem.setActionCommand("goto_marker@".concat(name));
 			menuItem.addActionListener(this);
+			if(n <= 20)
+			{
+				char key = (char)('0' + n % 10);
+				int mask = InputEvent.ALT_MASK;
+				if(n > 10)
+					mask |= InputEvent.SHIFT_MASK;
+				menuItem.setAccelerator(KeyStroke.getKeyStroke(
+					key,mask));
+				n++;
+			}
 			gotoMarker.add(menuItem);
 		}
 	}
@@ -337,6 +359,15 @@ implements ActionListener, KeyListener, CaretListener, WindowListener
 
 	public void setBuffer(Buffer buffer)
 	{
+		JScrollBar scrollBar = scroller.getVerticalScrollBar();
+		if(this.buffer != null)
+		{
+			this.buffer.setSelectionStart(textArea
+				.getSelectionStart());
+			this.buffer.setSelectionEnd(textArea
+				.getSelectionEnd());
+			this.buffer.setScrollPosition(scrollBar.getValue());
+		}
 		if(buffer == null)
 			this.buffer = jEdit.buffers.getBufferAt(0);
 		else
@@ -345,6 +376,10 @@ implements ActionListener, KeyListener, CaretListener, WindowListener
 		updateBuffersMenu();
 		updateMarkerMenus();
 		updateStatus(true);
+		textArea.select(this.buffer.getSelectionStart(),
+			this.buffer.getSelectionEnd());
+		scrollBar.setValue(this.buffer.getScrollPosition());
+		textArea.requestFocus();
 	}
 
 	public JTextArea getTextArea()

@@ -11,4 +11,14 @@ sendempty.message=The SMTP Server, From and To fields must all be\n\
 	filled out before the file can be sent.
 badport.title=Invalid Port
 badport.message=The specified port number is invalid.
+serverdown.title=Server Is Down
+serverdown.message=The SMTP server is down.
+badhost.title=The Server Doesn't Like You
+badhost.message=The SMTP server doesn't like you.
+badsender.title=Invalid Sender
+badsender.message=Invalid From: line. Check if it's okay.
+badrecepient.title=Invalid Recepient
+badrecepient.message=Invalid To: line. Check if it's okay.
+badmsg.title=Invalid Message
+badmsg.message=The server doesn't like your message.
 send.connect=Connecting to {0}...

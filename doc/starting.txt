@@ -1,18 +1,17 @@
-GETTING STARTED WITH JEDIT (starting.txt, last modified 6 Oct 1998)
+GETTING STARTED WITH JEDIT (starting.txt, last modified 7 Oct 1998)
 
 Contents
 --------
 1. Starting jEdit
-1.2. Unix & clones
+1.2. Unix & Clones
 1.3. Windows 95 and 98
 1.4. Windows NT
 1.5. MacOS
 2. Opening Files
-3. Autosave and backups
-4. Views
-5. Editing Files
-6. Markers
-7. Auto Indent
+3. Saving Files
+4. Editing Files
+5. Markers
+6. Auto Indent
 
 1. Starting jEdit
 -----------------
@@ -52,6 +51,7 @@ jOpen accepts these options:
 	-usage: Print command line usage
 	-server=<hostname>: jEdit server to connect to
 	-portfile=<file>: File with server port
+	-readonly: Open files read only
 
 If you want to open a file whose name starts with a dash (-), you must place
 the -- argument before it in the command line to stop it from being interpreted
@@ -125,11 +125,6 @@ Files can be saved back to disk in one of three ways:
 - With the `File->Save To URL' command, which prompts for a path name or
   URL to save the file to.
 
-4. Autosave and Backups
------------------------
-jEdit has two features which protect against stupid things that the computer
-or the user might do.
-
 The autosave feature protects against computer crashes. It saves open files at
 fixed intervals, 30 seconds by default. When a file is autosaved, its name is
 prefixed and suffixed with `#' characters - for example, if you were editing
@@ -145,8 +140,8 @@ would be called `HelloWorld.java~'. If you make some changes that you didn't
 like, you can revert to the last saved version by opening the backup file
 and overwriting the new version with it.
 
-5. Views
---------
+4. Editing Files
+----------------
 Files are edited inside views. Each view can only edit one file at once, but
 there can be any number of views. More than one view can edit the same file -
 changes made in one view automatically appear in the others.
@@ -179,21 +174,19 @@ Each view has a status bar. A sample status bar looks like this:
  |
 (**) if the file is new, (--) if it's not
 
-6. Editing Files
-----------------
 If you've ever used an editor such as nedit on Unix, Notepad on Windows
 or SimpleText on the Mac you'll feel right at home in jEdit. jEdit works in
 much the same way as the above editors. The menu item shortcuts are similar
 as well. Read the other help topics to find out why.
 
-7. Markers
+5. Markers
 ----------
 Most other editors can set `markers' in the text, and go to those markers.
 jEdit's markers, however are persistent across editing sessions and can have
 names of any length. Markers are set with the `Edit->Set Marker' command,
 cleared with `Edit->Clear Marker' and jumped to with `Edit->Go To Marker'.
 
-8. Auto Indent
+6. Auto Indent
 --------------
 This feature is useful for editing source code. When you press return, white
 space and comment characters from the start of the previous line are copied to

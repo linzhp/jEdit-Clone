@@ -1,4 +1,4 @@
-JEDIT MENUS (menus.txt, last modified 6 Oct 1998)
+JEDIT MENUS (menus.txt, last modified 7 Oct 1998)
 
 Contents
 --------
@@ -113,11 +113,16 @@ Defines a marker at the current caret position.
 A submenu with a list of markers. Selecting one will remove it.
 
 - Go To Marker (%goto_marker)
-A submenu with a list of markers. Selecting one will go to it.
+A submenu with a list of markers. Selecting one will go to it. The first nine
+markers have keyboard shortcuts A-1 to A-9. The tenth marker is A-0.
+The eleventh to nineteenth markers have shortcuts AS-1 to AS-9. The twenteeth
+marker is AS-0.
 
 -- SEPARATOR --
 
--- options not done yet --
+- Options (options)
+Displays the options dialog, for changing jEdit's behaviour. Most elements
+should be self-explanatory.
 
 4. Search Menu
 --------------

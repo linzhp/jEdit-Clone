@@ -35,22 +35,22 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.PrintJob;
 import java.awt.Toolkit;
-import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.InputStreamReader;
+import java.io.InputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.io.Reader;
-import java.io.StringReader;
 import java.io.Writer;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Enumeration;
 import java.util.Vector;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 
 public class Buffer extends PlainDocument
 implements DocumentListener, UndoableEditListener
@@ -66,6 +66,9 @@ implements DocumentListener, UndoableEditListener
 	private boolean newFile;
 	private boolean dirty;
 	private boolean readOnly;
+	private int selectionStart;
+	private int selectionEnd;
+	private int scrollPosition;
 	private UndoManager undo;
 	private Vector markers;
 	
@@ -119,13 +122,15 @@ implements DocumentListener, UndoableEditListener
 	{
 		try
 		{
-			Reader in;
+			InputStream in;
 			URLConnection connection = null;
 			if(url != null)
-				in = new InputStreamReader(url.openStream());
+				in = url.openStream();
 			else
-				in = new FileReader(file);
-			char[] buff = new char[4096];
+				in = new FileInputStream(file);
+			if(name.endsWith(".gz"))
+				in = new GZIPInputStream(in);
+			byte[] buff = new byte[4096];
 			int n;
 			while ((n = in.read(buff, 0, buff.length)) != -1)
 			{
@@ -156,12 +161,11 @@ implements DocumentListener, UndoableEditListener
 	{
 		try
 		{
-			Reader in;
+			InputStream in;
 			if(url != null)
-				in = new InputStreamReader(markersUrl.
-					openStream());
+				in = markersUrl.openStream();
 			else
-				in = new FileReader(markersFile);
+				in = new FileInputStream(markersFile);
 			StringBuffer buf = new StringBuffer();
 			int c;
 			boolean eof = false;
@@ -339,7 +343,7 @@ implements DocumentListener, UndoableEditListener
 		{
 			try
 			{
-				save(new FileWriter(autosaveFile));
+				save(new FileOutputStream(autosaveFile));
 			}
 			catch(Exception e)
 			{
@@ -408,23 +412,18 @@ implements DocumentListener, UndoableEditListener
 		backup();
 		try
 		{
+			OutputStream out;
 			if(url != null)
 			{
 				URLConnection connection = url.openConnection();
-				save(new OutputStreamWriter(connection
-					.getOutputStream()));
-				connection = markersUrl.openConnection();
-				if(!markers.isEmpty())
-					saveMarkers(new OutputStreamWriter(
-					connection.getOutputStream()));
+				out = connection.getOutputStream();
 			}
 			else
-			{
-				save(new FileWriter(file));
-				if(!markers.isEmpty())
-					saveMarkers(new FileWriter(
-					markersFile));
-			}
+				out = new FileOutputStream(file);
+			if(name.endsWith(".gz"))
+				out = new GZIPOutputStream(out);
+			save(out);
+			saveMarkers();
 			dirty = newFile = false;
 			autosaveFile.delete();
 			updateStatus();
@@ -443,13 +442,17 @@ implements DocumentListener, UndoableEditListener
 		return false;
 	}
 	
+	private void save(OutputStream out)
+		throws Exception
+	{
+		save(new OutputStreamWriter(out));
+	}
+
 	private void save(Writer out)
 		throws Exception
 	{
 		String newline = jEdit.props.getProperty("line.separator",
 			System.getProperty("line.separator"));
-		BufferedReader in = new BufferedReader(new StringReader(
-			getText(0,getLength())));
 		Element map = getDefaultRootElement();
 		for(int i = 0; i < map.getElementCount();)
 		{
@@ -461,24 +464,34 @@ implements DocumentListener, UndoableEditListener
 				out.write(newline);
 		}
 		out.close();
-		in.close();
 	}
-
-	private void saveMarkers(Writer out)
+	
+	private void saveMarkers()
 		throws IOException
 	{
+		if(markers.isEmpty())
+			return;
+		OutputStream out;
+		if(url != null)
+		{
+			URLConnection connection = markersUrl.openConnection();
+			out = connection.getOutputStream();
+		}
+		else
+			out = new FileOutputStream(markersFile);
+		Writer o = new OutputStreamWriter(out);
 		Enumeration enum = getMarkers();
 		while(enum.hasMoreElements())
 		{
 			Marker marker = (Marker)enum.nextElement();
-			out.write(marker.getName());
-			out.write(';');
-			out.write(String.valueOf(marker.getStart()));
-			out.write(';');
-			out.write(String.valueOf(marker.getEnd()));
-			out.write('\n');
+			o.write(marker.getName());
+			o.write(';');
+			o.write(String.valueOf(marker.getStart()));
+			o.write(';');
+			o.write(String.valueOf(marker.getEnd()));
+			o.write('\n');
 		}
-		out.close();
+		o.close();
 	}
 
 	private void backup()
@@ -709,6 +722,36 @@ loop:		for(int i = 0; i < map.getElementCount(); i++)
 	public boolean isReadOnly()
 	{
 		return readOnly;
+	}
+	
+	public int getSelectionStart()
+	{
+		return selectionStart;
+	}
+
+	public void setSelectionStart(int selectionStart)
+	{
+		this.selectionStart = selectionStart;
+	}
+
+	public int getSelectionEnd()
+	{
+		return selectionEnd;
+	}
+
+	public void setSelectionEnd(int selectionEnd)
+	{
+		this.selectionEnd = selectionEnd;
+	}
+
+	public int getScrollPosition()
+	{
+		return scrollPosition;
+	}
+
+	public void setScrollPosition(int scrollPosition)
+	{
+		this.scrollPosition = scrollPosition;
 	}
 	
 	public UndoManager getUndo()

@@ -1,11 +1,18 @@
-VERSION INFORMATION (VERSION, last modified 6 Oct 1998)
+VERSION INFORMATION (VERSION, last modified 7 Oct 1998)
 
-CURRENT VERSION: 0.7
+CURRENT VERSION: 0.8
 
 -- To Do:
-- Options dialog
 - Word wrap when printing
 - API documentation for plugin authors
+
+-- Version 0.8:
+- Several bug fixes
+- The first 20 markers now have keyboard shortcuts
+- Options dialog
+- jOpen now accepts -readonly flag
+- jEdit should now work with the TYA JIT
+- Improved documentation
 
 -- Version 0.7:
 - Several bug fixes

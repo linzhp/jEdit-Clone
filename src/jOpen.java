@@ -26,8 +26,8 @@ import java.net.Socket;
 
 public class jOpen
 {
-	public static final String VERSION = "1.0";
-	public static final String BUILD = "19980929";
+	public static final String VERSION = "0.8";
+	public static final String BUILD = "19981007";
 	
 	public static void usage()
 	{
@@ -41,6 +41,7 @@ public class jOpen
 			+ " to");
 		System.err.println("    -portfile=<file>: File with server"
 			+ " port");
+		System.err.println("    -readonly: Open files read-only");
 		System.exit(1);
 	}
 
@@ -56,6 +57,7 @@ public class jOpen
 		String portFilename = System.getProperty("user.home") +
 			File.separator + ".jedit-port";
 		boolean endOpts = false;
+		boolean readOnly = false;
 		for(int i = 0; i < args.length; i++)
 		{
 			String arg = args[i];
@@ -71,6 +73,8 @@ public class jOpen
 					server = arg.substring(8);
 				else if(arg.startsWith("-portfile="))
 					portFilename = arg.substring(10);
+				else if(arg.equals("-readonly"))
+					readOnly = true;
 				else
 				{
 					System.err.println("Unknown option: "
@@ -98,6 +102,11 @@ public class jOpen
 			Socket socket = new Socket(server,port);
 			DataOutputStream out = new DataOutputStream(socket
 				.getOutputStream());
+			if(readOnly)
+			{
+				out.writeBytes("-readonly\n");
+			}
+			out.writeBytes("--\n");
 			for(int i = 0; i < args.length; i++)
 			{
 				if(args[i] != null)

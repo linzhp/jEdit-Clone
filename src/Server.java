@@ -77,8 +77,19 @@ public class Server extends Thread
 				new BufferedReader(new InputStreamReader(client
 					.getInputStream()));
 			String filename;
+			boolean endOpts = false;
+			boolean readOnly = false;
 			while((filename = in.readLine()) != null)
-				jEdit.buffers.openFile(view,filename);
+			{
+				if(filename.equals("--"))
+					endOpts = true;
+				else if(!endOpts && filename.equals(
+					"-readonly"))
+					readOnly = true;
+				else
+					jEdit.buffers.openFile(view,filename,
+						readOnly,true);
+			}
 		}
 		catch(IOException io)
 		{
@@ -102,11 +113,13 @@ public class Server extends Thread
 		try
 		{
 			server.close();
+			server = null;
 		}
 		catch(IOException io)
 		{
 			io.printStackTrace();
 		}
 		portFile.delete();
+		System.out.println("jEdit server stopped");
 	}
 }

@@ -10,7 +10,7 @@ then
     JEDIT_HOME=/opt/slava/share/jedit-1.00
 fi
 
-JOPEN="-portfile=$HOME/.jedit-server$DISPLAY"
+JOPEN="-portfile=$HOME/.jedit-server-$DISPLAY"
 
 for a in "$@"
 do

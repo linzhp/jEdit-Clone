@@ -9,12 +9,8 @@ server=on
 server.portfile=.jedit-server
 
 ### Autosave
-# Autosave is on
-autosave=on
-# Autosave is off
-#autosave=off
 # Autosave interval (in seconds)
-autosave.interval=30
+autosave=30
 
 ### Number of backups to make (0 = no backups)
 backups=1
@@ -46,12 +42,12 @@ maxrecent=8
 untitled=Untitled-{0}
 
 ### Editor window
-# Normally, [xywh] is calculated to center the window on the screen.
-# Override this only if you don't like this behaviour.
-#editor.x=100
-#editor.y=100
-#editor.w=600
-#editor.h=400
+# The width and height of the text area, in characters
+editor.w=80
+editor.h=30
+# The x and y co-ordinate of the editor window
+editor.x=100
+editor.y=50
 
 ### Editor font
 editor.font=Monospaced
@@ -166,29 +162,32 @@ hypersearch.ignoreCase=Ignore Case
 
 ### Options dialog
 options.title=Options
-options.lf=Look And Feel:\ 
+options.lf=Look And Feel 
 options.lf.metal=Metal
 options.lf.motif=Motif
 options.lf.windows=Windows
 options.opening=Opening Files
-options.opening.server=Start jEdit Server
-options.opening.maxrecent=Number of recent files:\ 
+options.opening.server=Enable jEdit server (requred for jOpen)
+options.opening.maxrecent=Maximum number of recent files in menu:\ 
 options.saving=Saving Files
-options.saving.autosave=Autosave frequency: (secs, 0 = never)\ 
-options.saving.backups=Maximum number of backups (0 = none):
-options.saving.newline=End of line character:\ 
-options.saving.newline.unix=Unix (\\n)
-options.saving.newline.windows=Windows (\\r\\n)
-options.saving.newline.mac=MacOS (\\r)
+options.saving.autosave=Autosave frequency (secs, 0 = never):\ 
+options.saving.backups=Maximum number of backups (0 = none):\ 
+options.saving.newline=Line separator:\ 
+options.saving.newline.unix=Unix
+options.saving.newline.windows=Windows
+options.saving.newline.mac=MacOS
 options.editing=Editing Files
 options.editing.autoindent=Auto Indent
-options.editing.linewrap.off=No Wrapping
-options.editing.linewrap.char=Character Wrap
-options.editing.linewrap.word=Word Wrap
-options.editing.tabsize=Tab Size:
-options.editing.font=Font:
+options.editing.wrap=Wrap:\ 
+options.editing.wrap.off=Off
+options.editing.wrap.char=Character
+options.editing.wrap.word=Word
+options.editing.tabsize=Tab Size:\ 
+options.editing.font=Font:\ 
+options.editing.font.plain=Plain
 options.editing.font.bold=Bold
 options.editing.font.italic=Italic
+options.editing.font.bolditalic=Bold Italic
 options.printing=Print Margins (Inches)
 options.printing.left=Left:\ 
 options.printing.right=Right:\ 

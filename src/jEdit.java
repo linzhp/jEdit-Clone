@@ -35,8 +35,8 @@ import com.sun.java.swing.UIManager;
 
 public class jEdit
 {
-	public static final String VERSION = "0.7";
-	public static final String BUILD = "19981006";
+	public static final String VERSION = "0.8";
+	public static final String BUILD = "19981007";
 	public static final PropsMgr props = new PropsMgr();
 	public static final CommandMgr cmds = new CommandMgr();
 	public static final BufferMgr buffers = new BufferMgr();
@@ -137,8 +137,7 @@ public class jEdit
 			autosave.stop();
 		if("on".equals(props.getProperty("server")))
 			server = new Server(portFile);
-		if("on".equals(props.getProperty("autosave")))
-			autosave = new Autosave();
+		autosave = new Autosave();
 		buffers.loadRecent();
 	}
 	
