@@ -20,7 +20,7 @@
 package org.gjt.sp.jedit.syntax;
 
 import javax.swing.text.*;
-import java.awt.Color;
+import java.awt.*;
 
 /**
  * Class with several utility functions used by jEdit's syntax colorizing
@@ -114,6 +114,55 @@ public class SyntaxUtilities
 		return styles;
 	}
 
+	/**
+	 * Paints the specified line onto the graphics context. Note that this
+	 * method munges the offset and count values of the segment.
+	 * @param line The line segment
+	 * @param tokens The token list for the line
+	 * @param styles The syntax style list
+	 * @param expander The tab expander used to determine tab stops. May
+	 * be null
+	 * @param gfx The graphics context
+	 * @param x The x co-ordinate
+	 * @param y The y co-ordinate
+	 * @return The x co-ordinate, plus the width of the painted string
+	 */
+	public static int paintSyntaxLine(Segment line, Token tokens,
+		SyntaxStyle[] styles, TabExpander expander, Graphics gfx,
+		int x, int y)
+	{
+		Font defaultFont = gfx.getFont();
+		Color defaultColor = gfx.getColor();
+
+		int offset = 0;
+		for(;;)
+		{
+			byte id = tokens.id;
+			if(id == Token.END)
+				break;
+
+			int length = tokens.length;
+			if(id == Token.NULL)
+			{
+				if(!defaultColor.equals(gfx.getColor()))
+					gfx.setColor(defaultColor);
+				if(!defaultFont.equals(gfx.getFont()))
+					gfx.setFont(defaultFont);
+			}
+			else
+				styles[id].setGraphicsFlags(gfx,defaultFont);
+
+			line.count = length;
+			x = Utilities.drawTabbedText(line,x,y,gfx,expander,0);
+			line.offset += length;
+			offset += length;
+
+			tokens = tokens.next;
+		}
+
+		return x;
+	}
+
 	// private members
 	private SyntaxUtilities() {}
 }
@@ -121,6 +170,9 @@ public class SyntaxUtilities
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.8  1999/07/08 06:06:04  sp
+ * Bug fixes and miscallaneous updates
+ *
  * Revision 1.7  1999/07/05 04:38:39  sp
  * Massive batch of changes... bug fixes, also new text component is in place.
  * Have fun

@@ -18,6 +18,7 @@
  */
 package org.gjt.sp.jedit.remote.impl;
 
+import javax.swing.SwingUtilities;
 import javax.swing.text.Element;
 import java.rmi.server.UnicastRemoteObject;
 import java.rmi.*;
@@ -38,10 +39,16 @@ public class RemoteBufferImpl extends UnicastRemoteObject
 		this.buffer = buffer;
 	}
 
-	public void save(RemoteView view, String path)
+	public void save(final RemoteView view, final String path)
 		throws RemoteException
 	{
-		buffer.save(jEdit.getView(view.getUID()),path);
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run()
+			{
+				buffer.save(RemoteEditorImpl.getLocalView(view),
+					path);
+			}
+		});
 	}
 
 	public int getLineStartOffset(int line)
@@ -97,6 +104,9 @@ public class RemoteBufferImpl extends UnicastRemoteObject
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.4  1999/07/08 06:06:04  sp
+ * Bug fixes and miscallaneous updates
+ *
  * Revision 1.3  1999/06/22 06:14:39  sp
  * RMI updates, text area updates, flag to disable geometry saving
  *

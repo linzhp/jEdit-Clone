@@ -54,33 +54,11 @@ public class ViewEvent extends AbstractEditorEvent
 	 */
 	public ViewEvent(int id, View view, Buffer buffer)
 	{
-		super(id);
+		super(id,view,buffer);
 
 		// Check the id value
 		if(id < VIEW_FIRST || id > VIEW_LAST)
 			throw new IllegalArgumentException("id out of range");
-
-		this.view = view;
-		this.buffer = buffer;
-	}
-
-	/**
-	 * Returns the view involved. This is set for all event types.
-	 */
-	public View getView()
-	{
-		return view;
-	}
-
-	/**
-	 * For the BUFFER_CHANGED event type only - returns the view's
-	 * previous buffer. Null is returned if the event is of a different
-	 * type, or if the view had no original buffer (if it's the first
-	 * view created during startup).
-	 */
-	public Buffer getBuffer()
-	{
-		return buffer;
 	}
 
 	/**
@@ -106,24 +84,14 @@ public class ViewEvent extends AbstractEditorEvent
 			throw new InternalError();
 		}
 	}
-
-	/**
-	 * Returns a string representation of this event.
-	 */
-	public String toString()
-	{
-		return getClass().getName() + "[id=" + id + ",timestamp="
-			+ timestamp + ",view=" + view + ",buffer=" + buffer + "]";
-	}
-
-	// protected members
-	protected View view;
-	protected Buffer buffer;
 }
 
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.6  1999/07/08 06:06:04  sp
+ * Bug fixes and miscallaneous updates
+ *
  * Revision 1.5  1999/05/27 03:09:22  sp
  * Console unbundled
  *

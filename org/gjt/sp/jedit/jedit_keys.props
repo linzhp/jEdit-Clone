@@ -26,11 +26,11 @@ find-selection.shortcut=C+h
 goto-end-indent.shortcut=C+i
 join-lines.shortcut=C+j
 goto-line.shortcut=C+l
+exchange-anchor.shortcut=C+k
 set-marker.shortcut=C+m
 new-file.shortcut=C+n
 open-file.shortcut=C+o
 print.shortcut=C+p
-exit.shortcut=C+q
 redo.shortcut=C+r
 save.shortcut=C+s
 set-anchor.shortcut=C+t
@@ -57,10 +57,10 @@ block-comment.shortcut=C+e C+k
 select-line-range.shortcut=C+e C+l
 new-view.shortcut=C+e C+n
 open-url.shortcut=C+e C+o
+exit.shortcut=C+e C+q
 tab.shortcut=C+e C+t
 untab.shortcut=C+e C+u
 close-view.shortcut=C+e C+w
-exchange-anchor.shortcut=C+e C+x
 
 # Other keys
 indent-on-tab.shortcut=TAB

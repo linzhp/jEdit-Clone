@@ -11,7 +11,6 @@ classes=org/gjt/sp/jedit/event/AbstractEditorEvent.class \
 	org/gjt/sp/jedit/event/EditorAdapter.class \
 	org/gjt/sp/jedit/event/EditorEvent.class \
 	org/gjt/sp/jedit/event/EditorListener.class \
-	org/gjt/sp/jedit/event/EventMulticaster.class \
 	org/gjt/sp/jedit/event/ViewAdapter.class \
 	org/gjt/sp/jedit/event/ViewEvent.class \
 	org/gjt/sp/jedit/event/ViewListener.class

@@ -67,21 +67,11 @@ public class BufferEvent extends AbstractEditorEvent
 	 */
 	public BufferEvent(int id, Buffer buffer)
 	{
-		super(id);
+		super(id,null,buffer);
 
 		// Check the id value
 		if(id < BUFFER_FIRST || id > BUFFER_LAST)
 			throw new IllegalArgumentException("id out of range");
-
-		this.buffer = buffer;
-	}
-
-	/**
-	 * Returns the buffer involved. This is set for all event types.
-	 */
-	public Buffer getBuffer()
-	{
-		return buffer;
 	}
 
 	/**
@@ -113,23 +103,14 @@ public class BufferEvent extends AbstractEditorEvent
 			throw new InternalError();
 		}
 	}
-
-	/**
-	 * Returns a string representation of this event.
-	 */
-	public String toString()
-	{
-		return getClass().getName() + "[id=" + id + ",timestamp="
-			+ timestamp + ",buffer=" + buffer + "]";
-	}
-
-	// protected members
-	protected Buffer buffer;
 }
 
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.7  1999/07/08 06:06:04  sp
+ * Bug fixes and miscallaneous updates
+ *
  * Revision 1.6  1999/04/24 01:55:28  sp
  * MiscUtilities.constructPath() bug fixed, event system bug(s) fix
  *

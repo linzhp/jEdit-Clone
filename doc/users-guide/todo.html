@@ -27,26 +27,12 @@
 <td>1.7pre5</td>
 <td>To do:
 <ul>
-<li>New text component:
-<ul>
-<li>Bugs:
-<ul>
-<li>Printing doesn't work
-<li>Context menu doesn't work
-<li>Horizontal scrolling to the right doesn't work
-<li>Array index out of bounds in offsetToX()?
-</ul>
-<li>Features:
-<ul>
-<li>Add text area actions to key binding editor
-<li>Javadocs for text area classes
-<li>Update documentation for new text area
-<li>Write TextArea.setDefaults(), then View.getTextAreaDefaults(),
-then do it quicker in propertiesChanged()
+<li>Scrolling doesn't work properly on JDK 1.2 (maybe it's a Linux JDK-pre bug)
+<li>xToOffset() is broken
+<li>Multi-file find next is severely broken
 <li>Scrap electric scroll, instead do emacs-style jump scroll
-</ul>
-</ul>
-<li>Use Swing EventListenerList to fire events
+<li>Do wait cursor in find-next and replace-selection
+<li>Wait cursor isn't hidden properly when saving
 </ul>
 </td>
 </tr>
@@ -55,14 +41,25 @@ then do it quicker in propertiesChanged()
 <td>1.7pre6</td>
 <td>To do:
 <ul>
+<li>Currently, jEdit has three very similar bracket matching routines
+(locate-bracket action, JEditTextArea.updateBracketHighlight(),
+JEditTextArea.MouseHandler.doDoubleClick()). They should be merged into
+a single TextUtilities.getMatchingBracket(), and the lower half
+TextUtilities.locateBracket{Forward,Backward} should be rewritten/scrapped
+<li>Add text area actions to key binding editor
+<li>Javadocs for text area classes
+<li>Write TextArea.setDefaults(), then View.getTextAreaDefaults(),
+then do it quicker in propertiesChanged()
 <li>Faster literal search
-<li>Multi-file find next is severely broken
+</ul>
+</td>
+</tr>
+
+<tr>
+<td>1.7pre7</td>
+<td>To do:
+<ul>
 <li>Finish Perl mode (multiline matches)
-<li>Color picker is shown twice in colors &amp; styles (Swing bug)
-<li>RMI and startup process is not thread-safe. Instead of creating lots of
-inner classes and passing to invokeLater(), code a
-MiscUtilities.invokeLater(Class clazz, String method, Object object,
-Object[] args) method.
 <li>Rewrite token markers to use PerlTokenMarker-like structure<p>
 <b>PARTLY DONE: need to do C, HTML, TeX</b><br>
 <b>Mike D should do TSQL</b>
@@ -74,11 +71,6 @@ Object[] args) method.
 <td>1.8 and beyond</td>
 <td>To do:
 <ul>
-<li>Currently, jEdit has three very similar bracket matching routines
-(locate-bracket action, JEditTextArea.updateBracketHighlight(),
-JEditTextArea.MouseHandler.doDoubleClick()). They should be merged into
-a single TextUtilities.getMatchingBracket(), and the lower half
-TextUtilities.locateBracket{Forward,Backward} should be rewritten/scrapped
 <li>Embeddability
 <li>Folding
 <li>Menu bar overhaul (EnhancedMenu/Bar classes, support getMenuByName(),
@@ -91,7 +83,13 @@ also support loading menus for stuff other than views)
 <li>Drop support for Swing &lt; 1.1 (removeAll() hack, maybe others)
 <li>Eventually, drop support for JDK 1.1 and add drag and drop, remove
 deprecates, change RMI to CORBA, add im/bidi support, etc
-<li>Use ALE to code GUI?
+<li>Use ALE or similar GUI language to code GUI?
+<li>Token markers should be able to re-mark a specific region of the
+document, instead of being limited to entire lines
+<li>Rectangular selection
+<li>It would be cool if when jEdit started, it displayed a button bar
+with open file, new view, options, etc buttons. Then, jEdit would
+stay open even if all views were closed
 </ul>
 
 </body>

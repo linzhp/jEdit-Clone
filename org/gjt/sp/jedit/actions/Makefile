@@ -85,7 +85,7 @@ classes=org/gjt/sp/jedit/actions/about.class \
 	org/gjt/sp/jedit/actions/wing_comment.class \
 	org/gjt/sp/jedit/actions/word_count.class
 
-others=
+others='org/gjt/sp/jedit/actions/print$$PrintTabExpander.class'
 
 all: $(classes)
 	echo $(classes) $(others) >> .resources

@@ -217,18 +217,20 @@ public class DefaultInputHandler implements InputHandler
 
 	public void keyTyped(KeyEvent evt)
 	{
-		if(!textArea.isEditable())
-		{
-			textArea.getToolkit().beep();
-			return;
-		}
-
 		int modifiers = evt.getModifiers();
 		char c = evt.getKeyChar();
 		if((modifiers & ~KeyEvent.SHIFT_MASK) == 0)
 		{
 			if(c >= 0x20 && c != 0x7f)
 			{
+				if(!textArea.isEditable())
+				{
+					textArea.getToolkit().beep();
+					return;
+				}
+
+				currentBindings = bindings;
+
 				textArea.overwriteSetSelectedText(String.valueOf(c));
 			}
 		}
@@ -580,8 +582,7 @@ public class DefaultInputHandler implements InputHandler
 			textArea.setFirstLine(firstLine + visibleLines);
 			textArea.setCaretPosition(textArea.getLineStartOffset(
 				Math.min(textArea.getLineCount() - 1,
-				line + visibleLines - textArea
-				.getElectricScroll())));
+				line + visibleLines)));
 		}
 	}
 
@@ -737,8 +738,7 @@ public class DefaultInputHandler implements InputHandler
 
 			textArea.setFirstLine(firstLine - visibleLines);
 			textArea.setCaretPosition(textArea.getLineStartOffset(
-				Math.max(0,line - visibleLines +
-				textArea.getElectricScroll())));
+				Math.max(0,line - visibleLines)));
 		}
 	}
 

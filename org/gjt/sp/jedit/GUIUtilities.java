@@ -584,6 +584,26 @@ public class GUIUtilities
 	}
 
 	/**
+	 * Shows the wait cursor in a component.
+	 * @param comp The component
+	 */
+	public static void showWaitCursor(Component comp)
+	{
+		Cursor cursor = Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR);
+		comp.setCursor(cursor);
+	}
+
+	/**
+	 * Hides the wait cursor in a component.
+	 * @param comp The component
+	 */
+	public static void hideWaitCursor(Component comp)
+	{
+		Cursor cursor = Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR);
+		comp.setCursor(cursor);
+	}
+
+	/**
 	 * Ensures that the splash screen is not visible. This should be
 	 * called before displaying any dialog boxes or windows at
 	 * startup.
@@ -612,6 +632,9 @@ public class GUIUtilities
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.26  1999/07/08 06:06:04  sp
+ * Bug fixes and miscallaneous updates
+ *
  * Revision 1.25  1999/07/05 04:38:39  sp
  * Massive batch of changes... bug fixes, also new text component is in place.
  * Have fun

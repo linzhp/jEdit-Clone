@@ -129,8 +129,6 @@ public class StyleOptionPane extends OptionPane
 		{
 			if(evt.getValueIsAdjusting())
 				return;
-			if(table.getSelectedRow() == -1)
-				return;
 			if(table == colorTable)
 			{
 				Color color = JColorChooser.showDialog(
@@ -152,7 +150,6 @@ public class StyleOptionPane extends OptionPane
 					styleModel.setValueAt(style,table
 						.getSelectedRow(),1);
 			}
-			table.clearSelection();
 		}
 	}
 }
@@ -540,6 +537,9 @@ implements ActionListener, KeyListener
 /**
  * ChangeLog:
  * $Log$
+ * Revision 1.4  1999/07/08 06:06:04  sp
+ * Bug fixes and miscallaneous updates
+ *
  * Revision 1.3  1999/07/05 04:38:39  sp
  * Massive batch of changes... bug fixes, also new text component is in place.
  * Have fun

@@ -64,118 +64,120 @@ public class TextAreaPainter extends Component implements TabExpander
 		eolMarkers = defaults.eolMarkers;
 	}
 
-	public SyntaxStyle[] getStyles()
+	public final SyntaxStyle[] getStyles()
 	{
 		return styles;
 	}
 
-	public void setStyles(SyntaxStyle[] styles)
+	public final void setStyles(SyntaxStyle[] styles)
 	{
 		this.styles = styles;
 		invalidateOffscreen();
 		repaint();
 	}
 
-	public Color getCaretColor()
+	public final Color getCaretColor()
 	{
 		return caretColor;
 	}
 
-	public void setCaretColor(Color caretColor)
+	public final void setCaretColor(Color caretColor)
 	{
 		this.caretColor = caretColor;
 		invalidateSelectedLines();
 	}
 
-	public Color getSelectionColor()
+	public final Color getSelectionColor()
 	{
 		return selectionColor;
 	}
 
-	public void setSelectionColor(Color selectionColor)
+	public final void setSelectionColor(Color selectionColor)
 	{
 		this.selectionColor = selectionColor;
 		invalidateSelectedLines();
 	}
 
-	public Color getLineHighlightColor()
+	public final Color getLineHighlightColor()
 	{
 		return lineHighlightColor;
 	}
 
-	public void setLineHighlightColor(Color lineHighlightColor)
+	public final void setLineHighlightColor(Color lineHighlightColor)
 	{
 		this.lineHighlightColor = lineHighlightColor;
 		invalidateSelectedLines();
 	}
 
-	public boolean isLineHighlightEnabled()
+	public final boolean isLineHighlightEnabled()
 	{
 		return lineHighlight;
 	}
 
-	public void setLineHighlightEnabled(boolean lineHighlight)
+	public final void setLineHighlightEnabled(boolean lineHighlight)
 	{
 		this.lineHighlight = lineHighlight;
 		invalidateSelectedLines();
 	}
 
-	public Color getBracketHighlightColor()
+	public final Color getBracketHighlightColor()
 	{
 		return bracketHighlightColor;
 	}
 
-	public void setBracketHighlightColor(Color bracketHighlightColor)
+	public final void setBracketHighlightColor(Color bracketHighlightColor)
 	{
 		this.bracketHighlightColor = bracketHighlightColor;
 		invalidateLine(textArea.getBracketLine());
 	}
 
-	public boolean isBracketHighlightEnabled()
+	public final boolean isBracketHighlightEnabled()
 	{
 		return bracketHighlight;
 	}
 
-	public void setBracketHighlightEnabled(boolean bracketHighlight)
+	public final void setBracketHighlightEnabled(boolean bracketHighlight)
 	{
 		this.bracketHighlight = bracketHighlight;
 		invalidateLine(textArea.getBracketLine());
 	}
 
-	public boolean isBlockCaretEnabled()
+	public final boolean isBlockCaretEnabled()
 	{
 		return blockCaret;
 	}
 
-	public void setBlockCaretEnabled(boolean blockCaret)
+	public final void setBlockCaretEnabled(boolean blockCaret)
 	{
 		this.blockCaret = blockCaret;
 		invalidateSelectedLines();
 	}
 
-	public Color getEOLMarkerColor()
+	public final Color getEOLMarkerColor()
 	{
 		return eolMarkerColor;
 	}
 
-	public void setEOLMarkerColor(Color eolMarkerColor)
+	public final void setEOLMarkerColor(Color eolMarkerColor)
 	{
 		this.eolMarkerColor = eolMarkerColor;
-		invalidateSelectedLines();
+		invalidateOffscreen();
+		repaint();
 	}
 
-	public boolean isEOLMarkerEnabled()
+	public final boolean isEOLMarkerEnabled()
 	{
 		return eolMarkers;
 	}
 
-	public void setEOLMarkerEnabled(boolean eolMarkers)
+	public final void setEOLMarkerEnabled(boolean eolMarkers)
 	{
 		this.eolMarkers = eolMarkers;
-		invalidateSelectedLines();
+		invalidateOffscreen();
+		repaint();
 	}
 
-	public FontMetrics getFontMetrics()
+	public final FontMetrics getFontMetrics()
 	{
 		if(fm == null)
 			fm = Toolkit.getDefaultToolkit().getFontMetrics(getFont());
@@ -250,7 +252,7 @@ public class TextAreaPainter extends Component implements TabExpander
 		}
 	}
 
-	public void invalidateLine(int line)
+	public final void invalidateLine(int line)
 	{
 		_invalidateLine(line);
 		repaint();
@@ -289,13 +291,13 @@ public class TextAreaPainter extends Component implements TabExpander
 		lastInvalid = Math.min(lastInvalid,lastVisible);
 	}
 
-	public void invalidateLineRange(int firstLine, int lastLine)
+	public final void invalidateLineRange(int firstLine, int lastLine)
 	{
 		_invalidateLineRange(firstLine,lastLine);
 		repaint();
 	}
 
-	public void invalidateSelectedLines()
+	public final void invalidateSelectedLines()
 	{
 		invalidateLineRange(textArea.getSelectionStartLine(),
 			textArea.getSelectionEndLine());
@@ -321,7 +323,7 @@ public class TextAreaPainter extends Component implements TabExpander
 		}
 	}
 
-	public void invalidateOffscreen()
+	public final void invalidateOffscreen()
 	{
 		offImg = null;
 		offGfx = null;
@@ -435,24 +437,19 @@ public class TextAreaPainter extends Component implements TabExpander
 		Font defaultFont = getFont();
 		Color defaultColor = getForeground();
 				
-		gfx.setFont(defaultFont);
-
 		int y = textArea.lineToY(line);
 
 		if(line < 0 || line >= textArea.getLineCount())
 		{
 			paintHighlight(gfx,line,y);
-			gfx.setColor(defaultColor);
+			styles[Token.INVALID].setGraphicsFlags(gfx,defaultFont);
 			gfx.drawString("~",0,y + getFontMetrics().getHeight());
 			return 1;
 		}
 
-		// Get the text
-		textArea.getLineText(line,currentLine);
-		currentLineIndex = line;
-
 		if(tokenMarker == null)
 		{
+			currentLineIndex = line;
 			paintPlainLine(gfx,line,defaultFont,defaultColor,x,y);
 			return 1;
 		}
@@ -464,18 +461,9 @@ public class TextAreaPainter extends Component implements TabExpander
 			int lastLine = textArea.getLineCount();
 			do
 			{
-				if(count != 0)
-				{
-					currentLineIndex = line + count;
-					textArea.getLineText(currentLineIndex,
-						currentLine);
-				}
-
-				currentLineTokens = tokenMarker.markTokens(
-						currentLine,currentLineIndex);
-
-				paintSyntaxLine(gfx,line + count,defaultFont,
-					defaultColor,x,y);
+				currentLineIndex = line + count;
+				paintSyntaxLine(tokenMarker,gfx,line + count,
+					defaultFont,defaultColor,x,y);
 				y += getFontMetrics().getHeight();
 
 				count++;
@@ -490,7 +478,9 @@ public class TextAreaPainter extends Component implements TabExpander
 		Color defaultColor, int x, int y)
 	{
 		paintHighlight(gfx,line,y);
+		textArea.getLineText(line,currentLine);
 
+		gfx.setFont(defaultFont);
 		gfx.setColor(defaultColor);
 
 		y += getFontMetrics().getHeight();
@@ -503,53 +493,26 @@ public class TextAreaPainter extends Component implements TabExpander
 		}
 	}
 
-	protected void paintSyntaxLine(Graphics gfx, int line, Font defaultFont,
-		Color defaultColor, int x, int y)
+	protected void paintSyntaxLine(TokenMarker tokenMarker, Graphics gfx,
+		int line, Font defaultFont, Color defaultColor, int x, int y)
 	{
+		textArea.getLineText(currentLineIndex,currentLine);
+		currentLineTokens = tokenMarker.markTokens(currentLine,
+			currentLineIndex);
+
 		paintHighlight(gfx,line,y);
 
+		gfx.setFont(defaultFont);
+		gfx.setColor(defaultColor);
 		y += getFontMetrics().getHeight();
+		x = SyntaxUtilities.paintSyntaxLine(currentLine,
+			currentLineTokens,styles,this,gfx,x,y);
 
-		// We do this because xToOffset() uses currentLine to avoid
-		// unnecessary getText()s, and we must keep the offset and
-		// count values from being mangled
-		int segmentOffset = currentLine.offset;
-		int segmentCount = currentLine.count;
-
-		int offset = 0;
-		Token tokens = currentLineTokens;
-		for(;;)
-		{
-			byte id = tokens.id;
-			if(id == Token.END)
-				break;
-
-			int length = tokens.length;
-			if(id == Token.NULL)
-			{
-				if(!defaultColor.equals(gfx.getColor()))
-					gfx.setColor(defaultColor);
-				if(!defaultFont.equals(gfx.getFont()))
-					gfx.setFont(defaultFont);
-			}
-			else
-				styles[id].setGraphicsFlags(gfx,defaultFont);
-
-			currentLine.count = length;
-			x = Utilities.drawTabbedText(currentLine,x,y,gfx,this,0);
-			currentLine.offset += length;
-			offset += length;
-
-			tokens = tokens.next;
-		}
 		if(eolMarkers)
 		{
 			gfx.setColor(eolMarkerColor);
 			gfx.drawString(".",x,y);
 		}
-
-		currentLine.offset = segmentOffset;
-		currentLine.count = segmentCount;
 	}
 
 	protected void paintHighlight(Graphics gfx, int line, int y)
@@ -672,6 +635,9 @@ public class TextAreaPainter extends Component implements TabExpander
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.11  1999/07/08 06:06:04  sp
+ * Bug fixes and miscallaneous updates
+ *
  * Revision 1.10  1999/07/05 04:38:40  sp
  * Massive batch of changes... bug fixes, also new text component is in place.
  * Have fun

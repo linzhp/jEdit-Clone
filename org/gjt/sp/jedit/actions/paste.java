@@ -60,6 +60,7 @@ public class paste extends EditAction
 				}
 				catch(Exception e)
 				{
+					textArea.getToolkit().beep();
 				}
 			}
 		}

@@ -19,6 +19,7 @@
 
 package org.gjt.sp.jedit;
 
+import javax.swing.event.EventListenerList;
 import javax.swing.text.Element;
 import javax.swing.text.Segment;
 import javax.swing.*;
@@ -195,7 +196,6 @@ public class jEdit
 				System.err.println("Error while contacting jEdit RMI"
 					+ " service:");
 				e.printStackTrace();
-				System.exit(1);
 			}
 		}
 
@@ -251,13 +251,20 @@ public class jEdit
 			buffer = newFile(null);
 
 		// Start the RMI service last, to prevent races
+		// if clients connect before we're all done
 		initRMI();
 
-		// Create the view
-		newView(null,buffer);
+		// Create the view and hide the splash screen.
+		// Paranoid thread safety courtesy of Sun.
+		final Buffer _buffer = buffer;
 
-		// Dispose of the splash screen
-		GUIUtilities.hideSplashScreen();
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run()
+			{
+				newView(null,_buffer);
+				GUIUtilities.hideSplashScreen();
+			}
+		});
 	}
 
 	/**
@@ -363,8 +370,7 @@ public class jEdit
 			maxRecent = 8;
 		}
 
-		fireEditorEvent(new EditorEvent(EditorEvent.PROPERTIES_CHANGED,
-			null,null));
+		fireEditorEvent(EditorEvent.PROPERTIES_CHANGED,null,null);
 	}
 
 	/**
@@ -374,7 +380,7 @@ public class jEdit
 	public static void loadPlugins(String directory)
 	{
 		String[] args = { directory };
-		System.err.println(jEdit.getProperty(
+		System.out.println(jEdit.getProperty(
 			"jar.scanningdir",args));
 
 		File file = new File(directory);
@@ -644,16 +650,27 @@ public class jEdit
 			}
 			buffer = buffer.next;
 		}
+
+		// Show the wait cursor because there certainly is going
+		// to be a file load
+		if(view != null)
+			GUIUtilities.showWaitCursor(view);
+
 		buffer = new Buffer(view,url,path,readOnly,newFile);
 		addBufferToList(buffer);
 
 		if(marker != null)
 			gotoMarker(buffer,null,marker);
-		if(view != null)
+
+			if(view != null)
+		{
 			view.setBuffer(buffer);
 
-		fireEditorEvent(new EditorEvent(EditorEvent.BUFFER_CREATED,
-			view,buffer));
+			// Hide wait cursor
+			GUIUtilities.hideWaitCursor(view);
+		}
+
+		fireEditorEvent(EditorEvent.BUFFER_CREATED,view,buffer);
 
 		return buffer;
 	}
@@ -690,8 +707,7 @@ public class jEdit
 
 		buffer.close();
 
-		fireEditorEvent(new EditorEvent(EditorEvent.BUFFER_CLOSED,
-			view,buffer));
+		fireEditorEvent(EditorEvent.BUFFER_CLOSED,view,buffer);
 
 		return true;
 	}
@@ -755,11 +771,18 @@ public class jEdit
 	public static View newView(View view, Buffer buffer)
 	{
 		if(view != null)
+		{
+			GUIUtilities.showWaitCursor(view);
 			view.saveCaretInfo();
+		}
+
 		View newView = new View(view,buffer);
 		addViewToList(newView);
-		fireEditorEvent(new EditorEvent(EditorEvent.VIEW_CREATED,
-			newView,buffer));
+
+		if(view != null)
+			GUIUtilities.hideWaitCursor(view);
+
+		fireEditorEvent(EditorEvent.VIEW_CREATED,newView,buffer);
 		return newView;
 	}
 
@@ -772,8 +795,7 @@ public class jEdit
 			exit(view); /* exit does editor event & save */
 		else
 		{
-			fireEditorEvent(new EditorEvent(EditorEvent.VIEW_CLOSED,
-				view,view.getBuffer()));
+			fireEditorEvent(EditorEvent.VIEW_CLOSED,view,view.getBuffer());
 
 			view.close();
 			removeViewFromList(view);
@@ -849,7 +871,7 @@ public class jEdit
 	 */
 	public static final void addEditorListener(EditorListener listener)
 	{
-		multicaster.addListener(listener);
+		listenerList.add(EditorListener.class,listener);
 	}
 
 	/**
@@ -859,16 +881,7 @@ public class jEdit
 	 */
 	public static final void removeEditorListener(EditorListener listener)
 	{
-		multicaster.removeListener(listener);
-	}
-
-	/**
-	 * Fires an editor event to all registered listeners.
-	 * @param evt The event
-	 */
-	public static final void fireEditorEvent(EditorEvent evt)
-	{
-		multicaster.fire(evt);
+		listenerList.remove(EditorListener.class,listener);
 	}
 
 	/**
@@ -1006,7 +1019,7 @@ public class jEdit
 	private static int untitledCount;
 	private static Vector recent;
 	private static int maxRecent;
-	private static EventMulticaster multicaster;
+	private static EventListenerList listenerList;
 
 	// buffer link list
 	private static Buffer buffersFirst;
@@ -1053,6 +1066,21 @@ public class jEdit
 			getBuild());
 	}
 
+	private static void fireEditorEvent(int id, View view, Buffer buffer)
+	{
+		EditorEvent evt = null;
+		Object[] listeners = listenerList.getListenerList();
+		for(int i = listeners.length - 2; i >= 0; i-= 2)
+		{
+			if(listeners[i] == EditorListener.class)
+			{
+				if(evt == null)
+					evt = new EditorEvent(id,view,buffer);
+				evt.fire((EditorListener)listeners[i+1]);
+			}
+		}
+	}
+
 	/**
 	 * Initialise various objects, register protocol handlers,
 	 * register editor listener, and determine installation
@@ -1060,7 +1088,7 @@ public class jEdit
 	 */
 	private static void initMisc()
 	{
-		multicaster = new EventMulticaster();
+		listenerList = new EventListenerList();
 
 		// Add our protcols to java.net.URL's list
 		System.getProperties().put("java.protocol.handler.pkgs",
@@ -1549,6 +1577,9 @@ public class jEdit
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.121  1999/07/08 06:06:04  sp
+ * Bug fixes and miscallaneous updates
+ *
  * Revision 1.120  1999/07/05 04:38:39  sp
  * Massive batch of changes... bug fixes, also new text component is in place.
  * Have fun

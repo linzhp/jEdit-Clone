@@ -19,12 +19,15 @@
 
 package org.gjt.sp.jedit.actions;
 
-import javax.swing.text.BadLocationException;
-import javax.swing.text.Element;
-import javax.swing.text.PlainView;
+import javax.swing.text.*;
 import java.awt.event.ActionEvent;
 import java.awt.*;
-import org.gjt.sp.jedit.*;
+import org.gjt.sp.jedit.syntax.*;
+import org.gjt.sp.jedit.textarea.JEditTextArea;
+import org.gjt.sp.jedit.EditAction;
+import org.gjt.sp.jedit.Buffer;
+import org.gjt.sp.jedit.View;
+import org.gjt.sp.jedit.jEdit;
 
 public class print extends EditAction
 {
@@ -35,12 +38,10 @@ public class print extends EditAction
 	
 	public void actionPerformed(ActionEvent evt)
 	{
-		/*
 		View view = getView(evt);
 		Buffer buffer = view.getBuffer();
 
-		PrintJob job = view.getToolkit().getPrintJob(view,buffer
-			.getName(),null);
+		PrintJob job = view.getToolkit().getPrintJob(view,buffer.getName(),null);
 		if(job == null)
 			return;
 
@@ -89,48 +90,85 @@ public class print extends EditAction
 
 		String header = buffer.getPath();
 
-		Element map = buffer.getDefaultRootElement();
 		JEditTextArea textArea = view.getTextArea();
 		int tabSize = buffer.getTabSize() * textArea.getToolkit()
 			.getFontMetrics(textArea.getFont()).charWidth('m');
-		PrintSyntaxView syntaxView = new PrintSyntaxView(
-			map,leftMargin,tabSize);
+
+		Segment lineSegment = new Segment();
+		TokenMarker tokenMarker = textArea.getTokenMarker();
+		SyntaxStyle[] styles = textArea.getPainter().getStyles();
+		TabExpander expander = new PrintTabExpander(leftMargin,tabSize);
 
 		Graphics gfx = null;
-		Font font = textArea.getFont();
-		int fontHeight = font.getSize();
+		Font font = textArea.getPainter().getFont();
+		FontMetrics fm = null;
 		Dimension pageDimension = job.getPageDimension();
 		int pageWidth = pageDimension.width;
 		int pageHeight = pageDimension.height;
 		int y = 0;
 
-		for(int i = 0; i < map.getElementCount(); i++)
+		for(int i = 0; i < textArea.getLineCount(); i++)
 		{
 			if(gfx == null)
 			{
 				gfx = job.getGraphics();
 				gfx.setFont(font);
-				FontMetrics fm = gfx.getFontMetrics();
 				gfx.setColor(Color.lightGray);
+				fm = gfx.getFontMetrics();
 				gfx.fillRect(leftMargin,topMargin,pageWidth
-					- leftMargin - rightMargin,
-					  fm.getMaxAscent()
-					  + fm.getMaxDescent()
-					  + fm.getLeading());
+					- leftMargin - rightMargin,fm.getHeight());
 				gfx.setColor(Color.black);
-				y = topMargin + fontHeight;
+				y = topMargin + fm.getHeight() - fm.getDescent()
+					- fm.getLeading();
 				gfx.drawString(header,leftMargin,y);
-				y += fontHeight;
+				y += fm.getHeight();
 			}
-			syntaxView.drawLine(i,gfx,leftMargin,y += fontHeight);
+
+			y += fm.getHeight();
+			textArea.getLineText(i,lineSegment);
+
+			if(tokenMarker == null)
+			{
+				gfx.setColor(Color.black);
+				gfx.setFont(font);
+				Utilities.drawTabbedText(lineSegment,leftMargin,
+					y,gfx,expander,0);
+			}
+			else
+			{
+				gfx.setColor(Color.black);
+				gfx.setFont(font);
+				Token tokens = tokenMarker.markTokens(lineSegment,i);
+				SyntaxUtilities.paintSyntaxLine(lineSegment,
+					tokens,styles,expander,gfx,leftMargin,y);
+			}
+
 			if((y > pageHeight - bottomMargin) ||
-				(i == map.getElementCount() - 1))
+				(i == textArea.getLineCount() - 1))
 			{
 				gfx.dispose();
 				gfx = null;
 			}
 		}
 
-		job.end();*/
+		job.end();
+	}
+
+	class PrintTabExpander implements TabExpander
+	{
+		private int leftMargin;
+		private int tabSize;
+
+		public PrintTabExpander(int leftMargin, int tabSize)
+		{
+			this.leftMargin = leftMargin;
+			this.tabSize = tabSize;
+		}
+
+		public float nextTabStop(float x, int tabOffset)
+		{
+			int ntabs = ((int)x - leftMargin) / tabSize;
+			return (ntabs + 1) * tabSize + leftMargin;
+		}
 	}
 }

@@ -13,7 +13,6 @@
 <li><a href=#editor>Editor Events</a>
 <li><a href=#buffer>Buffer Events</a>
 <li><a href=#view>View Events</a>
-<li><a href=#multi>The EventMulticaster Class</a>
 </ul>
 
 <a name=intro>
@@ -168,29 +167,6 @@ ViewListener</a>
 <li><a href=../api/org.gjt.sp.jedit.event.ViewAdapter.html>
 ViewAdapter</a>
 </ul>
-
-<a name=multi>
-<h1>The EventMulticaster Class</h1>
-</a>
-
-The
-<a href=../api/org.gjt.sp.jedit.event.EventMulticaster.html>EventMulticaster</a>
-class is the core of the jEdit event system. It manages lists of event
-listeners and fires events at them. If you wish to implement your own event
-source and/or event type, this class is the easiest way to do so. It implements
-the following methods of interest:
-
-<ul>
-<li><code>addListener(AbstractEventListener listener)</code> - adds an
-event listener
-<li><code>removeListener(AbstractEventListener listener)</code> - removes an
-event listener
-<li><code>fireEvent(AbstractEditorEvent evt)</code> - fires the event to
-all listeners that can receive it
-</ul>
-
-Multiple types of listeners can be registered with each multicaster. When
-an event is fired, listeners that can't understand that event type are skipped.
 
 </body>
 </html>

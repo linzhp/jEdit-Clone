@@ -31,6 +31,7 @@ line, press it three times it goes to the beginning of the document
 a bracket will select the code block delimited by that bracket
 <li>Double clicks now treat `.' as a word separator, unlike the old Swing
 based code (which was very annoying when editing Java source)
+<li>It is now possible to Shift-click to extend the selection
 <li>The up/down arrows now behave better
 </ul>
 <li>It is now possible to disable window geometry saving. While this should
@@ -54,6 +55,10 @@ separately
 <li>More detailed RMI docs included
 <li>It is no longer necessary to start rmiregistry with a -classpath
 parameter pointing to jEdit's JAR file
+<li>Changed exit shortcut from C+q to C+e C+q so that if you miss C+w
+(close file) you can't accidentally exit the editor
+<li>The busy cursor is now display while loading and saving files, and
+several other time-consuming operations
 </ul>
 
 <h2>Bug Fixes</h2>
@@ -65,6 +70,11 @@ multiline string literals
 <li>Pasting text now works correctly with the MacOS MRJ
 <li>SyntaxUtilities.regionMatches() had a minor problem, some syntax modes
 were affected
+<li>Error messages about invalid markers are no longer printed to standard
+output. Previously, a stream of errors would be displayed when the latest
+version plugin is being run
+<li>Color picker dialogs were displayed twice in the colors &amp; styles
+option pane
 </ul>
 
 <a name=17pre4>

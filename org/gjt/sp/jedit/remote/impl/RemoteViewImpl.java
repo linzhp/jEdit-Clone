@@ -18,6 +18,7 @@
  */
 package org.gjt.sp.jedit.remote.impl;
 
+import javax.swing.SwingUtilities;
 import java.rmi.server.UnicastRemoteObject;
 import java.rmi.*;
 import org.gjt.sp.jedit.remote.*;
@@ -36,14 +37,24 @@ public class RemoteViewImpl extends UnicastRemoteObject implements RemoteView
 		this.view = view;
 	}
 
-	public void setCaretPosition(int pos) throws RemoteException
+	public void setCaretPosition(final int pos) throws RemoteException
 	{
-		view.getTextArea().setCaretPosition(pos);
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run()
+			{
+				view.getTextArea().setCaretPosition(pos);
+			}
+		});
 	}
 
-	public void select(int start, int end) throws RemoteException
+	public void select(final int start, final int end) throws RemoteException
 	{
-		view.getTextArea().select(start,end);
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run()
+			{
+				view.getTextArea().select(start,end);
+			}
+		});
 	}
 
 	public RemoteBuffer getBuffer() throws RemoteException
@@ -51,9 +62,14 @@ public class RemoteViewImpl extends UnicastRemoteObject implements RemoteView
 		return new RemoteBufferImpl(view.getBuffer());
 	}
 
-	public void setBuffer(RemoteBuffer buffer) throws RemoteException
+	public void setBuffer(final RemoteBuffer buffer) throws RemoteException
 	{
-		view.setBuffer(jEdit.getBuffer(buffer.getUID()));
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run()
+			{
+				view.setBuffer(RemoteEditorImpl.getLocalBuffer(buffer));
+			}
+		});
 	}
 
 	public boolean isClosed()
@@ -75,6 +91,9 @@ public class RemoteViewImpl extends UnicastRemoteObject implements RemoteView
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.3  1999/07/08 06:06:04  sp
+ * Bug fixes and miscallaneous updates
+ *
  * Revision 1.2  1999/06/15 05:03:54  sp
  * RMI interface complete, save all hack, views & buffers are stored as a link
  * list now

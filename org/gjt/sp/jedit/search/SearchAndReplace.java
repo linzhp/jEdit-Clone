@@ -276,12 +276,22 @@ loop:			for(;;)
 	public static boolean replaceAll(View view)
 	{
 		boolean retval = false;
+
+		// Show the wait cursor
+		if(view != null)
+			GUIUtilities.showWaitCursor(view);
+
 		Buffer[] buffers = fileset.getSearchBuffers(view);
 		for(int i = 0; i < buffers.length; i++)
 		{
 			Buffer buffer = buffers[i];
 			retval |= replace(view,buffer,0,buffer.getLength());
 		}
+
+		// Hide the wait cursor
+		if(view != null)
+			GUIUtilities.hideWaitCursor(view);
+
 		return retval;
 	}
 
@@ -400,6 +410,9 @@ loop:			for(;;)
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.10  1999/07/08 06:06:04  sp
+ * Bug fixes and miscallaneous updates
+ *
  * Revision 1.9  1999/07/05 04:38:39  sp
  * Massive batch of changes... bug fixes, also new text component is in place.
  * Have fun

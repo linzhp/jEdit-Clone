@@ -132,7 +132,7 @@ public class EditorOptionPane extends OptionPane
 		blinkCaret = new JCheckBox(jEdit.getProperty("options.editor"
 			+ ".blinkCaret"));
 		blinkCaret.getModel().setSelected("on".equals(jEdit.getProperty(
-			"view.caretBlinks")));
+			"view.caretBlink")));
 		addComponent(blinkCaret);
 
 		/* Block caret */
@@ -172,7 +172,7 @@ public class EditorOptionPane extends OptionPane
 			.isSelected() ? "on" : "off");
 		jEdit.setProperty("buffer.indentOnEnter",indentOnEnter.getModel()
 			.isSelected() ? "on" : "off");
-		jEdit.setProperty("view.caretBlinks",blinkCaret.getModel()
+		jEdit.setProperty("view.caretBlink",blinkCaret.getModel()
 			.isSelected() ? "on" : "off");
 		jEdit.setProperty("view.blockCaret",blockCaret.getModel()
 			.isSelected() ? "on" : "off");

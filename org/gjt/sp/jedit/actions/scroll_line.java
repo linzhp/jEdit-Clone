@@ -41,6 +41,8 @@ public class scroll_line extends EditAction
 		int offset = textArea.offsetToX(textArea.getCaretLine(),
 			textArea.getCaretPosition() - textArea
 			.getLineStartOffset(textArea.getCaretLine()));
+		textArea.setFirstLine(Math.max(0,line -
+			textArea.getVisibleLines() / 2));
 		textArea.scrollTo(line,offset);
 	}
 }

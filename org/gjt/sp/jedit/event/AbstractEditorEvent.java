@@ -19,6 +19,7 @@
 package org.gjt.sp.jedit.event;
 
 import java.util.EventListener;
+import org.gjt.sp.jedit.*;
 
 /**
  * The superclass of all jEdit events.<p>
@@ -47,11 +48,21 @@ public abstract class AbstractEditorEvent
 	}
 
 	/**
-	 * Returns the time when the event was fired.
+	 * Returns the view involved in this event. This might be
+	 * null.
 	 */
-	public long getTimestamp()
+	public View getView()
 	{
-		return timestamp;
+		return view;
+	}
+
+	/**
+	 * Returns the buffer involved in this event. This might be
+	 * null.
+	 */
+	public Buffer getBuffer()
+	{
+		return buffer;
 	}
 
 	/**
@@ -63,25 +74,41 @@ public abstract class AbstractEditorEvent
 	 */
 	public abstract void fire(EventListener listener);
 
-	// protected members
+	/**
+	 * Returns a string representation of this event.
+	 */
+	public String toString()
+	{
+		return getClass().getName() + "[id=" + id
+			+ ",view=" + view.getUID() + ",buffer="
+			+ buffer.getUID() + "]";
+	}
 
+	// protected members
 	protected int id;
-	protected long timestamp;
+	protected View view;
+	protected Buffer buffer;
 
 	/**
 	 * Creates a new <code>AbstractEditorEvent</code>.
 	 * @param id The event type
+	 * @param view The view involved
+	 * @param buffer The buffer involved
 	 */
-	protected AbstractEditorEvent(int id)
+	protected AbstractEditorEvent(int id, View view, Buffer buffer)
 	{
 		this.id = id;
-		timestamp = System.currentTimeMillis();
+		this.view = view;
+		this.buffer = buffer;
 	}
 }
 
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.5  1999/07/08 06:06:04  sp
+ * Bug fixes and miscallaneous updates
+ *
  * Revision 1.4  1999/03/16 04:34:46  sp
  * HistoryTextField updates, moved generate-text to a plugin, fixed spelling mistake in EditAction Javadocs
  *

@@ -122,6 +122,8 @@ public class Buffer extends DefaultSyntaxDocument
 	{
 		if(path == null && newFile)
 			return saveAs(view);
+
+		boolean returnValue;
 		URL saveUrl;
 		File saveFile;
 		if(path == null)
@@ -157,6 +159,11 @@ public class Buffer extends DefaultSyntaxDocument
 			}
 			saveFile = new File(path);
 		}
+
+		// A save is definately going to occur; show the wait cursor
+		if(view != null)
+			GUIUtilities.showWaitCursor(view);
+
 		backup(saveFile);
 		try
 		{
@@ -184,20 +191,27 @@ public class Buffer extends DefaultSyntaxDocument
 			autosaveFile.delete();
 			modTime = file.lastModified();
 
-			fireBufferEvent(new BufferEvent(BufferEvent
-				.DIRTY_CHANGED,this));
+			fireBufferEvent(BufferEvent.DIRTY_CHANGED,this);
 
-			return true;
+			returnValue = true;
 		}
 		catch(IOException io)
 		{
 			Object[] args = { io.toString() };
 			GUIUtilities.error(view,"ioerror",args);
+			returnValue = false;
 		}
 		catch(BadLocationException bl)
 		{
+			bl.printStackTrace();
+			returnValue = false;
 		}
-		return false;
+
+		// Hide wait cursor
+		if(view != null)
+			GUIUtilities.hideWaitCursor(view);
+
+		return returnValue;
 	}
 	
 	/**
@@ -206,6 +220,10 @@ public class Buffer extends DefaultSyntaxDocument
 	 */
 	public void reload(View view)
 	{
+		// Show the wait cursor
+		if(view != null)
+			GUIUtilities.showWaitCursor(view);
+
 		// Delete the autosave
 		autosaveFile.delete();
 
@@ -225,8 +243,12 @@ public class Buffer extends DefaultSyntaxDocument
 		
 		// Clear dirty flag
 		dirty = false;
-		fireBufferEvent(new BufferEvent(BufferEvent
-				.DIRTY_CHANGED,this));
+
+		// Hide the wait cursor
+		if(view != null)
+			GUIUtilities.hideWaitCursor(view);
+
+		fireBufferEvent(BufferEvent.DIRTY_CHANGED,this);
 
 		init = false;
 	}
@@ -361,8 +383,7 @@ public class Buffer extends DefaultSyntaxDocument
 		}
 		else
 			dirty = false;
-		fireBufferEvent(new BufferEvent(BufferEvent.DIRTY_CHANGED,
-			this));
+		fireBufferEvent(BufferEvent.DIRTY_CHANGED,this);
 	}
 
 	/**
@@ -455,7 +476,7 @@ public class Buffer extends DefaultSyntaxDocument
 				this.mode.enterView(view);
 		}
 
-		fireBufferEvent(new BufferEvent(BufferEvent.MODE_CHANGED,this));
+		fireBufferEvent(BufferEvent.MODE_CHANGED,this);
 	}
 
 	/**
@@ -569,8 +590,8 @@ public class Buffer extends DefaultSyntaxDocument
 			}
 		}
 		markers.addElement(markerN);
-		fireBufferEvent(new BufferEvent(BufferEvent.MARKERS_CHANGED,this));
-		fireBufferEvent(new BufferEvent(BufferEvent.DIRTY_CHANGED,this));
+		fireBufferEvent(BufferEvent.MARKERS_CHANGED,this);
+		fireBufferEvent(BufferEvent.DIRTY_CHANGED,this);
 	}
 
 	/**
@@ -588,8 +609,8 @@ loop:		for(int i = 0; i < markers.size(); i++)
 			if(marker.getName().equals(name))
 				markers.removeElementAt(i);
 		}
-		fireBufferEvent(new BufferEvent(BufferEvent.MARKERS_CHANGED,this));
-		fireBufferEvent(new BufferEvent(BufferEvent.DIRTY_CHANGED,this));
+		fireBufferEvent(BufferEvent.MARKERS_CHANGED,this);
+		fireBufferEvent(BufferEvent.DIRTY_CHANGED,this);
 	}
 	
 	/**
@@ -699,7 +720,7 @@ loop:		for(int i = 0; i < markers.size(); i++)
 	 */
 	public final void addBufferListener(BufferListener listener)
 	{
-		multicaster.addListener(listener);
+		listenerList.add(BufferListener.class,listener);
 	}
 
 	/**	
@@ -708,16 +729,7 @@ loop:		for(int i = 0; i < markers.size(); i++)
 	 */
 	public final void removeBufferListener(BufferListener listener)
 	{
-		multicaster.removeListener(listener);
-	}
-
-	/**
-	 * Forwards a buffer event to all registered listeners.
-	 * @param evt The event
-	 */
-	public final void fireBufferEvent(BufferEvent evt)
-	{
-		multicaster.fire(evt);
+		listenerList.remove(BufferListener.class,listener);
 	}
 
 	/**
@@ -748,7 +760,7 @@ loop:		for(int i = 0; i < markers.size(); i++)
 		setDocumentProperties(new BufferProps());
 		putProperty("i18n",Boolean.FALSE);
 		
-		multicaster = new EventMulticaster();
+		listenerList = new EventListenerList();
 		undo = new UndoManager();
 		markers = new Vector();
 		addDocumentListener(new DocumentHandler());
@@ -814,8 +826,23 @@ loop:		for(int i = 0; i < markers.size(); i++)
 	private Position anchor;
 	private int savedSelStart;
 	private int savedSelEnd;
-	private EventMulticaster multicaster;
-	
+	private EventListenerList listenerList;
+
+	private void fireBufferEvent(int id, Buffer buffer)
+	{
+		BufferEvent evt = null;
+		Object[] listeners = listenerList.getListenerList();
+		for(int i = listeners.length - 2; i >= 0; i-= 2)
+		{
+			if(listeners[i] == BufferListener.class)
+			{
+				if(evt == null)
+					evt = new BufferEvent(id,buffer);
+				evt.fire((BufferListener)listeners[i+1]);
+			}
+		}
+	}
+
 	private void setPath()
 	{
 		if(url == null)
@@ -1080,10 +1107,6 @@ loop:		for(int i = 0; i < markers.size(); i++)
 						}
 						catch(NumberFormatException nf)
 						{
-							System.err.println(
-								"Invalid"
-								+ " start: "
-								+ str);
 							start = 0;
 						}
 					}
@@ -1096,10 +1119,6 @@ loop:		for(int i = 0; i < markers.size(); i++)
 						}
 						catch(NumberFormatException nf)
 						{
-							System.err.println(
-								"Invalid"
-								+ " end: "
-								+ str);
 							end = 0;
 						}
 						addMarker(name,start,end);
@@ -1316,6 +1335,9 @@ loop:		for(int i = 0; i < markers.size(); i++)
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.90  1999/07/08 06:06:04  sp
+ * Bug fixes and miscallaneous updates
+ *
  * Revision 1.89  1999/07/05 04:38:39  sp
  * Massive batch of changes... bug fixes, also new text component is in place.
  * Have fun

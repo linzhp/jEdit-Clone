@@ -19,7 +19,7 @@
 
 package org.gjt.sp.jedit;
 
-import gnu.regexp.*;
+import java.lang.reflect.*;
 import java.io.*;
 
 /**
@@ -192,6 +192,9 @@ loop:		for(int i = 0; i < str.length(); i++)
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.13  1999/07/08 06:06:04  sp
+ * Bug fixes and miscallaneous updates
+ *
  * Revision 1.12  1999/05/29 08:06:56  sp
  * Search and replace overhaul
  *

@@ -86,34 +86,11 @@ public class EditorEvent extends AbstractEditorEvent
 	 */
 	public EditorEvent(int id, View view, Buffer buffer)
 	{
-		super(id);
+		super(id,view,buffer);
 
 		// Check the id value
 		if(id < EDITOR_FIRST || id > EDITOR_LAST)
 			throw new IllegalArgumentException("id out of range");
-
-		this.view = view;
-		this.buffer = buffer;
-	}
-
-	/**
-	 * Returns the buffer involved. This is set for all event types
-	 * except PROPERTIES_CHANGED.
-	 */
-	public Buffer getBuffer()
-	{
-		return buffer;
-	}
-
-	/**
-	 * Returns the view involved. This is never set for
-	 * PROPERTIES_CHANGED events. Also, this is not set for
-	 * BUFFER_CREATED events at startup, and BUFFER_CREATED events
-	 * caused by the server.
-	 */
-	public View getView()
-	{
-		return view;
 	}
 
 	/**
@@ -151,25 +128,14 @@ public class EditorEvent extends AbstractEditorEvent
 			throw new InternalError();
 		}
 	}
-
-	/**
-	 * Returns a string representation of this event.
-	 */
-	public String toString()
-	{
-		return getClass().getName() + "[id=" + id + ",timestamp="
-			+ timestamp + ",view=" + view + ",buffer="
-			+ buffer + "]";
-	}
-
-	// protected members
-	protected View view;
-	protected Buffer buffer;
 }
 
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.7  1999/07/08 06:06:04  sp
+ * Bug fixes and miscallaneous updates
+ *
  * Revision 1.6  1999/03/16 04:34:46  sp
  * HistoryTextField updates, moved generate-text to a plugin, fixed spelling mistake in EditAction Javadocs
  *

@@ -18,6 +18,7 @@
  */
 package org.gjt.sp.jedit.remote.impl;
 
+import javax.swing.SwingUtilities;
 import java.net.*;
 import java.rmi.server.UnicastRemoteObject;
 import java.rmi.*;
@@ -44,34 +45,65 @@ public class RemoteEditorImpl extends UnicastRemoteObject
 		jEdit.removeEditorListener(editorHandler);
 	}
 
-	public RemoteBuffer newFile(RemoteView view)
+	public RemoteBuffer newFile(final RemoteView view)
 		throws RemoteException
 	{
-		return new RemoteBufferImpl(jEdit.newFile(
-			view == null ? null : jEdit.getView(view.getUID())));
+		final RemoteBuffer[] returnValue = new RemoteBuffer[1];
+		try
+		{
+			SwingUtilities.invokeAndWait(new Runnable() {
+				public void run()
+				{
+					returnValue[0] = getRemoteBuffer(
+						jEdit.newFile(getLocalView(view)));
+				}
+			});
+		}
+		catch(Exception e)
+		{
+		}
+		return returnValue[0];
 	}
 
-	public RemoteBuffer openFile(RemoteView view, String parent, String path,
-		boolean readOnly, boolean newFile)
+	public RemoteBuffer openFile(final RemoteView view, final String parent,
+		final String path, final boolean readOnly, final boolean newFile)
 		throws RemoteException
 	{
-		return new RemoteBufferImpl(jEdit.openFile(
-			view == null ? null : jEdit.getView(view.getUID()),
-			parent,path,readOnly,newFile));
+		final RemoteBuffer[] returnValue = new RemoteBuffer[1];
+		try
+		{
+			SwingUtilities.invokeAndWait(new Runnable() {
+				public void run()
+				{
+					returnValue[0] = getRemoteBuffer(
+						jEdit.openFile(getLocalView(view),
+						parent,path,readOnly,newFile));
+				}
+			});
+		}
+		catch(Exception e)
+		{
+		}
+		return returnValue[0];
 	}
 
-	public void closeBuffer(RemoteView view, RemoteBuffer buffer)
+	public void closeBuffer(final RemoteView view, final RemoteBuffer buffer)
 		throws RemoteException
 	{
-		jEdit.closeBuffer(
-			view == null ? null : jEdit.getView(view.getUID()),
-			((RemoteBufferImpl)buffer).buffer);
+		SwingUtilities.invokeLater(new Runnable()
+		{
+			public void run()
+			{
+				jEdit.closeBuffer(getLocalView(view),
+					getLocalBuffer(buffer));
+			}
+		});
 	}
 
 	public RemoteBuffer getBuffer(String path)
 		throws RemoteException
 	{
-		return new RemoteBufferImpl(jEdit.getBuffer(path));
+		return getRemoteBuffer(jEdit.getBuffer(path));
 	}
 
 	public RemoteBuffer[] getBuffers()
@@ -81,7 +113,7 @@ public class RemoteEditorImpl extends UnicastRemoteObject
 		RemoteBuffer[] _buffers = new RemoteBuffer[buffers.length];
 		for(int i = 0; i < buffers.length; i++)
 		{
-			_buffers[i] = new RemoteBufferImpl(buffers[i]);
+			_buffers[i] = getRemoteBuffer(buffers[i]);
 		}
 		return _buffers;
 	}
@@ -102,18 +134,36 @@ public class RemoteEditorImpl extends UnicastRemoteObject
 		}
 	}
 
-	public RemoteView newView(RemoteView view, RemoteBuffer buffer)
+	public RemoteView newView(final RemoteView view, final RemoteBuffer buffer)
 		throws RemoteException
 	{
-		return new RemoteViewImpl(jEdit.newView(
-			view == null ? null : jEdit.getView(view.getUID()),
-			buffer == null ? null : jEdit.getBuffer(buffer.getUID())));
+		final RemoteView[] returnValue = new RemoteView[1];
+		try
+		{
+			SwingUtilities.invokeAndWait(new Runnable() {
+				public void run()
+				{
+					returnValue[0] = getRemoteView(
+						jEdit.newView(getLocalView(view),
+						getLocalBuffer(buffer)));
+				}
+			});
+		}
+		catch(Exception e)
+		{
+		}
+		return returnValue[0];
 	}
 
-	public void closeView(RemoteView view)
+	public void closeView(final RemoteView view)
 		throws RemoteException
 	{
-		jEdit.closeView(jEdit.getView(view.getUID()));
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run()
+			{
+				jEdit.closeView(getLocalView(view));
+			}
+		});
 	}
 
 	public RemoteView[] getViews()
@@ -123,7 +173,7 @@ public class RemoteEditorImpl extends UnicastRemoteObject
 		RemoteView[] _views = new RemoteView[views.length];
 		for(int i = 0; i < views.length; i++)
 		{
-			_views[i] = new RemoteViewImpl(views[i]);
+			_views[i] = getRemoteView(views[i]);
 		}
 		return _views;
 	}
@@ -144,10 +194,71 @@ public class RemoteEditorImpl extends UnicastRemoteObject
 		}
 	}
 
-	public synchronized void exit(RemoteView view)
+	public void exit(final RemoteView view)
 		throws RemoteException
 	{
-		jEdit.exit(jEdit.getView(view.getUID()));
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run()
+			{
+				jEdit.exit(getLocalView(view));
+			}
+		});
+	}
+
+	public static View getLocalView(RemoteView view)
+	{
+		try
+		{
+			if(view == null)
+				return null;
+			else
+				return jEdit.getView(view.getUID());
+		}
+		catch(RemoteException r)
+		{
+			// can be thrown by getUID() which is remote
+			return null;
+		}
+	}
+
+	public static RemoteView getRemoteView(View view)
+	{
+		try
+		{
+			return new RemoteViewImpl(view);
+		}
+		catch(RemoteException r)
+		{
+			return null;
+		}
+	}
+
+	public static Buffer getLocalBuffer(RemoteBuffer buffer)
+	{
+		try
+		{
+			if(buffer == null)
+				return null;
+			else
+				return jEdit.getBuffer(buffer.getUID());
+		}
+		catch(RemoteException r)
+		{
+			// can be thrown by getUID() which is remote
+			return null;
+		}
+	}
+
+	public static RemoteBuffer getRemoteBuffer(Buffer buffer)
+	{
+		try
+		{
+			return new RemoteBufferImpl(buffer);
+		}
+		catch(RemoteException r)
+		{
+			return null;
+		}
 	}
 
 	class EditorHandler extends EditorAdapter
@@ -178,6 +289,9 @@ public class RemoteEditorImpl extends UnicastRemoteObject
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.3  1999/07/08 06:06:04  sp
+ * Bug fixes and miscallaneous updates
+ *
  * Revision 1.2  1999/06/15 05:03:54  sp
  * RMI interface complete, save all hack, views & buffers are stored as a link
  * list now

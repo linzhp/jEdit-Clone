@@ -347,8 +347,7 @@ public class View extends JFrame
 		focusOnTextArea();
 
 		// Fire event
-		fireViewEvent(new ViewEvent(ViewEvent.BUFFER_CHANGED,this,
-			oldBuffer));
+		fireViewEvent(ViewEvent.BUFFER_CHANGED,this,oldBuffer);
 	}
 
 	/**
@@ -443,7 +442,7 @@ public class View extends JFrame
 	 */
 	public final void addViewListener(ViewListener listener)
 	{
-		multicaster.addListener(listener);
+		listenerList.add(ViewListener.class,listener);
 	}
 
 	/**	
@@ -452,16 +451,7 @@ public class View extends JFrame
 	 */
 	public final void removeViewListener(ViewListener listener)
 	{
-		multicaster.removeListener(listener);
-	}
-
-	/**
-	 * Forwards a view event to all registered listeners.
-	 * @param evt The event
-	 */
-	public final void fireViewEvent(ViewEvent evt)
-	{
-		multicaster.fire(evt);
+		listenerList.remove(ViewListener.class,listener);
 	}
 
 	// package-private members
@@ -472,7 +462,7 @@ public class View extends JFrame
 	View(View view, Buffer buffer)
 	{
 		uid = UID++;
-		multicaster = new EventMulticaster();
+		listenerList = new EventListenerList();
 
 		buffers = GUIUtilities.loadMenu(this,"buffers");
 		openRecent = GUIUtilities.loadMenu(this,"open-recent");
@@ -529,8 +519,10 @@ public class View extends JFrame
 		bottomToolBars = new Box(BoxLayout.Y_AXIS);
 
 		textArea = new JEditTextArea();
-		//textArea.setContextMenu(GUIUtilities.loadPopupMenu(this,
-		//	"view.context"));
+
+		// Set up the right-click popup menu
+		textArea.setRightClickPopup(GUIUtilities
+			.loadPopupMenu(this,"view.context"));
 
 		// Register key bindings
 		InputHandler inputHandler = textArea.getInputHandler();
@@ -619,6 +611,7 @@ public class View extends JFrame
 	private JMenu clearMarker;
 	private JMenu gotoMarker;
 	private JMenu plugins;
+	private JPopupMenu popup;
 	private Hashtable bindings;
 	private Hashtable currentPrefix;
 	private Box topToolBars;
@@ -631,10 +624,25 @@ public class View extends JFrame
 	private Buffer buffer;
 	private boolean showTip;
 	private boolean showFullPath;
-	private EventMulticaster multicaster;
+	private EventListenerList listenerList;
 	private BufferListener bufferListener;
 	private EditorListener editorListener;
 	private boolean closed;
+
+	private void fireViewEvent(int id, View view, Buffer buffer)
+	{
+		ViewEvent evt = null;
+		Object[] listeners = listenerList.getListenerList();
+		for(int i = listeners.length - 2; i >= 0; i-= 2)
+		{
+			if(listeners[i] == ViewListener.class)
+			{
+				if(evt == null)
+					evt = new ViewEvent(id,view,buffer);
+				evt.fire((ViewListener)listeners[i+1]);
+			}
+		}
+	}
 
 	private void loadStyles()
 	{
@@ -750,6 +758,9 @@ public class View extends JFrame
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.85  1999/07/08 06:06:04  sp
+ * Bug fixes and miscallaneous updates
+ *
  * Revision 1.84  1999/07/05 04:38:39  sp
  * Massive batch of changes... bug fixes, also new text component is in place.
  * Have fun

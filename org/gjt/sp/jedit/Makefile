@@ -17,7 +17,8 @@ classes=org/gjt/sp/jedit/jEdit.class \
 	org/gjt/sp/jedit/Plugin.class \
 	org/gjt/sp/jedit/View.class
 
-others='org/gjt/sp/jedit/jEdit$$Autosave.class' \
+others='org/gjt/sp/jedit/jEdit$$1.class' \
+	'org/gjt/sp/jedit/jEdit$$Autosave.class' \
 	'org/gjt/sp/jedit/Buffer$$BufferProps.class' \
 	'org/gjt/sp/jedit/Buffer$$DocumentHandler.class' \
 	'org/gjt/sp/jedit/Buffer$$EditorHandler.class' \
