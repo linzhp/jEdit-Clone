@@ -39,6 +39,7 @@ classes=org/gjt/sp/jedit/actions/about.class \
 	org/gjt/sp/jedit/actions/insert_date.class \
 	org/gjt/sp/jedit/actions/join_lines.class \
 	org/gjt/sp/jedit/actions/locate_bracket.class \
+	org/gjt/sp/jedit/actions/multifile_search.class \
 	org/gjt/sp/jedit/actions/new_file.class \
 	org/gjt/sp/jedit/actions/new_view.class \
 	org/gjt/sp/jedit/actions/next_buffer.class \

@@ -40,7 +40,7 @@ public class GlobalOptions extends OptionsDialog
 		addOptionPane(new org.gjt.sp.jedit.options.GeneralOptionPane());
 		addOptionPane(new org.gjt.sp.jedit.options.EditorOptionPane());
 		addOptionPane(new org.gjt.sp.jedit.options.KeyTableOptionPane());
-		addOptionPane(new org.gjt.sp.jedit.options.ColorTableOptionPane());
+		addOptionPane(new org.gjt.sp.jedit.options.StyleOptionPane());
 
 		Dimension screen = getToolkit().getScreenSize();
 		pack();
@@ -54,6 +54,10 @@ public class GlobalOptions extends OptionsDialog
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.8  1999/06/12 02:30:27  sp
+ * Find next can now perform multifile searches, multifile-search command added,
+ * new style option pane
+ *
  * Revision 1.7  1999/06/07 06:36:32  sp
  * Syntax `styling' (bold/italic tokens) added,
  * plugin options dialog for plugin option panes

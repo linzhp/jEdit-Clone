@@ -374,11 +374,7 @@ loop:			for(;;)
 	 */
 	public static void load()
 	{
-		String filesetStr = jEdit.getProperty("search.multifile.value");
-		if("all".equals(filesetStr))
-			fileset = new AllBufferSet();
-		else
-			fileset = new CurrentBufferSet();
+		fileset = new CurrentBufferSet();
 		search = jEdit.getProperty("search.find.value");
 		replace = jEdit.getProperty("search.replace.value");
 		regexp = "on".equals(jEdit.getProperty("search.regexp.toggle"));
@@ -390,8 +386,6 @@ loop:			for(;;)
 	 */
 	public static void save()
 	{
-		jEdit.setProperty("search.multifile.value",
-			(fileset instanceof AllBufferSet) ? "all" : "current");
 		jEdit.setProperty("search.find.value",(search == null ? ""
 			: search));
 		jEdit.setProperty("search.replace.value",(replace == null ? ""
@@ -414,6 +408,10 @@ loop:			for(;;)
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.8  1999/06/12 02:30:27  sp
+ * Find next can now perform multifile searches, multifile-search command added,
+ * new style option pane
+ *
  * Revision 1.7  1999/06/09 07:28:10  sp
  * Multifile search and replace tweaks, removed console.html
  *

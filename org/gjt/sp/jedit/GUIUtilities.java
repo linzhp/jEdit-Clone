@@ -25,6 +25,7 @@ import java.awt.event.*;
 import java.net.URL;
 import java.util.StringTokenizer;
 import org.gjt.sp.jedit.gui.*;
+import org.gjt.sp.jedit.syntax.SyntaxStyle;
 
 /**
  * Class with several useful GUI functions.<p>
@@ -540,6 +541,44 @@ public class GUIUtilities
 		return "#000000".substring(0,7 - colString.length()).concat(colString);
 	}
 
+	/**
+	 * Converts a style string to a style object.
+	 * @param str The style string
+	 * @exception IllegalArgumentException if the style is invalid
+	 */
+	public static SyntaxStyle parseStyle(String str)
+		throws IllegalArgumentException
+	{
+		Color color = Color.black;
+		boolean italics = false;
+		boolean bold = false;
+		StringTokenizer st = new StringTokenizer(str);
+		while(st.hasMoreTokens())
+		{
+			String s = st.nextToken();
+			if(s.startsWith("color:"))
+			{
+				color = GUIUtilities.parseColor(s.substring(6));
+			}
+			else if(s.startsWith("style:"))
+			{
+				for(int i = 6; i < s.length(); i++)
+				{
+					if(s.charAt(i) == 'i')
+						italics = true;
+					else if(s.charAt(i) == 'b')
+						bold = true;
+					else
+						throw new IllegalArgumentException(
+							"Invalid style: " + s);
+				}
+			}
+			else
+				throw new IllegalArgumentException(
+					"Invalid directive: " + s);
+		}
+		return new SyntaxStyle(color,italics,bold);
+	}
 
 	/**
 	 * Loads a windows's geometry from the properties.
@@ -625,6 +664,10 @@ public class GUIUtilities
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.21  1999/06/12 02:30:27  sp
+ * Find next can now perform multifile searches, multifile-search command added,
+ * new style option pane
+ *
  * Revision 1.20  1999/05/27 00:02:50  sp
  * Documentation updates, minor tweaks for WWW browser command unbundling
  *

@@ -1084,6 +1084,7 @@ public class jEdit
 		addAction(new org.gjt.sp.jedit.actions.insert_date());
 		addAction(new org.gjt.sp.jedit.actions.join_lines());
 		addAction(new org.gjt.sp.jedit.actions.locate_bracket());
+		addAction(new org.gjt.sp.jedit.actions.multifile_search());
 		addAction(new org.gjt.sp.jedit.actions.new_file());
 		addAction(new org.gjt.sp.jedit.actions.new_view());
 		addAction(new org.gjt.sp.jedit.actions.next_buffer());
@@ -1528,6 +1529,10 @@ public class jEdit
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.112  1999/06/12 02:30:27  sp
+ * Find next can now perform multifile searches, multifile-search command added,
+ * new style option pane
+ *
  * Revision 1.111  1999/06/07 06:36:32  sp
  * Syntax `styling' (bold/italic tokens) added,
  * plugin options dialog for plugin option panes
@@ -1564,11 +1569,5 @@ public class jEdit
  *
  * Revision 1.102  1999/05/22 08:33:53  sp
  * FAQ updates, mode selection tweak, patch mode update, javadoc updates, JDK 1.1.8 fix
- *
- * Revision 1.101  1999/05/18 07:26:40  sp
- * HelpViewer cursor tweak, minor view bug fix
- *
- * Revision 1.100  1999/05/18 04:40:12  sp
- * $n in console, minor GUI tweak
  *
  */

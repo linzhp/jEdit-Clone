@@ -951,25 +951,25 @@ loop:		for(int i = 0; i < markers.size(); i++)
 	{
 		try
 		{
-			styles[Token.COMMENT1] = parseStyle(
+			styles[Token.COMMENT1] = GUIUtilities.parseStyle(
 				(String)getProperty("style.comment1"));
-			styles[Token.COMMENT2] = parseStyle(
+			styles[Token.COMMENT2] = GUIUtilities.parseStyle(
 				(String)getProperty("style.comment2"));
-			styles[Token.KEYWORD1] = parseStyle(
+			styles[Token.KEYWORD1] = GUIUtilities.parseStyle(
 				(String)getProperty("style.keyword1"));
-			styles[Token.KEYWORD2] = parseStyle(
+			styles[Token.KEYWORD2] = GUIUtilities.parseStyle(
 				(String)getProperty("style.keyword2"));
-			styles[Token.KEYWORD3] = parseStyle(
+			styles[Token.KEYWORD3] = GUIUtilities.parseStyle(
 				(String)getProperty("style.keyword3"));
-			styles[Token.LABEL] = parseStyle(
+			styles[Token.LABEL] = GUIUtilities.parseStyle(
 				(String)getProperty("style.label"));
-			styles[Token.LITERAL1] = parseStyle(
+			styles[Token.LITERAL1] = GUIUtilities.parseStyle(
 				(String)getProperty("style.literal1"));
-			styles[Token.LITERAL2] = parseStyle(
+			styles[Token.LITERAL2] = GUIUtilities.parseStyle(
 				(String)getProperty("style.literal2"));
-			styles[Token.OPERATOR] = parseStyle(
+			styles[Token.OPERATOR] = GUIUtilities.parseStyle(
 				(String)getProperty("style.operator"));
-			styles[Token.INVALID] = parseStyle(
+			styles[Token.INVALID] = GUIUtilities.parseStyle(
 				(String)getProperty("style.invalid"));
 		}
 		catch(Exception e)
@@ -977,39 +977,6 @@ loop:		for(int i = 0; i < markers.size(); i++)
 			System.out.println("Error loading syntax styles:");
 			e.printStackTrace();
 		}
-	}
-
-	private SyntaxStyle parseStyle(String str)
-	{
-		Color color = Color.black;
-		boolean italics = false;
-		boolean bold = false;
-		StringTokenizer st = new StringTokenizer(str);
-		while(st.hasMoreTokens())
-		{
-			String s = st.nextToken();
-			if(s.startsWith("color:"))
-			{
-				color = GUIUtilities.parseColor(s.substring(6));
-			}
-			else if(s.startsWith("style:"))
-			{
-				for(int i = 6; i < s.length(); i++)
-				{
-					if(s.charAt(i) == 'i')
-						italics = true;
-					else if(s.charAt(i) == 'b')
-						bold = true;
-					else
-						throw new IllegalArgumentException(
-							"Invalid style: " + s);
-				}
-			}
-			else
-				throw new IllegalArgumentException(
-					"Invalid directive: " + s);
-		}
-		return new SyntaxStyle(color,italics,bold);
 	}
 
 	private void processProperty(String prop)
@@ -1359,6 +1326,10 @@ loop:		for(int i = 0; i < markers.size(); i++)
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.83  1999/06/12 02:30:27  sp
+ * Find next can now perform multifile searches, multifile-search command added,
+ * new style option pane
+ *
  * Revision 1.82  1999/06/09 05:22:11  sp
  * Find next now supports multi-file searching, minor Perl mode tweak
  *

@@ -177,8 +177,8 @@ locate-bracket.label=$Locate Bracket
 ### Anchor menu
 anchor=set-anchor \
        goto-anchor \
-       - \
        select-anchor \
+       - \
        exchange-anchor
 anchor.label=Anchor Operations
 set-anchor.label=Set Anchor
@@ -252,6 +252,8 @@ search=find \
        hypersearch \
        hypersearch-selection \
        - \
+       multifile-search \
+       - \
        goto-line \
        select-line-range \
        - \
@@ -267,6 +269,7 @@ replace-in-selection.label=$Replace in Selection
 replace-all.label=Replace $All
 hypersearch.label=H$yperSearch...
 hypersearch-selection.label=Hy$perSearch for Selection...
+multifile-search.label=M$ultifile Search Settings...
 goto-line.label=Go to $Line...
 select-line-range.label=Select Li$ne Range...
 set-marker.label=Set $Marker...
@@ -515,25 +518,28 @@ options.editor.blinkCaret=Blinking caret
 options.editor.blockCaret=Block-shaped caret
 options.editor.electricBorders=Electric (auto scroll) borders
 options.editor.noTabs=Soft (emulated with spaces) tabs
-options.colors.label=Colors
-options.colors.table.type=Token type
-options.colors.table.color=Color
-options.colors.bgColor=View background
-options.colors.fgColor=View foreground
-options.colors.caretColor=Caret
-options.colors.selectionColor=Selection
-options.colors.lineHighlightColor=Line highlight
-options.colors.bracketHighlightColor=Bracket highlight
-options.colors.comment1Color=Comment 1
-options.colors.comment2Color=Comment 2
-options.colors.literal1Color=String literal
-options.colors.literal2Color=Object literal
-options.colors.labelColor=Label
-options.colors.keyword1Color=Keyword 1
-options.colors.keyword2Color=Keyword 2
-options.colors.keyword3Color=Keyword 3
-options.colors.operatorColor=Operator
-options.colors.invalidColor=Invalid token
+options.styles.label=Colors & Styles
+options.styles.colors=Colors:
+options.styles.styles=Styles:
+options.styles.object=Object
+options.styles.color=Color
+options.styles.style=Style
+options.styles.bgColor=View background
+options.styles.fgColor=View foreground
+options.styles.caretColor=Caret
+options.styles.selectionColor=Selection
+options.styles.lineHighlightColor=Line highlight
+options.styles.bracketHighlightColor=Bracket highlight
+options.styles.comment1Style=Comment 1
+options.styles.comment2Style=Comment 2
+options.styles.literal1Style=String literal
+options.styles.literal2Style=Object literal
+options.styles.labelStyle=Label
+options.styles.keyword1Style=Keyword 1
+options.styles.keyword2Style=Keyword 2
+options.styles.keyword3Style=Keyword 3
+options.styles.operatorStyle=Operator
+options.styles.invalidStyle=Invalid token
 options.keys.label=Shortcuts
 options.keys.name=Command
 options.keys.binding=Keyboard shortcut

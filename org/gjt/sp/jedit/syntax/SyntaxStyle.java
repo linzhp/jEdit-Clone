@@ -74,6 +74,9 @@ public class SyntaxStyle
 	 */
 	public Font getStyledFont(Font font)
 	{
+		if(font == null)
+			throw new NullPointerException("font param must not"
+				+ " be null");
 		if(font == lastFont)
 			return lastStyledFont;
 		lastFont = font;
@@ -97,6 +100,16 @@ public class SyntaxStyle
 			gfx.setFont(_font);
 		if(gfx.getColor() != color)
 			gfx.setColor(color);
+	}
+
+	/**
+	 * Returns a string representation of this object.
+	 */
+	public String toString()
+	{
+		return getClass().getName() + "[color=" + color +
+			(italics ? ",italics" : "") +
+			(bold ? ",bold" : "") + "]";
 	}
 
 	// private members
