@@ -40,13 +40,13 @@ public class jEdit
 	/**
 	 * The jEdit version.
 	 */
-	public static final String VERSION = "1.6pre1";
+	public static final String VERSION = "1.6pre2";
 	
 	/**
 	 * The date when a change was last made to the source code,
 	 * in <code>YYYYMMDD</code> format.
 	 */
-	public static final String BUILD = "19990417";
+	public static final String BUILD = "19990420";
 
 	/**
 	 * The user properties file.
@@ -212,6 +212,12 @@ public class jEdit
 		if(buffer == null)
 			buffer = newFile(null);
 
+		// Start plugins
+		for(int i = 0; i < plugins.size(); i++)
+		{
+			((Plugin)plugins.elementAt(i)).start();
+		}
+
 		// Create the view
 		newView(null,buffer);
 
@@ -361,13 +367,15 @@ public class jEdit
 	}
 
 	/**
-	 * Registers a plugin with the editor.
+	 * Registers a plugin with the editor. For the plugin to work
+	 * properly, it's <code>start()</code> method must be called
+	 * as well.
 	 * @param plugin The plugin
+	 * @see org.gjt.sp.jedit.Plugin#start()
 	 */
 	public static void addPlugin(Plugin plugin)
 	{
 		plugins.addElement(plugin);
-		plugin.start();
 	}
 
 	/**
@@ -1487,6 +1495,9 @@ public class jEdit
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.72  1999/04/20 05:11:16  sp
+ * jEdit class API change, Acu docs
+ *
  * Revision 1.71  1999/04/19 05:47:35  sp
  * ladies and gentlemen, 1.6pre1
  *
