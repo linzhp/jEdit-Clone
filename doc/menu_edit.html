@@ -66,8 +66,14 @@ can be specified in the <a href=menu_tools.html#options>Options</a> dialog.</td>
 </tr>
 
 <tr>
-<td>Select to Anchor</td> <td>C+u C+y</td> <td>Extends the selection to the
+<td>Select to Anchor</td> <td>C+u</td> <td>Extends the selection to the
 anchor position.</td>
+</tr>
+
+<tr>
+<td>Exchange Anchor</td> <td>C+e C+x</td> <td>Exchanges the anchor and the
+caret position. Once the anchor is set, can be used to quickly jump between
+two locations.</td>
 </tr>
 
 </table>
@@ -81,7 +87,12 @@ anchor position.</td>
 </tr>
 
 <tr>
-<td>Select Line No Indent</td> <td>C+u C+n</td> <td>Selects the current line,
+<td>Go to End of Indent</td> <td>C+i</td> <td>Positions the caret on the
+first non-whitespace character of the current line.</td>
+</tr>
+
+<tr>
+<td>Select Line No Indent</td> <td>C+e C+i</td> <td>Selects the current line,
 ignoring any leading white space.</td>
 </tr>
 
@@ -90,7 +101,7 @@ ignoring any leading white space.</td>
 </tr>
 
 <tr>
-<td>Delete Line No Indent</td> <td>C+d C+n</td> <td>Deletes the current line,
+<td>Delete Line No Indent</td> <td>C+d C+i</td> <td>Deletes the current line,
 ignoring any leading white space.</td>
 </tr>
 
@@ -107,6 +118,11 @@ caret position the end of the current line.</td>
 <tr>
 <td>Join Lines</td> <td>C+j</td> <td>Joins the current and the next line,
 deleting any white space from the start of the next line.</td>
+</tr>
+
+<tr>
+<td>Scroll to Current Line</td> <td>C+e C+l</td> <td>Scrolls to the current
+line, positioning it at the center of the viewport.</td>
 </tr>
 
 </table>
@@ -144,7 +160,7 @@ text ending with a double newline.</td>
 </tr>
 
 <tr>
-<td>Delete Paragraph</td> <td>C+d C+ENTER</td> <td>Deletes the paragraph
+<td>Delete Paragraph</td> <td>C+d C+p</td> <td>Deletes the paragraph
 containing the caret. A paragraph is a block of text ending with a double
 newline.</td>
 </tr>
@@ -185,6 +201,41 @@ current line if the selection is empty. Tabs will not be used if the
 `noTabs' buffer-local property is set - see the
 <a href=using.html#buffer-props>Buffer-Local Properties</a>
 help topic for details.</td>
+</tr>
+
+<tr>
+<td>Wing Comment</td> <td>C+e C+c</td> <td>Comments out the selected text,
+using mode-specific comment characters. For example, C code, when wing
+commented, looks like this:
+<pre>
+/* printf("%s: %s returned %d",argv[0],&amp;cmdline,retval);
+return 1; */
+</pre>
+</td>
+</tr>
+
+<tr>
+<td>Box Comment</td> <td>C+e C+b</td> <td>Comments out the selected text,
+using mode-specific comment characters. For example, C code, when box
+commented, looks like this:
+<pre>
+/* if(retval == 0) regurtate_gunkulator(&amp;params);
+ * printf("%s: %s returned %d",argv[0],&amp;cmdline,retval);
+ * return 1; */
+</pre>
+</td>
+</tr>
+
+<tr>
+<td>Block Comment</td> <td>C+e C+k</td> <td>Comments out the selected text,
+using mode-specific comment characters. For example, C code, when block
+commented, looks this like:
+<pre>
+// if(retval == 0) regurtate_gunkulator(&amp;params);
+// printf("%s: %s returned %d",argv[0],&amp;cmdline,retval);
+// return 1;
+</pre>
+</td>
 </tr>
 
 </table>

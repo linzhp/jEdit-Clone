@@ -1,225 +1,78 @@
 <html>
 <body>
 <h1>Version History</h1>
-<a href=#13final>Version 1.3final</a><br>
-<a href=#13pre5>Version 1.3pre5</a><br>
-<a href=#13pre4>Version 1.3pre4</a><br>
-<a href=#13pre3>Version 1.3pre3</a><br>
-<a href=#13pre2>Version 1.3pre2</a><br>
-<a href=#13pre1>Version 1.3pre1</a><br>
 
-<a name=13final>
-<h1>Version 1.3final</h1>
+<a href=#todo>To Do</a><br>
+<a href=#14pre1>Version 1.4pre1</a><br>
+
+<a name=todo>
+<h1>To Do</h1>
 </a>
 
-<h1>Enhancements</h1>
-
 <ul>
-<li>Minor documentation updates
-<li>`Tabs to Spaces' and `Spaces to Tabs' commands now have keyboard
-shortcuts
+<li>Smaller splash screen
+<li>Macro/extension language
+<li>Compiler error list
+<li>Class/method/variable browser
+<li>Close dialog that lists all dirty files
+<li>Uncomment command
+<li>Fix splash screen deadlock
 </ul>
 
-
-<a name=13pre5>
-<h1>Version 1.3pre5</h1>
-</a>
-
-<h2>New Features</h2>
-
-<ul>
-<li>Plugin documentation added
-<li>`Shift Indent Left' and `Shift Indent Right' commands added
-</ul>
-
-<h2>Enhancements</h2>
-
-<ul>
-<li>`Save to URL' now defaults to the current file's path, rather
-than the last entered URL
-<li>Removed the Plugin interface, we have a flag the the EditAction
-constructor instead
-</ul>
-
-<h2>Bug Fixes</h2>
-
-<ul>
-<li>Fixed bug with shell script mode selection
-<li>Exceptions are no longer printed if .jedit-desktop contains
-non-existent files
-<li>First buffer opened by desktop has wrong scroll/caret position
-<li>Auto indent doesn't work properly with tab sizes other than 8
-<li>Removed debug message from `Spaces to Tabs' command
-<li>Locate bracket didn't work in text mode
-</ul>
-
-<a name=13pre4>
-<h1>Version 1.3pre4</h1>
+<a name=14pre1>
+<h1>Version 1.4pre1</h1>
 </a>
 
 <h2>New Features</h2>
 
 <ul>
-<li>The color scheme can now be specified in the Options dialog
-<li>Font style can now be set in the Options dialog
-<li>New help system
-<li>Compile and make commands added
-<li>Netscape commands changed to generic Browser commands
+<li>Semi-intelligent indent in C/C++/Java modes
+<li>`Electric borders' - scrolling starts when caret is 4 lines from
+the top or bottom
+<li>`Generate Random Text' command added (it's only 2 Kb, it's funny, and
+it's useful in certain situations too)
+<li>Usage hints (ie, Tips of the Day) are displayed in the title bar
+until you start typing
+<li>Scroll to Line command added
+<li>Exchange Anchor and Caret command added
+<li>Go to End of Indent command added
+<li>Several commands for commenting out program source added
 </ul>
 
 <h2>Enhancements</h2>
 
 <ul>
-<li>join-lines command removed, join-no-indent's shortcut is C+j now
-<li>Updates to Windows install script
-<li>-usrprops= command line parameter added
-<li>`Execute Command' now displays command output in a separate window
-<li>Changed several key bindings to be more consistent/easier to type
+<li>Status bar removed, dirty and read only status now displayed in the
+title bar, line number is displayed in the menu bar
+<li>Warning if file has changed on disk by another program
+<li>Keyboard shortcuts added changed and improved
+<li>Added a `Close' button to the help viewer
+<li>New menu item class displays key bindings in the correct place
+<li>Tab size setting on Options dialog is now an editable combo box
+<li>MacOS look and feel option added to Options
+<li>Auto save is now safer (first we save to #filename#+tmp+# then move to
+#filename# so that even if jEdit crashes during the autosave, the data will
+be preserved)
+<li>Auto save is now a little faster (flag is set if file has changed since
+previous auto save, and it is only saved then)
+<li>Auto save now occurs every 15 seconds rather than 30
+<li>Server messages are now prefixed with jEdit: so they are easier to
+track down
+<li>Command Output window is now an independent frame
+<li>Backup is only made only once per file visit (like Emacs)
 </ul>
 
 <h2>Bug Fixes</h2>
-
 <ul>
-<li>More than one copy of a URL could be open at once
-<li>SyntaxTextArea.java didn't compile with Sun's javac
-<li>jEdit.parseColor() failed for certain hex numbers
-<li>Line and bracket highlighting wouldn't work after options dialog box
-was used
-<li>^ and $ don't work in regexps
-<li>Opening empty files caused an exception
-<li>Removed select-next,prev-line commands because Swing already defines
-Shift+Up &amp; Shift+Down that do the same thing
+<li>Buffers menu's modified flag wasn't updated after a marker was set
+<li>Compiler setting wasn't saved
+<li>`Next Paragraph' and `Delete Paragraph' had problems deleting the last
+paragraph of a file
+<li>`Delete Line' had problems deleting the last line of a file
+<li>Pressing Escape in the `unsaved changes' dialog would discard changes,
+rather than cancelling the operation
+<li>Various dialogs didn't respond properly to Escape
+<li>Fixed incorrect message in `save first' dialog displayed by Compile command
 </ul>
-
-<a name=13pre3>
-<h1>Version 1.3pre3</h1>
-</a>
-
-<h2>New Features</h2>
-
-<ul>
-<li>`Paste Previous' command added
-<li>Bracket highlighting
-</ul>
-
-<h2>Enhancements</h2>
-
-<ul>
-<li>Line highlighting color changed
-<li>Several new key bindings added
-<li>`Open Link' shortcut changed to C+e C+l
-<li>Caret blink rate can now be set
-<li>Splash screen (use -nosplash switch if you really hate it)
-<li>The blank line at the end of files isn't displayed anymore
-</ul>
-
-<h2>Bug Fixes</h2>
-
-<ul>
-<li>Expand Abbreviation was buggy
-<li>Recent file list wasn't updated properly by the `Options' dialog
-<li>Marker go to didn't work - Open Link should work now
-<li>A failed `Save As' could cause weird problems
-<li>Send command didn't set the subject line properly
-<li>Search and replace was buggy
-<li>join-lines and join-no-indent was buggy
-<li>delete-no-indent didn't delete the right amount of characters
-<li>Caret wasn't displayed with read only files
-<li>Makefile mode didn't colorize short variables properly
-<li>jEdit.regionMatches() had a bug, among other things this caused
-weird problems in HTML mode
-</ul>
-
-<a name=13pre2>
-<h1>Version 1.3pre2</h1>
-</a>
-
-<h2>New Features</h2>
-
-<ul>
-<li>`Join Lines' and `Join Lines No Indent' commands added
-<li>Various paragraph related commands added
-<li>Desktop feature for saving the file list on exit and opening those
-  files on startup
-<li>`Pipe Selection Through Command' command added
-<li>The current line is highlighted
-</ul>
-
-<h2>Enhancements</h2>
-
-<ul>
-<li>Expand abbreviation command updates
-<li>Search &amp; Replace tweaks
-<li>Replace All operation can now be undone in one operation
-<li>`Execute Command' command now displays any errors returned by the
-program in a dialog box
-<li>Improved caret saving
-<li>More documentation
-</ul>
-
-<h2>Bug Fixes</h2>
-
-</ul>
-<li>C+[ C+i and C+d C+i commands changed to C+[ C+n and C+d C+n because
-C+i creates the wrong key code on some Java virtual machines
-<li>Mode-specific defaults for buffer-local properties wouldn't work
-<li>Format command didn't work properly
-<li>Files weren't tokenized properly after being loaded
-<li>\$ inside $...$ constructs wasn't colorized correctly in TeX mode
-<li>select-anchor didn't work
-<li>print.java didn't compile with Sun's javac
-<li>Tab size setting in options dialog box didn't work properly
-<li>Java mode didn't recognise the `throw' keyword
-<li>`Replace All' command didn't work sometimes
-</ul>
-
-<a name=13pre1>
-<h1>Version 1.3pre1</h1>
-</a>
-
-<h2>New Features</h2>
-
-<ul>
-<li>New line-based commands added
-<li>JavaScript mode added
-<li>Auto indent mode uses spaces instead of tabs if `noTabs' buffer-local
-property is set
-<li>HTML mode colorizes JavaScript in &lt;script&gt; tags
-<li>Defaults for buffer-local properties are obtained from global
-properties
-<li>Multiple key shortcuts (a la Emacs)
-<li>Modes can implement KeyListener and DocumentListener to receive
-  events
-<li>BufferMgr, CommandMgr, PropsMgr merged into jEdit class
-<li>Commands changed to Swing actions
-</ul>
-
-<h2>Enhancements</h2>
-
-<ul>
-<li>Properties split into three files - jedit.props, jedit_gui.props,
-  jedit_keys.props
-<li>C/Java mode: object instantiations removed from critical path
-<li>HyperSearch command updated to use floating positions
-<li>Search And Replace dialog tweaked a little
-<li>Marker list is kept sorted by `Set Marker' command
-<li>New, easier to follow documentation format
-<li>jEdit batch file and shell script updates
-</ul>
-
-<h2>Bug Fixes</h2>
-
-<ul>
-<li>Several Java and C keywords were missing
-<li>Path names like ../../file could cause problems
-<li>Options dialog box contained a reference to the obsolete `jOpen'
-  program
-<li>Autosave files wouldn't be deleted properly after a `Save As' or
-  `Save to URL'
-<li>Search and replace wouldn't handle all exceptions properly
-<li>A \$ inside a $...$ construct wasn't colorized correctly in TeX mode
-<li>Open Recent setting in Options dialog box didn't work
-</ul>
-
 </body>
 </html>

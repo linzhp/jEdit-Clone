@@ -33,6 +33,7 @@ source files easier to read. jEdit colorizes the following file types:
 <li>Shell scripts
 <li>TeX files
 </ul>
+<b>[jEdit 1.3 adds JavaScript to this list]</b>
 
 <a name=newCommands>
 <h1>New Text Editing Commands</h1>
@@ -47,8 +48,10 @@ of current word
 <li>`Edit->Locate Bracket': finds bracket that matches the one after the 
 caret
 <li>`Edit->Locate Block': selects the current code block, enclosed in 
-brackets
+brackets <b>[As of jEdit 1.3, this is Edit->Block Operations->Select Block]</b>
 <li>`Edit->Locate Paragraph': selects the current paragraph
+<b>[As of jEdit 1.3, this has been replaced with several commands in the
+Edit->Paragraph Operations submenu]</b>
 </ul>
 
 <a name=bufferProps>
@@ -72,13 +75,14 @@ This can be turned off with the `-noserver' switch.
 <li>The `Mode' menu has been moved into the main menubar and out of the
 `Edit' menu, and the `Go To Line', `Set Marker', `Clear Marker' and
 `Go To Marker' commands have been moved from the `Edit' menu to the
-`Search' menu.
+`Search' menu. <b>[jEdit 1.3 rearranges the menu bar once again]</b>
 <li>Views now switch to the previous, rather than the first buffer when
 the current buffer is closed.
 <li>jEdit should start up faster when lots of files have been specified on
 the command line.
 <li>The `Open in Netscape' command now prompts if the file should be saved 
-first if there are unsaved changes.
+first if there are unsaved changes. <b>[In jEdit 1.3 the Open in Netscape
+command has been replaced by a more generic Open in WWW Browser]</b>
 <li>Several minor bugs in the JAR loader were fixed.
 <li>Several commands that were distributed as plugins have been moved into 
 the main program.

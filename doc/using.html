@@ -115,7 +115,15 @@ specific.</td>
 </tr>
 
 <tr>
-<td>mode</td> <td>The edit mode to use for the buffer. Default is none.</td>
+<td>indentOpenBrackets</td> <td>The list of brackets that will add whitespace
+to the start of the next line when indenting.In C, C++ and Java modes yhe
+default is `{'.</td>
+</tr>
+
+<tr>
+<td>indentCloseBrackets</td> <td>The list of brackets that will add whitespace
+to the start of the next line when indenting. In C, C++ and Java modes the
+default is `}'.</td>
 </tr>
 
 <tr>
@@ -127,6 +135,10 @@ box.</td>
 <tr>
 <td>maxLineLen</td> <td>The maximum line length, used by the
 <a href=menu_edit.html#format>Format</a> command. Default is 72.</td>
+</tr>
+
+<tr>
+<td>mode</td> <td>The edit mode to use for the buffer. Default is none.</td>
 </tr>
 
 <tr>
@@ -169,27 +181,18 @@ Each view can edit one buffer at a time, and any number of views can be
 editing a buffer. A change in one view is automatically propagated to
 all others editing the same buffer.<p>
 
-The user interface of views should be pretty self explanatory - there is
-only one part that needs explaining, the status bar. The status bar is
-the strip of writing at the bottom. A sample status bar looks like this:
+A view's title bar displays the file name it is editing. If the file
+is read only, `(read only)' is also displayed and no editing can take
+place. If the file has changed since the last time it was saved,
+`(modified)' is displayed.<p>
 
-<blockquote><pre>
-(--:**) editing.html (HTML, Line 32/53 60%)
-</pre></blockquote>
+The current line number, total number of lines in the document and the
+ratio of the two is displayed to the right of the menu bar.<p>
 
-The elements, from left to right, are:
-
-<ul>
-<li>(--) New file flag. If the current file is not on disk, this is **,
--- otherwise.
-<li>(:) Read only flag. If the current file is read only, this is /, :
-otherwise.
-<li>(**) Changed flag. If the current file has been changed since it was
-last saved, this is **, -- otherwise.
-<li>(HTML) The current file's edit mode.
-<li>(Line 32/53 60%) The current line number and the total number of
-lines in the file. The percentage is the ratio of the two.
-</ul>
+To assist with the editing of program source code, jEdit automatically
+highlights the corresponding opening bracket when the caret is in front
+of an opening bracket, and vice versa. This feature can be disabled in
+the <a href=menu_tools.html#options>Options</a> dialog box.<p>
 
 The <a href=menu_file.html#new-view>New View</a> command can be used to
 create a new view, and the <a href=menu_file.html#close-view>Close View</a>
