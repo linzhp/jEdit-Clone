@@ -852,6 +852,9 @@ public class View extends JFrame
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.74  1999/05/20 06:26:32  sp
+ * Find selection update
+ *
  * Revision 1.73  1999/05/18 07:26:40  sp
  * HelpViewer cursor tweak, minor view bug fix
  *
@@ -882,11 +885,5 @@ public class View extends JFrame
  * Revision 1.64  1999/04/23 07:35:10  sp
  * History engine reworking (shared history models, history saved to
  * .jedit-history)
- *
- * Revision 1.63  1999/04/21 07:39:18  sp
- * FAQ added, plugins can now add panels to the options dialog
- *
- * Revision 1.62  1999/04/20 06:38:26  sp
- * jEdit.addPluginMenu() method added
  *
  */

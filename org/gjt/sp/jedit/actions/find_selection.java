@@ -34,11 +34,6 @@ public class find_selection extends EditAction
 	{
 		View view = getView(evt);
 		Buffer buffer = view.getBuffer();
-		String selection = view.getTextArea()
-			.getSelectedText();
-		if(selection != null)
-			new SearchAndReplace(view,selection);
-		else
-			view.getToolkit().beep();
+		new SearchAndReplace(view,view.getTextArea().getSelectedText());
 	}
 }
