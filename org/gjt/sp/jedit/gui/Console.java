@@ -177,11 +177,14 @@ implements ActionListener, ListSelectionListener
 					case 'd':
 						buf.append(buffer.getFile().getParent());
 						break;
+					case 'f':
+						buf.append(buffer.getPath());
+						break;
 					case 'j':
 						buf.append(jEdit.getJEditHome());
 						break;
-					case 'f':
-						buf.append(buffer.getPath());
+					case 'n':
+						buf.append(buffer.getName());
 						break;
 					case '$':
 						buf.append('$');
@@ -629,6 +632,9 @@ implements ActionListener, ListSelectionListener
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.31  1999/05/18 04:40:12  sp
+ * $n in console, minor GUI tweak
+ *
  * Revision 1.30  1999/05/11 09:05:10  sp
  * New version1.6.html file, some other stuff perhaps
  *
