@@ -192,6 +192,9 @@ public abstract class TokenMarker
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.9  1999/03/13 09:11:46  sp
+ * Syntax code updates, code cleanups
+ *
  * Revision 1.8  1999/03/13 08:50:39  sp
  * Syntax colorizing updates and cleanups, general code reorganizations
  *

@@ -65,6 +65,9 @@ public class SyntaxEditorKit extends DefaultEditorKit implements ViewFactory
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.7  1999/03/13 09:11:46  sp
+ * Syntax code updates, code cleanups
+ *
  * Revision 1.6  1999/03/13 08:50:39  sp
  * Syntax colorizing updates and cleanups, general code reorganizations
  *
