@@ -1286,7 +1286,7 @@ public class jEdit
 	{
 		public void propertiesChanged(EditorEvent evt)
 		{
-			propertiesChanged();
+			jEdit.propertiesChanged();
 		}
 	}
 
@@ -1574,6 +1574,10 @@ public class jEdit
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.48  1999/03/15 03:12:34  sp
+ * Fixed compile error with javac that jikes silently ignored (FUCK YOU IBM),
+ * maybe some other stuff fixed too
+ *
  * Revision 1.47  1999/03/14 02:22:13  sp
  * Syntax colorizing tweaks, server bug fix
  *
