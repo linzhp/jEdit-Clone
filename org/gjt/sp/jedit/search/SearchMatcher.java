@@ -40,6 +40,7 @@ public interface SearchMatcher
 	 * Returns the specified text, with any substitution specified
 	 * within this matcher performed.
 	 * @param text The text
+	 * @return Null if no matches were found, or the changed string
 	 */
 	public String substitute(String text);
 }
@@ -47,6 +48,9 @@ public interface SearchMatcher
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.3  1999/06/06 05:05:25  sp
+ * Search and replace tweaks, Perl/Shell Script mode updates
+ *
  * Revision 1.2  1999/05/29 08:06:56  sp
  * Search and replace overhaul
  *

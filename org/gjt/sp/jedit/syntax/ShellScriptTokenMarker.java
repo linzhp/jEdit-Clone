@@ -165,6 +165,7 @@ loop:		for(int i = offset; i < length; i++)
 				else if(token == Token.NULL)
 				{
 					token = Token.LITERAL1;
+					lineInfo[lineIndex].obj = null;
 					addToken(i - lastOffset,Token.NULL);
 					cmdState = 2; /*afterCmd*/
 					lastOffset = i;
@@ -242,6 +243,9 @@ loop:		for(int i = offset; i < length; i++)
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.16  1999/06/06 05:05:25  sp
+ * Search and replace tweaks, Perl/Shell Script mode updates
+ *
  * Revision 1.15  1999/06/05 00:22:58  sp
  * LGPL'd syntax package
  *

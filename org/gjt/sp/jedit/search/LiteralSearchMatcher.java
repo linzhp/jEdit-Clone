@@ -75,28 +75,31 @@ public class LiteralSearchMatcher implements SearchMatcher
 	 */
 	public String substitute(String text)
 	{
-		if(text.length() == 0)
-			return text;
-
-		StringBuffer buf = new StringBuffer();
+		StringBuffer buf = null;
 		int lastMatch = 0;
 		int searchLen = search.length();
 		int len = text.length() - searchLen + 1;
+		boolean matchFound = false;
 
 		int i = 0;
 		while(i < len)
 		{
 			if(text.regionMatches(ignoreCase,i,search,0,searchLen))
 			{
+				if(buf == null)
+					buf = new StringBuffer();
 				if(i != lastMatch)
 					buf.append(text.substring(lastMatch,i));
 				buf.append(replace);
 				i += searchLen;
 				lastMatch = i;
+				matchFound = true;
 			}
 			else
 				i++;
 		}
+		if(!matchFound)
+			return null;
 		if(text.length() != lastMatch)
 			buf.append(text.substring(lastMatch,text.length()));
 		return buf.toString();
@@ -111,6 +114,9 @@ public class LiteralSearchMatcher implements SearchMatcher
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.2  1999/06/06 05:05:25  sp
+ * Search and replace tweaks, Perl/Shell Script mode updates
+ *
  * Revision 1.1  1999/05/29 08:06:56  sp
  * Search and replace overhaul
  *

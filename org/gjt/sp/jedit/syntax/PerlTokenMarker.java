@@ -29,6 +29,10 @@ import javax.swing.text.Segment;
 public class PerlTokenMarker extends TokenMarker
 {
 	// public members
+	public static final byte S_ONE = Token.INTERNAL_FIRST;
+	public static final byte S_TWO = Token.INTERNAL_FIRST + 1;
+	public static final byte S_END = Token.INTERNAL_FIRST + 2;
+
 	public PerlTokenMarker()
 	{
 		this(getKeywords());
@@ -46,7 +50,8 @@ public class PerlTokenMarker extends TokenMarker
 		int lastOffset = offset;
 		int lastKeyword = offset;
 		char matchChar = '\0';
-		int matchCount = 0;
+		boolean matchCharBracket = false;
+		boolean matchSpacesAllowed = false;
 		int length = line.count + offset;
 
 		if(token == Token.LITERAL1 && lineIndex != 0
@@ -77,7 +82,8 @@ loop:		for(int i = offset; i < length; i++)
 			if(token == Token.KEYWORD2)
 			{
 				backslash = false;
-				if(!Character.isLetterOrDigit(c) && c != '_')
+				if(!Character.isLetterOrDigit(c) && c != '_'
+					&& c != '#' && c != '\'' && c != ':')
 				{
 					token = Token.NULL;
 					if(i != offset && array[i-1] == '$')
@@ -95,18 +101,61 @@ loop:		for(int i = offset; i < length; i++)
 					}
 				}
 			}
-			else if(token == Token.KEYWORD3)
+			else if(token == S_ONE || token == S_TWO)
 			{
-				if(backslash)
+				if(c == '\\')
+					backslash = !backslash;
+				else if(backslash)
 					backslash = false;
 				else
 				{
-					if(c == matchChar && --matchCount == 0)
+					if(matchChar == '\0')
 					{
-						token = Token.NULL;
-						addToken(i1 - lastOffset,
-							Token.KEYWORD3);
-						lastOffset = i1;
+						if(c == ' ' || c == '\t'
+							&& !matchSpacesAllowed)
+							continue;
+						else
+							matchChar = c;
+					}
+					else
+					{
+						switch(matchChar)
+						{
+						case '(':
+							matchChar = ')';
+							matchCharBracket = true;
+							break;
+						case '[':
+							matchChar = ']';
+							matchCharBracket = true;
+							break;
+						case '{':
+							matchChar = '}';
+							matchCharBracket = true;
+							break;
+						case '<':
+							matchChar = '>';
+							matchCharBracket = true;
+							break;
+						default:
+							matchCharBracket = false;
+							break;
+						}
+						if(c != matchChar)
+							continue;
+						if(token == S_TWO)
+						{
+							token = S_ONE;
+							if(matchCharBracket)
+								matchChar = '\0';
+						}
+						else
+						{
+							token = S_END;
+							addToken(i1 - lastOffset,
+								Token.LITERAL2);
+							lastOffset = i1;
+						}
 					}
 				}
 				continue;
@@ -120,7 +169,10 @@ loop:		for(int i = offset; i < length; i++)
 			case '#':
 				if(backslash)
 					backslash = false;
-				else if(token == Token.NULL)
+				else if(token == Token.NULL
+					|| token == S_ONE
+					|| token == S_TWO
+					|| lastKeyword == i)
 				{
 					addToken(i - lastOffset,Token.NULL);
 					addToken(length - i,Token.COMMENT1);
@@ -151,7 +203,16 @@ loop:		for(int i = offset; i < length; i++)
 					}
 				}
 				break;
-			case '&': case '$': case '%': case '@':
+			case '$':
+				// this is done so that $" is handled
+				// correctly in string literals
+				if(token == Token.LITERAL1
+					|| token == Token.LITERAL2)
+				{
+					backslash = true;
+					break;
+				}
+			case '&': case '%': case '@':
 				if(token == Token.NULL && length - i > 1)
 				{
 					if(c == '&' && array[i+1] == '&')
@@ -170,6 +231,7 @@ loop:		for(int i = offset; i < length; i++)
 				else if(token == Token.NULL)
 				{
 					token = Token.LITERAL1;
+					lineInfo[lineIndex].obj = null;
 					addToken(i - lastOffset,Token.NULL);
 					lastOffset = i;
 				}
@@ -183,7 +245,7 @@ loop:		for(int i = offset; i < length; i++)
 			case '\'':
 				if(backslash)
 					backslash = false;
-				else if(token == Token.NULL)
+				else if(token == Token.NULL && lastKeyword == i)
 				{
 					token = Token.LITERAL2;
 					addToken(i - lastOffset,Token.NULL);
@@ -192,7 +254,7 @@ loop:		for(int i = offset; i < length; i++)
 				else if(token == Token.LITERAL2)
 				{
 					token = Token.NULL;
-					addToken(i1 - lastOffset,Token.LITERAL1);
+					addToken(i1 - lastOffset,Token.LITERAL2);
 					lastOffset = i1;
 				}
 				break;
@@ -238,81 +300,52 @@ loop:		for(int i = offset; i < length; i++)
 					lastOffset = i1;
 				}
 				break;
-			case 's': case 'y': case 't':
-			case 'm': case 'q':
-				if(token == Token.NULL && length - i > 2)
-				{
-					char ch = array[i1];
-					if(!Character.isLetter(ch) && ch != '_'
-						&& ch != ' ')
-					{
-						if(c == 's')
-						{
-							matchCount = 2;
-							i++;
-						}
-						else if(c == 'y')
-						{
-							matchCount = 2;
-							i++;
-						}
-						else if(c == 'm')
-						{
-							matchCount = 1;
-							i++;
-						}
-					}
-					else if(c == 't')
-					{
-						if(array[i1] == 'r')
-						{
-							matchCount = 2;
-							i += 2;
-						}
-					}
-					else if(c == 'q')
-					{
-						c = array[i1];
-						if(c == 'q' || c == 'w' || c == 'x')
-						{
-							matchCount = 1;
-							i += 2;
-						}
-						else if(!Character.isLetter(c))
-						{
-							matchCount = 1;
-							i++;
-						}
-					}
-				}/*
-				else
-					break;*/ // no m<2 chars> or q<2 chars> keywords
 			case '/': case '?':
-				if(token == Token.NULL && length - i > 1)
+				if(token == Token.NULL && 
+					lastKeyword == i && length - i > 1)
 				{
-					matchChar = array[i];
-					if(!Character.isLetter(matchChar))
-					{
-						char ch = array[i+1];
-						if(c == '/' || c == '?')
-						{
-							matchCount = 1;
-							if(ch == '\t' || ch == ' ')
-								break;
-						}
-						token = Token.KEYWORD3;
-						addToken(i - lastOffset,Token.NULL);
-						lastOffset = i;
-					}
+					backslash = false;
+					char ch = array[i1];
+					if(ch == '\t' || ch == ' ')
+						break;
+					matchChar = c;
+					matchSpacesAllowed = false;
+					token = S_ONE;
+					addToken(i - lastOffset,Token.NULL);
+					lastOffset = i;
+					break;
 				}
 			default:
 				backslash = false;
-				if(token == Token.NULL && c != '_' &&
-					!Character.isLetter(c))
+				if(c != '_' && !Character.isLetterOrDigit(c))
 				{
+					if(token == S_END)
+					{
+						addToken(i - lastOffset,Token.LITERAL2);
+						token = Token.NULL;
+						lastOffset = i;
+						break;
+					}
+					else if(token != Token.NULL)
+					{
+						lastKeyword = i1;
+						break;
+					}
+
 					int len = i - lastKeyword;
 					byte id = keywords.lookup(line,lastKeyword,len);
-					if(id != Token.NULL)
+					if(id == S_ONE || id == S_TWO)
+					{
+						addToken(i - lastOffset,Token.LITERAL2);
+						lastOffset = i;
+						if(c == ' ' || c == '\t')
+							matchChar = '\0';
+						else
+							matchChar = c;
+						matchSpacesAllowed = true;
+						token = id;
+					}
+					else if(id != Token.NULL)
 					{
 						if(lastKeyword != lastOffset)
 							addToken(lastKeyword - lastOffset,Token.NULL);
@@ -328,7 +361,9 @@ loop:		for(int i = offset; i < length; i++)
 		{
 			int len = length - lastKeyword;
 			byte id = keywords.lookup(line,lastKeyword,len);
-			if(id != Token.NULL)
+			if(id == S_ONE || id == S_TWO)
+				token = id;
+			else if(id != Token.NULL)
 			{
 				if(lastKeyword != lastOffset)
 					addToken(lastKeyword - lastOffset,Token.NULL);
@@ -336,16 +371,27 @@ loop:		for(int i = offset; i < length; i++)
 				lastOffset = length;
 			}
 		}
-		if(lastOffset != length)
+		if(token == Token.KEYWORD2)
 		{
-			if(token == Token.KEYWORD3)
-			{
-				addToken(length - lastOffset,Token.INVALID);
-				token = Token.NULL;
-			}
-			else
-				addToken(length - lastOffset,token);
+			addToken(length - lastOffset,Token.KEYWORD2);
+			token = Token.NULL;
 		}
+		else if(token == Token.KEYWORD3) 
+		{
+			addToken(length - lastOffset,Token.INVALID);
+			token = Token.NULL;
+		}
+		else if(token == S_ONE || token == S_TWO)
+		{
+			addToken(length - lastOffset,Token.LITERAL2);
+		}
+		else if(token == S_END)
+		{
+			addToken(length - lastOffset,Token.LITERAL2);
+			token = Token.NULL;
+		}
+		else
+			addToken(length - lastOffset,token);
 		return token;
 	}
 
@@ -374,6 +420,15 @@ loop:		for(int i = offset; i < length; i++)
 			perlKeywords.add("unless",Token.KEYWORD1);
 			perlKeywords.add("until",Token.KEYWORD1);
 			perlKeywords.add("while",Token.KEYWORD1);
+
+			perlKeywords.add("m",S_ONE);
+			perlKeywords.add("q",S_ONE);
+			perlKeywords.add("qq",S_ONE);
+			perlKeywords.add("qw",S_ONE);
+			perlKeywords.add("qx",S_ONE);
+			perlKeywords.add("s",S_TWO);
+			perlKeywords.add("tr",S_TWO);
+			perlKeywords.add("y",S_TWO);
 		}
 		return perlKeywords;
 	}	
@@ -382,6 +437,9 @@ loop:		for(int i = offset; i < length; i++)
 /**
  * ChangeLog:
  * $Log$
+ * Revision 1.4  1999/06/06 05:05:25  sp
+ * Search and replace tweaks, Perl/Shell Script mode updates
+ *
  * Revision 1.3  1999/06/05 00:22:58  sp
  * LGPL'd syntax package
  *

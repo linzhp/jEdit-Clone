@@ -76,7 +76,11 @@ public class RESearchMatcher implements SearchMatcher
 	 */
 	public String substitute(String text)
 	{
-		return re.substituteAll(text,replace);
+		String str = re.substituteAll(text,replace);
+		if(str.equals(text)) // XXX slow
+			return null;
+		else
+			return str;
 	}
 
 	// private members
@@ -87,6 +91,9 @@ public class RESearchMatcher implements SearchMatcher
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.3  1999/06/06 05:05:25  sp
+ * Search and replace tweaks, Perl/Shell Script mode updates
+ *
  * Revision 1.2  1999/05/30 01:28:43  sp
  * Minor search and replace updates
  *

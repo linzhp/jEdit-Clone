@@ -312,7 +312,7 @@ public class SearchAndReplace
 				lineEnd -= lineStart;
 				String line = buffer.getText(lineStart,lineEnd);
 				String newLine = matcher.substitute(line);
-				if(line.equals(newLine)) // XXX slow
+				if(newLine == null)
 					continue;
 				buffer.remove(lineStart,lineEnd);
 				buffer.insertString(lineStart,newLine,null);
@@ -379,6 +379,9 @@ public class SearchAndReplace
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.5  1999/06/06 05:05:25  sp
+ * Search and replace tweaks, Perl/Shell Script mode updates
+ *
  * Revision 1.4  1999/06/03 08:24:13  sp
  * Fixing broken CVS
  *

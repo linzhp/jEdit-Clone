@@ -205,6 +205,9 @@ public abstract class TokenMarker
 		if(id >= Token.INTERNAL_FIRST && id <= Token.INTERNAL_LAST)
 			throw new InternalError("Invalid id: " + id);
 
+		if(length == 0 && id != Token.END)
+			return;
+
 		if(firstToken == null)
 		{
 			firstToken = new Token(length,id);
@@ -270,6 +273,9 @@ public abstract class TokenMarker
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.25  1999/06/06 05:05:25  sp
+ * Search and replace tweaks, Perl/Shell Script mode updates
+ *
  * Revision 1.24  1999/06/05 00:22:58  sp
  * LGPL'd syntax package
  *

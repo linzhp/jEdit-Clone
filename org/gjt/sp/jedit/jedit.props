@@ -236,6 +236,7 @@ mode.perl.blockComment=#
 mode.perl.indentOpenBrackets={
 mode.perl.indentCloseBrackets=}
 mode.extension.pl=perl
+mode.extension.pm=perl
 mode.firstline.#!/usr/bin/perl=perl
 
 # Props mode
