@@ -19,11 +19,11 @@
 
 package org.gjt.sp.jedit.syntax;
 
-import javax.swing.text.Segment;
+import javax.swing.text.*;
 
 /**
- * Class with several segment-related functions used by jEdit's syntax
- * colorizing subsystem.
+ * Class with several segment and bracket matching functions used by
+ * jEdit's syntax colorizing subsystem.
  *
  * @author Slava Pestov
  * @version $Id$
@@ -90,12 +90,145 @@ public class SyntaxUtilities
 		return true;
 	}
 
+	/**
+	 * Finds the previous instance of an opening bracket in the buffer.
+	 * The closing bracket is needed as well to handle nested brackets
+	 * properly.
+	 * @param doc The document to search in
+	 * @param dot The starting position
+	 * @param openBracket The opening bracket
+	 * @param closeBracket The closing bracket
+	 * @exception BadLocationException if `dot' is out of range
+	 */
+	public static int locateBracketBackward(Document doc, int dot,
+		char openBracket, char closeBracket)
+		throws BadLocationException
+	{
+		int count;
+		Element map = doc.getDefaultRootElement();
+
+		// check current line
+		int lineNo = map.getElementIndex(dot);
+		Element lineElement = map.getElement(lineNo);
+		int start = lineElement.getStartOffset();
+		int offset = scanBackwardLine(doc.getText(start,dot - start),
+			openBracket,closeBracket,0);
+		count = -offset - 1;
+		if(offset >= 0)
+			return start + offset;
+
+		// check previous lines
+		for(int i = lineNo - 1; i >= 0; i--)
+		{
+			lineElement = map.getElement(i);
+			start = lineElement.getStartOffset();
+			offset = scanBackwardLine(doc.getText(start,
+				lineElement.getEndOffset() - start),
+				openBracket,closeBracket,count);
+			count = -offset - 1;
+			if(offset >= 0)
+				return start + offset;
+		}
+
+		// not found
+		return -1;
+	}
+
+	/**
+	 * Finds the next instance of a closing bracket in the buffer.
+	 * The opening bracket is needed as well to handle nested brackets
+	 * properly.
+	 * @param doc The document to search in
+	 * @param dot The starting position
+	 * @param openBracket The opening bracket
+	 * @param closeBracket The closing bracket
+	 * @exception BadLocationException if `dot' is out of range
+	 */
+	public static int locateBracketForward(Document doc, int dot,
+		char openBracket, char closeBracket)
+		throws BadLocationException
+	{
+		int count;
+		Element map = doc.getDefaultRootElement();
+
+		// check current line
+		int lineNo = map.getElementIndex(dot);
+		Element lineElement = map.getElement(lineNo);
+		int start = lineElement.getStartOffset();
+		int end = lineElement.getEndOffset();
+		int offset = scanForwardLine(doc.getText(dot + 1,end - (dot + 1)),
+			openBracket,closeBracket,0);
+		count = -offset - 1;
+		if(offset >= 0)
+			return dot + offset + 1;
+
+		// check following lines
+		for(int i = lineNo + 1; i < map.getElementCount(); i++)
+		{
+			lineElement = map.getElement(i);
+			start = lineElement.getStartOffset();
+			offset = scanForwardLine(doc.getText(start,
+				lineElement.getEndOffset() - start),
+				openBracket,closeBracket,count);
+			count = -offset - 1;
+			if(offset >= 0)
+				return start + offset;
+		}
+
+		// not found
+		return -1;
+	}
+
+	// private members
 	private SyntaxUtilities() {}
+
+	// the return value is as follows:
+	// >= 0: offset in line where bracket was found
+	// < 0: -1 - count
+	private static int scanBackwardLine(String line, char openBracket,
+		char closeBracket, int count)
+	{
+		for(int i = line.length() - 1; i >= 0; i--)
+		{
+			char c = line.charAt(i);
+			if(c == closeBracket)
+				count++;
+			else if(c == openBracket)
+			{
+				if(--count < 0)
+					return i;
+			}
+		}
+		return -1 - count;
+	}
+
+	// the return value is as follows:
+	// >= 0: offset in line where bracket was found
+	// < 0: -1 - count
+	private static int scanForwardLine(String line, char openBracket,
+		char closeBracket, int count)
+	{
+		for(int i = 0; i < line.length(); i++)
+		{
+			char c = line.charAt(i);
+			if(c == openBracket)
+				count++;
+			else if(c == closeBracket)
+			{
+				if(--count < 0)
+					return i;
+			}
+		}
+		return -1 - count;
+	}
 }
 
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.2  1999/03/27 02:46:17  sp
+ * SyntaxTextArea is now modular
+ *
  * Revision 1.1  1999/03/13 09:11:46  sp
  * Syntax code updates, code cleanups
  *
