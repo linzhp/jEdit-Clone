@@ -1,0 +1,195 @@
+<html>
+<head>
+<title>jEdit Event System</title>
+</head>
+
+<body>
+
+<h1>jEdit Event System</h1>
+
+<ul>
+<li><a href=#intro>Introduction</a>
+<li><a href=#over>Overview</a>
+<li><a href=#editor>Editor Events</a>
+<li><a href=#buffer>Buffer Events</a>
+<li><a href=#view>View Events</a>
+<li><a href=#multi>The EventMulticaster Class</a>
+</ul>
+
+<a name=intro>
+<h1>Introduction</h1>
+</a>
+
+In order to allow various components to communicate without having
+knowledge of each other's internals, jEdit has an event system, much like
+that of the AWT.
+
+<a name=over>
+<h1>Overview</h1>
+</a>
+
+Each event source generally defines the following three methods for each
+event type it can fire:
+
+<ul>
+<li><code>add<i>Type</i>Listener(<i>Type</i>Listener listener)</code> -
+adds a listener for events of type <i>Type</i> to that object
+<li><code>remove<i>Type</i>Listener(<i>Type</i>Listener listener)</code> -
+removes a listener for events of type <i>Type</i> from that object
+<li><code>fire<i>Type</i>Event(<i>Type</i>Event evt)</code> - fires the
+specified event to all registered listeners
+</ul>
+
+An <i>event</i> is an object that carries various pieces of information,
+such as the event subtype, the time when the event was fired, and what
+objects, if any, were involved. All jEdit events extend the
+<a href=api/org.gjt.sp.jedit.event.AbstractEditorEvent.html>
+org.gjt.sp.jedit.event.AbstractEditorEvent</a> class.<p>
+
+A <i>listener</i> is an interface that defines one method for each event
+subtype. All jEdit listeners extend the
+<code>java.util.EventListener</code> interface.<p>
+
+An <i>adapter</i> is a special type of listener. It is a class that
+implements a listener interface, with all empty methods. It allows one
+to extend that class, only overriding the methods of interest.<p>
+
+To receive events, one would implement a listener (either by implementing
+the interface directly, or extending an adapter) and add that listener
+to the event source with an <code>add<i>Type</i>Listener()</code> method.<p>
+
+When receiving events is no longer necessary, the
+<code>remove<i>Type</i>Listener()</code> method can be used to remove a
+listener from the event source.
+
+<a name=editor>
+<h1>Editor Events</h1>
+</a>
+
+The most frequently used event type is the editor event. Editor events
+are fired by the <code>jEdit</code> class and are used to notify listeners
+of the following:
+
+<ul>
+<li>Buffers being created and closed
+<li>Views being created and closed
+<li>Properties being changed
+</ul>
+
+The following methods relate to editor events:
+
+<ul>
+<li><a href=api/org.gjt.sp.jedit.jEdit.html#addEditorListener(org.gjt.sp.jedit.event.EditorListener)>
+jEdit.addEditorListener()</a>
+<li><a href=api/org.gjt.sp.jedit.jEdit.html#removeEditorListener(org.gjt.sp.jedit.event.EditorListener)>
+jEdit.removeEditorListener()</a>
+<li><a href=api/org.gjt.sp.jedit.jEdit.html#fireEditorEvent(org.gjt.sp.jedit.event.EditorEvent)>
+jEdit.fireEditorEvent()</a> (not normally used)
+</ul>
+
+The following classes and interfaces relate to editor events:
+
+<ul>
+<li><a href=api/org.gjt.sp.jedit.event.EditorEvent.html>
+EditorEvent</a>
+<li><a href=api/org.gjt.sp.jedit.event.EditorListener.html>
+EditorListener</a>
+<li><a href=api/org.gjt.sp.jedit.event.EditorAdapter.html>
+EditorAdapter</a>
+</ul>
+
+<a name=buffer>
+<h1>Buffer Events</h1>
+</a>
+
+Buffer events are fired by instances of the <code>Buffer</code> class and
+are used to notify listeners of the following:
+
+<ul>
+<li>The dirty flag being set and cleared (buffer being modified and saved)
+<li>Markers being added and removed
+<li>The line separator being changed
+<li>The edit mode being changed
+</ul>
+
+The following methods relate to buffer events:
+
+<ul>
+<li><a href=api/org.gjt.sp.jedit.Buffer.html#addBufferListener(org.gjt.sp.jedit.event.BufferListener)>
+Buffer.addBufferListener()</a>
+<li><a href=api/org.gjt.sp.jedit.Buffer.html#removeBufferListener(org.gjt.sp.jedit.event.BufferListener)>
+Buffer.removeBufferListener()</a>
+<li><a href=api/org.gjt.sp.jedit.Buffer.html#fireBufferEvent(org.gjt.sp.jedit.event.BufferEvent)>
+Buffer.fireBufferEvent()</a> (not normally used)
+</ul>
+
+The following classes and interfaces relate to buffer events:
+
+<ul>
+<li><a href=api/org.gjt.sp.jedit.event.BufferEvent.html>
+BufferEvent</a>
+<li><a href=api/org.gjt.sp.jedit.event.BufferListener.html>
+BufferListener</a>
+<li><a href=api/org.gjt.sp.jedit.event.BufferAdapter.html>
+BufferAdapter</a>
+</ul>
+
+<a name=view>
+<h1>View Events</h1>
+</a>
+
+View events are fired by instances of the <code>View</code> class and are
+used to notify listeners of the following:
+
+<ul>
+<li>The view's buffer being changed
+<li>The view's current error being changed
+</ul>
+
+The following methods relate to view events:
+
+<ul>
+<li><a href=api/org.gjt.sp.jedit.View.html#addViewListener(org.gjt.sp.jedit.event.ViewListener)>
+View.addViewListener()</a>
+<li><a href=api/org.gjt.sp.jedit.View.html#removeViewListener(org.gjt.sp.jedit.event.ViewListener)>
+View.removeViewListener()</a>
+<li><a href=api/org.gjt.sp.jedit.View.html#fireViewEvent(org.gjt.sp.jedit.event.ViewEvent)>
+View.fireViewEvent()</a> (not normally used)
+</ul>
+
+The following classes and interfaces relate to view events:
+
+<ul>
+<li><a href=api/org.gjt.sp.jedit.event.ViewEvent.html>
+ViewEvent</a>
+<li><a href=api/org.gjt.sp.jedit.event.ViewListener.html>
+ViewListener</a>
+<li><a href=api/org.gjt.sp.jedit.event.ViewAdapter.html>
+ViewAdapter</a>
+</ul>
+
+<a name=multi>
+<h1>The EventMulticaster Class</h1>
+</a>
+
+The
+<a href=api/org.gjt.sp.jedit.event.EventMulticaster.html>EventMulticaster</a>
+class is the core of the jEdit event system. It manages lists of event
+listeners and fires events at them. If you wish to implement your own event
+source and/or event type, this class is the easiest way to do so. It implements
+the following methods of interest:
+
+<ul>
+<li><code>addListener(AbstractEventListener listener)</code> - adds an
+event listener
+<li><code>removeListener(AbstractEventListener listener)</code> - removes an
+event listener
+<li><code>fireEvent(AbstractEditorEvent evt)</code> - fires the event to
+all listeners that can receive it
+</ul>
+
+Multiple types of listeners can be registered with each multicaster. When
+an event is fired, listeners that can't understand it are skipped.
+
+</body>
+</html>
