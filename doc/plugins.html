@@ -75,12 +75,15 @@ Property entries have a .props extension. The property file format is
 described in the API documentation for the <code>java.util.Properties</code>
 class.<p>
 
-Class entries have a .class extension and are standard Java class files.
+Class entries have a .class extension and are standard Java class files.<p>
+
+Because there is no Javadoc documentation available yet, you will have
+to refer to the source when developing jEdit plugins.
 
 <h2>Edit Modes</h2>
 
-jEdit edit modes implement the <code><a href=api/org.gjt.sp.jedit.Mode.html>
-org.gjt.sp.jedit.Mode</a></code> interface. The following table lists
+jEdit edit modes implement the <code>org.gjt.sp.jedit.Mode</code> interface.
+The following table lists
 properties that can be defined for edit modes.
 
 <table border=3>
@@ -108,8 +111,7 @@ first line is <code>firstline</code></td>
 
 <h2>Commands</h2>
 
-jEdit commands extend the <code><a href=api/org.gjt.sp.jedit.EditAction.html>
-org.gjt.sp.jedit.EditAction</a></code> class.<p>
+jEdit commands extend the <code>org.gjt.sp.jedit.EditAction</a></code> class.<p>
 The command's menu label is stored in the <code>&lt;command&gt;.label</code>
 property where <code>command</code> is the command name. The shortcut can
 also be specified with the <code>&lt;command&gt;.shortcut</code> property.
