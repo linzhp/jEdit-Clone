@@ -30,7 +30,7 @@ import java.net.*;
 import java.util.*;
 import java.util.zip.*;
 import org.gjt.sp.jedit.event.*;
-import org.gjt.sp.jedit.gui.SyntaxTextArea;
+import org.gjt.sp.jedit.gui.JEditTextArea;
 import org.gjt.sp.jedit.syntax.*;
 
 /**
@@ -130,7 +130,7 @@ public class Buffer extends DefaultSyntaxDocument
 				view.getToolkit().beep();
 				return;
 			}
-			SyntaxTextArea textArea = view.getTextArea();
+			JEditTextArea textArea = view.getTextArea();
 			String selection = textArea.getSelectedText();
 			if(selection == null)
 				selection = "";
@@ -379,87 +379,6 @@ public class Buffer extends DefaultSyntaxDocument
 		anchor = null;
 
 		init = false;
-	}
-
-	/**
-	 * Finds the previous instance of an opening bracket in the buffer.
-	 * The closing bracket is needed as well to handle nested brackets
-	 * properly.
-	 * @param dot The starting position
-	 * @param openBracket The opening bracket
-	 * @param closeBracket The closing bracket
-	 * @exception BadLocationException if `dot' is out of range
-	 */
-	public int locateBracketBackward(int dot, char openBracket,
-		char closeBracket)
-		throws BadLocationException
-	{
-		int count;
-		Element map = getDefaultRootElement();
-		// check current line
-		int lineNo = map.getElementIndex(dot);
-		Element lineElement = map.getElement(lineNo);
-		int start = lineElement.getStartOffset();
-		int offset = scanBackwardLine(getText(start,dot - start),
-			openBracket,closeBracket,0);
-		count = -offset - 1;
-		if(offset >= 0)
-			return start + offset;
-		// check previous lines
-		for(int i = lineNo - 1; i >= 0; i--)
-		{
-			lineElement = map.getElement(i);
-			start = lineElement.getStartOffset();
-			offset = scanBackwardLine(getText(start,lineElement
-				.getEndOffset() - start),openBracket,
-				closeBracket,count);
-			count = -offset - 1;
-			if(offset >= 0)
-				return start + offset;
-		}
-		// not found
-		return -1;
-	}
-
-	/**
-	 * Finds the next instance of a closing bracket in the buffer.
-	 * The opening bracket is needed as well to handle nested brackets
-	 * properly.
-	 * @param dot The starting position
-	 * @param openBracket The opening bracket
-	 * @param closeBracket The closing bracket
-	 * @exception BadLocationException if `dot' is out of range
-	 */
-	public int locateBracketForward(int dot, char openBracket,
-		char closeBracket)
-		throws BadLocationException
-	{
-		int count;
-		Element map = getDefaultRootElement();
-		// check current line
-		int lineNo = map.getElementIndex(dot);
-		Element lineElement = map.getElement(lineNo);
-		int start = lineElement.getStartOffset();
-		int end = lineElement.getEndOffset();
-		int offset = scanForwardLine(getText(dot + 1,end - (dot + 1)),
-			openBracket,closeBracket,0);
-		count = -offset - 1;
-		if(offset >= 0)
-			return dot + offset + 1;
-		// check following lines
-		for(int i = lineNo + 1; i < map.getElementCount(); i++)
-		{
-			lineElement = map.getElement(i);
-			start = lineElement.getStartOffset();
-			offset = scanForwardLine(getText(start,lineElement
-				.getEndOffset() - start),openBracket,
-				closeBracket,count);
-			count = -offset - 1;
-			if(offset >= 0)
-				return start + offset;
-		}
-		// not found
-		return -1;
 	}
 
 	/**
@@ -1371,46 +1290,6 @@ loop:		for(int i = 0; i < markers.size(); i++)
 		file.renameTo(backup);
 	}
 
-	// the return value is as follows:
-	// >= 0: offset in line where bracket was found
-	// < 0: -1 - count
-	private int scanBackwardLine(String line, char openBracket,
-		char closeBracket, int count)
-	{
-		for(int i = line.length() - 1; i >= 0; i--)
-		{
-			char c = line.charAt(i);
-			if(c == closeBracket)
-				count++;
-			else if(c == openBracket)
-			{
-				if(--count < 0)
-					return i;
-			}
-		}
-		return -1 - count;
-	}
-
-	// the return value is as follows:
-	// >= 0: offset in line where bracket was found
-	// < 0: -1 - count
-	private int scanForwardLine(String line, char openBracket,
-		char closeBracket, int count)
-	{
-		for(int i = 0; i < line.length(); i++)
-		{
-			char c = line.charAt(i);
-			if(c == openBracket)
-				count++;
-			else if(c == closeBracket)
-			{
-				if(--count < 0)
-					return i;
-			}
-		}
-		return -1 - count;
-	}
-
 	class BufferProps extends Hashtable
 	{
 		public Object get(Object key)
@@ -1521,6 +1400,9 @@ loop:		for(int i = 0; i < markers.size(); i++)
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.67  1999/03/27 03:05:17  sp
+ * Modular SyntaxTextArea
+ *
  * Revision 1.66  1999/03/27 00:44:15  sp
  * Documentation updates, various bug fixes
  *

@@ -120,8 +120,8 @@ public class View extends JFrame
 			textArea.setElectricBorders(0);
 		}
 		updateOpenRecentMenu();
-		if(buffer != null) /* ie, after startup */
-			updateLineNumber(true);
+
+		textArea.updateHighlighters();
 	}
 	
 	/**
@@ -232,12 +232,22 @@ public class View extends JFrame
 
 	/**
 	 * Updates the line number indicator.
-	 * @param force True if it should be updated even if the caret
-	 * hasn't moved since the last update
 	 */
-	public void updateLineNumber(boolean force)
+	public void updateLineNumber()
 	{
-		updateLineNumber(textArea.getCaretPosition(),force);
+		int dot = textArea.getCaretPosition();
+
+		Element map = buffer.getDefaultRootElement();
+		int currLine = map.getElementIndex(dot);
+		Element lineElement = map.getElement(currLine);
+		int start = lineElement.getStartOffset();
+		int end = lineElement.getEndOffset();
+		int numLines = map.getElementCount();
+		Object[] args = { new Integer((dot - start) + 1),
+			new Integer(currLine + 1),
+			new Integer(numLines),
+			new Integer(((currLine + 1) * 100) / numLines) };
+		lineNumber.setText(jEdit.getProperty("view.lineNumber",args));
 	}
 
 	/**
@@ -279,7 +289,7 @@ public class View extends JFrame
 		textArea.setDocument(buffer);
 		updateMarkerMenus();
 		updateTitle();
-		updateLineNumber(true);
+		updateLineNumber();
 
 		Mode mode = buffer.getMode();
 		if(mode != null)
@@ -293,7 +303,7 @@ public class View extends JFrame
 	/**
 	 * Returns this view's text area.
 	 */
-	public SyntaxTextArea getTextArea()
+	public JEditTextArea getTextArea()
 	{
 		return textArea;
 	}
@@ -438,12 +448,10 @@ public class View extends JFrame
                 addKeyBinding(KeyStroke.getKeyStroke(KeyEvent.VK_TAB,0),
 			"indent-line");
 
-		textArea = new SyntaxTextArea();
+		textArea = new JEditTextArea();
 		scroller = new JScrollPane(textArea,ScrollPaneConstants
 			.VERTICAL_SCROLLBAR_ALWAYS,ScrollPaneConstants
 			.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-
-		lastLine = -1;
 
 		lineNumber = new JLabel();
 		lineNumber.setBorder(new EmptyBorder(0,10,0,0)); // ten pixel border on left
@@ -532,6 +540,8 @@ public class View extends JFrame
 		{
 		}
 
+		updateLineNumber();
+
 		bufferListener = new ViewBufferListener();
 
 		Buffer[] bufferArray = jEdit.getBuffers();
@@ -572,7 +582,10 @@ public class View extends JFrame
 			location = splitter.getLastDividerLocation();
 		jEdit.setProperty("view.divider",String.valueOf(location));
 
-		console.getCommandField().save();
+		HistoryTextField textField = console.getCommandField();
+		if(textField.getSelectedItem() != null)
+			textField.save();
+
 		console.stop();
 
 		saveCaretInfo();
@@ -593,94 +606,18 @@ public class View extends JFrame
 	private Hashtable bindings;
 	private Hashtable currentPrefix;
 	private JScrollPane scroller;
-	private SyntaxTextArea textArea;
+	private JEditTextArea textArea;
 	private Console console;
 	private JSplitPane splitter;
 	private JLabel lineNumber;
 	private JLabel hintBar;
 	private Segment lineSegment;
-	private int lastLine;
 	private Buffer buffer;
 	private boolean showTip;
 	private JToolBar toolBar;
 	private EventMulticaster multicaster;
 	private BufferListener bufferListener;
 	private EditorListener editorListener;
-
-	private void updateLineNumber(int dot, boolean force)
-	{
-		int currLine;
-		Element map = buffer.getDefaultRootElement();
-		currLine = map.getElementIndex(dot);
-		Element lineElement = map.getElement(currLine);
-		int start = lineElement.getStartOffset();
-		int end = lineElement.getEndOffset();
-		int numLines = map.getElementCount();
-		Object[] args = { new Integer((dot - start) + 1),
-			new Integer(currLine + 1),
-			new Integer(numLines),
-			new Integer(((currLine + 1) * 100) / numLines) };
-		lineNumber.setText(jEdit.getProperty("view.lineNumber",args));
-		if(textArea.getSelectionStart() == textArea.getSelectionEnd())
-		{
-			if(currLine != lastLine)
-				textArea.setHighlightedLine(start,end);
-			lastLine = currLine;
-		}
-		else
-		{
-			textArea.setHighlightedLine(0,0);
-			lastLine = -1;
-		}
-		try
-		{
-			if(dot != 0)
-			{
-				dot--;
-				buffer.getText(dot,1,lineSegment);
-				char bracket = lineSegment.array[lineSegment
-					.offset];
-				int otherBracket;
-				switch(bracket)
-				{
-				case '(':
-					otherBracket = buffer.locateBracketForward(
-						dot,'(',')');
-					break;
-				case ')':
-					otherBracket = buffer.locateBracketBackward(
-						dot,'(',')');
-					break;
-				case '[':
-					otherBracket = buffer.locateBracketForward(
-						dot,'[',']');
-					break;
-				case ']':
-					otherBracket = buffer.locateBracketBackward(
-						dot,'[',']');
-					break;
-				case '{':
-					otherBracket = buffer.locateBracketForward(
-						dot,'{','}');
-					break;
-				case '}':
-					otherBracket = buffer.locateBracketBackward(
-						dot,'{','}');
-					break;
-				default:
-					otherBracket = -1;
-					break;
-				}
-				textArea.setHighlightedBracket(otherBracket);
-			}
-			else
-				textArea.setHighlightedBracket(-1);
-		}
-		catch(BadLocationException bl)
-		{
-			//bl.printStackTrace();
-		}
-	}
 
 	// event listeners
 	class ViewBufferListener implements BufferListener
@@ -737,7 +674,7 @@ public class View extends JFrame
 	{
 		public void caretUpdate(CaretEvent evt)
 		{
-			updateLineNumber(evt.getDot(),false);
+			updateLineNumber();
 		}
 	}
 
@@ -817,6 +754,9 @@ public class View extends JFrame
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.55  1999/03/27 03:05:17  sp
+ * Modular SyntaxTextArea
+ *
  * Revision 1.54  1999/03/24 05:45:27  sp
  * Juha Lidfors' backup directory patch, removed debugging messages from various locations, documentation updates
  *
