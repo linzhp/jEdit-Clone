@@ -7,39 +7,27 @@
 <h1>jEdit To Do</h1>
 
 <ul>
-<li><a href=#veryshortterm>Very Short Term</a>
 <li><a href=#shortterm>Short Term</a>
 <li><a href=#medterm>Medium Term</a>
 <li><a href=#longterm>Long Term</a>
-</ul>
-
-<a name=veryshortterm>
-<h1>Very Short Term</h1>
-</a>
-
-This is what needs to be done as soon as possible:
-
-<ul>
-<li>Overwrite mode doesn't work on JDK 1.2.<p>
-Maybe Keymap.setDefaultKeyTypedAction() doesn't work properly?
 </ul>
 
 <a name=shortterm>
 <h1>Short Term</h1>
 </a>
 
-This is what needs to be done sometime during the 1.6preX
-series:
+This is what needs to be done before 1.6final is released:
 
 <ul>
-<li><b>All items done</b>
+<li>Overwrite mode doesn't work on JDK 1.2.<p>
+Maybe Keymap.setDefaultAction() doesn't work properly?
 </ul>
 
 <a name=medterm>
 <h1>Medium Term</h1>
 </a>
 
-This is what needs to be done in the 1.7 series:
+This is what needs to be done before 1.7final is released:
 
 <ul>
 <li>Port jEdit to Swing 1.1.1. It is a much better release
@@ -51,6 +39,11 @@ following workarounds should be removed from jEdit:
 <li>Various workarounds for &lt;h<i>n</i>&gt; bugs in the HTML help
 <li>... maybe more?
 </ul>
+
+<li>Store the scroll bar position along with the cursor position
+when switching buffers.<p>
+jEdit 1.1 and 1.2 did this, but it was removed in 1.3 with the
+buffer switching rewrite.
 
 <li>Multiline token colorization needs some work.<p>
 The C+END `bug' still exists.
@@ -107,11 +100,13 @@ to repaint lines after a multiline token.
 <h1>Long Term</h1>
 </a>
 
-This is what needs to be done in jEdit versions after 1.6:
+This is what needs to be done eventually:
 
 <ul>
 <li>jEdit API needs to be made thread-safe.
 <li>Class/method/variable completion.
+
+<li>Folding.
 
 <li>Integrate XMode.<p>
 Mike Dillon's XMode is a much better way of writing syntax

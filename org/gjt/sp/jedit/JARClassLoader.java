@@ -261,8 +261,6 @@ public class JARClassLoader extends ClassLoader
 		boolean doDepencies)
 		throws ClassNotFoundException
 	{
-		String name = MiscUtilities.classToFile(clazz);
-
 		Class cls = findLoadedClass(clazz);
 		if(cls != null)
 		{
@@ -270,6 +268,8 @@ public class JARClassLoader extends ClassLoader
 				resolveClass(cls);
 			return cls;
 		}
+
+		String name = MiscUtilities.classToFile(clazz);
 
 		try
 		{
@@ -322,6 +322,9 @@ public class JARClassLoader extends ClassLoader
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.10  1999/05/15 00:29:19  sp
+ * Prev error bug fix, doc updates, tips updates
+ *
  * Revision 1.9  1999/05/13 05:38:11  sp
  * JARClassLoader bug fix
  *

@@ -561,7 +561,7 @@ public class SyntaxTextArea extends JEditorPane
 	{
 		public DefaultKeyTypedAction()
 		{
-			super(DefaultEditorKit.defaultKeyTypedAction);
+			super("syntax-default-key-typed-action");
 		}
 
 		public void actionPerformed(ActionEvent evt)
@@ -748,6 +748,9 @@ public class SyntaxTextArea extends JEditorPane
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.26  1999/05/15 00:29:19  sp
+ * Prev error bug fix, doc updates, tips updates
+ *
  * Revision 1.25  1999/05/11 09:05:10  sp
  * New version1.6.html file, some other stuff perhaps
  *

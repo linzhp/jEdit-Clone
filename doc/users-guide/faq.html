@@ -19,8 +19,9 @@
 <h1>How do I Change the Compiler Used by `Tools-&gt;Compile'?</h1>
 </a>
 
-See the <a href=console.html#compiler>Invoking Mode Specific Compilers</a>
-help topic for details.
+This is detailed in the
+<a href=console.html#compiler>Invoking Mode Specific Compilers</a>
+help topic.
 
 <a name=cd>
 <h1>Why can't I change directories in the console?</h1>
@@ -92,11 +93,13 @@ files.
 <h1>Why doesn't overwrite mode work?</h1>
 </a>
 
-If you get the overwrite cursor, but text is still inserted
-when you start typing, the most likely problem is that your jEdit
-is still loading the AltGrPatch plugin that was obsoleted as
-of version 1.6pre4. Delete any copies of altgr.jar from the
-system and user plugin directories (see the
+Overwrite mode doesn't appear to work on Windows JDK 1.2. I am
+working on a fix; it will be available as soon as possible.<p>
+
+If overwrite mode doesn't work on other systems, the most likely
+problem is that your jEdit is still loading the AltGrPatch plugin
+that was obsoleted as of version 1.6pre4. Delete any copies of
+altgr.jar from the system and user plugin directories (see the
 <a href=plugins.html>jEdit Plugins</a> help topic for details).
 
 <a name=www>
@@ -111,9 +114,9 @@ On Unix, it is recommended that the `jedit_moz_remote' wrapper
 for Netscape Navigator be used. The script relies on the `netscape'
 executable being in the PATH.<p>
 
-On the MacOS, the `Open in WWW Browser' feature does not work. If
-anybody can confirm otherwise, I will be happy to post information
-here.
+On the MacOS, the `Open in WWW Browser' feature does not work at
+all. If anybody can confirm otherwise, I will be happy to post
+information here.
 
 <a name=alt>
 <h1>Why don't the Alt key mnemonics work?</h1>

@@ -38,6 +38,8 @@ public class prev_error extends EditAction
 			View view = getView(evt);
 			Console console = view.getConsole();
 			int errorNo = console.getCurrentError();
+			if(errorNo <= 0)
+				return;
 			console.setCurrentError(errorNo - 1);
 		}
 		catch(Exception e)
