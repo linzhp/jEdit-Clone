@@ -201,7 +201,8 @@ public class EditorOptionPane extends OptionPane
 	{
 		jEdit.setProperty("view.font",(String)font.getSelectedItem());
 		jEdit.setProperty("view.fontsize",(String)size.getSelectedItem());
-		jEdit.setProperty("view.fontstyle",(String)style.getSelectedItem());
+		jEdit.setProperty("view.fontstyle",String.valueOf(style
+			.getSelectedIndex()));
 		jEdit.setProperty("view.geometry.w",viewWidth.getText());
 		jEdit.setProperty("view.geometry.h",viewHeight.getText());
 		jEdit.setProperty("buffer.tabSize",(String)tabSize
@@ -219,7 +220,7 @@ public class EditorOptionPane extends OptionPane
 		jEdit.setProperty("view.blockCaret",blockCaret.getModel()
 			.isSelected() ? "on" : "off");
 		jEdit.setProperty("view.electricBorders",electricBorders.getModel()
-			.isSelected() ? "4" : "0");
+			.isSelected() ? "3" : "0");
 		jEdit.setProperty("buffer.noTabs",noTabs.getModel()
 			.isSelected() ? "yes" : "no");
 	}

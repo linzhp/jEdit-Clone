@@ -4,6 +4,13 @@
 ###
 
 ###
+### CONTEXT MENU
+###
+view.context=undo redo - cut copy paste paste-previous paste-predefined - \
+	set-anchor select-anchor exchange-anchor - \
+	delete-line join-lines scroll-line
+	
+###
 ### MENUBAR
 ###
 view.mbar=buffers file edit tools search help
@@ -18,6 +25,8 @@ file=new-file \
      open-url \
      open-selection \
      %open-recent \
+     - \
+     reload \
      - \
      close-file \
      close-view \
@@ -41,11 +50,12 @@ open-url.label=Open $URL...
 open-selection.label=Open Sele$ction
 open-recent.label=Open $Recent
 no-recent.label=No Recent Files
+reload.label=Re$load
 close-file.label=$Close File
 close-view.label=Close Vie$w
 save.label=S$ave
 save-as.label=Sa$ve As...
-save-url.label=Save to UR$L...
+save-url.label=Save to URL...
 save-all.label=Save All Buffers
 send.label=Sen$d...
 print.label=$Print...
@@ -392,6 +402,11 @@ make.message=Make command line:
 notsaved.title=File Not Saved
 # {0} - file name
 notsaved.message=Save changes to {0}?
+
+# File changed, still reload dialog
+changedreload.title=File Modified
+changedreload.message=File has been modified since last save;\n\
+	If you reload, you will lose those changes. Continue?
 
 # Autosave file exists dialog
 autosaveexists.title=Autosave File Exists

@@ -351,6 +351,24 @@ implements DocumentListener, UndoableEditListener
 	}
 	
 	/**
+	 * Reloads the buffer from disk.
+	 */
+	public void reload()
+	{
+		// This is so that `dirty' isn't set
+		init = true;
+
+		load();
+		loadMarkers();
+		tokenizeLines();
+
+		// The anchor gets f*cked across reloads, so clear it
+		anchor = null;
+
+		init = false;
+	}
+
+	/**
 	 * Finds the previous instance of an opening bracket in the buffer.
 	 * The closing bracket is needed as well to handle nested brackets
 	 * properly.
@@ -359,7 +377,7 @@ implements DocumentListener, UndoableEditListener
 	 * @param closeBracket The closing bracket
 	 * @exception BadLocationException if `dot' is out of range
 	 */
-	 public int locateBracketBackward(int dot, char openBracket,
+	public int locateBracketBackward(int dot, char openBracket,
 		char closeBracket)
 		throws BadLocationException
 	{
@@ -529,6 +547,19 @@ implements DocumentListener, UndoableEditListener
 		return readOnly;
 	}
 	
+	/**
+	 * Sets the `dirty' (changed since last save) flag of this buffer.
+	 */
+	public void dirty()
+	{
+		if(!((dirty && adirty) || readOnly))
+		{
+			adirty = dirty = !init;
+			updateTitles();
+			updateBufferMenus();
+		}
+	}
+
 	/**
 	 * Returns this buffer's undo manager.
 	 */
@@ -1077,6 +1108,10 @@ implements DocumentListener, UndoableEditListener
 			in.close();
                         if(sbuf.length() != 0 && sbuf.charAt(sbuf.length() - 1) == '\n')
 				sbuf.setLength(sbuf.length() - 1);
+
+			// For `reload' command
+			remove(0,getLength());
+
 			insertString(0,sbuf.toString(),null);
 			newFile = false;
 			modTime = file.lastModified();
@@ -1181,6 +1216,9 @@ implements DocumentListener, UndoableEditListener
 
 	private void loadMarkers()
 	{
+		// For `reload' command
+		markers.removeAllElements();
+
 		try
 		{
 			InputStream in;
@@ -1327,6 +1365,8 @@ implements DocumentListener, UndoableEditListener
 		if(backups == 0)
 			return;
 		File backup = null;
+		// Silly fix for `save as' to diff dir bug
+		String path = file.getPath();
 		for(int i = backups; i > 0; i--)
 		{
 			backup = new File(path + (backups == 1 ?
@@ -1415,16 +1455,6 @@ implements DocumentListener, UndoableEditListener
 				view.updateTitle();
 				view.updateMarkerMenus();
 			}
-		}
-	}
-
-	private void dirty()
-	{
-		if(!((dirty && adirty) || readOnly))
-		{
-			adirty = dirty = !init;
-			updateTitles();
-			updateBufferMenus();
 		}
 	}
 

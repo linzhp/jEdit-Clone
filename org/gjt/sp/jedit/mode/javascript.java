@@ -1,6 +1,6 @@
 /*
  * javascript.java - JavaScript editing mode
- * Copyright (C) 1998 Slava Pestov
+ * Copyright (C) 1998, 1999 Slava Pestov
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -43,8 +43,10 @@ public class javascript extends autoindent
 			keywords.add("return",Token.KEYWORD1);
 			keywords.add("while",Token.KEYWORD1);
 			keywords.add("with",Token.KEYWORD1);
-			keywords.add("break",Token.LABEL);
-			keywords.add("continue",Token.LABEL);
+			keywords.add("break",Token.KEYWORD1);
+			keywords.add("case",Token.KEYWORD1);
+			keywords.add("continue",Token.KEYWORD1);
+			keywords.add("default",Token.KEYWORD1);
 			keywords.add("false",Token.LABEL);
 			keywords.add("this",Token.LABEL);
 			keywords.add("true",Token.LABEL);

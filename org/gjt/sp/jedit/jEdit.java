@@ -39,13 +39,13 @@ public class jEdit
 	/**
 	 * The jEdit version.
 	 */
-	public static final String VERSION = "1.4pre4";
+	public static final String VERSION = "1.4pre5";
 	
 	/**
 	 * The date when a change was last made to the source code,
 	 * in <code>YYYYMMDD</code> format.
 	 */
-	public static final String BUILD = "19990215";
+	public static final String BUILD = "19990217";
 
 	/**
 	 * AWK regexp syntax.
@@ -338,6 +338,7 @@ public class jEdit
 		addAction(new org.gjt.sp.jedit.actions.prev_paragraph());
 		addAction(new org.gjt.sp.jedit.actions.print());
 		addAction(new org.gjt.sp.jedit.actions.redo());
+		addAction(new org.gjt.sp.jedit.actions.reload());
 		addAction(new org.gjt.sp.jedit.actions.replace());
 		addAction(new org.gjt.sp.jedit.actions.replace_all());
 		addAction(new org.gjt.sp.jedit.actions.replace_in_selection());
@@ -818,14 +819,6 @@ public class jEdit
 			}
 		}
 		Buffer buffer = new Buffer(url,path,readOnly,newFile);
-		if(!newFile)
-		{
-			if(recent.contains(path))
-				recent.removeElement(path);
-			recent.insertElementAt(path,0);
-			if(recent.size() > maxRecent)
-				recent.removeElementAt(maxRecent);
-		}
 		if(marker != null)
 			gotoMarker(buffer,null,marker);
 		if(view != null)
@@ -1022,6 +1015,35 @@ public class jEdit
 		}
 		else
 			return menu;
+		String menuItems = getProperty(name);
+		if(menuItems != null)
+		{
+			StringTokenizer st = new StringTokenizer(menuItems);
+			while(st.hasMoreTokens())
+			{
+				String menuItemName = st.nextToken();
+				if(menuItemName.equals("-"))
+					menu.addSeparator();
+				else
+				{
+					JMenuItem mi = loadMenuItem(view,menuItemName);
+					if(mi != null)
+						menu.add(mi);
+				}
+			}
+		}
+		return menu;
+	}
+
+	/**
+	 * Loads a popup menu from the properties for the specified view.
+	 * @param view The view to load the popup menu for
+	 * @param name The popup menu name
+	 */
+	public static JPopupMenu loadPopupMenu(View view, String name)
+	{
+		JPopupMenu menu = new JPopupMenu();
+		menu.setInvoker(view);
 		String menuItems = getProperty(name);
 		if(menuItems != null)
 		{
@@ -1809,6 +1831,15 @@ loop:		for(int i = 0; i < str.length(); i++)
 				buffer.getAutosaveFile().delete();
 			else
 				return false;
+		}
+		if(!buffer.isNewFile())
+		{
+			String path = buffer.getPath();
+			if(recent.contains(path))
+				recent.removeElement(path);
+			recent.insertElementAt(path,0);
+			if(recent.size() > maxRecent)
+				recent.removeElementAt(maxRecent);
 		}
 		return true;
 	}

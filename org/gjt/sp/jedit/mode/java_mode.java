@@ -56,9 +56,9 @@ public class java_mode extends autoindent
 			keywords.add("volatile",Token.KEYWORD1);
 			keywords.add("transient",Token.KEYWORD1);
 			keywords.add("break",Token.KEYWORD1);
-			keywords.add("case",Token.LABEL);
+			keywords.add("case",Token.KEYWORD1);
 			keywords.add("continue",Token.KEYWORD1);
-			keywords.add("default",Token.LABEL);
+			keywords.add("default",Token.KEYWORD1);
 			keywords.add("do",Token.KEYWORD1);
 			keywords.add("else",Token.KEYWORD1);
 			keywords.add("for",Token.KEYWORD1);

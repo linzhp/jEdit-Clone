@@ -4,69 +4,70 @@
 ###
 
 # I *LOVE* tabs: (:tabSize=8:)
+# ... but Kaffe doesn't.
 
-select-all.shortcut		C+a
-expand-abbrev.shortcut		C+b
-copy.shortcut			C+c
-delete-line.shortcut		C+d C+d
-delete-paragraph.shortcut	C+d C+e
-delete-end-line.shortcut	C+d C+f
-delete-no-indent.shortcut	C+d C+i
-delete-start-line.shortcut	C+d C+s
-replace-all.shortcut		C+e C+a
-box-comment.shortcut		C+e C+b
-wing-comment.shortcut		C+e C+c
-paste-predefined.shortcut	C+e C+d
-execute.shortcut		C+e C+e
-format.shortcut			C+e C+f
-replace-next.shortcut		C+e C+g
-select-no-indent.shortcut	C+e C+i
-scroll-line.shortcut		C+e C+j
-block-comment.shortcut		C+e C+k
-select-line-range.shortcut	C+e C+l
-set-marker.shortcut		C+e C+m
-new-view.shortcut		C+e C+n
-open-url.shortcut		C+e C+o
-pipe-selection.shortcut		C+e C+p
-uncomment.shortcut		C+e C+q
-replace.shortcut		C+e C+r
-find-selection.shortcut		C+e C+s
-tab.shortcut			C+e C+t
-untab.shortcut			C+e C+u
-paste-previous.shortcut		C+e C+v
-close-view.shortcut		C+e C+w
-exchange-anchor.shortcut	C+e C+x
-replace-in-selection.shortcut	C+e C+y
-prev-error.shortcut		C+e C+[
-next-error.shortcut		C+e C+]
-find.shortcut			C+f
-find-next.shortcut		C+g
-hypersearch.shortcut		C+h
-goto-end-indent.shortcut	C+i
-join-lines.shortcut		C+j
-compile.shortcut		C+k
-goto-line.shortcut		C+l
-make.shortcut			C+m
-new-file.shortcut		C+n
-open-file.shortcut		C+o
-print.shortcut			C+p
-exit.shortcut			C+q
-redo.shortcut			C+r
-save.shortcut			C+s
-set-anchor.shortcut		C+t
-select-anchor.shortcut		C+u
-paste.shortcut			C+v
-close-file.shortcut		C+w
-cut.shortcut			C+x
-goto-anchor.shortcut		C+y
-undo.shortcut			C+z
-select-block.shortcut		C+[
-locate-bracket.shortcut		C+]
-shift-left.shortcut		A+LEFT
-shift-right.shortcut		A+RIGHT
-prev-paragraph.shortcut		C+UP
-next-paragraph.shortcut		C+DOWN
-select-prev-paragraph.shortcut	CS+UP
-select-next-paragraph.shortcut	CS+DOWN
-help@index.html.shortcut	F1
+select-all.shortcut=C+a
+expand-abbrev.shortcut=C+b
+copy.shortcut=C+c
+delete-line.shortcut=C+d C+d
+delete-paragraph.shortcut=C+d C+e
+delete-end-line.shortcut=C+d C+f
+delete-no-indent.shortcut=C+d C+i
+delete-start-line.shortcut=C+d C+s
+replace-all.shortcut=C+e C+a
+box-comment.shortcut=C+e C+b
+wing-comment.shortcut=C+e C+c
+paste-predefined.shortcut=C+e C+d
+execute.shortcut=C+e C+e
+format.shortcut=C+e C+f
+replace-next.shortcut=C+e C+g
+select-no-indent.shortcut=C+e C+i
+scroll-line.shortcut=C+e C+j
+block-comment.shortcut=C+e C+k
+select-line-range.shortcut=C+e C+l
+set-marker.shortcut=C+e C+m
+new-view.shortcut=C+e C+n
+open-url.shortcut=C+e C+o
+pipe-selection.shortcut=C+e C+p
+uncomment.shortcut=C+e C+q
+replace.shortcut=C+e C+r
+find-selection.shortcut=C+e C+s
+tab.shortcut=C+e C+t
+untab.shortcut=C+e C+u
+paste-previous.shortcut=C+e C+v
+close-view.shortcut=C+e C+w
+exchange-anchor.shortcut=C+e C+x
+replace-in-selection.shortcut=C+e C+y
+prev-error.shortcut=C+e C+[
+next-error.shortcut=C+e C+]
+find.shortcut=C+f
+find-next.shortcut=C+g
+hypersearch.shortcut=C+h
+goto-end-indent.shortcut=C+i
+join-lines.shortcut=C+j
+compile.shortcut=C+k
+goto-line.shortcut=C+l
+make.shortcut=C+m
+new-file.shortcut=C+n
+open-file.shortcut=C+o
+print.shortcut=C+p
+exit.shortcut=C+q
+redo.shortcut=C+r
+save.shortcut=C+s
+set-anchor.shortcut=C+t
+select-anchor.shortcut=C+u
+paste.shortcut=C+v
+close-file.shortcut=C+w
+cut.shortcut=C+x
+goto-anchor.shortcut=C+y
+undo.shortcut=C+z
+select-block.shortcut=C+[
+locate-bracket.shortcut=C+]
+shift-left.shortcut=A+LEFT
+shift-right.shortcut=A+RIGHT
+prev-paragraph.shortcut=C+UP
+next-paragraph.shortcut=C+DOWN
+select-prev-paragraph.shortcut=CS+UP
+select-next-paragraph.shortcut=CS+DOWN
+help@index.html.shortcut=F1
 

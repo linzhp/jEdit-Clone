@@ -24,7 +24,7 @@ import javax.swing.text.*;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.datatransfer.*;
-import java.awt.event.FocusEvent;
+import java.awt.event.*;
 import java.beans.*;
 import org.gjt.sp.jedit.syntax.SyntaxEditorKit;
 import org.gjt.sp.jedit.Buffer;
@@ -37,6 +37,7 @@ import org.gjt.sp.jedit.jEdit;
  * @see org.gjt.sp.jedit.syntax.SyntaxEditorKit
  */
 public class SyntaxTextArea extends JEditorPane
+implements MouseListener
 {
 	// public members
 
@@ -50,6 +51,8 @@ public class SyntaxTextArea extends JEditorPane
 		lineHighlightColor = new Color(0xe0e0e0);
 		bracketHighlightColor = new Color(0xffaaaa);
 		lineSegment = new Segment();
+
+		addMouseListener(this);
 	}
 
 	/**
@@ -58,6 +61,16 @@ public class SyntaxTextArea extends JEditorPane
 	public EditorKit createDefaultEditorKit()
 	{
 		return new SyntaxEditorKit();
+	}
+
+	/**
+	 * Sets the popup menu that will be displayed when the text
+	 * area is right clicked.
+	 * @param menu The popup menu
+	 */
+	public void setContextMenu(JPopupMenu menu)
+	{
+		this.menu = menu;
 	}
 
 	/**
@@ -248,7 +261,24 @@ public class SyntaxTextArea extends JEditorPane
 		}
 	}
 
+	// event handlers
+	public void mouseClicked(MouseEvent evt) {}
+
+	public void mousePressed(MouseEvent evt)
+	{
+		if((evt.getModifiers() & InputEvent.BUTTON3_MASK) != 0)
+		{
+			menu.show(this,evt.getX(),evt.getY());
+			evt.consume();
+		}
+	}
+
+	public void mouseReleased(MouseEvent evt) {}
+	public void mouseEntered(MouseEvent evt) {}
+	public void mouseExited(MouseEvent evt) {}
+
 	// private members
+	private JPopupMenu menu;
 	private Color lineHighlightColor;
 	private Object lineHighlightTag;
 	private Color bracketHighlightColor;

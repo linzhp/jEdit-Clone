@@ -598,6 +598,7 @@ implements CaretListener, KeyListener, WindowListener
 		updateErrorListMenu();
 		updatePluginsMenu();
 
+		textArea.setContextMenu(jEdit.loadPopupMenu(this,"view.context"));
 		JMenuBar mbar = jEdit.loadMenubar(this,"view.mbar");
 		mbar.add(new JPanel()); // silly hack to move ruler to right side
 		mbar.add(lineNumber);

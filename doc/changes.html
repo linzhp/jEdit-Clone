@@ -4,13 +4,14 @@
 
 <a href=#wishlist>Wish List</a><br>
 <a href=#todo>To Do</a><br>
+<a href=#14pre5>Version 1.4pre5</a><br>
 <a href=#14pre4>Version 1.4pre4</a><br>
 <a href=#14pre3>Version 1.4pre3</a><br>
 <a href=#14pre2>Version 1.4pre2</a><br>
 <a href=#14pre1>Version 1.4pre1</a><br>
 
 <a name=wishlist>
-<h1>Wish List</h1>
+<h1>Wish List For Future Versions</h1>
 </a>
 
 <ul>
@@ -32,32 +33,55 @@ gets too long isn't very hard, but once a line is split it isn't rejoined
 again. Should ask that person if that's okay :) Maybe an Auto Format edit mode,
 that HTML and TeX modes can subclass?
 <li>Swing key maps should be editable
-<li>`Keep dialog' option in search &amp; replace (is this really necessary?
-I mean we already have C+g/C+e C+r/C+r C+y/C+e C+a for `Find Next', `Replace',
-`Replace Selection' and `Replace All'
-<li>Reload command
 <li>Insert file command
 <li>`Literal' search (no regexp) option
 <li>`Fix' jEdit's lazy colorizing (no, I'm not going to do it)
 </ul>
 
 <a name=todo>
-<h1>To Do</h1>
+<h1>To Do For 1.4</h1>
 </a>
 
 <ul>
-<li>Should separate huge jEdit class into GUIUtilities/TextUtilities, move
-buffer-related methods to Buffer class (as static methods), same for view
-related stuff. Also move generic text manipulation stuff such as bracket
-matching, etc to TextUtilities
-<li>It would be nice if `Locate Bracket' and `Select Block' skipped over
-comments/quoted literals that might contain unmatched brackets. This might
-require a rewrite of Buffer.locateBracketBackward() and
-Buffer.locateBracketForward().
-<li>For some reason splash screen doesn't appear until the first view is
-created
+<li>`Locate Bracket' and `Select Block' should skip
+comments/quoted literals that might contain unmatched brackets.
 <li>Backup directory feature, where all ...~ files are placed
-<li>Syntax colorizing is still slow
+<li>Syntax colorizing is still slow - should use a visible line cache to speed
+up scrolling
+<li>Context menu - mnemonics/arrows don't work, and selection is extended if
+mouse is held down
+</ul>
+
+<a name=14pre5>
+<h1>Version 1.4pre5</h1>
+</a>
+
+<h2>New Features</h2>
+
+<ul>
+<li>Reload command added
+<li>Right click menu added to text area (doesn't work very well yet)
+</ul>
+
+<h2>Enhancements</h2>
+
+<ul>
+<li>Electric borders aren't as `agressive' - scrolling starts at three
+lines from the top or bottom, not four like before
+<li>Block caret is now off by default
+<li>Files are added to the recent list when they're closed, not opened
+<li>Transact-SQL mode optimizations
+</ul>
+
+<h2>Bug Fixes</h2>
+
+<ul>
+<li>`Font Style' setting in Options should work now (why do I always
+mess up in the options dialog box?)
+<li>Sometimes C++ keywords weren't colorized
+<li>Fixed obscure backup bug nobody has ever seen (if you do a `save as'
+to a different directory than the original file, the backup is created
+in the wrong directory)
 </ul>
 
 <a name=14pre4>

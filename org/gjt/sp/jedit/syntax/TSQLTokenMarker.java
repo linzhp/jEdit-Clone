@@ -22,6 +22,8 @@ import javax.swing.text.Segment;
 
 public class TSQLTokenMarker extends TokenMarker
 {
+	private int offset, lastOffset, lastKeyword, length;
+
 	// public members
 	public TSQLTokenMarker(KeywordMap keywords)
 	{
@@ -33,14 +35,13 @@ public class TSQLTokenMarker extends TokenMarker
 		ensureCapacity(lineIndex);
 		lastToken = null;
 		String token = lineIndex == 0 ? null : lineInfo[lineIndex - 1];
-		int offset = line.offset;
-		int lastOffset = offset;
-		int lastKeyword = offset;
-		int length = line.count + offset;
+		offset = lastOffset = lastKeyword = line.offset;
+		length = line.count + offset;
 
 loop:
 		for(int i = offset; i < length; i++)
 		{
+			if (isKeywordCharacter(line.array[i])) continue;
 			switch(line.array[i])
 			{
 			case '*':
@@ -53,7 +54,7 @@ loop:
 				}
 				else if (token == null)
 				{
-					lastOffset = searchBack(line, i, lastOffset);
+					searchBack(line, i);
 					addToken(1,Token.OPERATOR1);
 					lastOffset = i + 1;
 				}
@@ -61,7 +62,7 @@ loop:
 			case '[':
 				if(token == null)
 				{
-					lastOffset = searchBack(line, i, lastOffset);
+					searchBack(line, i);
 					token = Token.LITERAL1;
 					literalChar = '[';
 					lastOffset = i;
@@ -78,7 +79,7 @@ loop:
 				break;
 			case '.': case ',': case '(': case ')':
 				if (token == null) {
-					lastOffset = searchBack(line, i, lastOffset);
+					searchBack(line, i);
 					addToken(1, null);
 					lastOffset = i + 1;
 				}
@@ -86,14 +87,14 @@ loop:
 			case '+': case '%': case '&': case '|': case '^':
 			case '~': case '<': case '>': case '=':
 				if (token == null) {
-					lastOffset = searchBack(line, i, lastOffset);
+					searchBack(line, i);
 					addToken(1,Token.OPERATOR1);
 					lastOffset = i + 1;
 				}
 				break;
 			case ' ': case '\t':
 				if (token == null) {
-					lastOffset = searchBack(line, i, lastOffset, false);
+					searchBack(line, i, false);
 				}
 				break;
 			case ':':
@@ -108,14 +109,14 @@ loop:
 				{
 					if (length - i >= 2 && line.array[i + 1] == '*')
 					{
-						lastOffset = searchBack(line, i, lastOffset);
+						searchBack(line, i);
 						token = Token.COMMENT1;
 						lastOffset = i;
 						i++;
 					}
 					else
 					{
-						lastOffset = searchBack(line, i, lastOffset);
+						searchBack(line, i);
 						addToken(1,Token.OPERATOR1);
 						lastOffset = i + 1;
 					}
@@ -126,14 +127,14 @@ loop:
 				{
 					if (length - i >= 2 && line.array[i+1] == '-')
 					{
-						lastOffset = searchBack(line, i, lastOffset);
+						searchBack(line, i);
 						addToken(length - i,Token.COMMENT1);
 						lastOffset = length;
 						break loop;
 					}
 					else
 					{
-						lastOffset = searchBack(line, i, lastOffset);
+						searchBack(line, i);
 						addToken(1,Token.OPERATOR1);
 						lastOffset = i + 1;
 					}
@@ -143,36 +144,20 @@ loop:
 				if(token == null && length - i >= 2 &&
 				(line.array[i+1] == '=' || line.array[i+1] == '<' || line.array[i+1] == '>'))
 				{
-					lastOffset = searchBack(line, i, lastOffset);
+					searchBack(line, i);
 					addToken(1,Token.OPERATOR1);
 					lastOffset = i + 1;
 				}
 				break;
-			case '"':
+			case '"': case '\'':
 				if(token == null)
 				{
 					token = Token.LITERAL1;
-					literalChar = '"';
+					literalChar = line.array[i];
 					addToken(i - lastOffset,null);
 					lastOffset = i;
 				}
-				else if(token == Token.LITERAL1 && literalChar == '"')
-				{
-					token = null;
-					literalChar = 0;
-					addToken((i + 1) - lastOffset,Token.LITERAL1);
-					lastOffset = i + 1;
-				}
-				break;
-			case '\'':
-				if(token == null)
-				{
-					token = Token.LITERAL1;
-					literalChar = '\'';
-					addToken(i - lastOffset,null);
-					lastOffset = i;
-				}
-				else if(token == Token.LITERAL1 && literalChar == '\'')
+				else if(token == Token.LITERAL1 && literalChar == line.array[i])
 				{
 					token = null;
 					literalChar = 0;
@@ -185,7 +170,7 @@ loop:
 			}
 		}
 		if(token == null)
-			lastOffset = searchBack(line, length, lastOffset, false);
+			searchBack(line, length, false);
 		if(lastOffset != length)
 			addToken(length - lastOffset,token);
 		lineInfo[lineIndex] = token;
@@ -207,31 +192,24 @@ loop:
 		return Character.isLetter(c) || c == '_' || c == '@';
 	}
 
-	private int searchBack(Segment line, int pos, int lastOffset)
+	private void searchBack(Segment line, int pos)
 	{
-		return searchBack(line, pos, lastOffset, true);
+		searchBack(line, pos, true);
 	}
 
-	private int searchBack(Segment line, int pos, int lastOffset, boolean padNull)
+	private void searchBack(Segment line, int pos, boolean padNull)
 	{
-		int off = pos;
-		while(--off >= lastOffset)
-		{
-			if(!isKeywordCharacter(line.array[off]))
-				break;
-		}
-		off++;
-		int len = pos - off;
-		String id = keywords.lookup(line,off,len);
+		int len = pos - lastKeyword;
+		String id = keywords.lookup(line,lastKeyword,len);
 		if(id != null)
 		{
-			if(off != lastOffset)
-				addToken(off - lastOffset,null);
+			if(lastKeyword != lastOffset)
+				addToken(lastKeyword - lastOffset,null);
 			addToken(len,id);
 			lastOffset = pos;
 		}
+		lastKeyword = pos + 1;
 		if (padNull && lastOffset < pos)
 			addToken(pos - lastOffset, null);
-		return lastOffset;
 	}
 }

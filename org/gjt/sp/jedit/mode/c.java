@@ -53,9 +53,9 @@ public class c extends autoindent
 			keywords.add("static",Token.KEYWORD1);
 			keywords.add("volatile",Token.KEYWORD1);
 			keywords.add("break",Token.KEYWORD1);
-			keywords.add("case",Token.LABEL);
+			keywords.add("case",Token.KEYWORD1);
 			keywords.add("continue",Token.KEYWORD1);
-			keywords.add("default",Token.LABEL);
+			keywords.add("default",Token.KEYWORD1);
 			keywords.add("do",Token.KEYWORD1);
 			keywords.add("else",Token.KEYWORD1);
 			keywords.add("for",Token.KEYWORD1);
@@ -79,5 +79,5 @@ public class c extends autoindent
 		return keywords;
 	}
 
-	protected static KeywordMap keywords;
+	private static KeywordMap keywords;
 }

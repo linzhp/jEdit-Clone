@@ -113,7 +113,7 @@ view.selectionColor=#ccccff
 view.caretBlinkRate=500
 
 # Block caret
-view.blockCaret=on
+view.blockCaret=off
 
 # Electric borders
 view.electricBorders=4
