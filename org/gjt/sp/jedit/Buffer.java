@@ -360,8 +360,9 @@ public class Buffer extends DefaultSyntaxDocument
 	
 	/**
 	 * Reloads the buffer from disk.
+	 * @param view The view that will be used to display error dialogs, etc
 	 */
-	public void reload()
+	public void reload(View view)
 	{
 		// Delete the autosave
 		autosaveFile.delete();
@@ -369,7 +370,7 @@ public class Buffer extends DefaultSyntaxDocument
 		// This is so that `dirty' isn't set
 		init = true;
 
-		load();
+		load(view);
 		loadMarkers();
 		
 		tokenizeLines();
@@ -627,9 +628,21 @@ public class Buffer extends DefaultSyntaxDocument
 	{
 		if(this.mode == mode)
 			return;
+
 		if(this.mode != null)
+		{
+			View[] views = jEdit.getViews();
+			for(int i = 0; i < views.length; i++)
+			{
+				View view = views[i];
+				if(view.getBuffer() == this)
+					this.mode.leaveView(view);
+			}
 			this.mode.leave(this);
+		}
+
 		this.mode = mode;
+
 		if(mode == null)
 		{
 			tokenMarker = null;
@@ -638,7 +651,17 @@ public class Buffer extends DefaultSyntaxDocument
 		{
 			setTokenMarker(mode.createTokenMarker());
 			((Hashtable)getColors()).clear(); // XXX
+
 			mode.enter(this);
+
+			View[] views = jEdit.getViews();
+			for(int i = 0; i < views.length; i++)
+			{
+				View view = views[i];
+				if(view.getBuffer() == this)
+					this.mode.enterView(view);
+			}
+			this.mode.enter(this);
 		}
 
 		fireBufferEvent(new BufferEvent(BufferEvent.MODE_CHANGED,this));
@@ -881,13 +904,46 @@ loop:		for(int i = 0; i < markers.size(); i++)
 	}
 
 	// package-private members
-	Buffer(URL url, String path, boolean readOnly, boolean newFile)
+	Buffer(View view, URL url, String path, boolean readOnly, boolean newFile)
 	{
+		init = true;
+		
 		this.url = url;
 		this.path = path;
 		this.newFile = newFile;
 		this.readOnly = readOnly;
-		init();
+		setDocumentProperties(new BufferProps());
+
+		// silly hack for backspace to work
+		putProperty("i18n",Boolean.FALSE);
+		undo = new UndoManager();
+		markers = new Vector();
+		setColors(new ColorList());
+		multicaster = new EventMulticaster();
+		addDocumentListener(new BufferDocumentListener());
+		setPath();
+		if(!newFile)
+		{
+			if(file.exists())
+				this.readOnly |= !file.canWrite();
+			if(autosaveFile.exists())
+			{
+				Object[] args = { autosaveFile.getPath() };
+				GUIUtilities.message(view,"autosaveexists",args);
+			}
+			load(view);
+			loadMarkers();
+		}
+		String userMode = (String)getProperty("mode");
+		if(userMode != null)
+			setMode(jEdit.getMode(userMode));
+		else
+			setMode();
+
+		addUndoableEditListener(new BufferUndoableEditListener());
+		jEdit.addEditorListener(new BufferEditorListener());
+		
+		init = false;
 	}
 
 	// private members
@@ -913,42 +969,6 @@ loop:		for(int i = 0; i < markers.size(); i++)
 	private int savedSelStart;
 	private int savedSelEnd;
 	private EventMulticaster multicaster;
-
-	private void init()
-	{	
-		init = true;
-		setDocumentProperties(new BufferProps());
-		// silly hack for backspace to work
-		putProperty("i18n",Boolean.FALSE);
-		undo = new UndoManager();
-		markers = new Vector();
-		setColors(new ColorList());
-		multicaster = new EventMulticaster();
-		addDocumentListener(new BufferDocumentListener());
-		setPath();
-		if(!newFile)
-		{
-			if(file.exists())
-				this.readOnly |= !file.canWrite();
-			if(autosaveFile.exists())
-			{
-				Object[] args = { autosaveFile.getPath() };
-				GUIUtilities.message(null,"autosaveexists",args);
-			}
-			load();
-			loadMarkers();
-		}
-		String userMode = (String)getProperty("mode");
-		if(userMode != null)
-			setMode(jEdit.getMode(userMode));
-		else
-			setMode();
-
-		addUndoableEditListener(new BufferUndoableEditListener());
-		jEdit.addEditorListener(new BufferEditorListener());
-		
-		init = false;
-	}
 	
 	private void setPath()
 	{
@@ -983,7 +1003,7 @@ loop:		for(int i = 0; i < markers.size(); i++)
 		autosaveFile = new File(file.getParent(),'#' + name + '#');
 	}
 	
-	private void load()
+	private void load(View view)
 	{
 		InputStream _in;
 		URLConnection connection = null;
@@ -1096,12 +1116,12 @@ loop:		for(int i = 0; i < markers.size(); i++)
 		catch(FileNotFoundException fnf)
 		{
 			Object[] args = { path };
-			GUIUtilities.error(null,"notfounderror",args);
+			GUIUtilities.error(view,"notfounderror",args);
 		}
 		catch(IOException io)
 		{
 			Object[] args = { io.toString() };
-			GUIUtilities.error(null,"ioerror",args);
+			GUIUtilities.error(view,"ioerror",args);
 		}
 	}
 
@@ -1501,6 +1521,9 @@ loop:		for(int i = 0; i < markers.size(); i++)
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.66  1999/03/27 00:44:15  sp
+ * Documentation updates, various bug fixes
+ *
  * Revision 1.65  1999/03/26 04:14:45  sp
  * EnhancedMenuItem tinkering, fixed compile error, fixed backup bug
  *

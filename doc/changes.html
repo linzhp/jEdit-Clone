@@ -17,12 +17,10 @@
 <ul>
 <li>Modularize SyntaxTextArea, make JEditTextArea subclass that handles
 jEdit-specific stuff
-<li>Finish plugin documentation (token markers, commands, modes)
+<li>Finish plugin documentation (commands, modes)
 <li>jEdit 1.4/5's syntax colorizing seems slower than 1.3. It affects
 all modes, so it's a bottleneck in some global method
 <li>Views sometimes lose contact with their buffer
-<li>CompilerError opens not existent files twice (might be a fundamental
-problem with jEdit.openFile())
 <li>view.divider property doesn't work properly
 <li>DefaultSyntaxDocument calls insertLines() twice for each new line
 (Swing bug?)
@@ -38,6 +36,7 @@ the color picker dialog twice
 
 <ul>
 <li>Menu items look better now
+<li>Plugin documentation updates
 </ul>
 
 <h2>Bug Fixes</h2>
@@ -46,6 +45,9 @@ the color picker dialog twice
 <li>Fixed compile error with JDK 1.2 javac in Buffer.java
 <li>Fixed stupid backup bug
 <li>Batch file token marker colorized stuff like C:\bob\fred.exe incorrectly
+<li>Invalid file names in compiler errors caused problems
+<li>The enterView() and leaveView() methods of the Mode interface are
+*ahem* actually called now
 </ul>
 
 <a name=15pre3>

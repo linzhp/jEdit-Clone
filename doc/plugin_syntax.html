@@ -44,7 +44,21 @@ the <code>SyntaxView</code> class.
 <h1>Writing New TokenMarkers</h1>
 </a>
 
-XXX - not done
+Extending jEdit's syntax colorizing system is actually quite easy.
+One needs to implement a subclass of the
+<a href=api/org.gjt.sp.jedit.syntax.TokenMarker.html>
+org.gjt.sp.jedit.syntax.TokenMarker</a> class.<p>
+
+Once a token marker exists, an implementation of
+<a href=api/org.gjt.sp.jedit.syntax.Mode.html>
+org.gjt.sp.jedit.syntax.Mode</a> needs to be provided, that returns
+a new instance of the token marker in the <code>createTokenMarker</code>
+method.
+
+Because there are many tricks you can use when writing token markers,
+studying the source to one can be a great help. The two most complicated
+token markers are CTokenMarker.java and SQLTokenMarker.java - they use
+region matching, keyword maps, and many other useful techniques.
 
 <a name=using>
 <h1>Using jEdit's Syntax Colorizing in Other Applications</h1>

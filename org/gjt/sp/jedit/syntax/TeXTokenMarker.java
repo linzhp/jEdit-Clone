@@ -30,8 +30,8 @@ import org.gjt.sp.jedit.jEdit;
 public class TeXTokenMarker extends TokenMarker
 {
 	// public members
-	public static final String BDFORMULA = "bdformula";
-	public static final String EDFORMULA = "edformula";
+	public static final String BDFORMULA = "_bdformula";
+	public static final String EDFORMULA = "_edformula";
 	
 	public Token markTokens(Segment line, int lineIndex)
 	{
@@ -160,6 +160,9 @@ loop:		for(int i = offset; i < length; i++)
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.11  1999/03/27 00:44:15  sp
+ * Documentation updates, various bug fixes
+ *
  * Revision 1.10  1999/03/13 00:09:07  sp
  * Console updates, uncomment removed cos it's too buggy, cvs log tags added
  *

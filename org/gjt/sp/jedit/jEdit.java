@@ -47,7 +47,7 @@ public class jEdit
 	 * The date when a change was last made to the source code,
 	 * in <code>YYYYMMDD</code> format.
 	 */
-	public static final String BUILD = "19990325";
+	public static final String BUILD = "19990327";
 
 	/**
 	 * AWK regexp syntax.
@@ -816,7 +816,7 @@ public class jEdit
 				return buffer;
 			}
 		}
-		Buffer buffer = new Buffer(url,path,readOnly,newFile);
+		Buffer buffer = new Buffer(view,url,path,readOnly,newFile);
 		if(marker != null)
 			gotoMarker(buffer,null,marker);
 		if(view != null)
@@ -1518,6 +1518,9 @@ public class jEdit
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.62  1999/03/27 00:44:15  sp
+ * Documentation updates, various bug fixes
+ *
  * Revision 1.61  1999/03/26 04:14:45  sp
  * EnhancedMenuItem tinkering, fixed compile error, fixed backup bug
  *

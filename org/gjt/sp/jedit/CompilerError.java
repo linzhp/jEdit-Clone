@@ -69,8 +69,8 @@ public class CompilerError implements EditorListener
 	 */
 	public CompilerError(String path, int lineNo, String error)
 	{
-		this.path = MiscUtilities.constructPath(System.getProperty(
-			"user.dir"),path);
+		this.path = MiscUtilities.constructPath(System
+			.getProperty("user.dir"),path);
 		this.lineNo = lineNo - 1;
 		this.error = error;
 
@@ -133,7 +133,6 @@ public class CompilerError implements EditorListener
 		if(buffer == null)
 		{
 			jEdit.openFile(null,null,path,false,false);
-		
 			// We should've gotten an openNotify
 			if(buffer == null)
 			{
@@ -189,8 +188,12 @@ public class CompilerError implements EditorListener
 		Element map = buffer.getDefaultRootElement();
 		try
 		{
-			linePos = buffer.createPosition(map.getElement(lineNo)
-				.getStartOffset());
+			Element lineElement = map.getElement(lineNo);
+			if(lineElement != null)
+			{
+				linePos = buffer.createPosition(lineElement
+					.getStartOffset());
+			}
 		}
 		catch(Exception e)
 		{
@@ -208,6 +211,9 @@ public class CompilerError implements EditorListener
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.9  1999/03/27 00:44:15  sp
+ * Documentation updates, various bug fixes
+ *
  * Revision 1.8  1999/03/22 04:20:01  sp
  * Syntax colorizing updates
  *

@@ -50,7 +50,7 @@ public class reload extends EditAction
 		SyntaxTextArea textArea = view.getTextArea();
 		int selStart = textArea.getSelectionStart();
 		int selEnd = textArea.getSelectionEnd();
-		buffer.reload();
+		buffer.reload(view);
 		textArea.select(selStart,selEnd);
 	}
 }
