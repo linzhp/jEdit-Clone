@@ -34,6 +34,7 @@ public class HistoryTextField extends JTextField
 	{
 		historyModel = HistoryModel.getModel(name);
 		addKeyListener(new KeyHandler());
+		addMouseListener(new MouseHandler());
 
 		index = -1;
 	}
@@ -147,6 +148,98 @@ public class HistoryTextField extends JTextField
 		}
 	}
 
+	private void showFullMenu(int x, int y)
+	{
+		JPopupMenu popup = new JPopupMenu();
+		JMenuItem caption = new JMenuItem(historyModel.getName());
+		caption.getModel().setEnabled(false);
+		popup.add(caption);
+		popup.addSeparator();
+
+		ButtonGroup grp = new ButtonGroup();
+
+		ActionHandler actionListener = new ActionHandler();
+
+		if(index == -1)
+			current = getText();
+
+		if(current != null && current.length() != 0)
+		{
+			JRadioButtonMenuItem menuItem =
+				new JRadioButtonMenuItem(current);
+			menuItem.setActionCommand("-1");
+			menuItem.addActionListener(actionListener);
+			grp.add(menuItem);
+			popup.add(menuItem);
+			menuItem.getModel().setSelected(true);
+		}
+
+		for(int i = 0; i < historyModel.getSize(); i++)
+		{
+			JRadioButtonMenuItem menuItem =
+				new JRadioButtonMenuItem(historyModel.getItem(i));
+			menuItem.setActionCommand(String.valueOf(i));
+			menuItem.addActionListener(actionListener);
+			grp.add(menuItem);
+			popup.add(menuItem);
+			if(i == index)
+				menuItem.getModel().setSelected(true);
+		}
+
+		popup.show(this,x,y);
+	}
+
+	private void showPartialMenu(int x, int y)
+	{
+		String text = getText().substring(0,getSelectionStart());
+		if(text == null || text.length() == 0)
+		{
+			showFullMenu(x,y);
+			return;
+		}
+
+		ActionHandler actionListener = new ActionHandler();
+
+		JPopupMenu popup = new JPopupMenu();
+		JMenuItem caption = new JMenuItem(historyModel.getName()
+			+ "/" + text);
+		caption.getModel().setEnabled(false);
+		popup.add(caption);
+		popup.addSeparator();
+
+		for(int i = 0; i < historyModel.getSize(); i++)
+		{
+			String item = historyModel.getItem(i);
+			if(item.startsWith(text))
+			{
+				JMenuItem menuItem = new JMenuItem(item);
+				menuItem.setActionCommand(String.valueOf(i));
+				menuItem.addActionListener(actionListener);
+				popup.add(menuItem);
+			}
+		}
+
+		popup.show(this,x,y);
+	}
+
+	class ActionHandler implements ActionListener
+	{
+		public void actionPerformed(ActionEvent evt)
+		{
+			int ind = Integer.parseInt(evt.getActionCommand());
+			if(ind == -1)
+			{
+				if(index != -1)
+					setText(current);
+			}
+			else
+			{
+				setText(historyModel.getItem(ind));
+				index = ind;
+			}
+		}
+	}
+
 	class KeyHandler extends KeyAdapter
 	{
 		public void keyPressed(KeyEvent evt)
@@ -179,11 +272,25 @@ public class HistoryTextField extends JTextField
 			}
 		}
 	}
+
+	class MouseHandler extends MouseAdapter
+	{
+		public void mousePressed(MouseEvent evt)
+		{
+			if((evt.getModifiers() & InputEvent.CTRL_MASK) != 0)
+				showPartialMenu(0,getHeight());
+			else if((evt.getModifiers() & InputEvent.BUTTON3_MASK) != 0)
+				showFullMenu(0,getHeight());
+		}
+	}
 }
 
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.28  1999/05/09 04:48:47  sp
+ * Funky history menus
+ *
  * Revision 1.27  1999/05/09 03:50:17  sp
  * HistoryTextField is now a text field again
  *

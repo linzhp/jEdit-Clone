@@ -55,13 +55,21 @@ To make it easier to reuse previous commands and search strings, jEdit's
 console, (see <a href=console.html>The Console</a>), Search &amp; Replace
 and HyperSearch dialogs use text fields with history lists.<p>
 
-The up and down arrow keys can be used to recall the previous and next
-entries.<p>
+The following keyboard commands can be used in history text fields:
 
-Pressing Control in addition to up or down will search for the previous
-or next entry that starts with the currently entered text; for example,
-if the used previously entered `ls /etc', and they enter `ls' and press
-Control+UP, `ls /etc' will be entered.<p>
+<ul>
+<li>UP - recalls the previous string
+<li>DOWN - recalls the next string
+<li>C+UP - recalls the last string that starts with the currently
+entered text
+<li>C+DOWN - recalls the next string that starts with the currently
+entered text
+</ul>
+
+In addition to the above, pressing the right mouse button will display
+a menu showing all entires, and holding down Control while clicking
+the right mouse button will display a menu showing all entires that
+start with the currently entered text.<p>
 
 The maximum number of entires in a history list is 25 by default; it can
 be changed in `Tools-&gt;Global Options-&gt;General'.
