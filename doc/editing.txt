@@ -1,0 +1,127 @@
+ADVANCED TEXT EDITING WITH JEDIT (editing.txt, last modified 13 Dec 1998)
+
+Contents
+--------
+1. Markers
+2. Search And Replace
+3. Buffer-Local Properties
+4. Miscallanous Commands
+5. Edit Modes
+5.1. Auto Indent Mode
+6. Netscape Remote Support
+7. Customising jEdit
+
+1. Markers
+----------
+Most other editors can set `markers' in the text, and go to those 
+markers. jEdit's markers, however are saved across editing sessions and 
+can have names of any length. Markers are set with the `Search->Set 
+Marker' command, cleared with `Search->Clear Marker' and jumped to with 
+`Search->Go To Marker'.
+
+2. Search And Replace
+---------------------
+Like most editors, jEdit supports regular expression search and 
+replace. See regexp.txt for details on regexp syntax.
+
+3. Buffer-Local Properties
+--------------------------
+Some setting such as tab size and edit mode can be set on a per-file 
+basis by inserting the following text in the first 10 lines of the 
+file:
+
+	(:<property>=<value>:<another property>=<another value>:)
+
+The following properties are used by jEdit:
+- `tabSize': The tab size
+- `maxLineLen': maximum line length, used by the `Format' command
+- `wordSep': word separator characters, used by `Expand Abbreviation' 
+  command
+- `openBracket': open brackets, used by the `Locate Bracket' and
+  `Locate Block' commands
+- `closeBracket': close brackets, used by the `Locate Bracket' and 
+  `Locate Block' commands
+- `mode': The edit mode
+In addition, most edit modes define some of their own.
+
+4. Miscallaneous Commands
+-------------------------
+There are several useful commands in the `Edit' menu. They are:
+- `Edit->Format': formats selected text or whole buffer by wrapping long 
+lines and removing duplicate spaces.
+- `Edit->Expand Abbreviation': scans backwards for possible completions 
+  of the current word.
+- `Edit->Locate Bracket': finds the bracket that matches the one before 
+  the caret.
+- `Edit->Locate Block': selects the current code block, enclosed in brackets.
+- `Edit->Locate Paragraph': selects the current paragraph.
+
+5. Edit Modes
+-------------
+An edit mode defines the required behaviour to edit a certain type of 
+file. Currently, edit modes can define indentation behaviour and syntax 
+colorizing rules. Syntax colorizing is the ability to show specific 
+parts of text in a diffirent color. This makes complex source files 
+easier to read.
+
+jEdit looks at the file's extension to determine which editing mode to 
+use. The mode can also be changed manually by selecting it from the 
+`Mode' menu or with the `mode' buffer-local property.
+
+jEdit comes with the following edit modes:
+- Auto Indent: indents lines.
+  with buffer local properties and description.
+- Batch File: colorizes DOS batch files. (.bat)
+- C: colorizes C/C++ source code. (.c, .h, .cc, .cpp)
+- HTML: colorizes HTML source. (.html, .shtml, .htm)
+- Java: colorizes Java source. (.java)
+- Makefile: colorizes UNIX Makefiles. (Makefile, makefile, GNUmakefile)
+- Shell Script: colorizes UNIX shell scripts. (.sh, also where first line 
+  is one of various shell paths)
+- TeX: colorizes TeX files. (.tex, .sty, .aux)
+
+More information about the auto indent mode can be found in the following
+section.
+
+5.1. Auto Indent Mode
+---------------------
+The auto indent mode overrides the default Tab key behaviour to copy 
+all white space from the start of the previous line to the start of the 
+current one. If both lines line up, a normal Tab will be inserted.
+
+The auto indent mode uses the following buffer-local properties:
+- `tabSize': The tab size
+- `ai': A list of characters that are treated as white space (in addition 
+  to tab, new line and space)
+
+All other edit modes inherit this mode's indentation behaviour.
+
+6. Netscape Remote Support
+--------------------------
+jEdit has two commands useful when editing HTML source: `Open in 
+Netscape' which will open the current file in Netscape, and `Open 
+Selection in Netscape', which will open the currently selected URL in 
+Netscape.
+
+These commands launch Netscape by first trying it with the `-remote' 
+switch, which on Unix systems opens URL in a running instance, and then 
+without that switch.
+
+On Windows 95/98/NT systems, you must add Netscape's directory to the 
+PATH. If the `netscape.exe' executable is in
+`C:\Program Files\Netscape\Communicator\Program`, the command to add
+that directory to the PATH is:
+
+	set PATH=%PATH%;C:\Program Files\Netscape\Communicator\Program
+
+It is advisable to place this command in your C:\AUTOEXEC.BAT so that 
+it's executed every time the computer starts up.
+
+7. Customising jEdit
+--------------------
+Simple settings such as the font and print margins can be changed in 
+the `Edit->Options' dialog. See menus.txt and props.txt for information 
+about customising menus and strings.
+
+-- Slava Pestov
+<sp@gjt.org>

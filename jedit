@@ -1,0 +1,35 @@
+#!/bin/sh
+
+# Silly hook for configure script
+test "$JAVA" = "" && JAVA="jre"
+
+# Find full path of $0
+case $0 in
+	/*) PRG=$0 ;;
+	./*) PRG=`pwd`/`basename $0` ;;
+	*) PRG=`which $0` ;;
+esac
+
+# Determine installation directory
+if test "$JEDIT_HOME" = ""
+then
+	while test -L "$PRG"
+	do
+		PRG=`ls -l "$PRG" | sed 's/.*-> //'`
+	done
+	JEDIT_HOME="`dirname $PRG`"
+fi
+
+# Call runtime
+if test "$JAVA" = "jre"
+then
+	cp="-cp $JEDIT_HOME/jedit.jar:$SWING_HOME/swingall.jar"
+else
+	cp="-classpath $CLASSPATH:$JEDIT_HOME/jedit.jar:$SWING_HOME/swingall.jar"
+fi
+
+CMDLINE="$JAVA $cp -mx32m $JEDIT org.gjt.sp.jedit.jEdit \
+	-portfile=$HOME/.jedit-server-`echo $DISPLAY|sed 's/\..*//'` $@"
+echo $CMDLINE
+
+exec $CMDLINE

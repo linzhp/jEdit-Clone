@@ -1,0 +1,35 @@
+HELP INDEX (index.txt, last modified 9 Dec 1998)
+
+This is the online documentation for jEdit 1.2. It is far from 
+complete. If you would like to contribute, e-mail me at <sp@gjt.org>.
+
+Some notes:
+1. These files look best with a monospaced font.
+2. In jEdit, files can be opened by double clicking on their name in the 
+   text and pressing CS-o - that is, Control-Shift-o.
+3. In jEdit, you can use the `Search->Go To Marker' menu to browse around 
+   help files.
+
+General
+-------
+COPYING.txt     The GNU General Public License
+README.txt      General information about jEdit
+changes.txt     Version history and to do list
+version1.1.txt  Changes between jEdit 1.1 and 1.2
+version1.0.txt  Changes between jEdit 1.0 and 1.1
+
+Using jEdit
+-----------
+starting.txt    Getting started with jEdit
+editing.txt     Advanced text editing with jEdit
+menus.txt       A description of jEdit's menus and how to customize them
+shortcuts.txt   An automatically generated file of jEdit's keyboard shortcuts
+regexp.txt      Information about regular expressions. Read this to make full
+                use of jEdit's Search And Replace and HyperSearch features
+props.txt       Information about property files and how to change them
+plugins.txt     Information about plugins, and how to install and use them
+plugdev.txt     Information about plugin development
+security.txt    jEdit server security notes
+
+-- Slava Pestov
+<sp@gjt.org>

@@ -17,10 +17,15 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-import com.sun.java.swing.*;
+package org.gjt.sp.jedit;
+
+import javax.swing.text.Segment;
+import javax.swing.*;
 import gnu.regexp.*;
+import java.awt.*;
 import java.awt.event.*;
-import java.io.File;
+import java.io.*;
+import java.net.Socket;
 import java.util.*;
 
 /**
@@ -97,7 +102,7 @@ public class jEdit
 	/**
 	 * The jEdit version.
 	 */
-	public static final String VERSION = "1.1.2";
+	public static final String VERSION = "1.2final";
 	
 	/**
 	 * The jEdit build.
@@ -105,16 +110,10 @@ public class jEdit
 	 * This is the date when a change was last made to the source code,
 	 * in <code>YYYYMMDD</code> format.
 	 */
-	public static final String BUILD = "19981116";
+	public static final String BUILD = "19981213";
 	
 	/**
 	 * The property manager.
-	 * <p>
-	 * The property manager can be used to set and fetch properties and
-	 * load and save property files.
-	 * @see PropsMgr#loadProps(InputStream,String,String)
-	 * @see PropsMgr#getProperty(String,Object[])
-	 * @see PropsMgr#saveProps(OutputStream,String)
 	 */
 	public static final PropsMgr props = new PropsMgr();
 
@@ -123,38 +122,11 @@ public class jEdit
 	 * <p>
 	 * The command manager can be used to fetch commands and modes and
 	 * to load plugins.
-	 * @see CommandMgr#loadPlugins(String)
-	 * @see CommandMgr#loadPlugin(String)
-	 * @see CommandMgr#getCommand(String)
-	 * @see CommandMgr#execCommand(Buffer,View,String)
-	 * @see CommandMgr#getPlugins()
-	 * @see CommandMgr#getMode(String)
-	 * @see CommandMgr#getModeName(Mode)
-	 * @see CommandMgr#getModes()
-	 * @see CommandMgr#addHook(String,Object)
-	 * @see CommandMgr#removeHook(String,Object)
-	 * @see CommandMgr#removeHook(String)
-	 * @see CommandMgr#execHook(Buffer,View,String)
-	 * @see Command
-	 * @see Mode
 	 */
 	public static final CommandMgr cmds = new CommandMgr();
 	
 	/**
 	 * The buffer manager.
-	 * <p>
-	 * The buffer manager can be used to open and close views and buffers.
-	 * @see BufferMgr#openURL(View)
-	 * @see BufferMgr#openFile(View)
-	 * @see BufferMgr#openFile(View,String,String,boolean,boolean)
-	 * @see BufferMgr#newFile(View)
-	 * @see BufferMgr#closeBuffer(View,Buffer)
-	 * @see BufferMgr#getBuffer(String)
-	 * @see BufferMgr#getBuffers()
-	 * @see BufferMgr#newView(View)
-	 * @see BufferMgr#closeView(View)
-	 * @see BufferMgr#getViews()
-	 * @see BufferMgr#getRecent()
 	 */
 	public static final BufferMgr buffers = new BufferMgr();
 	
@@ -171,9 +143,23 @@ public class jEdit
 		boolean readOnly = false;
 		portFile = new File(System.getProperty("user.home"),
 			".jedit-server");
-		String jeditHome = System.getProperty("jedit.home",
-			System.getProperty("user.dir"));
-		System.getProperties().put("jedit.home",jeditHome);
+		jEditHome = System.getProperty("jedit.home");
+		if(jEditHome == null)
+		{
+			String classpath = System
+				.getProperty("java.class.path");
+			int index = classpath.toLowerCase()
+				.indexOf("jedit.jar");
+			if(index > 0)
+			{
+				int start = classpath.lastIndexOf(File
+					.pathSeparator,index) + 1;
+				jEditHome = classpath.substring(start,
+					index - 1);
+			}
+			else
+				jEditHome = System.getProperty("user.dir");
+		}
 		for(int i = 0; i < args.length; i++)
 		{
 			String arg = args[i];
@@ -202,23 +188,91 @@ public class jEdit
 				args[i] = null;
 			}
 		}
+		if(portFile != null && portFile.exists())
+		{
+			try
+			{
+				BufferedReader in = new BufferedReader(
+					new FileReader(portFile));
+				Socket socket = new Socket("localhost",
+					Integer.parseInt(in.readLine()));
+				DataOutputStream out = new DataOutputStream(
+					socket.getOutputStream());
+				out.writeBytes(in.readLine());
+				out.write('\n');
+				if(readOnly)
+					out.writeBytes("-readonly\n");
+				out.writeBytes("-cwd=" + System
+					.getProperty("user.dir") + "\n");
+				boolean opened = false;
+				for(int i = 0; i < args.length; i++)
+				{
+					if(args[i] == null)
+						continue;
+					out.writeBytes(args[i]);
+					out.write('\n');
+					opened = true;
+				}
+				if(!opened)
+					out.write('\n');
+				socket.close();
+				in.close();
+				System.exit(0);
+				return;
+			}
+			catch(Exception e)
+			{
+				System.out.println("Stale port file deleted");
+				portFile.delete();
+			}
+		}
 		props.loadSystemProps();
-		cmds.loadPlugins(jeditHome + File.separator + "jars");
+		try
+		{
+			cmds.initMode("autoindent");
+			cmds.initMode("bat");
+			cmds.initMode("c");
+			cmds.initMode("html");
+			cmds.initMode("java_mode");
+			cmds.initMode("makefile");
+			cmds.initMode("sh");
+			cmds.initMode("tex");
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+			jEdit.error(null,"loadmodeerr",null);
+		}
+		cmds.loadPlugins(jEditHome + File.separator + "jars");
 		cmds.loadPlugins(System.getProperty("user.home") +
 			File.separator + ".jedit-jars");
 		if(!noUsrProps)
 			props.loadUserProps();	
 		propertiesChanged();
-		buffers.newFile(null);
 		String userDir = System.getProperty("user.dir");
-		View view = buffers.newView(null);
+		boolean opened = false;
+		Buffer buffer = null;
 		for(int i = 0; i < args.length; i++)
 		{
 			if(args[i] == null)
 				continue;
-			buffers.openFile(view,userDir,args[i],readOnly,false);
+			opened = true;
+			buffer = buffers.openFile(null,userDir,args[i],
+				readOnly,false);
 		}
-		cmds.execHook(null,null,"post_startup");
+		if(!opened)
+			buffer = buffers.newFile(null);
+		try
+		{
+			cmds.execHook(buffer,buffers.newView(buffer),
+				"post_startup");
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+			Object[] _args = { e.toString() };
+			jEdit.error(null,"execcmderr",_args);
+		}
 	}
 
 	/**
@@ -229,12 +283,16 @@ public class jEdit
 	 * changed:
 	 * <ul>
 	 * <li><code>lf</code>
+	 * <li><code>view.font</code>
+	 * <li><code>view.fontsize</code>
+	 * <li><code>view.fontstyle</code>
+	 * <li><code>view.autoindent</code>
+	 * <li><code>buffer.syntax</code>
 	 * <li><code>daemon.server.toggle</code>
 	 * <li><code>daemon.autosave.interval</code>
 	 * <li><code>buffermgr.recent</code>
 	 * </ul>
 	 * @see PropsMgr
-	 * @see View#propertiesChanged()
 	 */
 	public static void propertiesChanged()
 	{
@@ -259,6 +317,33 @@ public class jEdit
 		if("on".equals(props.getProperty("daemon.server.toggle"))
 			&& portFile != null)
 			server = new Server(portFile);
+			
+		String family = jEdit.props.getProperty("view.font",
+			"Monospaced");
+		int size, style;
+		try
+		{
+			size = Integer.parseInt(jEdit.props
+				.getProperty("view.fontsize"));
+		}
+		catch(NumberFormatException nf)
+		{
+			size = 12;
+		}
+		try
+		{
+			style = Integer.parseInt(jEdit.props
+				.getProperty("view.fontstyle"));
+		}
+		catch(NumberFormatException nf)
+		{
+			style = 0;
+		}
+		font = new Font(family,style,size);
+
+		autoindent = "on".equals(jEdit.props.getProperty(
+			"view.autoindent"));
+		syntax = "on".equals(jEdit.props.getProperty("buffer.syntax"));
 		autosave = new Autosave();
 		buffers.loadRecent();
 	}
@@ -276,6 +361,8 @@ public class jEdit
 	 */
 	public static JMenuBar loadMenubar(View view, String name)
 	{
+		if(name == null)
+			return null;
 		Vector vector = new Vector();
 		JMenuBar mbar = new JMenuBar();
 		String menus = props.getProperty(name);
@@ -460,6 +547,14 @@ public class jEdit
 	}
 	
 	/**
+	 * Returns the jEdit install directory.
+	 */
+	public static String getJEditHome()
+	{
+		return jEditHome;
+	}
+
+	/**
 	 * Returns the current regular expression.
 	 * <p>
 	 * It is created from the <code>search.find.value</code>,
@@ -504,30 +599,108 @@ public class jEdit
 	}
 
 	/**
-	 * Converts all tabs in the specified string to spaces.
-	 * @param tabSize The tab size
-	 * @param in The input string
+	 * Returns true if syntax colorizing is enabled.
 	 */
-	public static String untab(int tabSize, String in)
+	public static boolean getSyntaxColorizing()
 	{
-		StringBuffer buf = new StringBuffer();
-		for(int i = 0; i < in.length(); i++)
-		{
-			switch(in.charAt(i))
-			{
-			case '\t':
-				int count = tabSize - (i % tabSize);
-				while(count-- >= 0)
-					buf.append(' ');
-				break;
-			default:
-				buf.append(in.charAt(i));
-				break;
-			}
-		}
-		return buf.toString();
+		return syntax;
+	}
+
+	/**
+	 * Returns true if auto indent is enabled.
+	 */
+	public static boolean getAutoIndent()
+	{
+		return autoindent;
+	}
+
+	/**
+	 * Returns the default font.
+	 */
+	public static Font getFont()
+	{
+		return font;
 	}
 	
+	/**
+	 * Checks if a subregion of a <code>Segment</code> is equal to a
+	 * string.
+	 * @param ignoreCase True if case should be ignored, false otherwise
+	 * @param text The segment
+	 * @param offset The offset into the segment
+	 * @param match The string to match
+	 */
+	public static boolean regionMatches(boolean ignoreCase, Segment text,
+					    int offset, String match)
+	{
+		char[] textArray = text.array;
+		int length = offset + Math.min(match.length(),text.count);
+		for(int i = offset, j = 0; i < length; i++, j++)
+		{
+			char c1 = textArray[i];
+			char c2 = match.charAt(j);
+			if(ignoreCase)
+			{
+				c1 = Character.toUpperCase(c1);
+				c2 = Character.toUpperCase(c2);
+			}
+			if(c1 != c2)
+				return false;
+		}
+		return true;
+	}
+			
+			
+	/**
+	 * Converts a color name to a color object.
+	 * @param name The color name
+	 */
+	public static Color parseColor(String name)
+	{
+		if(name == null)
+			return Color.black;
+		else if(name.startsWith("#"))
+		{
+			try
+			{
+				return new Color(Integer.parseInt(
+					name.substring(1),16));
+			}
+			catch(NumberFormatException nf)
+			{
+				return Color.black;
+			}
+		}
+		else if("red".equals(name))
+			return Color.red;
+		else if("green".equals(name))
+			return Color.green;
+		else if("blue".equals(name))
+			return Color.blue;
+		else if("yellow".equals(name))
+			return Color.yellow;
+		else if("orange".equals(name))
+			return Color.orange;
+		else if("white".equals(name))
+			return Color.white;
+		else if("lightGray".equals(name))
+			return Color.lightGray;
+		else if("gray".equals(name))
+			return Color.gray;
+		else if("darkGray".equals(name))
+			return Color.darkGray;
+		else if("black".equals(name))
+			return Color.black;
+		else if("cyan".equals(name))
+			return Color.cyan;
+		else if("magenta".equals(name))
+			return Color.magenta;
+		else if("pink".equals(name))
+			return Color.pink;
+		else
+			return Color.black;
+	}
+
 	/**
 	 * Converts a file name to a class name.
 	 * <p>
@@ -538,10 +711,35 @@ public class jEdit
 	public static String fileToClass(String name)
 	{
 		char[] clsName = name.toCharArray();
-		for(int i = clsName.length - 1; i >= 5; i--)
+		for(int i = clsName.length - 6; i >= 0; i--)
 			if(clsName[i] == '/')
 				clsName[i] = '.';
 		return new String(clsName,0,clsName.length - 6);
+	}
+
+	/**
+	 * Constructs an absolute path name from a directory and another
+	 * path name.
+	 * @param parent The directory
+	 * @param path The path name
+	 */
+	public static String constructPath(String parent, String path)
+	{
+		// absolute pathnames
+		if(path.startsWith(File.separator))
+			return path;
+		// windows pathnames, eg C:\document
+		else if(path.length() >= 3 && path.charAt(1) == ':'
+			&& path.charAt(2) == '\\')
+			return path;
+		// relative pathnames
+		else if(parent == null)
+			parent = System.getProperty("user.dir");
+		// do it!
+		if(parent.endsWith(File.separator))
+			return parent + path;
+		else
+			return parent + File.separator + path;
 	}
 
 	/**
@@ -561,14 +759,18 @@ public class jEdit
 		buffers.saveRecent();
 		props.saveUserProps();
 		System.out.println("Thank you for using jEdit. Send an e-mail"
-			+ " to <slava_pestov@geocities.com>.");
+			+ " to <sp@gjt.org>.");
 		System.exit(0);
 	}
 
 	// private members
 	private static File portFile;
+	private static Font font;
+	private static boolean autoindent;
+	private static boolean syntax;
 	private static Server server;
 	private static Autosave autosave;
+	private static String jEditHome;
 
 	private jEdit() {}
 
@@ -597,6 +799,8 @@ public class jEdit
 
 	private static JMenu loadMenu(View view, String name, Vector vector)
 	{
+		if(name == null)
+			return null;
 		JMenu menu = view.getMenu(name);
 		if(menu != null)
 			return menu;
@@ -635,6 +839,8 @@ public class jEdit
 	private static JMenuItem loadMenuItem(View view, String name,
 		Vector vector)
 	{
+		if(name == null)
+			return null;
 		if(name.startsWith("%"))
 			return loadMenu(view,name.substring(1),vector);
 		String label = props.getProperty(name.concat(".label"));

@@ -1,2 +1,0 @@
-exec $JAVA -Djedit.home="$SLAVA_SHARE_DIR" $JEDIT_J jEdit \
-	-portfile="$HOME/.jedit-server-`echo $DISPLAY|sed 's/\..*//'`" $@

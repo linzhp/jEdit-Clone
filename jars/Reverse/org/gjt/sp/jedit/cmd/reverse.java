@@ -1,5 +1,5 @@
 /*
- * java_mode.java - Java editing mode
+ * reverse.java - Simple plugin
  * Copyright (C) 1998 Slava Pestov
  *
  * This program is free software; you can redistribute it and/or
@@ -17,16 +17,22 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-package org.gjt.sp.jedit.mode;
+package org.gjt.sp.jedit.cmd;
 
-import javax.swing.text.Element;
-import org.gjt.sp.jedit.syntax.*;
+import java.util.Hashtable;
+import org.gjt.sp.jedit.syntax.SyntaxTextArea;
 import org.gjt.sp.jedit.*;
 
-public class java_mode extends autoindent
+public class reverse implements Command
 {
-	public TokenMarker createTokenMarker()
+	public void exec(Buffer buffer, View view, String arg, Hashtable args)
 	{
-		return new CTokenMarker(false);
+		SyntaxTextArea textArea = view.getTextArea();
+		String selection = textArea.getSelectedText();
+		if(selection != null)
+			textArea.replaceSelection(new StringBuffer(selection)
+				.reverse().toString());
+		else
+			view.getToolkit().beep();
 	}
 }

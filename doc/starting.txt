@@ -1,0 +1,128 @@
+GETTING STARTED WITH JEDIT (starting.txt, last modified 10 Dec 1998)
+
+Contents
+--------
+1. Starting jEdit
+2. Opening Files
+3. Saving Files
+4. Editing Files
+
+1. Starting jEdit
+-----------------
+Usually, jEdit is started to edit one or more files with this command:
+
+	jedit <filename 1> <filename 2>...
+
+jEdit can also be started with no arguments:
+
+	jedit
+
+In that case, it will open a new `Untitled' file.
+
+A number of options can be given to jEdit:
+
+	-version: Print jEdit version and exit
+	-usage: Print command line usage
+	-nousrprops: Don't load user properties
+	-noserver: Don't start server
+	-portfile=<file>: Use <file> to store server port instead of default
+	-readonly: Open files read only
+
+To open a file whose name starts with a dash (-), you must place the --
+argument before it in the command line to stop it from being 
+interpreted as an option:
+
+	jedit -- -file-whose-name-starts-with-dash
+
+The -- indicates the end of options. No more options after it are 
+interpreted.
+
+NOTE: To save on memory usage, jEdit checks if another instance of it 
+is already running when it starts. If it is, is tells that instance to 
+open the specified files, and exits. If you don't like this, add the 
+-noserver switch to the jEdit command line.
+
+2. Opening Files
+----------------
+Within jEdit, files can be opened for editing in one of three ways:
+
+- With the `File->Open File' command, which shows a file selection 
+  dialog.
+- With the `File->Open URL' command, which lets you type in a path name 
+  or URL.
+- With the `File->New File' command, which creates a blank, untitled 
+  file.
+
+A new buffer is created for each file, and the file's contents are 
+loaded into it. The file remains unchanged on disk until you save it.
+
+3. Saving Files
+---------------
+Files can be saved back to disk in one of three ways:
+
+- With the `File->Save' command, which saves the file immediately.
+- With the `File->Save As' command, which shows a file selection dialog,
+  allowing a different name for the file to be chosen.
+- With the `File->Save To URL' command, which prompts for a path name or
+  URL to save the file to.
+
+The autosave feature protects against computer crashes. It saves open 
+files at fixed intervals, 30 seconds by default. When a file is 
+autosaved, its name is enclosed in `#' characters - for example, if you 
+were editing the file `HelloWorld.java', it would be autosaved to 
+`#HelloWorld.java#'. If jEdit crashes during an editing session, you 
+can open the autosave file, and if it contains important information, 
+overwrite the original file with it.
+
+The backup feature protects against the user's mistakes. When you save 
+a file, a tilde (`~') is added to the name of the original version 
+before the new version is saved - for example, if you made some changes 
+to `HelloWorld.java' and saved them, the original version, before the 
+changes, would be called `HelloWorld.java~'. If you make some changes 
+that you didn't like, you can revert to the last saved version by 
+opening the backup file and overwriting the new version with it.
+
+4. Editing Files
+----------------
+Files are edited inside views. Each view can only edit one file at 
+once, but there can be any number of views open at once. More than one 
+view can edit the same file - changes made in one view automatically 
+appear in the others.
+
+The `File->New View' command creates a new view, set to the edit the 
+same file as the current one.
+
+The `File->Close View' command closes the current view and exits jEdit 
+if there aren't any left.
+
+The Buffers menu can be used to select which file the current view 
+should be editing.
+
+Each view has a status bar. A sample status bar looks like this:
+
+(--:**) rc.multi (Text, Line 124/124 100%)
+ ^ ^ ^        ^    ^          ^   ^   ^
+ | | |        |    |          |   |   |
+ | | |        |    |          |   |   The caret position, as a percentage
+ | | |        |    |          |   |
+ | | |        |    |          |   The total number of lines in the file
+ | | |        |    |          |
+ | | |        |    |          The line number the caret is on
+ | | |        |    |
+ | | |        |    The current edit mode
+ | | |        |
+ | | |        The full pathname of the file
+ | | |
+ | | (**) if the has changed since last save, (--) if it hasn't
+ | |
+ | (/) if the file is read only, (:) if it's writeable
+ |
+(**) if the file is untitled, (--) if it's not
+
+If you've ever used an editor such as nedit on Unix, Notepad on Windows
+or SimpleText on the Mac you'll feel right at home in jEdit. jEdit 
+works in much the same way as the above editors. The menu item 
+shortcuts are similar as well.
+
+-- Slava Pestov
+<sp@gjt.org>
