@@ -73,7 +73,7 @@ public class HistoryTextField extends JComboBox
 		if(text == null)
 			text = "";
 		insertItemAt(text,0);
-		if(getItemCount() > 100)
+		if(getItemCount() > 25)
 			removeItemAt(getItemCount() - 1);
 	}
 
@@ -134,6 +134,9 @@ public class HistoryTextField extends JComboBox
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.18  1999/03/27 03:08:55  sp
+ * Changed max number of items in history to 25 from 100
+ *
  * Revision 1.17  1999/03/21 08:37:16  sp
  * Slimmer action system, history text field update
  *

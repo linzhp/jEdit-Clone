@@ -18,7 +18,7 @@ autosave=15
 recent=8
 
 # Number of elements in clipboard history (used by Paste Previous command)
-clipHistory=100
+clipHistory=25
 
 # Name for untitled files, {0} is the number open so far
 untitled=Untitled-{0}
