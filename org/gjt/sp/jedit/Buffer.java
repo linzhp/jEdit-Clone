@@ -55,8 +55,6 @@ implements DocumentListener, UndoableEditListener
 
 	/**
 	 * Finds the next instance of the search string in this buffer.
-	 * The search string is obtained from the
-	 * <code>search.find.value</code> property.
 	 * @param view The view
 	 * @param done For internal use. False if a `keep searching'
 	 * dialog should be shown if no more matches have been found.
@@ -68,8 +66,6 @@ implements DocumentListener, UndoableEditListener
 
 	/**
 	 * Finds the next instance of the search string in this buffer.
-	 * The search string is obtained from the
-	 * <code>search.find.value</code> property.
 	 * @param view The view
 	 * @param start Location where to start the search
 	 * @param done For internal use. False if a `keep searching'
@@ -119,9 +115,6 @@ implements DocumentListener, UndoableEditListener
 
 	/**
 	 * Replaces the current selection with the replacement string.
-	 * <p>
-	 * The replacement string is obtained from the
-	 * <code>search.replace.value</code> property.
 	 * @param view The view
 	 */
 	public void replace(View view)
@@ -134,7 +127,7 @@ implements DocumentListener, UndoableEditListener
 		try
 		{
 			RE regexp = jEdit.getRE();
-			String replaceStr = jEdit.getProperty("search.replace.value");
+			String replaceStr = jEdit.getProperty("history.replace.0");
 			if(regexp == null)
 			{
 				view.getToolkit().beep();
@@ -174,7 +167,7 @@ implements DocumentListener, UndoableEditListener
 		try
 		{
 			RE regexp = jEdit.getRE();
-			String replaceStr = jEdit.getProperty("search.replace.value");
+			String replaceStr = jEdit.getProperty("history.replace.0");
 			if(regexp == null)
 			{
 				endCompoundEdit();

@@ -813,7 +813,10 @@ public class jEdit
 						gotoMarker(buffer,view,
 							marker);
 					if(view.getBuffer() != buffer)
+					{
 						view.setBuffer(buffer);
+						view.updateBuffersMenu();
+					}
 				}
 				return buffer;
 			}
@@ -829,7 +832,6 @@ public class jEdit
 		{
 			View v = (View)enum.nextElement();
 			v.updateBuffersMenu();
-			v.updateOpenRecentMenu();
 		}
 		enum = getErrors();
 		if(enum != null)
@@ -879,6 +881,7 @@ public class jEdit
 			if(view.getBuffer() == buffer)
 				view.setBuffer(prev);
 			view.updateBuffersMenu();
+			view.updateOpenRecentMenu();
 		}
 		enum = getErrors();
 		if(enum != null)
@@ -1275,21 +1278,17 @@ public class jEdit
 
 	/**
 	 * Returns the current regular expression.
-	 * <p>
-	 * It is created from the <code>search.find.value</code>,
-	 * <code>search.ignoreCase.value</code> and
-	 * <code>search.regexp.value</code> properties.
 	 * @exception REException if the stored regular expression is invalid
 	 */
 	public static RE getRE()
 		throws REException
 	{
-		String pattern = getProperty("search.find.value");
+		String pattern = getProperty("history.find.0");
 		if(pattern == null || "".equals(pattern))
 			return null;
 		return new RE(pattern,("on".equals(getProperty(
 			"search.ignoreCase.toggle")) ? RE.REG_ICASE : 0)
-			| RE.REG_MULTILINE,jEdit.getRESyntax(getProperty(
+			| RE.REG_MULTILINE,getRESyntax(getProperty(
 			"search.regexp.value")));
 	}
 
