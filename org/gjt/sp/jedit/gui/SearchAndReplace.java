@@ -47,7 +47,7 @@ implements ActionListener, KeyListener, WindowListener
 		ignoreCase = new JCheckBox(jEdit.getProperty(
 			"search.ignoreCase"),
 			"on".equals(jEdit.getProperty("search."
-				+ "ignoreCase")));
+				+ "ignoreCase.toggle")));
 		regexpSyntax = new JComboBox(jEdit.SYNTAX_LIST);
 		regexpSyntax.setSelectedItem(jEdit.getProperty("search"
 			+ ".regexp.value"));
@@ -112,7 +112,7 @@ implements ActionListener, KeyListener, WindowListener
 	{
 		jEdit.setProperty("search.find.value",find.getText());
 		jEdit.setProperty("search.replace.value",replace.getText());
-		jEdit.setProperty("search.ignoreCase",ignoreCase
+		jEdit.setProperty("search.ignoreCase.toggle",ignoreCase
 			.getModel().isSelected() ? "on" : "off");
 		jEdit.setProperty("search.regexp.value",(String)regexpSyntax
 			.getSelectedItem());

@@ -203,9 +203,10 @@ implements ActionListener, WindowListener, Runnable
 			transcript.append(CRLF);
 			if(!response.startsWith("354"))
 				error("badmsg");
+			out.write("Subject: " + subject);
+			out.write(CRLF);
 			out.write("X-Mailer: jEdit " + jEdit.VERSION
-				+ " build " + jEdit.BUILD
-			        + " <http://www.gjt.org/~sp/jedit.html>");
+				+ " build " + jEdit.BUILD);
 			out.write(CRLF);
 			Buffer buffer = view.getBuffer();
 			Element map = buffer.getDefaultRootElement();

@@ -100,6 +100,8 @@ implements DocumentListener, UndoableEditListener
 		catch(Exception e)
 		{
 			Object[] args = { e.getMessage() };
+			if(args[0] == null)
+				args[0] = e.toString();
 			jEdit.error(view,"reerror",args);
 		}
 		return false;
@@ -130,9 +132,11 @@ implements DocumentListener, UndoableEditListener
 			textArea.replaceSelection(regexp.substitute(selection,
 				replaceStr));
 		}
-		catch(REException re)
+		catch(Exception e)
 		{
-			Object[] args = { re.getMessage() };
+			Object[] args = { e.getMessage() };
+			if(args[0] == null)
+				args[0] = e.toString();
 			jEdit.error(view,"reerror",args);
 		}
 	}
@@ -173,13 +177,12 @@ implements DocumentListener, UndoableEditListener
 				found = true;
 			}
 		}
-		catch(REException re)
+		catch(Exception e)
 		{
-			Object[] _args = { re.getMessage() };
-			jEdit.error(view,"reerror",_args);
-		}
-		catch(BadLocationException bl)
-		{
+			Object[] args = { e.getMessage() };
+			if(args[0] == null)
+				args[0] = e.toString();
+			jEdit.error(view,"reerror",args);
 		}
 		endCompoundEdit();
 		return found;
@@ -241,33 +244,45 @@ implements DocumentListener, UndoableEditListener
 	{
 		if(path == null && newFile)
 			return saveAs(view);
-		if(path != null)
+		URL saveUrl;
+		File saveFile;
+		if(path == null)
+		{
+			saveUrl = url;
+			path = this.path;
+			saveFile = file;
+		}
+		else
 		{
 			try
 			{
-				url = new URL(path);
+				saveUrl = new URL(path);
 			}
 			catch(MalformedURLException mu)
 			{
-				url = null;
+				saveUrl = null;
 			}
-			this.path = path;
-			setPath();
+			saveFile = new File(path);
 		}
-		backup();
+		backup(saveFile);
 		try
 		{
 			OutputStream out;
-			if(url != null)
+			if(saveUrl != null)
 			{
-				URLConnection connection = url.openConnection();
+				URLConnection connection = saveUrl
+					.openConnection();
 				out = connection.getOutputStream();
 			}
 			else
-				out = new FileOutputStream(file);
-			if(name.endsWith(".gz"))
+				out = new FileOutputStream(saveFile);
+			if(path.endsWith(".gz"))
 				out = new GZIPOutputStream(out);
 			save(out);
+			url = saveUrl;
+			this.path = path;
+			file = saveFile;
+			setPath();
 			saveMarkers();
 			dirty = newFile = readOnly = false;
 			autosaveFile.delete();
@@ -1003,6 +1018,8 @@ implements DocumentListener, UndoableEditListener
 				}
 			}
 			bin.close();
+			if(buf.charAt(buf.length() - 1) == '\n')
+				buf.setLength(buf.length() - 1);
 			insertString(0,buf.toString(),null);
 			newFile = false;
 			/* Although this is done in setPath(),
@@ -1189,17 +1206,17 @@ implements DocumentListener, UndoableEditListener
 		throws IOException, BadLocationException
 	{
 		OutputStreamWriter out = new OutputStreamWriter(_out);
-		String newline = jEdit.getProperty("buffer.line.separator",
+		String newline = jEdit.getProperty("buffer.lineSeparator",
 			System.getProperty("line.separator"));
 		Element map = getDefaultRootElement();
-		for(int i = 0; i < map.getElementCount();)
+		for(int i = 0; i < map.getElementCount(); i++)
 		{
 			Element line = map.getElement(i);
 			int start = line.getStartOffset();
 			out.write(getText(start,line.getEndOffset() - start
 				- 1));
-			if(++i != map.getElementCount())
-				out.write(newline);
+			//if(++i != map.getElementCount())
+			out.write(newline);
 		}
 		out.close();
 	}
@@ -1235,7 +1252,7 @@ implements DocumentListener, UndoableEditListener
 		o.close();
 	}
 
-	private void backup()
+	private void backup(File file)
 	{
 		int backups;
 		try

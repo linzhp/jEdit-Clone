@@ -222,8 +222,8 @@ public class SyntaxTextArea extends JEditorPane
 			if(newValue instanceof Buffer)
 			{
 				Buffer buf = (Buffer)newValue;
-				setDot(buf.getSavedSelStart());
-				moveDot(buf.getSavedSelEnd());
+				select(buf.getSavedSelStart(),
+					buf.getSavedSelEnd());
 			}
 		}
 	}

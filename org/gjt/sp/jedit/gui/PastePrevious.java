@@ -39,9 +39,10 @@ implements ActionListener, KeyListener
 			i < clipHistory.size(); i++, j--)
 		{
 			String clip = (String)clipHistory.elementAt(i);
+			clip = clip.replace('\n',' ');
 			if(clip.length() > 60)
 			{
-				clip = clip.substring(0,30) + "..."
+				clip = clip.substring(0,30) + " ... "
 					+ clip.substring(clip.length() - 30);
 			}
 			abbrevClipHistory[j] = clip;
