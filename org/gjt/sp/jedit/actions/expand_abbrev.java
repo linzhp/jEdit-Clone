@@ -74,7 +74,6 @@ loop:			for(int i = dot - 1; i >= start; i--)
 			}
 			String word = line.substring(wordStart - start,
 						     dot - start);
-			System.out.println(word);
 			// loop through lines in file looking for previous
 			// occurance of word
 			for(int i = lineNo; i >= 0; i--)
@@ -83,7 +82,7 @@ loop:			for(int i = dot - 1; i >= start; i--)
 				int lineStart = lineElement.getStartOffset();
 				int lineLen;
 				if(i == lineNo)
-					lineLen = dot - wordStart;
+					lineLen = wordStart - lineStart;
 				else
 				{
 					lineLen = lineElement.getEndOffset()
@@ -113,10 +112,6 @@ loop2:					for(int j = index + 1; j < lineLen; j++)
 							}
 						}
 					}
-					System.out.println(line);
-					System.out.println(line.substring(index +
-							word.length(),
-							wordEnd));
 					view.getTextArea().replaceSelection(
 						line.substring(index +
 							word.length(),

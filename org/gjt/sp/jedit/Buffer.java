@@ -176,7 +176,7 @@ public class Buffer extends DefaultSyntaxDocument
 			file = saveFile;
 			setPath();
 			saveMarkers();
-			if(newFile)
+			if(newFile || mode.getName().equals("text")) // XXX
 				setMode();
 			adirty = dirty = readOnly = newFile = false;
 
@@ -1309,6 +1309,9 @@ loop:		for(int i = 0; i < markers.size(); i++)
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.80  1999/06/05 00:42:04  sp
+ * Expand abbreviation & buffer mode selection bugs fixed
+ *
  * Revision 1.79  1999/06/03 08:24:12  sp
  * Fixing broken CVS
  *
