@@ -61,13 +61,14 @@ edit=undo \
      %anchor \
      %line \
      %paragraph \
-     select-block \
+     %block \
+     - \
+     tab \
+     untab \
      - \
      to-upper \
      to-lower \
      format \
-     tab \
-     untab \
      insert-date \
      - \
      expand-abbrev \
@@ -81,12 +82,11 @@ paste.label=$Paste
 paste-previous.label=Paste Pre$vious...
 clear.label=Clea$r
 select-all.label=Select $All
-select-block.label=Select Co$de Block
+tab.label=Spaces to Tabs
+untab.label=Tabs to Spaces
 to-lower.label=To $Lowercase
 to-upper.label=To $Uppercase
 format.label=F$ormat Text
-tab.label=Spaces to Tabs
-untab.label=Tabs to Spaces
 insert-date.label=$Insert Date
 expand-abbrev.label=E$xpand Abbreviation
 locate-bracket.label=$Locate Bracket
@@ -134,6 +134,16 @@ prev-paragraph.label=Go to Previous Paragraph
 select-next-paragraph.label=Select Next Paragraph
 select-prev-paragraph.label=Select Previous Paragraph
 delete-paragraph.label=Delete Paragraph
+
+### Block menu
+block=select-block \
+      - \
+      shift-left \
+      shift-right
+block.label=Code Block Operations
+select-block.label=Select Code Block
+shift-left.label=Shift Indent Left
+shift-right.label=Shift Indent Right
 
 ### Search menu
 search=find \
@@ -418,6 +428,7 @@ output.done=+++ Command finished.
 # Options dialog
 options.title=Options
 options.general.label=General
+options.general.lf.note=Restart jEdit for L&F changes to take effect
 options.general.lf=Swing look & feel:\ 
 options.general.autosave=Autosave frequency (seconds):\ 
 options.general.recent=Number of recent files:\ 

@@ -35,6 +35,8 @@ next-paragraph.shortcut=C+DOWN
 prev-paragraph.shortcut=C+UP
 select-next-paragraph.shortcut=CS+DOWN
 select-prev-paragraph.shortcut=CS+UP
+shift-left.shortcut=A+LEFT
+shift-right.shortcut=A+RIGHT
 
 ### The scary stuff
 new-view.shortcut=C+e C+n

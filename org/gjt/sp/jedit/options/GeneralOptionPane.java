@@ -39,11 +39,18 @@ public class GeneralOptionPane extends OptionPane
 		setLayout(layout);
 		GridBagConstraints cons = new GridBagConstraints();
 		cons.gridx = cons.gridy = 0;
-		cons.gridwidth = 3;
+		cons.gridwidth = 4;
 		cons.gridheight = 1;
 		cons.fill = GridBagConstraints.BOTH;
 		cons.weightx = 1.0f;
-		JLabel label = new JLabel(jEdit.getProperty("options.general.lf"),
+		JLabel label = new JLabel(jEdit.getProperty("options.general.lf.note"),
+			SwingConstants.CENTER);
+		layout.setConstraints(label,cons);
+		add(label);
+
+		cons.gridy = 1;
+		cons.gridwidth = 3;
+		label = new JLabel(jEdit.getProperty("options.general.lf"),
 			SwingConstants.RIGHT);
 		layout.setConstraints(label,cons);
 		add(label);
@@ -62,7 +69,7 @@ public class GeneralOptionPane extends OptionPane
 		add(lookAndFeel);
 		
 		cons.gridx = 0;
-		cons.gridy = 1;
+		cons.gridy = 2;
 		cons.gridwidth = 3;
 		label = new JLabel(jEdit.getProperty("options.general.autosave"),
 			SwingConstants.RIGHT);
@@ -75,7 +82,7 @@ public class GeneralOptionPane extends OptionPane
 		add(autosave);
 
 		cons.gridx = 0;
-		cons.gridy = 2;
+		cons.gridy = 3;
 		cons.gridwidth = 3;
 		label = new JLabel(jEdit.getProperty("options.general.recent"),
 			SwingConstants.RIGHT);
@@ -88,7 +95,7 @@ public class GeneralOptionPane extends OptionPane
 		add(recent);
 
 		cons.gridx = 0;
-		cons.gridy = 3;
+		cons.gridy = 4;
 		cons.gridwidth = 3;
 		label = new JLabel(jEdit.getProperty("options.general.clipHistory"),
 			SwingConstants.RIGHT);
@@ -101,7 +108,7 @@ public class GeneralOptionPane extends OptionPane
 		add(clipHistory);
 
 		cons.gridx = 0;
-		cons.gridy = 4;
+		cons.gridy = 5;
 		cons.gridwidth = 3;
 		label = new JLabel(jEdit.getProperty("options.general.backups"),
 			SwingConstants.RIGHT);
@@ -114,7 +121,7 @@ public class GeneralOptionPane extends OptionPane
 		add(backups);
 
 		cons.gridx = 0;
-		cons.gridy = 5;
+		cons.gridy = 6;
 		cons.gridwidth = 3;
 		label = new JLabel(jEdit.getProperty("options.general.lineSeparator"),
 			SwingConstants.RIGHT);
@@ -137,7 +144,7 @@ public class GeneralOptionPane extends OptionPane
 		add(lineSeparator);
 
 		cons.gridx = 0;
-		cons.gridy = 6;
+		cons.gridy = 7;
 		cons.gridwidth = 3;
 		label = new JLabel(jEdit.getProperty("options.general.make"),
 			SwingConstants.RIGHT);
@@ -153,7 +160,7 @@ public class GeneralOptionPane extends OptionPane
 		add(make);
 
 		cons.gridx = 0;
-		cons.gridy = 7;
+		cons.gridy = 8;
 		cons.gridwidth = 3;
 		label = new JLabel(jEdit.getProperty("options.general.browser"),
 			SwingConstants.RIGHT);
@@ -170,7 +177,7 @@ public class GeneralOptionPane extends OptionPane
 		add(browser);
 
 		cons.gridx = 0;
-		cons.gridy = 8;
+		cons.gridy = 9;
 		cons.gridwidth = cons.REMAINDER;
 		saveDesktop = new JCheckBox(jEdit.getProperty(
 			"options.general.saveDesktop"));
@@ -179,7 +186,7 @@ public class GeneralOptionPane extends OptionPane
 		layout.setConstraints(saveDesktop,cons);
 		add(saveDesktop);
 
-		cons.gridy = 9;
+		cons.gridy = 10;
 		server = new JCheckBox(jEdit.getProperty(
 			"options.general.server"));
 		server.getModel().setSelected("on".equals(jEdit.getProperty(

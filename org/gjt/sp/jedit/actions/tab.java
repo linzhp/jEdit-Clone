@@ -101,7 +101,6 @@ public class tab extends EditAction
 							% tabSize);
 						int tabs = indent / tabSize;
 						int spaces = indent % tabSize;
-						System.out.println("w=" +whitespace+",i=" + indent + ",s=" + spaces);
 						while(tabs-- > 0)
 							buf.append('\t');
 						while(spaces-- > 0)

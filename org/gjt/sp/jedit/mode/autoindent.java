@@ -1,6 +1,6 @@
 /*
  * autoindent.java - Auto indent editing mode
- * Copyright (C) 1998 Slava Pestov
+ * Copyright (C) 1998, 1999 Slava Pestov
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -72,48 +72,11 @@ public class autoindent implements Mode
 	private String autoIndent(int tabSize, String prevLine, String line,
 		boolean noTabs)
 	{
-		StringBuffer buf = new StringBuffer();
-		int count = getWhiteSpace(tabSize,line);
-		int prevCount = getWhiteSpace(tabSize,prevLine);
+		int count = jEdit.getLeadingWhiteSpaceWidth(line,tabSize);
+		int prevCount = jEdit.getLeadingWhiteSpaceWidth(prevLine,
+			tabSize);
 		if(prevCount <= count)
 			return null;
-		else if(noTabs)
-		{
-			prevCount -= count;
-			while(prevCount-- > 0)
-				buf.append(' ');
-		}
-		else		
-		{
-			prevCount -= count;
-			count = prevCount / 8;
-			while(count-- > 0)
-				buf.append('\t');
-			count = prevCount % 8;
-			while(count-- > 0)
-				buf.append(' ');
-		}
-		return buf.toString();
-	}
-
-	private int getWhiteSpace(int tabSize, String line)
-	{
-		int count = 0;
-loop:		for(int i = 0; i < line.length(); i++)
-		{
-			char c = line.charAt(i);
-			switch(c)
-			{
-			case ' ':
-				count++;
-				break;
-			case '\t':
-				count += (tabSize - count % tabSize);
-				break;
-			default:
-				break loop;
-			}
-		}
-		return count;
+		return jEdit.createWhiteSpace(prevCount - count,tabSize,noTabs);
 	}
 }
