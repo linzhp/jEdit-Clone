@@ -272,6 +272,8 @@ implements DocumentListener, UndoableEditListener
 			dirty = newFile = readOnly = false;
 			autosaveFile.delete();
 			updateStatus();
+			updateTitles();
+			updateBufferMenus();
 			return true;
 		}
 		catch(IOException io)
@@ -525,7 +527,10 @@ implements DocumentListener, UndoableEditListener
 			this.mode.leave(this);
 		this.mode = mode;
 		if(!init)
+		{
 			updateStatus();
+			updateBufferMenus();
+		}
 		if(mode == null)
 		{
 			tokenMarker = null;
@@ -1315,6 +1320,26 @@ implements DocumentListener, UndoableEditListener
 		}
 	}
 
+	private void updateTitles()
+	{
+		Enumeration enum = jEdit.getViews();
+		while(enum.hasMoreElements())
+		{
+			View view = (View)enum.nextElement();
+			if(view.getBuffer() == this)
+				view.updateTitle();
+		}
+	}
+
+	private void updateBufferMenus()
+	{
+		Enumeration enum = jEdit.getViews();
+		while(enum.hasMoreElements())
+		{
+			((View)enum.nextElement()).updateBuffersMenu();
+		}
+	}
+
 	private void updateMarkers()
 	{
 		Enumeration enum = jEdit.getViews();
@@ -1335,6 +1360,7 @@ implements DocumentListener, UndoableEditListener
 		{
 			dirty = !init;
 			updateStatus();
+			updateBufferMenus();
 		}
 	}
 

@@ -214,6 +214,17 @@ implements CaretListener, KeyListener, WindowListener
 	}
 
 	/**
+	 * Updates the title bar and read only status of the text
+	 * area.
+	 */
+	public void updateTitle()
+	{
+		Object[] args = { buffer.getPath() };
+		setTitle(jEdit.getProperty("view.title",args));
+		textArea.setEditable(!buffer.isReadOnly());
+	}
+
+	/**
 	 * Returns the buffer being edited by this view.
 	 */
 	public Buffer getBuffer()
@@ -235,6 +246,7 @@ implements CaretListener, KeyListener, WindowListener
 		updateMarkerMenus();
 		updateModeMenu();
 		updateStatus(true);
+		updateTitle();
 	}
 
 	/**
@@ -508,6 +520,14 @@ implements CaretListener, KeyListener, WindowListener
 		int currLine;
 		Element map = buffer.getDefaultRootElement();
 		currLine = map.getElementIndex(dot) + 1;
+		Element lineElement = map.getElement(currLine-1);
+		if(textArea.getSelectionStart() == textArea.getSelectionEnd())
+		{
+			textArea.setHighlightedLine(lineElement.getStartOffset(),
+				lineElement.getEndOffset());
+		}
+		else
+			textArea.setHighlightedLine(0,0);
 		if(lastLine == currLine && !force)
 			return;
 		lastLine = currLine;
@@ -521,12 +541,5 @@ implements CaretListener, KeyListener, WindowListener
 			new Integer(numLines),
 			new Integer((currLine * 100) / numLines) };
 		status.setText(jEdit.getProperty("view.status",args));
-		args[0] = this.buffer.getPath();
-		setTitle(jEdit.getProperty("view.title",args));
-		updateBuffersMenu();
-		textArea.setEditable(!buffer.isReadOnly());
-		Element lineElement = map.getElement(currLine-1);
-		textArea.setHighlightedLine(lineElement.getStartOffset(),
-			lineElement.getEndOffset());
 	}
 }
