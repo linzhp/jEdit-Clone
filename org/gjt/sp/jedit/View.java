@@ -36,8 +36,6 @@ import org.gjt.sp.jedit.syntax.SyntaxTextArea;
 public class View extends JFrame
 implements CaretListener, KeyListener, WindowListener
 {	
-	// public members
-
 	/**
 	 * Reloads the font, auto indent and word wrap settings
 	 * from the properties.
@@ -59,6 +57,28 @@ implements CaretListener, KeyListener, WindowListener
 		SwingUtilities.updateComponentTreeUI(this);
 	}
 	
+	/**
+	 * Recreates the plugins menu.
+	 */
+	public void updatePluginsMenu()
+	{
+		if(plugins.getMenuComponentCount() != 0)
+			buffers.removeAll();
+		Enumeration enum = jEdit.getPlugins();
+		if(!enum.hasMoreElements())
+		{
+			plugins.add(jEdit.loadMenuItem(this,"no-plugins"));
+			return;
+		}
+		while(enum.hasMoreElements())
+		{
+			String action = (String)((Action)enum.nextElement())
+				.getValue(Action.NAME);
+			JMenuItem mi = jEdit.loadMenuItem(this,action);
+			plugins.add(mi);
+		}
+	}
+
 	/**
 	 * Recreates the buffers menu.
 	 */
@@ -93,19 +113,20 @@ implements CaretListener, KeyListener, WindowListener
 	{
 		if(openRecent.getMenuComponentCount() != 0)
 			openRecent.removeAll();
-		Action action = jEdit.getAction("open-file");
+		Action action = jEdit.getAction("open-path");
 		Enumeration enum = jEdit.getRecent();
 		if(!enum.hasMoreElements())
 		{
-			openRecent.add(jEdit.getAction("no-recent"));
+			openRecent.add(jEdit.loadMenuItem(this,"no-recent"));
 			return;
 		}
 		while(enum.hasMoreElements())
 		{
 			String path = (String)enum.nextElement();
-			JMenuItem mi = openRecent.add(action);
-			mi.setActionCommand(path);
-			mi.setText(path);
+			JMenuItem menuItem = new JMenuItem(path);
+			menuItem.setActionCommand(path);
+			menuItem.addActionListener(action);
+			openRecent.add(menuItem);
 		}
 	}
 	
@@ -114,25 +135,18 @@ implements CaretListener, KeyListener, WindowListener
 	 */
 	public void updateMarkerMenus()
 	{
-		/*if(clearMarker.getMenuComponentCount() != 0)
+		if(clearMarker.getMenuComponentCount() != 0)
 			clearMarker.removeAll();
 		if(gotoMarker.getMenuComponentCount() != 0)
 			gotoMarker.removeAll();
-		Enumeration enum = buffer.getMarkers();
 		int n = 1;
+		Action clearMarkerAction = jEdit.getAction("clear-marker");
+		Action gotoMarkerAction = jEdit.getAction("goto-marker");
+		Enumeration enum = buffer.getMarkers();
 		if(!enum.hasMoreElements())
 		{
-			JMenuItem menuItem = jEdit.loadMenuItem(this,
-				"no_markers");
-			if(menuItem == null)
-				return;
-			menuItem.setEnabled(false);
-			clearMarker.add(menuItem);
-			menuItem = jEdit.loadMenuItem(this,"no_markers");
-			if(menuItem == null)
-				return;
-			menuItem.setEnabled(false);
-			gotoMarker.add(menuItem);
+			clearMarker.add(jEdit.loadMenuItem(this,"no-markers"));
+			gotoMarker.add(jEdit.loadMenuItem(this,"no-markers"));
 			return;
 		}
 		while(enum.hasMoreElements())
@@ -140,13 +154,12 @@ implements CaretListener, KeyListener, WindowListener
 			String name = ((Marker)enum.nextElement())
 				.getName();
 			JMenuItem menuItem = new JMenuItem(name);
-			menuItem.setActionCommand("clear_marker@"
-				.concat(name));
-			menuItem.addActionListener(this);
+			menuItem.setActionCommand(name);
+			menuItem.addActionListener(clearMarkerAction);
 			clearMarker.add(menuItem);
 			menuItem = new JMenuItem(name);
-			menuItem.setActionCommand("goto_marker@".concat(name));
-			menuItem.addActionListener(this);
+			menuItem.setActionCommand(name);
+			menuItem.addActionListener(gotoMarkerAction);
 			if(n <= 20)
 			{
 				char key = (char)('0' + n % 10);
@@ -158,7 +171,7 @@ implements CaretListener, KeyListener, WindowListener
 				n++;
 			}
 			gotoMarker.add(menuItem);
-		}*/
+		}
 	}
 
 	/**
@@ -308,6 +321,7 @@ implements CaretListener, KeyListener, WindowListener
 	// package-private members
 	View(Buffer buffer)
 	{
+		plugins = jEdit.loadMenu(this,"plugins");
 		buffers = jEdit.loadMenu(this,"buffers");
 		openRecent = jEdit.loadMenu(this,"open-recent");
 		clearMarker = jEdit.loadMenu(this,"clear-marker");
@@ -355,7 +369,7 @@ implements CaretListener, KeyListener, WindowListener
 		scroller = new JScrollPane(textArea,ScrollPaneConstants
 			.VERTICAL_SCROLLBAR_ALWAYS,ScrollPaneConstants
 			.HORIZONTAL_SCROLLBAR_AS_NEEDED);	
-		status = new JLabel("Tastes like chicken!");
+		status = new JLabel("Try our new product: soap! `It's fresh!'");
 		if(buffer == null)
 			setBuffer((Buffer)jEdit.getBuffers().nextElement());
 		else
@@ -363,6 +377,7 @@ implements CaretListener, KeyListener, WindowListener
 		textArea.addCaretListener(this);
 		textArea.addKeyListener(this);
 		textArea.setBorder(null);
+		updatePluginsMenu();
 		setJMenuBar(jEdit.loadMenubar(this,"view.mbar"));
 		propertiesChanged();
 		FontMetrics fm = getToolkit().getFontMetrics(textArea
@@ -370,8 +385,6 @@ implements CaretListener, KeyListener, WindowListener
 		JViewport viewport = scroller.getViewport();
 		viewport.setPreferredSize(new Dimension(w * fm.charWidth('m'),
 			h * fm.getHeight()));
-		// testing
-		// viewport.setBackingStoreEnabled(true);
 		getContentPane().add("Center",scroller);
 		getContentPane().add("South",status);
 		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
@@ -383,7 +396,9 @@ implements CaretListener, KeyListener, WindowListener
 
 	JMenu getMenu(String name)
 	{
-		if(name.equals("buffers"))
+		if(name.equals("plugins"))
+			return plugins;
+		else if(name.equals("buffers"))
 			return buffers;
 		else if(name.equals("open-recent"))
 			return openRecent;
@@ -398,6 +413,7 @@ implements CaretListener, KeyListener, WindowListener
 	}
 	
 	// private members
+	private JMenu plugins;
 	private JMenu buffers;
 	private JMenu openRecent;
 	private JMenu clearMarker;

@@ -69,6 +69,7 @@ implements ActionListener, ListSelectionListener, WindowListener
 		panel.add(regexpSyntax);
 		findBtn = new JButton(jEdit.getProperty("hypersearch.findBtn"));
 		panel.add(findBtn);
+		getRootPane().setDefaultButton(findBtn);
 		close = new JButton(jEdit.getProperty("hypersearch.close"));
 		panel.add(close);
 		content.add("Center",panel);

@@ -21,9 +21,8 @@ package org.gjt.sp.jedit;
 
 import javax.swing.text.JTextComponent;
 import javax.swing.*;
-import java.awt.event.ActionEvent;
 import java.awt.Component;
-import java.util.Enumeration;
+import java.util.EventObject;
 
 /**
  * An action implementation useful for jEdit commands. It provides support
@@ -43,7 +42,7 @@ public abstract class EditAction extends AbstractAction
 	/**
 	 * Determines the view to use for the action.
 	 */
-	public static View getView(ActionEvent evt)
+	public static View getView(EventObject evt)
 	{
 		if(evt != null)
 		{
@@ -75,7 +74,7 @@ public abstract class EditAction extends AbstractAction
 	/**
 	 * Determines the buffer to use for the action.
 	 */
-	public static Buffer getBuffer(ActionEvent evt)
+	public static Buffer getBuffer(EventObject evt)
 	{
 		// Call getBuffer() method of view
 		View view = getView(evt);

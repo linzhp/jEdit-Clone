@@ -43,11 +43,8 @@ import org.gjt.sp.jedit.syntax.*;
 public class Buffer extends PlainDocument
 implements DocumentListener, UndoableEditListener
 {
-	// public methods
-	
 	/**
 	 * Finds the next instance of the search string in this buffer.
-	 * <p>
 	 * The search string is obtained from the
 	 * <code>search.find.value</code> property.
 	 * @param view The view
@@ -55,6 +52,20 @@ implements DocumentListener, UndoableEditListener
 	 * dialog should be shown if no more matches have been found.
 	 */
 	public boolean find(View view, boolean done)
+	{
+		return find(view,view.getTextArea().getCaretPosition(),done);
+	}
+
+	/**
+	 * Finds the next instance of the search string in this buffer.
+	 * The search string is obtained from the
+	 * <code>search.find.value</code> property.
+	 * @param view The view
+	 * @param start Location where to start the search
+	 * @param done For internal use. False if a `keep searching'
+	 * dialog should be shown if no more matches have been found.
+	 */
+	public boolean find(View view, int start, boolean done)
 	{
 		try
 		{
@@ -64,14 +75,13 @@ implements DocumentListener, UndoableEditListener
 				view.getToolkit().beep();
 				return false;
 			}
-			int caret = view.getTextArea().getCaretPosition();
-			String text = getText(caret,getLength() - caret);
+			String text = getText(start,getLength() - start);
 			REMatch match = regexp.getMatch(text);
 			if(match != null)
 			{
-				view.getTextArea().select(caret + match
+				view.getTextArea().select(start + match
 					.getStartIndex(),
-					caret + match.getEndIndex());
+					start + match.getEndIndex());
 				return true;
 			}
 			if(done)
@@ -86,8 +96,7 @@ implements DocumentListener, UndoableEditListener
 				JOptionPane.QUESTION_MESSAGE);
 			if(result == JOptionPane.YES_OPTION)
 			{
-				view.getTextArea().setCaretPosition(0);
-				return find(view,true);
+				return find(view,0,true);
 			}
 		}
 		catch(REException re)

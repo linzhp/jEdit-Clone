@@ -1,5 +1,5 @@
 /*
- * help.java
+ * open_path.java
  * Copyright (C) 1998 Slava Pestov
  *
  * This program is free software; you can redistribute it and/or
@@ -19,23 +19,21 @@
 
 package org.gjt.sp.jedit.actions;
 
-import java.io.File;
+import javax.swing.JFileChooser;
 import java.awt.event.ActionEvent;
+import java.io.File;
 import org.gjt.sp.jedit.*;
 
-public class help extends EditAction
+public class open_path extends EditAction
 {
-	public help()
+	public open_path()
 	{
-		super("help");
+		super("open-path");
 	}
-	
+
 	public void actionPerformed(ActionEvent evt)
 	{
-		String arg = evt.getActionCommand();
-		if(arg == null)
-			arg = "index.txt";
-		jEdit.openFile(getView(evt),jEdit.getJEditHome() + "doc",arg,
+		jEdit.openFile(getView(evt),null,evt.getActionCommand(),
 			false,false);
 	}
 }

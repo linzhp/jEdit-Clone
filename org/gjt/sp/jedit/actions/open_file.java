@@ -33,24 +33,18 @@ public class open_file extends EditAction
 
 	public void actionPerformed(ActionEvent evt)
 	{
-		String arg = evt.getActionCommand();
 		View view = getView(evt);
-		if(arg != null)
-			jEdit.openFile(view,null,arg,false,false);
-		else
+		JFileChooser chooser = new JFileChooser(view.getBuffer()
+			.getFile().getParent());
+		chooser.setDialogType(JFileChooser.OPEN_DIALOG);
+		chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+		int retVal = chooser.showDialog(view,null);
+		if(retVal == JFileChooser.APPROVE_OPTION)
 		{
-			JFileChooser chooser = new JFileChooser(view.getBuffer()
-				.getFile().getParent());
-			chooser.setDialogType(JFileChooser.OPEN_DIALOG);
-			chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-			int retVal = chooser.showDialog(view,null);
-			if(retVal == JFileChooser.APPROVE_OPTION)
-			{
-				File file = chooser.getSelectedFile();
-				if(file != null)
-					jEdit.openFile(view,null,file
-						.getAbsolutePath(),false,false);
-			}
+			File file = chooser.getSelectedFile();
+			if(file != null)
+				jEdit.openFile(view,null,file.getAbsolutePath(),
+					false,false);
 		}
 	}
 }

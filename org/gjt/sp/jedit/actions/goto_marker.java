@@ -35,17 +35,11 @@ public class goto_marker extends EditAction
 	{
 		View view = getView(evt);
 		SyntaxTextArea textArea = view.getTextArea();
-		String arg = evt.getActionCommand();
-		if(arg == null)
-			arg = jEdit.input(view,"gotomarker","lastmarker");
-		if(arg != null)
-		{
-			Marker marker = view.getBuffer().getMarker(arg);
-			if(marker != null)
-				textArea.select(marker.getStart(),
-					marker.getEnd());
-			else
-				view.getToolkit().beep();
-		}
+		Marker marker = view.getBuffer().getMarker(evt
+			.getActionCommand());
+		if(marker != null)
+			textArea.select(marker.getStart(),marker.getEnd());
+		else
+			view.getToolkit().beep();
 	}
 }

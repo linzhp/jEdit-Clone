@@ -32,8 +32,7 @@ implements ActionListener, WindowListener
 	private JTextField replace;
 	private JCheckBox ignoreCase;
 	private JComboBox regexpSyntax;
-	private JButton findNext;
-	private JButton replaceBtn;
+	private JButton findBtn;
 	private JButton replaceAll;
 	private JButton close;
 	
@@ -52,8 +51,7 @@ implements ActionListener, WindowListener
 		regexpSyntax = new JComboBox(jEdit.SYNTAX_LIST);
 		regexpSyntax.setSelectedItem(jEdit.getProperty("search"
 			+ ".regexp.value"));
-		findNext = new JButton(jEdit.getProperty("search.next"));
-		replaceBtn = new JButton(jEdit.getProperty("search.replaceBtn"));
+		findBtn = new JButton(jEdit.getProperty("search.findBtn"));
 		replaceAll = new JButton(jEdit.getProperty("search.replaceAll"));
 		close = new JButton(jEdit.getProperty("search.close"));
 		getContentPane().setLayout(new BorderLayout());
@@ -90,10 +88,10 @@ implements ActionListener, WindowListener
 		panel.add(regexpSyntax);
 		getContentPane().add("Center",panel);
 		panel = new JPanel();
-		panel.add(findNext);
-		panel.add(replaceBtn);
+		panel.add(findBtn);
 		panel.add(replaceAll);
 		panel.add(close);
+		getRootPane().setDefaultButton(findBtn);
 		getContentPane().add("South",panel);
 		Dimension screen = getToolkit().getScreenSize();
 		pack();
@@ -101,8 +99,7 @@ implements ActionListener, WindowListener
 			(screen.height - getSize().height) / 2);
 		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 		addWindowListener(this);
-		findNext.addActionListener(this);
-		replaceBtn.addActionListener(this);
+		find.addActionListener(this);
 		replaceAll.addActionListener(this);
 		close.addActionListener(this);
 		show();
@@ -124,12 +121,16 @@ implements ActionListener, WindowListener
 		Object source = evt.getSource();
 		if(source == close)
 			dispose();
-		else if(source == findNext)
+		else if(source == findBtn)
+		{
 			view.getBuffer().find(view,false);
-		else if(source == replaceBtn)
-			view.getBuffer().replace(view);
+			dispose();
+		}
 		else if(source == replaceAll)
+		{
 			view.getBuffer().replaceAll(view);
+			dispose();
+		}
 	}
 
 	public void windowOpened(WindowEvent evt) {}

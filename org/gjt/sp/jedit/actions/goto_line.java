@@ -46,11 +46,18 @@ public class goto_line extends EditAction
 				.getCaretPosition()) + 1));
 		if(line != null)
 		{
-			Element element = map.getElement(Integer
-				.parseInt(line) - 1);
-			if(element != null)
-				view.getTextArea().setCaretPosition(element
-					.getStartOffset());
+			try
+			{
+				Element element = map.getElement(Integer
+					.parseInt(line) - 1);
+				if(element != null)
+					view.getTextArea().setCaretPosition(
+						element.getStartOffset());
+			}
+			catch(NumberFormatException nf)
+			{
+				view.getToolkit().beep();
+			}
 		}
 	}
 }

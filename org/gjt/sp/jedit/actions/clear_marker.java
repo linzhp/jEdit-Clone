@@ -33,12 +33,8 @@ public class clear_marker extends EditAction
 	{
 		View view = getView(evt);
 		Buffer buffer = view.getBuffer();
-		String arg = evt.getActionCommand();
 		if(buffer.isReadOnly())
 			view.getToolkit().beep();
-		if(arg == null)
-			arg = jEdit.input(view,"clearmarker","lastmarker");
-		if(arg != null)
-			buffer.removeMarker(arg);
+		buffer.removeMarker(evt.getActionCommand());
 	}
 }
