@@ -54,10 +54,8 @@ implements KeyListener
 		addKeyListener(this);
 		output.addKeyListener(this);
 
-		Dimension screen = getToolkit().getScreenSize();
 		pack();
-		setLocation((screen.width - getSize().width) / 2,
-			(screen.height - getSize().height) / 2);
+		GUIUtilities.loadGeometry(this,"output");
 		show();
 
 		stdout = new StdoutThread();
@@ -69,6 +67,7 @@ implements KeyListener
 		stdout.stop();
 		stderr.stop();
 		process.destroy();
+		GUIUtilities.saveGeometry(this,"output");
 		super.dispose();
 	}
 

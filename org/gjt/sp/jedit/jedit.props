@@ -81,10 +81,6 @@ buffer.colors.operator2=darkGray
 # Show hints/tips? (on/off)
 view.showTips=on
 
-# Geometry
-view.geometry.w=80
-view.geometry.h=30
-
 # Font
 view.font=Monospaced
 view.fontsize=14

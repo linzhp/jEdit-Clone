@@ -20,7 +20,7 @@
 package org.gjt.sp.jedit;
 
 import javax.swing.*;
-import java.awt.Color;
+import java.awt.*;
 import java.awt.event.*;
 import java.util.StringTokenizer;
 import org.gjt.sp.jedit.gui.EnhancedMenuItem;
@@ -386,6 +386,58 @@ public class GUIUtilities
 			return Color.pink;
 		else
 			return Color.black;
+	}
+
+	/**
+	 * Loads a windows's geometry from the properties.
+	 *
+	 * @param win The window
+	 * @param name The window name
+	 */
+	public static void loadGeometry(Window win, String name)
+	{
+		int x, y, width, height;
+
+		try
+		{
+			width = Integer.parseInt(jEdit.getProperty(name + ".width"));
+			height = Integer.parseInt(jEdit.getProperty(name + ".height"));
+		}
+		catch(NumberFormatException nf)
+		{
+			Dimension size = win.getSize();
+			width = size.width;
+			height = size.height;
+		}
+
+		try
+		{
+			x = Integer.parseInt(jEdit.getProperty(name + ".x"));
+			y = Integer.parseInt(jEdit.getProperty(name + ".y"));
+		}
+		catch(NumberFormatException nf)
+		{
+			Dimension screen = win.getToolkit().getScreenSize();
+			x = (screen.width - width) / 2;
+			y = (screen.height - height) / 2;
+		}
+
+		win.setBounds(x,y,width,height);
+	}
+
+	/**
+	 * Saves a window's geometry to the properties.
+	 *
+	 * @param win The window
+	 * @param name The window name
+	 */
+	public static void saveGeometry(Window win, String name)
+	{
+		Rectangle bounds = win.getBounds();
+		jEdit.setProperty(name + ".x",String.valueOf(bounds.x));
+		jEdit.setProperty(name + ".y",String.valueOf(bounds.y));
+		jEdit.setProperty(name + ".width",String.valueOf(bounds.width));
+		jEdit.setProperty(name + ".height",String.valueOf(bounds.height));
 	}
 
 	// private members

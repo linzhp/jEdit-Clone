@@ -60,28 +60,11 @@ implements ActionListener, HyperlinkListener
 		getContentPane().add("Center",new JScrollPane(viewer));
 		gotoURL(url,true);
 		
-		Dimension screen = getToolkit().getScreenSize();
-		int width, height;
-		try
-		{
-			width = Integer.parseInt(jEdit.getProperty("helpviewer.width"));
-		}
-		catch(NumberFormatException nf)
-		{
-			width = 600;
-		}
-		try
-		{
-			height = Integer.parseInt(jEdit.getProperty("helpviewer.height"));
-		}
-		catch(NumberFormatException nf)
-		{
-			height = 400;
-		}
-		setSize(width,height);
-		setLocation((screen.width - getSize().width) / 2,
-			(screen.height - getSize().height) / 2);
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+
+		pack();
+		GUIUtilities.loadGeometry(this,"helpviewer");
+
 		show();
 	}
 
@@ -135,6 +118,12 @@ implements ActionListener, HyperlinkListener
 				gotoURL(evt.getURL(),true);
 			}
 		}
+	}
+
+	public void dispose()
+	{
+		GUIUtilities.saveGeometry(this,"helpviewer");
+		super.dispose();
 	}
 
 	// private members

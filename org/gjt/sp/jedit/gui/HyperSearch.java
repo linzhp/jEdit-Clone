@@ -76,16 +76,16 @@ implements ActionListener, KeyListener, ListSelectionListener, WindowListener
 
 		content.add(stretchPanel, BorderLayout.CENTER);
 
-		Dimension screen = getToolkit().getScreenSize();
-		pack();
-		setLocation((screen.width - getSize().width) / 2,
-			(screen.height - getSize().height) / 2);
 		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 		find.addKeyListener(this);
 		addKeyListener(this);
 		addWindowListener(this);
 		findBtn.addActionListener(this);
 		close.addActionListener(this);
+
+		pack();
+		GUIUtilities.loadGeometry(this,"hypersearch");
+
 		show();
 		find.requestFocus();
 	}
@@ -97,6 +97,7 @@ implements ActionListener, KeyListener, ListSelectionListener, WindowListener
 			.getModel().isSelected() ? "on" : "off");
 		jEdit.setProperty("search.regexp.value",(String)regexpSyntax
 			.getSelectedItem());
+		GUIUtilities.saveGeometry(this,"hypersearch");
 	}
 	
 	public void actionPerformed(ActionEvent evt)

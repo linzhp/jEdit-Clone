@@ -84,116 +84,95 @@ ones may be available, depending on the plugins installed.
 
 <tr>
 <th bgcolor=#ccccff>Name</th><th bgcolor=#ccccff>Internal Name</th>
+<th bgcolor=#ccccff>Used For Which File Types</th>
 <th bgcolor=#ccccff>Description</th>
 </tr>
 
 <tr>
-<td>Text</td> <td>none</td> <td>(Yes, the internal name is `none'.) For
-editing plain text. Does not do anything special. Automatically selected
+<td>Text</td> <td>none</td> <td></td> <td>Automatically selected
 for files without a specific edit mode.</td>
 </tr>
 
 <tr>
-<td>Auto Indent</td> <td>autoindent</td> <td>Implements semi-intelligent
+<td>Auto Indent</td> <td>autoindent</td> <td></td>
+<td>Implements semi-intelligent
 indentation. Most other modes subclass this one.</td>
 </tr>
 
 <tr>
-<td>AMSTeX</td> <td>amstex</td> <td>For editing AMSTeX files. This mode
-is automatically selected for files whose names end with `.tex' and
-which contain `\documentstyle' in the first 100 lines, but which do not
-contain `\begin'. Default compiler is `amstex'.</td>
+<td>AMSTeX</td> <td>amstex</td> <td>Files with extension `.tex'
+containing `\documentstyle' but not `\begin' in the first 100 lines.</td>
+<td>For editing AMSTeX files.</td>
 </tr>
 
 <tr>
-<td>Batch File</td> <td>bat</td> <td>For editing MS-DOS Batch Files. This
-mode is automatically selected for files whose names end with `.bat' or
-`.cmd'.</td>
+<td>Batch File</td> <td>bat</td> <td>Files with extension `.bat' or `.cmd'.</td>
+<td>For editing MS-DOS Batch Files.</td>
 </tr>
 
 <tr>
-<td>C</td> <td>c</td> <td>For editing C source. This
-mode is automatically selected for files whose names end with `.c' or `.h'.
-Default compiler is `cc'.
-</td>
+<td>C</td> <td>c</td> <td>Files with extension `.c' or `.h'.</td>
+<td>For editing C source.</td>
 </tr>
 
 <tr>
-<td>C++</td> <td>cc</td> <td>For editing C++ source. This
-mode is automatically selected for files whose names end with `.cc',
-`.hh', `.cpp', `.cxx', `.C' or `.H' (sometimes I wish the C++ file
-extensions were more standardized). Default compiler is `c++'.
-</td>
+<td>C++</td> <td>cc</td> <td>Files with extension `.cc', `.hh', `.cpp',
+`.cxx', `.C' or `.H'.</td> <td>For editing C++ source.</td>
 </tr>
 
 <tr>
-<td>HTML</td> <td>html</td> <td>For editing HTML files. This
-mode is automatically selected for files whose names end with `.html',
-`.htm' or `.shtml'.
-</td>
+<td>HTML</td> <td>html</td> <td>Files with extension `.html', `.htm' or
+`.shtml'.</td> <td>For editing HTML files.</td>
 </tr>
 
 <tr>
-<td>Java</td> <td>java_mode</td> <td>For editing Java source. This
-mode is automatically selected for files whose names end with `.java'.
-Default compiler is `javac'.
-</td>
+<td>Java</td> <td>java_mode</td> <td>Files with extension `.java'.</td>
+<td>For editing Java source.</td>
 </tr>
 
 <tr>
-<td>JavaScript</td> <td>javascript</td> <td>For editing JavaScript source. This
-mode is automatically selected for files whose names end with `.js'. Also,
-HTML mode uses this mode to colorize scripts inside &lt;script&gt; tags.
-</td>
+<td>JavaScript</td> <td>javascript</td> <td>Files with extension `.js'. Also
+inside HTML &lt;script&gt; tags.</td> <td>For editing JavaScript source.</td>
 </tr>
 
 <tr>
-<td>LaTeX</td> <td>latex</td> <td>For editing LaTeX files. This
-mode is automatically selected for files whose names end with `.tex' and
-that contain `\begin' in the first 100 lines. Default compiler is `latex'.
-</td>
+<td>LaTeX</td> <td>latex</td> <td>Files with extension `.tex'
+containing `\begin' in the first 100 lines.</td>
+<td>For editing LaTeX files.</td>
 </tr>
 
 <tr>
-<td>Makefile</td> <td>make</td> <td>For editing Makefiles. This
-mode is automatically selected for files named `Makefile', `makefile', or
-`GNUmakefile'.
-</td>
+<td>Makefile</td> <td>make</td> <td>Files named `Makefile', `makefile' or
+`GNUmakefile'.</td> <td>For editing Makefiles.</td>
 </tr>
 
 <tr>
-<td>Patch (DIFF)</td> <td>patch</td> <td>For editing Unix-style patches
-and diffs. This mode is automatically selected for files whose names end
-with `.diff' or `.patch'.</td>
+<td>Patch (DIFF)</td> <td>patch</td> <td>Files with extension `.diff' or
+`.patch'.</td> <td>For editing Unix-style patches
+and diffs.</td>
 </tr>
 
 <tr>
-<td>Properties/INI</td> <td>props</td> <td>For editing Java property files
-and MS-DOS .ini files. This mode is automatically selected for files whose
-names end with `.ini', `.kdelnk', `.props', `.properties' or `.reg', and for
-files named
-`properties', `config.sys' or `.jedit-props'.</td>
+<td>Properties/INI</td> <td>props</td> <td>Files with extension `.ini',
+`.kdelnk', `.props', `.properties', `.reg' and files named `properties',
+`config.sys' or `.jedit-props'.</td> <td>For editing Java property files
+and MS-DOS .ini files.</td>
 </tr>
 
 <tr>
-<td>Shell Script</td> <td>sh</td> <td>For editing UNIX shell scripts. This
-mode is automatically selected for files whose first line is `#!' followed
-by various shell paths.
-</td>
+<td>Shell Script</td> <td>sh</td> <td>Files whose first line is #! followed
+by a shell path.</td> <td>For editing UNIX shell scripts.</td>
 </tr>
 
 <tr>
-<td>TeX</td> <td>tex</td> <td>For editing plain TeX files. This
-mode is automatically selected for files whose names end with `.tex' but
-which do not contain either `\begin' or `\documentstyle' in the first 100
-lines. Default compiler is `tex'.
-</td>
+<td>TeX</td> <td>tex</td> <td>Files with extension `.tex' not containing
+`\begin' or `\documentstyle' in the first 100 lines.</td>
+<td>For editing plain TeX files.</td>
 </tr>
 
-
 <tr>
-<td>Transact-SQL</td> <td>tsql</td> <td>For editing Transact-SQL files. This
-mode is automatically selected for files whose names end with `.sql'.
+<td>Transact-SQL</td> <td>tsql</td> <td>Files with extension `.sql'.</td>
+<td>For editing Transact-SQL files.
 Contributed by Mike Dillon &lt;mdillon@uclink4.berkeley.edu&gt;.
 </td>
 </tr>

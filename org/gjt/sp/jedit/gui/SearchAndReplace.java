@@ -98,11 +98,7 @@ implements ActionListener, KeyListener, WindowListener
 		panel.add(cancel);
 		getRootPane().setDefaultButton(findBtn);
 		getContentPane().add("South",panel);
-		Dimension screen = getToolkit().getScreenSize();
-		pack();
-		setLocation((screen.width - getSize().width) / 2,
-			(screen.height - getSize().height) / 2);
-		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+
 		find.addKeyListener(this);
 		replace.addKeyListener(this);
 		addKeyListener(this);
@@ -111,6 +107,11 @@ implements ActionListener, KeyListener, WindowListener
 		replaceSelection.addActionListener(this);
 		replaceAll.addActionListener(this);
 		cancel.addActionListener(this);
+		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+		
+		pack();
+		GUIUtilities.loadGeometry(this,"search");
+
 		show();
 		find.requestFocus();
 	}
@@ -125,6 +126,7 @@ implements ActionListener, KeyListener, WindowListener
 			.getModel().isSelected() ? "on" : "off");
 		jEdit.setProperty("search.regexp.value",(String)regexpSyntax
 			.getSelectedItem());
+		GUIUtilities.saveGeometry(this,"search");
 	}
 	
 	public void actionPerformed(ActionEvent evt)

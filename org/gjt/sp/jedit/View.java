@@ -514,6 +514,7 @@ implements CaretListener, KeyListener, WindowListener
 	
 	public void windowClosing(WindowEvent evt)
 	{
+		GUIUtilities.saveGeometry(this,"view");
 		jEdit.closeView(this);
 	}
 	
@@ -545,25 +546,6 @@ implements CaretListener, KeyListener, WindowListener
                 addKeyBinding(KeyStroke.getKeyStroke(KeyEvent.VK_TAB,0),
 			"indent-line");
 
-		int w = 80;
-		int h = 30;
-		try
-		{
-			w = Integer.parseInt(jEdit.getProperty(
-				"view.geometry.w"));
-		}
-		catch(Exception e)
-		{
-		}
-		try
-		{
-			h = Integer.parseInt(jEdit.getProperty(
-				"view.geometry.h"));
-		}
-		catch(Exception e)
-		{
-		}
-
 		textArea = new SyntaxTextArea();
 		scroller = new JScrollPane(textArea,ScrollPaneConstants
 			.VERTICAL_SCROLLBAR_ALWAYS,ScrollPaneConstants
@@ -588,8 +570,8 @@ implements CaretListener, KeyListener, WindowListener
 		FontMetrics fm = getToolkit().getFontMetrics(textArea
 			.getFont());
 		JViewport viewport = scroller.getViewport();
-		viewport.setPreferredSize(new Dimension(w * fm.charWidth('m'),
-			h * fm.getHeight()));
+		viewport.setPreferredSize(new Dimension(80 * fm.charWidth('m'),
+			25 * fm.getHeight()));
 
 		if(buffer == null)
 			setBuffer((Buffer)jEdit.getBuffers().nextElement());
@@ -601,11 +583,9 @@ implements CaretListener, KeyListener, WindowListener
 		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 		addKeyListener(this);
 		addWindowListener(this);
-		Dimension screen = getToolkit().getScreenSize();
 		pack();
-		setLocation((screen.width - getSize().width) / 2,
-			(screen.height - getSize().height) / 2);
-		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+		GUIUtilities.loadGeometry(this,"view");
+
 		show();
 	}
 
