@@ -36,7 +36,7 @@ import org.gjt.sp.jedit.syntax.*;
 /**
  * An in-memory copy of an open file.
  */
-public class Buffer extends PlainDocument
+public class Buffer extends PlainDocument implements SyntaxDocument
 {
 	/**
 	 * Size of I/O buffers.
@@ -707,7 +707,7 @@ public class Buffer extends PlainDocument
 	/**
 	 * Returns the colors for syntax colorizing.
 	 */
-	public Hashtable getColors()
+	public Dictionary getColors()
 	{
 		return colors;
 	}
@@ -1498,7 +1498,7 @@ loop:		for(int i = 0; i < markers.size(); i++)
 	{
 		public void propertiesChanged(EditorEvent evt)
 		{
-			getColors().clear();
+			colors.clear();
 		}
 	}
 
@@ -1557,6 +1557,9 @@ loop:		for(int i = 0; i < markers.size(); i++)
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.58  1999/03/13 08:50:39  sp
+ * Syntax colorizing updates and cleanups, general code reorganizations
+ *
  * Revision 1.57  1999/03/12 23:51:00  sp
  * Console updates, uncomment removed cos it's too buggy, cvs log tags added
  *

@@ -24,8 +24,8 @@ import java.io.*;
 /**
  * Class with several useful miscallaneous functions.<p>
  *
- * Currently, it only has two methods, for converting file names to
- * class names, and creating path names from a directory/path pair.
+ * It provides methods for converting file names to class names, for
+ * constructing path names, and for various indentation calculations.
  *
  * @author Slava Pestov
  * @version $Id$
@@ -74,6 +74,81 @@ public class MiscUtilities
 			return canonPath(parent + File.separator + path);
 	}
 
+	/**
+	 * Returns the number of leading white space characters in the
+	 * specified string.
+	 * @param str The string
+	 */
+	public static int getLeadingWhiteSpace(String str)
+	{
+		int whitespace = 0;
+loop:		for(;whitespace < str.length();)
+		{
+			switch(str.charAt(whitespace))
+			{
+			case ' ': case '\t':
+				whitespace++;
+				break;
+			default:
+				break loop;
+			}
+		}
+		return whitespace;
+	}
+
+	/**
+	 * Returns the width of the leading white space in the specified
+	 * string.
+	 * @param str The string
+	 * @param tabSize The tab size
+	 */
+	public static int getLeadingWhiteSpaceWidth(String str, int tabSize)
+	{
+		int whitespace = 0;
+loop:		for(int i = 0; i < str.length(); i++)
+		{
+			switch(str.charAt(i))
+			{
+			case ' ':
+				whitespace++;
+				break;
+			case '\t':
+				whitespace += (tabSize - whitespace % tabSize);
+				break;
+			default:
+				break loop;
+			}
+		}
+		return whitespace;
+	}
+
+	/**
+	 * Creates a string of white space with the specified length.
+	 * @param len The length
+	 * @param tabSize The tab size
+	 * @param noTabs True if tabs should not be used
+	 */
+	public static String createWhiteSpace(int len, int tabSize,
+		boolean noTabs)
+	{
+		StringBuffer buf = new StringBuffer();
+		if(noTabs)
+		{
+			while(len-- > 0)
+				buf.append(' ');
+		}
+		else		
+		{
+			int count = len / tabSize;
+			while(count-- > 0)
+				buf.append('\t');
+			count = len % tabSize;
+			while(count-- > 0)
+				buf.append(' ');
+		}
+		return buf.toString();
+	}
+
 	// private members
 	private MiscUtilities() {}
 
@@ -93,6 +168,9 @@ public class MiscUtilities
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.4  1999/03/13 08:50:39  sp
+ * Syntax colorizing updates and cleanups, general code reorganizations
+ *
  * Revision 1.3  1999/03/12 07:54:47  sp
  * More Javadoc updates
  *

@@ -39,15 +39,18 @@ public class print extends EditAction
 	{
 		View view = getView(evt);
 		Buffer buffer = view.getBuffer();
+
 		PrintJob job = view.getToolkit().getPrintJob(view,buffer
 			.getName(),null);
 		if(job == null)
 			return;
+
 		int topMargin;
 		int leftMargin;
 		int bottomMargin;
 		int rightMargin;
 		int ppi = job.getPageResolution();
+
 		try
 		{
 			topMargin = (int)(Float.valueOf(jEdit.getProperty(
@@ -84,25 +87,16 @@ public class print extends EditAction
 		{
 			rightMargin = leftMargin;
 		}
-		String header = view.getTitle();
+
+		String header = buffer.getPath();
+
 		Element map = buffer.getDefaultRootElement();
 		SyntaxTextArea textArea = view.getTextArea();
-		final int _tabSize = buffer.getTabSize() *
-			textArea.getToolkit().getFontMetrics(textArea.getFont())
-			.charWidth('m');
-		final float _leftMargin = leftMargin; // ARG stupid Sun
-		SyntaxView syntaxView = new SyntaxView(map) {
-			public float nextTabStop(float x, int tabOffset)
-			{
-				return ((((int)x - _leftMargin) / _tabSize + 1)
-					* _tabSize) + _leftMargin;
-			}
+		int tabSize = buffer.getTabSize() * textArea.getToolkit()
+			.getFontMetrics(textArea.getFont()).charWidth('m');
+		PrintSyntaxView syntaxView = new PrintSyntaxView(
+			map,leftMargin,tabSize);
 
-			public Color getDefaultColor()
-			{
-				return Color.black;
-			}
-		};
 		Graphics gfx = null;
 		Font font = textArea.getFont();
 		int fontHeight = font.getSize();
@@ -110,6 +104,7 @@ public class print extends EditAction
 		int pageWidth = pageDimension.width;
 		int pageHeight = pageDimension.height;
 		int y = 0;
+
 		for(int i = 0; i < map.getElementCount(); i++)
 		{
 			if(gfx == null)
@@ -136,6 +131,31 @@ public class print extends EditAction
 				gfx = null;
 			}
 		}
+
 		job.end();
+	}
+
+	private class PrintSyntaxView extends SyntaxView
+	{
+		private int leftMargin;
+		private int tabSize;
+
+		PrintSyntaxView(Element elem, int leftMargin, int tabSize)
+		{
+			super(elem);
+			this.leftMargin = leftMargin;
+			this.tabSize = tabSize;
+		}
+
+		public float nextTabStop(float x, int tabOffset)
+		{
+			return ((((int)x - leftMargin) / tabSize + 1)
+				* tabSize) + leftMargin;
+		}
+
+		public Color getDefaultColor()
+		{
+			return Color.black;
+		}
 	}
 }

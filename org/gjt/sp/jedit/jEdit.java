@@ -234,12 +234,7 @@ public class jEdit
 		multicaster = new EventMulticaster();
 
 		// Add PROPERTIES_CHANGED listener
-		addEditorListener(new EditorAdapter() {
-			public void propertiesChanged(EditorEvent evt)
-			{
-				propertiesChanged();
-			}
-		});
+		addEditorListener(new JEditEditorListener());
 		
 		// Determine installation directory
 		jEditHome = System.getProperty("jedit.home");
@@ -1287,6 +1282,14 @@ public class jEdit
 		return true;
 	}
 
+	private static class JEditEditorListener extends EditorAdapter
+	{
+		public void propertiesChanged(EditorEvent evt)
+		{
+			propertiesChanged();
+		}
+	}
+
 	private static class JarClassLoader extends ClassLoader
 	{
 		JarClassLoader()
@@ -1347,7 +1350,7 @@ public class jEdit
 
 	private static class Autosave extends Thread
 	{
-		public Autosave()
+		Autosave()
 		{
 			super("***jEdit autosave thread***");
 			setDaemon(true);
@@ -1393,7 +1396,7 @@ public class jEdit
 		private ServerSocket server;
 		private long authInfo;
 
-		public Server()
+		Server()
 		{
 			super("***jEdit server thread***");
 			setDaemon(true);
@@ -1421,7 +1424,7 @@ public class jEdit
 				out.close();
 				for(;;)
 				{
-					final Socket client = server.accept();
+					Socket client = server.accept();
 					System.out.println("jEdit: connection from "
 						+ client.getInetAddress());
 					// Paranoid thread safety
@@ -1429,13 +1432,9 @@ public class jEdit
 					// opens connecton and never closes it,
 					// but it's not too catastrophic since
 					// the autosaver continues running)
-					SwingUtilities.invokeLater(new Runnable()
-					{
-						public void run()
-						{
-							doClient(client);
-						}
-					});
+					SwingUtilities.invokeLater(new
+						ServerClientHandler(client,
+						authInfo));
 				}
 			}
 			catch(IOException io)
@@ -1444,7 +1443,35 @@ public class jEdit
 			}
 		}
 
-		private void doClient(Socket client)
+		public void stopServer()
+		{
+			if(server == null)
+				return;
+			stop();
+			try
+			{
+				server.close();
+				server = null;
+			}
+			catch(IOException io)
+			{
+				io.printStackTrace();
+			}
+			portFile.delete();
+		}
+	}
+
+	private static class ServerClientHandler implements Runnable
+	{
+		private Socket client;
+		private long authInfo;
+
+		ServerClientHandler(Socket client, long authInfo)
+		{
+			this.client = client;
+		}
+
+		public void run()
 		{
 			View view = null;
 			String authString = null;
@@ -1540,29 +1567,15 @@ public class jEdit
 				io.printStackTrace();
 			}
 		}
-
-		public void stopServer()
-		{
-			if(server == null)
-				return;
-			stop();
-			try
-			{
-				server.close();
-				server = null;
-			}
-			catch(IOException io)
-			{
-				io.printStackTrace();
-			}
-			portFile.delete();
-		}
 	}
 }
 
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.45  1999/03/13 08:50:39  sp
+ * Syntax colorizing updates and cleanups, general code reorganizations
+ *
  * Revision 1.44  1999/03/12 23:51:00  sp
  * Console updates, uncomment removed cos it's too buggy, cvs log tags added
  *

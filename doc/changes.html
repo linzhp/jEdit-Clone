@@ -10,11 +10,10 @@
 </a>
 
 <ul>
-<li>org.gjt.sp.jedit.syntax package should be usable on it's own
-<li>Integrate Gonzoo class browser
+<li>Document and clean up org.gjt.sp.jedit.gui package
+<li>SyntaxTextArea component should be usable on it's own
 <li>Color options panel should be a JTable
 <li><b>HistoryTextField doesn't work well sometimes</b>
-<li><b>Uncomment doesn't work very well</b>
 </ul>
 
 <a name=15pre1>
@@ -28,6 +27,8 @@
 <li>Console automatically appends .exe to command names on Windows and OS/2
 <li>Accent converter plugin now accepts German accents
 <li>Event system added
+<li><code>org.gjt.sp.jedit.syntax</code> package can be used on it's own -
+documentation on how to do this coming soon
 </ul>
 
 <h2>Enhancements</h2>
@@ -41,7 +42,7 @@
 modes anymore, you must manually add listeners now
 <li>API change: enterView()/leaveView() methods added to Mode interface,
 called when a view enters or leaves the mode
-<li>Code cleanups
+<li>Code cleanup/reorganization
 </ul>
 
 <h2>Bug Fixes</h2>
@@ -52,6 +53,8 @@ code
 <li>Removed CVS temporary files (.#... and .new...)
 <li>Removed unused acu.java file
 <li>Fixed minor bug with the `File-&gt;Line Separator' menu
+<li>Fixed bug in print command where it would print stuff other than the
+file name in page headers
 </ul>
 
 </body>

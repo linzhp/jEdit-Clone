@@ -333,7 +333,9 @@ about.message=jEdit version {0} build {1}\n\
 	Copyright (C) 1998, 1999 Slava Pestov.\n\
 	Transact-SQL mode (C) 1999 Mike Dillon.\n\
 	Accent Converter plugin (C) 1999 Romain Guy.\n\
-	JavaDoc colorization (C) 1999 Juha Lindfords.\n\
+	\n\
+	Juha Lindfords, Kunkel Friedhelm and Mike Dillon also contributed\n\
+	many smaller enhancements.
 	\n\
 	jEdit homepage: <http://www.gjt.org/~sp/jedit.html>.\n\
 	jEdit e-mail: <sp@gjt.org>.\n\

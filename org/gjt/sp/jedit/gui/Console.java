@@ -232,15 +232,9 @@ implements ActionListener, ListSelectionListener
 	private int lineNo;
 	private String error;
 
-	private synchronized void addOutput(final String msg)
+	private synchronized void addOutput(String msg)
 	{
-		SwingUtilities.invokeLater(new Runnable() {
-			public void run()
-			{
-				output.append(msg);
-				output.append("\n");
-			}
-		});
+		SwingUtilities.invokeLater(new SafeAppender(msg));
 
 		// Empty errors are of no use to us or the user
 		if(msg.length() == 0)
@@ -410,11 +404,30 @@ implements ActionListener, ListSelectionListener
 			}
 		}
 	}
+
+	private class SafeAppender implements Runnable
+	{
+		private String msg;
+
+		SafeAppender(String msg)
+		{
+			this.msg = msg;
+		}
+
+		public void run()
+		{
+			output.append(msg);
+			output.append("\n");
+		}
+	}
 }
 
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.10  1999/03/13 08:50:39  sp
+ * Syntax colorizing updates and cleanups, general code reorganizations
+ *
  * Revision 1.9  1999/03/12 23:51:00  sp
  * Console updates, uncomment removed cos it's too buggy, cvs log tags added
  *

@@ -27,26 +27,17 @@ import java.util.*;
  * for painting that token.
  * <p>
  * For performance reasons, the linked list of tokens is reused after each
- * line is tokenized. Therefore, the <code>Token.nextValid</code> flag is
- * necessary - a token instance might exist, but it might not actually be
- * valid.
+ * line is tokenized. Therefore, the return value of <code>markTokens</code>
+ * should only be used for immediate painting. Notably, it cannot be
+ * cached.
  *
  * @author Slava Pestov
  * @version $Id$
+ *
+ * @see org.gjt.sp.jedit.syntax.Token
  */
 public abstract class TokenMarker
 {
-	// public members
-
-	/**
-	 * Creates a new <code>TokenMarker</code>. This calls the
-	 * <code>init()</code> method.
-	 */
-	public TokenMarker()
-	{
-		init();
-	}
-
 	/**
 	 * Clears the token marker's state. This should be called before
 	 * a new document is to be tokenized.
@@ -134,9 +125,23 @@ public abstract class TokenMarker
 	protected int length;
 
 	/**
+	 * Creates a new <code>TokenMarker</code>. This calls the
+	 * <code>init()</code> method.
+	 */
+	public TokenMarker()
+	{
+		init();
+	}
+
+	/**
 	 * Ensures that the <code>lineInfo</code> array can contain the
 	 * specified index. This enlarges it if necessary. No action is
-	 * taken if the array is large enough already.
+	 * taken if the array is large enough already.<p>
+	 *
+	 * It should be unnecessary to call this under normal
+	 * circumstances; <code>insertLine()</code> should take care of
+	 * enlarging the line info array automatically.
+	 *
 	 * @param index The array index
 	 */
 	protected void ensureCapacity(int index)
@@ -151,7 +156,7 @@ public abstract class TokenMarker
 	}
 
 	/**
-	 * Adds a token to the list.
+	 * Adds a token to the token list.
 	 * @param length The length of the token
 	 * @param id The id of the token
 	 */
@@ -187,6 +192,9 @@ public abstract class TokenMarker
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.8  1999/03/13 08:50:39  sp
+ * Syntax colorizing updates and cleanups, general code reorganizations
+ *
  * Revision 1.7  1999/03/12 23:51:00  sp
  * Console updates, uncomment removed cos it's too buggy, cvs log tags added
  *

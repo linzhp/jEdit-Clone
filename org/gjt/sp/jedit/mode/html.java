@@ -36,6 +36,6 @@ public class html implements Mode
 
 	public TokenMarker createTokenMarker()
 	{
-		return new HTMLTokenMarker(javascript.getKeywords());
+		return new HTMLTokenMarker();
 	}
 }

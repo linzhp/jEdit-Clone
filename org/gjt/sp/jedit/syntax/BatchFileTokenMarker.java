@@ -19,7 +19,6 @@
 package org.gjt.sp.jedit.syntax;
 
 import javax.swing.text.Segment;
-import org.gjt.sp.jedit.TextUtilities;
 
 /**
  * Batch file token marker.
@@ -94,7 +93,7 @@ loop:		for(int i = line.offset; i < length; i++)
 			case ' ':
 				if(lastOffset == offset)
 				{
-					if(i > 2 && TextUtilities
+					if(i > 2 && SyntaxUtilities
 						.regionMatches(true,line,
 					       i - 3,"rem"))
 					{
@@ -134,6 +133,9 @@ loop:		for(int i = line.offset; i < length; i++)
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.12  1999/03/13 08:50:39  sp
+ * Syntax colorizing updates and cleanups, general code reorganizations
+ *
  * Revision 1.11  1999/03/13 00:09:07  sp
  * Console updates, uncomment removed cos it's too buggy, cvs log tags added
  *

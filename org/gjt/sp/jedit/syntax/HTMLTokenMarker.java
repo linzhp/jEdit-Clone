@@ -19,8 +19,6 @@
 package org.gjt.sp.jedit.syntax;
 
 import javax.swing.text.Segment;
-import org.gjt.sp.jedit.mode.javascript;
-import org.gjt.sp.jedit.TextUtilities;
 
 /**
  * HTML token marker.
@@ -30,10 +28,9 @@ import org.gjt.sp.jedit.TextUtilities;
  */
 public class HTMLTokenMarker extends TokenMarker
 {
-	// public members
-	public HTMLTokenMarker(KeywordMap keywords)
+	public HTMLTokenMarker()
 	{
-		this.keywords = keywords;
+		keywords = JavaScriptTokenMarker.getKeywords();
 	}
 
 	public Token markTokens(Segment line, int lineIndex)
@@ -95,7 +92,7 @@ loop:		for(int i = offset; i < length; i++)
 				backslash = false;
 				if(token == null)
 				{
-					if(TextUtilities.regionMatches(false,
+					if(SyntaxUtilities.regionMatches(false,
 						line,i,"<!--"))
 						token = Token.COMMENT1;
 					else
@@ -105,7 +102,7 @@ loop:		for(int i = offset; i < length; i++)
 				}
 				else if(token == Token.ALTTXT)
 				{
-					if(TextUtilities.regionMatches(true,
+					if(SyntaxUtilities.regionMatches(true,
 						line,i,"</SCRIPT>"))
 					{
 						token = Token.KEYWORD1;
@@ -118,7 +115,7 @@ loop:		for(int i = offset; i < length; i++)
 				backslash = false;
 				if(token == Token.KEYWORD1)
 				{
-					if(TextUtilities.regionMatches(true,line,
+					if(SyntaxUtilities.regionMatches(true,line,
 						lastOffset,"<SCRIPT"))
 						token = Token.ALTTXT;
 					else
@@ -128,7 +125,7 @@ loop:		for(int i = offset; i < length; i++)
 				}
 				else if(token == Token.COMMENT1)
 				{
-					if(TextUtilities.regionMatches(false,line,
+					if(SyntaxUtilities.regionMatches(false,line,
 						i - 2,"-->"))
 					{
 						token = null;
@@ -255,6 +252,9 @@ loop:		for(int i = offset; i < length; i++)
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.21  1999/03/13 08:50:39  sp
+ * Syntax colorizing updates and cleanups, general code reorganizations
+ *
  * Revision 1.20  1999/03/12 23:51:00  sp
  * Console updates, uncomment removed cos it's too buggy, cvs log tags added
  *

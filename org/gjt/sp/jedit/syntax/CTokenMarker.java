@@ -1,5 +1,5 @@
 /*
- * CTokenMarker.java - C/C++/Java token marker
+ * CTokenMarker.java - C token marker
  * Copyright (C) 1998, 1999 Slava Pestov
  *
  * This program is free software; you can redistribute it and/or
@@ -21,14 +21,18 @@ package org.gjt.sp.jedit.syntax;
 import javax.swing.text.Segment;
 
 /**
- * C/C++/Java/JavaScript token marker.
+ * C token marker.
  *
  * @author Slava Pestov
  * @version $Id$
  */
 public class CTokenMarker extends TokenMarker
 {
-	// public members
+	public CTokenMarker()
+	{
+		this(true,getKeywords());
+	}
+
 	public CTokenMarker(boolean cpp, KeywordMap keywords)
 	{
 		this.cpp = cpp;
@@ -200,7 +204,60 @@ loop:		for(int i = offset; i < length; i++)
 			return null;
 	}
 
+	public static KeywordMap getKeywords()
+	{
+		if(cKeywords == null)
+		{
+			cKeywords = new KeywordMap(false);
+			cKeywords.add("char",Token.KEYWORD3);
+			cKeywords.add("double",Token.KEYWORD3);
+			cKeywords.add("enum",Token.KEYWORD3);
+			cKeywords.add("float",Token.KEYWORD3);
+			cKeywords.add("int",Token.KEYWORD3);
+			cKeywords.add("long",Token.KEYWORD3);
+			cKeywords.add("short",Token.KEYWORD3);
+			cKeywords.add("signed",Token.KEYWORD3);
+			cKeywords.add("struct",Token.KEYWORD3);
+			cKeywords.add("typedef",Token.KEYWORD3);
+			cKeywords.add("union",Token.KEYWORD3);
+			cKeywords.add("unsigned",Token.KEYWORD3);
+			cKeywords.add("void",Token.KEYWORD3);
+			cKeywords.add("auto",Token.KEYWORD1);
+			cKeywords.add("const",Token.KEYWORD1);
+			cKeywords.add("extern",Token.KEYWORD1);
+			cKeywords.add("register",Token.KEYWORD1);
+			cKeywords.add("static",Token.KEYWORD1);
+			cKeywords.add("volatile",Token.KEYWORD1);
+			cKeywords.add("break",Token.KEYWORD1);
+			cKeywords.add("case",Token.KEYWORD1);
+			cKeywords.add("continue",Token.KEYWORD1);
+			cKeywords.add("default",Token.KEYWORD1);
+			cKeywords.add("do",Token.KEYWORD1);
+			cKeywords.add("else",Token.KEYWORD1);
+			cKeywords.add("for",Token.KEYWORD1);
+			cKeywords.add("goto",Token.KEYWORD1);
+			cKeywords.add("if",Token.KEYWORD1);
+			cKeywords.add("return",Token.KEYWORD1);
+			cKeywords.add("sizeof",Token.KEYWORD1);
+			cKeywords.add("switch",Token.KEYWORD1);
+			cKeywords.add("while",Token.KEYWORD1);
+			cKeywords.add("asm",Token.KEYWORD2);
+			cKeywords.add("asmlinkage",Token.KEYWORD2);
+			cKeywords.add("far",Token.KEYWORD2);
+			cKeywords.add("huge",Token.KEYWORD2);
+			cKeywords.add("inline",Token.KEYWORD2);
+			cKeywords.add("near",Token.KEYWORD2);
+			cKeywords.add("pascal",Token.KEYWORD2);
+			cKeywords.add("true",Token.LABEL);
+			cKeywords.add("false",Token.LABEL);
+			cKeywords.add("NULL",Token.LABEL);
+		}
+		return cKeywords;
+	}
+
 	// private members
+	private static KeywordMap cKeywords;
+
 	private boolean cpp;
 	private KeywordMap keywords;
 }
@@ -208,6 +265,9 @@ loop:		for(int i = offset; i < length; i++)
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.23  1999/03/13 08:50:39  sp
+ * Syntax colorizing updates and cleanups, general code reorganizations
+ *
  * Revision 1.22  1999/03/13 00:09:07  sp
  * Console updates, uncomment removed cos it's too buggy, cvs log tags added
  *

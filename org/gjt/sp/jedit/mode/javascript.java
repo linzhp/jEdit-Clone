@@ -25,34 +25,6 @@ public class javascript extends autoindent
 {
 	public TokenMarker createTokenMarker()
 	{
-		return new CTokenMarker(false,getKeywords());
+		return new JavaScriptTokenMarker();
 	}
-
-	public static KeywordMap getKeywords()
-	{
-		if(keywords == null)
-		{
-			keywords = new KeywordMap(false);
-			keywords.add("function",Token.KEYWORD3);
-			keywords.add("var",Token.KEYWORD3);
-			keywords.add("else",Token.KEYWORD1);
-			keywords.add("for",Token.KEYWORD1);
-			keywords.add("if",Token.KEYWORD1);
-			keywords.add("in",Token.KEYWORD1);
-			keywords.add("new",Token.KEYWORD1);
-			keywords.add("return",Token.KEYWORD1);
-			keywords.add("while",Token.KEYWORD1);
-			keywords.add("with",Token.KEYWORD1);
-			keywords.add("break",Token.KEYWORD1);
-			keywords.add("case",Token.KEYWORD1);
-			keywords.add("continue",Token.KEYWORD1);
-			keywords.add("default",Token.KEYWORD1);
-			keywords.add("false",Token.LABEL);
-			keywords.add("this",Token.LABEL);
-			keywords.add("true",Token.LABEL);
-		}
-		return keywords;
-	}
-
-	private static KeywordMap keywords;
 }

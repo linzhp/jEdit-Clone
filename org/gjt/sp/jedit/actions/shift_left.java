@@ -59,15 +59,15 @@ public class shift_left extends EditAction
 				int lineStart = lineElement.getStartOffset();
 				String line = buffer.getText(lineStart,
 					lineElement.getEndOffset() - lineStart - 1);
-				int whiteSpace = TextUtilities
+				int whiteSpace = MiscUtilities
 					.getLeadingWhiteSpace(line);
 				if(whiteSpace == 0)
 					continue;
-				int whiteSpaceWidth = Math.max(0,TextUtilities
+				int whiteSpaceWidth = Math.max(0,MiscUtilities
 					.getLeadingWhiteSpaceWidth(line,tabSize)
 					- tabSize);
 				buffer.remove(lineStart,whiteSpace);
-				buffer.insertString(lineStart,TextUtilities
+				buffer.insertString(lineStart,MiscUtilities
 					.createWhiteSpace(whiteSpaceWidth,
 					tabSize,noTabs),null);
 			}

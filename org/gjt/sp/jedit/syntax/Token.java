@@ -19,15 +19,19 @@
 package org.gjt.sp.jedit.syntax;
 
 /**
- * A linked list of tokens.
+ * A linked list of tokens. Each token has three fields - a token
+ * identifier, which is a string that can be looked up in the
+ * dictionary returned by <code>SyntaxDocument.getColors()</code>
+ * to get a color value, a length value which is the length of the
+ * token in the text, and a pointer to the next token in the list,
+ * which may or may not be valid, depending on the value of the
+ * <code>nextValid</code> flag.
  *
  * @author Slava Pestov
  * @version $Id$
  */
 public class Token
 {
-	// public members
-
 	/**
 	 * Alternate text token id.
 	 */
@@ -90,8 +94,7 @@ public class Token
 	public int length;
 
 	/**
-	 * The id of this token. This can be looked up in the table returned
-	 * by <code>Buffer.getColors()</code> to obtain a color value.
+	 * The id of this token.
 	 */
 	public String id;
 
@@ -129,6 +132,9 @@ public class Token
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.7  1999/03/13 08:50:39  sp
+ * Syntax colorizing updates and cleanups, general code reorganizations
+ *
  * Revision 1.6  1999/03/12 23:51:00  sp
  * Console updates, uncomment removed cos it's too buggy, cvs log tags added
  *

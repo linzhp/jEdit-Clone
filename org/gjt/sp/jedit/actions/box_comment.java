@@ -59,7 +59,7 @@ public class box_comment extends EditAction
 		{
 			Element lineElement = map.getElement(startLine);
 			int start = lineElement.getStartOffset();
-			int indent = TextUtilities.getLeadingWhiteSpace(
+			int indent = MiscUtilities.getLeadingWhiteSpace(
 				buffer.getText(start,lineElement.getEndOffset()
 				- start));
 			buffer.insertString(Math.max(start + indent,selectionStart),
@@ -68,14 +68,14 @@ public class box_comment extends EditAction
 			{
 				lineElement = map.getElement(i);
 				start = lineElement.getStartOffset();
-				indent = TextUtilities.getLeadingWhiteSpace(
+				indent = MiscUtilities.getLeadingWhiteSpace(
 					buffer.getText(start,lineElement
 					.getEndOffset() - start));
 				buffer.insertString(start + indent,boxComment,null);
 			}
 			lineElement = map.getElement(endLine);
 			start = lineElement.getStartOffset();
-			indent = TextUtilities.getLeadingWhiteSpace(buffer
+			indent = MiscUtilities.getLeadingWhiteSpace(buffer
 				.getText(start,lineElement.getEndOffset()
 				- start));
 			buffer.insertString(Math.max(start + indent,textArea

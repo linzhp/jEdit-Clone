@@ -43,7 +43,7 @@ public class select_no_indent extends EditAction
 		try
 		{
 			String str = buffer.getText(start,end - start);
-			int whitespace = start + TextUtilities
+			int whitespace = start + MiscUtilities
 				.getLeadingWhiteSpace(str);
 			view.getTextArea().select(whitespace,end - 1);
 		}

@@ -1,6 +1,6 @@
 /*
  * SyntaxView.java - jEdit's own Swing view implementation
- * Copyright (C) 1998 Slava Pestov
+ * Copyright (C) 1998, 1999 Slava Pestov
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -22,20 +22,19 @@ package org.gjt.sp.jedit.syntax;
 import javax.swing.text.*;
 import java.awt.*;
 import java.util.*;
-import org.gjt.sp.jedit.jEdit;
-import org.gjt.sp.jedit.Buffer;
 
 /**
- * A Swing view implementation that colorizes text with a
- * <code>TokenMarker</code>.
+ * A Swing view implementation that colorizes lines of a
+ * <code>SyntaxDocument</code> using a <code>TokenMarker</code>.<p>
+ *
+ * This class should not be used directly; a <code>SyntaxEditorKit</code>
+ * should be used instead.
  *
  * @author Slava Pestov
  * @version $Id$
  */
 public class SyntaxView extends PlainView
 {
-	// public methods
-	
 	/**
 	 * Creates a new <code>SyntaxView</code> for painting the specified
 	 * element.
@@ -50,15 +49,19 @@ public class SyntaxView extends PlainView
 	/**
 	 * Paints the specified line.
 	 * <p>
-	 * This is what it does:
+	 * This method performs the following:
 	 * <ul>
 	 * <li>Gets the token marker and color table from the current document,
-	 * typecast to a <code>Buffer</code>.
+	 * typecast to a <code>SyntaxDocument</code>.
 	 * <li>Tokenizes the required line by calling the
 	 * <code>markTokens()</code> method of the token marker.
 	 * <li>Paints each token, obtaining the color by looking up the
 	 * the <code>Token.id</code> value in the color table.
 	 * </ul>
+	 * If either the document doesn't implement
+	 * <code>SyntaxDocument</code>, or if the returned token marker is
+	 * null, the line will be painted with no colorization.
+	 *
 	 * @param lineIndex The line number
 	 * @param g The graphics context
 	 * @param x The x co-ordinate where the line should be painted
@@ -66,18 +69,34 @@ public class SyntaxView extends PlainView
 	 */
 	public void drawLine(int lineIndex, Graphics g, int x, int y)
 	{
-		Color def = getDefaultColor();
-		Buffer buffer = (Buffer)getDocument();
+		SyntaxDocument syntaxDocument;
+		TokenMarker tokenMarker;
+
+		Document document = getDocument();
+
+		if(document instanceof SyntaxDocument)
+		{
+			syntaxDocument = (SyntaxDocument)document;
+			tokenMarker = syntaxDocument.getTokenMarker();
+		}
+		else
+		{
+			syntaxDocument = null;
+			tokenMarker = null;
+		}
+
 		FontMetrics metrics = g.getFontMetrics();
-		Hashtable colors = buffer.getColors();
-		TokenMarker tokenMarker = buffer.getTokenMarker();
+		Color def = getDefaultColor();
+
 		try
 		{
-			Element lineElement = getElement().getElement(
-				lineIndex);
+			Element lineElement = getElement()
+				.getElement(lineIndex);
 			int start = lineElement.getStartOffset();
 			int end = lineElement.getEndOffset();
-			buffer.getText(start,end - (start + 1),line);
+
+			document.getText(start,end - (start + 1),line);
+
 			if(tokenMarker == null)
 			{
 				g.setColor(def);
@@ -85,6 +104,7 @@ public class SyntaxView extends PlainView
 			}
 			else
 			{
+				Dictionary colors = syntaxDocument.getColors();
 				Token tokens = tokenMarker.markTokens(line,
 					lineIndex);
 				int offset = 0;
@@ -129,6 +149,9 @@ public class SyntaxView extends PlainView
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.16  1999/03/13 08:50:39  sp
+ * Syntax colorizing updates and cleanups, general code reorganizations
+ *
  * Revision 1.15  1999/03/12 23:51:00  sp
  * Console updates, uncomment removed cos it's too buggy, cvs log tags added
  *
