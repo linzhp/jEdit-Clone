@@ -26,7 +26,7 @@ import gnu.regexp.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.Vector;
-import org.gjt.sp.jedit.gui.SyntaxTextArea;
+import org.gjt.sp.jedit.gui.JEditTextArea;
 import org.gjt.sp.jedit.jEdit;
 import org.gjt.sp.jedit.Buffer;
 import org.gjt.sp.jedit.GUIUtilities;
@@ -131,7 +131,7 @@ implements ActionListener, KeyListener, ListSelectionListener
 			return;
 		Position pos = (Position)positions.elementAt(results
 			.getSelectedIndex());
-		SyntaxTextArea textArea = view.getTextArea();
+		JEditTextArea textArea = view.getTextArea();
 		Element map = view.getBuffer().getDefaultRootElement();
 		Element lineElement = map.getElement(map.getElementIndex(pos
 			.getOffset()));
@@ -196,6 +196,9 @@ implements ActionListener, KeyListener, ListSelectionListener
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.23  1999/03/27 02:45:07  sp
+ * New JEditTextArea class that adds jEdit-specific features to SyntaxTextArea
+ *
  * Revision 1.22  1999/03/20 04:52:55  sp
  * Buffer-specific options panel finished, attempt at fixing OS/2 caret bug, code
  * cleanups
