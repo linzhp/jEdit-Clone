@@ -632,6 +632,9 @@ implements ActionListener, ListSelectionListener
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.32  1999/05/18 07:26:40  sp
+ * HelpViewer cursor tweak, minor view bug fix
+ *
  * Revision 1.31  1999/05/18 04:40:12  sp
  * $n in console, minor GUI tweak
  *
@@ -661,38 +664,5 @@ implements ActionListener, ListSelectionListener
  *
  * Revision 1.22  1999/04/19 05:44:34  sp
  * GUI updates
- *
- * Revision 1.21  1999/04/08 04:44:51  sp
- * New _setBuffer method in View class, new addTab method in Console class
- *
- * Revision 1.20  1999/04/02 02:39:46  sp
- * Updated docs, console fix, getDefaultSyntaxColors() method, hypersearch update
- *
- * Revision 1.19  1999/04/02 00:39:19  sp
- * Fixed console bug, syntax API changes, minor jEdit.java API change
- *
- * Revision 1.18  1999/04/01 04:13:00  sp
- * Bug fixing for 1.5final
- *
- * Revision 1.17  1999/03/28 01:36:24  sp
- * Backup system overhauled, HistoryTextField updates
- *
- * Revision 1.16  1999/03/27 23:47:57  sp
- * Updated docs, view tweak, goto-line fix, next/prev error tweak
- *
- * Revision 1.15  1999/03/22 04:20:01  sp
- * Syntax colorizing updates
- *
- * Revision 1.14  1999/03/20 05:23:32  sp
- * Code cleanups
- *
- * Revision 1.13  1999/03/20 00:26:48  sp
- * Console fix, backed out new JOptionPane code, updated tips
- *
- * Revision 1.12  1999/03/17 05:32:52  sp
- * Event system bug fix, history text field updates (but it still doesn't work), code cleanups, lots of banging head against wall
- *
- * Revision 1.11  1999/03/16 04:34:46  sp
- * HistoryTextField updates, moved generate-text to a plugin, fixed spelling mistake in EditAction Javadocs
  *
  */

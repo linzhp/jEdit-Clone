@@ -21,8 +21,6 @@ This is what needs to be done before 1.6final is released:
 <ul>
 <li>Overwrite mode doesn't work on JDK 1.2.<p>
 Maybe Keymap.setDefaultAction() doesn't work properly?
-
-<li>Text field labels should have keyboard mnemonics
 </ul>
 
 <a name=medterm>
@@ -51,7 +49,9 @@ buffer switching rewrite.
 The C+END `bug' still exists.
 
 <li>More syntax modes.<p>
-Perl and TCL are the most frequently requested ones.
+Perl and TCL are the most frequently requested ones.<p>
+<b>XMode is getting faster and better all time, so lack of edit modes
+might not be an issue once it's stable.</b>
 
 <li>Editor needs to be embeddable in other applications.<p>
 There are several levels of integration that should be looked into:
@@ -113,9 +113,6 @@ This is what needs to be done eventually:
 <li>Integrate XMode.<p>
 Mike Dillon's XMode is a much better way of writing syntax
 modes than the current `manual' way.<p>
-
-XMode is evolving very quickly so it might be ready in time
-for the jEdit 1.6 release.
 
 <li>Auto indent improvements.<p>
 Auto indent should support `smart' indent (for example, shifting

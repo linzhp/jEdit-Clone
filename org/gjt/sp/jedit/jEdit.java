@@ -1526,6 +1526,9 @@ public class jEdit
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.101  1999/05/18 07:26:40  sp
+ * HelpViewer cursor tweak, minor view bug fix
+ *
  * Revision 1.100  1999/05/18 04:40:12  sp
  * $n in console, minor GUI tweak
  *
@@ -1555,21 +1558,5 @@ public class jEdit
  *
  * Revision 1.91  1999/05/03 08:28:14  sp
  * Documentation updates, key binding editor, syntax text area bug fix
- *
- * Revision 1.90  1999/05/03 04:28:01  sp
- * Syntax colorizing bug fixing, console bug fix for Swing 1.1.1
- *
- * Revision 1.89  1999/05/02 00:07:21  sp
- * Syntax system tweaks, console bugfix for Swing 1.1.1
- *
- * Revision 1.88  1999/05/01 00:55:11  sp
- * Option pane updates (new, easier API), syntax colorizing updates
- *
- * Revision 1.87  1999/04/30 23:20:38  sp
- * Improved colorization of multiline tokens
- *
- * Revision 1.86  1999/04/27 06:53:38  sp
- * JARClassLoader updates, shell script token marker update, token marker compiles
- * now
  *
  */

@@ -290,8 +290,8 @@ public class View extends JFrame
 	 */
 	public void updateTitle()
 	{
-		Object[] args = { (showFullPath ? buffer.getPath() :
-			buffer.getName()),
+		Object[] args = { ((showFullPath && !buffer.isNewFile())
+			? buffer.getPath() : buffer.getName()),
 			new Integer(buffer.isReadOnly() ? 1 : 0),
 			new Integer(buffer.isDirty() ? 1: 0)};
 		setTitle(jEdit.getProperty("view.title",args));
@@ -852,6 +852,9 @@ public class View extends JFrame
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.73  1999/05/18 07:26:40  sp
+ * HelpViewer cursor tweak, minor view bug fix
+ *
  * Revision 1.72  1999/05/14 04:56:15  sp
  * Docs updated, default: fix in C/C++/Java mode, full path in title bar toggle
  *

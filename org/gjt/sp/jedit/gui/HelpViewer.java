@@ -101,6 +101,10 @@ public class HelpViewer extends JFrame
 
 	private void gotoURL(URL url, boolean addToHistory)
 	{
+		// reset default cursor so that the hand cursor doesn't
+		// stick around
+		viewer.setCursor(Cursor.getDefaultCursor());
+
 		try
 		{
 			urlField.setText(url.toString());
