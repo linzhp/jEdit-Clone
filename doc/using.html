@@ -1,0 +1,309 @@
+<html>
+<body>
+
+<h1>Using jEdit</h1>
+<a href=#starting>Starting jEdit</a><br>
+<a href=#server>The jEdit Server</a><br>
+<a href=#desktop>The Desktop File</a><br>
+<a href=#buffers>Buffers</a><br>
+<a href=#views>Views</a><br>
+<a href=#modes>Edit Modes</a><br>
+
+<a name=starting>
+<h1>Starting jEdit</h1>
+</a>
+
+jEdit can be started from the command line to edit one or more
+files like this:
+
+<blockquote><code>jedit &lt;file1&gt; &lt;file2&gt;...</code></blockquote>
+
+If the file name contains a hash (#) the remainder of the file name
+after the hash character is the name of a marker that will be jumped to
+in the opened file.<p>
+
+A number of `switches' can also be passed to jEdit.
+
+<blockquote><code>
+	-version: Display jEdit version and exit<br>
+	-usage: Display a command line usage message and exit<br>
+	-nousrprops: Don't load user properties<br>
+	-noserver: Don't start server<br>
+	-nodesktop: Ignore saved desktop<br>
+	-nosplash: Don't show initial splash screen<br>
+	-usrprops=&lt;file&gt;: Load user properties from &lt;file&gt;<br>
+	-portfile=&lt;file&gt;: Save server port to &lt;file&gt;<br>
+	-desktopfile=&lt;file&gt;: Save desktop to &lt;file&gt;<br>
+	-readonly: Open files read only<br>
+	--: End of options<br>
+</code></blockquote>
+
+Because the `-' character is reserved for switches, you must enter the
+`--' parameter prior to any files whose names start with `-'.
+
+<blockquote><code>jedit -- -filename</code></blockquote>
+
+jEdit can also be started from a GUI or command line with no parameters,
+in which case it will either open any files that were open in the last
+session, or if the `save desktop' feature is disabled, a blank
+`Untitled' file.<p>
+
+<a name=server>
+<h1>The jEdit Server</h1>
+</a>
+
+When jEdit is first started, it creates a new server thread that listens
+on a free TCP/IP socket. Subsequent invocations of jEdit connect to that
+socket and inform it of any files that are to be opened, and the thread
+opens those files. This technique cuts down on memory usage because
+there is only one instance of jEdit open at any one time.<p>
+
+The server can be disabled either on a `one-time' basis with the
+`-noserver' switch, or permanently in the
+<a href=menu_tools.html#options>Options</a> dialog box.<p>
+
+<a name=desktop>
+<h1>The Desktop File</h1>
+</a>
+
+When jEdit exits it saves the list of open files to the `desktop' file,
+so that the next time jEdit is started, it can reopen those files.<p>
+
+The desktop can be disabled either on a `one-time' basis with the
+`-nodesktop' switch, or permanently in the
+<a href=menu_tools.html#options>Options</a> dialog box.<p>
+
+<a name=buffers>
+<h1>Buffers</h1>
+</a>
+
+A buffer is an in-memory copy of an open file. All editing operations
+are performed on the buffer - the original remains unchanged on disk
+until the buffer is `saved'. The number of open buffers is only limited
+by available memory.<p>
+
+<a name=buffer-props>
+<h2>Buffer-Local Properties</h2>
+</a>
+
+Several paremeters such as the tab size can be set on a per-buffer
+basis with <i>buffer-local properties</i>.When a
+file is loaded, jEdit looks for something like the following in the first
+10 lines:
+
+<blockquote><code>
+	(:name=value:...)
+</code></blockquote>
+
+Any number of name/value pairs can be specified.<p>
+
+The following properties are supported:
+
+<table border=3>
+
+
+<tr>
+<td>closeBrackets</td> <td>A list of closing brackets, used by the
+<a href=menu_edit.html#locate-bracket>Locate Bracket</a> and
+<a href=menu_edit.html#select-block>Select Code Block</a> commands.
+Default is `)]}'.</td>
+</tr>
+
+<tr>
+<td>compiler</td> <td>The compiler to use for the buffer. Default is mode
+specific.</td>
+</tr>
+
+<tr>
+<td>mode</td> <td>The edit mode to use for the buffer. Default is none.</td>
+</tr>
+
+<tr>
+<td>make</td> <td>The name of the `make' tool. The global default can
+also be specified in the <a href=menu_tools.html#options>Options</a> dialog
+box.</td>
+</tr>
+
+<tr>
+<td>maxLineLen</td> <td>The maximum line length, used by the
+<a href=menu_edit.html#format>Format</a> command. Default is 72.</td>
+</tr>
+
+<tr>
+<td>noTabs</td> <td>In edit modes with automatic indentation (all the edit
+modes included with jEdit except for Text) this flag indicates that Tab
+characters should not be used, and an equivalent number of spaces should
+be inserted instead.</td>
+</tr>
+
+<tr>
+<td>noWordSep</td> <td>A list of non-alphanumeric characters that are
+not to be treated like word separators by the
+<a href=menu_edit.html#expand-abbrev>Expand Abbreviation</a> command.
+Default is none, however the C, C++ and
+Java edit modes define this to `._' by default.</td>
+</tr>
+
+<tr>
+<td>openBrackets</td> <td>A list of open brackets, used by the
+<a href=menu_edit.html#locate-bracket>Locate Bracket</a> and
+<a href=menu_edit.html#select-block>Select Code Block</a> commands. Default
+is `([{'.</td>
+</tr>
+
+<tr>
+<td>tabSize</td> <td>The tab width, in character units. Default is 8.</td>
+</tr>
+
+</table>
+
+<a name=views>
+<h1>Views</h2>
+</a>
+
+A view is an editor window, the user interface for editing buffers.
+Each view can edit one buffer at a time, and any number of views can be
+editing a buffer. A change in one view is automatically propagated to
+all others editing the same buffer.<p>
+
+The user interface of views should be pretty self explanatory - there is
+only one part that needs explaining, the status bar. The status bar is
+the strip of writing at the bottom. A sample status bar looks like this:
+
+<blockquote><pre>
+(--:**) editing.html (HTML, Line 32/53 60%)
+</pre></blockquote>
+
+The elements, from left to right, are:
+
+<ul>
+<li>(--) New file flag. If the current file is not on disk, this is **,
+-- otherwise.
+<li>(:) Read only flag. If the current file is read only, this is /, :
+otherwise.
+<li>(**) Changed flag. If the current file has been changed since it was
+last saved, this is **, -- otherwise.
+<li>(HTML) The current file's edit mode. |XXX edit modes|
+<li>(Line 32/53 60%) The current line number and the total number of
+lines in the file. The percentage is the ratio of the two.
+</ul>
+
+The <a href=menu_file.html#new-view>New View</a> command can be used to
+create a new view, and the <a href=menu_file.html#close-view>Close View</a>
+command closes the current view. The `Buffers' menu can be used to select
+which buffer the current view is editing.
+
+<a name=modes>
+<h1>Edit Modes</h1>
+</a>
+
+To implement indentation and syntax colorizing, jEdit has <i>edit modes</i> -
+each edit mode defining behaviour for editing some type of file. Namely,
+edit modes can define the following behaviour:
+
+<ul>
+<li><b>Indentation</b> - what to do when the Tab key is pressed
+<li><b>Syntax Colorizing</b> - jEdit has the capability to display different
+lexical tokens in source code using distinctive colors. Each file type is
+colorized accordingly
+<li><b>Buffer-Local Properties</b> - defaults for buffer-local properties,
+for example the compiler to use
+</ul>
+
+When a file is opened, jEdit looks at it's extension, file name and first
+line of text to determine which edit mode to use. The following table lists
+all edit modes included with jEdit, their internal names (which is the value
+that can be used in the `mode' buffer-local property) and how they are
+selected.
+
+<table border=3>
+
+<tr>
+<th bgcolor=#ccccff>Name</th><th bgcolor=#ccccff>Internal Name</th>
+<th bgcolor=#ccccff>Description</th>
+</tr>
+
+<tr>
+<td>AMSTeX</td> <td>amstex</td> <td>For editing AMSTeX files. This mode
+is automatically selected for files whose names end with `.tex' and
+which contain `\documentstyle' in the first 100 lines, but which do not
+contain `\begin'. Default compiler is `amstex'.</td>
+</tr>
+
+<tr>
+<td>Auto Indent</td> <td>autoindent</td> <td>Implements semi-intelligent
+indentation. All other modes subclass this.</td>
+</tr>
+
+<tr>
+<td>Batch File</td> <td>bat</td> <td>For editing MS-DOS Batch Files. This
+mode is automatically selected for files whose names end with `.bat'.</td>
+</tr>
+
+<tr>
+<td>C</td> <td>c</td> <td>For editing C source. This
+mode is automatically selected for files whose names end with `.c' or `.h'.
+Default compiler is `cc'.
+</td>
+</tr>
+
+<tr>
+<td>C++</td> <td>cc</td> <td>For editing C++ source. This
+mode is automatically selected for files whose names end with `.cc',
+`.cpp', `.cxx' or `.C'. Default compiler is `c++'.
+</td>
+</tr>
+
+<tr>
+<td>HTML</td> <td>html</td> <td>For editing HTML files. This
+mode is automatically selected for files whose names end with `.html',
+`.htm' or `.shtml'.
+</td>
+</tr>
+
+<tr>
+<td>Java</td> <td>java_mode</td> <td>For editing Java source. This
+mode is automatically selected for files whose names end with `.java'.
+Default compiler is `javac'.
+</td>
+</tr>
+
+<tr>
+<td>JavaScript</td> <td>javascript</td> <td>For editing JavaScript source. This
+mode is automatically selected for files whose names end with `.js'. Also,
+HTML mode uses this mode to colorize scripts inside &lt;script&gt; tags.
+</td>
+</tr>
+
+<tr>
+<td>LaTeX</td> <td>latex</td> <td>For editing LaTeX files. This
+mode is automatically selected for files whose names end with `.tex' and
+that contain `\begin' in the first 100 lines. Default compiler is `latex'.
+</td>
+</tr>
+
+<tr>
+<td>Makefile</td> <td>make</td> <td>For editing Makefiles. This
+mode is automatically selected for files named `Makefile'.
+</td>
+</tr>
+
+<tr>
+<td>Shell Script</td> <td>sh</td> <td>For editing UNIX shell scripts. This
+mode is automatically selected for files whose first line is `#!' followed
+by various shell paths.
+</td>
+</tr>
+
+<tr>
+<td>TeX</td> <td>tex</td> <td>For editing plain TeX files. This
+mode is automatically selected for files whose names end with `.tex' but
+which do not contain either `\begin' or `\documentstyle' in the first 100
+lines. Default compiler is `tex'.
+</td>
+</tr>
+
+</table>
+
+</body>
+</html>

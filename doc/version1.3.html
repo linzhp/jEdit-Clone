@@ -1,0 +1,121 @@
+<html>
+<body>
+
+<h1>New Features in jEdit 1.3</h1>
+
+<a href=#bracketHilite>Bracket Matching</a><br>
+<a href=#lineHilite>Current Line Highlighting</a><br>
+<a href=#syntax>Syntax Colorizing Improvements</a><br>
+<a href=#options>Options Dialog Box Improvements</a><br>
+<a href=#desktop>Desktop Saving</a><br>
+<a href=#newCommands>New Text Editing Commands</a><br>
+<a href=#newKeys>New Key Bindings</a><br>
+<a href=#pastePrev>Paste Previous Command</a><br>
+<a href=#osCmd>External Command Support Improvements</a><br>
+<a href=#bugFixes>Bug Fixes</a><br>
+
+<a name=bracketHilite>
+<h1>Bracket Highlighting</h1>
+</a>
+
+If the character before the caret is a bracket, the matching bracket is
+now displayed in a different color.
+
+<a name=lineHilite>
+<h1>Current Line Highlighting</h1>
+</a>
+
+The line the caret is on now has a different background color.
+
+<a name=syntax>
+<h1>Syntax Colorizing Improvements</h1>
+</a>
+
+The syntax colorizing subsystem is a lot smoother in jEdit 1.3. Major
+changes from 1.2 are:
+
+<ul>
+<li>JavaScript mode added, for editing JavaScript scripts. The HTML mode
+also colorizes JavaScript inside &lt;script&gt; tags.
+<li>C, C++ and Java colorizing is a little bit faster because of several
+optimizations.
+</ul>
+
+<a name=options>
+<h1>Options Dialog Box Updates</h1>
+</a>
+
+The `Options' dialog box has been completely overhauled. It can now
+change many more settings, including colors.
+
+<a name=desktop>
+<h1>Desktop Saving</h1>
+</a>
+
+When jEdit exits, a list of open files and caret positions is saved to a
+`desktop' file. When jEdit is started with no command line arguments, it
+reads this `desktop' file and opens the file(s).
+
+<a name=newCommands>
+<h1>New Text Editing Commands</h1>
+</a>
+
+Various new commands were added for manipulating lines, paragraphs and
+the anchor, a floating marker that is useful for several purposes.
+
+<a name=newKeys>
+<h1>New Key Bindings</h1>
+</a>
+
+The key bindings for a lot of commands have changed. jEdit now supports
+multiple keystroke key bindings.
+
+<a name=pastePrev>
+<h1>Paste Previous Command</h1>
+</a>
+
+The new `Paste Previous' command displays a list of previous copied and
+pasted strings. Selecting one will insert it into the document.
+
+<a name=osCmd>
+<h1>External Command Support Improvements</h1>
+</a>
+
+jEdit 1.3 has several new commands for interfacing with native programs:
+
+<ul>
+<li>`Filter Selection' - writes the selected text to the
+command's standard input, replacing the selection with the output.
+<li>`Make' - invokes the `make' tool, usually `make' on Unix and `nmake'
+on Windows.
+<li>`Compile' - invokes a mode-specific compiler. For example, in Java
+mode this is `javac', in C mode it's `cc', and so on. With TeX files, the
+first 100 lines are checked to determine if it's a LaTeX, AMSTeX or plain
+TeX file, and the appropriate variant of TeX will be invoked.
+</ul>
+
+<a name=bugFixes>
+<h1>Bug Fixes</h1>
+</a>
+
+jEdit 1.3 fixes the following bugs present in 1.2:
+
+<ul>
+<li>Several Java and C keywords were missing
+<li>jEdit.regionMatches() had a bug, among other things this caused
+problems in HTML mode
+<li>Makefile mode didn't colorize short variables properly
+<li>A \$ inside a $...$ construct wasn't colorized correctly in TeX mode
+<li>Path names like ../../file could cause problems
+<li>More than one copy of a URL could be open at once
+<li>A failed `Save As' could cause weird problems
+<li>Search and replace didn't support ^ and $
+<li>`Replace All' command didn't work sometimes
+<li>Various Format command bugs
+<li>Various Expand Abbreviation command bugs
+<li>Send command didn't set the subject line properly
+<li>print.java didn't compile with Sun's javac
+</ul>
+
+</body>
+</html>

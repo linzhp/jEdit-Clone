@@ -1,0 +1,115 @@
+<html>
+<body>
+
+<h1>Contents</h1>
+
+<a href=#plugins>jEdit Plugins</a><br>
+<a href=#installing>Installing Plugins</a><br>
+<a href=#using>Using Plugins</a><br>
+<a href=#develop>Developing Plugins</a><br>
+
+<a name=plugins>
+<h1>jEdit Plugins</h1>
+</a>
+
+jEdit has a powerful plugin architecture. Plugins can be used to add
+almost any feature to jEdit. They are easy to write and even easier to
+install.
+
+<a name=installing>
+<h1>Installing Plugins</h1>
+</a>
+
+Plugins are distributed as JAR files. They have a .jar extension.<p>
+
+Plugins can be installed in one of two directories - the system plugin
+directory and the user plugin directory. Plugins in the system directory
+can be used by all users on the system. Plugins in a user's plugin
+directory can only be used by the respective user.<p>
+
+On Unix, the system plugin directory is
+/opt/slava/share/jedit-<code>&lt;version&gt;</code>/jars, Each user has a
+plugin directory in $HOME/.jedit-jars.<p>
+
+On Windows 95 and 98, the system plugin directory is C:\Program
+Files\jEdit\jars. The user plugin directory is %JAVAHOME%\.jedit-jars.<p>
+
+On Windows NT, the system plugin directory is the same as that on
+Windows 95/98, but each user has a plugin directory in
+%HOME%\.jedit-jars.<p>
+
+<a name=using>
+<h1>Using Plugins</h1>
+</a><p>
+
+Once a plugin is installed, jEdit will say so during startup.
+
+<blockquote><pre>
+	Loading plugin /opt/slava/share/jedit-1.3final/jars/rot13.jar
+</pre></blockquote>
+
+If all goes well during startup, the plugins should also appear in the
+`Plugins' menu. If a newly installed plugin doesn't appear to be loaded,
+check that it's in the correct directory and that it's a JAR file.<p>
+
+If a plugin doesn't appear in the plugins menu but a `Loading...'
+message is printed, the plugin might be incompatible with your version
+of jEdit.<p>
+
+<a name=develop>
+<h1>Developing Plugins</h1>
+</a>
+
+Plugins are stored in JAR files. The JAR file can contain two types of
+entries - properties and classes. Other types of entries are ignored.<p>
+
+Property entries have a .props extension. The property file format is
+described in the API documentation for the <code>java.util.Properties</code>
+class.<p>
+
+Class entries have a .class extension and are standard Java class files.<p>
+
+<h2>Edit Modes</h2>
+
+jEdit edit modes implement the <code><a href=api/org.gjt.sp.jedit.Mode.html>
+org.gjt.sp.jedit.Mode</a></code> interface. Also, the following properties
+apply to edit modes:
+
+<table border=3>
+<tr>
+<td>mode.&lt;modename&gt;.name</td> <td>The name that appears in the `Mode'
+menu and several other places</td>
+</tr>
+<tr>
+<td>mode&lt;modename&gt;.&lt;property&gt;</td> <td>The default value of
+the buffer-local property named <code>property</code> for the specified
+edit mode</td>
+<tr>
+<td>mode.extension.&lt;ext&gt;</td> <td>The mode to use for files with
+extension <code>ext</code>.</td>
+</tr>
+<tr>
+<td>mode.filename.&lt;filename&gt;</td> <td>The mode to use for files named
+<code>filename</code></td>.
+</tr>
+<tr>
+<td>mode.firstline,&lt;firstline&gt;</td> <td>The mode to use for files whose
+first line is <code>firstline</code>.</td>
+</tr>
+</table>
+
+<h2>Commands</h2>
+
+jEdit commands extend the <code><a href=api/org.gjt.sp.jedit.EditAction.html>
+org.gjt.sp.jedit.EditAction</a></code> class. For a command to appear in
+the `Plugins' menu, it must also implement the
+<code>org.gjt.sp.jedit.Plugin</code> interface. The interface itself defines
+no methods, it simply tells jEdit that the command is also a plugin.<p>
+The command's menu label is stored in the <code>&lt;command&gt;.label</code>
+property where <code>command</code> is the command name. The shortcut can
+also be specified with the <code>&lt;command&gt;.shortcut</code> property,
+but doing so isn't recommended since future versions of jEdit might use
+that shortcut.
+
+</body>
+</html>

@@ -1,0 +1,85 @@
+<html>
+<body>
+
+<h1>New Features in jEdit 1.1</h1>
+
+<a href=#configure>Configure Script</a><br>
+<a href=#regexp>Improved Search and Replace</a><br>
+<a href=#server>Server Updates</a><br>
+<a href=#modes>Edit Modes</a><br>
+<a href=#errors>Improved Error Messages</a><br>
+<a href=#netscape>Netscape Remote Support</a><br>
+<a href=#buffer>Improved Buffer Switching</a><br>
+<a href=#speed>Performance Enhancements</a><br>
+<a href=#bugFixes>Bug Fixes</a><br>
+
+<a name=configure>
+<h1>Configure Script</h1>
+</a>
+
+In jEdit 1.0, one had to edit the Makefiles to change the install 
+directory. A new Configure script takes care of this. It also lets you 
+specify your Java virtual machine and javac.
+
+<a name=regexp>
+<h1>Improved Search And Replace</h1>
+</a>
+
+The search and replace code has changed significantly. It is much 
+faster and supports regular expression searching using gnu.regexp.
+
+<a name=server>
+<h1>Server Updates</h1>
+</a>
+
+The server now checks if an existing port file is valid before bailing 
+out. As a result, if jEdit crashes and is restarted, the server will 
+start. The server is now more secure as it requires the client to send 
+it a secret key stored in the port file. Finally, a shell script 
+version of jOpen is installed on Unix systems with netpipes. This 
+improves performance.
+
+<a name=modes>
+<h1>Edit Modes</h1>
+</a>
+
+Perhaps the most significant change is the addition of edit modes. 
+Each edit mode defines a set of rules for editing files with a certain 
+format. jEdit 1.1 comes with text and auto indent edit modes.
+
+<a name=errors>
+<h1>Improved Error Messages</h1>
+</a>
+
+Where jEdit 1.0 would dump a stack trace, jEdit 1.1 displays a dialog 
+box with an explanation of the error.
+
+<a name=netscape>
+<h1>Netscape Remote Support</h1>
+
+jEdit 1.1 has two commands which are useful for Web page editing - 
+Open in Netscape and Open Selection in Netscape.
+
+<a name=buffer>
+<h1>Improved Buffer Switching</h1>
+</a>
+
+In jEdit 1.0, when buffers were switched in a view, the caret would 
+jump to the top of the buffer. In 1.1, each buffer's caret position is 
+saved and restored when switching.
+
+<a name=speed>
+<h1>Performance Enhancements</h1>
+</a>
+
+jEdit 1.1 is faster overall than 1.0. The biggest speed increase is 
+file loading. Many other functions have been optimised as well.
+
+<a name=bugs>
+<h1>Bug Fixes</h1>
+</a>
+
+jEdit 1.1 fixes several obscure bugs present in 1.0.
+
+</body>
+</html>
