@@ -49,7 +49,7 @@ public class HTMLTokenMarker extends JSTokenMarker
 						token = COMMENT;
 						tokens.addElement(new JSToken(
 							line.substring(
-							lastOffset,i),token));
+							lastOffset,i),null));
 						lastOffset = i;
 						break;
 					}
@@ -74,7 +74,7 @@ public class HTMLTokenMarker extends JSTokenMarker
 				}
 				else if(token == COMMENT)
 				{
-					if(i > 2 && line.regionMatches(i - 2,
+					if(i >= 2 && line.regionMatches(i - 2,
 						"-->",0,3))
 					{
 						token = null;

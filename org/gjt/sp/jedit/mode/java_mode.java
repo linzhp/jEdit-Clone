@@ -32,18 +32,6 @@ public class java_mode extends autoindent //implements Mode
 		beautifier = new jstyle.JSLineBeautifier();
 	}
 
-	public void enter(Buffer buffer)
-	{
-		buffer.setTokenMarker(new JavaTokenMarker());
-		buffer.loadColors("java");
-	}
-
-	public void leave(Buffer buffer)
-	{
-		buffer.setTokenMarker(null);
-		buffer.clearColors();
-	}
-
 	/*public boolean indentLine(Buffer buffer, View view, int caret)
 	{
 		Element map = buffer.getDefaultRootElement();
@@ -78,4 +66,9 @@ public class java_mode extends autoindent //implements Mode
 		}
 		return true;
 	}*/
+
+	public JSTokenMarker createTokenMarker()
+	{
+		return new JavaTokenMarker();
+	}
 }

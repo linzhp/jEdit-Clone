@@ -82,4 +82,6 @@ public class SyntaxView extends PlainView
 			bl.printStackTrace();
 		}
 	}
+
+
 }

@@ -377,8 +377,17 @@ implements DocumentListener, UndoableEditListener
 		this.mode = mode;
 		if(!init)
 			updateStatus();
-		if(mode != null)
+		if(mode == null)
+		{
+			tokenMarker = null;
+			colors.clear();
+		}
+		else
+		{
+			setTokenMarker(mode.createTokenMarker());
+			loadColors(mode.getClass().getName().substring(22));
 			mode.enter(this);
+		}
 	}
 
 	/**
@@ -447,14 +456,6 @@ implements DocumentListener, UndoableEditListener
 			color = color.substring(index + 1);
 			colors.put(id,jEdit.parseColor(color));
 		}
-	}
-
-	/**
-	 * Clears the color table.
-	 */
-	public void clearColors()
-	{
-		colors.clear();
 	}
 
 	/**
@@ -601,7 +602,7 @@ implements DocumentListener, UndoableEditListener
 		if(children == null)
 			return;
 		for(int i = 0; i < children.length; i++)
-			tokenMarker.insertLine(i);
+			tokenMarker.insertLine(i + line);
 	}
 
 	public void removeUpdate(DocumentEvent evt)
@@ -618,7 +619,7 @@ implements DocumentListener, UndoableEditListener
 		if(children == null)
 			return;
 		for(int i = 0; i < children.length; i++)
-			tokenMarker.deleteLine(line);
+			tokenMarker.deleteLine(i + line);
 	}
 
 	public void changedUpdate(DocumentEvent evt)

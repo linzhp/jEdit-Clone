@@ -20,6 +20,7 @@
 package org.gjt.sp.jedit;
 
 import java.util.Hashtable;
+import jstyle.JSTokenMarker;
 
 /**
  * An edit mode. At the moment, edit modes can define indent behaviour
@@ -50,6 +51,12 @@ public interface Mode
 	 */
 	public abstract boolean indentLine(Buffer buffer, View view,
 		int caret);
+
+	/**
+	 * Returns a JSTokenMarker for this mode. Can return null if this
+	 * mode doesn's support syntax colorizing.
+	 */
+	public abstract JSTokenMarker createTokenMarker();
 
 	/**
 	 * Called when a buffer leaves this mode.

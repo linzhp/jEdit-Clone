@@ -67,7 +67,6 @@ loop:			for(int i = dot - 1; i >= start; i--)
 			}
 			String word = line.substring(wordStart - start,
 						     dot - start);
-			System.out.println("looking for " + word);
 			// loop through lines in file looking for previous
 			// occurance of word
 			for(int i = lineNo - 1; i >= 0; i--)
@@ -78,8 +77,6 @@ loop:			for(int i = dot - 1; i >= start; i--)
 					- lineStart;
 				line = buffer.getText(lineStart, lineLen);
 				int index = line.indexOf(word);
-				System.out.println("index=" + index);
-				System.out.println("lineLen=" + lineLen);
 				if(index != -1)
 				{
 					int wordEnd = lineLen;
@@ -101,8 +98,6 @@ loop2:					for(int j = index + 1; j < lineLen; j++)
 							}
 						}
 					}
-					System.out.println("wordEnd="
-						+ wordEnd);
 					view.getTextArea().replaceSelection(
 						line.substring(index +
 							word.length(),

@@ -19,20 +19,14 @@
 
 package org.gjt.sp.jedit.mode;
 
+import jstyle.JSTokenMarker;
 import org.gjt.sp.jedit.syntax.TeXTokenMarker;
 import org.gjt.sp.jedit.*;
 
 public class tex extends autoindent
 {
-	public void enter(Buffer buffer)
+	public JSTokenMarker createTokenMarker()
 	{
-		buffer.setTokenMarker(new TeXTokenMarker());
-		buffer.loadColors("tex");
-	}
-
-	public void leave(Buffer buffer)
-	{
-		buffer.setTokenMarker(null);
-		buffer.clearColors();
+		return new TeXTokenMarker();
 	}
 }
