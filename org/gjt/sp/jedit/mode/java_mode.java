@@ -51,7 +51,7 @@ public class java_mode implements Mode
 			Integer maxIndent = (Integer)buffer.getProperty(
 				"maxIndent");
 			if(maxIndent != null)
-				beautifier.setMaxInStatementIndentation(maxIndent
+				beautifier.setMaxInStatementIndetation(maxIndent
 					.intValue());
 			beautifier.setBracketIndent(buffer.getProperty(
 				"blockIndent")

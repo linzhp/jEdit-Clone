@@ -21,6 +21,7 @@ package org.gjt.sp.jedit.cmd;
 
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Element;
+import javax.swing.text.PlainView;
 import java.awt.*;
 import java.util.Hashtable;
 import org.gjt.sp.jedit.*;
@@ -30,14 +31,12 @@ public class print implements Command
 {
 	public void exec(Buffer buffer, View view, String arg, Hashtable args)
 	{
-		// Sometime in the future, this will be rewritten to do
-		// syntax colorizing and word wrap . . .
 		PrintJob job = view.getToolkit().getPrintJob(view,buffer
 			.getName(),null);
 		if(job == null)
 			return;
 		int topMargin;
-		int leftMargin;
+		final int leftMargin;
 		int bottomMargin;
 		int rightMargin;
 		int ppi = job.getPageResolution();
@@ -83,12 +82,20 @@ public class print implements Command
 		}
 		String header = view.getTitle();
 		Element map = buffer.getDefaultRootElement();
-		SyntaxView syntaxView = new SyntaxView(map);
 		SyntaxTextArea textArea = view.getTextArea();
+		final int _tabSize = buffer.getTabSize() *
+			textArea.getToolkit().getFontMetrics(textArea.getFont())
+			.charWidth('m');
+		SyntaxView syntaxView = new SyntaxView(map) {
+			public float nextTabStop(float x, int tabOffset)
+			{
+				return ((((int)x - leftMargin) / _tabSize + 1)
+					* _tabSize) + leftMargin;
+			}
+		};
 		Graphics gfx = null;
 		Font font = textArea.getFont();
 		int fontHeight = font.getSize();
-		int tabSize = buffer.getTabSize();
 		Dimension pageDimension = job.getPageDimension();
 		int pageWidth = pageDimension.width;
 		int pageHeight = pageDimension.height;

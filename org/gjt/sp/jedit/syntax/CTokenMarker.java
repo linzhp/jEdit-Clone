@@ -46,8 +46,7 @@ public class CTokenMarker extends TokenMarker
 		boolean backslash = false;
 loop:		for(int i = offset; i < length; i++)
 		{
-			char c = line.array[i];
-			switch(c)
+			switch(line.array[i])
 			{
 			case '\\':
 				backslash = !backslash;
@@ -62,8 +61,9 @@ loop2:					while(++off < i)
 					{
 						switch(line.array[off])
 						{
-						case ' ': case '\t':
-						case '(': case ')':
+						case ';': case '.': case ',':
+						case ' ': case '\t': case '(':
+						case ')':
 							break;
 						default:
 							break loop2;

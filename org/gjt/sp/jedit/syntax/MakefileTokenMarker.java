@@ -40,8 +40,7 @@ public class MakefileTokenMarker extends TokenMarker
 		boolean backslash = false;
 loop:		for(int i = offset; i < length; i++)
 		{
-			char c = line.array[i];
-			switch(c)
+			switch(line.array[i])
 			{
 			case '\\':
 				backslash = !backslash;
@@ -83,7 +82,8 @@ loop:		for(int i = offset; i < length; i++)
 					lastOffset = i;
 					if(length - i > 1)
 	 				{
-				      		if(line.array[i + 1] == '(')
+						char c = line.array[i + 1];
+				      		if(c == '(' || c == '{')
 							token = VARIABLE;
 						else
 						{
@@ -93,7 +93,7 @@ loop:		for(int i = offset; i < length; i++)
 					}
 				}
 				break;
-			case ')':
+			case ')': case '}':
 				backslash = false;
 				if(token == VARIABLE)
 				{

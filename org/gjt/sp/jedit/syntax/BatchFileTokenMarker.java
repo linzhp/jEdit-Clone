@@ -38,8 +38,7 @@ public class BatchFileTokenMarker extends TokenMarker
 		int length = line.count + offset;
 loop:		for(int i = line.offset; i < length; i++)
 		{
-			char c = line.array[i];
-			switch(c)
+			switch(line.array[i])
 			{
 			case '%':
 				if(token == null)

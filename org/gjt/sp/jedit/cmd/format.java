@@ -59,7 +59,7 @@ public class format implements Command
 		StringBuffer buf = new StringBuffer();
 		StringBuffer word = new StringBuffer();
 		int lineLength = 0;
-		boolean newline = false;
+		boolean newline = true;
 		boolean newlineIgnore = false;
 		boolean space = true;
 		char[] chars = text.toCharArray();
@@ -70,9 +70,16 @@ public class format implements Command
 			switch(c)
 			{
 			case '\n':
-				buf.append(word);		
+				buf.append(word);
 				word.setLength(0);
 				space = true;
+				if(i == 0)
+				{
+					buf.append('\n');
+					newline = false;
+					newlineIgnore = true;
+					break;
+				}
 				if(newlineIgnore)
 				{
 					lineLength--;

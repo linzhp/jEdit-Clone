@@ -91,6 +91,14 @@ public class BufferMgr
 		{
 			marker = path.substring(index + 1);
 			path = path.substring(0,index);
+			if(path.length() == 0)
+			{
+				if(view == null)
+					return null;
+				Buffer buffer = view.getBuffer();
+				gotoMarker(buffer,view,marker);
+				return buffer;
+			}
 		}
 		URL url = null;
 		try

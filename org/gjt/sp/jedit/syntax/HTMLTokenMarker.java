@@ -38,8 +38,7 @@ public class HTMLTokenMarker extends TokenMarker
 		int length = line.count + offset;
 		for(int i = offset; i < length; i++)
 		{
-			char c = line.array[i];
-			switch(c)
+			switch(line.array[i])
 			{
 			case '<':
 				// check if it's a comment

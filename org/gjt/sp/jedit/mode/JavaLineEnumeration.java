@@ -49,7 +49,7 @@ public class JavaLineEnumeration implements JSLineEnumeration
 		try
 		{
 			return buffer.getText(start,lineElement
-				.getEndOffset() - start - 1);
+				.getEndOffset() - (start + 1));
 		}
 		catch (BadLocationException bl)
 		{
