@@ -9,7 +9,11 @@ classes=org/gjt/sp/jedit/textarea/JEditTextArea.class \
 	org/gjt/sp/jedit/textarea/TextAreaPainter.class
 
 others='org/gjt/sp/jedit/textarea/JEditTextArea$$AdjustHandler.class' \
+	'org/gjt/sp/jedit/textarea/JEditTextArea$$CaretBlinker.class' \
 	'org/gjt/sp/jedit/textarea/JEditTextArea$$ComponentHandler.class' \
+	'org/gjt/sp/jedit/textarea/JEditTextArea$$FocusHandler.class' \
+	'org/gjt/sp/jedit/textarea/JEditTextArea$$MouseHandler.class' \
+	'org/gjt/sp/jedit/textarea/JEditTextArea$$MouseMotionHandler.class' \
 	'org/gjt/sp/jedit/textarea/JEditTextArea$$ScrollLayout.class' \
 	'org/gjt/sp/jedit/textarea/TextAreaModel$$DocumentHandler.class'
 

@@ -580,7 +580,7 @@ public class View extends JFrame
 
 		getContentPane().add(BorderLayout.NORTH,topToolBars);
 		org.gjt.sp.jedit.textarea.JEditTextArea ta =
-			new org.gjt.sp.jedit.textarea.JEditTextArea(80,25);
+			new org.gjt.sp.jedit.textarea.JEditTextArea(80,25);		
 		ta.getModel().setDocument(getBuffer());
 		textArea.setPreferredSize(ta.getPreferredSize());
 JTabbedPane tabs = new JTabbedPane();
@@ -819,6 +819,9 @@ tabs.addTab("Old text area",scroller);
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.83  1999/06/27 04:53:16  sp
+ * Text selection implemented in text area, assorted bug fixes
+ *
  * Revision 1.82  1999/06/25 06:54:08  sp
  * Text area updates
  *

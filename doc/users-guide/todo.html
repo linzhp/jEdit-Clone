@@ -30,8 +30,23 @@
 <ul>
 <li>New text component. To reach next stage:
 <ul>
-<li>Write JEditTextArea.calculateLongestLine(), add longest line code to
-TextAreaModel.DocumentHandler, write TextAreaModel.getLineWidth()
+<li>Bugs:
+<ul>
+<li>Focus and component handling doesn't work
+<li>Blinking caret needs to be cleaned up
+<li>Write syntax code in offsetToX and xToOffset
+<li>Selection start/end should float when text is added/removed
+</ul>
+<li>Features:
+<ul>
+<li>Fire caretEvents
+<li>Bracket highlighting
+<li>Add double click handler
+<li>Add horizontal scrolling support to scrollTo()
+<li>Auto scroll
+</ul>
+<li>After all of the above is done, make this the default text component,
+and add key event handling
 </ul>
 </ul>
 </td>

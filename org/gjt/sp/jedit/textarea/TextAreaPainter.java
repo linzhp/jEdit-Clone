@@ -1,19 +1,20 @@
 /*
  * TextAreaPainter.java - Performs double buffering and paints the text area
+ * Copyright (C) 1999 Slava Pestov
  *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or any later version.
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful,
+ * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
 
 package org.gjt.sp.jedit.textarea;
@@ -35,8 +36,7 @@ public class TextAreaPainter extends Component implements TabExpander
 	 * Creates a new repaint manager. This should be not be called
 	 * directly.
 	 */
-	public TextAreaPainter(JEditTextArea textArea, SyntaxStyle[] styles,
-		int cols, int rows)
+	public TextAreaPainter(JEditTextArea textArea, int cols, int rows)
 	{
 		this.textArea = textArea;
 		this.styles = styles;
@@ -46,9 +46,16 @@ public class TextAreaPainter extends Component implements TabExpander
 
 		firstInvalid = lastInvalid = -1;
 
+		setCursor(Cursor.getPredefinedCursor(Cursor.TEXT_CURSOR));
+
 		setFont(new Font("Monospaced",Font.PLAIN,14));
 		setForeground(Color.black);
 		setBackground(Color.white);
+		setStyles(SyntaxUtilities.getDefaultSyntaxStyles());
+		setCaretColor(Color.red);
+		setSelectionColor(new Color(0xccccff));
+		setLineHighlightColor(new Color(0xe0e0e0));
+		setLineHighlight(true);
 	}
 
 	public SyntaxStyle[] getStyles()
@@ -59,6 +66,58 @@ public class TextAreaPainter extends Component implements TabExpander
 	public void setStyles(SyntaxStyle[] styles)
 	{
 		this.styles = styles;
+	}
+
+	public Color getCaretColor()
+	{
+		return caretColor;
+	}
+
+	public void setCaretColor(Color caretColor)
+	{
+		this.caretColor = caretColor;
+	}
+
+	public Color getSelectionColor()
+	{
+		return selectionColor;
+	}
+
+	public void setSelectionColor(Color selectionColor)
+	{
+		this.selectionColor = selectionColor;
+	}
+
+	public Color getLineHighlightColor()
+	{
+		return lineHighlightColor;
+	}
+
+	public void setLineHighlightColor(Color lineHighlightColor)
+	{
+		this.lineHighlightColor = lineHighlightColor;
+	}
+
+	public boolean getLineHighlight()
+	{
+		return lineHighlight;
+	}
+
+	public void setLineHighlight(boolean lineHighlight)
+	{
+		this.lineHighlight = lineHighlight;
+		invalidateCurrentLine();
+	}
+
+	public boolean getBlockCaret()
+	{
+		return blockCaret;
+	}
+
+	public void setBlockCaret(boolean blockCaret)
+	{
+		this.blockCaret = blockCaret;
+		invalidateCurrentLine();
 	}
 
 	public FontMetrics getFontMetrics()
@@ -90,7 +149,7 @@ public class TextAreaPainter extends Component implements TabExpander
 		update(g);
 	}
 
-	public void invalidateLineRange(int firstLine, int lastLine)
+	public void _invalidateLineRange(int firstLine, int lastLine)
 	{
 		int firstVisible = textArea.getFirstLine();
 		int lastVisible = firstVisible + textArea.getVisibleLines();
@@ -121,11 +180,30 @@ public class TextAreaPainter extends Component implements TabExpander
 			firstInvalid = Math.min(firstInvalid,firstLine);
 			lastInvalid = Math.max(lastInvalid,lastLine);
 		}
+	}
+
+	public void invalidateLineRange(int firstLine, int lastLine)
+	{
+		_invalidateLineRange(firstLine,lastLine);
 		repaint();
+	}
+
+	public void invalidateCurrentLine()
+	{
+		// this method is called by setLineHighlight(),
+		// which is called from the constructor, where
+		// the model is not yet set
+		if(textArea.getModel() == null)
+			return;
+		int line = textArea.getModel().getCaretLine();
+		invalidateLineRange(line,line);
 	}
 
 	public void scrollRepaint(int oldFirstLine, int newFirstLine)
 	{
+		if(offGfx == null)
+			return;
+
 		TextAreaModel model = textArea.getModel();
 		int y = model.getLineHeight() * (oldFirstLine - newFirstLine);
 		offGfx.copyArea(0,0,offImg.getWidth(this),offImg.getHeight(this),0,y);
@@ -156,8 +234,9 @@ public class TextAreaPainter extends Component implements TabExpander
 
 	public float nextTabStop(float x, int tabOffset)
 	{
-		int ntabs = ((int)x) / tabSize;
-		return (ntabs + 1) * tabSize;
+		int offset = textArea.getHorizontalOffset();
+		int ntabs = ((int)x - offset) / tabSize;
+		return (ntabs + 1) * tabSize + offset;
 	}
 
 	public Dimension getPreferredSize()
@@ -174,13 +253,25 @@ public class TextAreaPainter extends Component implements TabExpander
 		return getPreferredSize();
 	}
 
+	// package-private members
+	int currentLineIndex;
+	Token currentLineTokens;
+	Segment currentLine;
+
 	// protected members
 	protected JEditTextArea textArea;
+	
 	protected SyntaxStyle[] styles;
+	protected Color caretColor;
+	protected Color selectionColor;
+	protected Color lineHighlightColor;
+
+	protected boolean blockCaret;
+	protected boolean lineHighlight;
 	protected int cols;
 	protected int rows;
 
-	protected Segment currentLine;
+	
 	protected int tabSize;
 	protected Graphics offGfx;
 	protected Image offImg;
@@ -232,7 +323,9 @@ public class TextAreaPainter extends Component implements TabExpander
 	protected int paintLine(TextAreaModel model, Graphics gfx, int lineIndex,
 		int x, int y)
 	{
-		TokenMarker tokenMarker = model.getDocument().getTokenMarker();
+		currentLineIndex = lineIndex;
+
+		TokenMarker tokenMarker = model.getTokenMarker();
 		Font defaultFont = getFont();
 		Color defaultColor = getForeground();
 
@@ -243,13 +336,21 @@ public class TextAreaPainter extends Component implements TabExpander
 		gfx.fillRect(0,y + gap,offImg.getWidth(this),fm.getHeight());
 				
 		gfx.setFont(defaultFont);
-		gfx.setColor(defaultColor);
 
-		if(lineIndex >= model.getLineCount())
+		if(lineIndex < 0 || lineIndex >= model.getLineCount())
 		{
+			gfx.setColor(defaultColor);
 			gfx.drawString("~",0,y + model.getLineHeight());
 			return 1;
 		}
+
+		// Get the text
+		model.getLineText(lineIndex,currentLine);
+
+		// draw the highlights
+		if(lineIndex >= model.getSelectionStartLine()
+			&& lineIndex <= model.getSelectionEndLine())
+			paintHighlight(model,gfx,lineIndex,y);
 
 		if(tokenMarker == null)
 		{
@@ -274,25 +375,24 @@ public class TextAreaPainter extends Component implements TabExpander
 	protected void paintPlainLine(TextAreaModel model, Graphics gfx,
 		Font defaultFont, Color defaultColor, int lineIndex, int x, int y)
 	{
-		model.getLineText(lineIndex,currentLine);
-		textArea.checkLongestLine(lineIndex,Utilities.drawTabbedText(
-			currentLine,x,y,gfx,this,0));
+		gfx.setColor(defaultColor);
+		Utilities.drawTabbedText(currentLine,x,y,gfx,this,0);
 	}
 
 	protected boolean paintSyntaxLine(TextAreaModel model, Graphics gfx,
 		TokenMarker tokenMarker, Font defaultFont, Color defaultColor,
 		int lineIndex, int x, int y)
 	{
-		model.getLineText(lineIndex,currentLine);
-		Token tokens = tokenMarker.markTokens(currentLine,lineIndex);
+		gfx.setColor(defaultColor);
+		currentLineTokens = tokenMarker.markTokens(currentLine,lineIndex);
 		int offset = 0;
 		for(;;)
 		{
-			byte id = tokens.id;
+			byte id = currentLineTokens.id;
 			if(id == Token.END)
 				break;
 
-			int length = tokens.length;
+			int length = currentLineTokens.length;
 			if(id == Token.NULL)
 			{
 				if(!defaultColor.equals(gfx.getColor()))
@@ -308,18 +408,87 @@ public class TextAreaPainter extends Component implements TabExpander
 			currentLine.offset += length;
 			offset += length;
 
-			tokens = tokens.next;
+			currentLineTokens = currentLineTokens.next;
 		}
 
-		textArea.checkLongestLine(lineIndex,x);
-
 		return tokenMarker.isNextLineRequested();
+	}
+
+	protected void paintHighlight(TextAreaModel model, Graphics gfx,
+		int lineIndex, int y)
+	{
+		FontMetrics fm = getFontMetrics();
+		int height = fm.getHeight();
+		y += fm.getLeading() + fm.getMaxDescent();
+
+		int selectionStart = model.getSelectionStart();
+		int selectionEnd = model.getSelectionEnd();
+
+		if(selectionStart == selectionEnd)
+		{
+			if(lineHighlight)
+			{
+				gfx.setColor(lineHighlightColor);
+				gfx.fillRect(0,y,offImg.getWidth(this),height);
+			}
+		}
+		else
+		{
+			gfx.setColor(selectionColor);
+
+			int selectionStartLine = model.getSelectionStartLine();
+			int selectionEndLine = model.getSelectionEndLine();
+			int lineStart = model.getLineStartOffset(lineIndex);
+
+			int x1, x2;
+			if(selectionStartLine == selectionEndLine)
+			{
+				x1 = model.offsetToX(lineIndex,selectionStart
+					- lineStart);
+				x2 = model.offsetToX(lineIndex,selectionEnd
+					- lineStart);
+			}
+			else if(lineIndex == selectionStartLine)
+			{
+				x1 = model.offsetToX(lineIndex,selectionStart
+					- lineStart);
+				x2 = offImg.getWidth(this);
+			}
+			else if(lineIndex == selectionEndLine)
+			{
+				x1 = 0;
+				x2 = model.offsetToX(lineIndex,selectionEnd
+					- lineStart);
+			}
+			else
+			{
+				x1 = 0;
+				x2 = offImg.getWidth(this);
+			}
+
+			gfx.fillRect(x1,y,x2 - x1,height);
+		}
+
+		if(textArea.getCaretVisible()
+			&& lineIndex == model.getCaretLine())
+		{
+			int offset = model.getCaretPosition() 
+				- model.getLineStartOffset(lineIndex);
+			int caretX = model.offsetToX(lineIndex,offset);
+			int caretWidth = (blockCaret ?
+				fm.charWidth('w') : 1);
+			gfx.setColor(caretColor);
+			gfx.fillRect(caretX,y,caretWidth,height);
+		}
 	}
 }
 
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.5  1999/06/27 04:53:16  sp
+ * Text selection implemented in text area, assorted bug fixes
+ *
  * Revision 1.4  1999/06/25 06:54:08  sp
  * Text area updates
  *
