@@ -257,7 +257,7 @@ implements ActionListener
 		content.add(label);
 		constraints.gridx = 1;
 		tabSize = new JTextField(jEdit.getProperty(
-			"buffer.tabsize"),5);
+			"buffer.tabSize"),5);
 		layout.setConstraints(tabSize,constraints);
 		content.add(tabSize);
 		constraints.gridx = 2;
@@ -349,7 +349,7 @@ implements ActionListener
 			jEdit.setProperty("buffer.line.separator",newline);
 			jEdit.setProperty("view.font",(String)font.getSelectedItem());
 			jEdit.setProperty("view.fontsize",(String)fontSize.getSelectedItem());
-			jEdit.setProperty("buffer.tabsize",tabSize.getText());
+			jEdit.setProperty("buffer.tabSize",tabSize.getText());
 			jEdit.setProperty("view.autoindent",autoindent
 				.getModel().isSelected() ? "on" : "off");
 			jEdit.setProperty("buffer.syntax",syntax.getModel()

@@ -193,7 +193,6 @@ loop:		for(int i = offset; i < length; i++)
 				cmdState == 1 ? COMMAND : token);
 		lineInfo[lineIndex] = (token == SQUOTE || token == DQUOTE
 			? token : null);
-		lastLine = lineIndex;
 		if(lastToken != null)
 		{
 			lastToken.nextValid = false;

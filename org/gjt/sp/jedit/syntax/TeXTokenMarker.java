@@ -139,7 +139,6 @@ loop:		for(int i = offset; i < length; i++)
 		if(lastOffset != length)
 			addToken(length - lastOffset,token);
 		lineInfo[lineIndex] = (token != COMMAND ? token : null);
-		lastLine = lineIndex;
 		if(lastToken != null)
 		{
 			lastToken.nextValid = false;

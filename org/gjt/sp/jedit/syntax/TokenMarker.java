@@ -52,7 +52,6 @@ public abstract class TokenMarker
 	public void init()
 	{
 		lineInfo = new String[100];
-		lastLine = -1;
 		length = 0;
 		lastToken = null;
 	}
@@ -100,12 +99,6 @@ public abstract class TokenMarker
 	}
 
 	// protected members
-
-	/**
-	 * The last tokenized line. This isn't set or used by this class,
-	 * it's defined for convinience.
-	 */
-	protected int lastLine;
 
 	/**
 	 * The first token in the list. This should be used as the return

@@ -168,7 +168,7 @@ implements DocumentListener, UndoableEditListener
 				String str = getText(start,len);
 				remove(start,len);
 				String subst = regexp.substitute(str,replaceStr);
-				index += subst.length();
+				index = start + subst.length();
 				insertString(start,subst,null);
 				found = true;
 			}
@@ -763,6 +763,33 @@ implements DocumentListener, UndoableEditListener
 		{
 		}
 	}
+	
+	/**
+	 * Saves the caret information.
+	 * @param savedSelStart The selection start
+	 * @param savedSelEnd The selection end
+	 */
+	public void setCaretInfo(int savedSelStart, int savedSelEnd)
+	{
+		this.savedSelStart = savedSelStart;
+		this.savedSelEnd = savedSelEnd;
+	}
+
+	/**
+	 * Returns the saved selection start.
+	 */
+	public int getSavedSelStart()
+	{
+		return savedSelStart;
+	}
+
+	/**
+	 * Returns the saved selection end.
+	 */
+	public int getSavedSelEnd()
+	{
+		return savedSelEnd;
+	}
 
 	// event handlers
 	public void undoableEditHappened(UndoableEditEvent evt)
@@ -827,20 +854,6 @@ implements DocumentListener, UndoableEditListener
 		this.readOnly = readOnly;
 		init();
 	}
-	
-	void setCaretInfo(int scrollH, int scrollV, int selStart,
-		int selEnd)
-	{
-		caretInfo[0] = scrollH;
-		caretInfo[1] = scrollV;
-		caretInfo[2] = selStart;
-		caretInfo[3] = selEnd;
-	}
-
-	int[] getCaretInfo()
-	{
-		return caretInfo;
-	}
 
 	// private methods
 	private File file;
@@ -859,7 +872,8 @@ implements DocumentListener, UndoableEditListener
 	private CompoundEdit compoundEdit;
 	private Vector markers;
 	private Position anchor;
-	private int[] caretInfo;
+	private int savedSelStart;
+	private int savedSelEnd;
 	private TokenMarker tokenMarker;
 	private Hashtable colors;
 
@@ -892,7 +906,6 @@ implements DocumentListener, UndoableEditListener
 		addUndoableEditListener(this);
 		updateMarkers();
 		propertiesChanged();
-		caretInfo = new int[4];
 		init = false;
 	}
 	
@@ -990,6 +1003,27 @@ implements DocumentListener, UndoableEditListener
 			bin.close();
 			insertString(0,buf.toString(),null);
 			newFile = false;
+			/* Although this is done in setPath(),
+			 * setPath() is called before the lines are
+			 * available, so we do it here as well.
+			 */
+			if(tokenMarker == null)
+				return;
+			Segment lineSegment = new Segment();
+			Element map = getDefaultRootElement();
+			int lines = map.getElementCount();
+			for(int i = 0; i < lines; i++)
+			{
+				Element lineElement = map.getElement(i);
+				int start = lineElement.getStartOffset();
+				getText(start,lineElement.getEndOffset()
+					- start,lineSegment);
+				tokenMarker.markTokens(lineSegment,i);
+			}
+		}
+		catch(BadLocationException bl)
+		{
+			bl.printStackTrace();
 		}
 		catch(FileNotFoundException fnf)
 		{
@@ -1000,9 +1034,6 @@ implements DocumentListener, UndoableEditListener
 		{
 			Object[] args = { io.toString() };
 			jEdit.error(null,"ioerror",args);
-		}
-		catch(BadLocationException bl)
-		{
 		}
 	}
 

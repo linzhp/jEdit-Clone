@@ -68,6 +68,7 @@ public class java_mode extends autoindent
 			keywords.add("return","keyword");
 			keywords.add("switch","keyword");
 			keywords.add("while","keyword");
+			keywords.add("throw","keyword");
 			keywords.add("try","keyword");
 			keywords.add("catch","keyword");
 			keywords.add("extends","keyword");

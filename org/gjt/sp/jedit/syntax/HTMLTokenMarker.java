@@ -241,7 +241,6 @@ loop:		for(int i = offset; i < length; i++)
 		if(lastOffset != length)
 			addToken(length - lastOffset,token);
 		lineInfo[lineIndex] = token;
-		lastLine = lineIndex;
 		if(lastToken != null)
 		{
 			lastToken.nextValid = false;

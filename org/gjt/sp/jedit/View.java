@@ -19,9 +19,9 @@
 
 package org.gjt.sp.jedit;
 
-import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.text.*;
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
@@ -53,6 +53,12 @@ implements CaretListener, KeyListener, WindowListener
 		Font font = jEdit.getFont();
 		textArea.setFont(font);
 		status.setFont(font);
+		textArea.setLineHighlight("on".equals(jEdit.getProperty(
+			"view.lineHighlight")));
+		textArea.setLineHighlightColor(jEdit.parseColor(jEdit
+			.getProperty("view.lineHighlightColor")));
+		textArea.setCaretColor(jEdit.parseColor(jEdit
+			.getProperty("view.caretColor")));
 		updateOpenRecentMenu();
 		SwingUtilities.updateComponentTreeUI(this);
 	}
@@ -217,33 +223,18 @@ implements CaretListener, KeyListener, WindowListener
 
 	/**
 	 * Sets the buffer being edited by this view.
-	 * @param buffer The buffer to edit. If this is null, the first buffer
-	 * will be edited
+	 * @param buffer The buffer to edit.
 	 */
 	public void setBuffer(Buffer buffer)
 	{
-		final JScrollBar h = scroller.getHorizontalScrollBar();
-		final JScrollBar v = scroller.getVerticalScrollBar();
 		if(this.buffer != null)
-			this.buffer.setCaretInfo(h.getValue(),v.getValue(),
-				textArea.getSelectionStart(),
-				textArea.getSelectionEnd());
+			saveCaretInfo();
 		this.buffer = buffer;
 		textArea.setDocument(buffer);
 		updateBuffersMenu();
 		updateMarkerMenus();
 		updateModeMenu();
-		final int[] caretInfo = this.buffer.getCaretInfo();
-		SwingUtilities.invokeLater(new Runnable() {
-			public void run()
-			{
-				textArea.select(caretInfo[2],caretInfo[3]);
-				h.setValue(caretInfo[0]);
-				v.setValue(caretInfo[1]);
-				textArea.requestFocus();
-				updateStatus(true);
-			}
-		});
+		updateStatus(true);
 	}
 
 	/**
@@ -254,6 +245,15 @@ implements CaretListener, KeyListener, WindowListener
 		return textArea;
 	}
 	
+	/**
+	 * Saves the caret information to the current buffer.
+	 */
+	public void saveCaretInfo()
+	{
+		buffer.setCaretInfo(textArea.getSelectionStart(),
+			textArea.getSelectionEnd());
+	}
+
 	/**
 	 * Adds a key binding to this view.
 	 * @param key The key stroke
@@ -525,5 +525,8 @@ implements CaretListener, KeyListener, WindowListener
 		setTitle(jEdit.getProperty("view.title",args));
 		updateBuffersMenu();
 		textArea.setEditable(!buffer.isReadOnly());
+		Element lineElement = map.getElement(currLine-1);
+		textArea.setHighlightedLine(lineElement.getStartOffset(),
+			lineElement.getEndOffset());
 	}
 }

@@ -150,7 +150,6 @@ loop:		for(int i = offset; i < length; i++)
 				 MAKE_CMD : token);
 		lineInfo[lineIndex] = (token == DQUOTE || token == SQUOTE ?
 			token : null);
-		lastLine = lineIndex;
 		if(lastToken != null)
 		{
 			lastToken.nextValid = false;

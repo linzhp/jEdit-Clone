@@ -19,6 +19,7 @@
 
 package org.gjt.sp.jedit.actions;
 
+import javax.swing.text.BadLocationException;
 import java.awt.event.ActionEvent;
 import java.io.*;
 import org.gjt.sp.jedit.*;
@@ -35,7 +36,8 @@ public class pipe_selection extends EditAction
 	{
 		View view = getView(evt);
 		SyntaxTextArea textArea = view.getTextArea();
-		String input = textArea.getSelectedText();
+		int start = textArea.getSelectionStart();
+		int end = textArea.getSelectionEnd();
 		Buffer buffer = view.getBuffer();
 		String command = jEdit.input(view,"execute","execute.cmd");
 		if(command == null)
@@ -72,25 +74,53 @@ public class pipe_selection extends EditAction
 			Process p = Runtime.getRuntime().exec(buf.toString());
 			OutputStreamWriter out = new OutputStreamWriter(
 				p.getOutputStream());
-			BufferedReader in = new BufferedReader(
-				new InputStreamReader(p.getInputStream()));
-			if(input != null)
+			boolean stripNewline;
+			String input = buffer.getText(start,end-start);
+			if(input != null && input.length() != 0)
+			{
+				stripNewline = (input.charAt(input.length()-1) != '\n');
 				out.write(input);
+			}
+			else
+				stripNewline = true;
 			out.close();
+			BufferedReader err = new BufferedReader(
+				new InputStreamReader(p.getErrorStream()));
 			buf.setLength(0);
 			String line;
+			while((line = err.readLine()) != null)
+			{
+				buf.append(line);
+				buf.append('\n');
+			}
+			err.close();
+			if(buf.length() != 0)
+			{
+				Object[] args = { buf.toString() };
+				jEdit.error(view,"cmderr",args);
+				return;
+			}
+			BufferedReader in = new BufferedReader(
+				new InputStreamReader(p.getInputStream()));
 			while((line = in.readLine()) != null)
 			{
 				buf.append(line);
 				buf.append('\n');
 			}
 			in.close();
-			view.getTextArea().replaceSelection(buf.toString());
+			if(stripNewline && buf.length() != 0
+				&& buf.charAt(buf.length()-1) == '\n')
+				buf.setLength(buf.length()-1);
+			buffer.remove(start,end-start);
+			buffer.insertString(start,buf.toString(),null);
 		}
 		catch(IOException io)
 		{
 			Object[] error = { io.toString() };
 			jEdit.error(view,"ioerror",error);
+		}
+		catch(BadLocationException b)
+		{
 		}
 	}
 }

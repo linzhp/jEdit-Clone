@@ -188,7 +188,6 @@ loop:		for(int i = offset; i < length; i++)
 		if(token == CPP_CMD && !backslash)
 			token = null;
 		lineInfo[lineIndex] = token;
-		lastLine = lineIndex;
 		if(lastToken != null)
 		{
 			lastToken.nextValid = false;

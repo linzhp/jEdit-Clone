@@ -20,7 +20,7 @@
 package org.gjt.sp.jedit.actions;
 
 import java.awt.event.ActionEvent;
-import java.io.IOException;
+import java.io.*;
 import org.gjt.sp.jedit.*;
 
 public class execute extends EditAction
@@ -66,7 +66,23 @@ public class execute extends EditAction
 		}
 		try
 		{
-			Runtime.getRuntime().exec(buf.toString());
+			Process p = Runtime.getRuntime().exec(buf.toString());
+			BufferedReader err = new BufferedReader(
+				new InputStreamReader(p.getErrorStream()));
+			buf.setLength(0);
+			String line;
+			while((line = err.readLine()) != null)
+			{
+				buf.append(line);
+				buf.append('\n');
+			}
+			err.close();
+			if(buf.length() != 0)
+			{
+				Object[] args = { buf.toString() };
+				jEdit.error(view,"cmderr",args);
+				return;
+			}
 		}
 		catch(IOException io)
 		{
