@@ -96,10 +96,9 @@ implements ActionListener, CaretListener, KeyListener, WindowListener
 		}
 		while(enum.hasMoreElements())
 		{
-			Object ooo = enum.nextElement();
-			JMenuItem menuItem = jEdit.loadMenuItem(this,ooo
-				.getClass().getName()
-				.substring(21));
+			String clazz = enum.nextElement().getClass().getName();
+			JMenuItem menuItem = jEdit.loadMenuItem(this,clazz
+				.substring(clazz.lastIndexOf('.') + 1));
 			if(menuItem != null)
 				plugins.add(menuItem);
 		}
@@ -294,7 +293,7 @@ implements ActionListener, CaretListener, KeyListener, WindowListener
 				textArea.getSelectionStart(),
 				textArea.getSelectionEnd());
 		this.buffer = buffer;
-		textArea.setDocument(this.buffer);
+		textArea.setDocument(buffer);
 		updateBuffersMenu();
 		updateMarkerMenus();
 		updateModeMenu();
@@ -342,26 +341,37 @@ implements ActionListener, CaretListener, KeyListener, WindowListener
 
 	public void keyPressed(KeyEvent evt)
 	{
-		if(evt.getKeyCode() == KeyEvent.VK_TAB)
+		Mode mode = buffer.getMode();
+		if(mode instanceof KeyListener)
+			((KeyListener)mode).keyTyped(evt);
+		else if(mode != null && jEdit.getAutoIndent()
+			&& evt.getKeyCode() == KeyEvent.VK_TAB)
 		{
-			Mode mode = buffer.getMode();
-			if(mode != null && jEdit.getAutoIndent())
+			if(mode.indentLine(buffer,this,textArea
+				.getCaretPosition()))
 			{
-				if(mode.indentLine(buffer,this,textArea
-					.getCaretPosition()))
-				{
-					evt.consume();
-					return;
-				}
+				evt.consume();
+				return;
 			}
 			textArea.replaceSelection("\t");
 			evt.consume();
 		}
 	}
 
-	public void keyTyped(KeyEvent evt) {}
-	public void keyReleased(KeyEvent evt) {}
-	
+	public void keyTyped(KeyEvent evt)
+	{
+		Mode mode = buffer.getMode();
+		if(mode instanceof KeyListener)
+			((KeyListener)mode).keyTyped(evt);
+	}
+
+	public void keyReleased(KeyEvent evt)
+	{
+		Mode mode = buffer.getMode();
+		if(mode instanceof KeyListener)
+			((KeyListener)mode).keyReleased(evt);
+	}
+
 	public void windowOpened(WindowEvent evt) {}
 	
 	public void windowClosing(WindowEvent evt)

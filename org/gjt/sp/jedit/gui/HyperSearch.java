@@ -41,11 +41,13 @@ implements ActionListener, ListSelectionListener, WindowListener
 	private JButton findBtn;
 	private JButton close;
 	private JList results;
+	private Vector positions;
 	
 	public HyperSearch(View view)
 	{
 		super(view,jEdit.props.getProperty("hypersearch.title"),false);
 		this.view = view;
+		positions = new Vector();
 		Container content = getContentPane();
 		content.setLayout(new BorderLayout());
 		JPanel panel = new JPanel();
@@ -114,6 +116,7 @@ implements ActionListener, ListSelectionListener, WindowListener
 	{
 		try
 		{
+			positions.removeAllElements();
 			Buffer buffer = view.getBuffer();
 			int tabSize = buffer.getTabSize();
 			Vector data = new Vector();
@@ -130,9 +133,15 @@ implements ActionListener, ListSelectionListener, WindowListener
 				String lineString = buffer.getText(start,
 					lineElement.getEndOffset() - start
 					- 1);
-				if(regexp.getMatch(lineString) != null)
+				REMatch match = regexp.getMatch(lineString);
+				if(match != null)
+				{
 					data.addElement(i + ":"
 						+ lineString);
+					positions.addElement(buffer
+						.createPosition(start + match
+						.getStartIndex()));
+				}
 			}
 			results.setListData(data);
 			pack();
@@ -151,16 +160,16 @@ implements ActionListener, ListSelectionListener, WindowListener
 	{
 		if(results.isSelectionEmpty())
 			return;
-		String selected = (String)results.getSelectedValue();
-		int line = Integer.parseInt(selected.substring(0,selected
-			.indexOf(':')));
+		Position pos = (Position)positions.elementAt(results
+			.getSelectedIndex());
 		SyntaxTextArea textArea = view.getTextArea();
-		Element lineElement = view.getBuffer().getDefaultRootElement()
-			.getElement(line - 1);
+		Element map = view.getBuffer().getDefaultRootElement();
+		Element lineElement = map.getElement(map.getElementIndex(pos
+			.getOffset()));
 		if(lineElement == null)
 			return;
 		textArea.select(lineElement.getStartOffset(),
-			lineElement.getEndOffset());
+			lineElement.getEndOffset() - 1);
 	}
 	
 	public void windowOpened(WindowEvent evt) {}

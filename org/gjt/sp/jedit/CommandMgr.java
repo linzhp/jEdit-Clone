@@ -137,18 +137,46 @@ public class CommandMgr extends ClassLoader
 		while(enum.hasMoreElements())
 		{
 			String clsName = (String)enum.nextElement();
-			if(clsName.startsWith("org.gjt.sp.jedit.cmd."))
-			{
-				Command cmd = getCommand(clsName
-					.substring(21));
-				if(cmd != null)
-					plugins.addElement(cmd);
-			}
-			else if(clsName.startsWith("org.gjt.sp.jedit.mode."))
-				initMode(clsName.substring(22));
+			// initCommand()/initMode() fail silently for
+			// non-commands/modes
+			initCommand(clsName);
+			initMode(clsName);
 		}
 	}
 	
+	/**
+	 * Loads a command.
+	 * <p>
+	 * @param name The name of the command
+	 * @return <code>null</code> if the command could not be found,
+	 * the command otherwise
+	 * @exception ClassNotFoundException if the class could not be found
+	 * @exception InstantiationException if a zero-argument constructor
+	 * doesn't exist
+	 * @exception IllegalAccessException if the constructor isn't public
+	 */
+	public void initCommand(String name)
+		throws ClassNotFoundException, InstantiationException,
+			IllegalAccessException
+	{
+		Class clazz;
+		int index = name.lastIndexOf('.');
+		if(index == -1)
+			clazz = loadClass("org.gjt.sp.jedit.cmd.".concat(name));
+		else
+		{
+			clazz = loadClass(name);
+			name = name.substring(index + 1);
+		}
+		if(Command.class.isAssignableFrom(clazz))
+		{
+			Object obj = clazz.newInstance();
+			commands.put(name,obj);
+			if(obj instanceof Plugin)
+				plugins.addElement(obj);
+		}
+	}
+
 	/**
 	 * Returns a command.
 	 * <p>
@@ -167,19 +195,15 @@ public class CommandMgr extends ClassLoader
 			IllegalAccessException
 	{
 		Command cmd = (Command)commands.get(name);
-		if(cmd != null)
-			return cmd;
-		Class cls = loadClass("org.gjt.sp.jedit.cmd."
-			.concat(name));
-		if(Command.class.isAssignableFrom(cls))
+		if(cmd == null)
 		{
-			Object obj = cls.newInstance();
-			commands.put(name,obj);
-			return (Command)obj;
+			initCommand(name);
+			return (Command)commands.get(name);
 		}
-		return null;
+		else
+			return cmd;
 	}
-	
+
 	/**
 	 * Executes the specified command, throwing an exception if an error
 	 * occurs.
@@ -237,12 +261,19 @@ public class CommandMgr extends ClassLoader
 	{
 		if(getMode(name) != null)
 			return;
-		Class cls = loadClass("org.gjt.sp.jedit.mode."
-			.concat(name));
-		if(!Mode.class.isAssignableFrom(cls))
-			return;
-		Mode mode = (Mode)cls.newInstance();
-		modes.addElement(mode);
+		Class clazz;
+		int index = name.lastIndexOf('.');
+		if(index == -1)
+			clazz = loadClass("org.gjt.sp.jedit.mode.".concat(name));
+		else
+		{
+			clazz = loadClass(name);
+			name = name.substring(index + 1);
+		}
+		if(Mode.class.isAssignableFrom(clazz))
+		{
+			modes.addElement(clazz.newInstance());
+		}
 	}
 	
 	/**
@@ -257,12 +288,12 @@ public class CommandMgr extends ClassLoader
 	{
 		if(name == null)
 			return null;
-		String clsName = "org.gjt.sp.jedit.mode.".concat(name);
 		Enumeration enum = modes.elements();
 		while(enum.hasMoreElements())
 		{
 			Mode mode = (Mode)enum.nextElement();
-			if(mode.getClass().getName().equals(clsName))
+			String clsName = mode.getClass().getName();
+			if(clsName.substring(clsName.lastIndexOf('.') + 1).equals(name))
 				return mode;
 		}
 		return null;
@@ -275,10 +306,14 @@ public class CommandMgr extends ClassLoader
 	public String getModeName(Mode mode)
 	{
 		if(mode == null)
-			return jEdit.props.getProperty("modename.none");
+			return jEdit.props.getProperty("mode.none.name");
 		else
-			return jEdit.props.getProperty("modename.".concat(
-				mode.getClass().getName().substring(22)));
+		{
+			String clsName = mode.getClass().getName();
+			return jEdit.props.getProperty("mode." +
+				clsName.substring(clsName.lastIndexOf('.') + 1)
+				+ ".name");
+		}
 	}
 
 	/**
@@ -378,6 +413,9 @@ public class CommandMgr extends ClassLoader
 	public Class loadClass(String name, boolean resolveIt)
 		throws ClassNotFoundException
 	{
+		Class clazz = findLoadedClass(name);
+		if(clazz != null)
+			return clazz;
 		byte[] data = (byte[])classes.get(name);
 		if(data == null)
 			return findSystemClass(name);

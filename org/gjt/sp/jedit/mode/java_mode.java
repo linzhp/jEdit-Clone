@@ -19,14 +19,68 @@
 
 package org.gjt.sp.jedit.mode;
 
-import javax.swing.text.Element;
 import org.gjt.sp.jedit.syntax.*;
-import org.gjt.sp.jedit.*;
 
 public class java_mode extends autoindent
 {
 	public TokenMarker createTokenMarker()
 	{
-		return new CTokenMarker(false);
+		return new CTokenMarker(false,getKeywordMap());
 	}
+
+	public static KeywordMap getKeywordMap()
+	{
+		if(keywords == null)
+		{
+			keywords = new KeywordMap(false);
+			keywords.add("package","preprocessor");
+			keywords.add("import","preprocessor");
+			keywords.add("byte","type");
+			keywords.add("char","type");
+			keywords.add("short","type");
+			keywords.add("int","type");
+			keywords.add("long","type");
+			keywords.add("float","type");
+			keywords.add("double","type");
+			keywords.add("boolean","type");
+			keywords.add("void","type");
+			keywords.add("class","type");
+			keywords.add("interface","type");
+			keywords.add("abstract","modifier");
+			keywords.add("final","modifier");
+			keywords.add("private","modifier");
+			keywords.add("protected","modifier");
+			keywords.add("public","modifier");
+			keywords.add("static","modifier");
+			keywords.add("synchronized","modifier");
+			keywords.add("volatile","modifier");
+			keywords.add("transient","modifier");
+			keywords.add("break","keyword");
+			keywords.add("case","label");
+			keywords.add("continue","keyword");
+			keywords.add("default","label");
+			keywords.add("do","keyword");
+			keywords.add("else","keyword");
+			keywords.add("for","keyword");
+			keywords.add("if","keyword");
+			keywords.add("instanceof","keyword");
+			keywords.add("new","keyword");
+			keywords.add("return","keyword");
+			keywords.add("switch","keyword");
+			keywords.add("while","keyword");
+			keywords.add("try","keyword");
+			keywords.add("catch","keyword");
+			keywords.add("extends","keyword");
+			keywords.add("finally","keyword");
+			keywords.add("implements","keyword");
+			keywords.add("throws","keyword");
+			keywords.add("this","constant");
+			keywords.add("null","constant");
+			keywords.add("true","constant");
+			keywords.add("false","constant");
+		}
+		return keywords;
+	}
+
+	private static KeywordMap keywords;
 }

@@ -35,10 +35,8 @@ public class autoindent implements Mode
 
 	public boolean indentLine(Buffer buffer, View view, int caret)
 	{
-		String comments = (String)buffer.getProperty("autoIndentChars");
-		if(comments == null)
-			comments = "#->%";
 		int tabSize = buffer.getTabSize();
+		boolean noTabs = "yes".equals(buffer.getProperty("noTabs"));
 		Element map = buffer.getDefaultRootElement();
 		int index = map.getElementIndex(caret);
 		if(index == 0)
@@ -54,7 +52,7 @@ public class autoindent implements Mode
 				- prevStart - 1;
 			String indent = autoIndent(tabSize,buffer.getText(
 				prevStart,prevLen),buffer.getText(start,len),
-				comments);
+				noTabs);
 			if(indent == null)
 				return false;
 			buffer.insertString(start,indent,null);
@@ -72,14 +70,20 @@ public class autoindent implements Mode
 
 	// private members
 	private String autoIndent(int tabSize, String prevLine, String line,
-		String comments)
+		boolean noTabs)
 	{
 		StringBuffer buf = new StringBuffer();
-		int count = getWhiteSpace(tabSize,line,comments);
-		int prevCount = getWhiteSpace(tabSize,prevLine,comments);
+		int count = getWhiteSpace(tabSize,line);
+		int prevCount = getWhiteSpace(tabSize,prevLine);
 		if(prevCount <= count)
 			return null;
-		else
+		else if(noTabs)
+		{
+			prevCount -= count;
+			while(prevCount-- > 0)
+				buf.append(' ');
+		}
+		else		
 		{
 			prevCount -= count;
 			count = prevCount / 8;
@@ -92,7 +96,7 @@ public class autoindent implements Mode
 		return buf.toString();
 	}
 
-	private int getWhiteSpace(int tabSize, String line, String comments)
+	private int getWhiteSpace(int tabSize, String line)
 	{
 		int count = 0;
 loop:		for(int i = 0; i < line.length(); i++)
@@ -107,10 +111,7 @@ loop:		for(int i = 0; i < line.length(); i++)
 				count += (tabSize - count % tabSize);
 				break;
 			default:
-				if(comments.indexOf(c) == -1)
-					break loop;
-				count++;
-				break;
+				break loop;
 			}
 		}
 		return count;

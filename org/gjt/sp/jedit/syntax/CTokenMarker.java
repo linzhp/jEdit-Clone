@@ -23,15 +23,16 @@ import javax.swing.text.Segment;
 public class CTokenMarker extends TokenMarker
 {
 	// public members
-	public static final String LABEL = ".label";
-	public static final String CPP_CMD = ".cpp_cmd";
-	public static final String COMMENT = ".comment";
-	public static final String DQUOTE = ".dquote";
-	public static final String SQUOTE = ".squote";
+	public static final String LABEL = "label";
+	public static final String CPP_CMD = "cpp_cmd";
+	public static final String COMMENT = "comment";
+	public static final String DQUOTE = "dquote";
+	public static final String SQUOTE = "squote";
 
-	public CTokenMarker(boolean cpp)
+	public CTokenMarker(boolean cpp, KeywordMap keywords)
 	{
 		this.cpp = cpp;
+		this.keywords = keywords;
 	}
 
 	public Token markTokens(Segment line, int lineIndex)
@@ -52,30 +53,26 @@ loop:		for(int i = offset; i < length; i++)
 				backslash = !backslash;
 				break;
 			case ';': case '.': case ',': case ' ': case '\t':
-			case '(': case ')':
+			case '(': case ')': case '[': case ']':
 				backslash = false;
 				if(token == null)
 				{
-					int off = lastOffset-1;
-loop2:					while(++off < i)
+					int off = i;
+					while(--off >= lastOffset)
 					{
-						switch(line.array[off])
-						{
-						case ';': case '.': case ',':
-						case ' ': case '\t': case '(':
-						case ')':
+						if(!Character.isLetter(line.array[off]))
 							break;
-						default:
-							break loop2;
-						}
 					}
+					off++;
 					int len = i - off;
-					if(off != lastOffset)
-						addToken(off - lastOffset,
-							 null);
-					addToken(len,new String(line
-						.array,off,len));
-					lastOffset = i;
+					String id = keywords.lookup(line,off,len);
+					if(id != null)
+					{
+						if(off != lastOffset)
+							addToken(off - lastOffset,null);
+						addToken(len,id);
+						lastOffset = i;
+					}
 				}
 				break;
 			case ':':
@@ -169,23 +166,22 @@ loop2:					while(++off < i)
 		}
 		if(token == null)
 		{
-			int off = lastOffset-1;
-loop3:			while(++off < length)
+			int off = length;
+			while(--off >= lastOffset)
 			{
-				switch(line.array[off])
-				{
-				case ' ': case '\t':
-				case '(': case ')':
+				if(!Character.isLetter(line.array[off]))
 					break;
-				default:
-					break loop3;
-				}
 			}
+			off++;
 			int len = length - off;
-			if(off != lastOffset)
-				addToken(off - lastOffset,null);
-			addToken(len,new String(line.array,off,len));
-			lastOffset = length;
+			String id = keywords.lookup(line,off,len);
+			if(id != null)
+			{
+				if(off != lastOffset)
+					addToken(off - lastOffset,null);
+				addToken(len,id);
+				lastOffset = length;
+			}
 		}
 		if(lastOffset != length)
 			addToken(length - lastOffset,token);
@@ -204,4 +200,5 @@ loop3:			while(++off < length)
 
 	// private members
 	private boolean cpp;
+	private KeywordMap keywords;
 }

@@ -440,7 +440,8 @@ implements DocumentListener, UndoableEditListener
 	public void loadColors(String name)
 	{
 		colors.clear();
-		String prop = jEdit.props.getProperty("colors.".concat(name));
+		String prop = jEdit.props.getProperty("mode.".concat(name)
+			+ ".colors");
 		if(prop == null)
 			return;
 		StringTokenizer st = new StringTokenizer(prop);
@@ -494,13 +495,22 @@ implements DocumentListener, UndoableEditListener
 		{
 			return;
 		}
-		for(int i = 0; i < markers.size(); i++)
+		if(!init)
 		{
-			Marker marker = (Marker)markers.elementAt(i);
-			if(marker.getName().equals(name))
+			for(int i = 0; i < markers.size(); i++)
 			{
-				markers.removeElementAt(i);
-				break;
+				Marker marker = (Marker)markers.elementAt(i);
+				if(marker.getName().equals(name))
+				{
+					markers.setElementAt(markerN,i);
+					break;
+				}
+				if(marker.getStart() > start)
+				{
+					markers.insertElementAt(markerN,i);
+					updateMarkers();
+					return;
+				}
 			}
 		}
 		markers.addElement(markerN);
@@ -589,6 +599,8 @@ implements DocumentListener, UndoableEditListener
 	public void insertUpdate(DocumentEvent evt)
 	{
 		dirty();
+		if(mode instanceof DocumentListener)
+			((DocumentListener)mode).insertUpdate(evt);
 		if(tokenMarker == null)
 			return;
 		DocumentEvent.ElementChange ch = evt.getChange(
@@ -606,6 +618,8 @@ implements DocumentListener, UndoableEditListener
 	public void removeUpdate(DocumentEvent evt)
 	{
 		dirty();
+		if(mode instanceof DocumentListener)
+			((DocumentListener)mode).removeUpdate(evt);
 		if(tokenMarker == null)
 			return;
 		DocumentEvent.ElementChange ch = evt.getChange(
@@ -623,6 +637,8 @@ implements DocumentListener, UndoableEditListener
 	public void changedUpdate(DocumentEvent evt)
 	{
 		dirty();
+		if(mode instanceof DocumentListener)
+			((DocumentListener)mode).changedUpdate(evt);
 	}
 
 	// package-private methods
@@ -671,6 +687,7 @@ implements DocumentListener, UndoableEditListener
 	private void init()
 	{	
 		init = true;
+		setDocumentProperties(new BufferProps(getDocumentProperties()));
 		undo = new UndoManager();
 		markers = new Vector();
 		colors = new Hashtable();
@@ -706,13 +723,6 @@ implements DocumentListener, UndoableEditListener
 			name = file.getName();
 			markersFile = new File(file.getParent(),'.' + name
 				+ ".marks");
-			try
-			{
-				path = file.getCanonicalPath();
-			}
-			catch(IOException io)
-			{
-			}
 		}
 		else
 		{
@@ -736,11 +746,18 @@ implements DocumentListener, UndoableEditListener
 		{
 			String nogzName = name.substring(0,name.length() -
 				(name.endsWith(".gz") ? 3 : 0));
-			int index = nogzName.lastIndexOf('.') + 1;
 			Mode mode = jEdit.cmds.getMode(jEdit.props.getProperty(
-				"mode.".concat(nogzName.substring(index))));
-			if(mode != null) // silly hack for shell script mode
+				"mode.filename.".concat(nogzName)));
+			if(mode != null)
 				setMode(mode);
+			else
+			{
+				int index = nogzName.lastIndexOf('.') + 1;
+				mode = jEdit.cmds.getMode(jEdit.props.getProperty(
+					"mode.extension.".concat(nogzName.substring(index))));
+				if(mode != null)
+					setMode(mode);
+			}
 		}
 	}
 	
@@ -772,7 +789,7 @@ implements DocumentListener, UndoableEditListener
 					{
 						setMode(jEdit.cmds.getMode(
 							jEdit.props
-							.getProperty("mode."
+							.getProperty("mode.firstline."
 								     + line)));
 					}
 				}
@@ -1065,4 +1082,43 @@ implements DocumentListener, UndoableEditListener
 			updateStatus();
 		}
 	}
+
+	private class BufferProps extends Hashtable
+	{
+		BufferProps(Dictionary defaults)
+		{
+			this.defaults = defaults;
+		}
+
+		public Object get(Object key)
+		{
+			Object o = super.get(key);
+			if(o != null)
+				return o;
+			o = defaults.get(key);
+			if(o != null)
+				return o;
+			if(mode == null)
+				return null;
+			String clazz = mode.getClass().getName();
+			String value = jEdit.props.getProperty("mode." + clazz
+				.substring(clazz.lastIndexOf('.') + 1) + "."
+				+ key);
+			if(value == null)
+				return null;
+			try
+			{
+				Integer i = new Integer(value);
+				put(key,i);
+				return i;
+			}
+			catch(NumberFormatException nf)
+			{
+				put(key,value);
+				return value;
+			}
+		}
+
+		private Dictionary defaults;
+	}		
 }
