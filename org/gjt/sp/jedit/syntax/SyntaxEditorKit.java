@@ -60,11 +60,24 @@ public class SyntaxEditorKit extends DefaultEditorKit implements ViewFactory
 	{
 		return new SyntaxView(elem);
 	}
+
+	/**
+	 * Creates a new instance of the default document for this
+	 * editor kit. This returns a new instance of
+	 * <code>DefaultSyntaxDocument</code>.
+	 */
+	public Document createDefaultDocument()
+	{
+		return new DefaultSyntaxDocument();
+	}
 }
 
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.8  1999/03/24 05:45:27  sp
+ * Juha Lidfors' backup directory patch, removed debugging messages from various locations, documentation updates
+ *
  * Revision 1.7  1999/03/13 09:11:46  sp
  * Syntax code updates, code cleanups
  *

@@ -1323,19 +1323,27 @@ loop:		for(int i = 0; i < markers.size(); i++)
 		if(backups == 0)
 			return;
 		File backup = null;
-		// Silly fix for `save as' to diff dir bug
-		String path = file.getPath();
+
 		for(int i = backups; i > 0; i--)
 		{
-			backup = new File(path + (backups == 1 ?
-				"~" : "~" + i + "~"));
+			// Checks for backup path property. If it's found, use it to build
+			// the filename for backup files, otherwise use the files own
+			// directory to save backups in.
+			String backupPath = jEdit.getProperty("backup.directory",
+					file.getParent());
+			backup = new File(backupPath + "" + file.getName()
+					+ (backups == 1 ? "~" : "~" + i + "~"));
+
 			if(backup.exists())
 			{
 				if(i == backups)
 					backup.delete();
 				else
-					backup.renameTo(new File(path + "~"
-						+ (i + 1) + "~"));
+				{
+					backup.renameTo(new File(backupPath 
+							+ "" + file.getName() + "~"
+							+ (i + 1) + "~"));
+				}
 			}
 		}
 		file.renameTo(backup);
@@ -1491,6 +1499,9 @@ loop:		for(int i = 0; i < markers.size(); i++)
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.63  1999/03/24 05:45:27  sp
+ * Juha Lidfors' backup directory patch, removed debugging messages from various locations, documentation updates
+ *
  * Revision 1.62  1999/03/22 04:20:01  sp
  * Syntax colorizing updates
  *

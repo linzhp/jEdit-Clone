@@ -42,8 +42,8 @@ only when they're referenced by another class.
 
 The only type of class file loaded immediately is that which implements
 the <a href=api/org.gjt.sp.jedit.Plugin.html>org.gjt.sp.jedit.Plugin</a>
-interface - therefore you must provide an implementation of that class
-to get the ball rolling.<p>
+interface - therefore an implementation must be provided to load any
+other actions and modes supplied with the plugin.<p>
 
 Due to the way the class loader works, the names of Plugin implementations
 must end with `Plugin'.<p>

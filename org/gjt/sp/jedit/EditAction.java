@@ -50,6 +50,7 @@ import java.util.EventObject;
  * shortcut of the action. The action must be in a menu for this
  * to work; you can't have keyboard-only actions. Format is described
  * in documentation for the <code>GUIUtilities</code> class.
+ * </ul>
  *
  * @author Slava Pestov
  * @version $Id$
@@ -131,6 +132,9 @@ public abstract class EditAction implements ActionListener
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.9  1999/03/24 05:45:27  sp
+ * Juha Lidfors' backup directory patch, removed debugging messages from various locations, documentation updates
+ *
  * Revision 1.8  1999/03/21 08:37:15  sp
  * Slimmer action system, history text field update
  *

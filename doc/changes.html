@@ -4,6 +4,7 @@
 
 <ul>
 <li><a href=#todo>To Do</a>
+<li><a href=#15pre3>Version 1.5pre3</a>
 <li><a href=#15pre2>Version 1.5pre2</a>
 <li><a href=#15pre1>Version 1.5pre1</a>
 </ul>
@@ -13,18 +14,18 @@
 </a>
 
 <ul>
-<li>JARClassLoader should be able to load resources
-<li>Some sort of way to get information about installed plugins
-<li>Major mode/indent mode/minor mode system
 <li>Modularize SyntaxTextArea, make JEditTextArea subclass that handles
 jEdit-specific stuff
-<li>Options dialog extension API
-<li>Finish plugin documentation
-<li>Do history in JOptionPanes
-<li><b>Views sometimes lose contact with their buffer</b>
-<li><b>CompilerError opens not found files twice</b>
-<li><b>view.splitter property doesn't work properly</b>
-<li><b>Buffer calls insertLines()/deleteLines() twice for each new line</b>
+<li>Finish plugin documentation (token markers, commands, modes)
+<li>jEdit 1.4/5's syntax colorizing seems slower than 1.3. It affects
+all modes, so it's a bottleneck in some global method
+<li>Views sometimes lose contact with their buffer
+<li>EnhancedMenuItem should paint the accelerator with the PLAF colors
+<li>CompilerError opens not existent files twice (might be a fundamental
+problem with jEdit.openFile())
+<li>view.divider property doesn't work properly
+<li>DefaultSyntaxDocument calls insertLines() twice for each new line
+(Swing bug?)
 </ul>
 
 <a name=15pre3>

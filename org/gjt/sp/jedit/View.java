@@ -568,8 +568,7 @@ public class View extends JFrame
 		GUIUtilities.saveGeometry(this,"view");
 
 		int location = splitter.getDividerLocation();
-		if(location > splitter.getHeight()
-			- splitter.getDividerSize() - 15)
+		if(location < splitter.getDividerSize() + 15)
 			location = splitter.getLastDividerLocation();
 		jEdit.setProperty("view.divider",String.valueOf(location));
 
@@ -718,8 +717,7 @@ public class View extends JFrame
 		public void bufferClosed(EditorEvent evt)
 		{
 			updateOpenRecentMenu();
-	
-			// XXX: should revert to 1.2 behaviour
+
 			Buffer[] bufferArray = jEdit.getBuffers();
 			if(bufferArray.length != 0)
 				setBuffer(bufferArray[bufferArray.length - 1]);
@@ -819,6 +817,9 @@ public class View extends JFrame
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.54  1999/03/24 05:45:27  sp
+ * Juha Lidfors' backup directory patch, removed debugging messages from various locations, documentation updates
+ *
  * Revision 1.53  1999/03/21 08:37:16  sp
  * Slimmer action system, history text field update
  *

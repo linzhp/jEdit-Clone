@@ -10,6 +10,8 @@
 <ul>
 <li><a href=#intro>Introduction</a>
 <li><a href=#over>Overview</a>
+<li><a href=#extending>Writing New TokenMarkers</a>
+<li><a href=#using>Using jEdit's Syntax Colorizing in Other Applications</a>
 </ul>
 
 <a name=intro>
@@ -22,6 +24,69 @@ system.
 <a name=over>
 <h1>Overview</h1>
 </a>
+
+jEdit's syntax colorizing system is composed of several layers. At the
+lowest level is an instance of
+<a href=api/org.gjt.sp.jedit.syntax.TokenMarker.html>
+org.gjt.sp.jedit.syntax.TokenMarker</a>, which parses lines of text and
+returns a linked list of tokens, each token containing a token type and
+length.<p>
+
+Further up is the <a href=api/org.gjt.sp.jedit.syntax.SyntaxView.html>
+org.gjt.sp.jedit.syntax.SyntaxView</a> class, which paints tokenized
+lines.<p>
+
+The <a href=api/org.gjt.sp.jedit.syntax.SyntaxEditorKit.html>
+org.gjt.sp.jedit.syntax.SyntaxEditorKit</a> creates instances of
+the <code>SyntaxView</code> class.
+
+<a name=extending>
+<h1>Writing New TokenMarkers</h1>
+</a>
+
+XXX - not done
+
+<a name=using>
+<h1>Using jEdit's Syntax Colorizing in Other Applications</h1>
+</a>
+
+jEdit's syntax colorizing code can be used by itself, without jEdit.
+Here is an example that creates a text component that can be used to
+colorize Java source:
+
+<pre>
+JEditorPane editorPane = new JEditorPane();
+
+editorPane.setEditorKit(new SyntaxEditorKit());
+DefaultSyntaxDocument document = new DefaultSyntaxDocument();
+document.setTokenMarker(new JavaTokenMarker());
+
+document.getColors().put(Token.COMMENT1,Color.red);
+document.getColors().put(Token.COMMENT2,Color.red);
+document.getColors().put(Token.LITERAL1,Color.gray);
+document.getColors().put(Token.LITERAL2,Color.gray);
+document.getColors().put(Token.LABEL,Color.darkGray);
+document.getColors().put(Token.KEYWORD1,Color.blue);
+document.getColors().put(Token.KEYWORD2,Color.magenta);
+document.getColors().put(Token.KEYWORD3,Color.green);
+document.getColors().put(Token.OPERATOR,Color.orange);
+document.getColors().put(Token.INVALID,Color.red);
+
+editorPane.setDocument(document);
+</pre>
+
+Basically, it boils down to creating a <code>JEditorPane</code> instance
+that uses the <a href=api/org.gjt.sp.jedit.syntax.SyntaxEditorKit.html>
+org.gjt.sp.jedit.syntax.SyntaxEditorKit</a>, and setting it to edit an
+instance of <a href=api/org.gjt.sp.jedit.syntax.DefaultSyntaxDocument.html>
+org.gjt.sp.jedit.syntax.DefaultSyntaxDocument</a>.<p>
+
+<code>DefaultSyntaxDocument</code> is a subclass of <code>PlainDocument</code>,
+sometimes, a different document type might be necessary (eg, when
+you need a <code>StyledDocument</code> to store various attributes about
+the text). In those situations, the more abstract
+<a href=api/org.gjt.sp.jedit.syntax.SyntaxDocument.html>SyntaxDocument</a>
+interface will have to be used.
 
 </body>
 </html>

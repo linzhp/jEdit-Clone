@@ -34,7 +34,7 @@ public class JARClassLoader extends ClassLoader
 	public JARClassLoader(String path)
 		throws Exception, Exception
 	{
-		System.out.println("Loading plugin: " + path);
+		System.out.println("Scanning JAR file: " + path);
 
 		zipFile = new ZipFile(path);
 
@@ -42,36 +42,22 @@ public class JARClassLoader extends ClassLoader
 		// all properties are already present
 		Vector pluginClasses = new Vector();
 
-		System.out.println("----------------");
 		Enumeration entires = zipFile.entries();
 		while(entires.hasMoreElements())
 		{
 			ZipEntry entry = (ZipEntry)entires.nextElement();
 			String name = entry.getName();
-			System.out.print("  -- " + name + ": ");
 			if(name.toLowerCase().endsWith(".props"))
 			{
-				System.out.println("loading properties file");
 				jEdit.loadProps(zipFile.getInputStream(entry),
 					name);
 			}
 			else if(name.toLowerCase().endsWith(".class"))
 			{
 				if(name.endsWith("Plugin.class"))
-				{
-					System.out.println("will load later");
 					pluginClasses.addElement(name);
-				}
-				else
-					System.out.println("skipping class");
-			}
-			else
-			{
-				System.out.println("skipping resource");
 			}
 		}
-
-		System.out.println("----------------");
 
 		// Do deferred loading
 		Enumeration enum = pluginClasses.elements();
@@ -87,9 +73,9 @@ public class JARClassLoader extends ClassLoader
 		Class clazz = loadClass(MiscUtilities.fileToClass(name));
 		if(Plugin.class.isAssignableFrom(clazz))
 		{
-			System.out.println("    registering plugin: " + clazz);
 			Plugin plugin = (Plugin)clazz.newInstance();
-			System.out.println("    " + plugin);
+			System.out.println(" -- loaded plugin: " +
+				plugin.getName());
 			jEdit.addPlugin(plugin);
 		}
 	}
@@ -101,12 +87,7 @@ public class JARClassLoader extends ClassLoader
 
 		Class cls = findLoadedClass(name);
 		if(cls != null)
-		{
-			System.out.println("Already loaded: " + name);
 			return cls;
-		}
-		else
-			System.out.println("Searching for entry: " + name);
 
 		try
 		{
@@ -114,12 +95,7 @@ public class JARClassLoader extends ClassLoader
 
 			// XXX: do dependency search in other JAR files
 			if(entry == null)
-			{
-				System.out.println(clazz +
-					" not found in JAR; looking in"
-					+ " system classes");
 				return findSystemClass(clazz);
-			}
 
 			InputStream in = zipFile.getInputStream(entry);
 
@@ -140,8 +116,6 @@ public class JARClassLoader extends ClassLoader
 				}
 			}
 			
-			System.out.println("Read " + data.length + " bytes");
-
 			cls = defineClass(clazz,data,0,data.length);
 
 			if(resolveIt)
@@ -163,43 +137,11 @@ public class JARClassLoader extends ClassLoader
 }
 
 /*
-public String loadEntry(ZipFile jar, ZipEntry entry)
-			throws IOException
-		{
-			InputStream in = jar.getInputStream(entry);
-			String entryName = entry.getName();
-			if(entryName.endsWith(".class"))
-			{
-				int len = (int)entry.getSize();
-				byte[] cls = new byte[len];
-				int success = 0;
-				int offset = 0;
-				String clsName = MiscUtilities.fileToClass(entryName);
-				while (success < len) {
-					len -= success;
-					offset += success;
-					success = in.read(cls,offset,len);
-					if (success == -1)
-					{
-						System.err.println("Error loading class "
-							+ clsName + " from "
-							+ jar.getName());
-						return null;
-					}
-				}
-				classes.put(clsName,cls);
-				return clsName;
-			}
-			else if(entryName.endsWith(".props"))
-				jEdit.loadProps(in,entryName);
-			in.close();
-			return null;
-		}
-*/
-
-/*
  * ChangeLog:
  * $Log$
+ * Revision 1.2  1999/03/24 05:45:27  sp
+ * Juha Lidfors' backup directory patch, removed debugging messages from various locations, documentation updates
+ *
  * Revision 1.1  1999/03/21 07:53:14  sp
  * Plugin doc updates, action API change, new method in MiscUtilities, new class
  * loader, new plugin interface
