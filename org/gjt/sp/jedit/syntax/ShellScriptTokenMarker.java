@@ -38,6 +38,28 @@ public class ShellScriptTokenMarker extends TokenMarker
 		int offset = line.offset;
 		int lastOffset = offset;
 		int length = line.count + offset;
+
+		if(token == Token.LITERAL1 && lineIndex != 0
+			&& lineInfo[lineIndex - 1].obj != null)
+		{
+			String str = (String)lineInfo[lineIndex - 1].obj;
+			if(str != null)
+				System.out.println(str.length() + ":" + line.count);
+			if(str != null && str.length() == line.count
+				&& SyntaxUtilities.regionMatches(false,line,
+				offset,str))
+			{
+				addToken(line.count,Token.LITERAL1);
+				return Token.NULL;
+			}
+			else
+			{
+				addToken(line.count,Token.LITERAL1);
+				lineInfo[lineIndex].obj = str;
+				return Token.LITERAL1;
+			}
+		}
+
 		boolean backslash = false;
 loop:		for(int i = offset; i < length; i++)
 		{
@@ -172,6 +194,23 @@ loop:		for(int i = offset; i < length; i++)
 					lastOffset = i + 1;
 				}
 				break;
+			case '<':
+				if(backslash)
+					backslash = false;
+				else if(token == Token.NULL)
+				{
+					if(length - i > 1 && line.array[i+1] == '<')
+					{
+						addToken(i - lastOffset,
+							Token.NULL);
+						token = Token.LITERAL1;
+						lastOffset = i;
+						lineInfo[lineIndex].obj =
+							new String(line.array,i + 2,
+								length - (i+2));
+					}
+				}
+				break;
 			default:
 				backslash = false;
 				if(Character.isLetter(c))
@@ -200,6 +239,10 @@ loop:		for(int i = offset; i < length; i++)
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.11  1999/04/27 06:53:38  sp
+ * JARClassLoader updates, shell script token marker update, token marker compiles
+ * now
+ *
  * Revision 1.10  1999/04/22 06:03:26  sp
  * Syntax colorizing change
  *

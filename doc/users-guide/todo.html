@@ -23,7 +23,9 @@ This is what needs to be done as soon as possible:
 <li>Console's stdin stuff needs to be fixed.<p>
 Probably a silly bug in Console.java.
 
-<li>Sometimes closing a view stuffs up all other event listeners.
+<li>Sometimes closing a view stuffs up all other event listeners.<p>
+This usually occurs with views created by the server. Probably
+a side effect of the EventMulticaster re-entrancy problems.
 
 <li>Event system needs to be debugged and documented better.<p>
 With the current EventMulticaster, event listeners cannot

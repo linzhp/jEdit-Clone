@@ -142,7 +142,7 @@ public class JARClassLoader extends ClassLoader
 		}
 		catch(IOException io)
 		{
-			return null;
+			return getSystemResourceAsStream(name);
 		}
 	}
 
@@ -176,6 +176,10 @@ public class JARClassLoader extends ClassLoader
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.5  1999/04/27 06:53:38  sp
+ * JARClassLoader updates, shell script token marker update, token marker compiles
+ * now
+ *
  * Revision 1.4  1999/04/19 05:47:35  sp
  * ladies and gentlemen, 1.6pre1
  *

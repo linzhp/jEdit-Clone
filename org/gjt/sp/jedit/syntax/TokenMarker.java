@@ -49,7 +49,7 @@ public abstract class TokenMarker
 		lastToken = null;
 
 		/* optimization :) */
-		lineInfo[lineIndex] = markTokensImpl((lineIndex == 0 ?
+		lineInfo[lineIndex].token = markTokensImpl((lineIndex == 0 ?
 			Token.NULL : lineInfo[lineIndex -1].token),
 			line,lineIndex);
 
@@ -247,6 +247,10 @@ public abstract class TokenMarker
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.18  1999/04/27 06:53:38  sp
+ * JARClassLoader updates, shell script token marker update, token marker compiles
+ * now
+ *
  * Revision 1.17  1999/04/26 07:55:00  sp
  * Event multicaster tweak, console shows exit code of processes
  *
