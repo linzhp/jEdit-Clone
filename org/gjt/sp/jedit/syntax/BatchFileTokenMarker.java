@@ -56,8 +56,8 @@ loop:		for(int i = offset; i < length; i++)
 					if(length - i <= 3 || array[i+2] == ' ')
 					{
 						addToken(2,Token.KEYWORD2);
-						i++;
-						lastOffset = i1;
+						i += 2;
+						lastOffset = i;
 					}
 					else
 						token = Token.KEYWORD2;
@@ -125,6 +125,9 @@ loop:		for(int i = offset; i < length; i++)
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.19  1999/07/16 23:45:49  sp
+ * 1.7pre6 BugFree version
+ *
  * Revision 1.18  1999/07/05 04:38:39  sp
  * Massive batch of changes... bug fixes, also new text component is in place.
  * Have fun

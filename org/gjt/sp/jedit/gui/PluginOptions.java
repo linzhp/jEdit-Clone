@@ -55,6 +55,8 @@ public class PluginOptions extends OptionsDialog
 			}
 		}
 
+		GUIUtilities.hideWaitCursor(view);
+
 		Dimension screen = getToolkit().getScreenSize();
 		pack();
 		setLocation((screen.width - getSize().width) / 2,
@@ -67,6 +69,9 @@ public class PluginOptions extends OptionsDialog
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.2  1999/07/16 23:45:49  sp
+ * 1.7pre6 BugFree version
+ *
  * Revision 1.1  1999/06/07 06:36:32  sp
  * Syntax `styling' (bold/italic tokens) added,
  * plugin options dialog for plugin option panes

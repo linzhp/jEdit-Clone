@@ -23,15 +23,35 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyListener;
 
 /**
- * Handles key events and executes actions bound to keystrokes.
+ * An abstract interface for a key event handler. Concrete implementations
+ * provide specific keystroke to action mappings.
  * @author Slava Pestov
  * @version $Id$
+ * @see org.gjt.sp.jedit.textarea.DefaultInputHandler
  */
 public interface InputHandler extends KeyListener
 {
-	public void install(JEditTextArea textArea);
-	public void uninstall(JEditTextArea textArea);
+	/**
+	 * Adds the default key bindings to this input handler.
+	 */
+	public void addDefaultKeyBindings();
+
+	/**
+	 * Adds a key binding to this input handler.
+	 * @param keyBinding The key binding (the format of this is
+	 * input-handler specific)
+	 * @param action The action
+	 */
 	public void addKeyBinding(String keyBinding, ActionListener action);
+
+	/**
+	 * Removes a key binding from this input handler.
+	 * @param keyBinding The key binding
+	 */
 	public void removeKeyBinding(String keyBinding);
+
+	/**
+	 * Removes all key bindings from this input handler.
+	 */
 	public void removeAllKeyBindings();
 }

@@ -37,6 +37,9 @@ implements ActionListener, KeyListener, WindowListener
 	public OptionsDialog(View view, String title)
 	{
 		super(view,title,true);
+
+		GUIUtilities.showWaitCursor(view);
+
 		getContentPane().setLayout(new BorderLayout());
 		panes = new Vector();
 		tabs = new JTabbedPane();
@@ -123,6 +126,9 @@ implements ActionListener, KeyListener, WindowListener
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.3  1999/07/16 23:45:49  sp
+ * 1.7pre6 BugFree version
+ *
  * Revision 1.2  1999/07/05 04:38:39  sp
  * Massive batch of changes... bug fixes, also new text component is in place.
  * Have fun

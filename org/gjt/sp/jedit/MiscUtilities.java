@@ -19,7 +19,6 @@
 
 package org.gjt.sp.jedit;
 
-import java.lang.reflect.*;
 import java.io.*;
 
 /**
@@ -192,6 +191,9 @@ loop:		for(int i = 0; i < str.length(); i++)
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.14  1999/07/16 23:45:49  sp
+ * 1.7pre6 BugFree version
+ *
  * Revision 1.13  1999/07/08 06:06:04  sp
  * Bug fixes and miscallaneous updates
  *

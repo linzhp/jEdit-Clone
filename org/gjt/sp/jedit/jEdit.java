@@ -36,6 +36,8 @@ import org.gjt.sp.jedit.gui.HistoryModel;
 import org.gjt.sp.jedit.remote.impl.RemoteEditorImpl;
 import org.gjt.sp.jedit.remote.*;
 import org.gjt.sp.jedit.search.SearchAndReplace;
+import org.gjt.sp.jedit.textarea.DefaultInputHandler;
+import org.gjt.sp.jedit.textarea.InputHandler;
 
 /**
  * The main class of the jEdit text editor.
@@ -49,7 +51,7 @@ public class jEdit
 	 */
 	public static String getVersion()
 	{
-		return "1.7pre5";
+		return "1.7pre6";
 	}
 
 	/**
@@ -59,7 +61,7 @@ public class jEdit
 	public static String getBuild()
 	{
 		// (major) (minor) (<99 = preX, 99 = final) (bug fix)
-		return "01.07.05.00";
+		return "01.07.06.00";
 	}
 
 	/**
@@ -74,6 +76,7 @@ public class jEdit
 		boolean endOpts = false;
 		boolean readOnly = false;
 		boolean wait = false;
+		boolean quit = false;
 		settingsDirectory = System.getProperty("user.home") +
 			File.separator + ".jedit";
 		serverPath = "org.gjt.sp.jedit/RemoteEditor/"
@@ -117,6 +120,8 @@ public class jEdit
 					serverPath = null;
 				else if(arg.equals("-wait"))
 					wait = true;
+				else if(arg.equals("-quit"))
+					quit = true;
 				else if(arg.equals("-nodesktop"))
 					desktop = false;
 				else if(arg.equals("-nosplash"))
@@ -154,6 +159,13 @@ public class jEdit
 			{
 				RemoteEditor editor = (RemoteEditor)Naming
 					.lookup(serverPath);
+
+				if(quit)
+				{
+					editor.exit(null);
+					System.exit(0);
+				}
+
 				RemoteBuffer buf = null;
 
 				for(int i = 0; i < args.length; i++)
@@ -199,6 +211,11 @@ public class jEdit
 			}
 		}
 
+		// If RMI is disabled and we were passed the -quit, flag,
+		// exit now
+		if(quit)
+			System.exit(0);
+
 		// Show the kool splash screen
 		if(showSplash)
 			GUIUtilities.showSplashScreen();
@@ -223,6 +240,9 @@ public class jEdit
 
 		// Start plugins
 		JARClassLoader.initPlugins();
+
+		// Only do this after plugin actions are available
+		initKeyBindings();
 
 		// Load files specified on the command line
 		Buffer buffer = null;
@@ -369,6 +389,9 @@ public class jEdit
 		{
 			maxRecent = 8;
 		}
+
+		if(inputHandler != null)
+			initKeyBindings();
 
 		fireEditorEvent(EditorEvent.PROPERTIES_CHANGED,null,null);
 	}
@@ -763,6 +786,15 @@ public class jEdit
 	}
 
 	/**
+	 * Returns the current input handler (key binding to action mapping)
+	 * @see org.gjt.sp.jedit.textarea.InputHandler
+	 */
+	public static InputHandler getInputHandler()
+	{
+		return inputHandler;
+	}
+
+	/**
 	 * Creates a new view of a buffer.
 	 * @param view The view from which to take the geometry, buffer and
 	 * caret position from
@@ -891,6 +923,10 @@ public class jEdit
 	 */
 	public static void exit(View view)
 	{
+		// For RMI's sake
+		if(view == null)
+			view = viewsFirst;
+
 		// Save the `desktop'
 		if("on".equals(getProperty("saveDesktop")))
 		{
@@ -1019,6 +1055,7 @@ public class jEdit
 	private static int untitledCount;
 	private static Vector recent;
 	private static int maxRecent;
+	private static InputHandler inputHandler;
 	private static EventListenerList listenerList;
 
 	// buffer link list
@@ -1049,6 +1086,7 @@ public class jEdit
 			+ " to <path>");
 		System.err.println("	-wait: If connecting to another"
 			+ " running instance, wait until");
+		System.err.println("    -quit: Quit the current instance using RMI");
 		System.err.println("	the user closes the new view before"
 			+ " exiting");
 		System.err.println("	-nodesktop: Ignore saved desktop");
@@ -1114,7 +1152,6 @@ public class jEdit
 				jEditHome = System.getProperty("user.dir");
 		}
 		jEditHome = jEditHome + File.separator;
-
 
 		if(settingsDirectory != null)
 		{
@@ -1398,6 +1435,42 @@ public class jEdit
 		}
 	}
 
+	/**
+	 * Loads the key bindings.
+	 */
+	private static void initKeyBindings()
+	{
+		// This is also called from propertiesChanged(), so we
+		// save some gc by reusing the old input handler
+		if(inputHandler == null)
+			inputHandler = new DefaultInputHandler();
+		else
+			inputHandler.removeAllKeyBindings();
+
+		// Register menu key bindings
+		inputHandler.removeAllKeyBindings();
+		EditAction[] actions = jEdit.getActions();
+		for(int i = 0; i < actions.length; i++)
+		{
+			String binding = jEdit.getProperty(actions[i]
+				.getName() + ".shortcut");
+			if(binding != null)
+				inputHandler.addKeyBinding(binding,actions[i]);
+		}
+
+		// Register text area key bindings
+		ActionListener[] textActions = DefaultInputHandler.ACTIONS;
+		for(int i = 0; i < textActions.length; i++)
+		{
+			String binding = jEdit.getProperty(DefaultInputHandler
+				.ACTION_NAMES[i] + ".shortcut");
+			if(binding != null)
+			{
+				inputHandler.addKeyBinding(binding,textActions[i]);
+			}
+		}
+	}
+
 	private static Buffer loadDesktop()
 	{
 		Buffer b = null;
@@ -1577,6 +1650,9 @@ public class jEdit
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.122  1999/07/16 23:45:49  sp
+ * 1.7pre6 BugFree version
+ *
  * Revision 1.121  1999/07/08 06:06:04  sp
  * Bug fixes and miscallaneous updates
  *

@@ -48,8 +48,7 @@ public class tab extends EditAction
 			int end = textArea.getSelectionEnd();
 			Element map = buffer.getDefaultRootElement();
 			Element lineElement = map.getElement(
-				map.getElementIndex(textArea
-				.getCaretPosition()));
+				textArea.getCaretLine());
 			int lineStart = lineElement.getStartOffset();
 			int lineEnd = lineElement.getEndOffset() - 1;
 			if(start == end)

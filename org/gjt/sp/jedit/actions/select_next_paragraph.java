@@ -38,7 +38,7 @@ public class select_next_paragraph extends EditAction
 		Buffer buffer = view.getBuffer();
 		Element map = buffer.getDefaultRootElement();
 		JEditTextArea textArea = view.getTextArea();
-		int lineNo = map.getElementIndex(textArea.getSelectionEnd());
+		int lineNo = textArea.getSelectionEnd();
 		int start = map.getElement(buffer.locateParagraphStart(lineNo))
 			.getStartOffset();
 		Element endElement = map.getElement(buffer

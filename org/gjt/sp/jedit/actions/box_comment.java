@@ -51,10 +51,10 @@ public class box_comment extends EditAction
 		boxComment = boxComment + ' ';
 		int selectionStart = textArea.getSelectionStart();
 		int selectionEnd = textArea.getSelectionEnd();
-		Element map = buffer.getDefaultRootElement();
-		int startLine = map.getElementIndex(selectionStart);
-		int endLine = map.getElementIndex(selectionEnd);
+		int startLine = textArea.getSelectionStartLine();
+		int endLine = textArea.getSelectionEndLine();
 		buffer.beginCompoundEdit();
+		Element map = buffer.getDefaultRootElement();
 		try
 		{
 			Element lineElement = map.getElement(startLine);

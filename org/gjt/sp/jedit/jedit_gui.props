@@ -286,6 +286,34 @@ help.label=Help Contents...
 plugin-help.label=Plugin Help Contents...
 
 ###
+### TEXT AREA KEY BINDING NAMES
+###
+
+backspace.label=Delete Previous Character
+delete.label=Delete Next Character
+overwrite.label=Overwrite Mode On/Off
+home.label=Beginning of Line
+end.label=End of Line
+select-home.label=Select Beginning of Line
+select-end.label=Select End of Line
+prev-page.label=Previous Page
+next-page.label=Next Page
+select-prev-page.label=Select Previous Page
+select-next-page.label=Select Next Page
+prev-char.label=Previous Character
+prev-word.label=Previous Word
+select-prev-char.label=Select Previous Character
+select-prev-word.label=Select Previous Word
+next-char.label=Next Character
+next-word.label=Next Word
+select-next-char.label=Select Next Character
+select-next-word.label=Select Next Word
+prev-line.label=Previous Line
+select-prev-line.label=Select Previous Line
+next-line.label=Next Line
+select-next-line.label=Select Next Line
+
+###
 ### VIEW STUFF
 ###
 
@@ -479,6 +507,7 @@ selectlinerange.end=End line:\
 # Buffer options dialog
 buffer_options.title=Buffer Options
 buffer_options.mode=Edit mode:\ 
+buffer_options.lineSeparator=Line separator:\ 
 
 # Global options dialog
 options.title=Global Options
@@ -498,6 +527,7 @@ options.general.saveGeometry=Save window and dialog positions
 options.general.showTips=Show hints in status bar
 options.general.showToolbar=Show toolbar
 options.general.showFullPath=Show full path of buffers in title bar
+options.general.copyAreaDisabled=Don't use copyArea() for scrolling
 options.editor.label=Editor
 options.editor.defaultMode=Default edit mode:\ 
 options.editor.font=Text font:\ 

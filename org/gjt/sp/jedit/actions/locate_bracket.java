@@ -37,62 +37,23 @@ public class locate_bracket extends EditAction
 		View view = getView(evt);
 		Buffer buffer = view.getBuffer();
 		JEditTextArea textArea = view.getTextArea();
-
-		String openBrackets = (String)buffer
-			.getProperty("openBrackets");
-		String closeBrackets = (String)buffer
-			.getProperty("closeBrackets");
-		if(closeBrackets.length() != openBrackets.length())
-		{
-			view.getToolkit().beep();
-			return;
-		}
 		int dot = textArea.getCaretPosition();
-		if(dot != 0)
-			dot--;
-		char bracket;
+
 		try
 		{
-			bracket = buffer.getText(dot,1).charAt(0);
-			int index = openBrackets.indexOf(bracket);
-			if(index != -1)
+			int bracket = TextUtilities.findMatchingBracket(
+				buffer,Math.max(0,dot - 1));
+			if(bracket != -1)
 			{
-				char closeBracket = closeBrackets.charAt(index);
-				int[] match = TextUtilities.locateBracketForward(
-					buffer,dot,bracket,closeBracket);
-				if(match == null)
-					view.getToolkit().beep();
-				else
-				{
-					int offset = textArea.getLineStartOffset(match[0])
-						+ match[1];
-					textArea.setCaretPosition(offset + 1);
-				}
+				textArea.setCaretPosition(bracket + 1);
 				return;
-			}
-			else
-			{
-				index = closeBrackets.indexOf(bracket);
-				if(index == -1)
-				{
-					view.getToolkit().beep();
-					return;
-				}
-				char openBracket = openBrackets.charAt(index);
-				int[] match = TextUtilities.locateBracketBackward(
-					buffer,dot,openBracket,bracket);
-				if(match == null)
-					view.getToolkit().beep();
-				else
-				{
-					int offset = textArea.getLineStartOffset(match[0])
-						+ match[1];
-					textArea.setCaretPosition(offset + 1);
-				}
 			}
 		}
 		catch(BadLocationException bl)
 		{
+			bl.printStackTrace();
 		}
+
+		view.getToolkit().beep();
 	}
 }

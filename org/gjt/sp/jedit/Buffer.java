@@ -191,7 +191,7 @@ public class Buffer extends DefaultSyntaxDocument
 			autosaveFile.delete();
 			modTime = file.lastModified();
 
-			fireBufferEvent(BufferEvent.DIRTY_CHANGED,this);
+			fireBufferEvent(BufferEvent.DIRTY_CHANGED);
 
 			returnValue = true;
 		}
@@ -248,7 +248,7 @@ public class Buffer extends DefaultSyntaxDocument
 		if(view != null)
 			GUIUtilities.hideWaitCursor(view);
 
-		fireBufferEvent(BufferEvent.DIRTY_CHANGED,this);
+		fireBufferEvent(BufferEvent.DIRTY_CHANGED);
 
 		init = false;
 	}
@@ -383,7 +383,7 @@ public class Buffer extends DefaultSyntaxDocument
 		}
 		else
 			dirty = false;
-		fireBufferEvent(BufferEvent.DIRTY_CHANGED,this);
+		fireBufferEvent(BufferEvent.DIRTY_CHANGED);
 	}
 
 	/**
@@ -476,7 +476,7 @@ public class Buffer extends DefaultSyntaxDocument
 				this.mode.enterView(view);
 		}
 
-		fireBufferEvent(BufferEvent.MODE_CHANGED,this);
+		fireBufferEvent(BufferEvent.MODE_CHANGED);
 	}
 
 	/**
@@ -590,8 +590,8 @@ public class Buffer extends DefaultSyntaxDocument
 			}
 		}
 		markers.addElement(markerN);
-		fireBufferEvent(BufferEvent.MARKERS_CHANGED,this);
-		fireBufferEvent(BufferEvent.DIRTY_CHANGED,this);
+		fireBufferEvent(BufferEvent.MARKERS_CHANGED);
+		fireBufferEvent(BufferEvent.DIRTY_CHANGED);
 	}
 
 	/**
@@ -609,8 +609,8 @@ loop:		for(int i = 0; i < markers.size(); i++)
 			if(marker.getName().equals(name))
 				markers.removeElementAt(i);
 		}
-		fireBufferEvent(BufferEvent.MARKERS_CHANGED,this);
-		fireBufferEvent(BufferEvent.DIRTY_CHANGED,this);
+		fireBufferEvent(BufferEvent.MARKERS_CHANGED);
+		fireBufferEvent(BufferEvent.DIRTY_CHANGED);
 	}
 	
 	/**
@@ -828,7 +828,7 @@ loop:		for(int i = 0; i < markers.size(); i++)
 	private int savedSelEnd;
 	private EventListenerList listenerList;
 
-	private void fireBufferEvent(int id, Buffer buffer)
+	private void fireBufferEvent(int id)
 	{
 		BufferEvent evt = null;
 		Object[] listeners = listenerList.getListenerList();
@@ -837,7 +837,7 @@ loop:		for(int i = 0; i < markers.size(); i++)
 			if(listeners[i] == BufferListener.class)
 			{
 				if(evt == null)
-					evt = new BufferEvent(id,buffer);
+					evt = new BufferEvent(id,this);
 				evt.fire((BufferListener)listeners[i+1]);
 			}
 		}
@@ -1144,6 +1144,7 @@ loop:		for(int i = 0; i < markers.size(); i++)
 	{
 		BufferedWriter out = new BufferedWriter(
 			new OutputStreamWriter(_out),IOBUFSIZE);
+		Segment lineSegment = new Segment();
 		String newline = (String)getProperty(LINESEP);
 		if(newline == null)
 			newline = System.getProperty("line.separator");
@@ -1152,8 +1153,10 @@ loop:		for(int i = 0; i < markers.size(); i++)
 		{
 			Element line = map.getElement(i);
 			int start = line.getStartOffset();
-			out.write(getText(start,line.getEndOffset() - start
-				- 1));
+			getText(start,line.getEndOffset() - start - 1,
+				lineSegment);
+			out.write(lineSegment.array,lineSegment.offset,
+				lineSegment.count);
 			out.write(newline);
 		}
 		out.close();
@@ -1335,6 +1338,9 @@ loop:		for(int i = 0; i < markers.size(); i++)
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.91  1999/07/16 23:45:48  sp
+ * 1.7pre6 BugFree version
+ *
  * Revision 1.90  1999/07/08 06:06:04  sp
  * Bug fixes and miscallaneous updates
  *

@@ -3,6 +3,38 @@
 ### by Slava Pestov <sp@gjt.org>
 ###
 
+###
+### TEXT AREA KEY BINDINGS
+###
+
+backspace.shortcut=BACK_SPACE
+delete.shortcut=DELETE
+overwrite.shortcut=INSERT
+home.shortcut=HOME
+end.shortcut=END
+select-home.shortcut=S+HOME
+select-end.shortcut=S+END
+prev-page.shortcut=PAGE_UP
+next-page.shortcut=PAGE_DOWN
+select-prev-page.shortcut=S+PAGE_UP
+select-next-page.shortcut=S+PAGE_DOWN
+prev-char.shortcut=LEFT
+prev-word.shortcut=C+LEFT
+select-prev-char.shortcut=S+LEFT
+select-prev-word.shortcut=CS+LEFT
+next-char.shortcut=RIGHT
+next-word.shortcut=C+RIGHT
+select-next-char.shortcut=S+RIGHT
+select-next-word.shortcut=CS+RIGHT
+prev-line.shortcut=UP
+select-prev-line.shortcut=S+UP
+next-line.shortcut=DOWN
+select-next-line.shortcut=S+DOWN
+
+###
+### MENU ITEM KEY BINDINGS
+###
+
 # Function keys
 help.shortcut=F1
 word-count.shortcut=F2
@@ -25,8 +57,8 @@ find-next.shortcut=C+g
 find-selection.shortcut=C+h
 goto-end-indent.shortcut=C+i
 join-lines.shortcut=C+j
-goto-line.shortcut=C+l
 exchange-anchor.shortcut=C+k
+goto-line.shortcut=C+l
 set-marker.shortcut=C+m
 new-file.shortcut=C+n
 open-file.shortcut=C+o

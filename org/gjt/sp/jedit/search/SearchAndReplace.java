@@ -175,6 +175,8 @@ public class SearchAndReplace
 			return false;
 		}
 
+		GUIUtilities.showWaitCursor(view);
+
 		try
 		{
 loop:			for(;;)
@@ -189,7 +191,10 @@ loop:			for(;;)
 					else
 						start = 0;
 					if(find(view,buffer,start))
+					{
+						GUIUtilities.hideWaitCursor(view);
 						return true;
+					}
 					repeat = false;
 				}
 
@@ -205,7 +210,7 @@ loop:			for(;;)
 					repeat = true;
 				}
 				else
-					return false;
+					break loop;
 			}
 		}
 		catch(Exception e)
@@ -217,6 +222,7 @@ loop:			for(;;)
 			GUIUtilities.error(view,"searcherror",args);
 		}
 
+		GUIUtilities.hideWaitCursor(view);
 		return false;
 	}
 
@@ -410,6 +416,9 @@ loop:			for(;;)
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.11  1999/07/16 23:45:49  sp
+ * 1.7pre6 BugFree version
+ *
  * Revision 1.10  1999/07/08 06:06:04  sp
  * Bug fixes and miscallaneous updates
  *

@@ -58,7 +58,16 @@ public class BufferListSet implements SearchFileSet
 	{
 		updateBufferList();
 		if(buffer == null)
+		{
+			Buffer viewBuffer = view.getBuffer();
+			for(int i = 0; i < buffers.length; i++)
+			{
+				buffer = buffers[i];
+				if(buffer == viewBuffer)
+					return buffer;
+			}
 			return buffers[0];
+		}
 		else
 		{
 			for(int i = 0; i < buffers.length; i++)
@@ -72,7 +81,6 @@ public class BufferListSet implements SearchFileSet
 				}
 			}
 		}
-		System.out.println("returning null");
 		return null;
 	}
 
@@ -108,6 +116,9 @@ public class BufferListSet implements SearchFileSet
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.5  1999/07/16 23:45:49  sp
+ * 1.7pre6 BugFree version
+ *
  * Revision 1.4  1999/06/15 05:03:54  sp
  * RMI interface complete, save all hack, views & buffers are stored as a link
  * list now

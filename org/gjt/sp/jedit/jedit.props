@@ -145,6 +145,9 @@ view.style.literal2=color:#650099 style:b
 view.style.operator=style:b
 view.style.invalid=color:red style:b
 
+# Don't use fast copyArea() for scrolling
+view.copyAreaDisabled=on
+
 ###
 ### EDIT MODES
 ###

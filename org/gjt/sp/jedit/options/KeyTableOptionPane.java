@@ -19,11 +19,12 @@
 
 package org.gjt.sp.jedit.options;
 
-import org.gjt.sp.jedit.*;
 import javax.swing.table.*;
 import javax.swing.*;
 import java.awt.*;
 import java.util.Vector;
+import org.gjt.sp.jedit.textarea.DefaultInputHandler;
+import org.gjt.sp.jedit.*;
 
 /**
  * Key binding editor option pane.
@@ -72,13 +73,29 @@ class KeyTableModel extends AbstractTableModel
 
 	KeyTableModel()
 	{
+		String[] textActions = DefaultInputHandler.ACTION_NAMES;
 		EditAction[] actions = jEdit.getActions();
-		bindings = new Vector(actions.length);
 
+		bindings = new Vector(textActions.length + actions.length);
+
+		// Add text area key bindings
+		for(int i = 0; i < textActions.length; i++)
+		{
+			String name = textActions[i];
+			String label = jEdit.getProperty(name + ".label");
+			// Skip certain actions this way (ENTER, TAB)
+			if(label == null)
+				continue;
+			String shortcut = jEdit.getProperty(name + ".shortcut");
+			addKeyBinding(new KeyBinding(name,label,shortcut));
+		}
+
+		// Add menu item key bindings
 		for(int i = 0; i < actions.length; i++)
 		{
 			String name = actions[i].getName();
 			String label = jEdit.getProperty(name + ".label");
+			// Skip certain actions this way (ENTER, TAB)
 			if(label == null)
 				continue;
 			label = GUIUtilities.prettifyMenuLabel(label);
@@ -121,6 +138,7 @@ class KeyTableModel extends AbstractTableModel
 		if(col != 1)
 			return;
 		((KeyBinding)bindings.elementAt(row)).shortcut = (String)value;
+		fireTableRowsUpdated(row,row);
 	}
 
 	public String getColumnName(int index)
@@ -194,6 +212,9 @@ class KeyTableModel extends AbstractTableModel
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.3  1999/07/16 23:45:49  sp
+ * 1.7pre6 BugFree version
+ *
  * Revision 1.2  1999/05/04 07:45:22  sp
  * Event mutlicaster is now re-entrant, key binding editor updates
  *

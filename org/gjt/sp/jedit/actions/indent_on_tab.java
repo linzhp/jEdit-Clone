@@ -50,8 +50,7 @@ public class indent_on_tab extends EditAction
                 if("yes".equals(buffer.getProperty("noTabs")))
                 {
 			Element map = buffer.getDefaultRootElement();
-			Element lineElement = map.getElement(map.getElementIndex(
-				selStart));
+			Element lineElement = map.getElement(textArea.getSelectionStartLine());
 
 			try
 			{

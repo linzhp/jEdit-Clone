@@ -46,12 +46,6 @@ public class indent_on_enter extends EditAction
 			&& "on".equals(buffer.getProperty("indentOnEnter")))
 		{
 			mode.indentLine(buffer,view,selStart);
-			/*
-			Element map = buffer.getDefaultRootElement();
-			Element lineElement = map.getElement(
-				map.getElementOffset(selStart));
-			textArea.setCaretPosition(lineElement.getEndOffset() - 1);
-			*/
                 }
         }
 }

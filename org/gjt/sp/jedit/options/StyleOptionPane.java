@@ -203,6 +203,7 @@ class ColorTableModel extends AbstractTableModel
 		ColorChoice ch = (ColorChoice)colorChoices.elementAt(row);
 		if(col == 1)
 			ch.color = (Color)value;
+		fireTableRowsUpdated(row,row);
 	}
 
 	public String getColumnName(int index)
@@ -338,6 +339,7 @@ class StyleTableModel extends AbstractTableModel
 		StyleChoice ch = (StyleChoice)styleChoices.elementAt(row);
 		if(col == 1)
 			ch.style = (SyntaxStyle)value;
+		fireTableRowsUpdated(row,row);
 	}
 
 	public String getColumnName(int index)
@@ -537,6 +539,9 @@ implements ActionListener, KeyListener
 /**
  * ChangeLog:
  * $Log$
+ * Revision 1.5  1999/07/16 23:45:49  sp
+ * 1.7pre6 BugFree version
+ *
  * Revision 1.4  1999/07/08 06:06:04  sp
  * Bug fixes and miscallaneous updates
  *

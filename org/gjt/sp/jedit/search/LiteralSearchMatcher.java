@@ -38,7 +38,10 @@ public class LiteralSearchMatcher implements SearchMatcher
 	public LiteralSearchMatcher(String search, String replace,
 		boolean ignoreCase)
 	{
-		this.search = search;
+		if(ignoreCase)
+			this.search = search.toUpperCase().toCharArray();
+		else
+			this.search = search.toCharArray();
 		this.replace = replace;
 		this.ignoreCase = ignoreCase;
 	}
@@ -53,19 +56,62 @@ public class LiteralSearchMatcher implements SearchMatcher
 	 */
 	public int[] nextMatch(String text)
 	{
-		int searchLen = search.length();
-		int len = text.length() - searchLen + 1;
+		char[] textChars = text.toCharArray();
 
-		for(int i = 0; i < len; i++)
+		int searchLen = search.length;
+		int len = textChars.length - searchLen + 1;
+
+		int result = -1;
+
+		if(ignoreCase)
 		{
-			if(text.regionMatches(ignoreCase,i,search,0,searchLen))
+loop:			for(int i = 0; i < len; i++)
 			{
-				int[] result = { i, i + searchLen };
-				return result;
+				if(Character.toUpperCase(textChars[i]) == search[0])
+				{
+					for(int j = 1; j < searchLen; j++)
+					{
+						if(Character.toUpperCase(textChars[i+j])
+							!= search[j])
+						{
+							i += j - 1;
+							continue loop;
+						}
+					}
+
+					result = i;
+					break loop;
+				}
+			}
+		}
+		else
+		{
+loop:			for(int i = 0; i < len; i++)
+			{
+				if(textChars[i] == search[0])
+				{
+					for(int j = 1; j < searchLen; j++)
+					{
+						if(textChars[i+j] != search[j])
+						{
+							i += j - 1;
+							continue loop;
+						}
+					}
+
+					result = i;
+					break loop;
+				}
 			}
 		}
 
-		return null;
+		if(result == -1)
+			return null;
+		else
+		{
+			int[] match = { result, result + searchLen };
+			return match;
+		}
 	}
 
 	/**
@@ -76,37 +122,82 @@ public class LiteralSearchMatcher implements SearchMatcher
 	public String substitute(String text)
 	{
 		StringBuffer buf = null;
+		char[] textChars = text.toCharArray();
 		int lastMatch = 0;
-		int searchLen = search.length();
-		int len = text.length() - searchLen + 1;
+		int searchLen = search.length;
+		int len = textChars.length - searchLen + 1;
 		boolean matchFound = false;
 
-		int i = 0;
-		while(i < len)
+		if(ignoreCase)
 		{
-			if(text.regionMatches(ignoreCase,i,search,0,searchLen))
+loop:			for(int i = 0; i < len;)
 			{
-				if(buf == null)
-					buf = new StringBuffer();
-				if(i != lastMatch)
-					buf.append(text.substring(lastMatch,i));
-				buf.append(replace);
-				i += searchLen;
-				lastMatch = i;
-				matchFound = true;
+				if(Character.toUpperCase(textChars[i]) == search[0])
+				{
+					for(int j = 1; j < searchLen; j++)
+					{
+						if(Character.toUpperCase(textChars[i+j])
+							!= search[j])
+						{
+							i += j;
+							continue loop;
+						}
+					}
+
+					if(buf == null)
+						buf = new StringBuffer();
+					if(i != lastMatch)
+						buf.append(textChars,lastMatch,i - lastMatch);
+					buf.append(replace);
+					i += searchLen;
+					lastMatch = i;
+					matchFound = true;
+				}
+				else
+					i++;
 			}
-			else
-				i++;
 		}
-		if(!matchFound)
+		else
+		{
+loop:			for(int i = 0; i < len;)
+			{
+				if(textChars[i] == search[0])
+				{
+					for(int j = 1; j < searchLen; j++)
+					{
+						if(textChars[i+j] != search[j])
+						{
+							i += j;
+							continue loop;
+						}
+					}
+
+					if(buf == null)
+						buf = new StringBuffer();
+					if(i != lastMatch)
+						buf.append(textChars,lastMatch,i - lastMatch);
+					buf.append(replace);
+					i += searchLen;
+					lastMatch = i;
+					matchFound = true;
+				}
+				else
+					i++;
+			}
+		}
+
+		if(matchFound)
+		{
+			if(lastMatch != textChars.length)
+				buf.append(textChars,lastMatch,textChars.length - lastMatch);
+			return buf.toString();
+		}
+		else
 			return null;
-		if(text.length() != lastMatch)
-			buf.append(text.substring(lastMatch,text.length()));
-		return buf.toString();
 	}
 
 	// private members
-	private String search;
+	private char[] search;
 	private String replace;
 	private boolean ignoreCase;
 }
@@ -114,6 +205,9 @@ public class LiteralSearchMatcher implements SearchMatcher
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.3  1999/07/16 23:45:49  sp
+ * 1.7pre6 BugFree version
+ *
  * Revision 1.2  1999/06/06 05:05:25  sp
  * Search and replace tweaks, Perl/Shell Script mode updates
  *

@@ -36,15 +36,14 @@ public class prev_paragraph extends EditAction
 		View view = getView(evt);
 		Buffer buffer = view.getBuffer();
 		Element map = buffer.getDefaultRootElement();
-		int lineNo = map.getElementIndex(view.getTextArea()
-			.getCaretPosition());
+		int lineNo = view.getTextArea().getCaretLine();
 		if(lineNo == 0)
 		{
 			view.getTextArea().setCaretPosition(0);
 			return;
 		}
 		int prevParagraph = buffer.locateParagraphStart(lineNo-1);
-		view.getTextArea().setCaretPosition(buffer.getDefaultRootElement()
-			.getElement(prevParagraph).getStartOffset());
+		view.getTextArea().setCaretPosition(
+			map.getElement(prevParagraph).getStartOffset());
 	}
 }

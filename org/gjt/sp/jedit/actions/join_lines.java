@@ -41,8 +41,7 @@ public class join_lines extends EditAction
 		}
 		Buffer buffer = view.getBuffer();
 		Element map = buffer.getDefaultRootElement();
-		int lineNo = map.getElementIndex(view.getTextArea()
-			.getCaretPosition());
+		int lineNo = view.getTextArea().getCaretLine();
 		Element lineElement = map.getElement(lineNo);
 		int start = lineElement.getStartOffset();
 		int end = lineElement.getEndOffset();

@@ -251,21 +251,23 @@ implements ActionListener, KeyListener, Runnable
 
 			Buffer buffer = view.getBuffer();
 			
-			int start, end;
+			int start, end, startLine, endLine;
 			if(selectionOnly)
 			{
 				start = view.getTextArea().getSelectionStart();
 				end = view.getTextArea().getSelectionEnd();
+				startLine = view.getTextArea().getSelectionStartLine();
+				endLine = view.getTextArea().getSelectionEndLine();
 			}
 			else
 			{
 				start = 0;
 				end = buffer.getLength();
+				startLine = 0;
+				endLine = buffer.getDefaultRootElement().getElementCount();
 			}
 			
 			Element map = buffer.getDefaultRootElement();
-			int startLine = map.getElementIndex(start);
-			int endLine = map.getElementIndex(end);
 
 			for(int i = startLine; i <= endLine; i++)
 			{

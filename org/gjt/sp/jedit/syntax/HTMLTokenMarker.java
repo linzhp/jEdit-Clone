@@ -68,8 +68,8 @@ loop:		for(int i = offset; i < length; i++)
 						backslash = false;
 						token = JAVASCRIPT;
 						i++;
-						addToken(i1 - lastOffset,Token.COMMENT2);
-						lastOffset = i1;
+						addToken((i + 1) - lastOffset,Token.COMMENT2);
+						lastOffset = (i + 1);
 						break;
 					}
 				}
@@ -252,6 +252,9 @@ loop:		for(int i = offset; i < length; i++)
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.29  1999/07/16 23:45:49  sp
+ * 1.7pre6 BugFree version
+ *
  * Revision 1.28  1999/06/05 00:22:58  sp
  * LGPL'd syntax package
  *

@@ -69,7 +69,7 @@ The following editing shortcuts are supported by the main editor
 component but are not listed in the menu bar.<p>
 
 If Shift is held down in combination with any
-of these keys, the selection is extended, rather than the caret
+key that moves the caret, the selection is extended, rather than the caret
 being moved.
 
 <table border=3>
@@ -107,7 +107,7 @@ beginning of the document.
 
 <tr>
 <td>End</td> <td>This behaves a little differently from the End keys
-of most other text editors - in fact, it emulates the Home key of the Brief
+of most other text editors - in fact, it emulates the End key of the Brief
 editor.<p>
 Pressing End when the caret is in the middle of the current line will move it
 to the end of the line. When the caret is on the end of the
@@ -117,11 +117,11 @@ end of the document.</td>
 </tr>
 
 <tr>
-<td>PageUp or A+Up</td> <td>Moves the caret up one screenful of text.</td>
+<td>PageUp</td> <td>Moves the caret up one screenful of text.</td>
 </tr>
 
 <tr>
-<td>PageDown or A+Down</td> <td>Moves the caret down one screenful of text.</td>
+<td>PageDown</td> <td>Moves the caret down one screenful of text.</td>
 </tr>
 
 </table>
@@ -130,7 +130,7 @@ end of the document.</td>
 <h1>Customizing Keyboard Shortcuts</h1>
 </a>
 
-Menu item shortcuts can be customized in
+Menu item and text area shortcuts can be customized in
 `File-&gt;Global Options-&gt;Shortcuts'.<p>
 
 Some notes about the key binding editor:
@@ -141,11 +141,11 @@ this file - <i>modifiers</i>+<i>key</i>
 <li>The modifiers is optional - so for example you can bind to function
 keys, etc
 <li>Each key binding can consist of up to two key strokes
-<li>To reset to the default keys, you must delete your .jedit-props
+<li>To reset to the default keys, you must delete your $HOME/.jedit/properties
 file, or if you don't want to lose your settings, open it with a
 text editor and remove all <i>xxx</i>.shortcut entires
-<li>Text area built in shortcuts (the arrow keys, Home, End, etc) cannot currently
-be changed. This will be implmented in future jEdit versions.
+<li>Changes to the key bindings take effect immediately, however the menu
+item labels are not updated in currently opened views
 </ul>
 
 </body>

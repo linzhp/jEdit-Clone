@@ -36,8 +36,7 @@ public class goto_end_indent extends EditAction
 		View view = getView(evt);
 		Buffer buffer = view.getBuffer();
 		Element map = buffer.getDefaultRootElement();
-		Element lineElement = map.getElement(map.getElementIndex(
-			view.getTextArea().getCaretPosition()));
+		Element lineElement = map.getElement(view.getTextArea().getCaretLine());
 		int start = lineElement.getStartOffset();
 		int end = lineElement.getEndOffset();
 		try

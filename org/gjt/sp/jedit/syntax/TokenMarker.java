@@ -56,12 +56,53 @@ public abstract class TokenMarker
 			prev = lineInfo[lineIndex - 1];
 
 		byte oldToken = info.token;
-
 		byte token = markTokensImpl(prev == null ?
 			Token.NULL : prev.token,line,lineIndex);
 
 		info.token = token;
-		nextLineRequested = (oldToken != token);
+
+		/*
+		 * This is a foul hack. It stops nextLineRequested
+		 * from being cleared if the same line is marked twice.
+		 *
+		 * Why is this necessary? It's all JEditTextArea's fault.
+		 * When something is inserted into the text, firing a
+		 * document event, the insertUpdate() method shifts the
+		 * caret (if necessary) by the amount inserted.
+		 *
+		 * All caret movement is handled by the select() method,
+		 * which eventually pipes the new position to scrollTo()
+		 * and calls repaint().
+		 *
+		 * Note that at this point in time, the new line hasn't
+		 * yet been painted; the caret is moved first.
+		 *
+		 * scrollTo() calls offsetToX(), which tokenizes the line
+		 * unless it is being called on the last line painted
+		 * (in which case it uses the text area's painter cached
+		 * token list). What scrollTo() does next is irrelevant.
+		 *
+		 * After scrollTo() has done it's job, repaint() is
+		 * called, and eventually we end up in paintLine(), whose
+		 * job is to paint the changed line. It, too, calls
+		 * markTokens().
+		 *
+		 * The problem was that if the line started a multiline
+		 * token, the first markTokens() (done in offsetToX())
+		 * would set nextLineRequested (because the line end
+		 * token had changed) but the second would clear it
+		 * (because the line was the same that time) and therefore
+		 * paintLine() would never know that it needed to repaint
+		 * subsequent lines.
+		 *
+		 * This bug took me ages to track down, that's why I wrote
+		 * all the relevant info down so that others wouldn't
+		 * duplicate it.
+		 */
+		 if(!(lastLine == lineIndex && nextLineRequested))
+			nextLineRequested = (oldToken != token);
+
+		lastLine = lineIndex;
 
 		addToken(0,Token.END);
 
@@ -120,7 +161,9 @@ public abstract class TokenMarker
 			lineInfo.length - len);
 
 		for(int i = index + lines - 1; i >= index; i--)
+		{
 			lineInfo[i] = new LineInfo();
+		}
 	}
 	
 	/**
@@ -177,6 +220,11 @@ public abstract class TokenMarker
 	protected int length;
 
 	/**
+	 * The last tokenized line.
+	 */
+	protected int lastLine;
+
+	/**
 	 * True if the next line should be painted.
 	 */
 	protected boolean nextLineRequested;
@@ -188,6 +236,7 @@ public abstract class TokenMarker
 	 */
 	protected TokenMarker()
 	{
+		lastLine = -1;
 	}
 
 	/**
@@ -292,6 +341,9 @@ public abstract class TokenMarker
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.27  1999/07/16 23:45:49  sp
+ * 1.7pre6 BugFree version
+ *
  * Revision 1.26  1999/07/05 04:38:39  sp
  * Massive batch of changes... bug fixes, also new text component is in place.
  * Have fun

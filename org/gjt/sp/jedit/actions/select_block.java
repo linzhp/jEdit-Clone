@@ -1,6 +1,6 @@
 /*
  * select_block.java
- * Copyright (C) 1998 Slava Pestov
+ * Copyright (C) 1998, 1999 Slava Pestov
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -19,13 +19,16 @@
 
 package org.gjt.sp.jedit.actions;
 
-import javax.swing.text.BadLocationException;
-import javax.swing.text.Element;
 import java.awt.event.ActionEvent;
+import org.gjt.sp.jedit.textarea.JEditTextArea;
 import org.gjt.sp.jedit.*;
 
 public class select_block extends EditAction
 {
+	// Useful to avoid lots of switch() statements
+	public final String openBrackets = "([{";
+	public final String closeBrackets = ")]}";
+
 	public select_block()
 	{
 		super("select-block");
@@ -35,125 +38,67 @@ public class select_block extends EditAction
 	{
 		View view = getView(evt);
 		Buffer buffer = view.getBuffer();
-		String openBrackets = (String)buffer
-			.getProperty("openBrackets");
-		String closeBrackets = (String)buffer
-			.getProperty("closeBrackets");
-		if(closeBrackets.length() != openBrackets.length())
+		JEditTextArea textArea = view.getTextArea();
+
+		int start = textArea.getSelectionStart();
+		int end = textArea.getSelectionEnd();
+		String text = textArea.getText(0,buffer.getLength());
+
+		// Scan backwards, trying to find a bracket
+		int count = 1;
+		char openBracket = '\0';
+		char closeBracket = '\0';
+
+		// We can't do the backward scan if start == 0, so just
+		// select the entire document
+		if(start == 0)
 		{
-			view.getToolkit().beep();
+			textArea.select(0,buffer.getLength());
 			return;
 		}
-		int count;
-		int blockStart = 0;
-		int blockEnd = buffer.getLength();
-		int selStart = view.getTextArea().getSelectionStart();
-		int selEnd = view.getTextArea().getSelectionEnd();
-		Element map = buffer.getDefaultRootElement();
-		int lineNo = map.getElementIndex(selStart);
-		Element lineElement = map.getElement(lineNo);
-		int start = lineElement.getStartOffset();
-		try
+
+backward_scan:	while(--start > 0)
 		{
-			int offset = scanBackwardLine(buffer.getText(start,
-				selStart - start),openBrackets,
-						      closeBrackets,0);
-			count = -1 - offset;
-			if(offset >= 0)
+			char c = text.charAt(start);
+			int index = openBrackets.indexOf(c);
+			if(index != -1)
 			{
-				blockStart = start + offset;
-				count = 0;
-			}
-			else
-			{
-				for(int i = lineNo - 1; i >= 0; i--)
+				if(--count == 0)
 				{
-					lineElement = map.getElement(i);
-					start = lineElement.getStartOffset();
-					offset = scanBackwardLine(buffer.getText(
-						start,lineElement
-						.getEndOffset() - start),
-						openBrackets,closeBrackets,
-						count);
-					count = -1 - offset;
-					if(offset >= 0)
-					{
-						blockStart = start + offset;
-						count = 0;
-						break;
-					}
+					openBracket = c;
+					closeBracket = closeBrackets.charAt(index);
+					break backward_scan;
 				}
 			}
-			lineNo = map.getElementIndex(selEnd);
-			lineElement = map.getElement(lineNo);
-			offset = scanForwardLine(buffer.getText(selEnd,
-				lineElement.getEndOffset() - selEnd),
-				openBrackets,closeBrackets,count);
-			count = -1 - offset;
-			if(offset >= 0)
-			{
-				blockEnd = selEnd + offset;
-				count = 0;
-			}
-			else
-			{
-				for(int i = lineNo + 1; i < map.getElementCount();
-				    i++)
-				{
-					lineElement = map.getElement(i);
-					start = lineElement.getStartOffset();
-					offset = scanForwardLine(buffer.getText(
-						start,lineElement.getEndOffset()
-						- start),openBrackets,
-								 closeBrackets,
-								 count);
-					count = -1 - offset;
-					if(offset >= 0)
-					{
-						blockEnd = start + offset;
-						count = 0;
-						break;
-					}
-				}
-			}
-		}
-		catch(BadLocationException bl)
-		{
-		}
-		view.getTextArea().select(blockStart,blockEnd);
-	}
-
-	private int scanBackwardLine(String line, String openBrackets,
-		String closeBrackets, int count)
-	{
-		for(int i = line.length() - 1; i >= 0; i--)
-		{
-			char c = line.charAt(i);
-			if(closeBrackets.indexOf(c) != -1)
-				count++;
-			else if(openBrackets.indexOf(c) != -1)
-			{
-				if(--count < 0)
-					return i;
-			}
-		}
-		return -1 - count;
-	}
-
-	private int scanForwardLine(String line, String openBrackets,
-		String closeBrackets, int count)
-	{
-		for(int i = 0; i < line.length(); i++)
-		{
-			char c = line.charAt(i);
-			if(openBrackets.indexOf(c) != -1)
-				count++;
 			else if(closeBrackets.indexOf(c) != -1)
-			{
-				if(--count < 0)
-					return i + 1;
-			}
+				count++;
 		}
-		return -1 - count;
+
+		// Reset count
+		count = 1;
+
+		// Scan forward, matching that bracket
+		if(openBracket == '\0')
+			end = buffer.getLength();
+		else
+		{
+forward_scan:		do
+			{
+				char c = text.charAt(end);
+				if(c == closeBracket)
+				{
+					if(--count == 0)
+					{
+						end++;
+						break forward_scan;
+					}
+				}
+				else if(c == openBracket)
+					count++;
+			}
+			while(++end < buffer.getLength());
+		}
+
+		textArea.select(start,end);
 	}
 }

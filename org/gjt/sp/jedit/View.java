@@ -122,9 +122,12 @@ public class View extends JFrame
 			jEdit.getProperty("view.fgColor")));
 		painter.setBlockCaretEnabled("on".equals(jEdit.getProperty(
 			"view.blockCaret")));
+		painter.setCopyAreaBroken("on".equals(jEdit.getProperty(
+			"view.copyAreaDisabled")));
 
 		textArea.setCaretBlinkEnabled("on".equals(jEdit.getProperty(
 			"view.caretBlink")));
+
 		try
 		{
 			textArea.setElectricScroll(Integer.parseInt(jEdit
@@ -333,8 +336,10 @@ public class View extends JFrame
 		this.buffer = buffer;
 
 		textArea.setDocument(buffer);
-		textArea.select(buffer.getSavedSelStart(),
-			buffer.getSavedSelEnd());
+
+		int start = Math.min(buffer.getLength(),buffer.getSavedSelStart());
+		int end = Math.min(buffer.getLength(),buffer.getSavedSelEnd());
+		textArea.select(start,end);
 
 		updateMarkerMenus();
 		updateTitle();
@@ -347,7 +352,7 @@ public class View extends JFrame
 		focusOnTextArea();
 
 		// Fire event
-		fireViewEvent(ViewEvent.BUFFER_CHANGED,this,oldBuffer);
+		fireViewEvent(ViewEvent.BUFFER_CHANGED,oldBuffer);
 	}
 
 	/**
@@ -524,16 +529,8 @@ public class View extends JFrame
 		textArea.setRightClickPopup(GUIUtilities
 			.loadPopupMenu(this,"view.context"));
 
-		// Register key bindings
-		InputHandler inputHandler = textArea.getInputHandler();
-		EditAction[] actions = jEdit.getActions();
-		for(int i = 0; i < actions.length; i++)
-		{
-			String binding = jEdit.getProperty(actions[i]
-				.getName() + ".shortcut");
-			if(binding != null)
-				inputHandler.addKeyBinding(binding,actions[i]);
-		}
+		// Set the input handler
+		textArea.setInputHandler(jEdit.getInputHandler());
 
 		propertiesChanged();
 
@@ -629,7 +626,7 @@ public class View extends JFrame
 	private EditorListener editorListener;
 	private boolean closed;
 
-	private void fireViewEvent(int id, View view, Buffer buffer)
+	private void fireViewEvent(int id, Buffer buffer)
 	{
 		ViewEvent evt = null;
 		Object[] listeners = listenerList.getListenerList();
@@ -638,7 +635,7 @@ public class View extends JFrame
 			if(listeners[i] == ViewListener.class)
 			{
 				if(evt == null)
-					evt = new ViewEvent(id,view,buffer);
+					evt = new ViewEvent(id,this,buffer);
 				evt.fire((ViewListener)listeners[i+1]);
 			}
 		}
@@ -758,6 +755,9 @@ public class View extends JFrame
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.86  1999/07/16 23:45:49  sp
+ * 1.7pre6 BugFree version
+ *
  * Revision 1.85  1999/07/08 06:06:04  sp
  * Bug fixes and miscallaneous updates
  *

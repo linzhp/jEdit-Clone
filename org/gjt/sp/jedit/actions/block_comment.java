@@ -46,10 +46,10 @@ public class block_comment extends EditAction
 		comment = comment + ' ';
 		int selectionStart = textArea.getSelectionStart();
 		int selectionEnd = textArea.getSelectionEnd();
-		Element map = buffer.getDefaultRootElement();
-		int startLine = map.getElementIndex(selectionStart);
-		int endLine = map.getElementIndex(selectionEnd);
+		int startLine = textArea.getSelectionStartLine();
+		int endLine = textArea.getSelectionEndLine();
 		buffer.beginCompoundEdit();
+		Element map = buffer.getDefaultRootElement();
 		try
 		{
 			buffer.insertString(selectionStart,comment,null);

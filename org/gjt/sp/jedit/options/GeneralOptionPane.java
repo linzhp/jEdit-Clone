@@ -138,6 +138,13 @@ public class GeneralOptionPane extends OptionPane
 		showFullPath.getModel().setSelected("on".equals(jEdit.getProperty(
 			"view.showFullPath")));
 		addComponent(showFullPath);
+
+		/* Disable copyArea() */
+		copyAreaDisabled = new JCheckBox(jEdit.getProperty(
+			"options.general.copyAreaDisabled"));
+		copyAreaDisabled.getModel().setSelected("on".equals(jEdit.getProperty(
+			"view.copyAreaDisabled")));
+		addComponent(copyAreaDisabled);
 	}
 
 	public void save()
@@ -183,6 +190,8 @@ public class GeneralOptionPane extends OptionPane
 			.isSelected() ? "on" : "off");
 		jEdit.setProperty("view.showFullPath",showFullPath.getModel()
 			.isSelected() ? "on" : "off");
+		jEdit.setProperty("view.copyAreaDisabled",copyAreaDisabled.getModel()
+			.isSelected() ? "on" : "off");
 	}
 
 	// private members
@@ -200,4 +209,5 @@ public class GeneralOptionPane extends OptionPane
 	private JCheckBox showTips;
 	private JCheckBox showToolbar;
 	private JCheckBox showFullPath;
+	private JCheckBox copyAreaDisabled;
 }

@@ -42,8 +42,7 @@ public class delete_paragraph extends EditAction
 		}
 		Buffer buffer = view.getBuffer();
 		Element map = buffer.getDefaultRootElement();
-		int lineNo = map.getElementIndex(view.getTextArea()
-			.getCaretPosition());
+		int lineNo = view.getTextArea().getCaretLine();
 		int start = map.getElement(buffer.locateParagraphStart(lineNo))
 			.getStartOffset();
 		int end = map.getElement(buffer.locateParagraphEnd(lineNo))

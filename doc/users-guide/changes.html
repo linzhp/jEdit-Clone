@@ -4,11 +4,73 @@
 <h1>Version History</h1>
 
 <ul>
+<li><a href=#17pre6>Version 1.7pre6</a>
 <li><a href=#17pre5>Version 1.7pre5</a>
 <li><a href=#17pre4>Version 1.7pre4</a>
 <li><a href=#17pre3>Version 1.7pre3</a>
 <li><a href=#17pre2>Version 1.7pre2</a>
 <li><a href=#17pre1>Version 1.7pre1</a>
+</ul>
+
+<a name=17pre6>
+<h1>Version 1.7pre6</h1>
+</a>
+
+<h2>API Changes</h2>
+
+<ul>
+<li>The various bracket matching routines scattered around the code have been
+merged into a single TextUtilities.findMatchingBracket()
+</ul>
+
+<h2>Enhancements</h2>
+
+<ul>
+<li>The busy cursor is now displayed while loading the options dialog box
+(which can take a while)
+<li>The key binding editor can now change text area key bindings
+(caret movement commands, page up, page down, etc)
+<li>You can now use S+PageUp/S+PageDown to select screenfuls of text
+<li>Minor tweaks to the HOME and END keys
+<li>Literal search and replace is now performed faster
+<li>Scrolling by screenfuls (with PageUp/PageDown, for example) is now
+performed faster
+<li>Files are saved a bit faster
+<li>Javadocs are now provided for the text area classes
+<li>jEdit can be started with the -quit switch to exit the currently
+running instance using RMI (this is primarily of use to session
+managers and the like)
+</ul>
+
+<h2>Bug Fixes</h2>
+
+<ul>
+<li>`make clean' left behind unnecessary files in the remote package
+<li>Changing the font of the text area didn't work properly until jEdit
+was restarted
+<li>Scrolling and repainting problems would manifest when making changes
+at the end of the document
+<li>The END key could throw an exception if the entire document was
+visible on the viewscreen
+<li>The buffer list set works better with find next
+<li>Multiline tokens were not correctly colorized sometimes
+<li>When switching to a buffer for the first time, the scroll bar wasn't
+updated
+<li>Double clicking on an empty line would throw an exception
+<li>Scrolling didn't work with JDK 1.2. A workaround can be enabled in
+File-&gt;Global Options-&gt;General (it is on by default, but those using
+JDK 1.1 can turn it off for slightly faster scrolling)
+<li>Editing multiline tokens at the end of the document could throw
+NullPointerExceptions
+<li>HTML mode didn't currectly colorize /* */ comments in
+&lt;script&gt; tags
+<li>Batch file could create invalid tokens under certain circumstances
+<li>The shortcut and style option panes didn't update their tables properly
+<li>Text area was created too wide
+<li>Scrolling was very slow (and it didn't work at all if the blinking
+caret was disabled)
+<li>The latest version plugin would check for a new version even if `no' was
+specified
 </ul>
 
 <a name=17pre5>

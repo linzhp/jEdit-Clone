@@ -42,8 +42,8 @@ public class delete_end_line extends EditAction
 		int caret = view.getTextArea().getCaretPosition();
 		Buffer buffer = view.getBuffer();
 		Element map = buffer.getDefaultRootElement();
-		Element lineElement = map.getElement(map.getElementIndex(
-			caret));
+		Element lineElement = map.getElement(
+			view.getTextArea().getCaretLine());
 		try
 		{
 			buffer.remove(caret,lineElement.getEndOffset()

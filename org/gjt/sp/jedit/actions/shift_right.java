@@ -49,10 +49,8 @@ public class shift_right extends EditAction
 			boolean noTabs = ("yes".equals(buffer.getProperty(
 				"noTabs")));
 			Element map = buffer.getDefaultRootElement();
-			int start = map.getElementIndex(textArea
-				.getSelectionStart());
-			int end = map.getElementIndex(textArea
-				.getSelectionEnd());
+			int start = textArea.getSelectionStartLine();
+			int end = textArea.getSelectionEndLine();
 			for(int i = start; i <= end; i++)
 			{
 				Element lineElement = map.getElement(i);

@@ -22,163 +22,126 @@ package org.gjt.sp.jedit.textarea;
 import javax.swing.text.*;
 
 /**
- * Class with several bracket matching functions used by the text area component.
+ * Class with several utility functions used by the text area component.
  * @author Slava Pestov
  * @version $Id$
  */
 public class TextUtilities
 {
 	/**
-	 * Finds the previous instance of an opening bracket in the document.
-	 * The closing bracket is needed as well to handle nested brackets
-	 * properly.
-	 * @param doc The document to search in
-	 * @param dot The starting position
-	 * @param openBracket The opening bracket
-	 * @param closeBracket The closing bracket
-	 * @return An integer array, the first element being the line the
-	 * second being the offset
-	 * @exception BadLocationException if `dot' is out of range
+	 * Returns the offset of the bracket matching the one at the
+	 * specified offset of the document, or -1 if the bracket is
+	 * unmatched (or if the character is not a bracket).
+	 * @param doc The document
+	 * @param offset The offset
+	 * @exception BadLocationException If an out-of-bounds access
+	 * was attempted on the document text
 	 */
-	public static int[] locateBracketBackward(Document doc, int dot,
-		char openBracket, char closeBracket)
+	public static int findMatchingBracket(Document doc, int offset)
 		throws BadLocationException
 	{
+		if(doc.getLength() == 0)
+			return -1;
+		char c = doc.getText(offset,1).charAt(0);
+		char cprime; // c` - corresponding character
+		boolean direction; // true = back, false = forward
+
+		switch(c)
+		{
+		case '(': cprime = ')'; direction = false; break;
+		case ')': cprime = '('; direction = true; break;
+		case '[': cprime = ']'; direction = false; break;
+		case ']': cprime = '['; direction = true; break;
+		case '{': cprime = '}'; direction = false; break;
+		case '}': cprime = '{'; direction = true; break;
+		default: return -1;
+		}
+
 		int count;
-		Element map = doc.getDefaultRootElement();
 
-		// check current line
-		int lineNo = map.getElementIndex(dot);
-		Element lineElement = map.getElement(lineNo);
-		int start = lineElement.getStartOffset();
-		int offset = scanBackwardLine(doc.getText(start,dot - start),
-			openBracket,closeBracket,0);
-		count = -offset - 1;
-		if(offset >= 0)
-		{
-			int[] returnValue = { lineNo, offset };
-			return returnValue;
-		}
+		// How to merge these two cases is left as an exercise
+		// for the reader.
 
-		// check previous lines
-		for(int i = lineNo - 1; i >= 0; i--)
+		// Go back or forward
+		if(direction)
 		{
-			lineElement = map.getElement(i);
-			start = lineElement.getStartOffset();
-			offset = scanBackwardLine(doc.getText(start,
-				lineElement.getEndOffset() - start),
-				openBracket,closeBracket,count);
-			count = -offset - 1;
-			if(offset >= 0)
+			// Count is 1 initially because we have already
+			// `found' one closing bracket
+			count = 1;
+
+			// Get text[0,offset-1];
+			String text = doc.getText(0,offset);
+
+			// Scan backwards
+			for(int i = offset - 1; i >= 0; i--)
 			{
-				int[] returnValue = { i, offset };
-				return returnValue;
+				// If text[i] == c, we have found another
+				// closing bracket, therefore we will need
+				// two opening brackets to complete the
+				// match.
+				char x = text.charAt(i);
+				if(x == c)
+					count++;
+
+				// If text[i] == cprime, we have found a
+				// opening bracket, so we return i if
+				// --count == 0
+				else if(x == cprime)
+				{
+					if(--count == 0)
+						return i;
+				}
+			}
+		}
+		else
+		{
+			// Count is 1 initially because we have already
+			// `found' one opening bracket
+			count = 1;
+
+			// So we don't have to + 1 in every loop
+			offset++;
+
+			// Number of characters to check
+			int len = doc.getLength() - offset;
+
+			// Get text[offset+1,len];
+			String text = doc.getText(offset,len);
+
+			// Scan forwards
+			for(int i = 0; i < len; i++)
+			{
+				// If text[i] == c, we have found another
+				// opening bracket, therefore we will need
+				// two closing brackets to complete the
+				// match.
+				char x = text.charAt(i);
+
+				if(x == c)
+					count++;
+
+				// If text[i] == cprime, we have found an
+				// closing bracket, so we return i if
+				// --count == 0
+				else if(x == cprime)
+				{
+					if(--count == 0)
+						return i + offset;
+				}
 			}
 		}
 
-		// not found
-		return null;
-	}
-
-	/**
-	 * Finds the next instance of a closing bracket in the document.
-	 * The opening bracket is needed as well to handle nested brackets
-	 * properly.
-	 * @param doc The document to search in
-	 * @param dot The starting position
-	 * @param openBracket The opening bracket
-	 * @param closeBracket The closing bracket
-	 * @return An integer array, the first element being the line the
-	 * second being the offset
-	 * @exception BadLocationException if `dot' is out of range
-	 */
-	public static int[] locateBracketForward(Document doc, int dot,
-		char openBracket, char closeBracket)
-		throws BadLocationException
-	{
-		int count;
-		Element map = doc.getDefaultRootElement();
-
-		// check current line
-		int lineNo = map.getElementIndex(dot);
-		Element lineElement = map.getElement(lineNo);
-		int start = lineElement.getStartOffset();
-		int end = lineElement.getEndOffset();
-		int offset = scanForwardLine(doc.getText(dot + 1,end - (dot + 1)),
-			openBracket,closeBracket,0);
-		count = -offset - 1;
-		if(offset >= 0)
-		{
-			int[] returnValue = { lineNo, (dot - start) + offset + 1 };
-			return returnValue;
-		}
-
-		// check following lines
-		for(int i = lineNo + 1; i < map.getElementCount(); i++)
-		{
-			lineElement = map.getElement(i);
-			start = lineElement.getStartOffset();
-			offset = scanForwardLine(doc.getText(start,
-				lineElement.getEndOffset() - start),
-				openBracket,closeBracket,count);
-			count = -offset - 1;
-			if(offset >= 0)
-			{
-				int[] returnValue = { i, offset };
-				return returnValue;
-			}
-		}
-
-		// not found
-		return null;
-	}
-
-	// private members
-
-	// the return value is as follows:
-	// >= 0: offset in line where bracket was found
-	// < 0: -1 - count
-	private static int scanBackwardLine(String line, char openBracket,
-		char closeBracket, int count)
-	{
-		for(int i = line.length() - 1; i >= 0; i--)
-		{
-			char c = line.charAt(i);
-			if(c == closeBracket)
-				count++;
-			else if(c == openBracket)
-			{
-				if(--count < 0)
-					return i;
-			}
-		}
-		return -1 - count;
-	}
-
-	// the return value is as follows:
-	// >= 0: offset in line where bracket was found
-	// < 0: -1 - count
-	private static int scanForwardLine(String line, char openBracket,
-		char closeBracket, int count)
-	{
-		for(int i = 0; i < line.length(); i++)
-		{
-			char c = line.charAt(i);
-			if(c == openBracket)
-				count++;
-			else if(c == closeBracket)
-			{
-				if(--count < 0)
-					return i;
-			}
-		}
-		return -1 - count;
+		// Nothing found
+		return -1;
 	}
 }
 
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.2  1999/07/16 23:45:49  sp
+ * 1.7pre6 BugFree version
+ *
  * Revision 1.1  1999/06/29 09:03:18  sp
  * oops, forgot to add TextUtilities.java
  *

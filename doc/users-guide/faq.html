@@ -25,9 +25,9 @@ applications?</a>
 Before reporting a problem with jEdit, make sure it's not a JDK bug:
 
 <ul>
-<li>Bug #4060861 - not having your computer's host name assigned to
+<li>Bug #4060861 - not having your computer's host name aliased to
 127.0.0.1 will cause RMI to throw an AccessException
-(fixed in JDK 1.1.8 and 1.2beta3)
+(fixed in JDK 1.1.8 and 1.2, Unix only)
 <li>Bug #4186108, maybe others - printing doesn't work very well with
 JDK 1.2 (not yet fixed)
 <li> Bug #4159610 - Alt key menu mnemonics insert the mnemonic character
@@ -38,6 +38,7 @@ a new JDK soon)
 <li>Bug ???? - windows are created about 4 pixels smaller than requested
 (this only occurs on Unix with some window managers, the only workaround is to
 disable geometry saving in Tools-&gt;Global Options-&gt;General)
+<li>Bug ???? - cursor handling in lightweight components is broken
 </ul>
 
 <a name=console>
@@ -126,7 +127,7 @@ Note that JDK 1.1.8 has a dynamic heap, so this is not necessary.
 
 If you get a ClassDefNotFoundError: org.gjt.sp.jedit.gui.SplashScreen when
 jEdit is starting up, the most likely problem is that you do not have
-Swing installed properly. For jEdit to work, Swing 1.1beta3 or later
+Swing installed properly. For jEdit to work, Swing 1.1 or later
 must be installed, and it's swingall.jar file must be in the CLASSPATH.<p>
 
 Swing can be downloaded from &lt;java.sun.com/products/jfc/index.html&gt;.
@@ -140,8 +141,7 @@ slower than native applications. A fast system with a good JVM
 will narrow the performance gap.<p>
 
 On all systems, a speedup can be achieved by installing the latest
-Swing version. Swing 1.1.1 seems to be much faster than either
-Swing 1.1beta3 or Swing 1.1final.<p>
+Swing version. Swing 1.1.1 seems to be much faster than Swing 1.1final.<p>
 
 Installing more RAM may improve performance - more RAM will
 result in less garbage collection.<p>

@@ -19,6 +19,7 @@
 
 package org.gjt.sp.jedit.textarea;
 
+import javax.swing.border.EtchedBorder;
 import javax.swing.event.*;
 import javax.swing.text.*;
 import javax.swing.*;
@@ -32,7 +33,7 @@ import org.gjt.sp.jedit.syntax.*;
  * @author Slava Pestov
  * @version $Id$
  */
-public class JEditTextArea extends Container
+public class JEditTextArea extends JComponent
 {
 	/**
 	 * Creates a new JEditTextArea with the default settings.
@@ -63,6 +64,7 @@ public class JEditTextArea extends Container
 		blink = true;
 
 		// Initialize the GUI
+		setBorder(new EtchedBorder(EtchedBorder.LOWERED));
 		setLayout(new ScrollLayout());
 		add(CENTER,painter);
 		add(RIGHT,vertical = new JScrollBar(JScrollBar.VERTICAL));
@@ -89,6 +91,15 @@ public class JEditTextArea extends Container
 	}
 
 	/**
+	 * Returns if this component can be traversed by pressing
+	 * the Tab key. This returns false.
+	 */
+	public final boolean isManagingFocus()
+	{
+		return true;
+	}
+
+	/**
 	 * Returns the object responsible for painting this text area.
 	 */
 	public final TextAreaPainter getPainter()
@@ -111,15 +122,10 @@ public class JEditTextArea extends Container
 	public void setInputHandler(InputHandler inputHandler)
 	{
 		if(this.inputHandler != null)
-		{
 			removeKeyListener(this.inputHandler);
-			this.inputHandler.uninstall(this);
-		}
 		if(inputHandler != null)
-		{
 			addKeyListener(inputHandler);
-			inputHandler.install(this);
-		}
+
 		this.inputHandler = inputHandler;
 	}
 
@@ -209,10 +215,11 @@ public class JEditTextArea extends Container
 		if(vertical != null && visibleLines != 0)
 		{
 			vertical.setValues(firstLine,visibleLines,0,getLineCount());
+			vertical.setUnitIncrement(1);
 			vertical.setBlockIncrement(visibleLines);
 		}
 
-		int width = painter.getSize().width;
+		int width = painter.getWidth();
 		if(horizontal != null && width != 0)
 		{
 			horizontal.setValues(-horizontalOffset,width,0,width * 5);
@@ -243,6 +250,7 @@ public class JEditTextArea extends Container
 		if(firstLine != vertical.getValue())
 			updateScrollBars();
 		painter.scrollRepaint(oldFirstLine,firstLine);
+		painter.repaint();
 	}
 
 	/**
@@ -251,6 +259,22 @@ public class JEditTextArea extends Container
 	public final int getVisibleLines()
 	{
 		return visibleLines;
+	}
+
+	/**
+	 * Recalculates the number of visible lines. This should not
+	 * be called directly.
+	 */
+	public final void recalculateVisibleLines()
+	{
+		if(painter == null)
+			return;
+		int height = painter.getHeight();
+		int lineHeight = painter.getFontMetrics().getHeight();
+		int oldVisibleLines = visibleLines;
+		visibleLines = height / lineHeight;
+		painter.invalidateOffscreen();
+		updateScrollBars();
 	}
 
 	/**
@@ -278,12 +302,70 @@ public class JEditTextArea extends Container
 	}
 
 	/**
+	 * A fast way of changing both the first line and horizontal
+	 * offset.
+	 * @param firstLine The new first line
+	 * @param horizontalOffset The new horizontal offset
+	 * @return True if any of the values were changed, false otherwise
+	 */
+	public boolean setOrigin(int firstLine, int horizontalOffset)
+	{
+		boolean changed = false;
+		boolean horizChanged = false;
+
+		if(horizontalOffset != this.horizontalOffset)
+		{
+			horizChanged = true;
+			this.horizontalOffset = horizontalOffset;
+			painter._invalidateLineRange(firstLine,firstLine + visibleLines);
+			changed = true;
+		}
+
+		if(firstLine != this.firstLine)
+		{
+			int oldFirstLine = this.firstLine;
+			this.firstLine = firstLine;
+			// If we scrolled horizontally, this is pointless
+			// since all lines have to be repainted anyway
+			if(!horizChanged)
+				painter.scrollRepaint(oldFirstLine,firstLine);
+			changed = true;
+		}
+
+		if(changed)
+		{
+			updateScrollBars();
+			painter.repaint();
+		}
+
+		return changed;
+	}
+
+	/**
+	 * Ensures that the caret is visible by scrolling the text area if
+	 * necessary.
+	 * @return True if scrolling was actually performed, false if the
+	 * caret was already visible
+	 */
+	public boolean scrollToCaret()
+	{
+		int line = getCaretLine();
+		int lineStart = getLineStartOffset(line);
+		int offset = Math.max(0,Math.min(getLineLength(line) - 1,
+			getCaretPosition() - lineStart));
+
+		return scrollTo(line,offset);
+	}
+
+	/**
 	 * Ensures that the specified line and offset is visible by scrolling
 	 * the text area if necessary.
 	 * @param line The line to scroll to
 	 * @param offset The offset in the line to scroll to
+	 * @return True if scrolling was actually performed, false if the
+	 * line and offset was already visible
 	 */
-	public void scrollTo(int line, int offset)
+	public boolean scrollTo(int line, int offset)
 	{
 		// visibleLines == 0 before the component is realized
 		// we can't do any proper scrolling then, so we have
@@ -291,21 +373,23 @@ public class JEditTextArea extends Container
 		if(visibleLines == 0)
 		{
 			setFirstLine(Math.max(0,line - electricScroll));
-			return;
+			return true;
 		}
+
+		int newFirstLine = firstLine;
+		int newHorizontalOffset = horizontalOffset;
 
 		if(line < firstLine + electricScroll)
 		{
-			setFirstLine(Math.max(0,line - electricScroll));
+			newFirstLine = Math.max(0,line - electricScroll);
 		}
 		else if(line + electricScroll >= firstLine + visibleLines)
 		{
-			int newline = (line - visibleLines) + electricScroll + 1;
-			if(newline < 0)
-				newline = 0;
-			if(newline + visibleLines >= getLineCount())
-				newline = getLineCount() - visibleLines;
-			setFirstLine(newline);
+			newFirstLine = (line - visibleLines) + electricScroll + 1;
+			if(newFirstLine + visibleLines >= getLineCount())
+				newFirstLine = getLineCount() - visibleLines;
+			if(newFirstLine < 0)
+				newFirstLine = 0;
 		}
 
 		int x = offsetToX(line,offset);
@@ -313,17 +397,22 @@ public class JEditTextArea extends Container
 
 		if(x < 0)
 		{
-			setHorizontalOffset(Math.min(0,horizontalOffset
-				- x + width));
+			newHorizontalOffset = Math.min(0,horizontalOffset
+				- x + width);
 		}
-		else if(x + width >= painter.getSize().width)
+		else if(x + width >= painter.getWidth())
 		{
-			setHorizontalOffset(horizontalOffset +
-				(painter.getSize().width - x)
-				- width);
+			newHorizontalOffset = horizontalOffset +
+				(painter.getWidth() - x) - width;
 		}
+
+		return setOrigin(newFirstLine,newHorizontalOffset);
 	}
 
+	/**
+	 * Converts a line index to a y co-ordinate.
+	 * @param line The line
+	 */
 	public int lineToY(int line)
 	{
 		FontMetrics fm = painter.getFontMetrics();
@@ -331,6 +420,10 @@ public class JEditTextArea extends Container
 			- (fm.getLeading() + fm.getMaxDescent());
 	}
 
+	/**
+	 * Converts a y co-ordinate to a line index.
+	 * @param y The y co-ordinate
+	 */
 	public int yToLine(int y)
 	{
 		FontMetrics fm = painter.getFontMetrics();
@@ -339,6 +432,11 @@ public class JEditTextArea extends Container
 			y / height + firstLine));
 	}
 
+	/**
+	 * Converts an offset in a line into an x co-ordinate.
+	 * @param line The line
+	 * @param offset The offset, from the start of the line
+	 */
 	public int offsetToX(int line, int offset)
 	{
 		TokenMarker tokenMarker = getTokenMarker();
@@ -409,6 +507,11 @@ public class JEditTextArea extends Container
 		}
 	}
 
+	/**
+	 * Converts an x co-ordinate to an offset within a line.
+	 * @param line The line
+	 * @param x The x co-ordinate
+	 */
 	public int xToOffset(int line, int x)
 	{
 		TokenMarker tokenMarker = getTokenMarker();
@@ -512,6 +615,11 @@ public class JEditTextArea extends Container
 		}
 	}
 
+	/**
+	 * Converts a point to an offset, from the start of the text.
+	 * @param x The x co-ordinate of the point
+	 * @param y The y co-ordinate of the point
+	 */
 	public int xyToOffset(int x, int y)
 	{
 		int line = yToLine(y);
@@ -519,11 +627,18 @@ public class JEditTextArea extends Container
 		return start + xToOffset(line,x);
 	}
 
+	/**
+	 * Returns the document this text area is editing.
+	 */
 	public final SyntaxDocument getDocument()
 	{
 		return document;
 	}
 
+	/**
+	 * Sets the document this text area is editing.
+	 * @param document The document
+	 */
 	public void setDocument(SyntaxDocument document)
 	{
 		if(this.document == document)
@@ -540,31 +655,57 @@ public class JEditTextArea extends Container
 		painter.repaint();
 	}
 
+	/**
+	 * Returns the document's token marker. Equivalent to calling
+	 * <code>getDocument().getTokenMarker()</code>.
+	 */
 	public final TokenMarker getTokenMarker()
 	{
 		return document.getTokenMarker();
 	}
 
+	/**
+	 * Sets the document's token marker. Equivalent to caling
+	 * <code>getDocument().setTokenMarker()</code>.
+	 * @param tokenMarker The token marker
+	 */
 	public final void setTokenMarker(TokenMarker tokenMarker)
 	{
 		document.setTokenMarker(tokenMarker);
 	}
 
+	/**
+	 * Returns the length of the document. Equivalent to calling
+	 * <code>getDocument().getLength()</code>.
+	 */
 	public final int getDocumentLength()
 	{
 		return document.getLength();
 	}
 
+	/**
+	 * Returns the number of lines in the document.
+	 */
 	public final int getLineCount()
 	{
 		return document.getDefaultRootElement().getElementCount();
 	}
 
+	/**
+	 * Returns the line containing the specified offset.
+	 * @param offset The offset
+	 */
 	public final int getLineOfOffset(int offset)
 	{
 		return document.getDefaultRootElement().getElementIndex(offset);
 	}
 
+	/**
+	 * Returns the start offset of the specified line.
+	 * @param line The line
+	 * @return The start offset of the specified line, or -1 if the line is
+	 * invalid
+	 */
 	public int getLineStartOffset(int line)
 	{
 		Element lineElement = document.getDefaultRootElement()
@@ -575,6 +716,12 @@ public class JEditTextArea extends Container
 			return lineElement.getStartOffset();
 	}
 
+	/**
+	 * Returns the end offset of the specified line.
+	 * @param line The line
+	 * @return The end offset of the specified line, or -1 if the line is
+	 * invalid.
+	 */
 	public int getLineEndOffset(int line)
 	{
 		Element lineElement = document.getDefaultRootElement()
@@ -585,6 +732,10 @@ public class JEditTextArea extends Container
 			return lineElement.getEndOffset();
 	}
 
+	/**
+	 * Returns the length of the specified line.
+	 * @param line The line
+	 */
 	public int getLineLength(int line)
 	{
 		Element lineElement = document.getDefaultRootElement()
@@ -593,14 +744,20 @@ public class JEditTextArea extends Container
 			return -1;
 		else
 			return lineElement.getEndOffset()
-				- lineElement.getStartOffset();
+				- lineElement.getStartOffset() - 1;
 	}
 
-	public final String getText(int start, int end)
+	/**
+	 * Returns the specified substring of the document.
+	 * @param start The start offset
+	 * @param len The length of the substring
+	 * @return The substring, or null if the offsets are invalid
+	 */
+	public final String getText(int start, int len)
 	{
 		try
 		{
-			return document.getText(start,end);
+			return document.getText(start,len);
 		}
 		catch(BadLocationException bl)
 		{
@@ -608,11 +765,18 @@ public class JEditTextArea extends Container
 		}
 	}
 
-	public final void getText(int start, int end, Segment segment)
+	/**
+	 * Copies the specified substring of the document into a segment.
+	 * If the offsets are invalid, the segment will contain a null string.
+	 * @param start The start offset
+	 * @param len The length of the substring
+	 * @param segment The segment
+	 */
+	public final void getText(int start, int len, Segment segment)
 	{
 		try
 		{
-			document.getText(start,end,segment);
+			document.getText(start,len,segment);
 		}
 		catch(BadLocationException bl)
 		{
@@ -620,78 +784,145 @@ public class JEditTextArea extends Container
 		}
 	}
 
+	/**
+	 * Returns the text on the specified line.
+	 * @param lineIndex The line
+	 * @return The text, or null if the line is invalid
+	 */
 	public final String getLineText(int lineIndex)
 	{
 		int start = getLineStartOffset(lineIndex);
 		return getText(start,getLineEndOffset(lineIndex) - start - 1);
 	}
 
+	/**
+	 * Copies the text on the specified line into a segment. If the line
+	 * is invalid, the segment will contain a null string.
+	 * @param lineIndex The line
+	 */
 	public final void getLineText(int lineIndex, Segment segment)
 	{
 		int start = getLineStartOffset(lineIndex);
 		getText(start,getLineEndOffset(lineIndex) - start - 1,segment);
 	}
 
+	/**
+	 * Returns the selection start offset.
+	 */
 	public final int getSelectionStart()
 	{
 		return selectionStart;
 	}
 
+	/**
+	 * Returns the selection start line.
+	 */
 	public final int getSelectionStartLine()
 	{
 		return selectionStartLine;
 	}
 
+	/**
+	 * Sets the selection start. The new selection will be the new
+	 * selection start and the old selection end.
+	 * @param selectionStart The selection start
+	 * @see #select(int,int)
+	 */
 	public final void setSelectionStart(int selectionStart)
 	{
-		select(selectionStart,selectionStart);
+		select(selectionStart,selectionEnd);
 	}
 
+	/**
+	 * Returns the selection end offset.
+	 */
 	public final int getSelectionEnd()
 	{
 		return selectionEnd;
 	}
 
+	/**
+	 * Returns the selection end line.
+	 */
 	public final int getSelectionEndLine()
 	{
 		return selectionEndLine;
 	}
 
+	/**
+	 * Sets the selection end. The new selection will be the old
+	 * selection start and the bew selection end.
+	 * @param selectionEnd The selection end
+	 * @see #select(int,int)
+	 */
 	public final void setSelectionEnd(int selectionEnd)
 	{
 		select(selectionStart,selectionEnd);
 	}
 
+	/**
+	 * Returns the caret position. This will either be the selection
+	 * start or the selection end, depending on which direction the
+	 * selection was made in.
+	 */
 	public final int getCaretPosition()
 	{
 		return (biasLeft ? selectionStart : selectionEnd);
 	}
 
+	/**
+	 * Returns the caret line.
+	 */
 	public final int getCaretLine()
 	{
 		return (biasLeft ? selectionStartLine : selectionEndLine);
 	}
 
+	/**
+	 * Returns the mark position. This will be the opposite selection
+	 * bound to the caret position.
+	 * @see #getCaretPosition()
+	 */
 	public final int getMarkPosition()
 	{
 		return (biasLeft ? selectionEnd : selectionStart);
 	}
 
+	/**
+	 * Returns the mark line.
+	 */
 	public final int getMarkLine()
 	{
 		return (biasLeft ? selectionEndLine : selectionStartLine);
 	}
 
+	/**
+	 * Sets the caret position. The new selection will consist of the
+	 * caret position only (hence no text will be selected)
+	 * @param caret The caret position
+	 * @see #select(int,int)
+	 */
 	public final void setCaretPosition(int caret)
 	{
 		select(caret,caret);
 	}
 
+	/**
+	 * Selects all text in the document.
+	 */
 	public final void selectAll()
 	{
 		select(0,getDocumentLength());
 	}
 
+	/**
+	 * Selects from the start offset to the end offset. This is the
+	 * general selection method used by all other selecting methods.
+	 * The caret position will be start if start &lt; end, and end
+	 * if end &gt; start.
+	 * @param start The start offset
+	 * @param end The end offset
+	 */
 	public void select(int start, int end)
 	{
 		int newStart, newEnd;
@@ -716,30 +947,35 @@ public class JEditTextArea extends Container
 				newEnd);
 		}
 
-		if(newStart == selectionStart && newEnd == selectionEnd
-			&& newBias == biasLeft)
-			return;
-
-		int newStartLine = getLineOfOffset(newStart);
-		int newEndLine = getLineOfOffset(newEnd);
-
-		if(painter.isBracketHighlightEnabled())
+		// If the new position is the same as the old, we don't
+		// do all this crap, however we still do the stuff at
+		// the end (clearing magic position, scrolling)
+		if(newStart != selectionStart || newEnd != selectionEnd
+			|| newBias != biasLeft)
 		{
-			if(bracketLine != -1)
-				painter._invalidateLine(bracketLine);
-			updateBracketHighlight(end);
-			if(bracketLine != -1)
-				painter._invalidateLine(bracketLine);
+			int newStartLine = getLineOfOffset(newStart);
+			int newEndLine = getLineOfOffset(newEnd);
+
+			if(painter.isBracketHighlightEnabled())
+			{
+				if(bracketLine != -1)
+					painter._invalidateLine(bracketLine);
+				updateBracketHighlight(end);
+				if(bracketLine != -1)
+					painter._invalidateLine(bracketLine);
+			}
+
+			painter._invalidateLineRange(selectionStartLine,selectionEndLine);
+			painter._invalidateLineRange(newStartLine,newEndLine);
+
+			selectionStart = newStart;
+			selectionEnd = newEnd;
+			selectionStartLine = newStartLine;
+			selectionEndLine = newEndLine;
+			biasLeft = newBias;
+
+			fireCaretEvent();
 		}
-
-		painter._invalidateLineRange(selectionStartLine,selectionEndLine);
-		painter._invalidateLineRange(newStartLine,newEndLine);
-
-		selectionStart = newStart;
-		selectionEnd = newEnd;
-		selectionStartLine = newStartLine;
-		selectionEndLine = newEndLine;
-		biasLeft = newBias;
 
 		// When the user is typing, etc, we don't want the caret
 		// to blink
@@ -749,22 +985,25 @@ public class JEditTextArea extends Container
 		// Clear the `magic' caret position used by up/down
 		magicCaret = -1;
 
-		int line = getCaretLine();
-		int lineStart = getLineStartOffset(line);
-		int offset = Math.max(0,Math.min(getLineLength(line) - 1,
-			getCaretPosition() - lineStart));
-		scrollTo(line,offset);
-		painter.repaint();
-
-		fireCaretEvent();
+		if(!scrollToCaret())
+			painter.repaint();
 	}
 
+	/**
+	 * Returns the selected text, or null if no selection is active.
+	 */
 	public final String getSelectedText()
 	{
+		if(selectionStart == selectionEnd)
+			return null;
 		return getText(selectionStart,
 			selectionEnd - selectionStart);
 	}
 
+	/**
+	 * Replaces the selection with the specified text.
+	 * @param selectedText The replacement text for the selection
+	 */
 	public void setSelectedText(String selectedText)
 	{
 		if(!editable)
@@ -789,36 +1028,67 @@ public class JEditTextArea extends Container
 		}
 	}
 
+	/**
+	 * Returns true if this text area is editable, false otherwise.
+	 */
 	public final boolean isEditable()
 	{
 		return editable;
 	}
 
+	/**
+	 * Sets if this component is editable.
+	 * @param editable True if this text area should be editable,
+	 * false otherwise
+	 */
 	public final void setEditable(boolean editable)
 	{
 		this.editable = editable;
 	}
 
+	/**
+	 * Returns the right click popup menu.
+	 */
 	public final JPopupMenu getRightClickPopup()
 	{
 		return popup;
 	}
 
+	/**
+	 * Sets the right click popup menu.
+	 * @param popup The popup
+	 */
 	public final void setRightClickPopup(JPopupMenu popup)
 	{
 		this.popup = popup;
 	}
 
+	/**
+	 * Returns the `magic' caret position. This can be used to preserve
+	 * the column position when moving up and down lines.
+	 */
 	public final int getMagicCaretPosition()
 	{
 		return magicCaret;
 	}
 
+	/**
+	 * Sets the `magic' caret position. This can be used to preserve
+	 * the column position when moving up and down lines.
+	 * @param magicCaret The magic caret position
+	 */
 	public final void setMagicCaretPosition(int magicCaret)
 	{
 		this.magicCaret = magicCaret;
 	}
 
+	/**
+	 * Similar to <code>setSelectedText()</code>, but overstrikes the
+	 * appropriate number of characters if overwrite mode is enabled.
+	 * @param str The string
+	 * @see #setSelectedText(String)
+	 * @see #isOverwriteEnabled()
+	 */
 	public void overwriteSetSelectedText(String str)
 	{
 		// Don't overstrike if there is a selection
@@ -849,42 +1119,65 @@ public class JEditTextArea extends Container
 		}
 	}
 
+	/**
+	 * Returns true if overwrite mode is enabled, false otherwise.
+	 */
 	public final boolean isOverwriteEnabled()
 	{
 		return overwrite;
 	}
 
+	/**
+	 * Sets if overwrite mode should be enabled.
+	 * @param overwrite True if overwrite mode should be enabled,
+	 * false otherwise.
+	 */
 	public final void setOverwriteEnabled(boolean overwrite)
 	{
 		this.overwrite = overwrite;
 		painter.invalidateSelectedLines();
 	}
 
+	/**
+	 * Returns the position of the highlighted bracket (the bracket
+	 * matching the one before the caret)
+	 */
 	public final int getBracketPosition()
 	{
 		return bracketPosition;
 	}
 
+	/**
+	 * Returns the line of the highlighted bracket (the bracket
+	 * matching the one before the caret)
+	 */
 	public final int getBracketLine()
 	{
 		return bracketLine;
 	}
 
-	public final char getBracketCharacter()
-	{
-		return bracket;
-	}
-
+	/**
+	 * Adds a caret change listener to this text area.
+	 * @param listener The listener
+	 */
 	public final void addCaretListener(CaretListener listener)
 	{
 		listenerList.add(CaretListener.class,listener);
 	}
 
+	/**
+	 * Removes a caret change listener from this text area.
+	 * @param listener The listener
+	 */
 	public final void removeCaretListener(CaretListener listener)
 	{
 		listenerList.remove(CaretListener.class,listener);
 	}
 
+	/**
+	 * Deletes the selected text from the text area and places it
+	 * into the clipboard.
+	 */
 	public void cut()
 	{
 		if(editable)
@@ -894,6 +1187,9 @@ public class JEditTextArea extends Container
 		}
 	}
 
+	/**
+	 * Places the selected text into the clipboard.
+	 */
 	public void copy()
 	{
 		if(editable)
@@ -905,6 +1201,9 @@ public class JEditTextArea extends Container
 		}
 	}
 
+	/**
+	 * Inserts the clipboard contents into the text.
+	 */
 	public void paste()
 	{
 		if(editable)
@@ -929,6 +1228,11 @@ public class JEditTextArea extends Container
 		}
 	}
 
+	/**
+	 * Called by the AWT when this component is removed from it's parent.
+	 * This stops any autoscrolling and clears the currently focused
+	 * component.
+	 */
 	public void removeNotify()
 	{
 		super.removeNotify();
@@ -985,7 +1289,6 @@ public class JEditTextArea extends Container
 
 	protected int bracketPosition;
 	protected int bracketLine;
-	protected char bracket;
 
 	protected int magicCaret;
 	protected boolean overwrite;
@@ -1004,58 +1307,21 @@ public class JEditTextArea extends Container
 
 	protected void updateBracketHighlight(int newCaretPosition)
 	{
+		if(newCaretPosition == 0)
+		{
+			bracketPosition = bracketLine = -1;
+			return;
+		}
+
 		try
 		{
-			if(newCaretPosition != 0)
+			int offset = TextUtilities.findMatchingBracket(
+				document,newCaretPosition - 1);
+			if(offset != -1)
 			{
-				newCaretPosition--;
-				Segment lineSegment = painter.currentLine;
-				getText(newCaretPosition,1,lineSegment);
-				char ch = lineSegment.array[lineSegment.offset];
-				int[] match;
-				switch(ch)
-				{
-				case '(':
-					match = TextUtilities.locateBracketForward(
-						document,newCaretPosition,'(',')');
-					bracket = ')';
-					break;
-				case ')':
-					match = TextUtilities.locateBracketBackward(
-						document,newCaretPosition,'(',')');
-					bracket = '(';
-					break;
-				case '[':
-					match = TextUtilities.locateBracketForward(
-						document,newCaretPosition,'[',']');
-					bracket = ']';
-					break;
-				case ']':
-					match = TextUtilities.locateBracketBackward(
-						document,newCaretPosition,'[',']');
-					bracket = '[';
-					break;
-				case '{':
-					match = TextUtilities.locateBracketForward(
-						document,newCaretPosition,'{','}');
-					bracket = '}';
-					break;
-				case '}':
-					match = TextUtilities.locateBracketBackward(
-						document,newCaretPosition,'{','}');
-					bracket = '{';
-					break;
-				default:
-					match = null;
-					bracket = '\0';
-					break;
-				}
-				if(match != null)
-				{
-					bracketLine = match[0];
-					bracketPosition = match[1];
-					return;
-				}
+				bracketLine = getLineOfOffset(offset);
+				bracketPosition = offset - getLineStartOffset(bracketLine);
+				return;
 			}
 		}
 		catch(BadLocationException bl)
@@ -1086,9 +1352,8 @@ public class JEditTextArea extends Container
 		else
 		{
 			int index = ch.getIndex();
-			painter._invalidateLineRange(index,
-				document.getDefaultRootElement()
-				.getElementCount());
+			painter._invalidateLineRange(index,Math.max(getLineCount(),
+				firstLine + visibleLines));
 			updateScrollBars();
 		}
 	}
@@ -1118,11 +1383,15 @@ public class JEditTextArea extends Container
 		public Dimension preferredLayoutSize(Container parent)
 		{
 			Dimension dim = new Dimension();
+			Insets insets = getInsets();
+			dim.width = insets.left + insets.right;
+			dim.height = insets.top + insets.bottom;
+
 			Dimension centerPref = center.getPreferredSize();
-			dim.height = centerPref.height;
-			dim.width = centerPref.width;
+			dim.height += centerPref.height;
+			dim.width += centerPref.width;
 			Dimension rightPref = right.getPreferredSize();
-			dim.width += rightPref.height;
+			dim.width += rightPref.width;
 			Dimension bottomPref = bottom.getPreferredSize();
 			dim.height += bottomPref.height;
 
@@ -1132,9 +1401,13 @@ public class JEditTextArea extends Container
 		public Dimension minimumLayoutSize(Container parent)
 		{
 			Dimension dim = new Dimension();
+			Insets insets = getInsets();
+			dim.width = insets.left + insets.right;
+			dim.height = insets.top + insets.bottom;
+
 			Dimension centerPref = center.getMinimumSize();
-			dim.height = centerPref.height;
-			dim.width = centerPref.width;
+			dim.height += centerPref.height;
+			dim.width += centerPref.width;
 			Dimension rightPref = center.getMinimumSize();
 			dim.width += rightPref.height;
 			Dimension bottomPref = center.getMinimumSize();
@@ -1146,14 +1419,30 @@ public class JEditTextArea extends Container
 		public void layoutContainer(Container parent)
 		{
 			Dimension size = parent.getSize();
+			Insets insets = getInsets();
+			int itop = insets.top;
+			int ileft = insets.left;
+			int ibottom = insets.bottom;
+			int iright = insets.right;
+
 			int rightWidth = right.getPreferredSize().width;
 			int bottomHeight = bottom.getPreferredSize().height;
-			right.setBounds(size.width - rightWidth,0,
-				rightWidth,size.height - bottomHeight);
-			bottom.setBounds(0,size.height - bottomHeight,
-				size.width - rightWidth,bottomHeight);
-			center.setBounds(0,0,size.width - rightWidth,
-				size.height - bottomHeight);
+
+			center.setBounds(
+				ileft,
+				itop,
+				size.width - rightWidth - ileft - iright,
+				size.height - bottomHeight - itop - ibottom);
+			right.setBounds(
+				size.width - rightWidth - iright,
+				itop,
+				rightWidth,
+				size.height - bottomHeight - itop - ibottom);
+			bottom.setBounds(
+				ileft,
+				size.height - bottomHeight - ibottom,
+				size.width - rightWidth - ileft - iright,
+				bottomHeight);
 		}
 
 		// private members
@@ -1166,7 +1455,8 @@ public class JEditTextArea extends Container
 	{
 		public void actionPerformed(ActionEvent evt)
 		{
-			if(focusedComponent != null)
+			if(focusedComponent != null
+				&& focusedComponent.hasFocus())
 				focusedComponent.blinkCaret();
 		}
 	}
@@ -1230,13 +1520,7 @@ public class JEditTextArea extends Container
 	{
 		public void componentResized(ComponentEvent evt)
 		{
-			int height = painter.getSize().height;
-			int lineHeight = painter.getFontMetrics().getHeight();
-			int oldVisibleLines = visibleLines;
-			visibleLines = height / lineHeight;
-			painter.invalidateOffscreen();
-			updateScrollBars();
-
+			recalculateVisibleLines();
 			scrollBarsInitialized = true;
 		}
 	}
@@ -1313,7 +1597,7 @@ public class JEditTextArea extends Container
 			select(newStart,newEnd);
 
 			if(repaint)
-				repaint();
+				painter.repaint();
 		}
 
 		public void changedUpdate(DocumentEvent evt)
@@ -1394,45 +1678,36 @@ public class JEditTextArea extends Container
 		private void doDoubleClick(MouseEvent evt, int line,
 			int offset, int dot) throws BadLocationException
 		{
-			String lineText = getLineText(line);
+			// Ignore empty lines
+			if(getLineLength(line) == 0)
+				return;
 
-			String openBrackets = (String)document.getProperty("openBrackets");
-			String closeBrackets = (String)document.getProperty("closeBrackets");
-
-			char ch = lineText.charAt(Math.max(0,offset - 1));
-			int index = openBrackets.indexOf(ch);
-			if(index != -1)
+			try
 			{
-				char closeBracket = closeBrackets.charAt(index);
-				int[] match = TextUtilities.locateBracketForward(
-					document,dot - 1,ch,closeBracket);
-				if(match != null)
+				int bracket = TextUtilities.findMatchingBracket(
+					document,Math.max(0,dot - 1));
+				if(bracket != -1)
 				{
-					int mark = getLineStartOffset(match[0])
-						+ match[1];
-					select(dot - 1,mark + 1);
+					int mark = getMarkPosition();
+					// Hack
+					if(bracket > mark)
+					{
+						bracket++;
+						mark--;
+					}
+					select(mark,bracket);
 					return;
 				}
 			}
-			else
+			catch(BadLocationException bl)
 			{
-				index = closeBrackets.indexOf(ch);
-				if(index != -1)
-				{
-					char openBracket = openBrackets.charAt(index);
-					int[] match = TextUtilities.locateBracketBackward(
-						document,dot - 1,openBracket,ch);
-					if(match != null)
-					{
-						int mark = getLineStartOffset(match[0])
-							+ match[1];
-						select(dot,mark);
-						return;
-					}
-				}
+				bl.printStackTrace();
 			}
 
 			// Ok, it's not a bracket... select the word
+			String lineText = getLineText(line);
+			char ch = lineText.charAt(offset - 1);
+
 			String noWordSep = (String)document.getProperty("noWordSep");
 
 			// If the user clicked on a non-letter char,
@@ -1490,6 +1765,9 @@ public class JEditTextArea extends Container
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.14  1999/07/16 23:45:49  sp
+ * 1.7pre6 BugFree version
+ *
  * Revision 1.13  1999/07/08 06:43:54  sp
  * Fixed minor typo
  *

@@ -89,7 +89,7 @@ public class BufferOptions extends JDialog
 		cons.gridx = 0;
 		cons.gridy = 2;
 		cons.gridwidth = 3;
-		label = new JLabel(jEdit.getProperty("options.general.lineSeparator"),
+		label = new JLabel(jEdit.getProperty("buffer_options.lineSeparator"),
 			SwingConstants.RIGHT);
 		layout.setConstraints(label,cons);
 		panel.add(label);
@@ -256,6 +256,9 @@ public class BufferOptions extends JDialog
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.8  1999/07/16 23:45:49  sp
+ * 1.7pre6 BugFree version
+ *
  * Revision 1.7  1999/04/19 05:44:34  sp
  * GUI updates
  *

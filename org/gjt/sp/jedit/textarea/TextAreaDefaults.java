@@ -25,11 +25,13 @@ import java.awt.Color;
 /**
  * Encapsulates default settings for a text area. This can be passed
  * to the constructor once the necessary fields have been filled out.
- * The advantage of doing this over calling lots of set() methods is
- * that this method is faster.
+ * The advantage of doing this over calling lots of set() methods after
+ * creating the text area is that this method is faster.
  */
 public class TextAreaDefaults
 {
+	private static InputHandler DEFAULT_INPUT_HANDLER;
+
 	public InputHandler inputHandler;
 	public SyntaxDocument document;
 	public boolean editable;
@@ -50,11 +52,23 @@ public class TextAreaDefaults
 	public Color eolMarkerColor;
 	public boolean eolMarkers;
 
+	public boolean copyAreaBroken;
+
+	/**
+	 * Returns a new TextAreaDefaults object with the default values filled
+	 * in.
+	 */
 	public static TextAreaDefaults getDefaults()
 	{
 		TextAreaDefaults defaults = new TextAreaDefaults();
 
-		defaults.inputHandler = new DefaultInputHandler();
+		if(DEFAULT_INPUT_HANDLER == null)
+		{
+			DEFAULT_INPUT_HANDLER = new DefaultInputHandler();
+			DEFAULT_INPUT_HANDLER.addDefaultKeyBindings();
+		}
+
+		defaults.inputHandler = DEFAULT_INPUT_HANDLER;
 		defaults.document = new DefaultSyntaxDocument();
 		defaults.editable = true;
 
@@ -73,6 +87,8 @@ public class TextAreaDefaults
 		defaults.bracketHighlight = true;
 		defaults.eolMarkerColor = new Color(0x009999);
 		defaults.eolMarkers = true;
+
+		defaults.copyAreaBroken = true;
 
 		return defaults;
 	}

@@ -38,7 +38,7 @@ public class select_prev_paragraph extends EditAction
 		Buffer buffer = view.getBuffer();
 		Element map = buffer.getDefaultRootElement();
 		JEditTextArea textArea = view.getTextArea();
-		int lineNo = map.getElementIndex(textArea.getSelectionStart());
+		int lineNo = textArea.getSelectionStartLine();
 		int start = map.getElement(buffer.locateParagraphStart(lineNo))
 			.getStartOffset();
 		Element endElement = map.getElement(buffer

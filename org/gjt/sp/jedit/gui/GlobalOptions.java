@@ -42,6 +42,8 @@ public class GlobalOptions extends OptionsDialog
 		addOptionPane(new org.gjt.sp.jedit.options.KeyTableOptionPane());
 		addOptionPane(new org.gjt.sp.jedit.options.StyleOptionPane());
 
+		GUIUtilities.hideWaitCursor(view);
+
 		Dimension screen = getToolkit().getScreenSize();
 		pack();
 		setLocation((screen.width - getSize().width) / 2,
@@ -54,6 +56,9 @@ public class GlobalOptions extends OptionsDialog
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.9  1999/07/16 23:45:49  sp
+ * 1.7pre6 BugFree version
+ *
  * Revision 1.8  1999/06/12 02:30:27  sp
  * Find next can now perform multifile searches, multifile-search command added,
  * new style option pane

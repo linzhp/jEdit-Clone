@@ -41,8 +41,7 @@ public class delete_line extends EditAction
 		}
 		Buffer buffer = view.getBuffer();
 		Element map = buffer.getDefaultRootElement();
-		Element lineElement = map.getElement(map.getElementIndex(
-			view.getTextArea().getCaretPosition()));
+		Element lineElement = map.getElement(view.getTextArea().getCaretLine());
 		try
 		{
 			int start = lineElement.getStartOffset();

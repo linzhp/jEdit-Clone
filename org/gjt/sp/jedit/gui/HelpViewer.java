@@ -78,7 +78,7 @@ public class HelpViewer extends JFrame
 		
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
-		pack();
+		setSize(600,400);
 		GUIUtilities.loadGeometry(this,"helpviewer");
 
 		show();
