@@ -45,7 +45,7 @@ public class jEdit
 	 * The date when a change was last made to the source code,
 	 * in <code>YYYYMMDD</code> format.
 	 */
-	public static final String BUILD = "19990126";
+	public static final String BUILD = "19990128";
 
 	/**
 	 * AWK regexp syntax.
@@ -309,6 +309,7 @@ public class jEdit
 		addAction(new org.gjt.sp.jedit.actions.generate_text());
 		addAction(new org.gjt.sp.jedit.actions.goto_anchor());
 		addAction(new org.gjt.sp.jedit.actions.goto_end_indent());
+		addAction(new org.gjt.sp.jedit.actions.goto_error());
 		addAction(new org.gjt.sp.jedit.actions.goto_line());
 		addAction(new org.gjt.sp.jedit.actions.goto_marker());
 		addAction(new org.gjt.sp.jedit.actions.help());
@@ -319,6 +320,7 @@ public class jEdit
 		addAction(new org.gjt.sp.jedit.actions.make());
 		addAction(new org.gjt.sp.jedit.actions.new_file());
 		addAction(new org.gjt.sp.jedit.actions.new_view());
+		addAction(new org.gjt.sp.jedit.actions.next_error());
 		addAction(new org.gjt.sp.jedit.actions.next_paragraph());
 		addAction(new org.gjt.sp.jedit.actions.open_file());
 		addAction(new org.gjt.sp.jedit.actions.open_path());
@@ -328,6 +330,7 @@ public class jEdit
 		addAction(new org.gjt.sp.jedit.actions.paste());
 		addAction(new org.gjt.sp.jedit.actions.paste_previous());
 		addAction(new org.gjt.sp.jedit.actions.pipe_selection());
+		addAction(new org.gjt.sp.jedit.actions.prev_error());
 		addAction(new org.gjt.sp.jedit.actions.prev_paragraph());
 		addAction(new org.gjt.sp.jedit.actions.print());
 		addAction(new org.gjt.sp.jedit.actions.redo());
@@ -354,6 +357,7 @@ public class jEdit
 		addAction(new org.gjt.sp.jedit.actions.tab());
 		addAction(new org.gjt.sp.jedit.actions.to_lower());
 		addAction(new org.gjt.sp.jedit.actions.to_upper());
+		addAction(new org.gjt.sp.jedit.actions.uncomment());
 		addAction(new org.gjt.sp.jedit.actions.undo());
 		addAction(new org.gjt.sp.jedit.actions.untab());
 		addAction(new org.gjt.sp.jedit.actions.wing_comment());
@@ -453,12 +457,12 @@ public class jEdit
 		if(buffer == null)
 			buffer = newFile(null);
 
+		// Create the view
+		newView(buffer);
+
 		// Dispose of the splash screen
 		if(splash != null)
 			splash.dispose();
-
-		// Create the view
-		newView(buffer);
 	}
 
 	/**
@@ -826,6 +830,17 @@ public class jEdit
 			v.updateBuffersMenu();
 			v.updateOpenRecentMenu();
 		}
+		enum = getErrors();
+		if(enum != null)
+		{
+			while(enum.hasMoreElements())
+			{
+				CompilerError error = (CompilerError)enum
+					.nextElement();
+				if(error.getPath().equals(path))
+					error.openNotify(buffer);
+			}
+		}
 		return buffer;
 	}
 
@@ -852,7 +867,7 @@ public class jEdit
 		if(!_closeBuffer(view,buffer))
 			return false;
 		int index = buffers.indexOf(buffer);
-		buffers.removeElement(buffer);
+		buffers.removeElementAt(index);
 		if(buffers.isEmpty())
 			exit(view);
 		Buffer prev = (Buffer)buffers.elementAt(Math.max(0,index - 1));
@@ -863,6 +878,17 @@ public class jEdit
 			if(view.getBuffer() == buffer)
 				view.setBuffer(prev);
 			view.updateBuffersMenu();
+		}
+		enum = getErrors();
+		if(enum != null)
+		{
+			while(enum.hasMoreElements())
+			{
+				CompilerError error = (CompilerError)enum
+					.nextElement();
+				if(error.getBuffer() == buffer)
+					error.closeNotify();
+			}
 		}
 		return true;
 	}
@@ -1288,7 +1314,7 @@ public class jEdit
 	public static boolean regionMatches(boolean ignoreCase, Segment text,
 					    int offset, String match)
 	{
-		if(text.count < match.length())
+		if(text.count + offset < match.length())
 			return false;
 		int length = offset + match.length();
 		char[] textArray = text.array;
@@ -1492,6 +1518,66 @@ loop:		for(int i = 0; i < str.length(); i++)
 	}
 
 	/**
+	 * Clears the error list.
+	 */
+	public static void clearErrors()
+	{
+		if(errors != null)
+			errors.removeAllElements();
+		currentError = -1;
+	}
+
+	/**
+	 * Adds an error to the error list.
+	 * @param path The path name of the file
+	 * @param lineNo The line number
+	 * @param error The error itself
+	 */
+	public static void addError(String path, int lineNo, String error)
+	{
+		if(errors == null)
+			errors = new Vector();
+		errors.addElement(new CompilerError(path,lineNo,error));
+	}
+
+	/**
+	 * Returns the error at the specified index in the error list.
+	 * @param index The index in the error list
+	 */
+	public static CompilerError getError(int index)
+	{
+		if(errors == null || index < 0 || index >= errors.size())
+			return null;
+		else
+			return (CompilerError)errors.elementAt(index);
+	}
+
+	/**
+	 * Returns an enumeration of compiler errors. Returns null
+	 * if no compilation has taken place.
+	 */
+	public static Enumeration getErrors()
+	{
+		return (errors == null ? null : errors.elements());
+	}
+
+	/**
+	 * Sets the current error number.
+	 */
+	public static void setCurrentError(int error)
+	{
+		currentError = error;
+	}
+
+	/**
+	 * Returns the current error number.
+	 */
+	public static int getCurrentError()
+	{
+		return currentError;
+	}
+
+	/**
 	 * Exits cleanly from jEdit, prompting the user if any unsaved files
 	 * should be saved first.
 	 * @param view The view from which this exit was called
@@ -1512,9 +1598,9 @@ loop:		for(int i = 0; i < str.length(); i++)
 					if(buffer.isNewFile())
 						continue;
 					out.write(buffer.getPath());
-					out.write(File.pathSeparator);
+					out.write('\t');
 					out.write(buffer.isReadOnly() ? "readOnly" : "");
-					out.write(File.pathSeparator);
+					out.write('\t');
 					Mode mode = buffer.getMode();
 					String clazz;
 					if(mode != null)
@@ -1527,11 +1613,11 @@ loop:		for(int i = 0; i < str.length(); i++)
 					else
 						clazz = "";
 					out.write(clazz);
-					out.write(File.pathSeparator);
+					out.write('\t');
 					out.write(String.valueOf(buffer.getSavedSelStart()));
-					out.write(File.pathSeparator);
+					out.write('\t');
 					out.write(String.valueOf(buffer.getSavedSelEnd()));
-					out.write(File.pathSeparator);
+					out.write('\t');
 					if(view.getBuffer() == buffer)
 						out.write('*');
 					out.write("\r\n");
@@ -1615,6 +1701,8 @@ loop:		for(int i = 0; i < str.length(); i++)
 	private static int maxRecent;
 	private static Vector clipHistory;
 	private static int maxClipHistory;
+	private static Vector errors;
+	private static int currentError;
 
 	private jEdit() {}
 
@@ -1651,19 +1739,19 @@ loop:		for(int i = 0; i < str.length(); i++)
 	{
 		try
 		{
-			int pathIndex = line.indexOf(File.pathSeparator);
+			int pathIndex = line.indexOf('\t');
 			String path = line.substring(0,pathIndex);
-			int roIndex = line.indexOf(File.pathSeparator,
+			int roIndex = line.indexOf('\t',
 				pathIndex+1);
 			boolean readOnly = (roIndex - pathIndex > 1);
-			int modeIndex = line.indexOf(File.pathSeparator,
+			int modeIndex = line.indexOf('\t',
 				roIndex+1);
 			String mode = line.substring(roIndex+1,modeIndex);
-			int selStartIndex = line.indexOf(File.pathSeparator,
+			int selStartIndex = line.indexOf('\t',
 				modeIndex+1);
 			int selStart = Integer.parseInt(line.substring(modeIndex+1,
 				selStartIndex));
-			int selEndIndex = line.indexOf(File.pathSeparator,
+			int selEndIndex = line.indexOf('\t',
 				selStartIndex+1);
 			int selEnd = Integer.parseInt(line.substring(selStartIndex+1,
 				selEndIndex));

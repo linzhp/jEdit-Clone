@@ -45,7 +45,8 @@ public class scroll_line extends EditAction
 		int viewHeight = view.getSize().height;
 		Rectangle rect = new Rectangle(0,startLine * height
 			- ((viewHeight - scrollHeight) / 2),0,viewHeight);
-		rect.height = Math.min(rect.height,viewHeight - rect.y);
+		rect.height = Math.min(viewHeight,textArea.getSize().height
+			- rect.y);
 		textArea.scrollRectToVisible(rect);
 	}
 }

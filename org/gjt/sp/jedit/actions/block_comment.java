@@ -37,18 +37,18 @@ public class block_comment extends EditAction
 		View view = getView(evt);
 		SyntaxTextArea textArea = view.getTextArea();
 		Buffer buffer = view.getBuffer();
-		String comment = (String)view.getBuffer()
-			.getProperty("blockComment") + ' ';
-		int selectionStart = textArea.getSelectionStart();
-		int selectionEnd = textArea.getSelectionEnd();
-		Element map = buffer.getDefaultRootElement();
-		int startLine = map.getElementIndex(selectionStart);
-		int endLine = map.getElementIndex(selectionEnd);
+		String comment = (String)buffer.getProperty("blockComment");
 		if(comment == null)
 		{
 			view.getToolkit().beep();
 			return;
 		}
+		comment = comment + ' ';
+		int selectionStart = textArea.getSelectionStart();
+		int selectionEnd = textArea.getSelectionEnd();
+		Element map = buffer.getDefaultRootElement();
+		int startLine = map.getElementIndex(selectionStart);
+		int endLine = map.getElementIndex(selectionEnd);
 		buffer.beginCompoundEdit();
 		try
 		{
@@ -62,6 +62,8 @@ public class block_comment extends EditAction
 		catch(BadLocationException bl)
 		{
 		}
+		textArea.select(textArea.getCaretPosition(),
+			textArea.getCaretPosition());
 		buffer.endCompoundEdit();
 	}
 }

@@ -32,8 +32,8 @@ public class help extends EditAction
 	
 	public void actionPerformed(ActionEvent evt)
 	{
-		new HelpViewer(getView(evt),getClass().getResource(
-			"/doc/".concat(evt.getActionCommand())));
+		new HelpViewer(getClass().getResource("/doc/"
+			.concat(evt.getActionCommand())));
 			
 	}
 }

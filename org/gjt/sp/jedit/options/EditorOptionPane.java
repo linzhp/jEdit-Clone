@@ -177,7 +177,16 @@ public class EditorOptionPane extends OptionPane
 			+ ".electricBorders"));
 		electricBorders.getModel().setSelected(!"0".equals(jEdit.getProperty(
 			"view.electricBorders")));
+		layout.setConstraints(electricBorders,cons);
 		add(electricBorders);
+
+		cons.gridy = 12;
+		noTabs = new JCheckBox(jEdit.getProperty("options.editor"
+			+ ".noTabs"));
+		noTabs.getModel().setSelected("yes".equals(jEdit.getProperty(
+			"buffer.noTabs")));
+		layout.setConstraints(noTabs,cons);
+		add(noTabs);
 	}
 
 	public void save()
@@ -201,6 +210,8 @@ public class EditorOptionPane extends OptionPane
 			.isSelected() ? "500" : "0");
 		jEdit.setProperty("view.electricBorders",electricBorders.getModel()
 			.isSelected() ? "4" : "0");
+		jEdit.setProperty("buffer.noTabs",noTabs.getModel()
+			.isSelected() ? "yes" : "no");
 	}
 
 	// private members
@@ -216,4 +227,5 @@ public class EditorOptionPane extends OptionPane
 	private JCheckBox autoIndent;
 	private JCheckBox blinkCaret;
 	private JCheckBox electricBorders;
+	private JCheckBox noTabs;
 }

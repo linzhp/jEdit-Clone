@@ -24,7 +24,7 @@ import javax.swing.event.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
-import java.util.Date;
+import java.util.*;
 import org.gjt.sp.jedit.*;
 
 public class CommandOutput extends JFrame
@@ -34,7 +34,10 @@ implements KeyListener
 	{
 		super(jEdit.getProperty("output.title"));
 
+		this.view = view;
 		this.process = process;
+
+		jEdit.clearErrors();
 
 		getContentPane().setLayout(new BorderLayout());
 		Object[] args = { cmd, new Date().toString() };
@@ -82,12 +85,24 @@ implements KeyListener
 	public void keyTyped(KeyEvent evt) {}
 
 	// private members
+	private View view;
 	private JTextArea output;
 	private Process process;
 	private StdoutThread stdout;
 	private StderrThread stderr;
 
-	private void addOutput(final String msg)
+	// Error parsing state
+	private static final int GENERIC = 0;
+	private static final int TEX = 1;
+	private static final int EMACS = 2;
+	private int errorMode;
+
+	// Intermediate data for TeX and Emacs mode
+	private String file;
+	private int lineNo;
+	private String error;
+
+	private synchronized void addOutput(final String msg)
 	{
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run()
@@ -96,8 +111,89 @@ implements KeyListener
 				output.append("\n");
 			}
 		});
+
+		// Empty errors are of no use to us or the user
+		if(msg.length() == 0)
+			return;
+
+		// Go the funky error state machine (and hope that the
+		// other thread doesn't sent irrelevant crap our way)
+		switch(errorMode)
+		{
+		case GENERIC:
+			// Check for TeX-style error
+			if(msg.charAt(0) == '!')
+			{
+				errorMode = TEX;
+				error = msg.substring(1);
+				break;
+			}
+
+			// Otherwise, check for standard filename:lineno:error
+			int fileIndex = msg.indexOf(':');
+			if(fileIndex == -1)
+				break; /* Oops */
+			file = msg.substring(0,fileIndex);
+
+			int lineNoIndex = msg.indexOf(':',fileIndex + 1);
+			if(lineNoIndex == -1)
+				break; /* Oops */
+			try
+			{
+				lineNo = Integer.parseInt(msg.substring(
+					fileIndex + 1,lineNoIndex));
+			}
+			catch(NumberFormatException nf)
+			{
+				break; /* Oops */
+			}
+
+			/*int emacsIndex = msg.indexOf(':',lineNoIndex + 1);
+			// Check for Emacs style file:line:col:line:col:
+			if(emacsIndex != -1)
+			{
+				errorMode = EMACS;
+				break;
+				// Second pass will fetch error message
+			}*/
+			
+			// If not, set the error message variable
+			error = msg.substring(lineNoIndex + 1);
+
+			jEdit.addError(file,lineNo,error);
+			break;
+		case TEX:
+			// Check for l.<line number>
+			if(msg.startsWith("l."))
+			{
+				lineNoIndex = msg.indexOf(' ');
+				if(lineNoIndex == -1)
+				{
+					errorMode = GENERIC;
+					break; /* Oops */
+				}
+
+				try
+				{
+					lineNo = Integer.parseInt(msg
+						.substring(2,lineNoIndex));
+				}
+				catch(NumberFormatException nf)
+				{
+					errorMode = GENERIC;
+					break; /* Oops */
+				}
+
+				error = error.concat(msg.substring(lineNoIndex));
+				errorMode = GENERIC;
+
+				jEdit.addError(view.getBuffer().getPath(),
+					lineNo,error);
+			}
+			break;
+		}
 	}
-	
+
 	private class StdoutThread extends Thread
 	{
 		StdoutThread()
@@ -120,7 +216,7 @@ implements KeyListener
 					addOutput(line);
 				}
 				in.close();
-				addOutput(jEdit.getProperty("output.done"));
+					
 			}
 			catch(IOException io)
 			{
@@ -157,6 +253,14 @@ implements KeyListener
 			{
 				Object[] args = { io.getMessage() };
 				jEdit.error((View)getParent(),"ioerror",args);
+			}
+			addOutput(jEdit.getProperty("output.done"));
+
+			// Update error list menus
+			Enumeration views = jEdit.getViews();
+			while(views.hasMoreElements())
+			{
+				((View)views.nextElement()).updateErrorListMenu();
 			}
 		}
 	}

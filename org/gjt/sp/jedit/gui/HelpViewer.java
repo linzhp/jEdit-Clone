@@ -28,12 +28,12 @@ import java.io.IOException;
 import java.net.URL;
 import org.gjt.sp.jedit.*;
 
-public class HelpViewer extends JDialog
+public class HelpViewer extends JFrame
 implements ActionListener, HyperlinkListener
 {
-	public HelpViewer(View view, URL url)
+	public HelpViewer(URL url)
 	{
-		super(view,jEdit.getProperty("helpviewer.title"),false);
+		super(jEdit.getProperty("helpviewer.title"));
 		
 		history = new URL[25];
 

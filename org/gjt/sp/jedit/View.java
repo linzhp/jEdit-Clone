@@ -24,6 +24,7 @@ import javax.swing.text.*;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.File;
 import java.util.*;
 import org.gjt.sp.jedit.gui.SyntaxTextArea;
 
@@ -103,28 +104,6 @@ implements CaretListener, KeyListener, WindowListener
 			updateLineNumber(true);
 	}
 	
-	/**
-	 * Recreates the plugins menu.
-	 */
-	public void updatePluginsMenu()
-	{
-		if(plugins.getMenuComponentCount() != 0)
-			buffers.removeAll();
-		Enumeration enum = jEdit.getPlugins();
-		if(!enum.hasMoreElements())
-		{
-			plugins.add(jEdit.loadMenuItem(this,"no-plugins"));
-			return;
-		}
-		while(enum.hasMoreElements())
-		{
-			String action = (String)((Action)enum.nextElement())
-				.getValue(Action.NAME);
-			JMenuItem mi = jEdit.loadMenuItem(this,action);
-			plugins.add(mi);
-		}
-	}
-
 	/**
 	 * Recreates the buffers menu.
 	 */
@@ -207,6 +186,59 @@ implements CaretListener, KeyListener, WindowListener
 			menuItem.setActionCommand(name);
 			menuItem.addActionListener(gotoMarkerAction);
 			gotoMarker.add(menuItem);
+		}
+	}
+
+	/**
+	 * Recreates the error list menu.
+	 */
+	public void updateErrorListMenu()
+	{
+		if(errors.getMenuComponentCount() != 0)
+			errors.removeAll();
+		Action gotoError = jEdit.getAction("goto-error");
+		Enumeration enum = jEdit.getErrors();
+		if(enum == null)
+		{
+			errors.add(jEdit.loadMenuItem(this,"no-errors"));
+			return;
+		}
+		int count = 0;
+		while(enum.hasMoreElements())
+		{
+			CompilerError error = (CompilerError)enum.nextElement();
+			String path = error.getPath();
+			int index = path.lastIndexOf(File.separatorChar);
+			if(index != -1)
+				path = path.substring(index + 1);
+			JMenuItem menuItem = new JMenuItem(path
+				+ ":" + (error.getLineNo() + 1) + ":"
+				+ error.getError());
+			menuItem.setActionCommand(String.valueOf(count++));
+			menuItem.addActionListener(gotoError);
+			errors.add(menuItem);
+		}
+	}
+
+	/**
+	 * Recreates the plugins menu.
+	 */
+	public void updatePluginsMenu()
+	{
+		if(plugins.getMenuComponentCount() != 0)
+			buffers.removeAll();
+		Enumeration enum = jEdit.getPlugins();
+		if(!enum.hasMoreElements())
+		{
+			plugins.add(jEdit.loadMenuItem(this,"no-plugins"));
+			return;
+		}
+		while(enum.hasMoreElements())
+		{
+			String action = (String)((Action)enum.nextElement())
+				.getValue(Action.NAME);
+			JMenuItem mi = jEdit.loadMenuItem(this,action);
+			plugins.add(mi);
 		}
 	}
 
@@ -433,7 +465,21 @@ implements CaretListener, KeyListener, WindowListener
 				evt.consume();
 				return;
 			}
-			textArea.replaceSelection("\t");
+			if("yes".equals(buffer.getProperty("noTabs")))
+			{
+				StringBuffer buf = new StringBuffer();
+				for(int i = buffer.getTabSize(); i > 0; i--)
+				{
+					// this is broken cos if we press
+					// tab in a non %tabSize==0 column,
+					// but I can't be fucked fixing it
+					/// right now
+					buf.append(' ');
+				}
+				textArea.replaceSelection(buf.toString());
+			}
+			else
+				textArea.replaceSelection("\t");
 			evt.consume();
 		}
 	}
@@ -470,12 +516,14 @@ implements CaretListener, KeyListener, WindowListener
 	{
 		showTip = ("on".equals(jEdit.getProperty("view.showTips")));
 		
-		plugins = jEdit.loadMenu(this,"plugins");
 		buffers = jEdit.loadMenu(this,"buffers");
 		openRecent = jEdit.loadMenu(this,"open-recent");
 		clearMarker = jEdit.loadMenu(this,"clear-marker");
 		gotoMarker = jEdit.loadMenu(this,"goto-marker");
+		errors = jEdit.loadMenu(this,"errors");
+		plugins = jEdit.loadMenu(this,"plugins");
 		mode = jEdit.loadMenu(this,"mode");
+
 		bindings = new Hashtable();
 		currentPrefix = bindings;
 		lineSegment = new Segment();
@@ -508,6 +556,7 @@ implements CaretListener, KeyListener, WindowListener
 		textArea.addKeyListener(this);
 		textArea.addCaretListener(this);
 		textArea.setBorder(null);
+		updateErrorListMenu();
 		updatePluginsMenu();
 
 		JMenuBar mbar = jEdit.loadMenubar(this,"view.mbar");
@@ -543,9 +592,7 @@ implements CaretListener, KeyListener, WindowListener
 
 	JMenu getMenu(String name)
 	{
-		if(name.equals("plugins"))
-			return plugins;
-		else if(name.equals("buffers"))
+		if(name.equals("buffers"))
 			return buffers;
 		else if(name.equals("open-recent"))
 			return openRecent;
@@ -553,6 +600,10 @@ implements CaretListener, KeyListener, WindowListener
 			return clearMarker;
 		else if(name.equals("goto-marker"))
 			return gotoMarker;
+		else if(name.equals("errors"))
+			return errors;
+		else if(name.equals("plugins"))
+			return plugins;
 		else if(name.equals("mode"))
 			return mode;
 		else
@@ -560,18 +611,18 @@ implements CaretListener, KeyListener, WindowListener
 	}
 	
 	// private members
-	private JMenu plugins;
 	private JMenu buffers;
 	private JMenu openRecent;
 	private JMenu clearMarker;
 	private JMenu gotoMarker;
+	private JMenu errors;
+	private JMenu plugins;
 	private JMenu mode;
 	private Hashtable bindings;
 	private Hashtable currentPrefix;
 	private JScrollPane scroller;
 	private SyntaxTextArea textArea;
 	private JLabel lineNumber;
-	private int lastLine;
 	private Segment lineSegment;
 	private Buffer buffer;
 	private boolean showTip;
@@ -580,10 +631,16 @@ implements CaretListener, KeyListener, WindowListener
 	{
 		int currLine;
 		Element map = buffer.getDefaultRootElement();
-		currLine = map.getElementIndex(dot) + 1;
-		Element lineElement = map.getElement(currLine-1);
+		currLine = map.getElementIndex(dot);
+		Element lineElement = map.getElement(currLine);
 		int start = lineElement.getStartOffset();
 		int end = lineElement.getEndOffset();
+		int numLines = map.getElementCount();
+		Object[] args = { new Integer((dot - start) + 1),
+			new Integer(currLine + 1),
+			new Integer(numLines),
+			new Integer((currLine * 100) / numLines) };
+		lineNumber.setText(jEdit.getProperty("view.lineNumber",args));
 		if(textArea.getSelectionStart() == textArea.getSelectionEnd())
 			textArea.setHighlightedLine(start,end);
 		else
@@ -636,13 +693,5 @@ implements CaretListener, KeyListener, WindowListener
 		{
 			//bl.printStackTrace();
 		}
-		if(lastLine == currLine && !force)
-			return;
-		lastLine = currLine;
-		int numLines = map.getElementCount();
-		Object[] args = { new Integer(currLine),
-			new Integer(numLines),
-			new Integer((currLine * 100) / numLines) };
-		lineNumber.setText(jEdit.getProperty("view.lineNumber",args));
 	}
 }

@@ -37,23 +37,23 @@ public class box_comment extends EditAction
 		View view = getView(evt);
 		SyntaxTextArea textArea = view.getTextArea();
 		Buffer buffer = view.getBuffer();
-		String commentStart = (String)view.getBuffer()
-			.getProperty("commentStart") + ' ';
-		String commentEnd = ' ' + (String)view.getBuffer()
-			.getProperty("commentEnd");
-		String boxComment = (String)view.getBuffer()
-			.getProperty("boxComment") + ' ';
-		int selectionStart = textArea.getSelectionStart();
-		int selectionEnd = textArea.getSelectionEnd();
-		Element map = buffer.getDefaultRootElement();
-		int startLine = map.getElementIndex(selectionStart);
-		int endLine = map.getElementIndex(selectionEnd);
+		String commentStart = (String)buffer.getProperty("commentStart");
+		String commentEnd = (String)buffer.getProperty("commentEnd");
+		String boxComment = (String)buffer.getProperty("boxComment");
 		if(commentStart == null || commentEnd == null
 			|| boxComment == null)
 		{
 			view.getToolkit().beep();
 			return;
 		}
+		commentStart = commentStart + ' ';
+		commentEnd = ' ' + commentEnd;
+		boxComment = boxComment + ' ';
+		int selectionStart = textArea.getSelectionStart();
+		int selectionEnd = textArea.getSelectionEnd();
+		Element map = buffer.getDefaultRootElement();
+		int startLine = map.getElementIndex(selectionStart);
+		int endLine = map.getElementIndex(selectionEnd);
 		buffer.beginCompoundEdit();
 		try
 		{
@@ -77,6 +77,8 @@ public class box_comment extends EditAction
 				start,lineElement.getEndOffset() - start));
 			buffer.insertString(Math.max(start + indent,textArea
 				.getSelectionEnd()),commentEnd,null);
+			textArea.select(textArea.getCaretPosition(),
+				textArea.getCaretPosition());
 		}
 		catch(BadLocationException bl)
 		{

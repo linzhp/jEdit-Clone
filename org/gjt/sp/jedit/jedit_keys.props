@@ -9,9 +9,9 @@ select-all.shortcut		C+a
 expand-abbrev.shortcut		C+b
 copy.shortcut			C+c
 delete-line.shortcut		C+d C+d
+delete-paragraph.shortcut	C+d C+e
 delete-end-line.shortcut	C+d C+f
 delete-no-indent.shortcut	C+d C+i
-delete-paragraph.shortcut	C+d C+p
 delete-start-line.shortcut	C+d C+s
 replace-all.shortcut		C+e C+a
 box-comment.shortcut		C+e C+b
@@ -26,6 +26,7 @@ set-marker.shortcut		C+e C+m
 new-view.shortcut		C+e C+n
 open-url.shortcut		C+e C+o
 pipe-selection.shortcut		C+e C+p
+uncomment.shortcut		C+e C+q
 replace.shortcut		C+e C+r
 find-selection.shortcut		C+e C+s
 tab.shortcut			C+e C+t
@@ -33,6 +34,8 @@ untab.shortcut			C+e C+u
 paste-previous.shortcut		C+e C+v
 close-view.shortcut		C+e C+w
 exchange-anchor.shortcut	C+e C+x
+prev-error.shortcut		C+e C+[
+next-error.shortcut		C+e C+]
 find.shortcut			C+f
 find-next.shortcut		C+g
 hypersearch.shortcut		C+h

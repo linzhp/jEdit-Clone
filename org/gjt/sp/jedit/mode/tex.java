@@ -19,11 +19,12 @@
 
 package org.gjt.sp.jedit.mode;
 
-import javax.swing.text.*;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Element;
 import org.gjt.sp.jedit.syntax.*;
 import org.gjt.sp.jedit.*;
 
-public class tex extends autoindent
+public class tex implements Mode
 {
 	public void enter(Buffer buffer)
 	{
@@ -69,7 +70,16 @@ public class tex extends autoindent
 		else if(docStyleFound)
 			buffer.setMode(jEdit.getMode("amstex"));
 	}
-			
+
+	public void leave(Buffer buffer)
+	{
+	}
+
+	public boolean indentLine(Buffer buffer, View view, int dot)
+	{
+		return false;
+	}
+
 	public TokenMarker createTokenMarker()
 	{
 		return new TeXTokenMarker();

@@ -151,7 +151,9 @@ block=select-block \
       - \
       wing-comment \
       box-comment \
-      block-comment
+      block-comment \
+      - \
+      uncomment
 block.label=Code Block Operations
 select-block.label=Select Code Block
 shift-left.label=Shift Indent Left
@@ -159,6 +161,7 @@ shift-right.label=Shift Indent Right
 wing-comment.label=Wing Comment
 box-comment.label=Box Comment
 block-comment.label=Block Comment
+uncomment.label=Uncomment
 
 ### Search menu
 search=find \
@@ -197,11 +200,15 @@ tools=execute \
       browser-open-sel \
       browser-open-url \
       - \
+      word-count \
+      generate-text \
+      - \
       compile \
       make \
       - \
-      word-count \
-      generate-text \
+      %errors \
+      prev-error \
+      next-error \
       - \
       options \
       - \
@@ -212,10 +219,14 @@ execute.label=E$xecute Command...
 pipe-selection.label=Fi$lter Selection...
 browser-open-sel.label=$Open Selection in WWW Browser
 browser-open-url.label=Open in $WWW Browser
+word-count.label=Word Co$unt...
+generate-text.label=$Generate Random Text...
 compile.label=$Compile...
 make.label=$Make...
-word-count.label=Wo$rd Count...
-generate-text.label=Generate Random Text...
+prev-error.label=Go to Pre$vious Error
+next-error.label=Go to $Next Error
+errors.label=Compile$r Errors
+no-errors.label=No Errors
 options.label=Opt$ions...
 
 ### Mode menu
@@ -227,31 +238,10 @@ no-plugins.label=No Plugins
 
 ### Help menu
 help=about \
-     help@index.html \
-     - \
-     help@copying.html \
-     help@version1.4.html \
-     - \
-     help@using.html \
-     help@regexp.html \
-     - \
-     help@keys.html \
-     help@menu_file.html \
-     help@menu_edit.html \
-     help@menu_search.html \
-     help@menu_tools.html
+     help@index.html
 help.label=$Help
 about.label=About jEdit...
-help@index.html.label=Help Contents
-help@copying.html.label=Copying & (No) Warranty
-help@version1.4.html.label=New Features in jEdit 1.4
-help@using.html.label=Using jEdit
-help@regexp.html.label=Regular Expressions
-help@keys.html.label=Keyboard Shortcuts
-help@menu_file.html.label=File Menu
-help@menu_edit.html.label=Edit Menu
-help@menu_search.html.label=Search Menu
-help@menu_tools.html.label=Tools Menu
+help@index.html.label=Help Contents...
 
 ###
 ### MISC STUFF
@@ -267,10 +257,11 @@ view.title={0}{1,choice,0#|1# (read only)}{2,choice,0#|1# (modified)} \
 	{3,choice,0#|1# (Hint: {4})}
 
 # Line number bar
-# {0} - the number of lines in the buffer
+# {0} - the current column number (dot - lineStart)
 # {1} - the current line number
-# {2} - the percentage of the file displayed
-view.lineNumber=({0}/{1} - {2}%)
+# {2} - the number of lines in the buffer
+# {3} - the percentage of the file displayed
+view.lineNumber=({0} - {1}/{2} - {3}%)
 
 ###
 ### VARIOUS DIALOGS
@@ -478,6 +469,7 @@ options.editor.syntax=Syntax colorizing
 options.editor.autoIndent=Auto indent
 options.editor.blinkCaret=Blinking caret
 options.editor.electricBorders=Electric (auto scroll) borders
+options.editor.noTabs=Soft (emulated with spaces) tabs
 options.colors1.label=Colors (General)
 options.colors1.bgColor=View background:\ 
 options.colors1.fgColor=View foreground:\ 

@@ -23,7 +23,7 @@ import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.text.*;
 import javax.swing.undo.*;
-import gnu.regexp.*;
+import gnu.regexp.*;	
 import java.awt.*;
 import java.io.*;
 import java.net.*;
@@ -782,21 +782,6 @@ implements DocumentListener, UndoableEditListener
 	 */
 	public void propertiesChanged()
 	{
-		// this isn't necessary, and it's broken too
-		/*try
-		{
-			Object oldSize = getProperty(tabSizeAttribute);
-			if(oldSize == null)
-			{
-				Integer tabSize = new Integer(jEdit
-					.getProperty("buffer.tabSize"));
-				putProperty(tabSizeAttribute,tabSize);
-			}
-		}
-		catch(NumberFormatException nf)
-		{
-		}*/
-
 		// reset the color cache
 		colors.clear();
 	}
@@ -1021,9 +1006,11 @@ implements DocumentListener, UndoableEditListener
 					int index = line.indexOf("(:");
 					if(index == -1)
 						continue;
-					int end = line.indexOf(')',index + 6);
+					int end = line.indexOf(":)",index + 6);
+					if(end == -1)
+						continue;
 					processProperty(line.substring(index,
-						end));
+						end + 1));
 				}
 			}
 			bin.close();

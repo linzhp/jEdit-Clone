@@ -37,13 +37,15 @@ public class wing_comment extends EditAction
 		View view = getView(evt);
 		SyntaxTextArea textArea = view.getTextArea();
 		Buffer buffer = view.getBuffer();
-		String commentStart = (String)buffer.getProperty("commentStart") + ' ';
-		String commentEnd = ' ' + (String)buffer.getProperty("commentEnd");
+		String commentStart = (String)buffer.getProperty("commentStart");
+		String commentEnd = (String)buffer.getProperty("commentEnd");
 		if(commentStart == null || commentEnd == null)
 		{
 			view.getToolkit().beep();
 			return;
 		}
+		commentStart = commentStart + ' ';
+		commentEnd = ' ' + commentEnd;
 		buffer.beginCompoundEdit();
 		try
 		{
@@ -51,6 +53,8 @@ public class wing_comment extends EditAction
 				commentStart,null);
 			buffer.insertString(textArea.getSelectionEnd(),
 				commentEnd,null);
+			textArea.select(textArea.getCaretPosition(),
+				textArea.getCaretPosition());
 		}
 		catch(BadLocationException bl)
 		{

@@ -289,17 +289,24 @@ public class SyntaxTextArea extends JEditorPane
 			SyntaxCaret.this.setVisible(true);
 		}
 
-		public void adjustVisibility(Rectangle rect)
+		public void adjustVisibility(final Rectangle rect)
 		{
-			/* Electric borders: cursor is never actually at
-			 * first/last visible line of viewport.
-			 */
-			int height = getToolkit().getFontMetrics(getFont())
-				.getHeight();
-			rect.y = Math.max(0,rect.y - height * electricLines);
-			rect.height += Math.min(getHeight() - (rect.y + rect.height),
-				height * electricLines * 2);
-			super.adjustVisibility(rect);
+			SwingUtilities.invokeLater(new Runnable() {
+				public void run()
+				{
+					int height = getToolkit().getFontMetrics(
+						getFont()).getHeight();
+					int y = Math.max(0,rect.y - height
+						* electricLines);
+					int lines = height * electricLines * 2;
+					if(y + lines + rect.height <= getHeight())
+					{
+						rect.y = y;
+						rect.height += lines;
+					}
+					scrollRectToVisible(rect);
+				}
+			});
 		}
 	}
 

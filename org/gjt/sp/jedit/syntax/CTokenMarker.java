@@ -104,7 +104,7 @@ loop:		for(int i = offset; i < length; i++)
 				break;
 			case '/':
 				backslash = false;
-				if(token == null && length - i >= 1)
+				if(token == null && length - i >= 2)
 				{
 					switch(line.array[i+1])
 					{

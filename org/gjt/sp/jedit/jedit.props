@@ -50,9 +50,11 @@ buffer.tabSize=8
 buffer.openBrackets=([{
 buffer.closeBrackets=)]}
 
-# Indent brackets (only set to real value in C/CC/Java modes)
-buffer.indentOpenBrackets=
-buffer.indentCloseBrackets=
+# Addint ==null checks to auto indent is something I can't
+# be bothered going, so here we go :) Real values are specified
+# in C/C++/Java/JavaScript modes
+buffer.openIndentBrackets=
+buffer.closeIndentBrackets=
 
 # Print margins
 buffer.margin.top=0.5
@@ -133,6 +135,7 @@ mode.autoindent.name=Auto Indent
 
 # Batch File mode
 mode.bat.name=Batch File
+mode.bat.blockComment=rem
 mode.extension.bat=bat
 
 # C mode
@@ -143,7 +146,7 @@ mode.c.indentCloseBrackets=}
 mode.c.commentStart=/*
 mode.c.commentEnd=*/
 mode.c.blockComment=//
-mode.c.boxComment=\ *
+mode.c.boxComment=*
 mode.c.compiler=cc -O %p
 mode.extension.c=c
 mode.extension.h=c
@@ -156,9 +159,12 @@ mode.cc.indentCloseBrackets=}
 mode.cc.commentStart=/*
 mode.cc.commentEnd=*/
 mode.cc.blockComment=//
-mode.cc.boxComment=\ *
+mode.cc.boxComment=*
 mode.cc.compiler=c++ -O2 %p
+# I wish the C++ file extensions were more standard... jeez...
 mode.extension.cc=cc
+mode.extension.hh=cc
+mode.extension.H=cc
 mode.extension.cpp=cc
 mode.extension.cxx=cc
 mode.extension.C=cc
@@ -180,7 +186,7 @@ mode.java_mode.indentCloseBrackets=}
 mode.java_mode.commentStart=/*
 mode.java_mode.commentEnd=*/
 mode.java_mode.blockComment=//
-mode.java_mode.boxComment=\ *
+mode.java_mode.boxComment=*
 mode.java_mode.compiler=javac %p
 mode.extension.java=java_mode
 
@@ -192,7 +198,7 @@ mode.javascript.indentCloseBrackets=}
 mode.javascript.commentStart=/*
 mode.javascript.commentEnd=*/
 mode.javascript.blockComment=//
-mode.javascript.boxComment=\ *
+mode.javascript.boxComment=*
 mode.extension.js=javascript
 
 # Makefile mode

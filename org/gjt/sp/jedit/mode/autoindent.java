@@ -37,7 +37,8 @@ public class autoindent implements Mode
 	{
 		String openBrackets = (String)buffer.getProperty("indentOpenBrackets");
 		String closeBrackets = (String)buffer.getProperty("indentCloseBrackets");
-		if(openBrackets.length() != closeBrackets.length())
+		if(openBrackets == null || closeBrackets == null
+			|| openBrackets.length() != closeBrackets.length())
 			return false;
 		int tabSize = buffer.getTabSize();
 		boolean noTabs = "yes".equals(buffer.getProperty("noTabs"));
@@ -89,21 +90,21 @@ public class autoindent implements Mode
 					if(prevLineStart)
 					{
 						prevLineIndent += (tabSize
-	  	  					- (prevLineIndent
-		  					% tabSize));
+							- (prevLineIndent
+							% tabSize));
 					}
 					break;
 				default:
 					prevLineStart = false;
 					if(closeBrackets.indexOf(c) != -1)
 						prevLineBrackets = Math.max(
-	 	 					prevLineBrackets-1,0);
+							prevLineBrackets-1,0);
 					else if(openBrackets.indexOf(c) != -1)
 						prevLineBrackets++;
 					break;
 				}
 			}
-
+	
 			/**
 			 * On the current line,
 			 * { should give us 0
@@ -132,8 +133,8 @@ public class autoindent implements Mode
 					if(lineStart)
 					{
 						lineIndent += (tabSize
-	  	  					- (lineIndent
-		  					% tabSize));
+							- (lineIndent
+							% tabSize));
 						lineWidth++;
 					}
 					break;
@@ -151,7 +152,7 @@ public class autoindent implements Mode
 					break;
 				}
 			}
-			
+							
 			prevLineIndent += (prevLineBrackets + lineBrackets)
 				* tabSize;
 
