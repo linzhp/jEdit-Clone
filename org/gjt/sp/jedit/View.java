@@ -137,7 +137,8 @@ public class View extends JFrame
 		{
 			Buffer b = bufferArray[i];
 			String name = b.getPath();
-			Object[] args = { name, new Integer(b.isReadOnly() ? 1: 0),
+			Object[] args = { (b.isNewFile() ? b.getName() : name),
+				new Integer(b.isReadOnly() ? 1: 0),
 				new Integer(b.isDirty() ? 1 : 0),
 				new Integer(0), null };
 			JRadioButtonMenuItem menuItem =
@@ -750,6 +751,9 @@ public class View extends JFrame
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.59  1999/04/07 05:01:26  sp
+ * Search and replace tweak, UI tweaks
+ *
  * Revision 1.58  1999/04/01 04:13:00  sp
  * Bug fixing for 1.5final
  *

@@ -36,10 +36,6 @@ public class SearchAndReplace extends JDialog
 		super(view,jEdit.getProperty("search.title"),false);
 		this.view = view;
 
-		// silly hack :)
-		selStart = view.getTextArea().getSelectionStart();
-		selEnd = view.getTextArea().getSelectionEnd();
-
 		find = new HistoryTextField("find");
 		find.setSelectedItem(defaultFind);
 
@@ -143,8 +139,6 @@ public class SearchAndReplace extends JDialog
 	private JButton replaceSelection;
 	private JButton replaceAll;
 	private JButton cancel;
-	private int selStart;
-	private int selEnd;
 	
 	private void save()
 	{
@@ -184,7 +178,8 @@ public class SearchAndReplace extends JDialog
 			{
 				save();
 				if(view.getBuffer().replaceAll(view,
-					selStart,selEnd))
+					view.getTextArea().getSelectionStart(),
+					view.getTextArea().getSelectionEnd()))
 					disposeOrKeepDialog();
 				else
 					getToolkit().beep();
@@ -216,6 +211,9 @@ public class SearchAndReplace extends JDialog
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.25  1999/04/07 05:01:26  sp
+ * Search and replace tweak, UI tweaks
+ *
  * Revision 1.24  1999/04/02 03:21:09  sp
  * Added manifest file, common strings such as OK, etc are no longer duplicated
  * many times in jedit_gui.props
