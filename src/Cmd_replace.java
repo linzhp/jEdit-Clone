@@ -1,5 +1,5 @@
 /*
- * Cmd_WordCount.java - Simple plugin
+ * Cmd_replace.java - Command
  * Copyright (C) 1998 Slava Pestov
  *
  * This program is free software; you can redistribute it and/or
@@ -17,10 +17,9 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-import com.sun.java.swing.JTextArea;
 import java.util.Hashtable;
 
-public class Cmd_WordCount implements Command
+public class Cmd_replace implements Command
 {
 	public Object init(Hashtable args)
 	{
@@ -31,48 +30,7 @@ public class Cmd_WordCount implements Command
 	{
 		View view = (View)args.get(VIEW);
 		if(view != null)
-		{
-			JTextArea textArea = view.getTextArea();
-			String selection = textArea.getSelectedText();
-			if(selection != null)
-				wordCount(view,selection);
-			else
-				wordCount(view,textArea.getText());
-		}
+			view.getBuffer().replace(view);
 		return null;
-	}
-
-	private void wordCount(View view, String text)
-	{
-		char[] chars = text.toCharArray();
-		int characters = chars.length;
-		int words;
-		if(characters == 0)
-			words = 0;
-		else
-			words = 1;
-		int lines = 1;
-		boolean word = false;
-		for(int i = 0; i < chars.length; i++)
-		{
-			switch(chars[i])
-			{
-			case '\r': case '\n':
-				lines++;
-			case ' ': case '\t':
-				if(word)
-				{
-					words++;
-					word = false;
-				}
-				break;
-			default:
-				word = true;
-				break;
-			}
-		}
-		Object[] args = { new Integer(characters), new Integer(words),
-			new Integer(lines) };
-		jEdit.message(view,"WordCount",args);
 	}
 }

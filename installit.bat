@@ -1,10 +1,9 @@
-@echo off
 set DIRECTORY="C:\Program Files\jEdit"
 md %DIRECTORY%
 md %DIRECTORY%\doc
 copy src\jedit.jar %DIRECTORY%
 cd plugins
-call .\installit
+call installit %DIRECTORY%
 cd ..
 copy bin\*.bat %DIRECTORY%
 copy etc\*.pif %DIRECTORY%

@@ -1,5 +1,5 @@
 /*
- * Cmd_ToUpper.java - Simple plugin
+ * Cmd_word_count.java - Simple plugin
  * Copyright (C) 1998 Slava Pestov
  *
  * This program is free software; you can redistribute it and/or
@@ -20,7 +20,7 @@
 import com.sun.java.swing.JTextArea;
 import java.util.Hashtable;
 
-public class Cmd_ToUpper implements Command
+public class Cmd_word_count implements Command
 {
 	public Object init(Hashtable args)
 	{
@@ -35,11 +35,44 @@ public class Cmd_ToUpper implements Command
 			JTextArea textArea = view.getTextArea();
 			String selection = textArea.getSelectedText();
 			if(selection != null)
-				textArea.replaceSelection(selection
-					.toUpperCase());
+				wordCount(view,selection);
 			else
-				view.getToolkit().beep();
+				wordCount(view,textArea.getText());
 		}
 		return null;
+	}
+
+	private void wordCount(View view, String text)
+	{
+		char[] chars = text.toCharArray();
+		int characters = chars.length;
+		int words;
+		if(characters == 0)
+			words = 0;
+		else
+			words = 1;
+		int lines = 1;
+		boolean word = false;
+		for(int i = 0; i < chars.length; i++)
+		{
+			switch(chars[i])
+			{
+			case '\r': case '\n':
+				lines++;
+			case ' ': case '\t':
+				if(word)
+				{
+					words++;
+					word = false;
+				}
+				break;
+			default:
+				word = true;
+				break;
+			}
+		}
+		Object[] args = { new Integer(characters), new Integer(words),
+			new Integer(lines) };
+		jEdit.message(view,"word_count",args);
 	}
 }

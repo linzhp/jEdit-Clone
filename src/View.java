@@ -320,14 +320,16 @@ implements ActionListener, KeyListener, CaretListener, WindowListener
 		int numLines = textArea.getLineCount();
 		Object[] args = { buffer.getPath(),
 			new Integer(buffer.isNewFile() ? 1 : 0),
+			new Integer(buffer.isReadOnly() ? 1 : 0),
 			new Integer(buffer.isDirty() ? 1 : 0),
 			new Integer(currLine),
 			new Integer(numLines),
 			new Integer(currLine * 100 / numLines) };
 		status.setText(jEdit.props.getProperty("status",args));
 		setTitle(this.buffer.getPath());
+		textArea.setEditable(!buffer.isReadOnly());
 	}
-			
+	
 	public Buffer getBuffer()
 	{
 		return buffer;

@@ -1,5 +1,5 @@
 /*
- * Cmd_HelloWorld.java - Simple plugin
+ * Cmd_to_upper.java - Simple plugin
  * Copyright (C) 1998 Slava Pestov
  *
  * This program is free software; you can redistribute it and/or
@@ -17,9 +17,10 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+import com.sun.java.swing.JTextArea;
 import java.util.Hashtable;
 
-public class Cmd_HelloWorld implements Command
+public class Cmd_to_upper implements Command
 {
 	public Object init(Hashtable args)
 	{
@@ -28,7 +29,17 @@ public class Cmd_HelloWorld implements Command
 
 	public Object exec(Hashtable args)
 	{
-		jEdit.message((View)args.get(VIEW),"HelloWorld",new Object[0]);
+		View view = (View)args.get(VIEW);
+		if(view != null)
+		{
+			JTextArea textArea = view.getTextArea();
+			String selection = textArea.getSelectedText();
+			if(selection != null)
+				textArea.replaceSelection(selection
+					.toUpperCase());
+			else
+				view.getToolkit().beep();
+		}
 		return null;
 	}
 }

@@ -1,0 +1,270 @@
+/*
+ * SendDialog.java - Send To Dialog
+ * Copyright (C) 1998 Slava Pestov
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+
+import com.sun.java.swing.JButton;
+import com.sun.java.swing.JDialog;
+import com.sun.java.swing.JLabel;
+import com.sun.java.swing.JPanel;
+import com.sun.java.swing.JSeparator;
+import com.sun.java.swing.JTextArea;
+import com.sun.java.swing.JTextField;
+import com.sun.java.swing.SwingConstants;
+import java.awt.Dimension;
+import java.awt.GridBagLayout;
+import java.awt.GridBagConstraints;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
+import java.net.Socket;
+
+public class SendDialog extends JDialog
+implements ActionListener, WindowListener
+{
+	public static final String CRLF = "\r\n";
+	private View view;
+	private JTextField smtp;
+	private JTextField from;
+	private JTextField to;
+	private JTextField subject;
+	private JPanel buttons;
+	private JButton send;
+	private JButton cancel;
+	
+	public SendDialog(View view)
+	{
+		super(view,jEdit.props.getProperty("send.title"),true);
+		this.view = view;
+		JPanel panel = new JPanel();
+		GridBagLayout layout = new GridBagLayout();
+		panel.setLayout(layout);
+		GridBagConstraints constraints = new GridBagConstraints();
+		constraints.gridwidth = constraints.gridheight = 1;
+		constraints.fill = constraints.BOTH;
+		constraints.weightx = 1.0f;
+		JLabel label = new JLabel(jEdit.props
+			.getProperty("send.smtp"),SwingConstants.RIGHT);
+		layout.setConstraints(label,constraints);
+		panel.add(label);
+		constraints.gridx = 1;
+		constraints.gridwidth = 2;
+		smtp = new JTextField(jEdit.props
+			.getProperty("send.lastsmtp"),30);
+		layout.setConstraints(smtp,constraints);
+		panel.add(smtp);
+		constraints.gridx = 0;
+		constraints.gridy = 1;
+		constraints.gridwidth = 1;
+		label = new JLabel(jEdit.props.getProperty("send.from"),
+			SwingConstants.RIGHT);
+		layout.setConstraints(label,constraints);
+		panel.add(label);
+		constraints.gridx = 1;
+		constraints.gridwidth = 2;
+		from = new JTextField(jEdit.props
+			.getProperty("send.lastfrom"),30);
+		layout.setConstraints(from,constraints);
+		panel.add(from);
+		constraints.gridx = 0;
+		constraints.gridy = 2;
+		constraints.gridwidth = 1;
+		label = new JLabel(jEdit.props.getProperty("send.to"),
+			SwingConstants.RIGHT);
+		layout.setConstraints(label,constraints);
+		panel.add(label);
+		constraints.gridx = 1;
+		constraints.gridwidth = 2;
+		to = new JTextField(jEdit.props.getProperty("send.lastto"),30);
+		layout.setConstraints(to,constraints);
+		panel.add(to);
+		constraints.gridx = 0;
+		constraints.gridy = 3;
+		constraints.gridwidth = 1;
+		label = new JLabel(jEdit.props.getProperty("send.subject"),
+			SwingConstants.RIGHT);
+		layout.setConstraints(label,constraints);
+		panel.add(label);
+		constraints.gridx = 1;
+		constraints.gridwidth = 2;
+		subject = new JTextField(view.getBuffer().getPath(),30);
+		layout.setConstraints(subject,constraints);
+		panel.add(subject);
+		getContentPane().add("North",panel);
+		getContentPane().add("Center",new JSeparator());
+		buttons = new JPanel();
+		send = new JButton(jEdit.props.getProperty("send.send"));
+		buttons.add(send);
+		cancel = new JButton(jEdit.props.getProperty("send.cancel"));
+		buttons.add(cancel);
+		getContentPane().add("South",buttons);
+		Dimension screen = getToolkit().getScreenSize();
+		pack();
+		setLocation((screen.width - getSize().width) / 2,
+			(screen.height - getSize().height) / 2);
+		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+		addWindowListener(this);
+		send.addActionListener(this);
+		cancel.addActionListener(this);
+		show();
+	}
+
+	public void save()
+	{
+		jEdit.props.put("send.lastsmtp",smtp.getText());
+		jEdit.props.put("send.lastfrom",from.getText());
+		jEdit.props.put("send.lastto",to.getText());
+		jEdit.props.put("send.lastsubject",subject.getText());
+	}
+	
+	public void doSend()
+	{
+		String smtp = this.smtp.getText();
+		String from = this.from.getText();
+		String to = this.to.getText();
+		String subject = this.subject.getText();
+		if(smtp.length() == 0 || from.length() == 0
+			|| to.length() == 0)
+		{
+			jEdit.error(view,"sendempty",new Object[0]);
+			return;
+		}
+		this.smtp.setEnabled(false);
+		this.from.setEnabled(false);
+		this.to.setEnabled(false);
+		this.subject.setEnabled(false);
+		JTextArea transcript = new JTextArea();
+		transcript.setRows(10);
+		transcript.setEditable(false);
+		getContentPane().remove(buttons);
+		getContentPane().add("South",transcript);
+		pack();
+		Object[] args = { smtp };
+		transcript.append(jEdit.props.getProperty("send.connect",
+			args));
+		try
+		{
+			int index = smtp.indexOf(':');
+			int port = 25;
+			if(index != -1)
+			{
+				port = Integer.parseInt(smtp.substring(index
+					+ 1));
+				smtp = smtp.substring(0,index);
+			}
+			Socket socket = new Socket(smtp,port);
+			BufferedReader in = new BufferedReader(new
+				InputStreamReader(socket.getInputStream()));
+			Writer out = new OutputStreamWriter(socket
+				.getOutputStream());
+			String response = in.readLine();
+			transcript.append(response);
+			transcript.append(CRLF);
+			if(!response.startsWith("220"))
+				throw new IOException("Server down");
+			String command = "HELO " + socket.getLocalAddress()
+				.getHostName() + CRLF;
+			transcript.append(command);
+			out.write(command);
+			response = in.readLine();
+			transcript.append(response);
+			transcript.append(CRLF);
+			if(!response.startsWith("250"))
+				throw new IOException("Connection refused");
+			command = "MAIL FROM: " + from + CRLF;
+			transcript.append(command);
+			out.write(command);
+			response = in.readLine();
+			transcript.append(response);
+			transcript.append(CRLF);
+			if(!response.startsWith("250"))
+				throw new IOException("Invalid sender");
+			command = "RCPT TO: " + to + CRLF;
+			transcript.append(command);
+			out.write(command);
+			response = in.readLine();
+			transcript.append(response);
+			transcript.append(CRLF);
+			if(!response.startsWith("250"))
+				throw new IOException("Invalid recepient");
+			command = "DATA" + CRLF;
+			transcript.append(command);
+			out.write(command);
+			out.write("bob\r\n.\r\n");
+			response = in.readLine();
+			transcript.append(response);
+			transcript.append(CRLF);
+			if(!response.startsWith("354"))
+				throw new IOException("Invalid message");
+			command = "QUIT" + CRLF;
+			transcript.append(command);
+			out.write(command);
+			response = in.readLine();
+			transcript.append(response);
+			transcript.append(CRLF);
+			in.close();
+			out.close();
+			socket.close();
+		}
+		catch(IOException io)
+		{
+			args[0] = io.toString();
+			jEdit.error(view,"ioerror",args);
+		}
+		catch(NumberFormatException nf)
+		{
+			jEdit.error(view,"badport",new Object[0]);
+		}
+		catch(Exception e)
+		{
+			args[0] = e.toString();
+			jEdit.error(view,"error",args);
+		}
+		save();
+		dispose();
+	}
+
+	public void actionPerformed(ActionEvent evt)
+	{
+		save();
+		Object source = evt.getSource();
+		if(source == cancel)
+			dispose();
+		else if(source == send)
+			doSend();
+	}
+
+	public void windowOpened(WindowEvent evt) {}
+	
+	public void windowClosing(WindowEvent evt)
+	{
+		save();
+		dispose();
+	}
+	
+	public void windowClosed(WindowEvent evt) {}
+	public void windowIconified(WindowEvent evt) {}
+	public void windowDeiconified(WindowEvent evt) {}
+	public void windowActivated(WindowEvent evt) {}
+	public void windowDeactivated(WindowEvent evt) {}
+}

@@ -34,7 +34,7 @@ public class Cmd_help implements Command
 			arg = "index.txt";
 		View view = (View)args.get(VIEW);
 		jEdit.buffers.openFile(view,jEdit.props.getProperty("helpdir")
-			+ File.separator + arg);
+			+ File.separator + arg,true,true);
 		return null;
 	}
 }

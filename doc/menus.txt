@@ -1,14 +1,15 @@
-JEDIT MENUS (menus.txt, last modified 30 Sep 1998)
+JEDIT MENUS (menus.txt, last modified 5 Oct 1998)
 
 Contents
 --------
 1. Format
 2. File Menu
 3. Edit Menu
-4. Plugins Menu
-5. Buffers Menu
-6. Help Menu
-7. Customizing Menus
+4. Search Menu
+5. Plugins Menu
+6. Buffers Menu
+7. Help Menu
+8. Customizing Menus
 
 1. Format
 ---------
@@ -104,10 +105,6 @@ Selects all the text in the current file.
 
 -- SEPARATOR --
 
--- search/replace not done yet --
-
--- SEPARATOR --
-
 - Go To Line (goto_line) (C-l)
 Moves the caret to the specified line.
 
@@ -126,21 +123,25 @@ it.
 
 -- options not done yet --
 
-4. Plugins Menu
+4. Search Menu
+--------------
+Search & replace isn't finished yet.
+
+5. Plugins Menu
 ---------------
 This menu contains one entry for each plugin you have installed.
 
-5. Buffers Menu
+6. Buffers Menu
 ---------------
 This menu contains one entry for each open file. The current file will have a
 marker next to it.
 
-6. Help Menu
+7. Help Menu
 ------------
 This menu contains a list of help files. A description of each one is for can
 be found by selecting `Help Index'.
 
-6. Customizing Menus
+8. Customizing Menus
 --------------------
 If you don't like jEdit's default menus, it is possible to change them. This
 involves changing properties, so read props.txt first.

@@ -6,6 +6,7 @@ resources=jEdit.class \
 	BufferMgr.class \
 	Command.class \
 	CommandMgr.class \
+	HyperSearch.class \
 	Marker.class \
 	Options.class \
 	PropsMgr.class \
@@ -21,9 +22,12 @@ resources=jEdit.class \
 	Cmd_cut.class \
 	Cmd_exit.class \
 	Cmd_find.class \
+	Cmd_find_next.class \
+	Cmd_find_selection.class \
 	Cmd_goto_line.class \
 	Cmd_goto_marker.class \
 	Cmd_help.class \
+	Cmd_hypersearch.class \
 	Cmd_new_file.class \
 	Cmd_new_view.class \
 	Cmd_open_file.class \
@@ -33,6 +37,9 @@ resources=jEdit.class \
 	Cmd_paste.class \
 	Cmd_print.class \
 	Cmd_redo.class \
+	Cmd_replace.class \
+	Cmd_replace_all.class \
+	Cmd_replace_next.class \
 	Cmd_save.class \
 	Cmd_save_as.class \
 	Cmd_save_url.class \

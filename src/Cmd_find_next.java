@@ -1,5 +1,5 @@
 /*
- * Cmd_ToLower.java - Simple plugin
+ * Cmd_find_next.java - Command
  * Copyright (C) 1998 Slava Pestov
  *
  * This program is free software; you can redistribute it and/or
@@ -17,10 +17,9 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-import com.sun.java.swing.JTextArea;
 import java.util.Hashtable;
 
-public class Cmd_ToLower implements Command
+public class Cmd_find_next implements Command
 {
 	public Object init(Hashtable args)
 	{
@@ -31,15 +30,7 @@ public class Cmd_ToLower implements Command
 	{
 		View view = (View)args.get(VIEW);
 		if(view != null)
-		{
-			JTextArea textArea = view.getTextArea();
-			String selection = textArea.getSelectedText();
-			if(selection != null)
-				textArea.replaceSelection(selection
-					.toLowerCase());
-			else
-				view.getToolkit().beep();
-		}
+			view.getBuffer().findNext(view);
 		return null;
 	}
 }

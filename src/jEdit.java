@@ -36,7 +36,7 @@ import com.sun.java.swing.UIManager;
 public class jEdit
 {
 	public static final String VERSION = "0.6";
-	public static final String BUILD = "19981004";
+	public static final String BUILD = "19981005";
 	public static final PropsMgr props = new PropsMgr();
 	public static final CommandMgr cmds = new CommandMgr();
 	public static final BufferMgr buffers = new BufferMgr();
@@ -56,6 +56,7 @@ public class jEdit
 			+ " properties");
 		System.err.println("    -portfile=<file>: Write server port to"
 			+ " <file>");
+		System.err.println("    -readonly: Open files read-only");
 		System.exit(1);
 	}
 
@@ -69,6 +70,7 @@ public class jEdit
 	{
 		boolean endOpts = false;
 		boolean noUsrProps = false;
+		boolean readOnly = false;
 		portFile = new File(System.getProperty("user.home"),
 			props.getProperty("server.portfile",".jedit-server"));
 		String jeditHome = System.getProperty("jedit.home",".");
@@ -87,6 +89,8 @@ public class jEdit
 					noUsrProps = true;
 				else if(arg.startsWith("-portfile="))
 					portFile = new File(arg.substring(10));
+				else if(arg.equals("-readonly"))
+					readOnly = true;
 				else
 				{
 					System.err.println("Unknown option: "
@@ -105,7 +109,7 @@ public class jEdit
 		if(!noUsrProps)
 			props.loadUserProps();	
 		propertiesChanged();
-		buffers.openFiles(args);
+		buffers.openFiles(args,readOnly);
 	}
 
 	public static void propertiesChanged()
@@ -284,6 +288,54 @@ public class jEdit
 			props.getProperty(name.concat(".message"),args),
 			props.getProperty(name.concat(".title"),args),
 			JOptionPane.ERROR_MESSAGE);
+	}
+
+	// We really need to use a better algorithm
+	public static int find(char[] pattern, char[] line, int start)
+	{
+		int length = line.length - (pattern.length - 1);
+		for(int i = start; i < length; i++)
+		{
+			boolean matches = false;
+			for(int j = 0; j < pattern.length; j++)
+			{
+				if(i + j > line.length)
+				{
+					matches = false;
+					break;
+				}
+				if(pattern[j] == line[i + j])
+					matches = true;
+				else
+				{
+					matches = false;
+					break;
+				}
+			}
+			if(matches)
+				return i;
+		}
+		return -1;
+	}
+
+	public static String untab(int tabSize, String in)
+	{
+		StringBuffer buf = new StringBuffer();
+		for(int i = 0; i < in.length(); i++)
+		{
+			switch(in.charAt(i))
+			{
+			case '\t':
+				int count = tabSize - (i % tabSize);
+				while(count-- >= 0)
+					buf.append(' ');
+				break;
+			default:
+				buf.append(in.charAt(i));
+				break;
+			}
+		}
+		return buf.toString();
 	}
 	
 	public static void exit(View view)

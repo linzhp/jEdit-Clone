@@ -18,6 +18,7 @@
  */
 
 import com.sun.java.swing.JButton;
+import com.sun.java.swing.JCheckBox;
 import com.sun.java.swing.JDialog;
 import com.sun.java.swing.JLabel;
 import com.sun.java.swing.JPanel;
@@ -35,9 +36,11 @@ import java.awt.event.WindowListener;
 
 public class SearchAndReplace extends JDialog
 implements ActionListener, WindowListener
-{	
+{
+	private View view;
 	private JTextField find;
 	private JTextField replace;
+	private JCheckBox ignoreCase;
 	private JButton findNext;
 	private JButton replaceBtn;
 	private JButton replaceAll;
@@ -46,9 +49,13 @@ implements ActionListener, WindowListener
 	public SearchAndReplace(View view)
 	{
 		super(view,jEdit.props.getProperty("search.title"),true);
-		find = new JTextField(jEdit.props.getProperty("lastfind"),20);
+		this.view = view;
+		find = new JTextField(jEdit.props.getProperty("lastfind"),30);
 		replace = new JTextField(jEdit.props
-			.getProperty("lastreplace"),20);
+			.getProperty("lastreplace"),30);
+		ignoreCase = new JCheckBox(jEdit.props.getProperty(
+			"search.ignoreCase"),
+			"on".equals(jEdit.props.getProperty("ignoreCase")));
 		findNext = new JButton(jEdit.props.getProperty("search.next"));
 		replaceBtn = new JButton(jEdit.props
 			.getProperty("search.replaceBtn"));
@@ -85,6 +92,7 @@ implements ActionListener, WindowListener
 		getContentPane().add("North",panel);
 		getContentPane().add("Center",new JSeparator());
 		panel = new JPanel();
+		panel.add(ignoreCase);
 		panel.add(findNext);
 		panel.add(replaceBtn);
 		panel.add(replaceAll);
@@ -94,18 +102,42 @@ implements ActionListener, WindowListener
 		pack();
 		setLocation((screen.width - getSize().width) / 2,
 			(screen.height - getSize().height) / 2);
-		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+		addWindowListener(this);
+		findNext.addActionListener(this);
+		replaceBtn.addActionListener(this);
+		replaceAll.addActionListener(this);
+		close.addActionListener(this);
 		show();
+	}
+	
+	public void save()
+	{
+		jEdit.props.put("lastfind",find.getText());
+		jEdit.props.put("lastreplace",replace.getText());
+		jEdit.props.put("ignoreCase",ignoreCase.getModel().isSelected()
+			? "on" : "off");
 	}
 	
 	public void actionPerformed(ActionEvent evt)
 	{
+		save();
+		Object source = evt.getSource();
+		if(source == close)
+			dispose();
+		else if(source == findNext)
+			view.getBuffer().findNext(view);
+		else if(source == replaceBtn)
+			view.getBuffer().replace(view);
+		else if(source == replaceAll)
+			view.getBuffer().replaceAll(view);
 	}
 
 	public void windowOpened(WindowEvent evt) {}
 	
 	public void windowClosing(WindowEvent evt)
 	{
+		save();
 		dispose();
 	}
 	

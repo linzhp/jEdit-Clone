@@ -45,7 +45,16 @@ public class Cmd_clear_marker implements Command
 				JOptionPane.QUESTION_MESSAGE);
 		}
 		if(arg != null)
-			view.getBuffer().removeMarker(arg);
+		{
+			try
+			{
+				view.getBuffer().removeMarker(arg);
+			}
+			catch(Exception e)
+			{
+				view.getToolkit().beep();
+			}
+		}
 		return null;
 	}
 }

@@ -18,10 +18,16 @@ Usually, jEdit is started to edit one or more files with this command:
 
 	jedit <filename 1> <filename 2>...
 
+You can instruct jEdit to open a file and move the caret to a specified
+marker like this:
+
+	jedit <filename 1>#<marker 1> <filename 2>#<marker 2>
+
 Or if another instance of jEdit is already running, jOpen can be used to open
 files in it:
 
 	jopen <filename 1> <filename 2>...
+	jopen <filename 1>#<marker 1> <filename 2>#<marker 2>...
 
 jEdit can also be started with no arguments:
 
@@ -36,6 +42,7 @@ A number of options can also be given to jEdit:
 	-usage: Print a command line usage
 	-nousrprops: Don't load user properties
 	-portfile=<file>: Write server port to <file>
+	-readonly: Open files read only
 
 jOpen also accepts certain options:
 
@@ -58,7 +65,7 @@ jEdit's working directory, not jOpen's. For example, if jEdit was started from
 directory /home/bob/Play, jEdit will try to open /home/bob/Work/filename, not
 /home/bob/Play/filename as expected.
 
-1.2. Unix
+1.1. Unix
 ---------
 You need to set the PATH variable to point to the directory with the jedit and
 jedit shell scripts so that the shell can locate them. The default location is
@@ -75,7 +82,7 @@ It is advisable to place these commands in the .profile script (Bourne shell)
 or the .csh.login script (C shell) so that the PATH will be set every time you
 log in.
 
-1.3. Windows 95 and 98
+1.2. Windows 95 and 98
 ----------------------
 If you want to use jEdit from the command line, you must add it's directory to
 the PATH. By default, jEdit is installed in C:\Program Files\jEdit. The command
@@ -86,12 +93,12 @@ to add that directory to the PATH is:
 It is advisable to place this command in your C:\AUTOEXEC.BAT so that it's
 executed every time the computer starts up.
 
-1.4. Windows NT
+1.3. Windows NT
 ---------------
 The PATH is set in the System control panel in Windows NT. The default
 installation directory is the same as that in Windows 95/98.
 
-1.5. MacOS
+1.4. MacOS
 ----------
 Could someone with MRJ tell me more about it's standalone application handling?
 
@@ -151,6 +158,19 @@ there aren't open ones left.
 
 The Buffers menu can be used to select which file the current view should be
 editing.
+
+Each view has a status bar. A sample status bar looks like this:
+
+(--:**) /etc/rc.d/rc.multi (Line 124/124 100%)
+ ^ ^ ^        ^                   ^   ^   ^
+ | | |        |                   |   |   |
+ | | |        |                   |   |  The caret position, as a percentage
+ | | |        |                   |  The total number of lines in the file
+ | | |        |                  The line number the caret is on
+ | | |       The full pathname of the file
+ | |(**) if the is dirty, (--) if it's not
+ | (/) if the file is read only, (:) if it's not
+(**) if the file is new, (--) if it's not
 
 6. Editing Files
 ----------------

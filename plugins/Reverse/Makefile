@@ -1,8 +1,8 @@
 # Makefile
 # Version: 1.0
 
-jar=Reverse.jar
-resources=Cmd_Reverse.class Reverse.props
+jar=reverse.jar
+resources=Cmd_reverse.class reverse.props
 all: $(jar)
 install: jar-install
 include ../../Rules.make

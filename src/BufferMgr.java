@@ -68,8 +68,13 @@ public class BufferMgr
 		}
 		jEdit.props.remove("recent." + maxRecent);
 	}
-	
-	public void openFiles(String[] files)
+
+	public int getMaxRecent()
+	{
+		return maxRecent;
+	}
+
+	public void openFiles(String[] files, boolean readOnly)
 	{
 		boolean opened = false;
 		for(int i = 0; i < files.length; i++)
@@ -77,7 +82,7 @@ public class BufferMgr
 			if(files[i] == null)
 				continue;
 			opened = true;
-			openFile(files[i]);
+			openFile(files[i],readOnly);
 		}
 		if(!opened)
 			newFile();
@@ -96,7 +101,7 @@ public class BufferMgr
 		if(path == null)
 			return null;
 		jEdit.props.put("lasturl",path);
-		return openFile(view,path,true);
+		return openFile(view,path,false,true);
 	}
 	
 	public Buffer openFile(View view)
@@ -114,22 +119,28 @@ public class BufferMgr
 		int retVal = fileChooser.showOpenDialog(view);
 		if(retVal == JFileChooser.APPROVE_OPTION)
 			return openFile(view,fileChooser.getSelectedFile()
-				.getPath(),true);
+				.getPath(),false,true);
 		else
 			return null;
 	}
 
 	public Buffer openFile(String path)
 	{
-		return openFile(null,path,true);
+		return openFile(null,path,false,true);
+	}
+	
+	public Buffer openFile(String path, boolean readOnly)
+	{
+		return openFile(null,path,readOnly,true);
 	}
 	
 	public Buffer openFile(View view, String path)
 	{
-		return openFile(view,path,true);
+		return openFile(view,path,false,true);
 	}
 
-	public Buffer openFile(View view, String path, boolean load)
+	public Buffer openFile(View view, String path, boolean readOnly,
+		boolean load)
 	{
 		Enumeration enum = getBuffers();
 		while(enum.hasMoreElements())
@@ -151,9 +162,7 @@ public class BufferMgr
 					recent.removeElementAt(0);
 			}
 		}
-		Buffer buffer = new Buffer(view,path,load);
-		if(view != null)
-			view.setBuffer(buffer);
+		Buffer buffer = new Buffer(view,path,readOnly,load);
 		buffers.addElement(buffer);
 		enum = getViews();
 		while(enum.hasMoreElements())
@@ -174,7 +183,7 @@ public class BufferMgr
 	{
 		Object[] args = { new Integer(++untitledCount) };
 		return openFile(view,jEdit.props.getProperty("untitled",
-			args),false);
+			args),false,false);
 	}
 
 	public boolean closeBuffer(View view, Buffer buffer)

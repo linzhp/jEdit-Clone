@@ -65,18 +65,27 @@ implements DocumentListener, UndoableEditListener
 	private boolean init;
 	private boolean newFile;
 	private boolean dirty;
+	private boolean readOnly;
 	private UndoManager undo;
 	private Vector markers;
 	
-	public Buffer(View view, String name, boolean load)
+	public Buffer(View view, String name, boolean readOnly, boolean load)
 	{
 		undo = new UndoManager();
 		markers = new Vector();
+		this.readOnly = readOnly;
 		newFile = !load;
 		init = true;
 		String parent = "";
 		if(view != null)
 			parent = view.getBuffer().getFile().getParent();
+		int index = name.indexOf('#');
+		String marker = null;
+		if(index != -1)
+		{
+			marker = name.substring(index + 1);
+			name = name.substring(0,index);
+		}
 		setPath(parent,name);
 		if(load)
 		{
@@ -93,6 +102,17 @@ implements DocumentListener, UndoableEditListener
 		init = false;
 		updateStatus();
 		updateMarkers();
+		if(view != null)
+		{
+			view.setBuffer(this);
+			if(marker != null)
+			{
+				int[] pos = getMarker(marker);
+				if(pos != null)
+					view.getTextArea().select(pos[0],
+						pos[1]);
+			}
+		}
 	}
 
 	private void load(View view)
@@ -122,7 +142,7 @@ implements DocumentListener, UndoableEditListener
 		}
 		catch(IOException io)
 		{
-			Object[] args = { path, io.toString() };
+			Object[] args = { io.toString() };
 			jEdit.error(view,"ioerror",args);
 		}
 		catch(BadLocationException bl)
@@ -217,6 +237,102 @@ implements DocumentListener, UndoableEditListener
 		new SearchAndReplace(view);
 	}
 
+	public boolean find(View view, String str)
+	{
+		return find(view,str,false);
+	}
+
+	private boolean find(View view, String str, boolean done)
+	{
+		try
+		{
+			boolean ignoreCase = "on".equals(jEdit.props
+				.getProperty("ignoreCase"));
+			if(ignoreCase)
+				str = str.toLowerCase();
+			char[] pattern = str.toCharArray();
+			Element map = getDefaultRootElement();
+			int lines = map.getElementCount();
+			int caret = view.getTextArea().getSelectionEnd();
+			int startLine = map.getElementIndex(caret);
+			int startOff = caret - map.getElement(startLine)
+				.getStartOffset();
+			for(int i = startLine; i < lines; i++)
+			{
+				Element lineElement = map.getElement(i);
+				int start = lineElement.getStartOffset();
+				String lineString = getText(start,lineElement
+					.getEndOffset() - start);
+				if(ignoreCase)
+					lineString = lineString.toLowerCase();
+				char[] line = lineString.toCharArray();
+				int offset = jEdit.find(pattern,line,startOff);
+				if(offset != -1)
+				{
+					offset += start;
+					view.getTextArea().select(offset,
+						offset + pattern.length);
+					return true;
+				}
+				startOff = 0;
+			}
+		}
+		catch(BadLocationException bl)
+		{
+			Object[] args = { bl.toString() };
+			jEdit.error(view,"error",args);
+		}
+		if(done)
+		{
+			view.getToolkit().beep();
+			return false;
+		}
+		int result = JOptionPane.showConfirmDialog(view,
+			jEdit.props.getProperty("keepsearching.message"),
+			jEdit.props.getProperty("keepsearching.title"),
+			JOptionPane.YES_NO_OPTION,
+			JOptionPane.QUESTION_MESSAGE);
+		if(result == JOptionPane.YES_OPTION)
+		{
+			view.getTextArea().setCaretPosition(0);
+			return find(view,str,true);
+		}
+		else
+			return false;
+	}
+
+	public boolean findNext(View view)
+	{
+		String findStr = jEdit.props.getProperty("lastfind");
+		if(findStr == null || "".equals(findStr))
+		{
+			view.getToolkit().beep();
+			return false;
+		}
+		else
+			return find(view,findStr);
+	}
+
+	public void replace(View view)
+	{
+		String replaceStr = jEdit.props.getProperty("lastreplace");
+		if(replaceStr == null)
+			view.getToolkit().beep();
+		else
+			view.getTextArea().replaceSelection(replaceStr);
+	}
+
+	public void replaceAll(View view)
+	{
+		while(findNext(view))
+			replace(view);
+	}
+	
+	public void hypersearch(View view)
+	{
+		new HyperSearch(view);
+	}
+		
 	public void autosave()
 	{
 		if(dirty)
@@ -316,7 +432,7 @@ implements DocumentListener, UndoableEditListener
 		}
 		catch(IOException io)
 		{
-			Object[] args = { getPath(), io.toString() };
+			Object[] args = { io.toString() };
 			jEdit.error(view,"ioerror",args);
 		}
 		catch(Exception e)
@@ -494,9 +610,9 @@ loop:		for(int i = 0; i < map.getElementCount(); i++)
 			try
 			{
 				int start = line.getStartOffset();
-				gfx.drawString(untab(tabSize,getText(start,line
-					.getEndOffset() - start - 1)),
-					leftMargin,y += fontHeight);
+				gfx.drawString(jEdit.untab(tabSize,getText(
+					start,line.getEndOffset() - start
+					- 1)),leftMargin,y += fontHeight);
 			}
 			catch(BadLocationException bl)
 			{
@@ -511,26 +627,6 @@ loop:		for(int i = 0; i < map.getElementCount(); i++)
 			}
 		}
 		job.end();
-	}
-
-	private String untab(int tabSize, String in)
-	{
-		StringBuffer buf = new StringBuffer();
-		for(int i = 0; i < in.length(); i++)
-		{
-			switch(in.charAt(i))
-			{
-			case '\t':
-				int count = tabSize - (i % tabSize);
-				while(count-- >= 0)
-					buf.append(' ');
-				break;
-			default:
-				buf.append(in.charAt(i));
-				break;
-			}
-		}
-		return buf.toString();
 	}
 	
 	public File getFile()
@@ -610,6 +706,11 @@ loop:		for(int i = 0; i < map.getElementCount(); i++)
 		return dirty;
 	}
 	
+	public boolean isReadOnly()
+	{
+		return readOnly;
+	}
+	
 	public UndoManager getUndo()
 	{
 		return undo;
@@ -623,6 +724,8 @@ loop:		for(int i = 0; i < map.getElementCount(); i++)
 	public void addMarker(String name, int start, int end)
 		throws BadLocationException
 	{
+		if(readOnly && !init)
+			throw new RuntimeException();
 		dirty = !init;
 		name = name.replace(';',' ');
 		Marker markerN = new Marker(name,createPosition(start),
@@ -660,6 +763,8 @@ loop:		for(int i = 0; i < map.getElementCount(); i++)
 
 	public void removeMarker(String name)
 	{
+		if(readOnly)
+			throw new RuntimeException();
 		dirty = !init;
 		for(int i = 0; i < markers.size(); i++)
 		{
@@ -689,7 +794,7 @@ loop:		for(int i = 0; i < map.getElementCount(); i++)
 
 	private void dirty()
 	{
-		if(!dirty)
+		if(!(dirty || readOnly))
 		{
 			dirty = !init;
 			updateStatus();

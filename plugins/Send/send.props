@@ -1,0 +1,14 @@
+send.label=Send...
+send.title=Send
+send.smtp=SMTP Server:\ 
+send.from=From:\ 
+send.to=To:\ 
+send.subject=Subject:\ 
+send.send=Send
+send.cancel=Cancel
+sendempty.title=Send Error
+sendempty.message=The SMTP Server, From and To fields must all be\n\
+	filled out before the file can be sent.
+badport.title=Invalid Port
+badport.message=The specified port number is invalid.
+send.connect=Connecting to {0}...

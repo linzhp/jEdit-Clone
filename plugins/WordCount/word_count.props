@@ -1,0 +1,3 @@
+word_count.label=Word Count...
+word_count.title=Word Count Results
+word_count.message=Characters: {0}\nWords: {1}\nLines: {2}

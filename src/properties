@@ -87,10 +87,9 @@ about.message=jEdit version {0} build {1}, Copyright (C) 1998 Slava Pestov.\n\
 	see the COPYING file for details.
 
 ### IO Error dialog
-# {0} - the file name
-# {1} - the error message
+# {0} - the error message
 ioerror.title=I/O Error
-ioerror.message=An I/O error occured in buffer {0} ({1})
+ioerror.message=An I/O error occured ({0})
 
 ### File not found dialog
 # {0} - the file name
@@ -147,14 +146,27 @@ autosaveexists.message=An autosave file {0} was found. This probably means\n\
 search.title=Search And Replace
 search.find=Find:\ 
 search.replace=Replace With:\ 
+search.ignoreCase=Ignore Case
 search.next=Find Next
 search.replaceBtn=Replace
 search.replaceAll=Replace All
 search.close=Close
 
+### Keep searching dialog
+keepsearching.title=No More Matches Found
+keepsearching.message=No more matches were found. Continue search from\n\
+	beginning of buffer?
+
+### Hypersearch dialog
+hypersearch.title=HyperSearch
+hypersearch.find=Search For:\ 
+hypersearch.findBtn=Find All
+hypersearch.close=Close
+hypersearch.ignoreCase=Ignore Case
+
 ### Options dialog
 options.title=Options
-options.lf=Look And Feel
+options.lf=Look And Feel:\ 
 options.lf.metal=Metal
 options.lf.motif=Motif
 options.lf.windows=Windows
@@ -162,18 +174,17 @@ options.opening=Opening Files
 options.opening.server=Start jEdit Server
 options.opening.maxrecent=Number of recent files:\ 
 options.saving=Saving Files
-options.saving.autosave=Autosave interval (seconds, 0 = off):
-options.saving.backups=Max number of backups (0 = off):
+options.saving.autosave=Autosave frequency: (secs, 0 = never)\ 
+options.saving.backups=Maximum number of backups (0 = none):
 options.saving.newline=End of line character:\ 
 options.saving.newline.unix=Unix (\\n)
 options.saving.newline.windows=Windows (\\r\\n)
 options.saving.newline.mac=MacOS (\\r)
 options.editing=Editing Files
-options.editing.autoindent=Auto indent
-options.editing.linewrap=Line wrap:\ 
-options.editing.linewrap.off=Off
-options.editing.linewrap.char=Character
-options.editing.linewrap.word=Word
+options.editing.autoindent=Auto Indent
+options.editing.linewrap.off=No Wrapping
+options.editing.linewrap.char=Character Wrap
+options.editing.linewrap.word=Word Wrap
 options.editing.tabsize=Tab Size:
 options.editing.font=Font:
 options.editing.font.bold=Bold
@@ -189,14 +200,16 @@ options.cancel=Cancel
 ### Status bar
 # {0} - the file name
 # {1} - 1 if the file is not on disk
-# {2} - 1 if the file has changed since last save
-# {3} - the number of lines in the buffer
-# {4} - the current line number
-# {5} - the percentage of the file displayed
-status=({1,choice,0#--|1#**}:{2,choice,0#--|1#**}) {0} (Line {3}/{4} {5}%)
+# {2} - 1 if the file is read only
+# {3} - 1 if the file has changed since last save
+# {4} - the number of lines in the buffer
+# {5} - the current line number
+# {6} - the percentage of the file displayed
+status=({1,choice,0#--|1#**}{2,choice,0#:|1#/}{3,choice,0#--|1#**}) {0} \
+	(Line {4}/{5} {6}%)
 
 ### Menubar
-editor_mbar=file edit plugins buffers help
+editor_mbar=file edit search plugins buffers help
 file=new_file new_view open_file open_url open_selection %open_recent - \
 	close_file close_view - save save_as save_url - print - exit
 file.label=File
@@ -226,8 +239,7 @@ print.label=Print...
 print.shortcut=C-p
 exit.label=Exit
 exit.shortcut=C-q
-edit=undo redo - cut copy paste clear select_all - find find_next \
-	find_selection replace replace_next replace_all - goto_line - \
+edit=undo redo - cut copy paste clear select_all - goto_line - \
 	set_marker %clear_marker %goto_marker - options
 edit.label=Edit
 undo.label=Undo
@@ -244,6 +256,17 @@ clear.label=Clear
 clear.shortcut=CS-x
 select_all.label=Select All
 select_all.shortcut=C-a
+goto_line.label=Go To Line...
+goto_line.shortcut=C-l
+set_marker.label=Set Marker...
+set_marker.shortcut=C-m
+clear_marker.label=Clear Marker
+goto_marker.label=Go To Marker
+no_markers.label=No Markers Defined
+options.label=Options...
+search.label=Search
+search=find find_next find_selection - replace replace_next replace_all - \
+	hypersearch
 find.label=Find...
 find.shortcut=C-f
 find_next.label=Find Next
@@ -256,14 +279,8 @@ replace_next.label=Replace & Find Next
 replace_next.shortcut=CS-g
 replace_all.label=Replace All
 replace_all.shortcut=CS-r
-goto_line.label=Go To Line...
-goto_line.shortcut=C-l
-set_marker.label=Set Marker...
-set_marker.shortcut=C-m
-clear_marker.label=Clear Marker
-goto_marker.label=Go To Marker
-no_markers.label=No Markers Defined
-options.label=Options...
+hypersearch.label=HyperSearch...
+hypersearch.shortcut=CS-h
 plugins.label=Plugins
 no_plugins.label=No Plugins
 buffers.label=Buffers

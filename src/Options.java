@@ -23,12 +23,14 @@ import com.sun.java.swing.JDialog;
 import com.sun.java.swing.JLabel;
 import com.sun.java.swing.JPanel;
 import com.sun.java.swing.JRadioButton;
+import com.sun.java.swing.JSeparator;
 import com.sun.java.swing.JTextField;
-import com.sun.java.swing.border.TitledBorder;
+import com.sun.java.swing.SwingConstants;
+import com.sun.java.swing.UIManager;
+import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
@@ -41,22 +43,55 @@ implements ActionListener
 	private JRadioButton motif;
 	private JRadioButton windows;
 	private JCheckBox server;
-	private JTextField maxrecent;
+	private JTextField maxRecent;
+	private JTextField autosave;
+	private JTextField backups;
+	private JCheckBox autoIndent;
+	private JRadioButton lineWrapOff;
+	private JRadioButton charWrap;
+	private JRadioButton wordWrap;
 	
 	public Options(View view)
 	{
 		super(view,jEdit.props.getProperty("options.title"),true);
 		GridBagLayout layout = new GridBagLayout();
 		GridBagConstraints constraints = new GridBagConstraints();
-		constraints.fill = constraints.HORIZONTAL;
-		constraints.gridwidth = constraints.REMAINDER;
-		getContentPane().setLayout(layout);
+		constraints.fill = constraints.BOTH;
+		constraints.anchor = constraints.EAST;
+		//constraints.weightx = 1.0f;
+		Container content = getContentPane();
+		content.setLayout(layout);
 		JPanel panel = createLfPanel();
 		layout.setConstraints(panel,constraints);
-		getContentPane().add(panel);
+		content.add(panel);
+		constraints.gridy = 1;
+		JSeparator separator = new JSeparator();
+		layout.setConstraints(separator,constraints);
+		content.add(separator);
+		constraints.gridy = 2;
 		panel = createOpeningPanel();
 		layout.setConstraints(panel,constraints);
-		getContentPane().add(panel);
+		content.add(panel);
+		constraints.gridy = 3;
+		separator = new JSeparator();
+		layout.setConstraints(separator,constraints);
+		content.add(separator);
+		constraints.gridy = 4;
+		panel = createAutosavePanel();
+		layout.setConstraints(panel,constraints);
+		content.add(panel);
+		constraints.gridy = 5;
+		panel = createBackupsPanel();
+		layout.setConstraints(panel,constraints);
+		content.add(panel);
+		constraints.gridy = 6;
+		separator = new JSeparator();
+		layout.setConstraints(separator,constraints);
+		content.add(separator);
+		constraints.gridy = 7;
+		panel = createEditingPanel();
+		layout.setConstraints(panel,constraints);
+		content.add(panel);
 		Dimension screen = getToolkit().getScreenSize();
 		pack();
 		setLocation((screen.width - getSize().width) / 2,
@@ -67,51 +102,94 @@ implements ActionListener
 
 	private JPanel createLfPanel()
 	{
-		JPanel panel = new JPanel();
-		panel.setBorder(new TitledBorder(jEdit.props.getProperty(
-			"options.lf")));
+		JPanel content = new JPanel();
+		JLabel label = new JLabel(jEdit.props
+			.getProperty("options.lf"),SwingConstants.RIGHT);
+		content.add(label);
+		//String lf = UIManager.getLookAndFeel();
 		ButtonGroup grp = new ButtonGroup();
-		metal = new JRadioButton(jEdit.props.getProperty(
-			"options.lf.metal"));
+		metal = new JRadioButton(jEdit.props
+			.getProperty("options.lf.metal"));
 		grp.add(metal);
-		panel.add(metal);
-		motif = new JRadioButton(jEdit.props.getProperty(
-			"options.lf.motif"));
+		content.add(metal);
+		motif = new JRadioButton(jEdit.props
+			.getProperty("options.lf.motif"));
 		grp.add(motif);
-		panel.add(motif);
-		windows = new JRadioButton(jEdit.props.getProperty(
-			"options.lf.windows"));
+		content.add(motif);
+		windows = new JRadioButton(jEdit.props
+			.getProperty("options.lf.windows"));
 		grp.add(windows);
-		panel.add(windows);
-		return panel;
+		content.add(windows);
+		return content;
 	}
 
 	private JPanel createOpeningPanel()
 	{
-		JPanel panel = new JPanel();
-		panel.setBorder(new TitledBorder(jEdit.props.getProperty(
-			"options.opening")));
-		GridBagLayout layout = new GridBagLayout();
-		GridBagConstraints constraints = new GridBagConstraints();
-		constraints.gridwidth=2;
-		constraints.gridheight=1;
-		constraints.anchor=constraints.WEST;
-		constraints.fill=constraints.BOTH;
-		panel.setLayout(layout);
-		server = new JCheckBox(jEdit.props.getProperty(
-			"options.opening.server"));
-		layout.setConstraints(server,constraints);
-		panel.add(server);
-		constraints.gridwidth=1;
-		constraints.gridy=2;
+		JPanel content = new JPanel();
+		server = new JCheckBox(jEdit.props
+			.getProperty("options.opening.server"));
+		content.add(server);
+		JLabel label = new JLabel(jEdit.props
+			.getProperty("options.opening.maxrecent"),
+			SwingConstants.RIGHT);
+		content.add(label);
+		maxRecent = new JTextField(String.valueOf(jEdit.props
+			.getProperty("maxrecent")),4);
+		content.add(maxRecent);
+		return content;
+	}
+
+	private JPanel createAutosavePanel()
+	{
+		JPanel content = new JPanel();
 		JLabel label = new JLabel(jEdit.props.getProperty(
-			"options.opening.maxrecent"));
-		layout.setConstraints(label,constraints);
-		panel.add(label);
-		maxrecent = new JTextField(2);
-		layout.setConstraints(maxrecent,constraints);
-		panel.add(maxrecent);
-		return panel;
+			"options.saving.autosave"),SwingConstants.RIGHT);
+		content.add(label);
+		autosave = new JTextField(jEdit.props.getProperty(
+			"autosave.interval"),4);
+		if(!"on".equals(jEdit.props.getProperty("autosave")))
+			autosave.setText("0");
+		content.add(autosave);
+		return content;
+	}
+
+	private JPanel createBackupsPanel()
+	{
+		JPanel content = new JPanel();
+		JLabel label = new JLabel(jEdit.props.getProperty(
+			"options.saving.backups"),SwingConstants.RIGHT);
+		content.add(label);
+		backups = new JTextField(jEdit.props.getProperty(
+			"backups"),4);
+		content.add(backups);
+		return content;
+	}
+
+	private JPanel createEditingPanel()
+	{
+		JPanel content = new JPanel();
+		autoIndent = new JCheckBox(jEdit.props.getProperty(
+			"options.editing.autoindent"),"on".equals(jEdit.props
+			.getProperty("editor.autoindent")));
+		content.add(autoIndent);
+		ButtonGroup grp = new ButtonGroup();
+		String lineWrap = jEdit.props.getProperty("editor.linewrap");
+		lineWrapOff = new JRadioButton(jEdit.props.getProperty(
+			"options.editing.linewrap.off"),"off".equals(
+			lineWrap));
+		grp.add(lineWrapOff);
+		content.add(lineWrapOff);
+		charWrap = new JRadioButton(jEdit.props.getProperty(
+			"options.editing.linewrap.char"),"char".equals(
+			lineWrap));
+		grp.add(charWrap);
+		content.add(charWrap);
+		wordWrap = new JRadioButton(jEdit.props.getProperty(
+			"options.editing.linewrap.word"),"word".equals(
+			lineWrap));
+		grp.add(wordWrap);
+		content.add(wordWrap);
+		return content;
 	}
 	
 	public void actionPerformed(ActionEvent evt)
