@@ -21,9 +21,10 @@ package org.gjt.sp.jedit.syntax;
 
 import javax.swing.event.*;
 import javax.swing.text.*;
-import javax.swing.JEditorPane;
+import javax.swing.*;
 import java.awt.*;
 import java.awt.datatransfer.*;
+import java.awt.event.FocusEvent;
 import java.beans.*;
 import org.gjt.sp.jedit.Buffer;
 import org.gjt.sp.jedit.jEdit;
@@ -58,7 +59,8 @@ public class SyntaxTextArea extends JEditorPane
 		}
 		
 		lineHighlightColor = new Color(0xe0e0e0);
-		bracketHighlightColor = new Color(0xcc0000);
+		bracketHighlightColor = new Color(0xffaaaa);
+		lineSegment = new Segment();
 	}
 
 	/**
@@ -114,8 +116,13 @@ public class SyntaxTextArea extends JEditorPane
 	{
 		try
 		{
-			getHighlighter().changeHighlight(bracketHighlightTag,
-				bracketPos,bracketPos+1);
+			if(bracketPos == -1)
+				getHighlighter().changeHighlight(
+					bracketHighlightTag,0,0);
+			else
+				getHighlighter().changeHighlight(
+					bracketHighlightTag,bracketPos,
+					bracketPos+1);
 		}
 		catch(BadLocationException bl)
 		{
@@ -140,6 +147,15 @@ public class SyntaxTextArea extends JEditorPane
 	public void setBracketHighlight(boolean bracketHighlight)
 	{
 		this.bracketHighlight = bracketHighlight;
+	}
+
+	/**
+	 * Sets the caret blink rate.
+	 * @param blinkRate the new blink rate, 0 = no blink
+	 */
+	public void setCaretBlinkRate(int blinkRate)
+	{
+		getCaret().setBlinkRate(blinkRate);
 	}
 
 	/**
@@ -200,6 +216,7 @@ public class SyntaxTextArea extends JEditorPane
 	private boolean bracketHighlight;
 	private Color bracketHighlightColor;
 	private Object bracketHighlightTag;
+	private Segment lineSegment;
 
 	private class SyntaxCaret extends DefaultCaret
 		implements PropertyChangeListener
@@ -222,9 +239,32 @@ public class SyntaxTextArea extends JEditorPane
 			if(newValue instanceof Buffer)
 			{
 				Buffer buf = (Buffer)newValue;
-				select(buf.getSavedSelStart(),
-					buf.getSavedSelEnd());
+				int height = getToolkit().getFontMetrics(
+					getFont()).getHeight();
+				int selStart = buf.getSavedSelStart();
+				int selEnd = buf.getSavedSelEnd();
+				select(selStart,selEnd);
+				Element map = getDocument().getDefaultRootElement();
+				int startLine = map.getElementIndex(selStart);
+				int endLine = map.getElementIndex(selEnd) + 1;
+				final Rectangle rect = new Rectangle(0,
+					startLine * height,0,(endLine - startLine)
+					* height);
+				SwingUtilities.invokeLater(new Runnable() {
+					public void run()
+					{
+						scrollRectToVisible(rect);
+					}
+				});
 			}
+		}
+
+		public void focusGained(FocusEvent evt)
+		{
+			/* we do this even if the text area is read only,
+			 * otherwise stuff like line and bracket highlighting
+			 * will look weird without a caret */
+			SyntaxTextArea.SyntaxCaret.this.setVisible(true);
 		}
 	}
 
@@ -233,8 +273,8 @@ public class SyntaxTextArea extends JEditorPane
 		public void paint(Graphics g, int p0, int p1, Shape bounds,
 			JTextComponent textComponent)
 		{
-			if(getSelectionStart() != getSelectionEnd()
-				|| !lineHighlight)
+			if(!lineHighlight || getSelectionStart()
+				!= getSelectionEnd())
 				return;
 			FontMetrics metrics = g.getFontMetrics();
 			Document doc = getDocument();
@@ -257,22 +297,27 @@ public class SyntaxTextArea extends JEditorPane
 			if(getSelectionStart() != getSelectionEnd()
 				|| !bracketHighlight)
 				return;
+			if(p0 == p1)
+				return;
 			Rectangle rect = (Rectangle)bounds;
 			Rectangle bracket;
+			Document doc = getDocument();
+			FontMetrics metrics = g.getFontMetrics();
 			try
 			{
 				bracket = modelToView(p0);
-				if(bracket == null)
-					return;
+				doc.getText(p0,1,lineSegment);
+				bracket.width += metrics.charWidth(lineSegment
+					.array[lineSegment.offset]);
 			}
 			catch(BadLocationException bl)
 			{
+				bl.printStackTrace();
 				return;
 			}
-			int x = rect.x + bracket.x;
-			int y = rect.y + bracket.y;
 			g.setColor(bracketHighlightColor);
-			g.fillRect(x,y,bracket.width,bracket.height);
+			g.fillRect(rect.x + bracket.x,rect.y + bracket.y,
+				bracket.width,bracket.height);
 		}
 	}
 }

@@ -41,8 +41,13 @@ public class select_next_paragraph extends EditAction
 		int lineNo = map.getElementIndex(textArea.getSelectionEnd());
 		int start = map.getElement(buffer.locateParagraphStart(lineNo))
 			.getStartOffset();
-		int end = map.getElement(buffer.locateParagraphEnd(lineNo))
-			.getStartOffset();
+		Element endElement = map.getElement(buffer
+			.locateParagraphEnd(lineNo));
+		int end;
+		if(endElement == null)
+			end = buffer.getLength();
+		else
+			end = endElement.getStartOffset();
 		textArea.select(Math.min(textArea.getSelectionStart(),start),end);
 	}
 }

@@ -34,6 +34,11 @@ public class join_no_indent extends EditAction
 	public void actionPerformed(ActionEvent evt)
 	{
 		View view = getView(evt);
+		if(!view.getTextArea().isEditable())
+		{
+			view.getToolkit().beep();
+			return;
+		}
 		Buffer buffer = view.getBuffer();
 		Element map = buffer.getDefaultRootElement();
 		int lineNo = map.getElementIndex(view.getTextArea()
@@ -41,18 +46,18 @@ public class join_no_indent extends EditAction
 		Element lineElement = map.getElement(lineNo);
 		int start = lineElement.getStartOffset();
 		int end = lineElement.getEndOffset();
-		Element nextLineElement = map.getElement(lineNo+1);
-		int nextStart = nextLineElement.getStartOffset();
-		int nextEnd = nextLineElement.getEndOffset();
-		if(end + 1 >= buffer.getLength())
+		if(end >= buffer.getLength())
 		{
 			view.getToolkit().beep();
 			return;
 		}
+		Element nextLineElement = map.getElement(lineNo+1);
+		int nextStart = nextLineElement.getStartOffset();
+		int nextEnd = nextLineElement.getEndOffset();
 		try
 		{
 			buffer.remove(end - 1,jEdit.getLeadingWhiteSpace(
-				buffer.getText(nextStart,nextEnd - nextStart)));
+				buffer.getText(nextStart,nextEnd - nextStart)) + 1);
 			buffer.insertString(end - 1," ",null);
 		}
 		catch(BadLocationException bl)

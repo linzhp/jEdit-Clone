@@ -34,11 +34,16 @@ public class join_lines extends EditAction
 	public void actionPerformed(ActionEvent evt)
 	{
 		View view = getView(evt);
+		if(!view.getTextArea().isEditable())
+		{
+			view.getToolkit().beep();
+			return;
+		}
 		Buffer buffer = view.getBuffer();
 		Element map = buffer.getDefaultRootElement();
 		Element lineElement = map.getElement(map.getElementIndex(
 			view.getTextArea().getCaretPosition()));
-		if(lineElement.getEndOffset() + 1 >= buffer.getLength())
+		if(lineElement.getEndOffset() >= buffer.getLength())
 		{
 			view.getToolkit().beep();
 			return;

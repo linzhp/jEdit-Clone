@@ -48,12 +48,21 @@ implements CaretListener, KeyListener, WindowListener
 			"view.lineHighlight")));
 		textArea.setLineHighlightColor(jEdit.parseColor(jEdit
 			.getProperty("view.lineHighlightColor")));
-		textArea.setLineHighlight("on".equals(jEdit.getProperty(
+		textArea.setBracketHighlight("on".equals(jEdit.getProperty(
 			"view.bracketHighlight")));
 		textArea.setBracketHighlightColor(jEdit.parseColor(jEdit
 			.getProperty("view.bracketHighlightColor")));
 		textArea.setCaretColor(jEdit.parseColor(jEdit
 			.getProperty("view.caretColor")));
+		try
+		{
+			textArea.setCaretBlinkRate(Integer.parseInt(jEdit
+				.getProperty("view.caretBlinkRate")));
+		}
+		catch(NumberFormatException nf)
+		{
+			textArea.setCaretBlinkRate(0);
+		}
 		updateOpenRecentMenu();
 		SwingUtilities.updateComponentTreeUI(this);
 	}
@@ -290,7 +299,6 @@ implements CaretListener, KeyListener, WindowListener
 	}
 
 	// event handlers
-
 	public void caretUpdate(CaretEvent evt)
 	{
 		updateStatus(evt.getDot(),false);
@@ -409,6 +417,7 @@ implements CaretListener, KeyListener, WindowListener
 		mode = jEdit.loadMenu(this,"mode");
 		bindings = new Hashtable();
 		currentPrefix = bindings;
+		lineSegment = new Segment();
 		int x;
 		int y;
 		try
@@ -508,6 +517,7 @@ implements CaretListener, KeyListener, WindowListener
 	private SyntaxTextArea textArea;
 	private JLabel status;
 	private int lastLine;
+	private Segment lineSegment;
 	private Buffer buffer;
 
 	private void updateStatus(int dot, boolean force)
@@ -516,14 +526,60 @@ implements CaretListener, KeyListener, WindowListener
 		Element map = buffer.getDefaultRootElement();
 		currLine = map.getElementIndex(dot) + 1;
 		Element lineElement = map.getElement(currLine-1);
+		int start = lineElement.getStartOffset();
+		int end = lineElement.getEndOffset();
 		if(textArea.getSelectionStart() == textArea.getSelectionEnd())
-		{
-			textArea.setHighlightedLine(lineElement.getStartOffset(),
-				lineElement.getEndOffset());
-		}
+			textArea.setHighlightedLine(start,end);
 		else
 			textArea.setHighlightedLine(0,0);
-		textArea.setHighlightedBracket(0);
+		try
+		{
+			if(dot != 0)
+			{
+				dot--;
+				buffer.getText(dot,1,lineSegment);
+				char bracket = lineSegment.array[lineSegment
+					.offset];
+				int otherBracket;
+				switch(bracket)
+				{
+				case '(':
+					otherBracket = buffer.locateBracketForward(
+						dot,'(',')');
+					break;
+				case ')':
+					otherBracket = buffer.locateBracketBackward(
+						dot,'(',')');
+					break;
+				case '[':
+					otherBracket = buffer.locateBracketForward(
+						dot,'[',']');
+					break;
+				case ']':
+					otherBracket = buffer.locateBracketBackward(
+						dot,'[',']');
+					break;
+				case '{':
+					otherBracket = buffer.locateBracketForward(
+						dot,'{','}');
+					break;
+				case '}':
+					otherBracket = buffer.locateBracketBackward(
+						dot,'{','}');
+					break;
+				default:
+					otherBracket = -1;
+					break;
+				}
+				textArea.setHighlightedBracket(otherBracket);
+			}
+			else
+				textArea.setHighlightedBracket(-1);
+		}
+		catch(BadLocationException bl)
+		{
+			bl.printStackTrace();
+		}
 		if(lastLine == currLine && !force)
 			return;
 		lastLine = currLine;

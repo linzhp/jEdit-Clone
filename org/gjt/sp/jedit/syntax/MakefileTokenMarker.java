@@ -89,6 +89,7 @@ loop:		for(int i = offset; i < length; i++)
 						{
 							addToken(2,VARIABLE);
 							lastOffset += 2;
+							i++;
 						}
 					}
 				}

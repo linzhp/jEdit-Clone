@@ -35,6 +35,11 @@ public class delete_paragraph extends EditAction
 	public void actionPerformed(ActionEvent evt)
 	{
 		View view = getView(evt);
+		if(!view.getTextArea().isEditable())
+		{
+			view.getToolkit().beep();
+			return;
+		}
 		Buffer buffer = view.getBuffer();
 		Element map = buffer.getDefaultRootElement();
 		int lineNo = map.getElementIndex(view.getTextArea()

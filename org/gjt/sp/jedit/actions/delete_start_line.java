@@ -34,6 +34,11 @@ public class delete_start_line extends EditAction
 	public void actionPerformed(ActionEvent evt)
 	{
 		View view = getView(evt);
+		if(!view.getTextArea().isEditable())
+		{
+			view.getToolkit().beep();
+			return;
+		}
 		int caret = view.getTextArea().getCaretPosition();
 		Buffer buffer = view.getBuffer();
 		Element map = buffer.getDefaultRootElement();

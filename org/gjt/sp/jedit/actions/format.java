@@ -33,6 +33,11 @@ public class format extends EditAction
 	public void actionPerformed(ActionEvent evt)
 	{
 		View view = getView(evt);
+		if(!view.getTextArea().isEditable())
+		{
+			view.getToolkit().beep();
+			return;
+		}
 		Buffer buffer = view.getBuffer();
 		Object o = buffer.getProperty("maxLineLen");
 		int maxLineLength;

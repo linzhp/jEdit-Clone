@@ -116,6 +116,11 @@ implements DocumentListener, UndoableEditListener
 	 */
 	public void replace(View view)
 	{
+		if(!view.getTextArea().isEditable())
+		{
+			view.getToolkit().beep();
+			return;
+		}
 		try
 		{
 			RE regexp = jEdit.getRE();
@@ -150,6 +155,8 @@ implements DocumentListener, UndoableEditListener
 	 */
 	public boolean replaceAll(View view)
 	{
+		if(!view.getTextArea().isEditable())
+			return false;
 		boolean found = false;
 		beginCompoundEdit();
 		try

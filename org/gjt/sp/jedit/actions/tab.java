@@ -39,6 +39,11 @@ public class tab extends EditAction
 		try
 		{
 			SyntaxTextArea textArea = view.getTextArea();
+			if(!textArea.isEditable())
+			{
+				view.getToolkit().beep();
+				return;
+			}
 			int start = textArea.getSelectionStart();
 			int end = textArea.getSelectionEnd();
 			Element map = buffer.getDefaultRootElement();

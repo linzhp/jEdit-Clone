@@ -34,15 +34,26 @@ public class delete_line extends EditAction
 	public void actionPerformed(ActionEvent evt)
 	{
 		View view = getView(evt);
+		if(!view.getTextArea().isEditable())
+		{
+			view.getToolkit().beep();
+			return;
+		}
 		Buffer buffer = view.getBuffer();
 		Element map = buffer.getDefaultRootElement();
 		Element lineElement = map.getElement(map.getElementIndex(
 			view.getTextArea().getCaretPosition()));
 		try
 		{
-			buffer.remove(lineElement.getStartOffset(),
-				lineElement.getEndOffset()
-				- lineElement.getStartOffset());
+			int start = lineElement.getStartOffset();
+			int end = lineElement.getEndOffset();
+			int length = buffer.getLength();
+			if(end > length)
+			{
+				end--;
+				start--;
+			}
+			buffer.remove(start,end - start);
 		}
 		catch(BadLocationException bl)
 		{
@@ -51,6 +62,7 @@ public class delete_line extends EditAction
 			 * why not throw a StringIndexOutOfBounds, or at
 			 * least make BadLocationException a RuntimeException?
 			 */
+			bl.printStackTrace();
 		}
 	}
 }
