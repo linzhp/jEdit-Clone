@@ -1,0 +1,325 @@
+<html>
+<body>
+
+<h1>Basic Text Editing</h1>
+<a href=#intro>Introduction</a><br>
+<a href=#starting>Starting jEdit</a><br>
+<a href=#opening>Opening Files</a><br>
+<a href=#saving>Saving Files</a><br>
+<a href=#sendPrint>Sending and Printing Files</a><br>
+<a href=#clipboard>Cut, Copy and Paste</a><br>
+<a href=#undo>Undo and Redo</a><br>
+<a href=#shortcuts>Keyboard Shortcuts</a><br>
+<a href=#views>Using Multiple Editor Windows</a><br>
+<a href=#server>The jEdit Server</a><br>
+<a href=#desktop>The Desktop File</a><br>
+
+<a name=intro>
+<h1>Introduction</h1>
+</a>
+
+This file describes jEdit's most basic functions. It assumes you are
+familiar with another text editor, for example GEdit on Unix, Notepad on
+Windows or SimpleText on the MacOS.<p>
+
+<a name=starting>
+<h1>Starting jEdit</h1>
+</a>
+
+jEdit can be started from the command line to edit one or more
+files like this:
+
+<blockquote><code>jedit &lt;file1&gt; &lt;file2&gt;...</code></blockquote>
+
+If the file name contains a hash (#) the remainder of the file name
+after the hash character is the name of a marker that will be jumped to.
+(See the <a href=advanced.html#markers>Markers</a> help topic for more
+information.<p>
+
+A number of `switches' can also be passed to jEdit.
+
+<blockquote><code>
+	-version: Display jEdit version and exit<br>
+	-usage: Display a command line usage message and exit<br>
+	-nousrprops: Don't load user properties<br>
+	-noserver: Don't start server<br>
+	-nodesktop: Ignore saved desktop<br>
+	-nosplash: Don't show initial splash screen<br>
+	-usrprops=&lt;file&gt;: Load user properties from &lt;file&gt;<br>
+	-portfile=&lt;file&gt;: Save server port to &lt;file&gt;<br>
+	-desktopfile=&lt;file&gt;: Save desktop to &lt;file&gt;<br>
+	-readonly: Open files read only<br>
+	--: End of options<br>
+</code></blockquote>
+
+Because the `-' character is reserved for switches, you must enter the
+`--' parameter prior to any file names that start with `-'.
+
+<blockquote><code>jedit -- -filename</code></blockquote>
+
+jEdit can also be started from a GUI or command line with no parameters,
+in which case it will either open any files that were open in the last
+session, or if the `save desktop' feature is disabled, a blank
+`Untitled' file.<p>
+
+<a name=opening>
+<h1>Opening Files</h1>
+</a>
+
+<p>
+Once jEdit is started, files can be opened in a number of ways:
+
+<ul>
+<li><b>By starting another copy of jEdit.</b> -
+if jEdit is started when there is another copy running, the files are opened in
+the already running copy.
+<li><b>With the `File->Open File' command.</b> - This displays a standard
+(or not so standard, depending on the look and feel selected in
+`Tools-&gt;Options-&gt;General') file selection dialog box.
+<li><b>With the `File-&gt;Open URL' command.</b> - This displays a text
+entry dialog where a URL can be entered. The name `Open URL' is somewhat
+misleading, since file names, as well as URLs, can be entered. The
+exact protocols available depend on the Java implementation - most support
+ftp: and http:.
+<li><b>With the `File-&gt;Open Selection' command.</b> - This opens the file
+or URL specified by the currently selected text.
+<li><b>With the `File-&gt;Open Recent' menu. </b>- This menu displays
+the most recently opened files, 8 by default but this can be changed in
+`Tools-&gt;Options-&gt;General.
+<li><b>With the `File-&gt;New File' command.</b> - This command creates an
+empty file named `Untitled-n' where <i>n</i> is the number of `Untitled'
+files open so far. The new file isn't actually created on disk until you save;
+see below.
+</ul>
+
+<a name=saving>
+<h1>Saving Files</h1>
+</a>
+
+Any changes made to open files aren't actually stored to disk until you
+save. (But see below about the auto save feature). To save the file to
+disk, do one of the following:
+
+<ul>
+<li><b>Close the file or exit jEdit.</b> - If you close a file or exit jEdit,
+you will be asked if any unsaved changes should be saved.
+<li><b>With the `File-&gt;Save' command.</b> - This command saves the file
+to disk without further user input. If the file is `Untitled', you will
+be prompted to enter a file name first.
+<li><b>With the `File-&gt;Save As' command.</b> - This command displays a
+file selection dialog box where an alternative path name to save the file to
+can be entered or selected.
+<li><b>With the `File-&gt;Save to URL' command.</b> - This command displays
+a text entry dialog box where a URL to save the file to can be entered.
+As with `Open URL', file path names are accepted too. The available protocols
+and the exact behaviour of URL uploading depend on the Java implementation.
+</ul>
+
+<h2>Autosave</h2>
+
+If jEdit crashes, there is still a good chance that you will be able
+to recover any unsaved changes.<p>
+
+Every 15 seconds (the interval can be changed in
+`Tools-&gt;Options-&gt;General') a copy of every open file with unsaved
+changes is written out to #filename# where <i>filename</i> is the name
+of the file. If jEdit crashes (or you do a file listing in a directory
+which contains files open in jEdit) you will see these autosave files.<p>
+
+If jEdit has truly crashed, you can try opening these autosave files
+to see if they contain what you were editing before jEdit crashed. If
+so, you can overwrite the original copy of the file.<p>
+
+You might also see files named #filename#+tmp+# where <i>filename</i>
+is a file you were editing. A file named that means that jEdit crashed
+while writing out a new autosave - the old one should still be in
+#filename#. The +tmp+ version is probably useless, since it is
+incomplete.<p>
+
+<h2>Backups</h2>
+
+Sometimes you start editing a file, save it several times, then decide
+that you don't like the changes.<p>
+
+The first time you save a file after opening it, jEdit copies the old
+vesion to filename~ where <i>filename</i> is the name of the file being
+saved. Subsequent saves don't update the backup - you must close
+the file and save it again for that to happen. The result is that the
+backup always contains the file, as it was before you started editing it.<p>
+
+Multiple backups (named filename~1~, filename~2~ ... filename~10~ and so on,
+1 being the newest and 10 being the oldest) can enabled in
+`Tools-&gt;Options-&gt;General'.<p>
+
+<a name=sendPrint>
+<h1>Sending and Printing Files</h1>
+</a>
+
+Files can be sent via e-mail with the `File-&gt;Send' command.
+`File-&gt;Print' can be used to print the file to a printer (or on some
+operating systems, to a PostScript file).
+
+<a name=clipboard>
+<h1>Cut, Copy and Paste</h1>
+</a>
+
+jEdit has several commands for moving and copying text. They are:
+
+<ul>
+<li><b>Edit-&gt;Cut</b> - this command places the selection in the
+clipboard and removes it from the document.
+<li><b>Edit-&gt;Copy</b> - this command places the selection in the
+clipboard and leaves it in the document.
+<li><b>Edit-&gt;Paste</b> - places the clipboard contents in the
+document, replacing the selection, if any.
+<li><b>Edit-&gt;Paste Previous</b> - displays a list of previously
+copied and pasted strings available for insertion. By default, the last
+100 clippings are remembered - this can be changed in
+`Tools-&gt;Options-&gt;General'.
+</ul>
+
+<a name=undo>
+<h1>Undo and Redo</h1>
+</a>
+
+In case you make a mistake, the `Edit-&gt;Undo' command undoes the last
+editing action. Up to 100 previous actions can be undone. If you undo
+too much, try `Edit-&gt;Redo'.
+
+<a name=shortcuts>
+<h1>Keyboard Shortcuts</h1>
+</a>
+
+Within jEdit, keyboard shortcuts are written as
+<code>modifier+key</code>, where <code>modifier</code> is S for Shift,
+C for Control, or A for Alt. <code>key</code> is either a letter,
+or a named key such as PageUp.<p>
+
+Some keyboard shortcuts consist of more than one keystroke, for
+example `Delete Paragraph' is <code>C+d C+e</code>. Both key
+strokes must be pressed in the respective order.
+
+<h2>Menu Item Shortcuts</h2>
+The most frequently used menu item commands have keyboard shortcuts.
+They are listed to the right of the menu item's label.
+
+<h2>Menu Mnemonics</h2>
+
+Pressing the Alt key in combination with one of the underlined
+characters in the menu bar activates the respective menu. Once a
+menu is open, an item in it can be selected by pressing the
+underlined character in its label.<p>
+
+While a menu is open, the arrow keys can be used to select menu
+items, and Space or Enter will activate the selected menu item.<p>
+
+The F10 key can be used to activate the menu bar for menu
+selection via arrow keys.
+
+<h2>Dialog Shortcuts</h2>
+
+All dialogs have an OK button which can be activated by pressing
+the Enter key.<p>
+
+Most dialogs also have a Cancel button which can be activated by
+pressing the Escape key.<p>
+
+Tab and Shift+Tab can be used to shift the keyboard focus to the
+next and previous component in a dialog box.
+
+<h2>Text Editing Shortcuts</h2>
+
+The following shortcuts are available in most text components,
+including the main editor component and the text fields in various
+dialogs.<p>
+
+If Shift is held down in combination with any
+of these keys, the selection is extended, rather than the caret
+being moved.
+
+<table border=3>
+
+<tr>
+<td>Backspace</td> <td>Deletes the character before the caret.
+If there is a selection, it will be deleted instead.</td>
+</tr>
+
+<tr>
+<td>Delete</td> <td>Deletes the character after the caret.
+If there is a selection, it will be deleted instead.</td>
+</tr>
+
+<tr>
+<td>Left, Right, Up, Down</td> <td>Moves the caret in the
+respective direction.</td>
+</tr>
+
+<tr>
+<td>C+Left, C+Right</td> <td>Moves the caret one word
+backward and one word forward, respectively.</td>
+</tr>
+
+<tr>
+<td>Home</td> <td>Moves the caret to the start of the line.</td>
+</tr>
+
+<tr>
+<td>End</td> <td>Moves the caret to the end of the line.</td>
+</tr>
+
+<tr>
+<td>C+Home</td> <td>Moves the caret to the start of the text.</td>
+</tr>
+
+<tr>
+<td>C+End</td> <td>Moves the caret to the end of the text.</td>
+</tr>
+
+<tr>
+<td>PageUp</td> <td>Moves the caret up one screenful of text.</td>
+</tr>
+
+<tr>
+<td>PageDown</td> <td>Moves the caret down one screenful of text.</td>
+</tr>
+
+</table>
+
+<a name=views>
+<h1>Using Multiple Editor Windows</h1>
+</a>
+
+By default, jEdit has only one editor window, or <i>view</i>, open. All
+open files, or <i>buffers</i> are opened in that view. However, new views
+can be created with the `File-&gt;New View' command, and they can be
+closed with `File-&gt;Close View'. The `Buffers' menu can be used to select
+which buffer the current view is to edit. Several views can be editing the
+same buffer, in which case changes in one view will propagate to all others
+editing the same buffer.
+
+<a name=server>
+<h1>The jEdit Server</h1>
+</a>
+
+When jEdit is first started, it creates a new server thread that listens
+on a free TCP/IP socket. Subsequent invocations of jEdit connect to that
+socket and inform it of any files that are to be opened. This technique
+cuts down on memory usage because there is only one instance of jEdit open
+at any one time.<p>
+
+The server can be disabled either on a `one-time' basis with the
+`-noserver' switch, or permanently in `Tools-&gt;Options-&gt;General'.
+
+<a name=desktop>
+<h1>The Desktop File</h1>
+</a>
+
+When jEdit exits it saves the list of open files to the `desktop' file,
+so that the next time jEdit is started with no command line parameters,
+it can reopen those files.<p>
+
+The desktop can be disabled either on a `one-time' basis with the
+`-nodesktop' switch, or permanently in `Tools-&gt;Options-&gt;General'.<p>
+
+</body>
+</html>

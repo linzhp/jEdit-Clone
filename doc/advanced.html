@@ -1,0 +1,229 @@
+<html>
+<body>
+
+<h1>Advanced Text Editing</h1>
+
+<a href=#intro>Introduction</a><br>
+<a href=#modes>Edit Modes</a><br>
+<a href=#markers>Markers and the Anchor</a><br>
+<a href=#search>Search &amp; Replace</a><br>
+<a href=#misc>Miscallaneous Commands</a><br>
+
+<a name=intro>
+<h1>Introduction</h1>
+</a>
+
+This file outlines some of the more advanced features available in jEdit
+such as edit modes, the anchor and markers, various line-based commands
+and search and replace.<p>
+
+<a name=modes>
+<h1>Edit Modes</h1>
+</a>
+
+Because it is impossible to provide optimal editing for all file types
+at once, jEdit supports edit modes. Each edit mode defines indentation,
+syntax colorizing patterns, and various settings such as default compiler,
+comment strings, and so on.<p>
+
+To determine which edit mode to use for a file, jEdit looks at the file
+name, file extension, and first line of the file. If neither of these
+methods are suitable, the mode can be specified `manually', by entering
+the following in one of the first 10 lines of the file:
+<pre>
+	(:mode=sh:)
+</pre>
+Of course, sh should be the <b>internal</b> name of the desired edit mode.<p>
+
+The following table lists all edit modes included with jEdit; additional
+ones may be available, depending on what plugins are installed.
+
+<table border=3>
+
+<tr>
+<th bgcolor=#ccccff>Name</th><th bgcolor=#ccccff>Internal Name</th>
+<th bgcolor=#ccccff>Description</th>
+</tr>
+
+<tr>
+<td>Text</td> <td>none</td> <td>(Yes, the internal name is `none'.) For
+editing plain text. Does not do anything special. Automatically selected
+for files without a specific edit mode.</td>
+</tr>
+
+<tr>
+<td>AMSTeX</td> <td>amstex</td> <td>For editing AMSTeX files. This mode
+is automatically selected for files whose names end with `.tex' and
+which contain `\documentstyle' in the first 100 lines, but which do not
+contain `\begin'. Default compiler is `amstex'.</td>
+</tr>
+
+<tr>
+<td>Auto Indent</td> <td>autoindent</td> <td>Implements semi-intelligent
+indentation. All other modes except for Text, HTML and the TeX family subclass
+this.</td>
+</tr>
+
+<tr>
+<td>Batch File</td> <td>bat</td> <td>For editing MS-DOS Batch Files. This
+mode is automatically selected for files whose names end with `.bat'.</td>
+</tr>
+
+<tr>
+<td>C</td> <td>c</td> <td>For editing C source. This
+mode is automatically selected for files whose names end with `.c' or `.h'.
+Default compiler is `cc'.
+</td>
+</tr>
+
+<tr>
+<td>C++</td> <td>cc</td> <td>For editing C++ source. This
+mode is automatically selected for files whose names end with `.cc',
+`.hh', `.cpp', `.cxx', `.C' or `.H' (sometimes I wish the C++ file
+extensions were more standard). Default compiler is `c++'.
+</td>
+</tr>
+
+<tr>
+<td>HTML</td> <td>html</td> <td>For editing HTML files. This
+mode is automatically selected for files whose names end with `.html',
+`.htm' or `.shtml'.
+</td>
+</tr>
+
+<tr>
+<td>Java</td> <td>java_mode</td> <td>For editing Java source. This
+mode is automatically selected for files whose names end with `.java'.
+Default compiler is `javac'.
+</td>
+</tr>
+
+<tr>
+<td>JavaScript</td> <td>javascript</td> <td>For editing JavaScript source. This
+mode is automatically selected for files whose names end with `.js'. Also,
+HTML mode uses this mode to colorize scripts inside &lt;script&gt; tags.
+</td>
+</tr>
+
+<tr>
+<td>LaTeX</td> <td>latex</td> <td>For editing LaTeX files. This
+mode is automatically selected for files whose names end with `.tex' and
+that contain `\begin' in the first 100 lines. Default compiler is `latex'.
+</td>
+</tr>
+
+<tr>
+<td>Makefile</td> <td>make</td> <td>For editing Makefiles. This
+mode is automatically selected for files named `Makefile'.
+</td>
+</tr>
+
+<tr>
+<td>Shell Script</td> <td>sh</td> <td>For editing UNIX shell scripts. This
+mode is automatically selected for files whose first line is `#!' followed
+by various shell paths.
+</td>
+</tr>
+
+<tr>
+<td>TeX</td> <td>tex</td> <td>For editing plain TeX files. This
+mode is automatically selected for files whose names end with `.tex' but
+which do not contain either `\begin' or `\documentstyle' in the first 100
+lines. Default compiler is `tex'.
+</td>
+</tr>
+
+</table>
+
+<a name=markers>
+<h1>Markers and the Anchor</h1>
+</a>
+
+jEdit has two features which make it easier to browse around long files.<p>
+
+The <i>anchor</i> is a floating location (floating meaning that if text
+before it is changed, the anchor will move) that can be used to save a position
+and go back later, to select large blocks of text, and to `flip' between two
+positions in the document. Unlike markers, the anchor position is not saved
+to disk when the file is saved.<p>
+
+The following commands manipulate the anchor:
+
+<ul>
+<li><b>Edit-&gt;Anchor Operations-&gt;Set Anchor</b> - moves the anchor
+to the current caret position.
+<li><b>Edit-&gt;Anchor Operations-&gt;Go to Anchor</b> - moves the caret
+position to where the anchor is.
+<li><b>Edit-&gt;Anchor Operations-&gt;Select to Anchor</b> - selects text
+from the anchor position to the caret.
+<li><b>Edit-&gt;Anchor Operations-&gt;Exchange Anchor and Caret</b> - moves
+the caret to the anchor position, and moves the anchor to where the caret
+used to be.
+</ul>
+
+Markers are more general purpose than the anchor, but they are slightly more
+inconvenient to use. There can be any number of markers defined in the
+file, and they are saved to disk when the file is saved. (Markers
+are saved to .filename.marks where <i>filename</i> is the file)<p>
+
+The following commands manipulate markers:
+
+<ul>
+<li><b>Search-&gt;Set Marker</b> - displays a text entry dialog where a marker
+name can be entered. The default name is the current selection.
+<li><b>Search-&gt;Clear Marker</b> - a menu of markers, selecting one will
+clear it.
+<li><b>Search-&gt;Go to Marker</b> - a menu of markers, selecting one will
+move the caret position to it.
+</ul>
+
+<a name=search>
+<h1>Search &amp; Replace</h1>
+</a>
+
+jEdit's Search &amp; Replace is based on regular expressions -
+see <a href=regexp.html>Regular Expressions</a> if you are not familiar
+with them.<p>
+
+The actual searching and replacement commands are:
+
+<ul>
+<li><b>Search-&gt;Find</b> - displays the search &amp; replace dialog.
+<li><b>Search-&gt;Find Next</b> - locates the next occurance of the search
+string.
+<li><b>Search-&gt;Find Selection</b> - locates the next occurance of the
+selected text. Subsequent `Find Next' commands will also use the selection
+as the search string.
+<li><b>Search-&gt;Replace</b> - replaces the selection with the replacement
+string.
+<li><b>Search-&gt;Replace &amp; Find Next</b> - replaces the selection with
+the replacement string and locates the next occurance of the search string.
+<li><b>Search-&gt;Replace All</b> - replaces all occurances of the search
+string with the replacement string.
+<li><b>Search-&gt;HyperSearch</b> - displays the HyperSearch dialog. The
+HyperSearch feature lists all lines that contain the search string. Clicking
+on a line in the list will select it in the editor.
+</ul>
+
+<a name=misc>
+<h1>Miscallaneous Commands</h1>
+</a>
+
+Most commands in jEdit are self-explanatory. However, there are some
+exceptions - they are listed here.
+
+<ul>
+<li><b>Edit-&gt;Line Operations-&gt;Go to End Indent</b> - moves the caret to
+the first non-whitespace character of the current line.
+<li><b>Edit-&gt;Line Operations-&gt;Delete No Indent</b> - deletes the current
+line except for any indent at the start.
+<li><b>Edit-&gt;Line Operations-&gt;Select No Indent</b> - selects the current
+line except for any indent at the start.
+<li><b>Edit-&gt;Line Operations-&gt;Join Lines</b> - appends the next line
+without any leading indent to the end of the current line.
+<li><b>Tools-&gt;Filter Selecton</b> - filters the selection through an
+external command, specified in a text entry dialog.
+</ul>
+
+</body>
+</html>

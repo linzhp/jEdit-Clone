@@ -1,0 +1,240 @@
+<html>
+<body>
+
+<h1>Editing Program Source</h1>
+
+<a href=#intro>Introduction</a><br>
+<a href=#bracket>Bracket Matching</a><br>
+<a href=#autoindent>Indentation</a><br>
+<a href=#colorizing>Syntax Colorizing</a><br>
+<a href=#comment>Commenting and Uncommenting</a><br>
+<a href=#compile>Compiling and Fixing Errors</a><br>
+
+<a name=intro>
+<h1>Introduction</h1>
+</a>
+
+jEdit has many features useful for editing program source code,
+including bracket matching, auto indent, several commands for
+commenting and uncommenting code and commands for quick compile-edit-fix
+cycles. While  they don't count as programs some of the information in
+this document applies to HTML and TeX files too.
+
+<a name=bracket>
+<h1>Bracket Matching</h1>
+</a>
+
+Most programming languages make extensive use of brackets to delimit
+code blocks and lists. Mismatched brackets are probably the most
+common syntax error. jEdit has the following features to help prevent this:
+
+<ul>
+<li><b>Bracket highlighting</b> - if the character before the caret is
+a bracket ((, ), [, ], {, }) the matching one is highlighted.
+<li><b>`Edit-&gt;Locate Bracket' command</b> - this command complements
+the previous item nicely. When invoked, it moves the caret to the bracket
+matching the one before the caret. If there is no matching bracket, jEdit
+will beep.
+<li><b>`Edit-&gt;Code Block Operations-&gt;Select Code Block' command</b> -
+this command locates the closest opening and closing brackets around the
+caret, and selects everything in between. Invoking it again selects the
+next outer code block, and so on. If there aren't any matching brackets
+around the caret, the entire document will be selected.
+</ul>
+
+<a name=autoindent>
+<h1>Indentation</h1>
+</a>
+
+<h2>Automatic Indentation</h2>
+Most programming languages make extensive use of multiple levels of
+indentation. Pressing Tab or Space multiple times at the start of every
+line is very tedious, so jEdit provides an auto indent feature.<p>
+
+When Tab is first pressed on a line, the appropriate amount of indent is
+inserted - usually the indent of the previous non-empty line, but
+some modes have more complicated algorithms. When Tab is pressed on a line
+which already has the right amount of indent, a real Tab is inserted.<p>
+
+In the C, C++, Java and JavaScript edit modes, auto indent handles curly
+brackets ({, }) by shifting the indent in the appropriate direction when
+Tab is pressed on a line which contains them. To enable bracket indent
+in edit modes other than those above, set the `openIndentBrackets' and
+`closeIndentBrackets' buffer-local properties to a list of opening and
+closing brackets to indent. For example, When editing Lisp you might
+specify the following in one of the first 10 lines of your Lisp file:
+<pre>
+	(:openIndentBrackets=(:closingIndentBrackets=):)
+</pre>
+The above example doesn't demonstrate this, but multiple brackets can also
+be specified in both lists.
+
+<h2>Changing the Tab Width</h2>
+
+The Tab width can be specified on either a global or file-by-file basis.
+<ul>
+<li>To set the tab width for all files edited within jEdit, specify the
+desired width in `Tools-&gt;Options-&gt;Editor'.
+<li>To set the tab width on a file-by-file basis, set the `tabSize'
+buffer-local property to the desired size, for example by putting the
+following in one of the first 10 lines of the file:
+<pre>
+	(:tabSize=4:)
+</pre>
+Of course replacing 4 with the desired tab size.<p>
+</ul>
+
+<h2>Enabling Soft Tabs</h2>
+
+If you prefer to use `soft' tabs - ie, multiple spaces inserted when
+you press Tab, you can do one of the following:
+<ul>
+<li>To enable soft tabs for all files edited within jEdit, specify so in
+`Tools-&gt;Options-&gt;Editor'.
+<li>To enable soft tabs on a file-by-file basis, set the `noTabs' buffer-local
+property to `yes', for example by putting the following in one of the first 10
+lines of the file:
+<pre>
+	(:noTabs=yes:)
+</pre>
+</ul>
+
+<h2>Indentation-Related Commands</h2>
+
+The following commands are useful when editing indented files:
+
+<ul>
+<li><b>Edit-&gt;Code Block Operations-&gt;Shift Indent Left</b> - removes one
+leading Tab (either real or emulated via spaces) from the start of the every
+line of the selection (or the current line if nothing is selected)
+<li><b>Edit-&gt;Code Block Operations-&gt;Shift Indent Right</b> - does the
+opposite of the above, adding one Tab to the leading indent of every line
+of the selection. If soft tabs are enabled (see above) an emulated tab
+will be inserted instead.
+<li><b>Edit-&gt;Spaces to Tabs</b> - converts consecutive spaces to tabs
+<li><b>Edit-&gt;Tabs to Spaces</b> - converts tabs to `soft' tabs
+</ul>
+
+<a name=colorizing>
+<h1>Syntax Colorizing</h1>
+</a>
+
+jEdit does syntax colorizing for the following file types:
+
+<ul>
+<li>DOS batch files
+<li>C source
+<li>C++ source
+<li>HTML documents
+<li>Java source
+<li>JavaScript source (.js files and &lt;script&gt; tags in HTML)
+<li>UNIX (sometimes Windows) Makefiles
+<li>UNIX Shell Scripts
+<li>TeX documents
+</ul>
+
+Syntax colorizing makes errors such as misplaced quotes, mispelt
+keywords, etc easier to see. It also makes certain lexical tokens
+stand out more.<p>
+
+<b>Hint:</b> syntax colorizing is performed when printing, too.
+
+<a name=comment>
+<h1>Commenting and Uncommenting</h1>
+</a>
+
+Most programing languages support comments, which are ignored by
+the compiler/interpreter. jEdit has the following commands for
+commenting and uncommenting text:
+
+<ul>
+<li><b>Edit-&gt;Code Block Operations-&gt;Wing Comment</b> - surrounds the
+selection with comment start and end strings. Only works in edit
+modes which define comment start and end strings. An example of
+wing commented Java code:
+<pre>
+	/* regurgitator();
+	System.out.println("Hello World");
+	System.exit(1); */
+</pre>
+<li><b>Edit-&gt;Code Block Operations-&gt;Block Comment</b> - places comment
+to end of line strings at the start of every line of the selection. Only works
+in edit modes which define comment to end of line strings. An
+example of block commented Java code:
+<pre>
+	// regurgitator();
+	// System.out.println("Hello World");
+	// System.exit(1);
+</pre>
+<li><b>Edit-&gt;Code Block Operations-&gt;Box Comment</b> - surrounds the
+selection with comment start and end strings, and places the box
+comment strings at the start of every line of the selection. An example
+of box commented Java code:
+<pre>
+	/* regurgitator();
+	* System.out.println("Hello World");
+	* System.exit(1); */
+</pre>
+<li><b>Edit-&gt;Code Block Operations-&gt;Uncomment</b> - tries to remove
+any comment strings from the start and end of every line of the selection.
+</ul>
+
+The comment characters can be reassigned on a file-by-file basis by
+placing something like the following in one of the first 10 lines of the
+file:
+<pre>
+	(:commentStart=(*:commentEnd=*):)
+	(:blockComment=->:boxComment=**:)
+</pre>
+
+
+<a name=compile>
+<h1>Compiling and Fixing Errors</h1>
+</a>
+
+To make the edit-compile-fix cycle faster, jEdit has the following
+commands:
+
+<ul>
+<li><b>Tools-&gt;Compile</b> - used to compile the current file. Invokes
+a mode specific compiler - for example, in C mode, this is cc, in Java
+this is javac, etc. The compiler can also be set on a file-by-file
+basis by setting the `compiler' buffer-local property, for example by putting
+this in one of the first 10 lines of the file:
+<pre>
+	(:compiler=c89 -O2 %p:)
+</pre>
+Of course c89 -O2 should be replaced by your compiler and compilation flags,
+if any. The %p should appear somewhere in the compiler command - it is
+replaced with the file's path name by the compile command.
+<li><b>Tools-&gt;Make</b> - invokes the `make' tool which is usually used to
+build the entire program. The make tool can be set for all files edited within
+jEdit in `Tools-&gt;Options-&gt;General'. Also, it can be set on a file-by-file
+basis by setting the `make' buffer-local property, for example by putting
+this in one of the first 10 lines of the file:
+<pre>
+	(:make=pmake:)
+</pre>
+Of course pmake should be replaced by your make tool.
+</ul>
+
+jEdit attempts to parse compiler errors and build an
+error list in `Tools-&gt;Compiler Errors'. Currently, jEdit parses the
+following error formats:
+<ul>
+<li>Generic format used by many compilers and utilities:
+<pre>file name:line number:error message</pre>
+<li>TeX-style errors:
+<pre>
+! error message
+l.line number, error message continued</pre>
+</ul>
+
+Selecting an error from `Tools-&gt;Compiler Errors' will open the file
+involved and move the caret to the line where the error occured.
+The `Tools-&gt;Next Error' and `Tools-&gt;Previous Error' commands can also
+be used to go to the next and the previous error, respectively.
+
+</body>
+</html>
+</ul>

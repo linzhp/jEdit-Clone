@@ -11,12 +11,16 @@
 
 <ul>
 <li>Smaller splash screen
-<li>Macro/extension language
-<li>Compiler error list
+<li>Compiler error list: read errors from file (-q option)
+<li>Compiler error list: Emacs error parsing
+<li>Compiler error list: test extensively
+<li>Go to line number from cmd line (-line= option, only one can be
+specified per cmd line)
 <li>Class/method/variable browser
-<li>Close dialog that lists all dirty files
-<li>Uncomment command
+<li>Uncomment command doesn't delete start and end spaces
 <li>Fix splash screen deadlock
+<li>Locate bracket/select code block should skip quotes and comments
+<li>`Sticky' file format: open DOS file, saved as DOS file
 </ul>
 
 <a name=14pre1>
@@ -27,16 +31,13 @@
 
 <ul>
 <li>Semi-intelligent indent in C/C++/Java modes
+<li>Experimental compiler error parsing added
 <li>`Electric borders' - scrolling starts when caret is 4 lines from
 the top or bottom
-<li>`Generate Random Text' command added (it's only 2 Kb, it's funny, and
-it's useful in certain situations too)
 <li>Usage hints (ie, Tips of the Day) are displayed in the title bar
 until you start typing
-<li>Scroll to Line command added
-<li>Exchange Anchor and Caret command added
-<li>Go to End of Indent command added
-<li>Several commands for commenting out program source added
+<li>`Scroll to Line', `Exchange Anchor and Caret', `Go to End of Indent'
+and `Generate Random Text' (it's funny, so laugh) commands added
 </ul>
 
 <h2>Enhancements</h2>
@@ -45,34 +46,27 @@ until you start typing
 <li>Status bar removed, dirty and read only status now displayed in the
 title bar, line number is displayed in the menu bar
 <li>Warning if file has changed on disk by another program
-<li>Keyboard shortcuts added changed and improved
-<li>Added a `Close' button to the help viewer
+<li>Improved keyboard shortcuts
 <li>New menu item class displays key bindings in the correct place
-<li>Tab size setting on Options dialog is now an editable combo box
-<li>MacOS look and feel option added to Options
-<li>Auto save is now safer (first we save to #filename#+tmp+# then move to
-#filename# so that even if jEdit crashes during the autosave, the data will
-be preserved)
-<li>Auto save is now a little faster (flag is set if file has changed since
-previous auto save, and it is only saved then)
-<li>Auto save now occurs every 15 seconds rather than 30
-<li>Server messages are now prefixed with jEdit: so they are easier to
-track down
-<li>Command Output window is now an independent frame
+<li>Several options dialog updates
+<li>Several autosave updates 
 <li>Backup is only made only once per file visit (like Emacs)
+<li>Default JVM changed to `java' to make it easier for people with JDK 1.2
 </ul>
 
 <h2>Bug Fixes</h2>
 <ul>
 <li>Buffers menu's modified flag wasn't updated after a marker was set
 <li>Compiler setting wasn't saved
-<li>`Next Paragraph' and `Delete Paragraph' had problems deleting the last
-paragraph of a file
-<li>`Delete Line' had problems deleting the last line of a file
-<li>Pressing Escape in the `unsaved changes' dialog would discard changes,
-rather than cancelling the operation
+<li>`Next Paragraph',  `Delete Paragraphand `Delete Line' had problems
+when working on the last line of the document
 <li>Various dialogs didn't respond properly to Escape
-<li>Fixed incorrect message in `save first' dialog displayed by Compile command
+<li>Incorrect message was displayed in the `save before compiling' dialog
+<li>CTokenMarker would throw an exception if the last character on a line
+was `/'
+<li>Fixed the jEdit.regionMatches bug (again) it caused problems in HTML
+mode
+<li>URLs didn't work properly with the desktop feature on Unix
 </ul>
 </body>
 </html>

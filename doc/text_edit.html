@@ -1,0 +1,102 @@
+<html>
+<body>
+
+<h1>Editing Text Files</h1>
+
+<a href=#intro>Introduction</a><br>
+<a href=#paragraph>Paragraph-Based Commands</a><br>
+<a href=#format>Formatting Text</a><br>
+<a href=#wordcount>Counting Lines, Words and Characters</a><br>
+<a href=#www>Commands for Editing HTML Files</a><br>
+<a href=#tex>Commands for Editing TeX Files</a><br>
+
+<a name=intro>
+<h1>Introduction</h1>
+</a>
+
+While jEdit is primarily a programmer's text editor, it also has many
+features useful for editing plain text documents and HTML and TeX files,
+including several paragraph manipulation commands, a command for formatting
+text, a word count feature, and several commands useful when editing HTML.
+The commands described in this file are also sometimes useful when
+editing program source, especially comments and such.
+
+<a name=paragraph>
+<h1>Paragraph-Based Commands</h1>
+</a>
+
+Most plain text is separated into paragraphs. jEdit defines paragraphs as
+blocks of text separated by double newlines. jEdit does NOT explicitly
+look for HTML &lt;p&gt; tags, nor does it support paragraphs separated
+by single newlines that start with several spaces of indentation.<p>
+
+The following commands deal with paragraphs:
+
+<ul>
+<li><b>Edit-&gt;Paragraph Operations-&gt;Go to Next Paragraph</b> - moves the caret
+to the start of the next paragraph
+<li><b>Edit-&gt;Paragraph Operations-&gt;Go to Previous Paragraph</b> - moves the
+caret to the start ofthe previous paragraph
+<li><b>Edit-&gt;Paragraph Operations-&gt;Select Next Paragraph</b> - extends the
+selection to the start of the next paragraph
+<li><b>Edit-&gt;Paragraph Operations-&gt;Select Previous Paragraph</b> - extends
+the selection to the start of the previous paragraph
+<li><b>Edit-&gt;Paragraph Operations-&gt;Delete Paragraph</b> - deletes
+the paragraph containing the caret
+</ul>
+
+<b>Hint:</b> If you separate your program source into clear, logical sections
+using double newlines, the paragraph commands will  be useful then, too.
+
+<a name=format>
+<h1>Formatting Text</h1>
+</a>
+
+The `Edit-&gt;Format' command reflows the selected text to the current
+line width, by breaking lines at word boundaries if they are too long and
+rejoining lines if there is room available. The Format command can be invoked
+on several paragraphs, in which case it will format each one independently.<p>
+
+The `maxLineLen' buffer-local property controls the maximum line length
+before word wrap is done; default is 72, which makes for comfortable reading
+in Windows' Notepad default window size and standard 80 column terminals.
+The change it to a different value, set the buffer-local property by placing
+the following in one of the first 10 lines of the file:
+<pre>
+	(:maxLineLen=78:)
+</pre>
+Of course replacing 78 with the desired line length.
+
+<a name=wordcount>
+<h1>Counting Lines, Words and Characters</h1>
+</a>
+
+The `Tools-&gt;Word Count' command counts the number of lines, words and
+characters in the selection (or the entire document if
+nothing is selected).
+
+<a name=www>
+<h1>Commands for Editing HTML Files</h1>
+</a>
+
+The following commands are useful when editing HTML files:
+
+<ul>
+<li><b>Tools-&gt;Open Selection in WWW Browser</b> - similar to the
+above, but opens in the WWW browser that can be specified in
+`Tools-&gt;Options-&gt;General'.
+<li><b>Tools-&gt;Open in WWW Browser</b> - opens the current file in the
+WWW browser.
+</ul>
+
+<a name=tex>
+<h1>Commands for Editing TeX Files</h1>
+</a>
+
+To have jEdit automatically invoke AMS-TeX, LaTeX or plain TeX, and parse
+the error list, use the `Tools-&gt;Compile' command - see the
+<a href=program_edit.html#compile >Compiling and Fixing Errors</a> help
+topic for details.
+
+</body>
+</html>
