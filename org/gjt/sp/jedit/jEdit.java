@@ -311,7 +311,7 @@ public class jEdit
 		addAction(new org.gjt.sp.jedit.actions.box_comment());
 		addAction(new org.gjt.sp.jedit.actions.browser_open_sel());
 		addAction(new org.gjt.sp.jedit.actions.browser_open_url());
-//		addAction(new org.gjt.sp.jedit.actions.buffer_options());
+		addAction(new org.gjt.sp.jedit.actions.buffer_options());
 		addAction(new org.gjt.sp.jedit.actions.clear());
 		addAction(new org.gjt.sp.jedit.actions.clear_marker());
 		addAction(new org.gjt.sp.jedit.actions.close_file());
@@ -373,8 +373,6 @@ public class jEdit
 		addAction(new org.gjt.sp.jedit.actions.select_block());
 		addAction(new org.gjt.sp.jedit.actions.select_buffer());
 		addAction(new org.gjt.sp.jedit.actions.select_line_range());
-		addAction(new org.gjt.sp.jedit.actions.select_line_sep());
-		addAction(new org.gjt.sp.jedit.actions.select_mode());
 		addAction(new org.gjt.sp.jedit.actions.select_next_paragraph());
 		addAction(new org.gjt.sp.jedit.actions.select_no_indent());
 		addAction(new org.gjt.sp.jedit.actions.select_prev_paragraph());
@@ -1577,6 +1575,10 @@ public class jEdit
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.57  1999/03/20 04:52:55  sp
+ * Buffer-specific options panel finished, attempt at fixing OS/2 caret bug, code
+ * cleanups
+ *
  * Revision 1.56  1999/03/20 02:07:59  sp
  * Starting work on buffer-specific options panel
  *

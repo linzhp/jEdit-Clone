@@ -230,75 +230,6 @@ public class View extends JFrame
 	}
 
 	/**
-	 * Recreates the mode menu.
-	 */
-	public void updateModeMenu()
-	{
-		if(mode.getMenuComponentCount() != 0)
-			mode.removeAll();
-		Mode bufferMode = buffer.getMode();
-		ButtonGroup grp = new ButtonGroup();
-		Mode[] modeArray = jEdit.getModes();
-		JMenuItem menuItem = new JRadioButtonMenuItem(jEdit
-			.getModeName(null));
-		menuItem.addActionListener(jEdit.getAction("select-mode"));
-		menuItem.setActionCommand(null);
-		if(bufferMode == null)
-			menuItem.getModel().setSelected(true);
-		grp.add(menuItem);
-		mode.add(menuItem);
-		for(int i = 0; i < modeArray.length; i++)
-		{
-			Mode m = modeArray[i];
-			String name = jEdit.getModeName(m);
-			menuItem = new JRadioButtonMenuItem(name);
-			menuItem.addActionListener(jEdit.getAction("select-mode"));
-			String clazz = m.getClass().getName();
-			menuItem.setActionCommand(clazz.substring(clazz
-				.lastIndexOf('.') + 1));
-			grp.add(menuItem);
-			if(m == bufferMode)
-				menuItem.getModel().setSelected(true);
-			mode.add(menuItem);
-		}
-	}
-	
-	/**
-	 * Recreates the line separator menu.
-	 */
-	public void updateLineSepMenu()
-	{
-		if(lineSep.getMenuComponentCount() != 0)
-			lineSep.removeAll();
-		Action action = jEdit.getAction("select-line-sep");
-		String newline = (String)buffer.getProperty(Buffer.LINESEP);
-		if(newline == null)
-			newline = System.getProperty("line.separator");
-		ButtonGroup grp = new ButtonGroup();
-		JMenuItem menuItem = new JRadioButtonMenuItem(jEdit.getProperty(
-			"lineSep.unix"));
-		menuItem.setActionCommand("\n");
-		menuItem.addActionListener(action);
-		menuItem.getModel().setSelected("\n".equals(newline));
-		grp.add(menuItem);
-		lineSep.add(menuItem);
-		menuItem = new JRadioButtonMenuItem(jEdit.getProperty(
-			"lineSep.windows"));
-		menuItem.setActionCommand("\r\n");
-		menuItem.addActionListener(action);
-		menuItem.getModel().setSelected("\r\n".equals(newline));
-		grp.add(menuItem);
-		lineSep.add(menuItem);
-		menuItem = new JRadioButtonMenuItem(jEdit.getProperty(
-			"lineSep.mac"));
-		menuItem.setActionCommand("\r");
-		menuItem.addActionListener(action);
-		menuItem.getModel().setSelected("\r".equals(newline));
-		grp.add(menuItem);
-		lineSep.add(menuItem);
-	}
-
-	/**
 	 * Updates the line number indicator.
 	 * @param force True if it should be updated even if the caret
 	 * hasn't moved since the last update
@@ -345,9 +276,7 @@ public class View extends JFrame
 		}
 		this.buffer = buffer;
 		textArea.setDocument(buffer);
-		updateLineSepMenu();
 		updateMarkerMenus();
-		updateModeMenu();
 		updateTitle();
 		updateLineNumber(true);
 
@@ -499,8 +428,6 @@ public class View extends JFrame
 		clearMarker = GUIUtilities.loadMenu(this,"clear-marker");
 		gotoMarker = GUIUtilities.loadMenu(this,"goto-marker");
 		plugins = GUIUtilities.loadMenu(this,"plugins");
-		mode = GUIUtilities.loadMenu(this,"mode");
-		lineSep = GUIUtilities.loadMenu(this,"line-separator");
 
 		bindings = new Hashtable();
 		currentPrefix = bindings;
@@ -631,10 +558,6 @@ public class View extends JFrame
 			return gotoMarker;
 		else if(name.equals("plugins"))
 			return plugins;
-		else if(name.equals("mode"))
-			return mode;
-		else if(name.equals("line-separator"))
-			return lineSep;
 		else
 			return null;
 	}
@@ -667,8 +590,6 @@ public class View extends JFrame
 	private JMenu clearMarker;
 	private JMenu gotoMarker;
 	private JMenu plugins;
-	private JMenu mode;
-	private JMenu lineSep;
 	private Hashtable bindings;
 	private Hashtable currentPrefix;
 	private JScrollPane scroller;
@@ -777,19 +698,10 @@ public class View extends JFrame
 				updateMarkerMenus();
 		}
 	
-		public void bufferLineSepChanged(BufferEvent evt)
-		{
-			if(evt.getBuffer() == buffer)
-				updateLineSepMenu();
-		}
-	
 		public void bufferModeChanged(BufferEvent evt)
 		{
 			if(evt.getBuffer() == buffer)
-			{
-				updateModeMenu();
 				textArea.repaint();
-			}
 		}
 	}
 
@@ -906,6 +818,10 @@ public class View extends JFrame
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.50  1999/03/20 04:52:55  sp
+ * Buffer-specific options panel finished, attempt at fixing OS/2 caret bug, code
+ * cleanups
+ *
  * Revision 1.49  1999/03/19 08:32:22  sp
  * Added a status bar to views, Escape key now works in dialog boxes
  *

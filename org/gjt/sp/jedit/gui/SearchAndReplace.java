@@ -107,7 +107,7 @@ public class SearchAndReplace extends JDialog
 		getRootPane().setDefaultButton(findBtn);
 		getContentPane().add("South",panel);
 
-		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
 		SearchKeyListener keyListener = new SearchKeyListener();
 		addKeyListener(keyListener);
@@ -116,8 +116,6 @@ public class SearchAndReplace extends JDialog
 			.addKeyListener(keyListener);
 		replace.getEditor().getEditorComponent()
 			.addKeyListener(keyListener);
-
-		addWindowListener(new SearchWindowListener());
 
 		SearchActionListener actionListener = new SearchActionListener();
 		find.addActionListener(actionListener);
@@ -213,19 +211,15 @@ public class SearchAndReplace extends JDialog
 			}
 		}
 	}
-
-	class SearchWindowListener extends WindowAdapter
-	{
-		public void windowClosing(WindowEvent evt)
-		{
-			dispose();
-		}
-	}
 }
 
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.22  1999/03/20 04:52:55  sp
+ * Buffer-specific options panel finished, attempt at fixing OS/2 caret bug, code
+ * cleanups
+ *
  * Revision 1.21  1999/03/19 08:32:22  sp
  * Added a status bar to views, Escape key now works in dialog boxes
  *

@@ -51,20 +51,14 @@ public class BufferEvent extends AbstractEditorEvent
 
 	/**
 	 * The return value of the <code>getID()</code> function when
-	 * a buffer's line separator has changed.
-	 */
-	public static final int LINESEP_CHANGED = BUFFER_FIRST + 2;
-
-	/**
-	 * The return value of the <code>getID()</code> function when
 	 * a buffer's edit mode has changed.
 	 */
-	public static final int MODE_CHANGED = BUFFER_FIRST + 3;
+	public static final int MODE_CHANGED = BUFFER_FIRST + 2;
 
 	/**
 	 * The last event id that denotes a buffer event.
 	 */
-	public static final int BUFFER_LAST = BUFFER_FIRST + 4;
+	public static final int BUFFER_LAST = BUFFER_FIRST + 3;
 
 	/**
 	 * Creates a new buffer event.
@@ -111,9 +105,6 @@ public class BufferEvent extends AbstractEditorEvent
 		case MARKERS_CHANGED:
 			l.bufferMarkersChanged(this);
 			break;
-		case LINESEP_CHANGED:
-			l.bufferLineSepChanged(this);
-			break;
 		case MODE_CHANGED:
 			l.bufferModeChanged(this);
 			break;
@@ -139,6 +130,10 @@ public class BufferEvent extends AbstractEditorEvent
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.5  1999/03/20 04:52:55  sp
+ * Buffer-specific options panel finished, attempt at fixing OS/2 caret bug, code
+ * cleanups
+ *
  * Revision 1.4  1999/03/16 04:34:46  sp
  * HistoryTextField updates, moved generate-text to a plugin, fixed spelling mistake in EditAction Javadocs
  *

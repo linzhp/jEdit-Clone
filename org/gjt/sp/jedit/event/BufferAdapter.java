@@ -45,11 +45,6 @@ public abstract class BufferAdapter implements BufferListener
 	public void bufferMarkersChanged(BufferEvent evt) {}
 
 	/**
-	 * Method invoked when a buffer's line separator has changed.
-	 */
-	public void bufferLineSepChanged(BufferEvent evt) {}
-
-	/**
 	 * Method invoked when a buffer's edit mode has changed.
 	 */
 	public void bufferModeChanged(BufferEvent evt) {}
@@ -58,6 +53,10 @@ public abstract class BufferAdapter implements BufferListener
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.5  1999/03/20 04:52:55  sp
+ * Buffer-specific options panel finished, attempt at fixing OS/2 caret bug, code
+ * cleanups
+ *
  * Revision 1.4  1999/03/16 04:34:46  sp
  * HistoryTextField updates, moved generate-text to a plugin, fixed spelling mistake in EditAction Javadocs
  *

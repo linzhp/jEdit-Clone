@@ -38,7 +38,7 @@ import org.gjt.sp.jedit.View;
  * @version $Id$
  */
 public class HyperSearch extends JDialog
-implements ActionListener, KeyListener, ListSelectionListener, WindowListener
+implements ActionListener, KeyListener, ListSelectionListener
 {
 	public HyperSearch(View view)
 	{
@@ -80,11 +80,10 @@ implements ActionListener, KeyListener, ListSelectionListener, WindowListener
 
 		content.add(stretchPanel, BorderLayout.CENTER);
 
-		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		find.getEditor().getEditorComponent().addKeyListener(this);
 		find.addActionListener(this);
 		addKeyListener(this);
-		addWindowListener(this);
 		findBtn.addActionListener(this);
 		close.addActionListener(this);
 
@@ -141,20 +140,6 @@ implements ActionListener, KeyListener, ListSelectionListener, WindowListener
 		textArea.select(lineElement.getStartOffset(),
 			lineElement.getEndOffset() - 1);
 	}
-	
-	public void windowOpened(WindowEvent evt) {}
-	
-	public void windowClosing(WindowEvent evt)
-	{
-		save();
-		dispose();
-	}
-	
-	public void windowClosed(WindowEvent evt) {}
-	public void windowIconified(WindowEvent evt) {}
-	public void windowDeiconified(WindowEvent evt) {}
-	public void windowActivated(WindowEvent evt) {}
-	public void windowDeactivated(WindowEvent evt) {}
 
 	// private members
 	private View view;
@@ -211,6 +196,10 @@ implements ActionListener, KeyListener, ListSelectionListener, WindowListener
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.22  1999/03/20 04:52:55  sp
+ * Buffer-specific options panel finished, attempt at fixing OS/2 caret bug, code
+ * cleanups
+ *
  * Revision 1.21  1999/03/19 08:32:22  sp
  * Added a status bar to views, Escape key now works in dialog boxes
  *

@@ -356,8 +356,8 @@ implements MouseListener, MouseMotionListener
 		{
 			if(r != null)
 			{
-				x = r.x - 1;
-				y = r.y - 1;
+				x = r.x;
+				y = r.y;
 				height = r.height + 2;
 				SyntaxCaret.this.repaint();
 			}
@@ -467,6 +467,10 @@ implements MouseListener, MouseMotionListener
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.14  1999/03/20 04:52:55  sp
+ * Buffer-specific options panel finished, attempt at fixing OS/2 caret bug, code
+ * cleanups
+ *
  * Revision 1.13  1999/03/17 05:32:52  sp
  * Event system bug fix, history text field updates (but it still doesn't work), code cleanups, lots of banging head against wall
  *

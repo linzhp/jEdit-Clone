@@ -518,6 +518,10 @@ class ColorChoice
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.2  1999/03/20 04:52:55  sp
+ * Buffer-specific options panel finished, attempt at fixing OS/2 caret bug, code
+ * cleanups
+ *
  * Revision 1.1  1999/03/20 01:55:42  sp
  * New color option pane, fixed search & replace bug
  *

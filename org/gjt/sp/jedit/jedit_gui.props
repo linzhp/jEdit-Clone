@@ -68,8 +68,6 @@ file=new-file \
      save-url \
      save-all \
      - \
-     %line-separator \
-     - \
      send \
      print \
      - \
@@ -92,9 +90,6 @@ save-all.label=Save All Buffers
 send.label=Sen$d...
 print.label=$Print...
 exit.label=E$xit
-
-### Line separator menu
-line-separator.label=Line Separator
 
 ### Edit menu
 edit=undo \
@@ -227,7 +222,6 @@ tools=word-count \
       buffer-options \
       global-options \
       - \
-      %mode \
       %plugins
 tools.label=$Tools
 word-count.label=Word Co$unt...
@@ -240,9 +234,6 @@ browser-open-sel.label=$Open Selection in WWW Browser
 browser-open-url.label=Open in $WWW Browser
 buffer-options.label=Buffe$r Options...
 global-options.label=$Global Options...
-
-### Mode menu
-mode.label=$Mode
 
 ### Plugins menu
 plugins.label=Plu$gins
@@ -507,8 +498,17 @@ selectlinerange.end=End line:\
 selectlinerange.ok=OK
 selectlinerange.cancel=Cancel
 
-# Options dialog
-options.title=Options
+# Buffer options dialog
+buffer_options.title=Buffer Options
+buffer_options.tabSize=Tab size:\ 
+buffer_options.mode=Edit mode:\ 
+buffer_options.lineSeparator=Line separator:\ 
+buffer_options.noTabs=Soft (emulated with spaces) tabs
+buffer_options.ok=OK
+buffer_options.cancel=Cancel
+
+# Global options dialog
+options.title=Global Options
 options.general.label=General
 options.general.lf.note=Restart jEdit for L&F changes to take effect
 options.general.lf=Swing look & feel:\ 

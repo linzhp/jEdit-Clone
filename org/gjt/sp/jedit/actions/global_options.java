@@ -25,7 +25,7 @@ import org.gjt.sp.jedit.EditAction;
 
 public class global_options extends EditAction
 {
-	public options()
+	public global_options()
 	{
 		super("global-options");
 	}
