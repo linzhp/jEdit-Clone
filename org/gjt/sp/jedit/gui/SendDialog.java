@@ -102,14 +102,14 @@ implements ActionListener, KeyListener, Runnable
 		subject = new JTextField(view.getBuffer().getPath(),30);
 		layout.setConstraints(subject,constraints);
 		panel.add(subject);
-		getContentPane().add("North",panel);
-		getContentPane().add("Center",new JSeparator());
+		getContentPane().add(BorderLayout.NORTH,panel);
+		getContentPane().add(BorderLayout.CENTER,new JSeparator());
 		buttons = new JPanel();
 		send = new JButton(jEdit.getProperty("send.send"));
 		buttons.add(send);
 		cancel = new JButton(jEdit.getProperty("send.cancel"));
 		buttons.add(cancel);
-		getContentPane().add("South",buttons);
+		getContentPane().add(BorderLayout.SOUTH,buttons);
 		Dimension screen = getToolkit().getScreenSize();
 		pack();
 		setLocation((screen.width - getSize().width) / 2,
@@ -142,7 +142,8 @@ implements ActionListener, KeyListener, Runnable
 		transcript.setRows(10);
 		transcript.setEditable(false);
 		getContentPane().remove(buttons);
-		getContentPane().add("South",new JScrollPane(transcript));
+		getContentPane().add(BorderLayout.SOUTH,
+			new JScrollPane(transcript));
 		pack();
 		Object[] args = { smtp };
 		transcript.append(jEdit.getProperty("send.connect",

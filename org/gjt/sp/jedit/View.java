@@ -19,6 +19,7 @@
 
 package org.gjt.sp.jedit;
 
+import javax.swing.border.EmptyBorder;
 import javax.swing.event.*;
 import javax.swing.text.*;
 import javax.swing.*;
@@ -48,7 +49,7 @@ public class View extends JFrame
 				toolBar = GUIUtilities.loadToolBar("view.toolbar");
 			if(toolBar.getParent() == null)
 			{
-				getContentPane().add("North",toolBar);
+				getContentPane().add(BorderLayout.NORTH,toolBar);
 				validate();
 			}
 		}
@@ -445,6 +446,7 @@ public class View extends JFrame
 		lastLine = -1;
 
 		lineNumber = new JLabel();
+		lineNumber.setBorder(new EmptyBorder(0,10,0,0)); // ten pixel border on left
 		String tip;
 		if("on".equals(jEdit.getProperty("view.showTips")))
 		{
@@ -468,10 +470,9 @@ public class View extends JFrame
 	
 		hintBar = new JLabel(tip);
 
-		Box status = Box.createHorizontalBox();
-		status.add(hintBar);
-		status.add(Box.createHorizontalGlue());
-		status.add(lineNumber);
+		JPanel status = new JPanel(new BorderLayout());
+		status.add(hintBar,BorderLayout.CENTER); // hintBar takes up whatever room there is
+		status.add(lineNumber,BorderLayout.EAST); // lineNumber is always full width (or the frame width)
 
 		updatePluginsMenu();
 
@@ -501,8 +502,8 @@ public class View extends JFrame
 		splitter.setPreferredSize(new Dimension(81 * fm.charWidth('m'),
 			26 * fm.getHeight()));
 
-		getContentPane().add("Center",splitter);
-		getContentPane().add("South",status);
+		getContentPane().add(BorderLayout.CENTER,splitter);
+		getContentPane().add(BorderLayout.SOUTH,status);
 
 		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 		pack();
@@ -818,6 +819,9 @@ public class View extends JFrame
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.51  1999/03/20 05:23:32  sp
+ * Code cleanups
+ *
  * Revision 1.50  1999/03/20 04:52:55  sp
  * Buffer-specific options panel finished, attempt at fixing OS/2 caret bug, code
  * cleanups

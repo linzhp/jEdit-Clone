@@ -44,7 +44,7 @@ implements ActionListener, KeyListener, WindowListener
 		addOptionPane(new GeneralOptionPane());
 		addOptionPane(new EditorOptionPane());
 		addOptionPane(new ColorTableOptionPane());
-		getContentPane().add("Center",tabs);
+		getContentPane().add(BorderLayout.CENTER,tabs);
 		JPanel buttons = new JPanel();
 		ok = new JButton(jEdit.getProperty("options.ok"));
 		ok.addActionListener(this);
@@ -53,7 +53,7 @@ implements ActionListener, KeyListener, WindowListener
 		cancel = new JButton(jEdit.getProperty("options.cancel"));
 		cancel.addActionListener(this);
 		buttons.add(cancel);
-		getContentPane().add("South",buttons);
+		getContentPane().add(BorderLayout.CENTER,buttons);
 		addKeyListener(this);
 		addWindowListener(this);
 		Dimension screen = getToolkit().getScreenSize();
@@ -132,6 +132,9 @@ implements ActionListener, KeyListener, WindowListener
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.3  1999/03/20 05:23:32  sp
+ * Code cleanups
+ *
  * Revision 1.2  1999/03/20 04:52:55  sp
  * Buffer-specific options panel finished, attempt at fixing OS/2 caret bug, code
  * cleanups

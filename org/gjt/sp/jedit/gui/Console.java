@@ -43,10 +43,12 @@ implements ActionListener, ListSelectionListener
 		this.view = view;
 
 		JPanel panel = new JPanel(new BorderLayout());
-		panel.add("West",new JLabel(jEdit.getProperty("console.cmd")));
-		panel.add("Center",cmd = new HistoryTextField("console"));
+		panel.add(BorderLayout.WEST,new JLabel(jEdit
+			.getProperty("console.cmd")));
+		panel.add(BorderLayout.CENTER,cmd = new HistoryTextField(
+			"console"));
 		cmd.addActionListener(this);
-		add("North",panel);
+		add(BorderLayout.NORTH,panel);
 
 		JTabbedPane tabs = new JTabbedPane(SwingConstants.BOTTOM);
 		tabs.addTab(jEdit.getProperty("console.output"),
@@ -56,7 +58,7 @@ implements ActionListener, ListSelectionListener
 			new JScrollPane(errorList = new JList(getErrorList())));
 		errorList.setVisibleRowCount(15);
 		errorList.addListSelectionListener(this);
-		add("Center",tabs);
+		add(BorderLayout.CENTER,tabs);
 	}
 
 	public HistoryTextField getCommandField()
@@ -439,6 +441,9 @@ implements ActionListener, ListSelectionListener
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.14  1999/03/20 05:23:32  sp
+ * Code cleanups
+ *
  * Revision 1.13  1999/03/20 00:26:48  sp
  * Console fix, backed out new JOptionPane code, updated tips
  *

@@ -31,8 +31,12 @@ public class SplashScreen extends JWindow
 		getContentPane().setLayout(new BorderLayout());
 		URL url = getClass().getResource("/org/gjt/sp/jedit/jedit_logo.gif");
 		if(url != null)
-			getContentPane().add("Center",new JLabel(new ImageIcon(url)));
-		getContentPane().add("South",new JLabel("jEdit "
+		{
+			getContentPane().add(BorderLayout.CENTER,
+				new JLabel(new ImageIcon(url)));
+		}
+		
+		getContentPane().add(BorderLayout.SOUTH,new JLabel("jEdit "
 			+ jEdit.VERSION + " build " + jEdit.BUILD,
 			SwingConstants.CENTER));
 		Dimension screen = getToolkit().getScreenSize();

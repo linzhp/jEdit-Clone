@@ -39,8 +39,8 @@ implements ActionListener, KeyListener
 
 		buffer = view.getBuffer();
 		
-		getContentPane().add("North",new JLabel(jEdit.getProperty(
-			"selectlinerange.caption")));
+		getContentPane().add(BorderLayout.NORTH,new JLabel(
+			jEdit.getProperty("selectlinerange.caption")));
 
 		JPanel panel = new JPanel();
 		panel.setLayout(new GridLayout(2,2));		
@@ -53,7 +53,7 @@ implements ActionListener, KeyListener
 			SwingConstants.RIGHT));
 		panel.add(end = new HistoryTextField("line"));
 		end.getEditor().getEditorComponent().addKeyListener(this);
-		getContentPane().add("Center",panel);
+		getContentPane().add(BorderLayout.CENTER,panel);
 
 		panel = new JPanel();
 		panel.add(ok = new JButton(jEdit.getProperty("selectlinerange.ok")));
@@ -61,7 +61,7 @@ implements ActionListener, KeyListener
 		panel.add(cancel = new JButton(jEdit.getProperty(
 			"selectlinerange.cancel")));
 		cancel.addActionListener(this);
-		getContentPane().add("South",panel);
+		getContentPane().add(BorderLayout.SOUTH,panel);
 
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		getRootPane().setDefaultButton(ok);
@@ -147,6 +147,9 @@ implements ActionListener, KeyListener
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.3  1999/03/20 05:23:32  sp
+ * Code cleanups
+ *
  * Revision 1.2  1999/03/19 08:32:22  sp
  * Added a status bar to views, Escape key now works in dialog boxes
  *

@@ -92,20 +92,20 @@ public class SearchAndReplace extends JDialog
 		constraints.weightx = 1.0f;
 		layout.setConstraints(replace,constraints);
 		panel.add(replace);
-		getContentPane().add("North",panel);
+		getContentPane().add(BorderLayout.NORTH,panel);
 		panel = new JPanel();
 		panel.add(keepDialog);
 		panel.add(ignoreCase);
 		panel.add(new JLabel(jEdit.getProperty("search.regexp")));
 		panel.add(regexpSyntax);
-		getContentPane().add("Center",panel);
+		getContentPane().add(BorderLayout.CENTER,panel);
 		panel = new JPanel();
 		panel.add(findBtn);
 		panel.add(replaceSelection);
 		panel.add(replaceAll);
 		panel.add(cancel);
 		getRootPane().setDefaultButton(findBtn);
-		getContentPane().add("South",panel);
+		getContentPane().add(BorderLayout.SOUTH,panel);
 
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
@@ -216,6 +216,9 @@ public class SearchAndReplace extends JDialog
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.23  1999/03/20 05:23:32  sp
+ * Code cleanups
+ *
  * Revision 1.22  1999/03/20 04:52:55  sp
  * Buffer-specific options panel finished, attempt at fixing OS/2 caret bug, code
  * cleanups

@@ -36,7 +36,8 @@ implements ActionListener, KeyListener
 
 		textArea = new JTextArea(text,8,50);
 		textArea.setFont(view.getTextArea().getFont());
-		getContentPane().add("Center",new JScrollPane(textArea));
+		getContentPane().add(BorderLayout.CENTER,
+			new JScrollPane(textArea));
 			
 		JPanel buttons = new JPanel();
 		ok = new JButton(jEdit.getProperty("clipedit.ok"));
@@ -46,7 +47,7 @@ implements ActionListener, KeyListener
 		cancel = new JButton(jEdit.getProperty("clipedit.cancel"));
 		cancel.addActionListener(this);
 		buttons.add(cancel);
-		getContentPane().add("South",buttons);
+		getContentPane().add(BorderLayout.SOUTH,buttons);
 		
 		addKeyListener(this);
 

@@ -52,12 +52,13 @@ implements ActionListener, HyperlinkListener
 		close = new JButton(jEdit.getProperty("helpviewer.close"));
 		close.addActionListener(this);
 		buttons.add(close);
-		getContentPane().add("North",buttons);
+		getContentPane().add(BorderLayout.NORTH,buttons);
 
 		viewer = new JEditorPane();
 		viewer.setEditable(false);
 		viewer.addHyperlinkListener(this);
-		getContentPane().add("Center",new JScrollPane(viewer));
+		getContentPane().add(BorderLayout.CENTER,
+			new JScrollPane(viewer));
 		gotoURL(url,true);
 		
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
