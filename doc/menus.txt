@@ -106,6 +106,8 @@ Selects all the text in the current file.
 
 -- search/replace not done yet --
 
+-- SEPARATOR --
+
 - Go To Line (goto_line) (C-l)
 Moves the caret to the specified line.
 
@@ -117,8 +119,12 @@ A submenu with a list of currently defined markers. Selecting one will remove
 it.
 
 - Go To Marker (%goto_marker)
-A submenu with a lsit of currently defined markers. Selecting one will go to
+A submenu with a list of currently defined markers. Selecting one will go to
 it.
+
+-- SEPARATOR --
+
+-- options not done yet --
 
 4. Plugins Menu
 ---------------

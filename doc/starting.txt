@@ -1,4 +1,4 @@
-GETTING STARTED WITH JEDIT (starting.txt, last modified 2 Oct 1998)
+GETTING STARTED WITH JEDIT (starting.txt, last modified 4 Oct 1998)
 
 Contents
 --------
@@ -11,7 +11,6 @@ Contents
 3. Autosave and backups
 4. Views
 5. Editing Files
-6. Advanced Features
 
 1. Starting jEdit
 -----------------
@@ -113,7 +112,7 @@ Files can be saved back to disk in one of three ways:
 
 - With the `File->Save' command, which saves the file immediately.
 - With the `File->Save As' command, which shows a file selection dialog,
-  allowing a diffirent name for the file to be chosen.
+  allowing a different name for the file to be chosen.
 - With the `File->Save To URL' command, which lets you type in a path name or
   URL to save the file to.
 
@@ -155,25 +154,11 @@ editing.
 
 6. Editing Files
 ----------------
-If you've ever used an editor such as kedit on Unix, Notepad on Windows
+If you've ever used an editor such as nedit on Unix, Notepad on Windows
 or SimpleText on the Mac you'll feel right at home in jEdit. jEdit's
 commands work similarly as in the above editors. The menu item shortcuts are
-also very similar.
-
-7. Advanced Features
---------------------
-jEdit also has a number of features that many other editors lack.
-
-Most other editors can set `markers' in the text, and go to those markers.
-jEdit's markers, however are persistent across editing sessions and can have
-names of any length. Markers are set the `Edit->Set Marker', cleared with
-`Edit->Clear Marker' and jumped to with `Edit->Go To Marker'.
-
-The `File->Open Selection' command can uses the current selection as the
-name of a file to open. This is useful in help files, for example.
-
-The `File->Open URL' and `File->Save To URL' commands enable jEdit to edit
-files on the Internet.
+also very similar. However, jEdit is much more powerful. See editing.txt to
+find out why.
 
 -- Slava Pestov
 <slava_pestov@geocities.com>

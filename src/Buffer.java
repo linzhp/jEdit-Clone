@@ -212,6 +212,11 @@ implements DocumentListener, UndoableEditListener
 		}
 	}
 
+	public void find(View view)
+	{
+		new SearchAndReplace(view);
+	}
+
 	public void autosave()
 	{
 		if(dirty)

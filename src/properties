@@ -143,6 +143,15 @@ autosaveexists.message=An autosave file {0} was found. This probably means\n\
 	that jEdit crashed before you had a chance to save. If you do not\n\
 	need the old unsaved information, you can delete this file.
 
+### Search and replace dialog
+search.title=Search And Replace
+search.find=Find:\ 
+search.replace=Replace With:\ 
+search.next=Find Next
+search.replaceBtn=Replace
+search.replaceAll=Replace All
+search.close=Close
+
 ### Options dialog
 options.title=Options
 options.lf=Look And Feel
@@ -218,7 +227,7 @@ print.shortcut=C-p
 exit.label=Exit
 exit.shortcut=C-q
 edit=undo redo - cut copy paste clear select_all - find find_next \
-	find_selection replace replace_next replace_all goto_line - \
+	find_selection replace replace_next replace_all - goto_line - \
 	set_marker %clear_marker %goto_marker - options
 edit.label=Edit
 undo.label=Undo
@@ -259,13 +268,16 @@ plugins.label=Plugins
 no_plugins.label=No Plugins
 buffers.label=Buffers
 help=about help - help@README help@COPYING help@VERSION - \
-	help@installing.txt help@starting.txt help@menus.txt help@props.txt
+	help@installing.txt help@starting.txt help@editing.txt help@menus.txt \
+	help@props.txt help@plugins.txt
 help.label=Help
 about.label=About jEdit...
 help@README.label=Readme
 help@COPYING.label=Copying
 help@VERSION.label=Version Info
 help@installing.txt.label=Installation
-help@starting.txt.label=Starting
+help@starting.txt.label=Getting Started
+help@editing.txt.label=Advanced Editing
 help@menus.txt.label=Menus
 help@props.txt.label=Properties
+help@plugins.txt.label=Plugins

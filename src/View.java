@@ -350,6 +350,11 @@ implements ActionListener, KeyListener, CaretListener, WindowListener
 		return textArea;
 	}
 	
+	public void options()
+	{
+		new Options(this);
+	}
+
 	public void actionPerformed(ActionEvent evt)
 	{
 		jEdit.cmds.execCommand(this,evt.getActionCommand());
@@ -414,7 +419,7 @@ loop:				for(i = 0; i < line.length; i++)
 	
 	public void windowClosing(WindowEvent evt)
 	{
-		jEdit.cmds.execCommand(this,"close_view");
+		jEdit.buffers.closeView(this);
 	}
 	
 	public void windowClosed(WindowEvent evt) {}

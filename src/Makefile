@@ -9,6 +9,7 @@ resources=jEdit.class \
 	Marker.class \
 	Options.class \
 	PropsMgr.class \
+	SearchAndReplace.class \
 	Server.class \
 	View.class \
 	Cmd_about.class \
@@ -19,6 +20,7 @@ resources=jEdit.class \
 	Cmd_copy.class \
 	Cmd_cut.class \
 	Cmd_exit.class \
+	Cmd_find.class \
 	Cmd_goto_line.class \
 	Cmd_goto_marker.class \
 	Cmd_help.class \

@@ -15,6 +15,7 @@ Using jEdit
 -----------
 installing.txt  Installing jEdit
 starting.txt    Getting started with jEdit
+editing.txt     Advanced text editing with jEdit
 menus.txt       A description of jEdit's menus and how to customize them
 props.txt       A description of property files and how to change them
 plugins.txt     A description of jEdit plugins, and how to install, use and

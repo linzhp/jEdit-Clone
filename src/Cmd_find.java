@@ -1,5 +1,5 @@
 /*
- * Cmd_options.java - Command
+ * Cmd_find.java - Command
  * Copyright (C) 1998 Slava Pestov
  *
  * This program is free software; you can redistribute it and/or
@@ -17,10 +17,9 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-import java.io.File;
 import java.util.Hashtable;
 
-public class Cmd_options implements Command
+public class Cmd_find implements Command
 {
 	public Object init(Hashtable args)
 	{
@@ -30,9 +29,8 @@ public class Cmd_options implements Command
 	public Object exec(Hashtable args)
 	{
 		View view = (View)args.get(VIEW);
-		String arg = (String)args.get(ARG);
 		if(view != null)
-			view.options();
+			view.getBuffer().find(view);
 		return null;
 	}
 }
