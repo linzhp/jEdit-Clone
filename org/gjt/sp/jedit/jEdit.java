@@ -41,13 +41,13 @@ public class jEdit
 	/**
 	 * The jEdit version.
 	 */
-	public static final String VERSION = "1.5pre4";
+	public static final String VERSION = "1.5final";
 	
 	/**
 	 * The date when a change was last made to the source code,
 	 * in <code>YYYYMMDD</code> format.
 	 */
-	public static final String BUILD = "19990327";
+	public static final String BUILD = "19990329";
 
 	/**
 	 * AWK regexp syntax.
@@ -614,10 +614,13 @@ public class jEdit
 			return;
 		for(int i = 0; i < plugins.length; i++)
 		{
+			String plugin = plugins[i];
+			if(!plugin.toLowerCase().endsWith(".jar"))
+				continue;
 			try
 			{
 				new JARClassLoader(directory + File.separator
-					+ plugins[i]);
+					+ plugin);
 			}
 			catch(Throwable e)
 			{
@@ -1517,6 +1520,10 @@ public class jEdit
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.64  1999/03/29 06:30:25  sp
+ * Documentation updates, fixed bug in DefaultSyntaxDocument, fixed bug in
+ * goto-line
+ *
  * Revision 1.63  1999/03/27 03:22:15  sp
  * Number of items in a history list can now be set
  *

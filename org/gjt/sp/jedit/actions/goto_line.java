@@ -40,7 +40,7 @@ public class goto_line extends EditAction
 		Element map = buffer.getDefaultRootElement();
 		String line = GUIUtilities.input(view,"gotoline",
 			String.valueOf(map.getElementIndex(textArea
-			.getCaretPosition())));
+			.getCaretPosition()) + 1));
 
 		if(line != null)
 		{

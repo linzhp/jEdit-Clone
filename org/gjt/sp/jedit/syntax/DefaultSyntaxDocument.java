@@ -62,6 +62,8 @@ implements SyntaxDocument
 	public void setTokenMarker(TokenMarker tm)
 	{
 		tokenMarker = tm;
+		if(tm == null)
+			return;
 		tokenMarker.insertLines(0,getDefaultRootElement()
 			.getElementCount());
 		tokenizeLines();
@@ -180,6 +182,10 @@ implements SyntaxDocument
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.2  1999/03/29 06:30:25  sp
+ * Documentation updates, fixed bug in DefaultSyntaxDocument, fixed bug in
+ * goto-line
+ *
  * Revision 1.1  1999/03/22 04:35:48  sp
  * Syntax colorizing updates
  *

@@ -64,17 +64,24 @@ region matching, keyword maps, and many other useful techniques.
 <h1>Using jEdit's Syntax Colorizing in Other Applications</h1>
 </a>
 
-jEdit's syntax colorizing code can be used by itself, without jEdit.
-Here is an example that creates a text component that can be used to
-colorize Java source:
+jEdit's syntax colorizing component can be embedded in other applications.
+The easiest way to describe how this is done is with a live code
+example:
 
 <pre>
-JEditorPane editorPane = new JEditorPane();
+SyntaxTextArea textArea = new SyntaxTextArea();
 
-editorPane.setEditorKit(new SyntaxEditorKit());
-DefaultSyntaxDocument document = new DefaultSyntaxDocument();
+<font color=red>/* Enable bracket highlighting (optional) */</font>
+textArea.setBracketHighlight(true);
+
+<font color=red>/* Fetch it's document */</font>
+DefaultSyntaxDocument document =
+	(DefaultSyntaxDocument)textArea.getDocument();
+
+<font color=red>/* Give it a token marker */</font>
 document.setTokenMarker(new JavaTokenMarker());
 
+<font color=red>/* Fill in the color table */</font>
 document.getColors().put(Token.COMMENT1,Color.red);
 document.getColors().put(Token.COMMENT2,Color.red);
 document.getColors().put(Token.LITERAL1,Color.gray);
@@ -85,23 +92,21 @@ document.getColors().put(Token.KEYWORD2,Color.magenta);
 document.getColors().put(Token.KEYWORD3,Color.green);
 document.getColors().put(Token.OPERATOR,Color.orange);
 document.getColors().put(Token.INVALID,Color.red);
-
-editorPane.setDocument(document);
 </pre>
 
-Basically, it boils down to creating a <code>JEditorPane</code> instance
-that uses the <a href=api/org.gjt.sp.jedit.syntax.SyntaxEditorKit.html>
-org.gjt.sp.jedit.syntax.SyntaxEditorKit</a>, and setting it to edit an
-instance of <a href=api/org.gjt.sp.jedit.syntax.DefaultSyntaxDocument.html>
-org.gjt.sp.jedit.syntax.DefaultSyntaxDocument</a>.<p>
+Basically, it boils down to creating an
+<a href=api/org.gjt.sp.jedit.syntax.SyntaxTextArea.html>
+org.gjt.sp.jedit.syntax.SyntaxTextArea</a> instance
+and setting the appropriate properties of it's document.<p>
 
-<code>DefaultSyntaxDocument</code> is a subclass of <code>PlainDocument</code>;
-sometimes, a different document type might be necessary (eg, when
-you need a <code>StyledDocument</code> to be able to store various attributes
-with the text). In those situations, the document to be colorized should
-implement the more abstract
-<a href=api/org.gjt.sp.jedit.syntax.SyntaxDocument.html>SyntaxDocument</a>
-interface.
+By default, <code>SyntaxTextArea</code> uses an
+<a href=api/org.gjt.sp.jedit.syntax.DefaultSyntaxDocument.html>
+org.gjt.sp.jedit.syntax.DefaultSyntaxDocument</a> as it's document.
+In some situations, <code>DefaultSyntaxDocument</code> is not
+appropriate - the lower level
+<a href=api/org.gjt.sp.jedit.syntax.SyntaxDocument.html>
+org.gjt.sp.jedit.syntax.SyntaxDocument</a> interface can be used
+instead.
 
 </body>
 </html>
