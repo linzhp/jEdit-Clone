@@ -19,11 +19,17 @@
 package org.gjt.sp.jedit.mode;
 
 import org.gjt.sp.jedit.syntax.*;
+import org.gjt.sp.jedit.Mode;
 
-public class tsql extends autoindent
+public class tsql extends Mode
 {
+	public tsql()
+	{
+		super("tsql");
+	}
+	
 	public TokenMarker createTokenMarker()
   	{
-	  return new TSQLTokenMarker();
+		return new TSQLTokenMarker();
 	}
 }

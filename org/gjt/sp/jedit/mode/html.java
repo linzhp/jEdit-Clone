@@ -22,18 +22,13 @@ package org.gjt.sp.jedit.mode;
 import org.gjt.sp.jedit.syntax.*;
 import org.gjt.sp.jedit.*;
 
-public class html implements Mode
+public class html extends Mode
 {
-	public void enter(Buffer buffer) {}
-	public void leave(Buffer buffer) {}
-	public void enterView(View view) {}
-	public void leaveView(View view) {}
-
-	public boolean indentLine(Buffer buffer, View view, int dot)
+	public html()
 	{
-		return false;
+		super("html");
 	}
-
+	
 	public TokenMarker createTokenMarker()
 	{
 		return new HTMLTokenMarker();

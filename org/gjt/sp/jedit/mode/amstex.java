@@ -23,6 +23,11 @@ import org.gjt.sp.jedit.Buffer;
 
 public class amstex extends tex
 {
+	public amstex()
+	{
+		super("amstex");
+	}
+	
 	public void enter(Buffer buffer)
 	{
 		// override tex mode's implementation

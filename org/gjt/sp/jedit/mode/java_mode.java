@@ -20,9 +20,15 @@
 package org.gjt.sp.jedit.mode;
 
 import org.gjt.sp.jedit.syntax.*;
+import org.gjt.sp.jedit.Mode;
 
-public class java_mode extends autoindent
+public class java_mode extends Mode
 {
+	public java_mode()
+	{
+		super("java");
+	}
+	
 	public TokenMarker createTokenMarker()
 	{
 		return new JavaTokenMarker();

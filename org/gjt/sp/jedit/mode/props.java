@@ -20,9 +20,15 @@
 package org.gjt.sp.jedit.mode;
 
 import org.gjt.sp.jedit.syntax.*;
+import org.gjt.sp.jedit.Mode;
 
-public class props extends autoindent
+public class props extends Mode
 {
+	public props()
+	{
+		super("props");
+	}
+	
 	public TokenMarker createTokenMarker()
 	{
 		return new PropsTokenMarker();

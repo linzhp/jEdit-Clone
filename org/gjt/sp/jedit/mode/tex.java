@@ -24,8 +24,19 @@ import javax.swing.text.Element;
 import org.gjt.sp.jedit.syntax.*;
 import org.gjt.sp.jedit.*;
 
-public class tex implements Mode
+public class tex extends Mode
 {
+	public tex()
+	{
+		super("tex");
+	}
+	
+	// For the amstex, latex subclasses
+	protected tex(String name)
+	{
+		super(name);
+	}
+	
 	public void enter(Buffer buffer)
 	{
 		/* We use a really simple algorithm to determine
@@ -69,15 +80,6 @@ public class tex implements Mode
 			buffer.setMode(jEdit.getMode("latex"));
 		else if(docStyleFound)
 			buffer.setMode(jEdit.getMode("amstex"));
-	}
-
-	public void leave(Buffer buffer) {}
-	public void enterView(View view) {}
-	public void leaveView(View view) {}
-
-	public boolean indentLine(Buffer buffer, View view, int dot)
-	{
-		return false;
 	}
 
 	public TokenMarker createTokenMarker()

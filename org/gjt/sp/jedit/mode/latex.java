@@ -23,6 +23,11 @@ import org.gjt.sp.jedit.Buffer;
 
 public class latex extends tex
 {
+	public latex()
+	{
+		super("latex");
+	}
+	
 	public void enter(Buffer buffer)
 	{
 		// override tex mode's implementation

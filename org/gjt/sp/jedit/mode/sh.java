@@ -22,8 +22,13 @@ package org.gjt.sp.jedit.mode;
 import org.gjt.sp.jedit.syntax.*;
 import org.gjt.sp.jedit.*;
 
-public class sh extends autoindent
+public class sh extends Mode
 {
+	public sh()
+	{
+		super("sh");
+	}
+	
 	public TokenMarker createTokenMarker()
 	{
 		return new ShellScriptTokenMarker();

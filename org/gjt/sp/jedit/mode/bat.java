@@ -22,8 +22,13 @@ package org.gjt.sp.jedit.mode;
 import org.gjt.sp.jedit.syntax.*;
 import org.gjt.sp.jedit.*;
 
-public class bat extends autoindent
+public class bat extends Mode
 {
+	public bat()
+	{
+		super("bat");
+	}
+	
 	public TokenMarker createTokenMarker()
 	{
 		return new BatchFileTokenMarker();

@@ -20,9 +20,15 @@
 package org.gjt.sp.jedit.mode;
 
 import org.gjt.sp.jedit.syntax.*;
+import org.gjt.sp.jedit.Mode;
 
-public class javascript extends autoindent
+public class javascript extends Mode
 {
+	public javascript()
+	{
+		super("javascript");
+	}
+	
 	public TokenMarker createTokenMarker()
 	{
 		return new JavaScriptTokenMarker();

@@ -22,18 +22,13 @@ package org.gjt.sp.jedit.mode;
 import org.gjt.sp.jedit.syntax.*;
 import org.gjt.sp.jedit.*;
 
-public class patch implements Mode
+public class patch extends Mode
 {
-	public void enter(Buffer buffer) {}
-	public void leave(Buffer buffer) {}
-	public void enterView(View view) {}
-	public void leaveView(View view) {}
-	
-	public boolean indentLine(Buffer buffer, View view, int dot)
+	public patch()
 	{
-		return false;
+		super("patch");
 	}
-
+	
 	public TokenMarker createTokenMarker()
 	{
 		return new PatchTokenMarker();
