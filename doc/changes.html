@@ -19,6 +19,7 @@ resources
 <li>Finish plugin documentation
 <li>Color options panel should have a JTable for editing the colors
 <li>Fix uncomment command
+<li>Do history in JOptionPanes
 <li><b>view.splitter property doesn't work properly</b>
 <li><b>Buffer calls insertLines()/deleteLines() twice for each new line</b>
 </ul>
@@ -32,7 +33,6 @@ resources
 <ul>
 <li>History text field now has a combo box widget for graphically
 selecting previous strings
-<li>Text input dialog boxes now use history text fields
 <li>Select line range dialog now uses history text fields
 <li>When a new view is created, it takes the caret position from the
 view that created it
@@ -57,6 +57,7 @@ of them being in the title bar and menu bar, respectively)
 <li>VIEW_CREATED events returned the wrong value with the getView() method
 <li>ViewEvent would throw an InternalError when firing a VIEW_BUFFER_CHANGED
 event
+<li>Thread safety fix in console code
 <li>Possible fix for weird path name construction on Windows
 </ul>
 

@@ -43,7 +43,7 @@ public class HistoryTextField extends JComboBox
 			i++;
 		}
 		setEditable(true);
-		setMaximumRowCount(10);
+		setMaximumRowCount(20);
 		setSelectedItem(null);
 
 		getEditor().getEditorComponent()
@@ -56,7 +56,7 @@ public class HistoryTextField extends JComboBox
 		if(text == null)
 			text = (String)getSelectedItem();
 		if(text != null && text.length() != 0)
-			insertItemAt(text,0);
+			addItem(text);
 		for(int i = 0; i < getItemCount(); i++)
 		{
 			jEdit.setProperty("history." + name + "." + i,
@@ -70,7 +70,7 @@ public class HistoryTextField extends JComboBox
 		if(text == null)
 			text = (String)getSelectedItem();
 		if(text != null && text.length() != 0)
-			insertItemAt(text,0);
+			addItem(text);
 		if(getItemCount() > 100)
 			removeItemAt(getItemCount() - 1);
 	}
@@ -132,6 +132,9 @@ public class HistoryTextField extends JComboBox
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.15  1999/03/20 00:26:48  sp
+ * Console fix, backed out new JOptionPane code, updated tips
+ *
  * Revision 1.14  1999/03/19 21:50:16  sp
  * Made HistoryTextField compile
  *

@@ -422,9 +422,49 @@ public class GUIUtilities
 	 * from the <code><i>name</i>.message</code> property.
 	 * @param frame The frame to display the dialog for
 	 * @param name The name of the dialog
+	 * @param def The text to display by default in the input field
+	 */
+	public static String input(JFrame frame, String name, Object def)
+	{
+		String retVal = (String)JOptionPane.showInputDialog(frame,
+			jEdit.getProperty(name.concat(".message")),
+			jEdit.getProperty(name.concat(".title")),
+			JOptionPane.QUESTION_MESSAGE,null,null,def);
+		return retVal;
+	}
+
+	/**
+	 * Displays an input dialog box and returns any text the user entered.
+	 * The title of the dialog is fetched from
+	 * the <code><i>name</i>.title</code> property. The message is fetched
+	 * from the <code><i>name</i>.message</code> property.
+	 * @param frame The frame to display the dialog for
+	 * @param name The name of the dialog
+	 * @param def The property whose text to display in the input field
+	 */
+	public static String inputProperty(JFrame frame, String name, String def)
+	{
+		String retVal = (String)JOptionPane.showInputDialog(frame,
+			jEdit.getProperty(name.concat(".message")),
+			jEdit.getProperty(name.concat(".title")),
+			JOptionPane.QUESTION_MESSAGE,
+			null,null,jEdit.getProperty(def));
+		if(retVal != null)
+			jEdit.setProperty(def,retVal);
+		return retVal;
+	}
+
+	/**
+	 * Displays an input dialog box and returns any text the user entered.
+	 * The title of the dialog is fetched from
+	 * the <code><i>name</i>.title</code> property. The message is fetched
+	 * from the <code><i>name</i>.message</code> property.
+	 * @param frame The frame to display the dialog for
+	 * @param name The name of the dialog
 	 * @param history The name of the history list to use
 	 * @param def The text that appears by default
 	 */
+/*
 	public static String input(JFrame frame, String name, String history,
 		String def)
 	{
@@ -433,13 +473,19 @@ public class GUIUtilities
 		Object[] message = { jEdit.getProperty(name.concat(".message")),
 			textField };
 
-		textField.requestDefaultFocus();
-
-		int retVal = JOptionPane.showConfirmDialog(frame,message,
-			jEdit.getProperty(name.concat(".title")),
+		JOptionPane pane = new JOptionPane(message,
+			JOptionPane.QUESTION_MESSAGE,
 			JOptionPane.OK_CANCEL_OPTION);
+		pane.selectInitialValue();
 
-		if(retVal == JOptionPane.OK_OPTION)
+		JDialog dialog = pane.createDialog(frame,
+			jEdit.getProperty(name.concat(".title")));
+		dialog.show();
+
+		Object retVal = pane.getValue();
+
+		if(retVal instanceof Integer &&
+			((Integer)retVal).intValue() == JOptionPane.OK_OPTION)
 		{
 			textField.save();
 			return (String)textField.getSelectedItem();
@@ -447,7 +493,7 @@ public class GUIUtilities
 		else
 			return null;
 	}
-
+*/
 	/**
 	 * Converts a color name to a color object. The name must either be
 	 * a known string, such as `red', `green', etc (complete list is in
@@ -567,6 +613,9 @@ public class GUIUtilities
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.12  1999/03/20 00:26:48  sp
+ * Console fix, backed out new JOptionPane code, updated tips
+ *
  * Revision 1.11  1999/03/19 07:12:10  sp
  * JOptionPane changes, did a fromdos of the source
  *

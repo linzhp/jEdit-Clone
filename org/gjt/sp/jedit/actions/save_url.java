@@ -33,7 +33,7 @@ public class save_url extends EditAction
 	{
 		View view = getView(evt);
 		String path = GUIUtilities.input(view,"saveurl",view.getBuffer()
-			.getPath(),null);
+			.getPath());
 		if(path != null)
 			view.getBuffer().save(view,path);
 	}

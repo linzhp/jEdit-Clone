@@ -232,7 +232,7 @@ implements ActionListener, ListSelectionListener
 
 	private synchronized void addOutput(String msg)
 	{
-		SwingUtilities.invokeLater(new SafeAppender(msg));
+		SwingUtilities.invokeLater(new SafeAppend(msg));
 
 		// Empty errors are of no use to us or the user
 		if(msg.length() == 0)
@@ -336,7 +336,8 @@ implements ActionListener, ListSelectionListener
 	{
 		if(errors == null)
 			errors = new DefaultListModel();
-		errors.addElement(new CompilerError(path,lineNo,error));
+		SwingUtilities.invokeLater(new SafeAddError(
+			new CompilerError(path,lineNo,error)));
 	}
 
 	class StdoutThread extends Thread
@@ -403,11 +404,11 @@ implements ActionListener, ListSelectionListener
 		}
 	}
 
-	class SafeAppender implements Runnable
+	class SafeAppend implements Runnable
 	{
 		private String msg;
 
-		SafeAppender(String msg)
+		SafeAppend(String msg)
 		{
 			this.msg = msg;
 		}
@@ -418,11 +419,29 @@ implements ActionListener, ListSelectionListener
 			output.append("\n");
 		}
 	}
+
+	class SafeAddError implements Runnable
+	{
+		private CompilerError error;
+
+		SafeAddError(CompilerError error)
+		{
+			this.error = error;
+		}
+
+		public void run()
+		{
+			errors.addElement(error);
+		}
+	}
 }
 
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.13  1999/03/20 00:26:48  sp
+ * Console fix, backed out new JOptionPane code, updated tips
+ *
  * Revision 1.12  1999/03/17 05:32:52  sp
  * Event system bug fix, history text field updates (but it still doesn't work), code cleanups, lots of banging head against wall
  *

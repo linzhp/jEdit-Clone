@@ -33,7 +33,7 @@ public class open_url extends EditAction
 	{
 		View view = getView(evt);
 		Buffer buffer = view.getBuffer();
-		String path = GUIUtilities.input(view,"openurl","url",null);
+		String path = GUIUtilities.inputProperty(view,"openurl","url");
 		if(path != null)
 		{
 			jEdit.openFile(view,buffer.getFile().getParent(),
