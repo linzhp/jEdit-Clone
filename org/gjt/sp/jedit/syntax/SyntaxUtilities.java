@@ -20,10 +20,14 @@
 package org.gjt.sp.jedit.syntax;
 
 import javax.swing.text.*;
+import java.awt.Color;
+import java.util.Dictionary;
+import java.util.Hashtable;
 
 /**
  * Class with several segment and bracket matching functions used by
- * jEdit's syntax colorizing subsystem.
+ * jEdit's syntax colorizing subsystem. It also provides a way to get
+ * the default color table.
  *
  * @author Slava Pestov
  * @version $Id$
@@ -179,8 +183,34 @@ public class SyntaxUtilities
 		return -1;
 	}
 
+	/**
+	 * Returns the default color table. This can be passed to the
+	 * <code>setColors()</code> method of <code>SyntaxDocument</code>
+	 * to use the default syntax colors.
+	 */
+	public Dictionary getDefaultSyntaxColors()
+	{
+		if(COLORS == null)
+		{
+			COLORS = new ReadOnlyHashtable();
+			COLORS.put(Token.COMMENT1,Color.red);
+			COLORS.put(Token.COMMENT2,new Color(0x990033));
+			COLORS.put(Token.KEYWORD1,Color.blue);
+			COLORS.put(Token.KEYWORD2,Color.magenta);
+			COLORS.put(Token.KEYWORD3,new Color(0x009600));
+			COLORS.put(Token.LITERAL1,new Color(0x650099));
+			COLORS.put(Token.LITERAL2,new Color(0x650099));
+			COLORS.put(Token.OPERATOR,Color.orange);
+			COLORS.put(Token.INVALID,new Color(0xff9900));
+			COLORS.setReadOnly();
+		}
+
+		return COLORS;
+	}
+      
 	// private members
 	private SyntaxUtilities() {}
+	private static ReadOnlyHashtable COLORS;
 
 	// the return value is as follows:
 	// >= 0: offset in line where bracket was found
@@ -221,11 +251,48 @@ public class SyntaxUtilities
 		}
 		return -1 - count;
 	}
+
+	static class ReadOnlyHashtable extends Hashtable
+	{
+		private boolean readOnly;
+
+		public Object put(Object key, Object value)
+		{
+			checkReadOnly();
+			return super.put(key,value);
+		}
+
+		public Object remove(Object key)
+		{
+			checkReadOnly();
+			return super.remove(key);
+		}
+
+		public void clear()
+		{
+			checkReadOnly();
+			super.clear();
+		}
+
+		public void setReadOnly()
+		{
+			readOnly = true;
+		}
+
+		private void checkReadOnly()
+		{
+			if(readOnly)
+				throw new InternalError("This hashtable is read only");
+		}
+	}
 }
 
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.3  1999/04/02 02:39:46  sp
+ * Updated docs, console fix, getDefaultSyntaxColors() method, hypersearch update
+ *
  * Revision 1.2  1999/03/27 02:46:17  sp
  * SyntaxTextArea is now modular
  *

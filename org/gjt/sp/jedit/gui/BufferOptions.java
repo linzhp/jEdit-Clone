@@ -76,10 +76,14 @@ public class BufferOptions extends JDialog
 		cons.gridwidth = 1;
 		modes = jEdit.getModes();
 		String[] modeNames = new String[modes.length + 1];
-		modeNames[0] = jEdit.getModeName(null);
+		modeNames[0] = jEdit.getModeName(null) + " (none)";
 		for(int i = 0; i < modes.length; i++)
 		{
-			modeNames[i + 1] = jEdit.getModeName(modes[i]);
+			Mode mode = modes[i];
+			String clazz = mode.getClass().getName();
+			modeNames[i + 1] = jEdit.getModeName(mode)
+				+ " (" + clazz.substring(clazz.lastIndexOf('.') + 1)
+				+ ")";
 		}
 		mode = new JComboBox(modeNames);
 		mode.setSelectedItem(buffer.getModeName());
@@ -225,6 +229,9 @@ public class BufferOptions extends JDialog
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.3  1999/04/02 02:39:46  sp
+ * Updated docs, console fix, getDefaultSyntaxColors() method, hypersearch update
+ *
  * Revision 1.2  1999/03/20 06:16:41  sp
  * Buffer options panel updates, color table option pane updates
  *

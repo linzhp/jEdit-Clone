@@ -4,6 +4,7 @@
 
 <ul>
 <li><a href=#todo>To Do</a>
+<li><a href=#152>Version 1.5.2</a>
 <li><a href=#151>Version 1.5.1</a>
 <li><a href=#15final>Version 1.5final</a>
 <li><a href=#15pre4>Version 1.5pre4</a>
@@ -17,13 +18,32 @@
 </a>
 
 <ul>
-<li>Finish plugin documentation (commands, modes)
-<li>jEdit 1.4/5's syntax colorizing seems slower than 1.3. It affects
-all modes, so it's a bottleneck in some global method
-<li>Views sometimes lose contact with their buffer
+<li>Finish mode and command docs
 <li>DefaultSyntaxDocument calls insertLines() twice for each new line
 (Swing bug/limitation?)
-<li>HyperSearch should switch the view to the correct buffer, if necessary
+<li>Resource loading
+<li>JDK 1.2 fixes, Makefile.win
+</ul>
+
+<a name=152>
+<h1>Version 1.5.2</h1>
+</a>
+
+<h2>Enhancements</h2>
+
+<ul>
+<li>Minor update to plugin_syntax.html
+<li>Buffer options dialog box now shows the internal names of edit modes
+along with the localised name
+<li>New <code>SyntaxUtilities.getDefaultSyntaxColors()</code> method returns
+default syntax color dictionary
+</ul>
+
+<h2>Bug Fixes</h2>
+
+<ul>
+<li>URLs weren't opened by the console
+<li>HyperSearch would have problems if the view's buffer was changed
 </ul>
 
 <a name=151>

@@ -81,23 +81,24 @@ DefaultSyntaxDocument document =
 <font color=red>/* Give it a token marker */</font>
 document.setTokenMarker(new JavaTokenMarker());
 
-<font color=red>/* Fill in the color table */</font>
-document.getColors().put(Token.COMMENT1,Color.red);
-document.getColors().put(Token.COMMENT2,Color.red);
-document.getColors().put(Token.LITERAL1,Color.gray);
-document.getColors().put(Token.LITERAL2,Color.gray);
-document.getColors().put(Token.LABEL,Color.darkGray);
-document.getColors().put(Token.KEYWORD1,Color.blue);
-document.getColors().put(Token.KEYWORD2,Color.magenta);
-document.getColors().put(Token.KEYWORD3,Color.green);
-document.getColors().put(Token.OPERATOR,Color.orange);
-document.getColors().put(Token.INVALID,Color.red);
+<font color=red>/* Give it a color table */</font>
+document.setColors(SyntaxUtilities.getDefaultSyntaxColors());
 </pre>
 
 Basically, it boils down to creating an
 <a href=api/org.gjt.sp.jedit.syntax.SyntaxTextArea.html>
 org.gjt.sp.jedit.syntax.SyntaxTextArea</a> instance
 and setting the appropriate properties of it's document.<p>
+
+After the text (if any) is first loaded into the document, the
+<code>tokenizeLines()</code> method should be called:
+
+<pre>
+document.tokenizeLines();
+</pre>
+
+This step isn't strictly necessary, but without it long
+multiline statements might get colorized wrong.<p>
 
 By default, <code>SyntaxTextArea</code> uses an
 <a href=api/org.gjt.sp.jedit.syntax.DefaultSyntaxDocument.html>

@@ -41,7 +41,7 @@ public class jEdit
 	/**
 	 * The jEdit version.
 	 */
-	public static final String VERSION = "1.5.1";
+	public static final String VERSION = "1.5.2";
 	
 	/**
 	 * The date when a change was last made to the source code,
@@ -1517,6 +1517,12 @@ public class jEdit
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.68  1999/04/02 02:39:46  sp
+ * Updated docs, console fix, getDefaultSyntaxColors() method, hypersearch update
+ *
+ * Revision 1.67  1999/04/02 00:39:19  sp
+ * Fixed console bug, syntax API changes, minor jEdit.java API change
+ *
  * Revision 1.66  1999/04/01 04:27:07  sp
  * fixed silly jEdit.java bug
  *

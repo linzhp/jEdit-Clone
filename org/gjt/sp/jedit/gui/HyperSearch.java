@@ -26,6 +26,7 @@ import gnu.regexp.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.Vector;
+import org.gjt.sp.jedit.event.*;
 import org.gjt.sp.jedit.gui.JEditTextArea;
 import org.gjt.sp.jedit.jEdit;
 import org.gjt.sp.jedit.Buffer;
@@ -38,7 +39,6 @@ import org.gjt.sp.jedit.View;
  * @version $Id$
  */
 public class HyperSearch extends JDialog
-implements ActionListener, KeyListener, ListSelectionListener
 {
 	public HyperSearch(View view)
 	{
@@ -75,18 +75,23 @@ implements ActionListener, KeyListener, ListSelectionListener
 
 		results = new JList();
 		results.setVisibleRowCount(10);
-		results.addListSelectionListener(this);
+		results.addListSelectionListener(new HyperListSelectionListener());
 		stretchPanel.add(new JScrollPane(results), BorderLayout.CENTER);
 
 		content.add(stretchPanel, BorderLayout.CENTER);
 
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-		find.getEditor().getEditorComponent().addKeyListener(this);
-		find.addActionListener(this);
-		addKeyListener(this);
-		findBtn.addActionListener(this);
-		close.addActionListener(this);
 
+		HyperKeyListener keyListener = new HyperKeyListener();
+		HyperActionListener actionListener = new HyperActionListener();
+
+		find.getEditor().getEditorComponent().addKeyListener(keyListener);
+		addKeyListener(keyListener);
+		find.addActionListener(actionListener);
+		findBtn.addActionListener(actionListener);
+		close.addActionListener(actionListener);
+
+		jEdit.addEditorListener(editorListener = new HyperEditorListener());
 		pack();
 		GUIUtilities.loadGeometry(this,"hypersearch");
 
@@ -104,45 +109,15 @@ implements ActionListener, KeyListener, ListSelectionListener
 		GUIUtilities.saveGeometry(this,"hypersearch");
 	}
 	
-	public void actionPerformed(ActionEvent evt)
+	public void dispose()
 	{
-		Object source = evt.getSource();
-		if(source == close)
-			dispose();
-		else if(source == findBtn || source == find)
-		{
-			save();
-			doHyperSearch();
-		}
-	}
-
-	public void keyPressed(KeyEvent evt)
-	{
-		if(evt.getKeyCode() == KeyEvent.VK_ESCAPE)	
-			dispose();
-	}
-
-	public void keyReleased(KeyEvent evt) {}
-	public void keyTyped(KeyEvent evt) {}
-
-	public void valueChanged(ListSelectionEvent evt)
-	{
-		if(results.isSelectionEmpty() || evt.getValueIsAdjusting())
-			return;
-		Position pos = (Position)positions.elementAt(results
-			.getSelectedIndex());
-		JEditTextArea textArea = view.getTextArea();
-		Element map = view.getBuffer().getDefaultRootElement();
-		Element lineElement = map.getElement(map.getElementIndex(pos
-			.getOffset()));
-		if(lineElement == null)
-			return;
-		textArea.select(lineElement.getStartOffset(),
-			lineElement.getEndOffset() - 1);
+		jEdit.removeEditorListener(editorListener);
+		super.dispose();
 	}
 
 	// private members
 	private View view;
+	private Buffer buffer;
 	private HistoryTextField find;
 	private JCheckBox ignoreCase;
 	private JComboBox regexpSyntax;
@@ -150,13 +125,14 @@ implements ActionListener, KeyListener, ListSelectionListener
 	private JButton close;
 	private JList results;
 	private Vector positions;
+	private HyperEditorListener editorListener;
 
 	private void doHyperSearch()
 	{
 		try
 		{
 			positions.removeAllElements();
-			Buffer buffer = view.getBuffer();
+			buffer = view.getBuffer();
 			int tabSize = buffer.getTabSize();
 			Vector data = new Vector();
 			RE regexp = jEdit.getRE();
@@ -191,11 +167,85 @@ implements ActionListener, KeyListener, ListSelectionListener
 			GUIUtilities.error(view,"reerror",args);
 		}
 	}
+
+	class HyperActionListener implements ActionListener
+	{
+		public void actionPerformed(ActionEvent evt)
+		{
+			Object source = evt.getSource();
+			if(source == close)
+				dispose();
+			else if(source == findBtn || source == find)
+			{
+				save();
+				doHyperSearch();
+			}
+		}
+	}
+
+	class HyperEditorListener extends EditorAdapter
+	{
+		public void bufferClosed(EditorEvent evt)
+		{
+			System.out.println("testing");
+			if(evt.getBuffer() == buffer)
+			{
+				positions.removeAllElements();
+				// XXX: need empty model
+				results.setModel(new DefaultListModel());
+				// Can't give it a value in the bottom half
+				buffer = null;
+			}
+		}
+	}
+
+	class HyperKeyListener extends KeyAdapter
+	{
+		public void keyPressed(KeyEvent evt)
+		{
+			if(evt.getKeyCode() == KeyEvent.VK_ESCAPE)	
+				dispose();
+		}
+	}
+
+	class HyperListSelectionListener implements ListSelectionListener
+	{
+		public void valueChanged(ListSelectionEvent evt)
+		{
+			if(results.isSelectionEmpty() || evt.getValueIsAdjusting())
+				return;
+
+			Position pos = (Position)positions.elementAt(results
+				.getSelectedIndex());
+			Element map = buffer.getDefaultRootElement();
+			Element lineElement = map.getElement(map.getElementIndex(pos
+				.getOffset()));
+			if(lineElement == null)
+				return;
+
+			int start = lineElement.getStartOffset();
+			int end = lineElement.getEndOffset() - 1;
+
+			if(view.getBuffer() == buffer)
+			{
+				view.getTextArea().select(start,end);
+			}
+			else
+			{
+				buffer.setCaretInfo(start,end);
+				view.setBuffer(buffer);
+				view.updateBuffersMenu();
+			}
+		}
+	}
 }
 
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.25  1999/04/02 02:39:46  sp
+ * Updated docs, console fix, getDefaultSyntaxColors() method, hypersearch update
+ *
  * Revision 1.24  1999/04/01 04:13:00  sp
  * Bug fixing for 1.5final
  *
