@@ -22,15 +22,6 @@ package org.gjt.sp.jedit.event;
 /**
  * The superclass of all jEdit events.<p>
  *
- * In jEdit versions prior to 1.5, each component was notified of various
- * events in a hard-coded, direct way. That made for complicated and
- * non-extensible code. Additions such as buffer lists required changes
- * to jEdit's internals.<p>
- *
- * Starting with version 1.5, jEdit has an event system. This allows
- * components to communicate without having to know about each other's
- * internals.<p>
- *
  * Each event carries an event type value, which is an integer, and a
  * timestamp, which is the time the event was fired.
  *
@@ -90,6 +81,9 @@ public abstract class AbstractEditorEvent
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.3  1999/03/14 04:13:40  sp
+ * Fixed ArrayIndexOutOfBounds in TokenMarker, minor Javadoc updates, minor documentation updates
+ *
  * Revision 1.2  1999/03/12 23:51:00  sp
  * Console updates, uncomment removed cos it's too buggy, cvs log tags added
  *

@@ -50,7 +50,7 @@ public interface EditorListener extends AbstractEditorListener
 	public void viewClosed(EditorEvent evt);
 
 	/**
-	 * Method invoked when the value of properties that
+	 * Method invoked when the values of properties that
 	 * might require settings to be reloaded are changed.
 	 * This is invoked by the Options dialog box.
 	 */
@@ -60,6 +60,9 @@ public interface EditorListener extends AbstractEditorListener
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.5  1999/03/14 04:13:40  sp
+ * Fixed ArrayIndexOutOfBounds in TokenMarker, minor Javadoc updates, minor documentation updates
+ *
  * Revision 1.4  1999/03/14 02:22:13  sp
  * Syntax colorizing tweaks, server bug fix
  *

@@ -66,12 +66,11 @@ public abstract class TokenMarker
 	 */
 	public void insertLines(int index, int lines)
 	{
-		System.out.println(lines + " lines inserted at " + index);
 		if(lines <= 0)
 			return;
-		int len = index + lines;
 		length += lines;
-		ensureCapacity(len);
+		ensureCapacity(length);
+		int len = index + lines;
 		System.arraycopy(lineInfo,index,lineInfo,len,
 			lineInfo.length - len);
 	}
@@ -85,8 +84,6 @@ public abstract class TokenMarker
 	 */
 	public void deleteLines(int index, int lines)
 	{
-		System.out.println(lines + " lines deleted at " +
-			index);
 		if (lines <= 0)
 			return;
 		int len = index + lines;
@@ -189,6 +186,9 @@ public abstract class TokenMarker
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.11  1999/03/14 04:13:40  sp
+ * Fixed ArrayIndexOutOfBounds in TokenMarker, minor Javadoc updates, minor documentation updates
+ *
  * Revision 1.10  1999/03/14 02:22:13  sp
  * Syntax colorizing tweaks, server bug fix
  *

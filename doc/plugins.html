@@ -58,63 +58,7 @@ of jEdit.<p>
 
 jEdit comes with several plugins that convert French accents to HTML
 entities, reverse text, and rot13 text. They are installed when jEdit
-is installed.<p>
-
-Also, several color schemes (`themes') are included with jEdit in the
-`themes' directory. Move them to a plugin directory to use them (only
-install one at a time).
-
-<a name=develop>
-<h1>Developing Plugins</h1>
-</a>
-
-Plugins are stored in JAR files. The JAR file can contain two types of
-entries - properties and classes. Other types of entries are ignored.<p>
-
-Property entries have a .props extension. The property file format is
-described in the API documentation for the <code>java.util.Properties</code>
-class.<p>
-
-Class entries have a .class extension and are standard Java class files.<p>
-
-Because there is no Javadoc documentation available yet, you will have
-to refer to the source when developing jEdit plugins.
-
-<h2>Edit Modes</h2>
-
-jEdit edit modes implement the <code>org.gjt.sp.jedit.Mode</code> interface.
-The following table lists
-properties that can be defined for edit modes.
-
-<table border=3>
-<tr>
-<td>mode.<i>modename</i>.name</td> <td>The name that appears in the `Mode'
-menu and several other places</td>
-</tr>
-<tr>
-<td>mode<i>modename</i>.<i>property</i></td> <td>The default value of
-the buffer-local property named <code>property</code> for the specified
-edit mode</td>
-<tr>
-<td>mode.extension.<i>ext</i></td> <td>The mode to use for files with
-extension <code>ext</code></td>
-</tr>
-<tr>
-<td>mode.filename.<i>filename</i></td> <td>The mode to use for files named
-<code>filename</code></td>
-</tr>
-<tr>
-<td>mode.firstline.<i>firstline</i></td> <td>The mode to use for files whose
-first line is <code>firstline</code></td>
-</tr>
-</table>
-
-<h2>Commands</h2>
-
-jEdit commands extend the <code>org.gjt.sp.jedit.EditAction</a></code> class.<p>
-The command's menu label is stored in the <code><i>command</i>.label</code>
-property where <code>command</code> is the command name. The shortcut can
-also be specified with the <code><i>command</i>.shortcut</code> property.
+is installed.
 
 </body>
 </html>

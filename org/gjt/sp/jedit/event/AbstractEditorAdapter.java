@@ -22,13 +22,8 @@ package org.gjt.sp.jedit.event;
 import java.util.EventListener;
 
 /**
- * There are two ways to implement an event listener - either to
- * directory implement a listener interface, possibly inserting
- * empty stubs for unused methods, or to subclass an <i>adapter</i>
- * - an abstract class, implementing that interface, with empty
- * stubs for all required methods. If an adapter is subclassed,
- * only the used methods need to be implemented. This class is the
- * abstract superclass of all adapters - it can't be used directly.
+ * The superclass of all adapters - event listener implementations with
+ * all empty methods.
  *
  * @author Slava Pestov
  * @version $Id$
@@ -40,6 +35,9 @@ public abstract class AbstractEditorAdapter implements AbstractEditorListener
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.3  1999/03/14 04:13:40  sp
+ * Fixed ArrayIndexOutOfBounds in TokenMarker, minor Javadoc updates, minor documentation updates
+ *
  * Revision 1.2  1999/03/12 23:51:00  sp
  * Console updates, uncomment removed cos it's too buggy, cvs log tags added
  *
