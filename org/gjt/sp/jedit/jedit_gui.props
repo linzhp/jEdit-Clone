@@ -24,13 +24,11 @@ lineSep.mac=MacOS (\\r)
 ###
 
 jar.scanningdir=Scanning directory: {0}
-jar.scanning=Scanning JAR file: {0}
+jar.loading=Loading plugins:
 jar.error.load=Error loading {0}
 jar.error.zip=Error loading class {0} from {1}
 jar.error.duplicateName=A plugin named {0} is already loaded
 jar.disabled=Disabled at user request: {0}
-jar.loaded=Loaded successfully: {0}
-jar.loaded.old=Loaded successfully USING OLD APIs: {0}
 jar.error.init=Initialization failed: {0}
 jar.error.deps=Dependency check failed: {0}\n\
 	The following is required to use this plugin:

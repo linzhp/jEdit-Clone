@@ -258,7 +258,8 @@ public class DefaultInputHandler implements InputHandler
 			|| keyCode == KeyEvent.VK_BACK_SPACE
 			|| keyCode == KeyEvent.VK_DELETE
 			|| keyCode == KeyEvent.VK_ENTER
-			|| keyCode == KeyEvent.VK_TAB)
+			|| keyCode == KeyEvent.VK_TAB
+			|| keyCode == KeyEvent.VK_ESCAPE)
 		{
 			if(grabAction != null)
 			{
@@ -1070,6 +1071,9 @@ public class DefaultInputHandler implements InputHandler
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.8  1999/10/05 04:43:58  sp
+ * Minor bug fixes and updates
+ *
  * Revision 1.7  1999/10/04 06:13:52  sp
  * Repeat counts now supported
  *

@@ -102,12 +102,20 @@ public class JARClassLoader extends ClassLoader
 
 	public static void initPlugins()
 	{
+		String msg = jEdit.getProperty("jar.loading");
+		System.out.print(msg);
+		System.out.flush();
+		width = msg.length();
+
 		for(int i = 0; i < classLoaders.size(); i++)
 		{
 			JARClassLoader classLoader = (JARClassLoader)
 				classLoaders.elementAt(i);
 			classLoader.loadAllPlugins();
 		}
+
+		if(width != 0)
+			System.out.println();
 	}
 
 	public static JARClassLoader getClassLoader(int index)
@@ -116,6 +124,9 @@ public class JARClassLoader extends ClassLoader
 	}
 
 	// private members
+
+	// Pretty loading messages:
+	private static int width;
 
 	/* Loading of plugin classes is deferred until all JARs
 	 * are loaded - this is necessary because a plugin might
@@ -136,6 +147,11 @@ public class JARClassLoader extends ClassLoader
 			}
 			catch(Throwable t)
 			{
+				if(width != 0)
+				{
+					System.err.println();
+					width = 0;
+				}
 				String[] args = { name };
 				System.err.println(jEdit.getProperty("jar.error.init",args));
 				t.printStackTrace();
@@ -148,14 +164,6 @@ public class JARClassLoader extends ClassLoader
 	{
 		name = MiscUtilities.fileToClass(name);
 
-		// Check if it is disabled
-		if("yes".equals(jEdit.getProperty("plugin." + name + ".disabled")))
-		{
-			String[] args = { name };
-			System.err.println(jEdit.getProperty("jar.disabled",args));
-			return;
-		}
-
 		// Check if a plugin with the same name is already loaded
 		EditPlugin[] plugins = jEdit.getPlugins();
 
@@ -163,6 +171,11 @@ public class JARClassLoader extends ClassLoader
 		{
 			if(plugins[i]._getName().equals(name))
 			{
+				if(width != 0)
+				{
+					System.err.println();
+					width = 0;
+				}
 				String[] args = { name };
 				System.err.println(jEdit.getProperty(
 					"jar.error.duplicateName",args));
@@ -181,17 +194,28 @@ public class JARClassLoader extends ClassLoader
 		if(!Modifier.isInterface(modifiers)
 			&& !Modifier.isAbstract(modifiers))
 		{
+			int nameWidth = name.length() + 1;
+			if((width + nameWidth) >= 79)
+			{
+				System.out.println();
+				width = nameWidth;
+			}
+			else
+			{
+				System.out.print(' ');
+				width += nameWidth;
+			}
+
+			System.out.print(name);
+			System.out.flush();
+
 			if(EditPlugin.class.isAssignableFrom(clazz))
 			{
 				jEdit.addPlugin((EditPlugin)clazz.newInstance());
-				String[] args = { name };
-				System.out.println(jEdit.getProperty("jar.loaded",args));
 			}
 			else if(Plugin.class.isAssignableFrom(clazz))
 			{
 				jEdit.addPlugin((Plugin)clazz.newInstance());
-				String[] args = { name };
-				System.out.println(jEdit.getProperty("jar.loaded.old",args));
 			}
 		}
 	}
@@ -202,6 +226,9 @@ public class JARClassLoader extends ClassLoader
 
 		// For `failed dependencies' error message
 		StringBuffer deps = new StringBuffer();
+
+		if(width != 0)
+			deps.append('\n');
 
 		String[] args = { name };
 		deps.append(jEdit.getProperty("jar.error.deps",args));
@@ -260,7 +287,10 @@ public class JARClassLoader extends ClassLoader
 		}
 
 		if(!ok)
+		{
+			width = 0;
 			System.out.print(deps);
+		}
 		return ok;
 	}
 
@@ -351,6 +381,9 @@ public class JARClassLoader extends ClassLoader
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.17  1999/10/05 04:43:58  sp
+ * Minor bug fixes and updates
+ *
  * Revision 1.16  1999/10/04 03:20:51  sp
  * Option pane change, minor tweaks and bug fixes
  *

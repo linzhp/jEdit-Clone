@@ -1582,10 +1582,6 @@ public class jEdit
 		{
 			oldAPI = new Plugin.OldAPI();
 			addPlugin(oldAPI);
-			System.err.println("NOTE: One or more of your plugins"
-				+ " are using deprecated jEdit APIs.\n"
-				+ "Please obtain newer versions as the old"
-				+ " APIs will eventually be removed.");
 		}
 	}
 
@@ -1636,6 +1632,9 @@ public class jEdit
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.132  1999/10/05 04:43:58  sp
+ * Minor bug fixes and updates
+ *
  * Revision 1.131  1999/10/04 03:20:51  sp
  * Option pane change, minor tweaks and bug fixes
  *

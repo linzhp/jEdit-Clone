@@ -22,6 +22,13 @@ package org.gjt.sp.jedit.gui;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * Mega hackery in this class.
+ * <ul>
+ * <li>Painting of custom strings (for the multi-key accelerators)
+ * <li>Support for null action commands
+ * </ul>
+ */
 public class EnhancedMenuItem extends JMenuItem
 {
 	public EnhancedMenuItem(String label, String keyBinding)
@@ -65,6 +72,11 @@ public class EnhancedMenuItem extends JMenuItem
 				getFont().getSize() + (insets.top - 1)
 				/* XXX magic number */);
 		}
+	}
+
+	public String getActionCommand()
+	{
+		return getModel().getActionCommand();
 	}
 
 	// private members

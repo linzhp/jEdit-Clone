@@ -407,7 +407,9 @@ public class GUIUtilities
 	}
 
 	/**
-	 * Displays a file selection dialog box.
+	 * Displays a file selection dialog box. This is better than creating
+	 * your own <code>JFileChooser</code> because it supports file filters,
+	 * and reuses existing file choosers for maximum efficency.
 	 * @param view The view
 	 * @param file The file to select by default
 	 * @param type The dialog type
@@ -416,21 +418,12 @@ public class GUIUtilities
 	public static String showFileDialog(View view, String file, int type)
 	{
 		File _file = new File(file);
-		JFileChooser chooser = new JFileChooser(_file.getParent());
+		JFileChooser chooser = getFileChooser();
+
+		chooser.setCurrentDirectory(_file);
 		chooser.setSelectedFile(_file);
 		chooser.setDialogType(type);
 		chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-
-		if("on".equals(jEdit.getProperty("filefilters")))
-		{
-			REFileFilter[] filters = jEdit.getFileFilters();
-			for(int i = 0; i < filters.length; i++)
-			{
-				chooser.addChoosableFileFilter(filters[i]);
-			}
-	
-			chooser.setFileFilter(chooser.getAcceptAllFileFilter());
-		}
 
 		int retVal = chooser.showDialog(view,null);
 		if(retVal == JFileChooser.APPROVE_OPTION)
@@ -671,12 +664,40 @@ public class GUIUtilities
 
 	// private members
 	private static SplashScreen splash;
+	private static JFileChooser chooser;
+
 	private GUIUtilities() {}
+
+	// Since only one file chooser is every visible at any one
+	// time, we can reuse 'em
+	private static JFileChooser getFileChooser()
+	{
+		if(chooser == null)
+		{
+			chooser = new JFileChooser();
+
+			if("on".equals(jEdit.getProperty("filefilters")))
+			{
+				REFileFilter[] filters = jEdit.getFileFilters();
+				for(int i = 0; i < filters.length; i++)
+				{
+					chooser.addChoosableFileFilter(filters[i]);
+				}
+
+				chooser.setFileFilter(chooser.getAcceptAllFileFilter());
+			}
+		}
+
+		return chooser;
+	}
 }
 
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.30  1999/10/05 04:43:58  sp
+ * Minor bug fixes and updates
+ *
  * Revision 1.29  1999/10/04 03:20:50  sp
  * Option pane change, minor tweaks and bug fixes
  *
@@ -709,11 +730,5 @@ public class GUIUtilities
  *
  * Revision 1.20  1999/05/27 00:02:50  sp
  * Documentation updates, minor tweaks for WWW browser command unbundling
- *
- * Revision 1.19  1999/05/08 00:13:00  sp
- * Splash screen change, minor documentation update, toolbar API fix
- *
- * Revision 1.18  1999/05/04 04:51:25  sp
- * Fixed HistoryTextField for Swing 1.1.1
  *
  */

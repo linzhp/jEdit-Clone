@@ -1228,10 +1228,13 @@
   </para>
   <note>
    <para>
-    jEdit allows all commands to be repeated, even though not all of them
-    make sense; so don't repeat <guimenuitem>Word Count</> 100 times, because
-    you will have to click through stacks of dialog boxes!
+    Currently, only keystrokes can be repeated, not menu item commands. This is
+    due to two reasons:
    </para>
+   <itemizedlist>
+    <listitem><para>Menu item repeating is messy to implement</para></listitem>
+    <listitem><para>Menu item repeating is not very useful</para></listitem>
+   </itemizedlist>
   </note>
  </sect1>
  <sect1 id=rect-select><title>Rectangular Selection</>
