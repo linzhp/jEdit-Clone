@@ -28,7 +28,7 @@ public class expand_abbrev implements Command
 {
 	public void exec(Buffer buffer, View view, String arg, Hashtable args)
 	{
-		String separators = (String)buffer.getProperty("ws");
+		String separators = (String)buffer.getProperty("wordSep");
 		if(separators == null)
 			separators = ".,:;!?";
 		int dot = view.getTextArea().getSelectionStart();

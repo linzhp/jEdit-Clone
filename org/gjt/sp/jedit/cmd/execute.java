@@ -19,6 +19,7 @@
 
 package org.gjt.sp.jedit.cmd;
 
+import java.io.IOException;
 import java.util.Hashtable;
 import org.gjt.sp.jedit.*;
 
@@ -26,6 +27,45 @@ public class execute implements Command
 {
 	public void exec(Buffer buffer, View view, String arg, Hashtable args)
 	{
-		buffer.execute(view,arg);
+		if(arg == null)
+			arg = jEdit.input(view,"execute","execute.cmd");
+		if(arg == null)
+			return;		
+		StringBuffer buf = new StringBuffer();
+		for(int i = 0; i < arg.length(); i++)
+		{
+			switch(arg.charAt(i))
+			{
+			case '%':
+				if(i != arg.length() - 1)
+				{
+					switch(arg.charAt(++i))
+					{
+					case 'u':
+						buf.append(buffer.getPath());
+						break;
+					case 'p':
+						buf.append(buffer.getFile()
+							.getPath());
+						break;
+					default:
+						buf.append('%');
+						break;
+					}
+					break;
+				}
+			default:
+				buf.append(arg.charAt(i));
+			}
+		}
+		try
+		{
+			Runtime.getRuntime().exec(buf.toString());
+		}
+		catch(IOException io)
+		{
+			Object[] error = { io.toString() };
+			jEdit.error(view,"ioerror",error);
+		}
 	}
 }

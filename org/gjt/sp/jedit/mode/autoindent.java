@@ -34,7 +34,7 @@ public class autoindent implements Mode
 
 	public boolean indentLine(Buffer buffer, View view, int caret)
 	{
-		String comments = (String)buffer.getProperty("ai");
+		String comments = (String)buffer.getProperty("autoIndentChars");
 		if(comments == null)
 			comments = "#->%";
 		int tabSize = buffer.getTabSize();

@@ -55,9 +55,11 @@ public class java_mode implements Mode
 		{
 			beautifier.init();
 			beautifier.setTabIndentation(buffer.getTabSize());
-			beautifier.setBracketIndent(buffer.getProperty("ib")
+			beautifier.setBracketIndent(buffer.getProperty(
+				"blockIndent")
 				!= null);
-			beautifier.setSwitchIndent(buffer.getProperty("fs")
+			beautifier.setSwitchIndent(buffer.getProperty(
+				"flushSwitch")
 				!= null);
 			line = beautifier.beautifyLine(enum);
 		}

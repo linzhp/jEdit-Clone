@@ -198,57 +198,6 @@ implements DocumentListener, UndoableEditListener
 	}
 
 	/**
-	 * Executes <code>cmd</code>, or if it is null, prompts the user for
-	 * a command to execute.
-	 * <p>
-	 * Note that these aren't jEdit commands, but OS commands.
-	 * @param view The view
-	 * @param cmd The command to execute
-	 */
-	public void execute(View view, String cmd)
-	{
-		if(cmd == null)
-			cmd = jEdit.input(view,"execute","execute.cmd");
-		if(cmd == null)
-			return;		
-		StringBuffer buf = new StringBuffer();
-		for(int i = 0; i < cmd.length(); i++)
-		{
-			switch(cmd.charAt(i))
-			{
-			case '%':
-				if(i != cmd.length() - 1)
-				{
-					switch(cmd.charAt(++i))
-					{
-					case 'u':
-						buf.append(path);
-						break;
-					case 'p':
-						buf.append(file.getPath());
-						break;
-					default:
-						buf.append('%');
-						break;
-					}
-					break;
-				}
-			default:
-				buf.append(cmd.charAt(i));
-			}
-		}
-		try
-		{
-			Runtime.getRuntime().exec(buf.toString());
-		}
-		catch(IOException io)
-		{
-			Object[] error = { io.toString() };
-			jEdit.error(view,"ioerror",error);
-		}
-	}
-
-	/**
 	 * Autosaves this buffer.
 	 */
 	public void autosave()
@@ -258,6 +207,13 @@ implements DocumentListener, UndoableEditListener
 			try
 			{
 				save(new FileOutputStream(autosaveFile));
+			}
+			catch(FileNotFoundException fnf)
+			{
+				// this could happen if eg, the directory
+				// containing this file was renamed.
+				// we ignore the error then so save the user
+				// from seeing pages and pages of exceptions :)
 			}
 			catch(Exception e)
 			{
@@ -341,110 +297,6 @@ implements DocumentListener, UndoableEditListener
 		{
 		}
 		return false;
-	}
-	
-	/**
-	 * Prints this buffer.
-	 * @param view The view
-	 */
-	public void print(View view)
-	{
-		PrintJob job = view.getToolkit().getPrintJob(view,name,null);
-		if(job == null)
-			return;
-		int topMargin;
-		int leftMargin;
-		int bottomMargin;
-		int rightMargin;
-		int ppi = job.getPageResolution();
-		try
-		{
-			topMargin = (int)(Float.valueOf(jEdit.props
-				.getProperty("buffer.margin.top")).floatValue()
-				* ppi);
-		}
-		catch(NumberFormatException nf)
-		{
-			topMargin = ppi / 2;
-		}
-		try
-		{
-			leftMargin = (int)(Float.valueOf(jEdit.props
-				.getProperty("buffer.margin.left"))
-				.floatValue() * ppi);
-		}
-		catch(NumberFormatException nf)
-		{
-			leftMargin = ppi / 2;
-		}
-		try
-		{
-			bottomMargin = (int)(Float.valueOf(jEdit.props
-				.getProperty("buffer.margin.bottom"))
-				.floatValue() * ppi);
-		}
-		catch(NumberFormatException nf)
-		{
-			bottomMargin = topMargin;
-		}
-		try
-		{
-			rightMargin = (int)(Float.valueOf(jEdit.props
-				.getProperty("buffer.margin.right"))
-				.floatValue() * ppi);
-		}
-		catch(NumberFormatException nf)
-		{
-			rightMargin = leftMargin;
-		}
-		String header = view.getTitle();
-		Element map = getDefaultRootElement();
-		SyntaxTextArea textArea = view.getTextArea();
-		Graphics gfx = null;
-		Font font = textArea.getFont();
-		int fontHeight = font.getSize();
-		int tabSize = getTabSize();
-		Dimension pageDimension = job.getPageDimension();
-		int pageWidth = pageDimension.width;
-		int pageHeight = pageDimension.height;
-		int y = 0;
-		for(int i = 0; i < map.getElementCount(); i++)
-		{
-			if(gfx == null)
-			{
-				gfx = job.getGraphics();
-				gfx.setFont(font);
-				FontMetrics fm = gfx.getFontMetrics();
-				gfx.setColor(Color.lightGray);
-				gfx.fillRect(leftMargin,topMargin,pageWidth
-					- leftMargin - rightMargin,
-					  fm.getMaxAscent()
-					  + fm.getMaxDescent()
-					  + fm.getLeading());
-				gfx.setColor(Color.black);
-				y = topMargin + fontHeight;
-				gfx.drawString(header,leftMargin,y);
-				y += fontHeight;
-			}
-			Element line = map.getElement(i);
-			try
-			{
-				int start = line.getStartOffset();
-				gfx.drawString(jEdit.untab(tabSize,getText(
-					start,line.getEndOffset() - start
-					- 1)),leftMargin,y += fontHeight);
-			}
-			catch(BadLocationException bl)
-			{
-			}
-			if((y > pageHeight - bottomMargin) ||
-				(i == map.getElementCount() - 1))
-			{
-				gfx.dispose();
-				gfx = null;
-			}
-		}
-		job.end();
 	}
 	
 	/**
@@ -594,23 +446,6 @@ implements DocumentListener, UndoableEditListener
 		Element map = getDefaultRootElement();
 		try
 		{
-			//boolean next = false;
-			// this is painfully slow because of JScrollPane bugs,
-			// so we're just going to have to put up with
-			// inaccurate colorizing for now :(
-			// ... besides, Tal says it's not necessary
-			/*for(int i = oldLineIndex + 1; i < lineIndex; i++)
-			{
-				Element lineElement = map.getElement(i);
-				int start = lineElement.getStartOffset();
-				String line = getText(start,lineElement
-					.getEndOffset() - start);
-				tokenMarker.markTokens(line,lineIndex,next);
-				next = true;
-				// FIXME this doesn't work
-				//if(!tokenMarker.isNextLineRequested())
-				//	break;
-			}*/
 			Element lineElement = map.getElement(lineIndex);
 			int start = lineElement.getStartOffset();
 			String line = jEdit.untab(getTabSize(),getText(start,
@@ -713,6 +548,27 @@ implements DocumentListener, UndoableEditListener
 			updateMarkers();
 	}
 
+	/**
+	 * Removes the marker with the specified name.
+	 * @param name The name of the marker to remove
+	 */
+	public void removeMarker(String name)
+	{
+		if(readOnly)
+			return;
+		dirty = !init;
+		for(int i = 0; i < markers.size(); i++)
+		{
+			Marker marker = (Marker)markers.elementAt(i);
+			if(marker.getName().equals(name))
+			{
+				markers.removeElementAt(i);
+				updateMarkers();
+				return;
+			}
+		}
+	}
+	
 	/**
 	 * Returns the marker with the specified name.
 	 * @param name The marker name
@@ -1279,23 +1135,6 @@ implements DocumentListener, UndoableEditListener
 			{
 				view.updateStatus(true);
 				view.updateMarkerMenus();
-			}
-		}
-	}
-
-	public void removeMarker(String name)
-	{
-		if(readOnly)
-			return;
-		dirty = !init;
-		for(int i = 0; i < markers.size(); i++)
-		{
-			Marker marker = (Marker)markers.elementAt(i);
-			if(marker.getName().equals(name))
-			{
-				markers.removeElementAt(i);
-				updateMarkers();
-				return;
 			}
 		}
 	}
