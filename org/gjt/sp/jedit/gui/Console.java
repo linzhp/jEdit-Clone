@@ -20,12 +20,12 @@
 package org.gjt.sp.jedit.gui;
 
 import javax.swing.*;
-
 import javax.swing.event.*;
 import javax.swing.text.Element;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
+import java.net.URL;
 import org.gjt.sp.jedit.event.*;
 import org.gjt.sp.jedit.*;
 
@@ -51,12 +51,14 @@ implements ActionListener, ListSelectionListener
 		add(BorderLayout.NORTH,panel);
 
 		tabs = new JTabbedPane(SwingConstants.BOTTOM);
+
 		addTab(jEdit.getProperty("console.output"),
-			new JScrollPane(output = new JTextArea()));
-		output.setEditable(false);
+			new JScrollPane(output = new JTextArea(8,40)));
+		output.append(jEdit.getProperty("console.help"));
+
 		addTab(jEdit.getProperty("console.errors"),
 			new JScrollPane(errorList = new JList(getErrorList())));
-		errorList.setVisibleRowCount(15);
+		errorList.setVisibleRowCount(8);
 		errorList.addListSelectionListener(this);
 		add(BorderLayout.CENTER,tabs);
 	}
@@ -70,7 +72,11 @@ implements ActionListener, ListSelectionListener
 	{
 		stop();
 
-		output.setText("> " + command + "\n");
+		if(command.equalsIgnoreCase("clear"))
+		{
+			output.setText("");
+			return;
+		}
 
 		// Check for a URL
 		int colonIndex = command.indexOf(':');
@@ -96,7 +102,47 @@ implements ActionListener, ListSelectionListener
 					+ ".exe" + command.substring(spaceIndex);
 			}
 		}
-		
+
+		// Expand variables
+		StringBuffer buf = new StringBuffer();
+		for(int i = 0; i < command.length(); i++)
+		{
+			char c = command.charAt(i);
+			switch(c)
+			{
+			case '%':
+				if(i == command.length() - 1)
+					buf.append(c);
+				else
+				{
+					Buffer buffer = view.getBuffer();
+					switch(command.charAt(++i))
+					{
+					case 'd':
+						buf.append(buffer.getFile().getParent());
+						break;
+					case 'j':
+						buf.append(jEdit.getJEditHome());
+						break;
+					case 'f':
+						buf.append(buffer.getPath());
+						break;
+					case '%':
+						buf.append('%');
+						break;
+					}
+				}
+				break;
+			default:
+				buf.append(c);
+			}
+		}
+
+		command = buf.toString();
+
+		output.append("\n> " + command);
+		output.setCaretPosition(output.getDocument().getLength());
+
 		if(errors != null)
 		{
 			for(int i = 0; i < errors.size(); i++)
@@ -115,11 +161,12 @@ implements ActionListener, ListSelectionListener
 		}
 		catch(IOException io)
 		{
+			output.append("\n");
 			String[] args = { io.getMessage() };
 			output.append(jEdit.getProperty("console.ioerror",args));
-			output.append("\n");
 			return;
 		}
+		stdin = new StdinThread();
 		stdout = new StdoutThread();
 		stderr = new StderrThread();
 	}
@@ -128,6 +175,7 @@ implements ActionListener, ListSelectionListener
 	{
 		if(process != null)
 		{
+			stdin.stop();
 			stdout.stop();
 			stderr.stop();
 			//process.destroy(); // Keep running
@@ -229,6 +277,11 @@ implements ActionListener, ListSelectionListener
 		}
 	}
 
+	public Dimension getMinimumSize()
+	{
+		return new Dimension(0,0);
+	}
+
 	// private members
 	private boolean appendEXE;
 
@@ -243,6 +296,7 @@ implements ActionListener, ListSelectionListener
 	private DefaultListModel errors;
 
 	private Process process;
+	private StdinThread stdin;
 	private StdoutThread stdout;
 	private StderrThread stderr;
 
@@ -365,6 +419,37 @@ implements ActionListener, ListSelectionListener
 			new CompilerError(path,lineNo,error)));
 	}
 
+	class StdinThread extends Thread
+	{
+		StdinThread()
+		{
+			super("*** jEdit stdin write thread ***");
+			start();
+		}
+
+		public void run()
+		{
+			String selection = view.getTextArea().getSelectedText();
+			if(selection == null)
+				return;
+
+			try
+			{
+				OutputStreamWriter out = new OutputStreamWriter(
+					process.getOutputStream());
+
+				out.write(selection);
+				out.flush();
+				out.close();
+			}
+			catch(IOException io)
+			{
+				Object[] args = { io.getMessage() };
+				GUIUtilities.error(view,"ioerror",args);
+			}
+		}
+	}
+	
 	class StdoutThread extends Thread
 	{
 		StdoutThread()
@@ -392,8 +477,7 @@ implements ActionListener, ListSelectionListener
 			catch(IOException io)
 			{
 				Object[] args = { io.getMessage() };
-				GUIUtilities.error((View)getParent(),"ioerror",
-					args);
+				GUIUtilities.error(view,"ioerror",args);
 			}
 		}
 	}
@@ -424,7 +508,7 @@ implements ActionListener, ListSelectionListener
 			catch(IOException io)
 			{
 				Object[] args = { io.getMessage() };
-				GUIUtilities.error((View)getParent(),"ioerror",args);
+				GUIUtilities.error(view,"ioerror",args);
 			}
 		}
 	}
@@ -440,8 +524,8 @@ implements ActionListener, ListSelectionListener
 
 		public void run()
 		{
-			output.append(msg);
 			output.append("\n");
+			output.append(msg);
 		}
 	}
 
@@ -464,6 +548,9 @@ implements ActionListener, ListSelectionListener
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.22  1999/04/19 05:44:34  sp
+ * GUI updates
+ *
  * Revision 1.21  1999/04/08 04:44:51  sp
  * New _setBuffer method in View class, new addTab method in Console class
  *
@@ -496,11 +583,5 @@ implements ActionListener, ListSelectionListener
  *
  * Revision 1.11  1999/03/16 04:34:46  sp
  * HistoryTextField updates, moved generate-text to a plugin, fixed spelling mistake in EditAction Javadocs
- *
- * Revision 1.10  1999/03/13 08:50:39  sp
- * Syntax colorizing updates and cleanups, general code reorganizations
- *
- * Revision 1.9  1999/03/12 23:51:00  sp
- * Console updates, uncomment removed cos it's too buggy, cvs log tags added
  *
  */

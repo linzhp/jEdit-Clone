@@ -61,7 +61,7 @@ public class HistoryTextField extends JComboBox
 		setSelectedItem(null);
 
 		getEditor().getEditorComponent()
-			.addKeyListener(new HistoryKeyListener());
+			.addKeyListener(new KeyHandler());
 	}
 
 	public void save()
@@ -73,6 +73,10 @@ public class HistoryTextField extends JComboBox
 			text = "";
 		else
 		{
+			DefaultComboBoxModel m = (DefaultComboBoxModel)getModel();
+			int index = m.getIndexOf(text);
+			if(index != -1)
+				removeItemAt(index);
 			insertItemAt(text,0);
 			if(getItemCount() > max)
 				removeItemAt(getItemCount() - 1);
@@ -91,6 +95,10 @@ public class HistoryTextField extends JComboBox
 			text = (String)getSelectedItem();
 		if(text == null || text.length() == 0)
 			return;
+		DefaultComboBoxModel m = (DefaultComboBoxModel)getModel();
+		int index = m.getIndexOf(text);
+		if(index != -1)
+			removeItemAt(index);
 		insertItemAt(text,0);
 		if(getItemCount() > max)
 			removeItemAt(getItemCount() - 1);
@@ -137,7 +145,7 @@ public class HistoryTextField extends JComboBox
 	private String name;
 	private int max;
 
-	class HistoryKeyListener extends KeyAdapter
+	class KeyHandler extends KeyAdapter
 	{
 		public void keyPressed(KeyEvent evt)
 		{
@@ -154,6 +162,9 @@ public class HistoryTextField extends JComboBox
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.21  1999/04/19 05:44:34  sp
+ * GUI updates
+ *
  * Revision 1.20  1999/03/28 01:36:24  sp
  * Backup system overhauled, HistoryTextField updates
  *

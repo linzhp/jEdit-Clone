@@ -1,5 +1,5 @@
 /*
- * SendDialog.java - Send To Dialog
+ * SendDialog.java - Send Dialog
  * Copyright (C) 1998, 1999 Slava Pestov
  *
  * This program is free software; you can redistribute it and/or
@@ -34,23 +34,16 @@ public class SendDialog extends JDialog
 implements ActionListener, KeyListener, Runnable
 {
 	public static final String CRLF = "\r\n";
-	private View view;
-	private Thread thread;
-	private JTextField smtp;
-	private JTextField from;
-	private JTextField to;
-	private JTextField subject;
-	private JPanel buttons;
-	private JButton send;
-	private JButton cancel;
 	
 	public SendDialog(View view)
 	{
 		super(view,jEdit.getProperty("send.title"),true);
 		this.view = view;
+		
 		JPanel panel = new JPanel();
 		GridBagLayout layout = new GridBagLayout();
 		panel.setLayout(layout);
+		
 		GridBagConstraints constraints = new GridBagConstraints();
 		constraints.gridwidth = constraints.gridheight = 1;
 		constraints.fill = constraints.BOTH;
@@ -59,12 +52,14 @@ implements ActionListener, KeyListener, Runnable
 			.getProperty("send.smtp"),SwingConstants.RIGHT);
 		layout.setConstraints(label,constraints);
 		panel.add(label);
+		
 		constraints.gridx = 1;
 		constraints.gridwidth = 2;
 		smtp = new JTextField(jEdit
 			.getProperty("send.smtp.value"),30);
 		layout.setConstraints(smtp,constraints);
 		panel.add(smtp);
+		
 		constraints.gridx = 0;
 		constraints.gridy = 1;
 		constraints.gridwidth = 1;
@@ -72,12 +67,14 @@ implements ActionListener, KeyListener, Runnable
 			SwingConstants.RIGHT);
 		layout.setConstraints(label,constraints);
 		panel.add(label);
+		
 		constraints.gridx = 1;
 		constraints.gridwidth = 2;
 		from = new JTextField(jEdit
 			.getProperty("send.from.value"),30);
 		layout.setConstraints(from,constraints);
 		panel.add(from);
+		
 		constraints.gridx = 0;
 		constraints.gridy = 2;
 		constraints.gridwidth = 1;
@@ -85,11 +82,13 @@ implements ActionListener, KeyListener, Runnable
 			SwingConstants.RIGHT);
 		layout.setConstraints(label,constraints);
 		panel.add(label);
+		
 		constraints.gridx = 1;
 		constraints.gridwidth = 2;
 		to = new JTextField(jEdit.getProperty("send.to.value"),30);
 		layout.setConstraints(to,constraints);
 		panel.add(to);
+		
 		constraints.gridx = 0;
 		constraints.gridy = 3;
 		constraints.gridwidth = 1;
@@ -97,28 +96,48 @@ implements ActionListener, KeyListener, Runnable
 			SwingConstants.RIGHT);
 		layout.setConstraints(label,constraints);
 		panel.add(label);
+		
 		constraints.gridx = 1;
 		constraints.gridwidth = 2;
 		subject = new JTextField(view.getBuffer().getPath(),30);
 		layout.setConstraints(subject,constraints);
 		panel.add(subject);
+		
+		constraints.gridx = 0;
+		constraints.gridy = 4;
+		constraints.gridwidth = constraints.REMAINDER;
+		constraints.fill = constraints.VERTICAL;
+		constraints.anchor = constraints.WEST;
+		selectionOnly = new JCheckBox(jEdit.getProperty(
+			"send.selectionOnly"));
+		selectionOnly.getModel().setSelected("on".equals(
+			jEdit.getProperty("send.selectionOnly.value")));
+		layout.setConstraints(selectionOnly,constraints);
+		panel.add(selectionOnly);
+		
 		getContentPane().add(BorderLayout.NORTH,panel);
 		getContentPane().add(BorderLayout.CENTER,new JSeparator());
+		
 		buttons = new JPanel();
 		send = new JButton(jEdit.getProperty("send.send"));
 		buttons.add(send);
 		cancel = new JButton(jEdit.getProperty("common.cancel"));
 		buttons.add(cancel);
+		
 		getContentPane().add(BorderLayout.SOUTH,buttons);
+		
 		Dimension screen = getToolkit().getScreenSize();
 		pack();
 		setLocation((screen.width - getSize().width) / 2,
 			(screen.height - getSize().height) / 2);
+		
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+		
 		getRootPane().setDefaultButton(send);
 		addKeyListener(this);
 		send.addActionListener(this);
 		cancel.addActionListener(this);
+		
 		show();
 	}
 
@@ -128,27 +147,35 @@ implements ActionListener, KeyListener, Runnable
 		String from = this.from.getText();
 		String to = this.to.getText();
 		String subject = this.subject.getText();
+		boolean selectionOnly = this.selectionOnly.getModel()
+			.isSelected();
+
 		if(smtp.length() == 0 || from.length() == 0
 			|| to.length() == 0)
 		{
 			GUIUtilities.error(view,"sendempty",new Object[0]);
 			return;
 		}
+
 		this.smtp.setEnabled(false);
 		this.from.setEnabled(false);
 		this.to.setEnabled(false);
 		this.subject.setEnabled(false);
+
 		JTextArea transcript = new JTextArea();
 		transcript.setRows(10);
 		transcript.setEditable(false);
+
 		getContentPane().remove(buttons);
 		getContentPane().add(BorderLayout.SOUTH,
 			new JScrollPane(transcript));
 		pack();
+
 		Object[] args = { smtp };
 		transcript.append(jEdit.getProperty("send.connect",
 			args));
 		transcript.append(CRLF);
+
 		try
 		{
 			int index = smtp.indexOf(':');
@@ -159,21 +186,25 @@ implements ActionListener, KeyListener, Runnable
 					+ 1));
 				smtp = smtp.substring(0,index);
 			}
+
 			Socket socket = new Socket(smtp,port);
 			BufferedReader in = new BufferedReader(new
 				InputStreamReader(socket.getInputStream()));
 			Writer out = new OutputStreamWriter(socket
 				.getOutputStream());
+
 			String response = in.readLine();
 			transcript.append(response);
 			transcript.append(CRLF);
 			if(!response.startsWith("220"))
 				error("serverdown");
+
 			String command = "HELO " + socket.getLocalAddress()
 				.getHostName() + CRLF;
 			transcript.append(command);
 			out.write(command);
 			out.flush();
+			
 			response = in.readLine();
 			transcript.append(response);
 			transcript.append(CRLF);
@@ -183,6 +214,7 @@ implements ActionListener, KeyListener, Runnable
 			transcript.append(command);
 			out.write(command);
 			out.flush();
+			
 			response = in.readLine();
 			transcript.append(response);
 			transcript.append(CRLF);
@@ -192,6 +224,7 @@ implements ActionListener, KeyListener, Runnable
 			transcript.append(command);
 			out.write(command);
 			out.flush();
+			
 			response = in.readLine();
 			transcript.append(response);
 			transcript.append(CRLF);
@@ -201,34 +234,67 @@ implements ActionListener, KeyListener, Runnable
 			transcript.append(command);
 			out.write(command);
 			out.flush();
+			
 			response = in.readLine();
 			transcript.append(response);
 			transcript.append(CRLF);
 			if(!response.startsWith("354"))
 				error("badmsg");
+			
 			out.write("Subject: " + subject);
 			out.write(CRLF);
 			out.write("X-Mailer: jEdit " + jEdit.VERSION
 				+ " build " + jEdit.BUILD);
 			out.write(CRLF);
+			out.write("X-jEdit-Selection-Only: " +
+				selectionOnly);
+			out.write(CRLF);
+
 			Buffer buffer = view.getBuffer();
+			
+			int start, end;
+			if(selectionOnly)
+			{
+				start = view.getTextArea().getSelectionStart();
+				end = view.getTextArea().getSelectionEnd();
+			}
+			else
+			{
+				start = 0;
+				end = buffer.getLength();
+			}
+			
 			Element map = buffer.getDefaultRootElement();
-			int lines = map.getElementCount();
-			for(int i = 0; i < lines; i++)
+			int startLine = map.getElementIndex(start);
+			int endLine = map.getElementIndex(end);
+
+			for(int i = startLine; i <= endLine; i++)
 			{
 				Element lineElement = map.getElement(i);
-				int start = lineElement.getStartOffset();
-				String line = buffer.getText(start,
-					lineElement.getEndOffset() -
-						(start + 1));
-				if(".".equals(line))
-					out.write(":");
+				int lineStart;
+				int lineEnd;
+
+				if(i == startLine)
+					lineStart = start;
 				else
-					out.write(line);
+					lineStart = lineElement.getStartOffset();
+
+				if(i == endLine)
+					lineEnd = end;
+				else
+					lineEnd = lineElement.getEndOffset() - 1;
+
+				String line = buffer.getText(lineStart,lineEnd
+					- lineStart);
+				if(line.equals("."))
+					line = "!"; // XXX use =nn code
+				out.write(line);
 				out.write(CRLF);
 			}
+
 			out.write("." + CRLF);
 			out.flush();
+
 			response = in.readLine();
 			transcript.append(response);
 			transcript.append(CRLF);
@@ -238,6 +304,7 @@ implements ActionListener, KeyListener, Runnable
 			transcript.append(command);
 			out.write(command);
 			out.flush();
+
 			response = in.readLine();
 			transcript.append(response);
 			transcript.append(CRLF);
@@ -257,26 +324,11 @@ implements ActionListener, KeyListener, Runnable
 		catch(BadLocationException bl)
 		{
 		}
+
+		save();
 		dispose();
 	}
 
-	private void error(String msg)
-	{
-		GUIUtilities.error(view,msg,new Object[0]);
-		dispose();
-	}
-	
-	public void dispose()
-	{
-		jEdit.setProperty("send.smtp.value",smtp.getText());
-		jEdit.setProperty("send.from.value",from.getText());
-		jEdit.setProperty("send.to.value",to.getText());
-		jEdit.setProperty("send.subject.value",subject.getText());
-		super.dispose();
-		if(thread != null)
-			thread.stop();
-	}
-	
 	public void actionPerformed(ActionEvent evt)
 	{
 		Object source = evt.getSource();
@@ -301,6 +353,37 @@ implements ActionListener, KeyListener, Runnable
 
 	public void keyReleased(KeyEvent evt) {}
 	public void keyTyped(KeyEvent evt) {}
+
+	// private members
+	private View view;
+	private Thread thread;
+	private JTextField smtp;
+	private JTextField from;
+	private JTextField to;
+	private JTextField subject;
+	private JCheckBox selectionOnly;
+	private JPanel buttons;
+	private JButton send;
+	private JButton cancel;
+
+	private void error(String msg)
+	{
+		GUIUtilities.error(view,msg,new Object[0]);
+		dispose();
+	}
+	
+	private void save()
+	{
+		jEdit.setProperty("send.smtp.value",smtp.getText());
+		jEdit.setProperty("send.from.value",from.getText());
+		jEdit.setProperty("send.to.value",to.getText());
+		jEdit.setProperty("send.subject.value",subject.getText());
+		jEdit.setProperty("send.selectionOnly.value",
+			selectionOnly.getModel().isSelected() ? "on" : "off");
+		
+		if(thread != null)
+			thread.stop();
+	}
 
 	private void doSend()
 	{

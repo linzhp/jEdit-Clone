@@ -50,7 +50,7 @@ public class BufferOptions extends JDialog
 
 		// Tab size
 		JLabel label = new JLabel(jEdit.getProperty(
-			"buffer_options.tabSize"),SwingConstants.RIGHT);
+			"options.editor.tabSize"),SwingConstants.RIGHT);
 		layout.setConstraints(label,cons);
 		panel.add(label);
 
@@ -75,11 +75,10 @@ public class BufferOptions extends JDialog
 		cons.gridx = 3;
 		cons.gridwidth = 1;
 		modes = jEdit.getModes();
-		String[] modeNames = new String[modes.length + 1];
-		modeNames[0] = jEdit.getModeName(null) + " (none)";
+		String[] modeNames = new String[modes.length];
 		for(int i = 0; i < modes.length; i++)
 		{
-			modeNames[i + 1] = jEdit.getModeName(modes[i]);
+			modeNames[i] = jEdit.getModeName(modes[i]);
 		}
 		mode = new JComboBox(modeNames);
 		mode.setSelectedItem(buffer.getModeName());
@@ -90,7 +89,7 @@ public class BufferOptions extends JDialog
 		cons.gridx = 0;
 		cons.gridy = 2;
 		cons.gridwidth = 3;
-		label = new JLabel(jEdit.getProperty("buffer_options.lineSeparator"),
+		label = new JLabel(jEdit.getProperty("options.general.lineSeparator"),
 			SwingConstants.RIGHT);
 		layout.setConstraints(label,cons);
 		panel.add(label);
@@ -113,14 +112,41 @@ public class BufferOptions extends JDialog
 		layout.setConstraints(lineSeparator,cons);
 		panel.add(lineSeparator);
 
-		// Soft tabs
+		// Syntax colorizing
 		cons.gridx = 0;
 		cons.gridy = 3;
 		cons.gridwidth = cons.REMAINDER;
 		cons.fill = GridBagConstraints.NONE;
 		cons.anchor = GridBagConstraints.WEST;
+		syntax = new JCheckBox(jEdit.getProperty(
+			"options.editor.syntax"));
+		syntax.getModel().setSelected("on".equals(
+			buffer.getProperty("syntax")));
+		layout.setConstraints(syntax,cons);
+		panel.add(syntax);
+
+		// Indent on tab
+		cons.gridy = 4;
+		indentOnTab = new JCheckBox(jEdit.getProperty(
+			"options.editor.indentOnTab"));
+		indentOnTab.getModel().setSelected("on".equals(
+			buffer.getProperty("indentOnTab")));
+		layout.setConstraints(indentOnTab,cons);
+		panel.add(indentOnTab);
+
+		// Indent on enter
+		cons.gridy = 5;
+		indentOnEnter = new JCheckBox(jEdit.getProperty(
+			"options.editor.indentOnEnter"));
+		indentOnEnter.getModel().setSelected("on".equals(
+			buffer.getProperty("indentOnEnter")));
+		layout.setConstraints(indentOnEnter,cons);
+		panel.add(indentOnEnter);
+
+		// Soft tabs
+		cons.gridy = 6;
 		noTabs = new JCheckBox(jEdit.getProperty(
-			"buffer_options.noTabs"));
+			"options.editor.noTabs"));
 		noTabs.getModel().setSelected("yes".equals(
 			buffer.getProperty("noTabs")));
 		layout.setConstraints(noTabs,cons);
@@ -129,8 +155,7 @@ public class BufferOptions extends JDialog
 		getContentPane().setLayout(new BorderLayout());
 		getContentPane().add(BorderLayout.CENTER,panel);
 
-		BufferOptionsActionListener actionListener =
-			new BufferOptionsActionListener();
+		ActionHandler actionListener = new ActionHandler();
 
 		panel = new JPanel();
 		ok = new JButton(jEdit.getProperty("common.ok"));
@@ -142,7 +167,7 @@ public class BufferOptions extends JDialog
 		panel.add(cancel);
 		getContentPane().add(BorderLayout.SOUTH,panel);
 
-		addKeyListener(new BufferOptionsKeyListener());
+		addKeyListener(new KeyHandler());
 
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		Dimension screen = getToolkit().getScreenSize();
@@ -159,6 +184,9 @@ public class BufferOptions extends JDialog
 	private Mode[] modes;
 	private JComboBox mode;
 	private JComboBox lineSeparator;
+	private JCheckBox indentOnTab;
+	private JCheckBox indentOnEnter;
+	private JCheckBox syntax;
 	private JCheckBox noTabs;
 	private JButton ok;
 	private JButton cancel;
@@ -175,10 +203,7 @@ public class BufferOptions extends JDialog
 		}
 
 		int index = mode.getSelectedIndex();
-		if(index == 0)
-			buffer.setMode(null);
-		else
-			buffer.setMode(modes[index - 1]);
+		buffer.setMode(modes[index]);
 		
 		index = lineSeparator.getSelectedIndex();
 		String lineSep;
@@ -192,13 +217,21 @@ public class BufferOptions extends JDialog
 			throw new InternalError();
 		buffer.putProperty("lineSeparator",lineSep);
 
+		buffer.putProperty("syntax",syntax.getModel()
+			.isSelected() ? "on" : "off");
+		buffer.putProperty("indentOnTab",indentOnTab.getModel()
+			.isSelected() ? "on" : "off");
+		buffer.putProperty("indentOnEnter",indentOnEnter.getModel()
+			.isSelected() ? "on" : "off");
 		buffer.putProperty("noTabs",noTabs.getModel().isSelected()
 			? "yes" : "no");
-
+			
+		buffer.propertiesChanged();
+		
 		dispose();
 	}
 
-	class BufferOptionsActionListener implements ActionListener
+	class ActionHandler implements ActionListener
 	{
 		public void actionPerformed(ActionEvent evt)
 		{
@@ -210,7 +243,7 @@ public class BufferOptions extends JDialog
 		}
 	}
 
-	class BufferOptionsKeyListener extends KeyAdapter
+	class KeyHandler extends KeyAdapter
 	{
 		public void keyReleased(KeyEvent evt)
 		{
@@ -223,6 +256,9 @@ public class BufferOptions extends JDialog
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.7  1999/04/19 05:44:34  sp
+ * GUI updates
+ *
  * Revision 1.6  1999/04/08 04:44:51  sp
  * New _setBuffer method in View class, new addTab method in Console class
  *

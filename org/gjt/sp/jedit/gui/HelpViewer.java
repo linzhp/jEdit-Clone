@@ -25,11 +25,10 @@ import javax.swing.text.html.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.IOException;
-import java.net.URL;
+import java.net.*;
 import org.gjt.sp.jedit.*;
 
 public class HelpViewer extends JFrame
-implements ActionListener, HyperlinkListener
 {
 	public HelpViewer(URL url)
 	{
@@ -37,28 +36,44 @@ implements ActionListener, HyperlinkListener
 		
 		history = new URL[25];
 
-		getContentPane().setLayout(new BorderLayout());
+		ActionHandler actionListener = new ActionHandler();
 
-		JPanel buttons = new JPanel();
-		back = new JButton(jEdit.getProperty("helpviewer.back"));
-		back.addActionListener(this);
-		buttons.add(back);
-		forward = new JButton(jEdit.getProperty("helpviewer.forward"));
-		forward.addActionListener(this);
-		buttons.add(forward);
-		home = new JButton(jEdit.getProperty("helpviewer.home"));
-		home.addActionListener(this);
-		buttons.add(home);
-		close = new JButton(jEdit.getProperty("common.close"));
-		close.addActionListener(this);
-		buttons.add(close);
-		getContentPane().add(BorderLayout.NORTH,buttons);
+		JPanel panel = new JPanel(new BorderLayout());
+		panel.add(BorderLayout.WEST,new JLabel(
+			jEdit.getProperty("helpviewer.url")));
+		urlField = new JTextField();
+		urlField.addKeyListener(new KeyHandler());
+		panel.add(urlField);
+		
+		getContentPane().add(BorderLayout.NORTH,panel);
 
 		viewer = new JEditorPane();
 		viewer.setEditable(false);
-		viewer.addHyperlinkListener(this);
+		viewer.addHyperlinkListener(new LinkHandler());
 		getContentPane().add(BorderLayout.CENTER,
 			new JScrollPane(viewer));
+
+		panel = new JPanel();
+
+		back = new JButton(jEdit.getProperty("helpviewer.back"));
+		back.setIcon(new ImageIcon(getClass().getResource(
+			"/org/gjt/sp/jedit/toolbar/Left.gif")));
+		back.addActionListener(actionListener);
+		panel.add(back);
+		forward = new JButton(jEdit.getProperty("helpviewer.forward"));
+		forward.setIcon(new ImageIcon(getClass().getResource(
+			"/org/gjt/sp/jedit/toolbar/Right.gif")));
+		forward.addActionListener(actionListener);
+		panel.add(forward);
+
+		home = new JButton(jEdit.getProperty("helpviewer.home"));
+		home.setIcon(new ImageIcon(getClass().getResource(
+			"/org/gjt/sp/jedit/toolbar/Help.gif")));
+		home.addActionListener(actionListener);
+		panel.add(home);
+		
+		getContentPane().add(BorderLayout.SOUTH,panel);
+
 		gotoURL(url,true);
 		
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
@@ -67,58 +82,6 @@ implements ActionListener, HyperlinkListener
 		GUIUtilities.loadGeometry(this,"helpviewer");
 
 		show();
-	}
-
-	public void actionPerformed(ActionEvent evt)
-	{
-		Object source = evt.getSource();
-		if(source == back)
-		{
-			if(historyPos <= 1)
-				getToolkit().beep();
-			else
-			{
-				URL url = history[--historyPos - 1];
-				gotoURL(url,false);
-			}
-		}
-		else if(source == forward)
-		{
-			if(history.length - historyPos <= 1)
-				getToolkit().beep();
-			else
-			{
-				URL url = history[historyPos];
-				if(url == null)
-					getToolkit().beep();
-				else
-				{
-					historyPos++;
-					gotoURL(url,false);
-				}
-			}
-		}
-		else if(source == home)
-			gotoURL(getClass().getResource("/doc/index.html"),true);
-		else if(source == close)
-			dispose();
-	}
-
-	public void hyperlinkUpdate(HyperlinkEvent evt)
-	{
-		if(evt.getEventType() == HyperlinkEvent.EventType.ACTIVATED)
-		{
-			if(evt instanceof HTMLFrameHyperlinkEvent)
-			{
-				((HTMLDocument)viewer.getDocument())
-					.processHTMLFrameHyperlinkEvent(
-					(HTMLFrameHyperlinkEvent)evt);
-			}
-			else
-			{
-				gotoURL(evt.getURL(),true);
-			}
-		}
 	}
 
 	public void dispose()
@@ -131,8 +94,8 @@ implements ActionListener, HyperlinkListener
 	private JButton back;
 	private JButton forward;
 	private JButton home;
-	private JButton close;
 	private JEditorPane viewer;
+	private JTextField urlField;
 	private URL[] history;
 	private int historyPos;
 
@@ -140,6 +103,7 @@ implements ActionListener, HyperlinkListener
 	{
 		try
 		{
+			urlField.setText(url.toString());
 			viewer.setPage(url);
 			if(addToHistory)
 			{
@@ -152,8 +116,87 @@ implements ActionListener, HyperlinkListener
 		}
 		catch(IOException io)
 		{
-			Object[] args = { io.getMessage() };
-			GUIUtilities.error((View)getParent(),"ioerror",args);
+			String[] args = { io.getMessage() };
+			GUIUtilities.error(this,"ioerror",args);
+		}
+	}
+	
+	class ActionHandler implements ActionListener
+	{
+		public void actionPerformed(ActionEvent evt)
+		{
+			Object source = evt.getSource();
+			if(source == back)
+			{
+				if(historyPos <= 1)
+					getToolkit().beep();
+				else
+				{
+					URL url = history[--historyPos - 1];
+					gotoURL(url,false);
+				}
+			}
+			else if(source == forward)
+			{
+				if(history.length - historyPos <= 1)
+					getToolkit().beep();
+				else
+				{
+					URL url = history[historyPos];
+					if(url == null)
+						getToolkit().beep();
+					else
+					{
+						historyPos++;
+						gotoURL(url,false);
+					}
+				}
+			}
+			else if(source == home)
+				gotoURL(getClass().getResource("/doc/index.html"),true);
+		}
+	}
+
+	class KeyHandler extends KeyAdapter
+	{
+		public void keyPressed(KeyEvent evt)
+		{
+			if(evt.getKeyCode() == KeyEvent.VK_ENTER)
+			{
+				try
+				{
+					gotoURL(new URL(urlField.getText()),
+						true);
+				}
+				catch(MalformedURLException mf)
+				{
+					String[] args = { urlField.getText() };
+					GUIUtilities.error(HelpViewer.this,
+						"badurl",args);
+				}
+			}
+		}
+	}
+
+	class LinkHandler implements HyperlinkListener
+	{
+		public void hyperlinkUpdate(HyperlinkEvent evt)
+		{
+			if(evt.getEventType() == HyperlinkEvent.EventType.ACTIVATED)
+			{
+				if(evt instanceof HTMLFrameHyperlinkEvent)
+				{
+					((HTMLDocument)viewer.getDocument())
+						.processHTMLFrameHyperlinkEvent(
+						(HTMLFrameHyperlinkEvent)evt);
+				}
+				else
+				{
+					URL url = evt.getURL();
+					if(url != null)
+						gotoURL(url,true);
+				}
+			}
 		}
 	}
 }

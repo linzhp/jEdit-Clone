@@ -45,37 +45,9 @@ public class JEditTextArea extends SyntaxTextArea
 	 */
 	public JEditTextArea()
 	{
-		addMouseListener(new TextAreaMouseListener());
-		addMouseMotionListener(new TextAreaMouseMotionListener());
-		addPropertyChangeListener(new TextAreaPropertyListener());
-	}
-
-	/**
-	 * Copies the selected text to the clipboard, adding it to the
-	 * jEdit clip history.
-	 */
-	public void copy()
-	{
-		String selection = getSelectedText();
-		if(selection != null)
-		{
-			super.copy();
-			jEdit.addToClipHistory(selection);
-		}
-	}
-
-	/**
-	 * Copies the selected text to the clipboard, removing it from
-	 * the document and adding it to the jEdit clip history.
-	 */
-	public void cut()
-	{
-		String selection = getSelectedText();
-		if(selection != null)
-		{
-			super.cut();
-			jEdit.addToClipHistory(selection);
-		}
+		addMouseListener(new MouseHandler());
+		addMouseMotionListener(new MouseMotionHandler());
+		addPropertyChangeListener(new PropertyHandler());
 	}
 
 	/**
@@ -114,7 +86,7 @@ public class JEditTextArea extends SyntaxTextArea
 	// private members
 	private JPopupMenu menu;
 
-	class TextAreaMouseListener extends MouseAdapter
+	class MouseHandler extends MouseAdapter
 	{
 		public void mousePressed(MouseEvent evt)
 		{
@@ -127,7 +99,7 @@ public class JEditTextArea extends SyntaxTextArea
 		}
 	}
 
-	class TextAreaMouseMotionListener implements MouseMotionListener
+	class MouseMotionHandler implements MouseMotionListener
 	{
 		public void mouseMoved(MouseEvent evt)
 		{
@@ -142,7 +114,7 @@ public class JEditTextArea extends SyntaxTextArea
 		}
 	}
 
-	class TextAreaPropertyListener implements PropertyChangeListener
+	class PropertyHandler implements PropertyChangeListener
 	{
 		public void propertyChange(PropertyChangeEvent evt)
 		{
@@ -170,6 +142,9 @@ public class JEditTextArea extends SyntaxTextArea
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.2  1999/04/19 05:44:34  sp
+ * GUI updates
+ *
  * Revision 1.1  1999/03/27 02:45:07  sp
  * New JEditTextArea class that adds jEdit-specific features to SyntaxTextArea
  *

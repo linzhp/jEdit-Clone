@@ -47,7 +47,7 @@ public class SearchAndReplace extends JDialog
 			"search.ignoreCase"),
 			"on".equals(jEdit.getProperty("search."
 				+ "ignoreCase.toggle")));
-		regexpSyntax = new JComboBox(jEdit.SYNTAX_LIST);
+		regexpSyntax = new JComboBox(MiscUtilities.SYNTAX_LIST);
 		regexpSyntax.setSelectedItem(jEdit.getProperty("search"
 			+ ".regexp.value"));
 		findBtn = new JButton(jEdit.getProperty("search.findBtn"));
@@ -105,7 +105,7 @@ public class SearchAndReplace extends JDialog
 
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
-		SearchKeyListener keyListener = new SearchKeyListener();
+		KeyHandler keyListener = new KeyHandler();
 		addKeyListener(keyListener);
 
 		find.getEditor().getEditorComponent()
@@ -113,7 +113,7 @@ public class SearchAndReplace extends JDialog
 		replace.getEditor().getEditorComponent()
 			.addKeyListener(keyListener);
 
-		SearchActionListener actionListener = new SearchActionListener();
+		ActionHandler actionListener = new ActionHandler();
 		find.addActionListener(actionListener);
 		replace.addActionListener(actionListener);
 		findBtn.addActionListener(actionListener);
@@ -160,7 +160,7 @@ public class SearchAndReplace extends JDialog
 		dispose();
 	}
 
-	class SearchActionListener implements ActionListener
+	class ActionHandler implements ActionListener
 	{
 		public void actionPerformed(ActionEvent evt)
 		{
@@ -196,7 +196,7 @@ public class SearchAndReplace extends JDialog
 		}
 	}
 
-	class SearchKeyListener extends KeyAdapter
+	class KeyHandler extends KeyAdapter
 	{
 		public void keyPressed(KeyEvent evt)
 		{
@@ -211,6 +211,9 @@ public class SearchAndReplace extends JDialog
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.26  1999/04/19 05:44:34  sp
+ * GUI updates
+ *
  * Revision 1.25  1999/04/07 05:01:26  sp
  * Search and replace tweak, UI tweaks
  *

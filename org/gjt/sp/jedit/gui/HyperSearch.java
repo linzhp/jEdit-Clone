@@ -31,6 +31,7 @@ import org.gjt.sp.jedit.gui.JEditTextArea;
 import org.gjt.sp.jedit.jEdit;
 import org.gjt.sp.jedit.Buffer;
 import org.gjt.sp.jedit.GUIUtilities;
+import org.gjt.sp.jedit.MiscUtilities;
 import org.gjt.sp.jedit.View;
 
 /**
@@ -62,7 +63,7 @@ public class HyperSearch extends JDialog
 			"on".equals(jEdit.getProperty("search.ignoreCase.toggle")));
 		panel.add(ignoreCase);
 		panel.add(new JLabel(jEdit.getProperty("search.regexp")));
-		regexpSyntax = new JComboBox(jEdit.SYNTAX_LIST);
+		regexpSyntax = new JComboBox(MiscUtilities.SYNTAX_LIST);
 		regexpSyntax.setSelectedItem(jEdit.getProperty("search"
 			+ ".regexp.value"));
 		panel.add(regexpSyntax);
@@ -75,15 +76,15 @@ public class HyperSearch extends JDialog
 
 		results = new JList();
 		results.setVisibleRowCount(10);
-		results.addListSelectionListener(new HyperListSelectionListener());
+		results.addListSelectionListener(new ListHandler());
 		stretchPanel.add(new JScrollPane(results), BorderLayout.CENTER);
 
 		content.add(stretchPanel, BorderLayout.CENTER);
 
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
-		HyperKeyListener keyListener = new HyperKeyListener();
-		HyperActionListener actionListener = new HyperActionListener();
+		KeyHandler keyListener = new KeyHandler();
+		ActionHandler actionListener = new ActionHandler();
 
 		find.getEditor().getEditorComponent().addKeyListener(keyListener);
 		addKeyListener(keyListener);
@@ -91,7 +92,7 @@ public class HyperSearch extends JDialog
 		findBtn.addActionListener(actionListener);
 		close.addActionListener(actionListener);
 
-		jEdit.addEditorListener(editorListener = new HyperEditorListener());
+		jEdit.addEditorListener(editorListener = new EditorHandler());
 		pack();
 		GUIUtilities.loadGeometry(this,"hypersearch");
 
@@ -125,7 +126,7 @@ public class HyperSearch extends JDialog
 	private JButton close;
 	private JList results;
 	private Vector positions;
-	private HyperEditorListener editorListener;
+	private EditorHandler editorListener;
 
 	private void doHyperSearch()
 	{
@@ -135,7 +136,7 @@ public class HyperSearch extends JDialog
 			buffer = view.getBuffer();
 			int tabSize = buffer.getTabSize();
 			Vector data = new Vector();
-			RE regexp = jEdit.getRE();
+			RE regexp = MiscUtilities.getRE();
 			Element map = buffer.getDefaultRootElement();
 			int lines = map.getElementCount();
 			for(int i = 1; i <= lines; i++)
@@ -168,7 +169,7 @@ public class HyperSearch extends JDialog
 		}
 	}
 
-	class HyperActionListener implements ActionListener
+	class ActionHandler implements ActionListener
 	{
 		public void actionPerformed(ActionEvent evt)
 		{
@@ -183,11 +184,10 @@ public class HyperSearch extends JDialog
 		}
 	}
 
-	class HyperEditorListener extends EditorAdapter
+	class EditorHandler extends EditorAdapter
 	{
 		public void bufferClosed(EditorEvent evt)
 		{
-			System.out.println("testing");
 			if(evt.getBuffer() == buffer)
 			{
 				positions.removeAllElements();
@@ -199,7 +199,7 @@ public class HyperSearch extends JDialog
 		}
 	}
 
-	class HyperKeyListener extends KeyAdapter
+	class KeyHandler extends KeyAdapter
 	{
 		public void keyPressed(KeyEvent evt)
 		{
@@ -208,7 +208,7 @@ public class HyperSearch extends JDialog
 		}
 	}
 
-	class HyperListSelectionListener implements ListSelectionListener
+	class ListHandler implements ListSelectionListener
 	{
 		public void valueChanged(ListSelectionEvent evt)
 		{
@@ -242,6 +242,9 @@ public class HyperSearch extends JDialog
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.28  1999/04/19 05:44:34  sp
+ * GUI updates
+ *
  * Revision 1.27  1999/04/08 04:44:51  sp
  * New _setBuffer method in View class, new addTab method in Console class
  *

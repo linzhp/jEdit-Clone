@@ -140,6 +140,9 @@ implements ActionListener, KeyListener
 
 		((View)getParent()).getTextArea().select(startOffset,endOffset);
 
+		start.save();
+		end.save();
+
 		dispose();
 	}
 }
@@ -147,6 +150,9 @@ implements ActionListener, KeyListener
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.5  1999/04/19 05:44:34  sp
+ * GUI updates
+ *
  * Revision 1.4  1999/04/02 03:21:09  sp
  * Added manifest file, common strings such as OK, etc are no longer duplicated
  * many times in jedit_gui.props
