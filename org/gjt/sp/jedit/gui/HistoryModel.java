@@ -43,7 +43,7 @@ public class HistoryModel extends DefaultComboBoxModel
 	public void addItem(String text)
 	{
 		if(text == null || text.length() == 0)
-			text = "";
+			return;
 
 		int index = getIndexOf(text);
 		if(index != -1)
