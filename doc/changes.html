@@ -20,6 +20,8 @@
 <ul>
 <li>Each view should have a menu of functions, the buffer should be
 dynamically parsed, maybe in a separate thread
+<li>Folding (fold list stored in buffer, but each view has it's own
+fold configuration)
 <li>GUI key binding editor (including Swing keymaps)
 <li>Insert file command
 <li>Literal (no regexp) search option
@@ -54,15 +56,25 @@ mouse is held down
 
 <ul>
 <li><b>Error list doesn't work for some people</b>
-<li>Geometry isn't saved/restored
-(and this only happends on X11, dammit)
-<li>When the session is being restored, the text area doesn't scroll to the
-correct line sometimes
+<li>Geometry isn't saved/restored properly (getBounds() always returns
+less than was passed to setBounds(), and this only happends on X11)
+(probably a JDK bug, and a really annoying one too)
+<li>Very very rarely when the session is being restored, the text area
+doesn't scroll to the correct line
+<li>Nothing is displayed in the help window when jEdit is being used with
+the TYA JIT (probably a TYA bug)
 </ul>
 
 <a name=14pre8>
 <h1>Version 1.4pre8</h1>
 </a>
+
+<h2>New Features</h2>
+
+<ul>
+<li>Quoted literals that don't end on the current line are colored
+differently to make errors easier to spot
+</ul>
 
 <h2>Enhancements</h2>
 
@@ -70,6 +82,7 @@ correct line sometimes
 <li>Minor documentation updates
 <li>When something is copied or pasted, it isn't added to the
 paste previous list if it is already there
+<li>Upgraded gnu.regexp to version 1.0.6
 </ul>
 
 <h2>Bug Fixes</h2>
@@ -85,6 +98,12 @@ since 1.4pre2!!!)
 <li>Fix in Configure script for JVM paths that include slashes
 <li>Error list didn't work with DOS/Windows paths (E:\filename\file)
 <li>HistoryTextField didn't set historyPos to -1 after addToHistory()
+<li>Replace All didn't work if the replacement string was empty
+<li>Desktop had various problems with untitled files
+<li>Desktop was only loaded up to the current file, not the end of
+the list
+<li>Fixed incorrect colorization of multiline literals in Makefile mode
+<li>Fixed Makefile bug where it wouldn't install if BINDIR == SHAREDIR
 </ul>
 
 <a name=14pre7>

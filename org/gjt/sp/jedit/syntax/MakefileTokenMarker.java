@@ -140,8 +140,18 @@ loop:		for(int i = offset; i < length; i++)
 			}
 		}
 		if(lastOffset != length)
-			addToken(length - lastOffset,lastOffset == offset ?
-				 Token.KEYWORD1 : token);
+		{
+			if(token != null && token != Token.KEYWORD2)
+			{
+				addToken(length - lastOffset,Token.INVALID);
+				token = null;
+			}
+			else
+			{
+				addToken(length - lastOffset,lastOffset == offset ?
+					 Token.KEYWORD1 : token);
+			}
+		}
 		lineInfo[lineIndex] = (token == Token.LITERAL1 || token == Token.LITERAL2 ?
 			token : null);
 		if(lastToken != null)

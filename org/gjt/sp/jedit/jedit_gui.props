@@ -328,9 +328,12 @@ lineSep.mac=MacOS (\\r)
 # {6} - Free memory
 # {7} - Total memory
 about.title=About jEdit
-about.message=jEdit {0} build {1}\n\
+about.message=jEdit version {0} build {1}\n\
+	\n\
 	Copyright (C) 1998, 1999 Slava Pestov.\n\
-	Portions copyright (C) 1999 Mike Dillon, Romain Guy and Juha Lindfords\n\
+	Transact-SQL mode (C) 1999 Mike Dillon.\n\
+	Accent Converter plugin (C) 1999 Romain Guy.\n\
+	JavaDoc colorization (C) 1999 Juha Lindfords.\n\
 	\n\
 	jEdit homepage: <http://www.gjt.org/~sp/jedit.html>.\n\
 	jEdit e-mail: <sp@gjt.org>.\n\
@@ -339,7 +342,7 @@ about.message=jEdit {0} build {1}\n\
 	certain conditions; see Help->Help Contents->Copying for details.\n\
 	\n\
 	Java version {2} running on {3}/{5} version {4}.\n\
-	Java heap space: (free/total) {6}/{7}Kb\n\
+	Java heap space: (free/total) {6}/{7}Kb
 
 # IO Error dialog, {0}=the error message
 ioerror.title=I/O Error
@@ -550,8 +553,8 @@ options.colors2.labelColor=Label color:\
 options.colors2.keyword1Color=Keyword 1 color:\ 
 options.colors2.keyword2Color=Keyword 2 color:\ 
 options.colors2.keyword3Color=Keyword 3 color:\ 
-options.colors2.operator1Color=Operator 1 color:\ 
-options.colors2.operator2Color=Operator 2 color:\ 
+options.colors2.operatorColor=Operator color:\ 
+options.colors2.invalidColor=Invalid token color:\ 
 options.ok=OK
 options.cancel=Cancel
 

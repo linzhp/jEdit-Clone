@@ -167,12 +167,15 @@ implements DocumentListener, UndoableEditListener
 		try
 		{
 			RE regexp = jEdit.getRE();
-			String replaceStr = jEdit.getProperty("history.replace.0");
 			if(regexp == null)
 			{
 				endCompoundEdit();
 				return false;
 			}
+
+			String replaceStr = jEdit.getProperty("history.replace.0");
+			if(replaceStr == null)
+				replaceStr = "";
 			
 			REMatch match;
 

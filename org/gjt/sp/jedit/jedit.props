@@ -71,8 +71,8 @@ buffer.colors.keyword3=green
 buffer.colors.label=#8888ff
 buffer.colors.literal1=gray
 buffer.colors.literal2=gray
-buffer.colors.operator1=orange
-buffer.colors.operator2=darkGray
+buffer.colors.operator=orange
+buffer.colors.invalid=#990033
 
 ###
 ### VIEW SETTINGS

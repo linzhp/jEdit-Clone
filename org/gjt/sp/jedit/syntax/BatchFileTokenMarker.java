@@ -108,8 +108,13 @@ loop:		for(int i = line.offset; i < length; i++)
 			}
 		}
 		if(lastOffset != length)
-			addToken(length - lastOffset,lastOffset == offset ?
-				Token.KEYWORD1 : token);
+		{
+			if(token != null)
+				token = Token.INVALID;
+			else if(lastOffset == offset)
+				token = Token.KEYWORD1;
+			addToken(length - lastOffset,token);
+		}
 		if(lastToken != null)
 		{
 			lastToken.nextValid = false;

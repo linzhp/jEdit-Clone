@@ -1134,31 +1134,32 @@ public class jEdit
 		// Save the `desktop'
 		if("on".equals(getProperty("saveDesktop")))
 		{
-			int i;
+			int bufNum = 0;
 			view.saveCaretInfo();
-			for(i = 0; i < buffers.size(); i++)
+			for(int i = 0; i < buffers.size(); i++)
 			{
 				Buffer buffer = (Buffer)buffers.elementAt(i);
 				if(buffer.isNewFile())
 					continue;
-				setProperty("desktop." + i + ".path",
+				setProperty("desktop." + bufNum + ".path",
 					buffer.getPath());
 				Mode mode = buffer.getMode();
 				String clazz = (mode == null ? "none"
 					: mode.getClass().getName());
-				setProperty("desktop." + i + ".mode",
+				setProperty("desktop." + bufNum + ".mode",
 					clazz.substring(clazz.lastIndexOf('.')
 					+ 1));
-				setProperty("desktop." + i + ".readOnly",
+				setProperty("desktop." + bufNum + ".readOnly",
 					buffer.isReadOnly() ? "yes" : "no");
-				setProperty("desktop." + i + ".current",
+				setProperty("desktop." + bufNum + ".current",
 					view.getBuffer() == buffer ? "yes" : "no");
-				setProperty("desktop." + i + ".selStart",
+				setProperty("desktop." + bufNum + ".selStart",
 					String.valueOf(buffer.getSavedSelStart()));
-				setProperty("desktop." + i + ".selEnd",
+				setProperty("desktop." + bufNum + ".selEnd",
 					String.valueOf(buffer.getSavedSelEnd()));
+				bufNum++;
 			}
-			unsetProperty("desktop." + i + ".path");
+			unsetProperty("desktop." + bufNum + ".path");
 		}
 
 		// Close all buffers
@@ -1266,6 +1267,7 @@ public class jEdit
 
 	private static Buffer loadDesktop()
 	{
+		Buffer buffer = null;
 		try
 		{
 			int i = 0;
@@ -1281,12 +1283,12 @@ public class jEdit
 					"desktop." + i + ".selStart"));
 				int selEnd = Integer.parseInt(getProperty(
 					"desktop." + i + ".selEnd"));
-				Buffer buffer = openFile(null,null,path,readOnly,
+				buffer = openFile(null,null,path,readOnly,
 					false);
 				buffer.setCaretInfo(selStart,selEnd);
 				buffer.setMode(getMode(mode));
-				if(current)
-					return buffer;
+				if(!current)
+					buffer = null;
 				i++;
 			}
 		}
@@ -1295,7 +1297,9 @@ public class jEdit
 			System.err.println("Error while loading desktop:");
 			e.printStackTrace();
 		}
-		return null;
+		if(buffer == null && buffers.size() > 0)
+			buffer = (Buffer)buffers.elementAt(buffers.size() - 1);
+		return buffer;
 	}		
 			
 	private static void gotoMarker(Buffer buffer, View view,

@@ -219,7 +219,19 @@ loop:		for(int i = offset; i < length; i++)
 			}
 		}
 		if(lastOffset != length)
-			addToken(length - lastOffset,token);
+		{
+			if(token != null && token != Token.ALTTXT
+				&& token != Token.KEYWORD1)
+			{
+				addToken(length - lastOffset,Token.INVALID);
+				if(token == Token.KEYWORD2)
+					token = null;
+				else
+					token = Token.ALTTXT;
+			}
+			else
+				addToken(length - lastOffset,token);
+		}
 		lineInfo[lineIndex] = token;
 		if(lastToken != null)
 		{

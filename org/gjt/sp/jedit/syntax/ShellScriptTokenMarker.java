@@ -183,8 +183,11 @@ loop:		for(int i = offset; i < length; i++)
 			}
 		}
 		if(lastOffset != length)
-			addToken(length - lastOffset,token == null &&
-				cmdState == 1 ? Token.KEYWORD1 : token);
+		{
+			if(token == null && cmdState == 1)
+				token = Token.KEYWORD1;
+			addToken(length - lastOffset,token);
+		}
 		lineInfo[lineIndex] = (token == Token.LITERAL2 || token == Token.LITERAL1
 			? token : null);
 		if(lastToken != null)

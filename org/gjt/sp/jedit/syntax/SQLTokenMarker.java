@@ -59,7 +59,7 @@ loop:
 				else if (token == null)
 				{
 					searchBack(line, i);
-					addToken(1,Token.OPERATOR1);
+					addToken(1,Token.OPERATOR);
 					lastOffset = i + 1;
 				}
 				break;
@@ -92,7 +92,7 @@ loop:
 			case '~': case '<': case '>': case '=':
 				if (token == null) {
 					searchBack(line, i);
-					addToken(1,Token.OPERATOR1);
+					addToken(1,Token.OPERATOR);
 					lastOffset = i + 1;
 				}
 				break;
@@ -121,7 +121,7 @@ loop:
 					else
 					{
 						searchBack(line, i);
-						addToken(1,Token.OPERATOR1);
+						addToken(1,Token.OPERATOR);
 						lastOffset = i + 1;
 					}
 				}
@@ -139,7 +139,7 @@ loop:
 					else
 					{
 						searchBack(line, i);
-						addToken(1,Token.OPERATOR1);
+						addToken(1,Token.OPERATOR);
 						lastOffset = i + 1;
 					}
 				}
@@ -149,7 +149,7 @@ loop:
 				(line.array[i+1] == '=' || line.array[i+1] == '<' || line.array[i+1] == '>'))
 				{
 					searchBack(line, i);
-					addToken(1,Token.OPERATOR1);
+					addToken(1,Token.OPERATOR);
 					lastOffset = i + 1;
 				}
 				break;

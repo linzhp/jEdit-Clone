@@ -173,7 +173,15 @@ loop:		for(int i = offset; i < length; i++)
 			}
 		}
 		if(lastOffset != length)
-			addToken(length - lastOffset,token);
+		{
+			if(token == Token.LITERAL1 || token == Token.LITERAL2)
+			{
+				addToken(length - lastOffset,Token.INVALID);
+				token = null;
+			}
+			else
+				addToken(length - lastOffset,token);
+		}
 		if(token == Token.KEYWORD2 && !backslash)
 			token = null;
 		lineInfo[lineIndex] = token;
