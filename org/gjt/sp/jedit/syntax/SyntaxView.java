@@ -104,33 +104,11 @@ public class SyntaxView extends PlainView
 			}
 			else
 			{
-				Color[] colors = syntaxDocument.getColors();
-				Token tokens = tokenMarker.markTokens(line,
-					lineIndex);
-				int offset = 0;
-				for(;;)
-				{
-					byte id = tokens.id;
-					if(id == Token.END)
-						break;
+				paintSyntaxLine(line,lineIndex,x,y,g,
+					syntaxDocument,tokenMarker,def);
 
-					int length = tokens.length;
-					Color color;
-					if(id == Token.NULL)
-						color = def;
-					else
-						color = colors[id];
-					g.setColor(color == null ?
-						   def : color);
-
-				   	line.count = length;
-					x = Utilities.drawTabbedText(line,x,
-						   y,g,this,offset);
-					line.offset += length;
-					offset += length;
-
-					tokens = tokens.next;
-				}
+				if(tokenMarker.isNextLineRequested())
+					forceRepaint(y);
 			}
 		}
 		catch(BadLocationException bl)
@@ -148,11 +126,53 @@ public class SyntaxView extends PlainView
 
 	// private members
 	private Segment line;
+
+	private void paintSyntaxLine(Segment line, int lineIndex, int x, int y,
+		Graphics g, SyntaxDocument syntaxDocument,
+		TokenMarker tokenMarker, Color def)
+	{
+		Color[] colors = syntaxDocument.getColors();
+		Token tokens = tokenMarker.markTokens(line,lineIndex);
+		int offset = 0;
+		for(;;)
+		{
+			byte id = tokens.id;
+			if(id == Token.END)
+				break;
+
+			int length = tokens.length;
+			Color color;
+			if(id == Token.NULL)
+				color = def;
+			else
+				color = colors[id];
+			g.setColor(color == null ? def : color);
+
+			line.count = length;
+			x = Utilities.drawTabbedText(line,x,y,g,this,offset);
+			line.offset += length;
+			offset += length;
+
+			tokens = tokens.next;
+		}
+	}
+
+	/** Stupid hack that repaints from y to the end of the text component */
+	private void forceRepaint(int y)
+	{
+		System.out.println("Repaint forced");
+		Component host = getContainer();
+		Dimension size = host.getSize();
+		host.repaint(0,y,size.height - y,size.width);
+	}
 }
 
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.18  1999/04/30 23:20:38  sp
+ * Improved colorization of multiline tokens
+ *
  * Revision 1.17  1999/04/19 05:38:20  sp
  * Syntax API changes
  *

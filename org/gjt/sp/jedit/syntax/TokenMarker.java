@@ -48,10 +48,22 @@ public abstract class TokenMarker
 	{
 		lastToken = null;
 
+		LineInfo info = lineInfo[lineIndex];
+		byte oldToken = info.token;
+
 		/* optimization :) */
-		lineInfo[lineIndex].token = markTokensImpl((lineIndex == 0 ?
+		byte token = markTokensImpl((lineIndex == 0 ?
 			Token.NULL : lineInfo[lineIndex -1].token),
 			line,lineIndex);
+
+		if(oldToken != token)
+		{
+			System.out.println("Shit: " + lineIndex);
+			info.token = token;
+			nextLineRequested = true;
+		}
+		else
+			nextLineRequested = false;
 
 		addToken(0,Token.END);
 
@@ -116,6 +128,16 @@ public abstract class TokenMarker
 			index,lineInfo.length - len);
 	}
 
+	/**
+	 * Returns true if the next line should be repainted. This
+	 * will return true after a line has been tokenized that starts
+	 * a multiline token that continues onto the next line.
+	 */
+	public boolean isNextLineRequested()
+	{
+		return nextLineRequested;
+	}
+
 	// protected members
 
 	/**
@@ -141,6 +163,11 @@ public abstract class TokenMarker
 	 * The length of the <code>lineInfo</code> array.
 	 */
 	protected int length;
+
+	/**
+	 * True if the next line should be painted.
+	 */
+	protected boolean nextLineRequested;
 
 	/**
 	 * Creates a new <code>TokenMarker</code>. This DOES NOT create
@@ -247,6 +274,9 @@ public abstract class TokenMarker
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.19  1999/04/30 23:20:38  sp
+ * Improved colorization of multiline tokens
+ *
  * Revision 1.18  1999/04/27 06:53:38  sp
  * JARClassLoader updates, shell script token marker update, token marker compiles
  * now

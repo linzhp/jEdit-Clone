@@ -46,7 +46,7 @@ public class jEdit
 	 * The date when a change was last made to the source code,
 	 * in <code>YYYYMMDD</code> format.
 	 */
-	public static final String BUILD = "19990427";
+	public static final String BUILD = "19990501";
 
 	/**
 	 * The main method of the jEdit application.
@@ -1522,6 +1522,9 @@ public class jEdit
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.87  1999/04/30 23:20:38  sp
+ * Improved colorization of multiline tokens
+ *
  * Revision 1.86  1999/04/27 06:53:38  sp
  * JARClassLoader updates, shell script token marker update, token marker compiles
  * now

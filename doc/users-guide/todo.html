@@ -23,6 +23,9 @@ This is what needs to be done as soon as possible:
 <li>Console's stdin stuff needs to be fixed.<p>
 Probably a silly bug in Console.java.
 
+<li>Multiline token colorization needs some work.<p>
+The C+END `bug' still exists.
+
 <li>Sometimes closing a view stuffs up all other event listeners.<p>
 This usually occurs with views created by the server. Probably
 a side effect of the EventMulticaster re-entrancy problems.
@@ -90,6 +93,11 @@ enclosed with quotes should be treated as one.
 <li>Help viewer should support bookmarks.<p>
 As more and more documentation is written, this becomes more of
 an issue.
+
+<li>Syntax colorizing optimizations.<p>
+If we override the paint() method of the View class then we will
+be able to fetch the document and token marker once per paint
+request, rather than once per line.
 </ul>
 
 </ul>
@@ -102,14 +110,14 @@ This is what needs to be done either in the 1.7 series, or
 possibly in the 1.6 series:
 
 <ul>
-<li>Proper colorization of multiline statements.<p>
-Currently, when a change on one line affects the colorization
-of subsequent lines, the display isn't automatically updated.<p>
+<li>Port jEdit to Swing 1.1.1. It is a much better release
+and this should be done as soon as 1.1.1 is released. The
+following workarounds should be removed from jEdit:
 
-This is tricky to implement unless we cache token lists of all
-lines in the document. There are also a whole lot of smaller
-issues (what do we do with lines that are not visible but should
-be retokenized anyway?).
+<ul>
+<li>The removeAll() hack in the View.update*Menu methods
+<li>... maybe more?
+</ul>
 
 <li>Key binding editor.<p>
 Lots of people have asked for this one.
