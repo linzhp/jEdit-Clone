@@ -45,7 +45,6 @@ loop:		for(int i = offset; i < length; i++)
 			case '\\':
 				backslash = !backslash;
 				break;
-			// SP I made this a boolean expression, like you said
 			case '*':
 				if((token == Token.COMMENT1 || token == Token.COMMENT2)
 					&& length - i > 1)
@@ -113,9 +112,6 @@ loop:		for(int i = offset; i < length; i++)
 					case '*':
 						addToken(i - lastOffset,token);
 						lastOffset = i;
-						// SP:
-						// the token == null check was not needed
-						// since it is already done above.
 						if(length - i > 2 && line.array[i+2] == '*')
 							token = Token.COMMENT2;
 						else

@@ -653,8 +653,8 @@ public class jEdit
 		while(enum.hasMoreElements())
 		{
 			Class clazz = loader.loadClass((String)enum.nextElement());
-			if(Action.class.isAssignableFrom(clazz))
-				addAction((Action)clazz.newInstance());
+			if(EditAction.class.isAssignableFrom(clazz))
+				addAction((EditAction)clazz.newInstance());
 			else if(Mode.class.isAssignableFrom(clazz))
 				addMode((Mode)clazz.newInstance());
 		}

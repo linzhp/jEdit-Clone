@@ -79,7 +79,7 @@ loop:
 			case '.': case ',': case '(': case ')':
 				if (token == null) {
 					lastOffset = searchBack(line, i, lastOffset);
-					addToken(1, Token.OPERATOR2);
+					addToken(1, null);
 					lastOffset = i + 1;
 				}
 				break;
