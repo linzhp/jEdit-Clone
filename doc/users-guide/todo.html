@@ -29,9 +29,8 @@ I have no idea why. Maybe Keymap.setDefaultKeyTypedAction() doesn't work
 properly?
 
 <li>Sometimes Search &amp; Replace selects the wrong text.<p>
-This only seems to happen with Swing 1.1.1. So, it either a
-problem with Swing, or a bug in JEditTextArea.PropertyHandler
-or SyntaxTextArea.doElectricScroll().
+The selection is hidden on certain occasions in Swing itself. I am
+pretty sure it's a Swing bug.
 
 </ul>
 
@@ -48,9 +47,8 @@ series:
 The C+END `bug' still exists.
 
 <li>Sometimes closing a view stuffs up all other event listeners.<p>
-This usually occurs with views created by the server.
-
-<li>`Expand Abbreviation' should only expand on view boundaries.
+This usually occurs with views created by the server.<br>
+<b>This hasn't happened for quite a while - maybe it's been fixed?</b>
 
 </ul>
 
@@ -127,6 +125,7 @@ to repaint lines after a multiline token.
 This is what needs to be done in jEdit versions after 1.6:
 
 <ul>
+<li>jEdit API needs to be made thread-safe.
 <li>Class/method/variable completion.
 
 <li>Integrate XMode.<p>

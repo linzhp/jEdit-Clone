@@ -21,6 +21,7 @@
 <li>Plugins can now use classes from other loaded plugins
 <li>Plugins can now specify the jEdit/JDK version and any classes they
 depend on
+<li>`~' now expands to the user's home directory in console commands
 <li>History combo boxes are now text fields, with up/down arrow key
 recall as in jEdit 1.4.
 <ul>
@@ -43,6 +44,9 @@ jEdit.getVersion() and jEdit.getBuild()
 <li>FAQ updated
 <li>Splash screen is hidden if a dialog box is displayed at startup
 (for example, a file not found message)
+<li>`Expand Abbreviation' only expands on word boundaries
+<li>Variable metacharacter changed to `$' in the console, to make it
+more consistent with shells, etc that use $ to signify variables
 </ul>
 
 <h2>Bug Fixes</h2>
@@ -55,6 +59,9 @@ loading to work
 interfaces whose names end with `Plugin'
 <li>The values of View.TOP and View.BOTTOM were incorrect, so the toolbar
 API didn't work properly
+<li>JavaScript wasn't colorized correctly in HTML mode if an incomplete
+string literal was found
+<li>Fixed several mistakes in console information message
 </ul>
 
 <a name=16pre5>

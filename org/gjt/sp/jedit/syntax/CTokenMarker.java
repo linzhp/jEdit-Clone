@@ -80,7 +80,7 @@ loop:		for(int i = offset; i < length; i++)
 				break;
 			case '#':
 				backslash = false;
-				if(cpp & token == Token.NULL)
+				if(cpp && token == Token.NULL)
 				{
 					token = Token.KEYWORD2;
 					addToken(i - lastOffset,Token.NULL);
@@ -256,6 +256,9 @@ loop:		for(int i = offset; i < length; i++)
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.26  1999/05/11 09:05:10  sp
+ * New version1.6.html file, some other stuff perhaps
+ *
  * Revision 1.25  1999/04/22 06:03:26  sp
  * Syntax colorizing change
  *

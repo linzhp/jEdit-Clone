@@ -1,0 +1,141 @@
+<html>
+<body>
+
+<h1>What's New in jEdit 1.6</h1>
+
+This file outlines the most important changes in jEdit 1.6, from 1.5.1.
+There are many less significant changes; see the version history for
+a full list.
+
+<ul>
+<li><a href=#misc>Miscallaneous New Features</a>
+<li><a href=#console>Console Enhancements</a>
+<li><a href=#syntax>Syntax Colorizing Enhancements</a>
+<li><a href=#history>History Text Field Enhancements</a>
+<li><a href=#plugins>Plugin System Enhancements</a>
+<li><a href=#bugs>Bug Fixes</a>
+</ul>
+
+<a name=misc>
+<h1>Miscallaneous New Features</h1>
+</a>
+
+<ul>
+<li>`Open Previous Buffer' and `Open Next Buffer' commands allow
+buffer switching from the keyboard
+<li>Overwrite mode can now be enabled by pressing `Insert' in the
+main text component
+<li>A key binding editor now exists in
+`Tools-&gt;Global Options-&gt;Shortcuts'
+<li>Auto indent can now be optionally be performed when the Enter
+key is pressed
+<li>The default edit mode for new files can now be set
+</ul>
+
+<a name=console>
+<h1>Console Enhancements</h1>
+</a>
+
+The following changes have been made to the console component:
+
+<ul>
+<li>Output is now colorized, depending on it being an informational
+message, and error, or parsed error
+<li>The exit code of commands is now displayed
+<li>Various variables can now be entered as part of the command, for
+example $f will expand to the current file name
+</ul>
+
+<a name=syntax>
+<h1>Syntax Colorizing Enhancements</h1>
+</a>
+
+The syntax colorizing system is much smoother in jEdit 1.6 than in 1.5. The
+most important changes are:
+
+<ul>
+<li>Changing a multiline token will now result in the entire token being
+recolorized
+<li>An array is now used to store color values, instead of a hashtable,
+this results in a noticable speedup
+<li>Shell script mode now colorizes multiline literals (&gt;&gt;EOF)
+<li>The syntax colorizing system is now easier to embed in other applications
+</ul>
+
+<a name=history>
+<h1>History Text Field Enhancements</h1>
+</a>
+
+The following changes have been made to the history text field component
+(used by the console, Search &amp; Replace, and HyperSearch):
+
+<ul>
+<li>The history lists are now stored in a seprate $HOME_DIR/.jedit-history
+file. Loading this file is much faster than reading hundreds of
+seprate properties, one for each entry
+<li>The history lists are now shared between multiple components of
+the same type. For example, if two Search &amp; Replace dialogs are open,
+entering a search string in one will add it to the history list of the
+other
+<li>The history text field component is now a text field, rather than
+a combo box. The change was made because of implementation problems
+with the Swing combo box component, and also because the text field is
+easier to access from the keyboard
+<li>It is now possible to search the history list for a specific string
+</ul>
+
+<a name=plugins>
+<h1>Plugin System Enhancements</h1>
+</a>
+
+Plugins can do much more in jEdit 1.6 than in 1.5. The most important changes
+are:
+
+<ul>
+<li>Plugins can now add tool bars to views
+<li>Plugins can now add submenus to the `Plugins' menu
+<li>Plugins can now add tabs to the `Global Options' dialog box
+<li>Plugins can specify which version of the JDK and jEdit, and any classes,
+they depend on. If the dependencies are not satisfied, an error message is
+printed
+<li>Plugins can now use classes loaded from other plugins
+<li>Plugins can now include documentation which will be listed in the help
+system
+<li>Resource loading from plugin JARs using standard Java methods now works
+</ul>
+
+<a name=bugs>
+<h1>Bug Fixes</h1>
+</a>
+
+<ul>
+<li>HyperSearch would have problems if the view's buffer was changed
+<li>Fixed incorrect behaviour of `Replace' button in Search &amp; Replace
+dialog
+<li>Paste previous would stop working after the maximum number of clippings
+was present
+<li>Closing an unsaved file could display the `save file' dialog twice
+<li>Closing a file would set the buffer of all views to the last one
+<li>Mode.enter() was being called twice by Buffer.setMode()
+<li>Minor fix to MacOS instructions in README.txt
+<li>Full set of C++ keywords is now colorized
+<li>Fixed NullPointerException when loading desktop entries with
+unknown edit modes (this could occur, for example when starting
+1.6pre1 for the first time after running 1.5)
+<li>Fixed minor problem with line and bracket highlighting when
+options dialog is closed
+<li>The -usrprops= command line parameter didn't work
+<li>Fixed minor bug when saving recent file list
+<li>`Replace In Selection' did strange things to the selection start value
+<li>Paths of the form C:blah\blah (with no slash after the drive letter)
+were not handled correctly by jEdit
+<li>Reload could throw an exception if the reloaded file was shorter
+than the current one and the caret was at the end of the document
+<li>Console can now be moved in Swing 1.1.1
+<li>Loaded JARs don't have to contain a Plugin instance for resource
+loading to work
+<li>JARClassLoader no longer attempts to instantiate abstract classes and
+interfaces whose names end with `Plugin'
+<li>JavaScript wasn't colorized correctly in HTML mode if an incomplete
+string literal was found
+</ul>

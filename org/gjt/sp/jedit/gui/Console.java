@@ -166,7 +166,7 @@ implements ActionListener, ListSelectionListener
 			char c = command.charAt(i);
 			switch(c)
 			{
-			case '%':
+			case '$':
 				if(i == command.length() - 1)
 					buf.append(c);
 				else
@@ -183,11 +183,25 @@ implements ActionListener, ListSelectionListener
 					case 'f':
 						buf.append(buffer.getPath());
 						break;
-					case '%':
-						buf.append('%');
+					case '$':
+						buf.append('$');
 						break;
 					}
 				}
+				break;
+			case '~':
+				if(i == command.length() - 1)
+				{
+					buf.append(System.getProperty("user.home"));
+					break;
+				}
+				c = command.charAt(i + 1);
+				if(c == '/' || c == ' ' || c == File.separatorChar)
+				{
+					buf.append(System.getProperty("user.home"));
+					break;
+				}
+				buf.append('~');
 				break;
 			default:
 				buf.append(c);
@@ -615,6 +629,9 @@ implements ActionListener, ListSelectionListener
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.30  1999/05/11 09:05:10  sp
+ * New version1.6.html file, some other stuff perhaps
+ *
  * Revision 1.29  1999/05/09 03:50:17  sp
  * HistoryTextField is now a text field again
  *

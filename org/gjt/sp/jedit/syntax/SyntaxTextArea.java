@@ -64,6 +64,19 @@ public class SyntaxTextArea extends JEditorPane
 		bracketHighlightColor = new Color(0xffaaaa);
 		lineSegment = new Segment();
 		addCaretListener(new CaretHandler());
+
+		if(!keymapInitialized)
+		{
+			Keymap map = JTextComponent.getKeymap(JTextComponent
+				.DEFAULT_KEYMAP);
+			map.setDefaultAction(new SyntaxTextArea
+				.DefaultKeyTypedAction());
+			map.addActionForKeyStroke(KeyStroke.getKeyStroke(
+				KeyEvent.VK_INSERT,0),new SyntaxTextArea
+				.InsertKeyAction());
+
+			keymapInitialized = true;
+		}
 	}
 
 	/**
@@ -512,6 +525,8 @@ public class SyntaxTextArea extends JEditorPane
 	private int lastLine = -1;
 	private int lastBracket = -1;
 
+	private static boolean keymapInitialized;
+
 	private void _replaceSelection(String content)
 	{
 		if(!overwrite || getSelectionStart() != getSelectionEnd())
@@ -728,20 +743,14 @@ public class SyntaxTextArea extends JEditorPane
 			updateHighlighters();
 		}
 	}
-
-	static
-	{
-		Keymap map = JTextComponent.getKeymap(JTextComponent
-			.DEFAULT_KEYMAP);
-		map.setDefaultAction(new SyntaxTextArea.DefaultKeyTypedAction());
-		map.addActionForKeyStroke(KeyStroke.getKeyStroke(
-			KeyEvent.VK_INSERT,0),new SyntaxTextArea.InsertKeyAction());
-	}
 }
 
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.25  1999/05/11 09:05:10  sp
+ * New version1.6.html file, some other stuff perhaps
+ *
  * Revision 1.24  1999/05/07 06:15:43  sp
  * Resource loading update, fix for abstract Plugin classes in JARs
  *
@@ -768,11 +777,5 @@ public class SyntaxTextArea extends JEditorPane
  *
  * Revision 1.16  1999/04/01 04:13:00  sp
  * Bug fixing for 1.5final
- *
- * Revision 1.15  1999/03/27 23:47:57  sp
- * Updated docs, view tweak, goto-line fix, next/prev error tweak
- *
- * Revision 1.14  1999/03/27 02:46:17  sp
- * SyntaxTextArea is now modular
  *
  */

@@ -85,7 +85,7 @@ loop:			for(int i = dot - 1; i >= start; i--)
 				if(i == lineNo)
 					lineLen -= (dot - wordStart);
 				line = buffer.getText(lineStart, lineLen);
-				int index = line.lastIndexOf(word);
+				int index = getIndexOfWord(line,word,separators);
 				if(index != -1)
 				{
 					int wordEnd = lineLen;
@@ -120,5 +120,29 @@ loop2:					for(int j = index + 1; j < lineLen; j++)
 		{
 		}
 		view.getToolkit().beep();
+	}
+
+	private int getIndexOfWord(String line, String word, String separators)
+	{
+		for(int i = 0; i < line.length(); i++)
+		{
+			if(i == 0)
+			{
+				if(line.regionMatches(0,word,0,word.length()))
+					return 0;
+			}
+
+			char c = line.charAt(i);
+			if(!Character.isLetterOrDigit(c)
+				&& (separators == null ||
+				separators.indexOf(c) == -1))
+			{
+				if(line.regionMatches(i + 1,word,
+					0,word.length()))
+					return i + 1;
+			}
+		}
+
+		return -1;
 	}
 }

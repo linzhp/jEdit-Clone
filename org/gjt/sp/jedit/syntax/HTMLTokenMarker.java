@@ -224,8 +224,12 @@ loop:		for(int i = offset; i < length; i++)
 		}
 		if(lastOffset != length)
 		{
-			if(token == Token.LITERAL1 || token == Token.LITERAL2
-				|| token == Token.KEYWORD2)
+			if(token == Token.LITERAL1 || token == Token.LITERAL2)
+			{
+				addToken(length - lastOffset,Token.INVALID);
+				token = JAVASCRIPT;
+			}
+			else if(token == Token.KEYWORD2)
 			{
 				addToken(length - lastOffset,Token.INVALID);
 				token = Token.NULL;
@@ -245,6 +249,9 @@ loop:		for(int i = offset; i < length; i++)
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.25  1999/05/11 09:05:10  sp
+ * New version1.6.html file, some other stuff perhaps
+ *
  * Revision 1.24  1999/05/03 04:28:01  sp
  * Syntax colorizing bug fixing, console bug fix for Swing 1.1.1
  *

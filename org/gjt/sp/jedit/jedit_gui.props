@@ -494,9 +494,9 @@ console.help=This is the jEdit console, a tool for executing programs and\n\
 	Here are some examples of what you can enter here:\n\
 	\n\
 	ls (OS commands - .exe is automatically appended on Windows)\n\
-	cc %f (c%f expands to the file path)\n\
-	netscape %u (%u is the current file's URL)\n\
-	make -C %d (%d is the current file's parent directory)\n\
+	ls ~/jars (~ expands to the user's home directory)\n\
+	cc $f ($f expands to the file path)\n\
+	make -C $d ($d is the current file's parent directory)\n\
 	clear (removes all text from the console)\n\
 	file:/etc/passwd (will open the file)\n\
 	file:C:\\Documents\\doc.txt (Windows file paths)\n\
