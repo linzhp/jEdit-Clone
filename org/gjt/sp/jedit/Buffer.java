@@ -997,8 +997,8 @@ implements DocumentListener, UndoableEditListener
 				in = new FileInputStream(file);
 			if(name.endsWith(".gz"))
 				in = new GZIPInputStream(in);
-			BufferedReader bin = new BufferedReader(new
-				InputStreamReader(in));
+			BufferedReader bin = new BufferedReader(
+				new InputStreamReader(in));
 			String line;
 			int count = 0;
 			while ((line = bin.readLine()) != null)

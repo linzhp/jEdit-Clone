@@ -2,54 +2,75 @@
 <body>
 <h1>Version History</h1>
 
+<a href=#wishlist>Wish List</a><br>
 <a href=#todo>To Do</a><br>
+<a href=#14pre3>Version 1.4pre3</a><br>
 <a href=#14pre2>Version 1.4pre2</a><br>
 <a href=#14pre1>Version 1.4pre1</a><br>
+
+<a name=wishlist>
+<h1>Wish List</h1>
+</a>
+
+<ul>
+<li>Class/method/variable browser (the implementation is actally quite
+easy - the hardest part is writing the source code parser)
+<li>Make org.gjt.sp.jedit.syntax and org.gjt.sp.jedit.gui.SyntaxTextArea
+not dependant on Buffer/jEdit classes (maybe a SyntaxDocument interface,
+or set/getTabSize/TokenMarker methods in SyntaxTextArea)
+<li>Maybe make entire jEdit application a component that can be added to
+other programs, but this is tricky
+<li>One person has requested automatic word wrap - jEdit 1.0 and 1.1 had it,
+but it got lost in the syntax colorizing scuffle of jEdit 1.2. I'm not too
+keen on adding this since a) it requires major (well not major but considerable)
+changes to my SyntaxView class, b) jEdit is designed to be mainly a programming
+text editor, c) Edit-&gt;Format Text is there for manual word wrap, d)
+nobody else has asked for this and I don't need it either
+<li>Semi-automatic word wrap that inserts physical newlines if the line
+gets too long isn't very hard, but once a line is split it isn't rejoined
+again. Should ask that person if that's okay :) Maybe an Auto Format edit mode,
+that HTML and TeX modes can subclass?
+<li>Swing key maps should be editable
+<li>`Keep dialog' option in search &amp; replace (is this really necessary?
+I mean we already have C+g/C+e C+r/C+r C+y/C+e C+a for `Find Next', `Replace',
+`Replace Selection' and `Replace All'
+<li>Reload command
+<li>Insert file command
+<li>`Literal' search (no regexp) option
+<li>`Fix' jEdit's lazy colorizing (no, I'm not going to do it)
+</ul>
 
 <a name=todo>
 <h1>To Do</h1>
 </a>
 
 <ul>
-<li>Class/method/variable browser (the implementation is actally quite
-easy - the hardest part is writing the source code parser)
 <li>Should separate huge jEdit class into GUIUtilities/TextUtilities, move
 buffer-related methods to Buffer class (as static methods), same for view
 related stuff. Also move generic text manipulation stuff such as bracket
 matching, etc to TextUtilities
-<li>Make org.gjt.sp.jedit.syntax and org.gjt.sp.jedit.gui.SyntaxTextArea
-not dependant on Buffer/jEdit classes (maybe a SyntaxDocument interface,
-or set/getTabSize/TokenMarker methods in SyntaxTextArea)
-<li>Maybe make entire jEdit application a component that can be added to
-other programs, but this is tricky and is best left for version 2.0 :)
-<li>One person has requested automatic word wrap - jEdit 1.0 and 1.1 had it,
-but it got lost in the syntax colorizing scuffle of jEdit 1.2. I'm not too
-keen on adding this since a) it requires major (well not major but considerable)
-changes to my SyntaxView class, b) jEdit is designed to be mainly a programming
-text editor, c) Edit-&gt;Format Text is there for manual word wrap, d)
-nobody else has asked for this and I don't need it either. Again, a jEdit 2.0
-thing :)
-<li>Semi-automatic word wrap that inserts physical newlines if the line
-gets too long isn't very hard, but once a line is split it isn't rejoined
-again. Should ask that person if that's okay :) Maybe an Auto Format edit mode,
-that HTML and TeX modes can subclass?
 <li>It would be nice if `Locate Bracket' and `Select Block' skipped over
 comments/quoted literals that might contain unmatched brackets. This might
 require a rewrite of Buffer.locateBracketBackward() and
 Buffer.locateBracketForward().
-<li>Swing key maps should be editable
-<li>Reload command
-<li>Insert file command
-<li>`Literal' search (no regexp) option
-<li>`Keep dialog' option in search &amp; replace
 <li>Sticky file format (open DOS file, saved as DOS file)
 <li>For some reason splash screen doesn't appear until the first view is
 created
+<li>Backup directory feature, where all ...~ files are placed
+<li>Autosave directory feature, where all #...# files are placed
 </ul>
 
 <a name=14pre3>
 <h1>Version 1.4pre3</h1>
 </a>
+
+<h2>New Features</h2>
+
+<ul>
+<li>Added patch mode for editing Unix diffs and patches (Yeah, it's kind of
+cheap, but I was editing a diff the other day and thought, why not?)
+<li>Added props mode for editing Java property files and DOS INI files
+</ul>
 
 <h2>Bug Fixes</h2>
 

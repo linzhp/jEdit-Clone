@@ -277,6 +277,8 @@ public class jEdit
 		addMode(new org.gjt.sp.jedit.mode.javascript());
 		addMode(new org.gjt.sp.jedit.mode.latex());
 		addMode(new org.gjt.sp.jedit.mode.makefile());
+		addMode(new org.gjt.sp.jedit.mode.patch());
+		addMode(new org.gjt.sp.jedit.mode.props());
 		addMode(new org.gjt.sp.jedit.mode.sh());
 		addMode(new org.gjt.sp.jedit.mode.tex());
 

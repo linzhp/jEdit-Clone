@@ -202,6 +202,21 @@ mode.filename.GNUmakefile=makefile
 mode.filename.Makefile=makefile
 mode.filename.makefile=makefile
 
+# Patch mode
+mode.patch.name=Patch (DIFF)
+mode.extension.diff=patch
+mode.extension.patch=patch
+
+# Props mode
+mode.props.name=Properties/INI
+mode.extension.props=props
+mode.extension.properties=props
+mode.extension.ini=props
+mode.extension.kdelnk=props
+mode.filename.properties=props
+mode.filename.config.sys=props
+mode.filename..jedit-props=props
+
 # Shell script mode
 mode.sh.name=Shell Script
 mode.sh.blockComment=#

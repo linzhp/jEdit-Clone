@@ -87,8 +87,8 @@ contain `\begin'. Default compiler is `amstex'.</td>
 
 <tr>
 <td>Auto Indent</td> <td>autoindent</td> <td>Implements semi-intelligent
-indentation. All other modes except for Text, HTML and the TeX family subclass
-this.</td>
+indentation. All other modes except for Text, HTML, Patch and the TeX family
+subclass this.</td>
 </tr>
 
 <tr>
@@ -146,6 +146,19 @@ mode is automatically selected for files named `Makefile'.
 </tr>
 
 <tr>
+<td>Patch (DIFF)</td> <td>patch</td> <td>For editing Unix-style patches
+and diffs. This mode is automatically selected for files whose names end
+with `.diff' or `.patch'.</td>
+</tr>
+
+<tr>
+<td>Properties/INI</td> <td>props</td> <td>For editing Java property files
+and MS-DOS .ini files. This mode is automatically selected for files whose
+names end with `.ini', `.kdelnk', `.props', `.properties', and for files named
+`properties', `config.sys' or `.jedit-props'.</td>
+</tr>
+
+<tr>
 <td>Shell Script</td> <td>sh</td> <td>For editing UNIX shell scripts. This
 mode is automatically selected for files whose first line is `#!' followed
 by various shell paths.
@@ -168,7 +181,7 @@ lines. Default compiler is `tex'.
 
 jEdit has two features which make it easier to browse around long files.<p>
 
-The <i>anchor</i> is a floating location (floating meaning that if text
+The anchor is a floating location (floating meaning that if text
 before it is changed, the anchor will move) that can be used to save a position
 and go back later, to select large blocks of text, and to `flip' between two
 positions in the document. Unlike markers, the anchor position is not saved
