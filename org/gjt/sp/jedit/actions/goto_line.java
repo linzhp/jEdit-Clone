@@ -22,7 +22,7 @@ package org.gjt.sp.jedit.actions;
 import javax.swing.*;
 import javax.swing.text.Element;
 import java.awt.event.ActionEvent;
-import org.gjt.sp.jedit.gui.SyntaxTextArea;
+import org.gjt.sp.jedit.gui.JEditTextArea;
 import org.gjt.sp.jedit.*;
 
 public class goto_line extends EditAction
@@ -36,7 +36,7 @@ public class goto_line extends EditAction
 	{
 		View view = getView(evt);
 		Buffer buffer = view.getBuffer();
-		SyntaxTextArea textArea = view.getTextArea();
+		JEditTextArea textArea = view.getTextArea();
 		Element map = buffer.getDefaultRootElement();
 		String line = GUIUtilities.inputProperty(view,"gotoline","line");
 

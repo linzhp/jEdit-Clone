@@ -1,6 +1,6 @@
 /*
  * locate_bracket.java
- * Copyright (C) 1998 Slava Pestov
+ * Copyright (C) 1998, 1999 Slava Pestov
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -22,6 +22,7 @@ package org.gjt.sp.jedit.actions;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Element;
 import java.awt.event.ActionEvent;
+import org.gjt.sp.jedit.syntax.SyntaxUtilities;
 import org.gjt.sp.jedit.*;
 
 public class locate_bracket extends EditAction
@@ -55,8 +56,8 @@ public class locate_bracket extends EditAction
 			if(index != -1)
 			{
 				char closeBracket = closeBrackets.charAt(index);
-				int offset = buffer.locateBracketForward(dot,
-					bracket,closeBracket);
+				int offset = SyntaxUtilities.locateBracketForward(
+					buffer,dot,bracket,closeBracket);
 				if(offset == -1)
 					view.getToolkit().beep();
 				else
@@ -73,8 +74,8 @@ public class locate_bracket extends EditAction
 					return;
 				}
 				char openBracket = openBrackets.charAt(index);
-				int offset = buffer.locateBracketBackward(dot,
-					openBracket,bracket);
+				int offset = SyntaxUtilities.locateBracketBackward(
+					buffer,dot,openBracket,bracket);
 				if(offset == -1)
 					view.getToolkit().beep();
 				else

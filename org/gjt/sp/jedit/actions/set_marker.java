@@ -20,7 +20,7 @@
 package org.gjt.sp.jedit.actions;
 
 import java.awt.event.ActionEvent;
-import org.gjt.sp.jedit.gui.SyntaxTextArea;
+import org.gjt.sp.jedit.gui.JEditTextArea;
 import org.gjt.sp.jedit.*;
 
 public class set_marker extends EditAction
@@ -36,7 +36,7 @@ public class set_marker extends EditAction
 		Buffer buffer = view.getBuffer();
 		if(buffer.isReadOnly())
 			view.getToolkit().beep();
-		SyntaxTextArea textArea = view.getTextArea();
+		JEditTextArea textArea = view.getTextArea();
 		String marker = GUIUtilities.input(view,"setmarker",
 			textArea.getSelectedText());
 		if(marker != null)

@@ -20,7 +20,7 @@
 package org.gjt.sp.jedit.actions;
 
 import java.awt.event.ActionEvent;
-import org.gjt.sp.jedit.gui.SyntaxTextArea;
+import org.gjt.sp.jedit.gui.JEditTextArea;
 import org.gjt.sp.jedit.*;
 
 public class to_lower extends EditAction
@@ -33,7 +33,7 @@ public class to_lower extends EditAction
 	public void actionPerformed(ActionEvent evt)
 	{
 		View view = getView(evt);
-		SyntaxTextArea textArea = view.getTextArea();
+		JEditTextArea textArea = view.getTextArea();
 		String selection = textArea.getSelectedText();
 		if(selection != null)
 			textArea.replaceSelection(selection.toLowerCase());

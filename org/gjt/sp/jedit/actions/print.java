@@ -25,7 +25,7 @@ import javax.swing.text.PlainView;
 import java.awt.event.ActionEvent;
 import java.awt.*;
 import org.gjt.sp.jedit.*;
-import org.gjt.sp.jedit.gui.SyntaxTextArea;
+import org.gjt.sp.jedit.gui.JEditTextArea;
 import org.gjt.sp.jedit.syntax.SyntaxView;
 
 public class print extends EditAction
@@ -91,7 +91,7 @@ public class print extends EditAction
 		String header = buffer.getPath();
 
 		Element map = buffer.getDefaultRootElement();
-		SyntaxTextArea textArea = view.getTextArea();
+		JEditTextArea textArea = view.getTextArea();
 		int tabSize = buffer.getTabSize() * textArea.getToolkit()
 			.getFontMetrics(textArea.getFont()).charWidth('m');
 		PrintSyntaxView syntaxView = new PrintSyntaxView(

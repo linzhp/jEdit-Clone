@@ -20,7 +20,7 @@
 package org.gjt.sp.jedit.actions;
 
 import java.awt.event.ActionEvent;
-import org.gjt.sp.jedit.gui.SyntaxTextArea;
+import org.gjt.sp.jedit.gui.JEditTextArea;
 import org.gjt.sp.jedit.*;
 
 public class indent_line extends EditAction
@@ -34,7 +34,7 @@ public class indent_line extends EditAction
         {
                 View view = getView(evt);
                 Buffer buffer = view.getBuffer();
-                SyntaxTextArea textArea = view.getTextArea();
+                JEditTextArea textArea = view.getTextArea();
                 Mode mode = buffer.getMode();
 		int selStart = textArea.getSelectionStart();
 		int selEnd = textArea.getSelectionEnd();

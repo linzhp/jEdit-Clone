@@ -23,7 +23,7 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.Element;
 import java.awt.event.ActionEvent;
 import org.gjt.sp.jedit.*;
-import org.gjt.sp.jedit.gui.SyntaxTextArea;
+import org.gjt.sp.jedit.gui.JEditTextArea;
 
 public class select_next_paragraph extends EditAction
 {
@@ -37,7 +37,7 @@ public class select_next_paragraph extends EditAction
 		View view = getView(evt);
 		Buffer buffer = view.getBuffer();
 		Element map = buffer.getDefaultRootElement();
-		SyntaxTextArea textArea = view.getTextArea();
+		JEditTextArea textArea = view.getTextArea();
 		int lineNo = map.getElementIndex(textArea.getSelectionEnd());
 		int start = map.getElement(buffer.locateParagraphStart(lineNo))
 			.getStartOffset();

@@ -23,7 +23,7 @@ import javax.swing.text.BadLocationException;
 import java.awt.event.ActionEvent;
 import java.io.*;
 import org.gjt.sp.jedit.*;
-import org.gjt.sp.jedit.gui.SyntaxTextArea;
+import org.gjt.sp.jedit.gui.JEditTextArea;
 
 public class pipe_selection extends EditAction
 {
@@ -35,7 +35,7 @@ public class pipe_selection extends EditAction
 	public void actionPerformed(ActionEvent evt)
 	{
 		View view = getView(evt);
-		SyntaxTextArea textArea = view.getTextArea();
+		JEditTextArea textArea = view.getTextArea();
 		int start = textArea.getSelectionStart();
 		int end = textArea.getSelectionEnd();
 		Buffer buffer = view.getBuffer();

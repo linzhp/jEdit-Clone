@@ -22,7 +22,7 @@ package org.gjt.sp.jedit.actions;
 import javax.swing.text.Element;
 import java.awt.event.ActionEvent;
 import java.awt.Rectangle;
-import org.gjt.sp.jedit.gui.SyntaxTextArea;
+import org.gjt.sp.jedit.gui.JEditTextArea;
 import org.gjt.sp.jedit.*;
 
 public class scroll_line extends EditAction
@@ -35,7 +35,7 @@ public class scroll_line extends EditAction
 	public void actionPerformed(ActionEvent evt)
 	{
 		View view = getView(evt);
-		SyntaxTextArea textArea = view.getTextArea();
+		JEditTextArea textArea = view.getTextArea();
 		Element map = view.getBuffer().getDefaultRootElement();
 		int startLine = map.getElementIndex(textArea.getSelectionStart());
 		int endLine = map.getElementIndex(textArea.getSelectionEnd()) + 1;

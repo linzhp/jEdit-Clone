@@ -21,7 +21,7 @@ package org.gjt.sp.jedit.actions;
 
 import java.awt.event.ActionEvent;
 import org.gjt.sp.jedit.*;
-import org.gjt.sp.jedit.gui.SyntaxTextArea;
+import org.gjt.sp.jedit.gui.JEditTextArea;
 
 public class goto_anchor extends EditAction
 {
@@ -33,7 +33,7 @@ public class goto_anchor extends EditAction
 	public void actionPerformed(ActionEvent evt)
 	{
 		View view = getView(evt);
-		SyntaxTextArea textArea = view.getTextArea();
+		JEditTextArea textArea = view.getTextArea();
 		int pos = view.getBuffer().getAnchor();
 		if(pos != -1)
 			textArea.setCaretPosition(pos);

@@ -22,7 +22,7 @@ package org.gjt.sp.jedit.actions;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Element;
 import java.awt.event.ActionEvent;
-import org.gjt.sp.jedit.gui.SyntaxTextArea;
+import org.gjt.sp.jedit.gui.JEditTextArea;
 import org.gjt.sp.jedit.*;
 
 public class box_comment extends EditAction
@@ -35,7 +35,7 @@ public class box_comment extends EditAction
 	public void actionPerformed(ActionEvent evt)
 	{
 		View view = getView(evt);
-		SyntaxTextArea textArea = view.getTextArea();
+		JEditTextArea textArea = view.getTextArea();
 		Buffer buffer = view.getBuffer();
 		String commentStart = (String)buffer.getProperty("commentStart");
 		String commentEnd = (String)buffer.getProperty("commentEnd");

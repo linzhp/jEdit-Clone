@@ -22,7 +22,7 @@ package org.gjt.sp.jedit.actions;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Element;
 import java.awt.event.ActionEvent;
-import org.gjt.sp.jedit.gui.SyntaxTextArea;
+import org.gjt.sp.jedit.gui.JEditTextArea;
 import org.gjt.sp.jedit.*;
 
 public class untab extends EditAction
@@ -38,7 +38,7 @@ public class untab extends EditAction
 		Buffer buffer = view.getBuffer();
 		try
 		{
-			SyntaxTextArea textArea = view.getTextArea();
+			JEditTextArea textArea = view.getTextArea();
 			if(!textArea.isEditable())
 			{
 				view.getToolkit().beep();

@@ -21,7 +21,7 @@ package org.gjt.sp.jedit.actions;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
-import org.gjt.sp.jedit.gui.SyntaxTextArea;
+import org.gjt.sp.jedit.gui.JEditTextArea;
 import org.gjt.sp.jedit.*;
 
 public class goto_marker extends EditAction
@@ -34,7 +34,7 @@ public class goto_marker extends EditAction
 	public void actionPerformed(ActionEvent evt)
 	{
 		View view = getView(evt);
-		SyntaxTextArea textArea = view.getTextArea();
+		JEditTextArea textArea = view.getTextArea();
 		Marker marker = view.getBuffer().getMarker(evt
 			.getActionCommand());
 		if(marker != null)
