@@ -224,20 +224,22 @@ tools=word-count \
       browser-open-sel \
       browser-open-url \
       - \
-      options \
+      buffer-options \
+      global-options \
       - \
       %mode \
       %plugins
 tools.label=$Tools
 word-count.label=Word Co$unt...
+compile.label=$Compile...
 pipe-selection.label=Fi$lter Selection...
 toggle-console.label=Show/Hi$de Console
-compile.label=$Compile...
 prev-error.label=Go to $Previous Error
 next-error.label=Go to $Next Error
 browser-open-sel.label=$Open Selection in WWW Browser
 browser-open-url.label=Open in $WWW Browser
-options.label=Opt$ions...
+buffer-options.label=Buffe$r Options...
+global-options.label=$Global Options...
 
 ### Mode menu
 mode.label=$Mode

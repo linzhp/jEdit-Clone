@@ -311,6 +311,7 @@ public class jEdit
 		addAction(new org.gjt.sp.jedit.actions.box_comment());
 		addAction(new org.gjt.sp.jedit.actions.browser_open_sel());
 		addAction(new org.gjt.sp.jedit.actions.browser_open_url());
+//		addAction(new org.gjt.sp.jedit.actions.buffer_options());
 		addAction(new org.gjt.sp.jedit.actions.clear());
 		addAction(new org.gjt.sp.jedit.actions.clear_marker());
 		addAction(new org.gjt.sp.jedit.actions.close_file());
@@ -330,6 +331,7 @@ public class jEdit
 		addAction(new org.gjt.sp.jedit.actions.find_next());
 		addAction(new org.gjt.sp.jedit.actions.find_selection());
 		addAction(new org.gjt.sp.jedit.actions.format());
+		addAction(new org.gjt.sp.jedit.actions.global_options());
 		addAction(new org.gjt.sp.jedit.actions.goto_anchor());
 		addAction(new org.gjt.sp.jedit.actions.goto_end_indent());
 		addAction(new org.gjt.sp.jedit.actions.goto_line());
@@ -348,7 +350,6 @@ public class jEdit
 		addAction(new org.gjt.sp.jedit.actions.open_path());
 		addAction(new org.gjt.sp.jedit.actions.open_selection());
 		addAction(new org.gjt.sp.jedit.actions.open_url());
-		addAction(new org.gjt.sp.jedit.actions.options());
 		addAction(new org.gjt.sp.jedit.actions.paste());
 		addAction(new org.gjt.sp.jedit.actions.paste_predefined());
 		addAction(new org.gjt.sp.jedit.actions.paste_previous());
@@ -1576,6 +1577,9 @@ public class jEdit
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.56  1999/03/20 02:07:59  sp
+ * Starting work on buffer-specific options panel
+ *
  * Revision 1.55  1999/03/20 01:55:42  sp
  * New color option pane, fixed search & replace bug
  *

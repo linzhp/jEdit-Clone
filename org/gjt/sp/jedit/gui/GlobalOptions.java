@@ -1,6 +1,6 @@
 /*
- * Options.java - Options dialog
- * Copyright (C) 1998 Slava Pestov
+ * GlobalOptions.java - Global options dialog
+ * Copyright (C) 1998, 1999 Slava Pestov
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -27,6 +27,11 @@ import org.gjt.sp.jedit.event.*;
 import org.gjt.sp.jedit.options.*;
 import org.gjt.sp.jedit.*;
 
+/**
+ * The global (editor-wide) settings dialog.
+ * @author Slava Pestov
+ * @version $Id$
+ */
 public class Options extends JDialog
 implements ActionListener, KeyListener, WindowListener
 {
@@ -123,3 +128,11 @@ implements ActionListener, KeyListener, WindowListener
 		panes.addElement(pane);
 	}
 }
+
+/*
+ * ChangeLog:
+ * $Log$
+ * Revision 1.1  1999/03/20 02:07:59  sp
+ * Starting work on buffer-specific options panel
+ *
+ */
