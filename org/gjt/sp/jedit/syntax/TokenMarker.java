@@ -48,29 +48,27 @@ public abstract class TokenMarker
 	{
 		lastToken = null;
 
+		LineInfo info = lineInfo[lineIndex];
+		if(info == null)
+		{
+			info = new LineInfo(Token.NULL,null);
+			lineInfo[lineIndex] = info;
+		}
+
 		byte token;
 
 		if(lineIndex == 0)
 			token = Token.NULL;
 		else
 		{
-			LineInfo info = lineInfo[lineIndex - 1];
-			if(info != null)
-				token = info.token;
+			LineInfo prevInfo = lineInfo[lineIndex - 1];
+			if(prevInfo != null)
+				token = prevInfo.token;
 			else
 				token = Token.NULL;
 		}
 
-		token = markTokensImpl(token,line,lineIndex);
-
-		LineInfo info = lineInfo[lineIndex];
-		if(info != null)
-			info.token = token;
-		else
-		{
-			info = new LineInfo(token,null);
-			lineInfo[lineIndex] = info;
-		}
+		info.token = markTokensImpl(token,line,lineIndex);
 
 		addToken(0,Token.END);
 
@@ -254,6 +252,9 @@ public abstract class TokenMarker
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.15  1999/04/23 05:06:43  sp
+ * TokenMarker.markTokens bug fix
+ *
  * Revision 1.14  1999/04/23 05:02:25  sp
  * new LineInfo[] array in TokenMarker
  *
