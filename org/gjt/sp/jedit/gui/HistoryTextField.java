@@ -65,35 +65,10 @@ public class HistoryTextField extends JComboBox
 		}
 	}
 
-	public void actionPerformed(ActionEvent evt)
-	{
-		Object current = getEditor().getItem();
-		setSelectedItem(current);
-
-		// Don't fire actionEvent here
-	}
-
-	public void selectedItemChanged()
-	{
-		if(selectedItemReminder != null)
-		{
-			fireItemStateChanged(new ItemEvent(this,
-				ItemEvent.ITEM_STATE_CHANGED,
-				selectedItemReminder,ItemEvent.DESELECTED));
-		}
-
-		selectedItemReminder = getModel().getSelectedItem();
-
-		if(selectedItemReminder != null)
-		{
-			fireItemStateChanged(new ItemEvent(this,
-				ItemEvent.ITEM_STATE_CHANGED,
-				selectedItemReminder,ItemEvent.SELECTED));
-		}
-		
-		// Don't fire actionEvent here
-	}
-
+	/**
+	 * Stupid workaround so that selecting an item or losing
+	 * focus won't fire an action event
+	 */
 	public void _fireActionEvent()
 	{
 		super.fireActionEvent();
@@ -122,6 +97,9 @@ public class HistoryTextField extends JComboBox
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.25  1999/05/05 07:20:45  sp
+ * jEdit 1.6pre5
+ *
  * Revision 1.24  1999/05/04 04:51:25  sp
  * Fixed HistoryTextField for Swing 1.1.1
  *
