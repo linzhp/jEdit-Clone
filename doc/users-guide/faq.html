@@ -19,7 +19,7 @@ When you have lots of buffers open, there might not be enough free
 space in the <i>Java heap</i>, even though lots of RAM is available.
 The solution is to increase the Java heap memory allocation.<p>
 
-On Windows, enter this in an MS-DOS Prompt before starting jEdit,
+On Windows, enter the following in an MS-DOS Prompt before starting jEdit,
 or place it in your AUTOEXEC.BAT to have it done every time the
 system starts:
 
@@ -27,51 +27,69 @@ system starts:
 set JEDIT=-mx<i>nn</i>m
 </pre>
 
+On Unix systems with a Bourne shell (ash, bash, jsh, sh, zsh) enter
+the following in a command line before starting jEdit, or place it in
+your .login or .profile to have it done every time you log in:
+
+<pre>
+set JEDIT=-mx<i>nn</i>m; export JEDIT
+</pre>
+
+On Unix systems with a C shell (csh, tcsh) enter the following in a
+command line before starting jEdit, or place it in your .csh.login
+or .csh.profile to have it done every time you log in:
+
+<pre>
+setenv JEDIT -mx<i>nn</i>
+</pre>
+
 Where <i>nn</i> is the size of the Java heap, in megabytes. The
 default is 32 Mb - if you like to open lots of files at once, 64
 might be better.<p>
-
-On Unix, the procedure is the same - set the JEDIT enviroment
-variable (how this is done depends on the shell) and if necessary,
-place the command in your .profile or .cshprofile (depending on
-what shell you are using).
 
 <a name=alt>
 <h1>The Alt-key mnemonics act weird!</h1>
 </a>
 
-On some JDK versions, pressing an Alt-key mnemonic inserts the
-character in the text, rather than selecting the menu. This is
-an AWT/JFC bug; there is nothing I can do about it. The only solution
-is to upgrade to a more recent JDK version.
+On some JDK versions, the AWT incorrectly sets the modifiers of
+KEY_TYPED events to 0 even if the Alt key is pressed. The end
+result is that the keystroke is inserted in the document. This
+is an AWT bug, and as far as I know the only way to fix it is
+to upgrade to a later JDK version.
 
 <a name=www>
 <h1>The `Open in WWW Browser' command doesn't work!</h1>
 </a>
 
-On Unix, make sure that the browser is in your PATH. On Windows,
-make sure that the browser's name ends with `.exe'. Also on some
-systems it might be necessary to enter the full path to the
-browser, not just the name of the executable.
+On Unix and Windows, make sure that either the full path to
+the browser is entered in `Tools-&gt;Global Options-&gt;General',
+or that the browser's directory is listed in your PATH.<p>
+
+On Unix, it is recommended that the `jedit_moz_remote' wrapper
+for Netscape Navigator be used. The script relies on the `netscape'
+executable being in the PATH.<p>
+
+On the MacOS, the `Open in WWW Browser' feature does not work. If
+anybody can confirm otherwise, I will be happy to post information
+here.
 
 <a name=multi>
 <h1>Why aren't multiline comments, etc colorized correctly?</h1>
 </a>
 
 In jEdit, when you open a multiline comment, the rest of the
-viewscreen isn't automatically colorized accordingly - you must
+viewscreen isn't recolorized accordingly - you must
 force a replaint, by scrolling up or down, or hiding and
-exposing the jEdit window. This is a limitation of how jEdit
-works, and it will be fixed in the near future. BTW, Emacs has
-this problem too.
+exposing the jEdit window. This is a limitation of how jEdit's
+syntax engine works, and it will be fixed in the near future.
 
 <a name=bigfile>
 <h1>Why does the display mess up when editing large files?</h1>
 </a>
 
 Due to an AWT limitation or Swing bug (or maybe both) the
-Swing JTextComponent component has problems editing documents
-&gt; 2000 or so lines. The problem is that the viewscreen turns gray
+Swing JTextComponent component has problems editing documents greater
+than about 2000 lines. The problem is that the viewscreen turns gray
 and GUI elements are repainted incorrectly. Until Sun fixes
 this, other editors will have to be used to edit very large
 files.

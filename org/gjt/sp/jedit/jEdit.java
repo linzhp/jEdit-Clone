@@ -909,10 +909,13 @@ public class jEdit
 		System.err.println("    -usage: Print this message and exit");
 		System.err.println("    -nousrprops: Don't load user"
 			+ " properties");
+		System.err.println("    -nohistory: Don't load history lists");
 		System.err.println("    -noserver: Don't start server");
 		System.err.println("    -nodesktop: Ignore saved desktop");
 		System.err.println("    -nosplash: Don't show splash screen");
 		System.err.println("    -usrprops=<file>: Read user properties"
+			+ " from <file>");
+		System.err.println("    -history=<file>: Load history list"
 			+ " from <file>");
 		System.err.println("    -portfile=<file>: Write server port to"
 			+ " <file>");
@@ -1211,10 +1214,10 @@ public class jEdit
 			while((path = getProperty("desktop." + i + ".path")) != null)
 			{
 				String mode = getProperty("desktop." + i + ".mode");
-				boolean readOnly = getProperty("desktop." + i + ".readOnly")
-					.equals("yes");
-				boolean current = getProperty("desktop." + i + ".current")
-					.equals("yes");
+				boolean readOnly = "yes".equals(getProperty(
+					"desktop." + i + ".readOnly"));
+				boolean current = "yes".equals(getProperty(
+					"desktop." + i + ".current"));
 				int selStart = Integer.parseInt(getProperty(
 					"desktop." + i + ".selStart"));
 				int selEnd = Integer.parseInt(getProperty(
@@ -1519,6 +1522,9 @@ public class jEdit
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.84  1999/04/25 07:23:36  sp
+ * Documentation updates, reload bug fix, console bug fix
+ *
  * Revision 1.83  1999/04/25 03:39:37  sp
  * Documentation updates, console updates, history text field updates
  *
@@ -1552,9 +1558,6 @@ public class jEdit
  *
  * Revision 1.73  1999/04/20 06:38:26  sp
  * jEdit.addPluginMenu() method added
- *
- * Revision 1.72  1999/04/20 05:11:16  sp
- * jEdit class API change, Acu docs
  *
  *
  */

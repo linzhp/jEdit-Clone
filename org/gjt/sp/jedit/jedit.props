@@ -192,7 +192,7 @@ mode.cc.indentCloseBrackets=}
 mode.cc.commentStart=/*
 mode.cc.commentEnd=*/
 mode.cc.blockComment=//
-mode.cc.boxComment=*
+mode.cc.boxComment=\ *
 mode.cc.compiler=c++ -O2 %f
 # I wish the C++ file extensions were more standard... jeez...
 mode.extension.cc=cc
@@ -204,7 +204,6 @@ mode.extension.cxx=cc
 mode.html.name=HTML
 mode.html.commentStart=<!--
 mode.html.commentEnd=-->
-mode.html.boxComment=--
 mode.extension.html=html
 mode.extension.shtml=html
 mode.extension.htm=html

@@ -120,7 +120,15 @@ implements ActionListener, ListSelectionListener
 
 		if(command.equalsIgnoreCase("clear"))
 		{
-			output.setText("");
+			try
+			{
+				outputDocument.remove(0,outputDocument
+					.getLength());
+			}
+			catch(BadLocationException bl)
+			{
+				bl.printStackTrace();
+			}
 			return;
 		}
 
@@ -623,6 +631,9 @@ implements ActionListener, ListSelectionListener
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.27  1999/04/25 07:23:36  sp
+ * Documentation updates, reload bug fix, console bug fix
+ *
  * Revision 1.26  1999/04/25 03:39:37  sp
  * Documentation updates, console updates, history text field updates
  *

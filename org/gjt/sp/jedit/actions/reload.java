@@ -50,7 +50,13 @@ public class reload extends EditAction
 		JEditTextArea textArea = view.getTextArea();
 		int selStart = textArea.getSelectionStart();
 		int selEnd = textArea.getSelectionEnd();
+
 		buffer.reload(view);
-		textArea.select(selStart,selEnd);
+
+		if(selStart < buffer.getLength()
+			&& selEnd < buffer.getLength())
+		{
+			textArea.select(selStart,selEnd);
+		}
 	}
 }

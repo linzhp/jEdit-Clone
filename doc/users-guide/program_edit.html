@@ -163,8 +163,6 @@ lines of the file:
 Where flag is either `on' or `off'.
 </ul>
 
-<b>Hint:</b> syntax colorizing is performed when printing, too.
-
 <a name=comment>
 <h1>Commenting</h1>
 </a>
@@ -198,16 +196,16 @@ comment strings at the start of every line of the selection. An example
 of box commented Java code:
 <pre>
 	/* doSomething();
-	* System.out.println("Done.");
-	* System.exit(0); */
+	 * System.out.println("Done.");
+	 * System.exit(0); */
 </pre>
 </ul>
 
 The comment characters can be reassigned on a file-by-file basis by
 placing something like the following in one of the first 10 lines of the
 file:
-<blockquote><code>:commentStart=(*:commentEnd=*):<br>
-:blockComment=->:boxComment=**:</code></blockquote>
+<blockquote><code>:commentStart=<i>comment start</i>:commentEnd=<i>comment end</i>:<br>
+:blockComment=<i>end of line comment</i>:boxComment=<i>box comment</i>:</code></blockquote>
 
 </body>
 </html>

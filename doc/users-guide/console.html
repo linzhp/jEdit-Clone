@@ -30,13 +30,13 @@ tab that lists the output of each command, and an errors tab that lists any
 parsed errors. Pressing enter in the command field will execute the
 currently entered command.<p>
 
-The console displays lines of text in different colors depending if they
+The console displays lines of output in different colors if they
 are informational messages (those printed by the console), errors
 (text output on the error stream of the running process), or parsed
 errors (more on that later). The colors used by the console
 can be changed in `Tools-&gt;Global Options-&gt;Colors'.<p>
 
-The following variables can be entered as part of the command:
+The following variables can be entered as part of a command:
 
 <ul>
 <li>%d - expands to the current file's parent directory
@@ -80,8 +80,8 @@ the previous error, respectively.
 </a>
 
 The `Tools-&gt;Compile' command invokes
-a mode specific compiler - for example, in C mode, this is cc, in Java
-this is javac, etc.<p>
+a mode specific compiler - for example, in C mode, it is cc, in Java
+mode it is javac, etc.<p>
 
 The compiler can also be set on a file-by-file basis by setting the
 `compiler' buffer-local property, for example by putting this in one of

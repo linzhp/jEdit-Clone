@@ -20,7 +20,7 @@
 </a>
 
 This file describes jEdit's most basic functions. It assumes you are
-familiar with basic text editing with another text editor.
+familiar with simple text editing concepts (the caret, selecting text, etc).
 
 <a name=starting>
 <h1>Starting jEdit</h1>
@@ -47,10 +47,12 @@ A number of `switches' can also be passed to jEdit.
 	-version: Display jEdit version and exit<br>
 	-usage: Display a command line usage message and exit<br>
 	-nousrprops: Don't load user properties<br>
+	-nohistory: Don't load history lists<br>
 	-noserver: Don't start server<br>
 	-nodesktop: Ignore saved desktop<br>
 	-nosplash: Don't show initial splash screen<br>
 	-usrprops=<i>file</i>: Load user properties from <i>file</i><br>
+	-history=<i>file</i>: Load history lists from <i>file</i><br>
 	-portfile=<i>file</i>: Save server port to <i>file</i><br>
 	-desktopfile=<i>file</i>: Save desktop to <i>file</i><br>
 	-readonly: Open files read only<br>
@@ -74,8 +76,7 @@ Once jEdit is started, additional files can be opened in a number of ways:
 if jEdit is started when there is another copy running, the files are opened in
 the already running copy.
 <li><b>With the `File->Open File' command.</b> - This displays a standard
-(or not so standard, depending on the look and feel selected in
-`Tools-&gt;Options-&gt;General') file selection dialog box.
+file selection dialog box.
 <li><b>With the `File-&gt;Open URL' command.</b> - This displays a text
 entry dialog where a URL can be entered. The name `Open URL' is somewhat
 misleading, since file names, as well as URLs, can be entered. The
@@ -130,7 +131,7 @@ which contains files open in jEdit) you will see these autosave files.<p>
 
 If jEdit has truly crashed, try opening these autosave files
 to see if they contain what was being edited before jEdit crashed. If
-so, overwrite the original copy of the file.<p>
+so, overwrite the original copy of the file with the autosave.<p>
 
 <h2>Backups</h2>
 
