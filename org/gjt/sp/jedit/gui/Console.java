@@ -44,7 +44,7 @@ implements ActionListener, ListSelectionListener
 
 		JPanel panel = new JPanel(new BorderLayout());
 		panel.add("West",new JLabel(jEdit.getProperty("console.cmd")));
-		panel.add("Center",cmd = new HistoryTextField("console",40));
+		panel.add("Center",cmd = new HistoryTextField("console"));
 		cmd.addActionListener(this);
 		add("North",panel);
 
@@ -172,11 +172,12 @@ implements ActionListener, ListSelectionListener
 	{
 		if(evt.getSource() == cmd)
 		{
-			String s = cmd.getText();
+			System.out.println("HELLO WORLD");
+			String s = (String)cmd.getSelectedItem();
 			if(s != null && s.length() != 0)
 			{
 				cmd.addCurrentToHistory();
-				cmd.setText(null);
+				cmd.setSelectedItem(null);
 
 				run(s);
 			}
@@ -425,6 +426,9 @@ implements ActionListener, ListSelectionListener
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.11  1999/03/16 04:34:46  sp
+ * HistoryTextField updates, moved generate-text to a plugin, fixed spelling mistake in EditAction Javadocs
+ *
  * Revision 1.10  1999/03/13 08:50:39  sp
  * Syntax colorizing updates and cleanups, general code reorganizations
  *

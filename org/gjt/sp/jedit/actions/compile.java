@@ -87,6 +87,7 @@ public class compile extends EditAction
 
 		view.showConsole();
 
-		view.getConsole().getCommandField().setText(buf.toString());
+		view.getConsole().getCommandField()
+			.setSelectedItem(buf.toString());
 	}
 }

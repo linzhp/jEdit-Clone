@@ -60,7 +60,7 @@ import java.util.EventObject;
  * @see jEdit#getAction(String)
  * @see jEdit#getActions()
  * @see jEdit#addAction(Action)
- * @see GUIUtilities#loadMenuar(View,String)
+ * @see GUIUtilities#loadMenubar(View,String)
  */
 public abstract class EditAction extends AbstractAction
 {
@@ -139,6 +139,9 @@ public abstract class EditAction extends AbstractAction
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.6  1999/03/16 04:34:45  sp
+ * HistoryTextField updates, moved generate-text to a plugin, fixed spelling mistake in EditAction Javadocs
+ *
  * Revision 1.5  1999/03/12 07:23:19  sp
  * Fixed serious view bug, Javadoc updates
  *

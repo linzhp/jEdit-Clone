@@ -19,6 +19,7 @@
 
 package org.gjt.sp.jedit.event;
 
+import java.util.EventListener;
 import org.gjt.sp.jedit.*;
 
 /**
@@ -27,7 +28,7 @@ import org.gjt.sp.jedit.*;
  * @author Slava Pestov
  * @version $Id$
  */
-public interface BufferListener extends AbstractEditorListener
+public interface BufferListener extends EventListener
 {
 	/**
 	 * Method invoked when a buffer's dirty flag changes.
@@ -55,6 +56,9 @@ public interface BufferListener extends AbstractEditorListener
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.4  1999/03/16 04:34:46  sp
+ * HistoryTextField updates, moved generate-text to a plugin, fixed spelling mistake in EditAction Javadocs
+ *
  * Revision 1.3  1999/03/14 02:22:13  sp
  * Syntax colorizing tweaks, server bug fix
  *

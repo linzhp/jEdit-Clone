@@ -16,8 +16,9 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
 package org.gjt.sp.jedit.event;
+
+import java.util.EventListener;
 
 /**
  * The superclass of all jEdit events.<p>
@@ -60,7 +61,7 @@ public abstract class AbstractEditorEvent
 	 * should be ignored. An exception should not be thrown.
 	 * @param listener The event listener
 	 */
-	public abstract void fire(AbstractEditorListener listener);
+	public abstract void fire(EventListener listener);
 
 	// protected members
 
@@ -81,6 +82,9 @@ public abstract class AbstractEditorEvent
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.4  1999/03/16 04:34:46  sp
+ * HistoryTextField updates, moved generate-text to a plugin, fixed spelling mistake in EditAction Javadocs
+ *
  * Revision 1.3  1999/03/14 04:13:40  sp
  * Fixed ArrayIndexOutOfBounds in TokenMarker, minor Javadoc updates, minor documentation updates
  *

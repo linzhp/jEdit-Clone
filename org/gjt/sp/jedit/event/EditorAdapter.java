@@ -29,8 +29,7 @@ import org.gjt.sp.jedit.*;
  * @author Slava Pestov
  * @version $Id$
  */
-public abstract class EditorAdapter extends AbstractEditorAdapter
-implements EditorListener
+public abstract class EditorAdapter implements EditorListener
 {
 	/**
 	 * Method invoked when a buffer has been created.
@@ -63,6 +62,9 @@ implements EditorListener
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.5  1999/03/16 04:34:46  sp
+ * HistoryTextField updates, moved generate-text to a plugin, fixed spelling mistake in EditAction Javadocs
+ *
  * Revision 1.4  1999/03/14 04:13:40  sp
  * Fixed ArrayIndexOutOfBounds in TokenMarker, minor Javadoc updates, minor documentation updates
  *

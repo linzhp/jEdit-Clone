@@ -19,6 +19,8 @@
 
 package org.gjt.sp.jedit.event;
 
+import java.util.EventListener;
+
 /**
  * A class whose instances can be used for firing editor events and
  * managing event listeners.<p>
@@ -46,7 +48,7 @@ public class EventMulticaster
 	 * Adds an event listener to this multicaster.
 	 * @param listener The event listener
 	 */
-	public void addListener(AbstractEditorListener listener)
+	public void addListener(EventListener listener)
 	{
 		removeListener(listener);
 		if(this.listener == null)
@@ -59,7 +61,7 @@ public class EventMulticaster
 	 * Removes an event listener from this multicaster.
 	 * @param listener The event listener
 	 */
-	public void removeListener(AbstractEditorListener listener)
+	public void removeListener(EventListener listener)
 	{
 		EventMulticaster mx = this;
 		EventMulticaster prev = null;
@@ -105,9 +107,9 @@ public class EventMulticaster
 
 	// private members
 	private EventMulticaster next;
-	private AbstractEditorListener listener;
+	private EventListener listener;
 
-	private EventMulticaster(AbstractEditorListener listener,
+	private EventMulticaster(EventListener listener,
 		EventMulticaster next)
 	{
 		this.listener = listener;
@@ -118,6 +120,9 @@ public class EventMulticaster
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.3  1999/03/16 04:34:46  sp
+ * HistoryTextField updates, moved generate-text to a plugin, fixed spelling mistake in EditAction Javadocs
+ *
  * Revision 1.2  1999/03/12 23:51:00  sp
  * Console updates, uncomment removed cos it's too buggy, cvs log tags added
  *

@@ -36,10 +36,10 @@ implements ActionListener, KeyListener, WindowListener
 		selStart = view.getTextArea().getSelectionStart();
 		selEnd = view.getTextArea().getSelectionEnd();
 
-		find = new HistoryTextField("find",30);
-		find.setText(defaultFind);
+		find = new HistoryTextField("find");
+		find.setSelectedItem(defaultFind);
 
-		replace = new HistoryTextField("replace",30);
+		replace = new HistoryTextField("replace");
 		keepDialog = new JCheckBox(jEdit.getProperty(
 			"search.keepDialog"),"on".equals(jEdit.getProperty(
 			"search.keepDialog.toggle")));
@@ -66,15 +66,17 @@ implements ActionListener, KeyListener, WindowListener
 		GridBagConstraints constraints = new GridBagConstraints();
 		constraints.gridwidth = constraints.gridheight = 1;
 		constraints.fill = constraints.BOTH;
-		constraints.weightx = 1.0f;
+		constraints.weightx = 0.0f;
 		JLabel label = new JLabel(jEdit.getProperty("search.find"),
 			SwingConstants.RIGHT);
 		layout.setConstraints(label,constraints);
 		panel.add(label);
+		constraints.weightx = 1.0f;
 		constraints.gridx = 1;
-		constraints.gridwidth = 2;
+		constraints.gridwidth = 4;
 		layout.setConstraints(find,constraints);
 		panel.add(find);
+		constraints.weightx = 0.0f;
 		constraints.gridx = 0;
 		constraints.gridwidth = 1;
 		constraints.gridy = 2;
@@ -82,8 +84,9 @@ implements ActionListener, KeyListener, WindowListener
 			SwingConstants.RIGHT);
 		layout.setConstraints(label,constraints);
 		panel.add(label);
+		constraints.weightx = 1.0f;
 		constraints.gridx = 1;
-		constraints.gridwidth = 2;
+		constraints.gridwidth = 4;
 		layout.setConstraints(replace,constraints);
 		panel.add(replace);
 		getContentPane().add("North",panel);

@@ -19,6 +19,7 @@
 
 package org.gjt.sp.jedit.event;
 
+import java.util.EventListener;
 import org.gjt.sp.jedit.*;
 
 /**
@@ -27,7 +28,7 @@ import org.gjt.sp.jedit.*;
  * @author Slava Pestov
  * @version $Id$
  */
-public interface EditorListener extends AbstractEditorListener
+public interface EditorListener extends EventListener
 {
 	/**
 	 * Method invoked when a buffer has been created.
@@ -60,6 +61,9 @@ public interface EditorListener extends AbstractEditorListener
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.6  1999/03/16 04:34:46  sp
+ * HistoryTextField updates, moved generate-text to a plugin, fixed spelling mistake in EditAction Javadocs
+ *
  * Revision 1.5  1999/03/14 04:13:40  sp
  * Fixed ArrayIndexOutOfBounds in TokenMarker, minor Javadoc updates, minor documentation updates
  *

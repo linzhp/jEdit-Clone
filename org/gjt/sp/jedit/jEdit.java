@@ -41,13 +41,13 @@ public class jEdit
 	/**
 	 * The jEdit version.
 	 */
-	public static final String VERSION = "1.5pre1";
+	public static final String VERSION = "1.5pre2";
 	
 	/**
 	 * The date when a change was last made to the source code,
 	 * in <code>YYYYMMDD</code> format.
 	 */
-	public static final String BUILD = "19990315";
+	public static final String BUILD = "19990316";
 
 	/**
 	 * AWK regexp syntax.
@@ -330,7 +330,6 @@ public class jEdit
 		addAction(new org.gjt.sp.jedit.actions.find_next());
 		addAction(new org.gjt.sp.jedit.actions.find_selection());
 		addAction(new org.gjt.sp.jedit.actions.format());
-		addAction(new org.gjt.sp.jedit.actions.generate_text());
 		addAction(new org.gjt.sp.jedit.actions.goto_anchor());
 		addAction(new org.gjt.sp.jedit.actions.goto_end_indent());
 		addAction(new org.gjt.sp.jedit.actions.goto_line());
@@ -1574,6 +1573,9 @@ public class jEdit
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.50  1999/03/16 04:34:45  sp
+ * HistoryTextField updates, moved generate-text to a plugin, fixed spelling mistake in EditAction Javadocs
+ *
  * Revision 1.49  1999/03/15 03:40:23  sp
  * Search and replace updates, TSQL mode/token marker updates
  *

@@ -45,7 +45,7 @@ implements ActionListener, KeyListener, ListSelectionListener, WindowListener
 		JPanel panel = new JPanel(new BorderLayout());
 		panel.add(new JLabel(jEdit.getProperty("hypersearch.find")),
 			BorderLayout.WEST);
-		find = new HistoryTextField("find",20);
+		find = new HistoryTextField("find");
 		panel.add(find, BorderLayout.CENTER);
 		content.add(panel, BorderLayout.NORTH);
 
@@ -175,7 +175,7 @@ implements ActionListener, KeyListener, ListSelectionListener, WindowListener
 			Buffer buffer = view.getBuffer();
 			int tabSize = buffer.getTabSize();
 			Vector data = new Vector();
-			RE regexp = new RE(find.getText(),
+			RE regexp = new RE((String)find.getSelectedItem(),
 				(ignoreCase.getModel().isSelected()
 				? RE.REG_ICASE : 0),jEdit.getRESyntax(jEdit
 				.getProperty("search.regexp.value")));

@@ -213,7 +213,6 @@ block-comment.label=Block Comment
 
 ### Tools menu
 tools=word-count \
-      generate-text \
       - \
       pipe-selection \
       toggle-console \
@@ -231,7 +230,6 @@ tools=word-count \
       %plugins
 tools.label=$Tools
 word-count.label=Word Co$unt...
-generate-text.label=Generate Random Text...
 pipe-selection.label=Fi$lter Selection...
 toggle-console.label=Show/Hi$de Console
 compile.label=$Compile...

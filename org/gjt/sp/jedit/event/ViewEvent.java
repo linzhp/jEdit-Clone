@@ -19,6 +19,7 @@
 
 package org.gjt.sp.jedit.event;
 
+import java.util.EventListener;
 import org.gjt.sp.jedit.*;
 
 /**
@@ -94,7 +95,7 @@ public class ViewEvent extends AbstractEditorEvent
 	 * event type.
 	 * @param listener The event listener
 	 */
-	public void fire(AbstractEditorListener listener)
+	public void fire(EventListener listener)
 	{
 		if(!(listener instanceof ViewListener))
 			return;
@@ -131,6 +132,9 @@ public class ViewEvent extends AbstractEditorEvent
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.3  1999/03/16 04:34:46  sp
+ * HistoryTextField updates, moved generate-text to a plugin, fixed spelling mistake in EditAction Javadocs
+ *
  * Revision 1.2  1999/03/12 23:51:00  sp
  * Console updates, uncomment removed cos it's too buggy, cvs log tags added
  *

@@ -1,5 +1,5 @@
 /*
- * HistoryTextField.java - Text field with up arrow/down arrow recall
+ * HistoryTextField.java - Text field with a combo box history
  * Copyright (C) 1999 Slava Pestov
  *
  * This program is free software; you can redistribute it and/or
@@ -24,89 +24,48 @@ import java.awt.*;
 import java.awt.event.*;
 import org.gjt.sp.jedit.*;
 
-public class HistoryTextField extends JTextField implements KeyListener
+public class HistoryTextField extends JComboBox
 {
-	public HistoryTextField(String name, int width)
+	public HistoryTextField(String name)
 	{
-		super(width);
+		history = new DefaultComboBoxModel();
 		this.name = name;
-		history = new String[100];
 		String line;
 		int i = 0;
 		while((line = jEdit.getProperty("history." + name + "." + i)) != null)
 		{
-			history[i] = line;
+			history.addElement(line);
 			i++;
 		}
-		addKeyListener(this);
+		setModel(history);
+		setEditable(true);
+		setMaximumRowCount(10);
+		setSelectedItem(null);
 	}
 
 	public void save()
 	{
-		String text = getText();
-		if(text == null)
-			text = "";
-		System.arraycopy(history,0,history,1,history.length - 1);
-		history[0] = text;
+		String text = (String)getSelectedItem();
+		if(text != null && text.length() != 0)
+			history.insertElementAt(text,0);
 
-		for(int i = 0; i < history.length; i++)
+		for(int i = 0; i < history.getSize(); i++)
 		{
-			String line = history[i];
-			if(line == null)
-				break;
-			jEdit.setProperty("history." + name + "." + i,line);
+			jEdit.setProperty("history." + name + "." + i,
+				(String)history.getElementAt(i));
 		}
 	}
 
 	public void addCurrentToHistory()
 	{
-		String text = getText();
-		history[0] = text;
-		historyPos = 1;
-		if(text == null)
-			return;
-		System.arraycopy(history,0,history,1,history.length - 1);
+		String text = (String)getSelectedItem();
+		if(text != null && text.length() != 0)
+			history.insertElementAt(text,0);
+		if(history.getSize() > 100)
+			history.removeElementAt(history.getSize() - 1);
 	}
-
-	public void keyTyped(KeyEvent evt) {}
-
-	public void keyPressed(KeyEvent evt)
-	{
-		switch(evt.getKeyCode())
-		{
-		case KeyEvent.VK_DOWN:
-			if(historyPos == 1)
-                        {
-                                historyPos = 0;
-                                setText(current);
-                        }
-                        else if(historyPos < 1)
-                                getToolkit().beep();
-			else
-				setText(history[--historyPos - 1]);
-			evt.consume();
-			break;
-		case KeyEvent.VK_UP:
-                        if(historyPos == 0)
-                                current = getText();
-			String line = history[historyPos];
-			if(line == null)
-				getToolkit().beep();
-			else
-			{
-				historyPos++;
-				setText(line);
-			}
-			evt.consume();
-			break;
-		}
-	}
-
-	public void keyReleased(KeyEvent evt) {}
 
 	// private members
 	private String name;
-	private String[] history;
-        private String current;
-	private int historyPos;
+	private DefaultComboBoxModel history;
 }
