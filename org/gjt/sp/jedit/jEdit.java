@@ -30,7 +30,8 @@ import java.net.*;
 import java.text.MessageFormat;
 import java.util.zip.*;
 import java.util.*;
-import org.gjt.sp.jedit.gui.*;
+import org.gjt.sp.jedit.event.*;
+import org.gjt.sp.jedit.gui.SplashScreen;
 
 /**
  * The main class of the jEdit text editor.
@@ -40,13 +41,13 @@ public class jEdit
 	/**
 	 * The jEdit version.
 	 */
-	public static final String VERSION = "1.4final";
+	public static final String VERSION = "1.5pre1";
 	
 	/**
 	 * The date when a change was last made to the source code,
 	 * in <code>YYYYMMDD</code> format.
 	 */
-	public static final String BUILD = "19990306";
+	public static final String BUILD = "19990309";
 
 	/**
 	 * AWK regexp syntax.
@@ -230,6 +231,7 @@ public class jEdit
 		views = new Vector();
 		recent = new Vector();
 		clipHistory = new Vector();
+		multicaster = new EventMulticaster();
 		
 		// Determine installation directory
 		jEditHome = System.getProperty("jedit.home");
@@ -319,7 +321,6 @@ public class jEdit
 		addAction(new org.gjt.sp.jedit.actions.delete_paragraph());
 		addAction(new org.gjt.sp.jedit.actions.delete_start_line());
 		addAction(new org.gjt.sp.jedit.actions.exchange_anchor());
-		addAction(new org.gjt.sp.jedit.actions.execute());
 		addAction(new org.gjt.sp.jedit.actions.exit());
 		addAction(new org.gjt.sp.jedit.actions.expand_abbrev());
 		addAction(new org.gjt.sp.jedit.actions.find());
@@ -337,7 +338,6 @@ public class jEdit
 		addAction(new org.gjt.sp.jedit.actions.insert_date());
 		addAction(new org.gjt.sp.jedit.actions.join_lines());
 		addAction(new org.gjt.sp.jedit.actions.locate_bracket());
-		addAction(new org.gjt.sp.jedit.actions.make());
 		addAction(new org.gjt.sp.jedit.actions.new_file());
 		addAction(new org.gjt.sp.jedit.actions.new_view());
 		addAction(new org.gjt.sp.jedit.actions.next_error());
@@ -381,6 +381,7 @@ public class jEdit
 		addAction(new org.gjt.sp.jedit.actions.shift_left());
 		addAction(new org.gjt.sp.jedit.actions.shift_right());
 		addAction(new org.gjt.sp.jedit.actions.tab());
+		addAction(new org.gjt.sp.jedit.actions.toggle_console());
 		addAction(new org.gjt.sp.jedit.actions.to_lower());
 		addAction(new org.gjt.sp.jedit.actions.to_upper());
 		addAction(new org.gjt.sp.jedit.actions.uncomment());
@@ -817,10 +818,7 @@ public class jEdit
 						gotoMarker(buffer,view,
 							marker);
 					if(view.getBuffer() != buffer)
-					{
 						view.setBuffer(buffer);
-						view.updateBuffersMenu();
-					}
 				}
 				return buffer;
 			}
@@ -831,23 +829,8 @@ public class jEdit
 		if(view != null)
 			view.setBuffer(buffer);
 		buffers.addElement(buffer);
-		Enumeration enum = getViews();
-		while(enum.hasMoreElements())
-		{
-			View v = (View)enum.nextElement();
-			v.updateBuffersMenu();
-		}
-		enum = getErrors();
-		if(enum != null)
-		{
-			while(enum.hasMoreElements())
-			{
-				CompilerError error = (CompilerError)enum
-					.nextElement();
-				if(error.getPath().equals(path))
-					error.openNotify(buffer);
-			}
-		}
+		fireEditorEvent(new EditorEvent(EditorEvent.BUFFER_CREATED,
+			view,buffer));
 		return buffer;
 	}
 
@@ -875,29 +858,9 @@ public class jEdit
 			return false;
 		if(buffers.size() == 1)
 			exit(view);
-		int index = buffers.indexOf(buffer);
-		buffers.removeElementAt(index);
-		Buffer prev = (Buffer)buffers.elementAt(Math.max(0,index - 1));
-		Enumeration enum = getViews();
-		while(enum.hasMoreElements())
-		{
-			view = (View)enum.nextElement();
-			if(view.getBuffer() == buffer)
-				view.setBuffer(prev);
-			view.updateBuffersMenu();
-			view.updateOpenRecentMenu();
-		}
-		enum = getErrors();
-		if(enum != null)
-		{
-			while(enum.hasMoreElements())
-			{
-				CompilerError error = (CompilerError)enum
-					.nextElement();
-				if(error.getBuffer() == buffer)
-					error.closeNotify();
-			}
-		}
+		buffers.removeElement(buffer);
+		fireEditorEvent(new EditorEvent(EditorEvent.BUFFER_CLOSED,
+			view,buffer));
 		return true;
 	}
 
@@ -934,6 +897,8 @@ public class jEdit
 	{
 		View _view = new View(view,buffer);
 		views.addElement(_view);
+		fireEditorEvent(new EditorEvent(EditorEvent.VIEW_CREATED,
+			view,buffer));
 		return _view;
 	}
 
@@ -942,10 +907,13 @@ public class jEdit
 	 */
 	public static void closeView(View view)
 	{
-		GUIUtilities.saveGeometry(view,"view");
-		
+		view.close();
+
+		fireEditorEvent(new EditorEvent(EditorEvent.VIEW_CLOSED,
+			view,view.getBuffer()));
+
 		if(views.size() == 1)
-			jEdit.exit(view);
+			exit(view);
 		else
 		{
 			view.dispose();
@@ -1034,6 +1002,35 @@ public class jEdit
 	}
 
 	/**
+	 * Adds an editor event listener to the global editor listener
+	 * list.
+	 * @param listener The editor event listener
+	 */
+	public static void addEditorListener(EditorListener listener)
+	{
+		multicaster.addListener(listener);
+	}
+
+	/**
+	 * Removes an editor event listener from the global editor listener
+	 * list.
+	 * @param listener The editor event listener
+	 */
+	public static void removeEditorListener(EditorListener listener)
+	{
+		multicaster.removeListener(listener);
+	}
+
+	/**
+	 * Fires an editor event to all registered listeners.
+	 * @param evt The event
+	 */
+	public static void fireEditorEvent(EditorEvent evt)
+	{
+		multicaster.fire(evt);
+	}
+
+	/**
 	 * Adds a string to the clipboard history.
 	 * @param str The string
 	 */
@@ -1052,85 +1049,13 @@ public class jEdit
 	}
 
 	/**
-	 * Clears the error list.
-	 */
-	public static void clearErrors()
-	{
-		if(errors != null)
-			errors.removeAllElements();
-		currentError = -1;
-	}
-
-	/**
-	 * Adds an error to the error list.
-	 * @param path The path name of the file
-	 * @param lineNo The line number
-	 * @param error The error itself
-	 */
-	public static void addError(String path, int lineNo, String error)
-	{
-		if(errors == null)
-			errors = new DefaultListModel();
-		errors.addElement(new CompilerError(path,lineNo,error));
-	}
-
-	/**
-	 * Returns the error at the specified index in the error list.
-	 * @param index The index in the error list
-	 */
-	public static CompilerError getError(int index)
-	{
-		if(errors == null || index < 0 || index >= errors.size())
-			return null;
-		else
-			return (CompilerError)errors.elementAt(index);
-	}
-
-	/**
-	 * Returns an enumeration of compiler errors. Returns null
-	 * if no compilation has taken place.
-	 */
-	public static Enumeration getErrors()
-	{
-		return (errors == null ? null : errors.elements());
-	}
-
-	/**
-	 * Returns the compiler error list as a Swing ListModel.
-	 * Guaranteed to return non-null (as a JList requires).
-	 */
-	public static DefaultListModel getErrorList()
-	{
-		if(errors == null)
-			errors = new DefaultListModel();
-		return errors;
-	}
-
-	/**
-	 * Sets the current error number.
-	 */
-	public static void setCurrentError(int error)
-	{
-		currentError = error;
-	}
-
-	/**
-	 * Returns the current error number.
-	 */
-	public static int getCurrentError()
-	{
-		return currentError;
-	}
-
-	/**
 	 * Exits cleanly from jEdit, prompting the user if any unsaved files
 	 * should be saved first.
 	 * @param view The view from which this exit was called
 	 */
 	public static void exit(View view)
 	{
-		// Save the current view's geometry
-		GUIUtilities.saveGeometry(view,"view");
+		view.close();
 
 		// Save the `desktop'
 		if("on".equals(getProperty("saveDesktop")))
@@ -1233,8 +1158,7 @@ public class jEdit
 	private static int maxRecent;
 	private static Vector clipHistory;
 	private static int maxClipHistory;
-	private static DefaultListModel errors;
-	private static int currentError;
+	private static EventMulticaster multicaster;
 
 	private jEdit() {}
 
@@ -1268,7 +1192,7 @@ public class jEdit
 
 	private static Buffer loadDesktop()
 	{
-		Buffer buffer = null;
+		Buffer b = null;
 		try
 		{
 			int i = 0;
@@ -1284,12 +1208,12 @@ public class jEdit
 					"desktop." + i + ".selStart"));
 				int selEnd = Integer.parseInt(getProperty(
 					"desktop." + i + ".selEnd"));
-				buffer = openFile(null,null,path,readOnly,
+				Buffer buffer = openFile(null,null,path,readOnly,
 					false);
 				buffer.setCaretInfo(selStart,selEnd);
 				buffer.setMode(getMode(mode));
-				if(!current)
-					buffer = null;
+				if(current)
+					b = buffer;
 				i++;
 			}
 		}
@@ -1298,9 +1222,9 @@ public class jEdit
 			System.err.println("Error while loading desktop:");
 			e.printStackTrace();
 		}
-		if(buffer == null && buffers.size() > 0)
-			buffer = (Buffer)buffers.elementAt(buffers.size() - 1);
-		return buffer;
+		if(b == null && buffers.size() > 0)
+			b = (Buffer)buffers.elementAt(buffers.size() - 1);
+		return b;
 	}		
 			
 	private static void gotoMarker(Buffer buffer, View view,

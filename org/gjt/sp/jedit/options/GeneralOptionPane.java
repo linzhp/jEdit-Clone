@@ -151,22 +151,6 @@ public class GeneralOptionPane extends OptionPane
 		cons.gridx = 0;
 		cons.gridy = 7;
 		cons.gridwidth = 3;
-		label = new JLabel(jEdit.getProperty("options.general.make"),
-			SwingConstants.RIGHT);
-		layout.setConstraints(label,cons);
-		add(label);
-		cons.gridx = 3;
-		cons.gridwidth = 1;
-		String[] makes = { "make", "nmake.exe" };
-		make = new JComboBox(makes);
-		make.setEditable(true);
-		make.setSelectedItem(jEdit.getProperty("buffer.make"));
-		layout.setConstraints(make,cons);
-		add(make);
-
-		cons.gridx = 0;
-		cons.gridy = 8;
-		cons.gridwidth = 3;
 		label = new JLabel(jEdit.getProperty("options.general.browser"),
 			SwingConstants.RIGHT);
 		layout.setConstraints(label,cons);
@@ -182,7 +166,7 @@ public class GeneralOptionPane extends OptionPane
 		add(browser);
 
 		cons.gridx = 0;
-		cons.gridy = 9;
+		cons.gridy = 8;
 		cons.gridwidth = cons.REMAINDER;
 		cons.fill = GridBagConstraints.NONE;
 		cons.anchor = GridBagConstraints.WEST;
@@ -193,7 +177,7 @@ public class GeneralOptionPane extends OptionPane
 		layout.setConstraints(saveDesktop,cons);
 		add(saveDesktop);
 
-		cons.gridy = 10;
+		cons.gridy = 9;
 		server = new JCheckBox(jEdit.getProperty(
 			"options.general.server"));
 		server.getModel().setSelected("on".equals(jEdit.getProperty(
@@ -201,7 +185,7 @@ public class GeneralOptionPane extends OptionPane
 		layout.setConstraints(server,cons);
 		add(server);
 
-		cons.gridy = 11;
+		cons.gridy = 10;
 		showTips = new JCheckBox(jEdit.getProperty(
 			"options.general.showTips"));
 		showTips.getModel().setSelected("on".equals(jEdit.getProperty(
@@ -209,7 +193,7 @@ public class GeneralOptionPane extends OptionPane
 		layout.setConstraints(showTips,cons);
 		add(showTips);
 
-		cons.gridy = 12;
+		cons.gridy = 11;
 		showToolbar = new JCheckBox(jEdit.getProperty(
 			"options.general.showToolbar"));
 		showToolbar.getModel().setSelected("on".equals(jEdit.getProperty(
@@ -253,7 +237,6 @@ public class GeneralOptionPane extends OptionPane
 		}
 		jEdit.setProperty("buffer.lineSeparator",lineSep);
 		jEdit.setProperty("browser",(String)browser.getSelectedItem());
-		jEdit.setProperty("buffer.make",(String)make.getSelectedItem());
 		jEdit.setProperty("view.showTips",showTips.getModel()
 			.isSelected() ? "on" : "off");
 		jEdit.setProperty("view.showToolbar",showToolbar.getModel()
@@ -266,7 +249,6 @@ public class GeneralOptionPane extends OptionPane
 	private JTextField recent;
 	private JTextField clipHistory;
 	private JTextField backups;
-	private JComboBox make;
 	private JComboBox lineSeparator;
 	private JComboBox browser;
 	private JCheckBox saveDesktop;

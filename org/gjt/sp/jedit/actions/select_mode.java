@@ -33,6 +33,5 @@ public class select_mode extends EditAction
 	{
 		View view = getView(evt);
 		view.getBuffer().setMode(jEdit.getMode(evt.getActionCommand()));
-		view.getTextArea().repaint();
 	}
 }

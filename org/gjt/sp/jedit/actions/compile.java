@@ -19,7 +19,7 @@
 
 package org.gjt.sp.jedit.actions;
 
-import javax.swing.JOptionPane;
+import javax.swing.*;
 import java.awt.event.ActionEvent;
 import org.gjt.sp.jedit.gui.Console;
 import org.gjt.sp.jedit.*;
@@ -64,35 +64,42 @@ public class compile extends EditAction
 			}
 		}
 
-		buffer.putProperty("compiler",compiler);
 		StringBuffer buf = new StringBuffer();
-		for(int i = 0; i < compiler.length(); i++)
+
+		if(compiler != null)
 		{
-			switch(compiler.charAt(i))
+			for(int i = 0; i < compiler.length(); i++)
 			{
-			case '%':
-				if(i != compiler.length() - 1)
+				switch(compiler.charAt(i))
 				{
-					switch(compiler.charAt(++i))
+				case '%':
+					if(i != compiler.length() - 1)
 					{
-					case 'u':
-						buf.append(buffer.getPath());
-						break;
-					case 'p':
-						buf.append(buffer.getFile()
-							.getPath());
-						break;
-					default:
-						buf.append('%');
+						switch(compiler.charAt(++i))
+						{
+						case 'u':
+							buf.append(buffer
+								.getPath());
+							break;
+						case 'p':
+							buf.append(buffer
+								.getFile()
+								.getPath());
+							break;
+						default:
+							buf.append('%');
+							break;
+						}
 						break;
 					}
-					break;
+				default:
+					buf.append(compiler.charAt(i));
 				}
-			default:
-				buf.append(compiler.charAt(i));
 			}
 		}
 
-		new Console(view,buf.toString());
+		view.toggleConsoleVisibility();
+
+		view.getConsole().getCommandField().setText(buf.toString());
 	}
 }

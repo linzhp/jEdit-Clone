@@ -59,9 +59,6 @@ buffer.margin.right=0.5
 # Syntax colorizing
 buffer.syntax=on
 
-# `Make' tool
-buffer.make=make
-
 # Colors
 buffer.colors.comment1=red
 buffer.colors.comment2=#990033

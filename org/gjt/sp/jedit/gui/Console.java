@@ -1,5 +1,5 @@
 /*
- * Console.java - Command output window
+ * Console.java - Command output panel
  * Copyright (C) 1999 Slava Pestov
  *
  * This program is free software; you can redistribute it and/or
@@ -27,59 +27,56 @@ import java.awt.event.*;
 import java.io.*;
 import org.gjt.sp.jedit.*;
 
-public class Console extends JFrame
-implements ActionListener, KeyListener, ListSelectionListener, WindowListener
+public class Console extends JPanel
+implements ActionListener, ListSelectionListener
 {
-	public Console(View view, String defaultCmd)
+	public Console(View view)
 	{
-		super(jEdit.getProperty("console.title"));
+		super(new BorderLayout());
 
 		this.view = view;
 
 		JPanel panel = new JPanel(new BorderLayout());
 		panel.add("West",new JLabel(jEdit.getProperty("console.cmd")));
 		panel.add("Center",cmd = new HistoryTextField("console",40));
-		cmd.setText(defaultCmd);
-		cmd.addKeyListener(this);
-		getContentPane().add("North",panel);
+		cmd.addActionListener(this);
+		add("North",panel);
 
-		JTabbedPane tabs = new JTabbedPane();
+		JTabbedPane tabs = new JTabbedPane(SwingConstants.BOTTOM);
 		tabs.addTab(jEdit.getProperty("console.output"),
-			new JScrollPane(output = new JTextArea(15,40)));
+			new JScrollPane(output = new JTextArea()));
 		output.setEditable(false);
 		tabs.addTab(jEdit.getProperty("console.errors"),
-			new JScrollPane(errors = new JList(jEdit.getErrorList())));
-		errors.setVisibleRowCount(15);
-		errors.addListSelectionListener(this);
-		getContentPane().add("Center",tabs);
+			new JScrollPane(errorList = new JList(getErrorList())));
+		errorList.setVisibleRowCount(15);
+		errorList.addListSelectionListener(this);
+		add("Center",tabs);
+	}
 
-		panel = new JPanel();
-		panel.add(run = new JButton(jEdit.getProperty("console.run")));
-		getRootPane().setDefaultButton(run);
-		panel.add(stop = new JButton(jEdit.getProperty("console.stop")));
-		panel.add(close = new JButton(jEdit.getProperty("console.close")));
-		run.addActionListener(this);
-		close.addActionListener(this);
-		getContentPane().add("South",panel);
-
-		addKeyListener(this);
-		addWindowListener(this);
-
-		pack();
-		GUIUtilities.loadGeometry(this,"console");
-		show();
-
-		cmd.requestFocus();
+	public HistoryTextField getCommandField()
+	{
+		return cmd;
 	}
 
 	public void run(String command)
 	{
 		stop();
+
 		output.append("> ");
 		output.append(command);
 		output.append("\n");
 		
-		jEdit.clearErrors();
+		if(errors != null)
+		{
+			for(int i = 0; i < errors.size(); i++)
+			{
+				CompilerError error =
+					(CompilerError)errors.elementAt(i);
+				jEdit.removeEditorListener(error);
+			}
+			errors.removeAllElements();
+		}
+		currentError = -1;
 
 		try
 		{
@@ -97,49 +94,68 @@ implements ActionListener, KeyListener, ListSelectionListener, WindowListener
 		stderr = new StderrThread();
 	}
 
+	/**
+	 * Returns the error at the specified index in the error list.
+	 * @param index The index in the error list
+	 */
+	public CompilerError getError(int index)
+	{
+		if(errors == null || index < 0 || index >= errors.size())
+			return null;
+		else
+			return (CompilerError)errors.elementAt(index);
+	}
+
+	/**
+	 * Returns the compiler error list as a Swing ListModel.
+	 * Guaranteed to return non-null (as a JList requires).
+	 */
+	public DefaultListModel getErrorList()
+	{
+		if(errors == null)
+			errors = new DefaultListModel();
+		return errors;
+	}
+
+	/**
+	 * Sets the current error number.
+	 */
+	public void setCurrentError(int error)
+	{
+		currentError = error;
+	}
+
+	/**
+	 * Gets the current error number.
+	 */
+	public int getCurrentError()
+	{
+		return currentError;
+	}
+
 	public void actionPerformed(ActionEvent evt)
 	{
-		Object source = evt.getSource();
-		if(source == run)
-			run();
-		else if(source == stop)
-			stop();
-		else if(source == close)
-			close();
-	}
-
-	public void keyPressed(KeyEvent evt)
-	{
-		switch(evt.getKeyCode())
+		if(evt.getSource() == cmd)
 		{
-		case KeyEvent.VK_ENTER:
-			run();
-			evt.consume();
-			break;
-		case KeyEvent.VK_ESCAPE:
-			close();
-			evt.consume();
-			break;
+			String s = cmd.getText();
+			if(s != null && s.length() != 0)
+			{
+				cmd.addCurrentToHistory();
+				cmd.setText(null);
+
+				run(s);
+			}
 		}
 	}
-
-	public void keyReleased(KeyEvent evt) {}
-	public void keyTyped(KeyEvent evt) {}
 
 	public void valueChanged(ListSelectionEvent evt)
 	{
-		if(errors.isSelectionEmpty())
+		if(errorList.isSelectionEmpty())
 			return;
 
-		if(!view.isVisible())
-		{
-			view = jEdit.newView(view,(Buffer)jEdit.getBuffers()
-				.nextElement());
-		}
-
-		int errorNo = errors.getSelectedIndex();
-		jEdit.setCurrentError(errorNo);
-		CompilerError error = jEdit.getError(errorNo);
+		int errorNo = errorList.getSelectedIndex();
+		setCurrentError(errorNo);
+		CompilerError error = getError(errorNo);
 		Buffer buffer = error.openFile();
 		int lineNo = error.getLineNo();
 		Element lineElement = buffer.getDefaultRootElement()
@@ -155,29 +171,16 @@ implements ActionListener, KeyListener, ListSelectionListener, WindowListener
 			view.updateBuffersMenu();
 		}
 	}
-	
-	public void windowOpened(WindowEvent evt) {}
-	
-	public void windowClosing(WindowEvent evt)
-	{
-		close();
-	}
-	
-	public void windowClosed(WindowEvent evt) {}
-	public void windowIconified(WindowEvent evt) {}
-	public void windowDeiconified(WindowEvent evt) {}
-	public void windowActivated(WindowEvent evt) {}
-	public void windowDeactivated(WindowEvent evt) {}
 
 	// private members
 	private HistoryTextField cmd;
 	private JTextArea output;
-	private JList errors;
-	private JButton run;
-	private JButton stop;
-	private JButton close;
+	private JList errorList;
 
 	private View view;
+
+	private DefaultListModel errors;
+	private int currentError;
 
 	private Process process;
 	private StdoutThread stdout;
@@ -192,17 +195,6 @@ implements ActionListener, KeyListener, ListSelectionListener, WindowListener
 	private int lineNo;
 	private String error;
 
-	private void run()
-	{
-		String s = cmd.getText();
-		if(s != null && s.length() != 0)
-		{
-			cmd.addCurrentToHistory();
-			cmd.setText(null);
-			run(s);
-		}
-	}
-
 	private void stop()
 	{
 		if(process != null)
@@ -212,13 +204,6 @@ implements ActionListener, KeyListener, ListSelectionListener, WindowListener
 			process.destroy();
 			process = null;
 		}
-	}
-
-	private void close()
-	{
-		GUIUtilities.saveGeometry(this,"console");
-		cmd.save();
-		dispose();
 	}
 
 	private synchronized void addOutput(final String msg)
@@ -288,7 +273,7 @@ implements ActionListener, KeyListener, ListSelectionListener, WindowListener
 			// If not, set the error message variable
 			error = msg.substring(lineNoIndex + 1);
 
-			jEdit.addError(file,lineNo,error);
+			addError(file,lineNo,error);
 			break;
 		case TEX:
 			// Check for l.<line number>
@@ -315,7 +300,7 @@ implements ActionListener, KeyListener, ListSelectionListener, WindowListener
 				error = error.concat(msg.substring(lineNoIndex));
 				errorMode = GENERIC;
 
-				jEdit.addError(view.getBuffer().getPath(),
+				addError(view.getBuffer().getPath(),
 					lineNo,error);
 			}
 			break;
@@ -324,9 +309,16 @@ implements ActionListener, KeyListener, ListSelectionListener, WindowListener
 			error = msg.trim();
 			errorMode = GENERIC;
 
-			jEdit.addError(file,lineNo,error);
+			addError(file,lineNo,error);
 			break;
 		}
+	}
+
+	private void addError(String path, int lineNo, String error)
+	{
+		if(errors == null)
+			errors = new DefaultListModel();
+		errors.addElement(new CompilerError(path,lineNo,error));
 	}
 
 	private class StdoutThread extends Thread

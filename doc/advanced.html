@@ -79,7 +79,9 @@ Of course, <i>sh</i> should be the <b>internal</b> name of the desired edit
 mode.<p>
 
 The following table lists all edit modes included with jEdit; additional
-ones may be available, depending on the plugins installed.
+ones may be available, depending on the plugins installed. Note that jEdit's
+file name matching routines are case-insensitive - test.bat, test.BaT and
+test.BAT will all be edited with the Batch File mode.
 
 <table border=3>
 
@@ -143,7 +145,7 @@ containing `\begin' in the first 100 lines.</td>
 </tr>
 
 <tr>
-<td>Makefile</td> <td>make</td> <td>Files named `Makefile', `makefile' or
+<td>Makefile</td> <td>make</td> <td>Files named `makefile' or
 `GNUmakefile'.</td> <td>For editing Makefiles.</td>
 </tr>
 

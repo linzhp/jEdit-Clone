@@ -6,29 +6,34 @@
 ###
 ### TOOLBAR
 ###
-view.toolbar=new-file open-file save print send - reload - undo redo - cut \
-	copy paste - find find-next - make compile prev-error next-error - \
-	options exit - help@index.html
-new-file.icon=filenew.gif
-open-file.icon=fileopen.gif
-save.icon=save.gif
-print.icon=fileprint.gif
-send.icon=send.gif
-reload.icon=reload.gif
-undo.icon=undo.gif
-redo.icon=redo.gif
-cut.icon=editcut.gif
-copy.icon=editcopy.gif
-paste.icon=editpaste.gif
-find.icon=search.gif
-find-next.icon=next.gif
-make.icon=make.gif
-compile.icon=compile.gif
-prev-error.icon=back.gif
-next-error.icon=forward.gif
-options.icon=configure.gif
-exit.icon=exit.gif
-help@index.html.icon=contents.gif
+view.toolbar=new-file open-file open-url close-file - save save-all - \
+	send print - undo redo - cut copy paste - \
+	find find-next hypersearch - \
+	toggle-console - prev-error next-error - exit - \
+	help@index.html
+
+new-file.icon=New.gif
+open-file.icon=Open.gif
+open-url.icon=World.gif
+close-file.icon=Delete.gif
+save.icon=Save.gif
+save-all.icon=SaveAll.gif
+send.icon=EnvelopeIn.gif
+print.icon=Print.gif
+undo.icon=Undo.gif
+redo.icon=Redo.gif
+cut.icon=Cut.gif
+copy.icon=Copy.gif
+paste.icon=Paste.gif
+find.icon=Magnify.gif
+find-next.icon=VCRFastForward.gif
+hypersearch.icon=DocumentIn.gif
+toggle-console.icon=Computer.gif
+prev-error.icon=Left.gif
+next-error.icon=Right.gif
+exit.icon=VCROpen.gif
+help@index.html.icon=Help.gif
+
 
 ###
 ### CONTEXT MENU
@@ -210,35 +215,33 @@ block-comment.label=Block Comment
 uncomment.label=Uncomment
 
 ### Tools menu
-tools=execute \
+tools=word-count \
+      generate-text \
+      - \
       pipe-selection \
+      toggle-console \
+      compile \
+      - \
+      prev-error \
+      next-error \
       - \
       browser-open-sel \
       browser-open-url \
-      - \
-      word-count \
-      generate-text \
-      - \
-      compile \
-      make \
-      prev-error \
-      next-error \
       - \
       options \
       - \
       %mode \
       %plugins
 tools.label=$Tools
-execute.label=E$xecute Command...
-pipe-selection.label=Fi$lter Selection...
-browser-open-sel.label=$Open Selection in WWW Browser
-browser-open-url.label=Open in $WWW Browser
 word-count.label=Word Co$unt...
 generate-text.label=Generate Random Text...
+pipe-selection.label=Fi$lter Selection...
+toggle-console.label=Show/Hide Console
 compile.label=$Compile...
-make.label=$Make...
 prev-error.label=Go to Pre$vious Error
 next-error.label=Go to $Next Error
+browser-open-sel.label=$Open Selection in WWW Browser
+browser-open-url.label=Open in $WWW Browser
 options.label=Opt$ions...
 
 ### Mode menu
@@ -519,7 +522,6 @@ options.general.recent=Number of recent files:\
 options.general.clipHistory=Number of clippings in clip history:\ 
 options.general.backups=Number of backups when saving:\ 
 options.general.lineSeparator=Default line separator:\ 
-options.general.make=Make tool:\ 
 options.general.browser=WWW browser:\ 
 options.general.saveDesktop=Save session on exit
 options.general.server=Enable jEdit server

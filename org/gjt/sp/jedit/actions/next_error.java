@@ -21,6 +21,7 @@ package org.gjt.sp.jedit.actions;
 
 import javax.swing.JOptionPane;
 import java.awt.event.ActionEvent;
+import org.gjt.sp.jedit.gui.Console;
 import org.gjt.sp.jedit.*;
 
 public class next_error extends EditAction
@@ -35,8 +36,9 @@ public class next_error extends EditAction
 		try
 		{
 			View view = getView(evt);
-			int errorNo = jEdit.getCurrentError();
-			CompilerError error = jEdit.getError(++errorNo);
+			Console console = view.getConsole();
+			int errorNo = console.getCurrentError();
+			CompilerError error = console.getError(++errorNo);
 			if(error == null)
 			{
 				view.getToolkit().beep();
@@ -45,7 +47,7 @@ public class next_error extends EditAction
 			JOptionPane.showMessageDialog(view,error.getError(),
 				jEdit.getProperty("error.title"),
 				JOptionPane.INFORMATION_MESSAGE);
-			jEdit.setCurrentError(errorNo);
+			console.setCurrentError(errorNo);
 			Buffer buffer = error.openFile();
 			int lineNo = error.getLineNo();
 			int start = buffer.getDefaultRootElement()

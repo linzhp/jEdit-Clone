@@ -2,402 +2,47 @@
 <body>
 <h1>Version History</h1>
 
-<a href=#wishlist>To Do For Future Versions</a><br>
-<a href=#showstop>Version 1.4 Showstoppers</a><br>
-<a href=#14final>Version 1.4final</a><br>
-<a href=#14pre8>Version 1.4pre8</a><br>
-<a href=#14pre7>Version 1.4pre7</a><br>
-<a href=#14pre6>Version 1.4pre6</a><br>
-<a href=#14pre5>Version 1.4pre5</a><br>
-<a href=#14pre4>Version 1.4pre4</a><br>
-<a href=#14pre3>Version 1.4pre3</a><br>
-<a href=#14pre2>Version 1.4pre2</a><br>
-<a href=#14pre1>Version 1.4pre1</a><br>
+<a href=#todo>To Do</a><br>
+<a href=#showstop>Version 1.5pre1</a>
 
-<a name=wishlist>
-<h1>To Do For Future Versions</h1>
+<a name=todo>
+<h1>To Do</h1>
 </a>
 
 <ul>
-<li>Folding (fold list stored in buffer, but each view has it's own
-fold configuration)
-<li>GUI key binding editor (including Swing keymaps)
-<li>Insert file command
-<li>Literal (no regexp) search option
-<li>Bracket matching code should skip comments and quoted literals
-<li>Fix lazy colorizing of multiline statements
-<li>Search and replace needs a reworking, it's too messy right now
-<li>Event system, with BufferEvent, ViewEvent notifying components when
-buffers/views are opened and closed. Would make a lot of existing code
-cleaner
-<li>ApplicationOwner interface so that jEdit be added to any
-application that supports those interfaces, which define functions such
-as getProperty(), createFileReader(), exit(), etc
-<li>Dependencies on Buffer class should be removed from syntax colorizing
-subsystem, it make it usable on it's own
-<li>Expand abbreviation should fetch the next match if the caret hasn't
-moved since the last time it was invoked
-<li>Each view should have it's own `console' and file browser
-<li>Context menu - mnemonics/arrows don't work, and selection is extended if
-mouse is held down
-<li>Command line parameter to not open a new view when connecting to the server
+<li>HistoryTextField doesn't work well sometimes
+<li>Remove make tool setting from docs
+<li>Update docs for new console
+<li>View.toggleConsoleVisibility() broken
+<li>Make syntax package modular
 </ul>
 
-<a name=showstop>
-<h1>Version 1.4 Showstoppers</h1>
+<a name=15pre1>
+<h1>Version 1.5pre1</h1>
 </a>
+
+<h2>New Features</h2>
 
 <ul>
-<li><b>ACU BUG</b>
-<li>Geometry isn't saved/restored properly (getBounds() always returns
-less than was passed to setBounds(), and this only happends on X11)
-(probably a JDK bug, and a really annoying one too)
-<li>Very very rarely when the session is being restored, the text area
-doesn't scroll to the correct line
-<li>Nothing is displayed in the help window when jEdit is being used with
-the TYA JIT (probably a TYA bug)
+<li>Each view now has it's own console and error list
+<li>Event system added
 </ul>
-
-<a name=14final>
-<h1>Version 1.4final</h1>
-</a>
 
 <h2>Enhancements</h2>
 
 <ul>
-<li>New version of accent converter plugin (Romain Guy)
-<li>When a new view is created, it borrows it's geometry from the current
-view
-<li>Minor options dialog box updates
-<li>Changed several syntax colors
+<li>New tool bar icons, it is also dockable
 <li>Minor documentation updates
 </ul>
 
 <h2>Bug Fixes</h2>
 
 <ul>
-<li>Reload command didn't work for files with no edit mode
-<li>Made mode selection case insensitive, so that AUTOEXEC.BAT is now
-recognized as a batch file
-<li>The paths that Jikes outputs on Windows (DOS drive letter + Unix
-path separator) should be correctly parsed by the `console'
-<li>Accent converter didn't work properly with entitites it didn't know about
-<li>Filter selection dialog wasn't displayed properly
-<li>Fixed bug in search &amp; replace where it would have problems dealing
-with an empty replace string
-<li>Possible fix for the options dialog crash some people have been
-seeing (autosave thread is now stopped with interrupt() instead of
-stop())
+<li>The current file wasn't restored properly by the session management
+code
+<li>Removed CVS temporary files (.#... and .new...)
+<li>Removed unused acu.java file
 </ul>
 
-<a name=14pre8>
-<h1>Version 1.4pre8</h1>
-</a>
-
-<h2>New Features</h2>
-
-<ul>
-<li>Quoted literals that don't end on the current line are colored
-differently to make errors easier to spot
-</ul>
-
-<h2>Enhancements</h2>
-
-<ul>
-<li>Minor documentation updates
-<li>When something is copied or pasted, it isn't added to the
-paste previous list if it is already there
-<li>Upgraded gnu.regexp to version 1.0.6
-</ul>
-
-<h2>Bug Fixes</h2>
-
-<ul>
-<li>Processes invoked from the console that read from standard input
-hang forever
-<li>`Keep dialog' didn't work properly - it cleared the text fields,
-so you had to press up arrow after each search
-<li>`Replace All' didn't work if the replacement string was shorter than
-the search string (really embarrassing bug, and it has been around
-since 1.4pre2!!!)
-<li>Fix in Configure script for JVM paths that include slashes
-<li>Error list didn't work with DOS/Windows paths (E:\filename\file)
-<li>HistoryTextField didn't set historyPos to -1 after addToHistory()
-<li>Replace All didn't work if the replacement string was empty
-<li>Desktop had various problems with untitled files
-<li>Desktop was only loaded up to the current file, not the end of
-the list
-<li>Fixed incorrect colorization of multiline literals in Makefile mode
-<li>Fixed Makefile bug where it wouldn't install if BINDIR == SHAREDIR
-</ul>
-
-<a name=14pre7>
-<h1>Version 1.4pre7</h1>
-</a>
-
-<h2>New Features</h2>
-
-<ul>
-<li>Simple toolbar added
-<li>New `console' window to replace old `command output' - it has more
-features
-<li>-+<i>line</i> switch can be used to go to a line number
-</ul>
-
-<h2>Enhancements</h2>
-
-<ul>
-<li>Minor options dialog box improvements
-</ul>
-
-<h2>Bug Fixes</h2>
-
-<ul>
-<li>Error list menu was created incorrectly sometimes
-<li>Invalid line numbers in the error list caused problems
-<li>Keywords weren't colorized correctly sometimes
-<li>Untitled files were (wrongly) saved with the desktop, this caused problems
-<li>View size and position wasn't saved on exit
-</ul>
-
-<a name=14pre6>
-<h1>Version 1.4pre6</h1>
-</a>
-
-<h2>New Features</h2>
-
-<ul>
-<li>The position of the editor window and most dialogs is now saved to the
-properties and restored when jEdit is reopened
-</ul>
-
-<h2>Enhancements</h2>
-
-<ul>
-<li>`Accents to HTML Entities' plugin optimizations (Romain Guy)
-<li>Desktop file isn't used anymore - session is stored in the properties
-<li>Major code reorganization
-</ul>
-
-<h2>Bug Fixes</h2>
-
-<ul>
-<li>Files got corrupted if the line separator was set to DOS/Windows in
-the Options dialog box (this only affected new files, existing files are
-safe)
-<li>Find Selection didn't work
-<li>Soft tabs didn't work in text mode
-<li>Desktop wasn't saved sometimes
-<li>Using the history would delete what was already entered in the text field
-</ul>
-
-<a name=14pre5>
-<h1>Version 1.4pre5</h1>
-</a>
-
-<h2>New Features</h2>
-
-<ul>
-<li>Reload command added
-<li>Right click menu added to text area (doesn't work very well yet)
-<li>History in Search &amp; Replace and HyperSearch - use up and down
-arrow keys to recall previous search strings (Doesn't work very well yet)
-<li>Keep dialog option in Search &amp; Replace
-</ul>
-
-<h2>Enhancements</h2>
-
-<ul>
-<li>Electric borders aren't as `agressive' - scrolling starts at three
-lines from the top or bottom, not four like before
-<li>Block caret is now off by default
-<li>Files are added to the recent list when they're closed, not opened
-<li>HyperSearch dialog beeps when no matches were found
-<li>Faster keyword map (uses character arrays instead of strings) should make
-C, C++, Java, JavaScript and SQL mode faster
-<li>Transact-SQL mode optimizations (Mike Dillon)
-<li>Minor syntax colorizing speedups (less array copying) (Mike Dillon)
-<li>Redundant calls to ensureCapacity() removed from token markers (Mike Dillon)
-</ul>
-
-<h2>Bug Fixes</h2>
-
-<ul>
-<li>`Font Style' setting in Options should work now (why do I always
-mess up in the options dialog box?)
-<li>Sometimes C++ keywords weren't colorized
-<li>Fixed obscure backup bug nobody has ever seen (if you do a `save as'
-to a different directory than the original file, the backup is created
-in the wrong directory)
-<li>Some constructs would be colorized as labels in C/C++/Java mode
-<li>Fixed very obscure syntax colorizing bug (insertLine() was called
-one too many times, this is probably what caused the random multiline
-comment glitches, and so on)
-<li>Fixed several buffers menu updating bugs
-</ul>
-
-<a name=14pre4>
-<h1>Version 1.4pre4</h1>
-</a>
-
-<h2>New Features</h2>
-
-<ul>
-<li>Added TSQL mode (Mike Dillon)
-<li>Added Block Caret setting in Tools-&gt;Options-&gt;Editor
-<li>Sticky file format (when a file is loaded, jEdit tries to guess the
-line separators. When it is saved, the original line separators are used.
-Makes it easier for people who deal with both DOS and Unix files)
-</ul>
-
-<h2>Enhancements</h2>
-
-<ul>
-<li>Improved KeywordMap, might make C/C++/Java mode faster (Mike Dillon)
-<li>Double clicking on items in `Paste Previous' and `Paste Predefined'
-has the same effect as pressing `Insert' (Mike Dillon)
-<li>Size of I/O buffers increased from 8K to 32K - should make file saving
-and loading faster
-<li>Removed redundant scanning pass from CTokenMarker - should be about
-50% faster
-<li>(, ) characters are now optional in buffer-local properties, for example
-you can now write :tabSize=4: instead of (:tabSize=4:) in the first 10 lines
-of a file
-</ul>
-
-<h2>Bug Fixes</h2>
-
-<ul>
-<li>Batch file mode had an ArrayIndexOutOfBounds condition (Mike Dillon)
-<li>HyperSearch dialog didn't resize properly (Mike Dillon)
-<li>AltGR key should now work on Windows (Juha Lindfors)
-<li>Shift Indent Left/Right had problems when shifting empty lines
-<li>Line separator setting in Options dialog box didn't work
-<li>README.txt referenced non-existent COPYING.txt (as of jEdit 1.3, it
-is COPYING.html on the doc/ directory)
-</ul>
-
-<a name=14pre3>
-<h1>Version 1.4pre3</h1>
-</a>
-
-<h2>New Features</h2>
-
-<ul>
-<li>Added patch mode for editing Unix diffs and patches (Yeah, it's kind of
-cheap, but I was editing a diff the other day and thought, why not?)
-<li>Added props mode for editing Java property files and DOS INI files
-</ul>
-
-<h2>Bug Fixes</h2>
-
-<ul>
-<li>Fixed bug in <code>jEdit.regionMatches</code> method, this caused problems
-in HTML, Batch File mode
-<li>`Replace in Selection' didn't work sometimes
-<li>`Save All Buffers' saved all buffers - should only save changed ones
-<li>jEdit should now work with `custom' classloaders
-<li>Fixed bug with plugin classes >8K (thanks to 
-Mike Dillon &lt;mdillon@uclink4.berkeley.edu&gt; for the fix)
-<li>KeywordMap didn't work with case insensitive keywords (thanks to 
-Mike Dillon &lt;mdillon@uclink4.berkeley.edu&gt; for the fix)
-<li>Indentifiers such as the_class and no_break would be colorized incorrectly
-in C/C++/Java mode
-<li>Labels and ?: constructs should now be colorized correctly 99% of the time
-</ul>
-
-<a name=14pre2>
-<h1>Version 1.4pre2</h1>
-</a>
-
-<h2>New Features</h2>
-<ul>
-<li>Emacs-style error parsing added (If you use the very fast and very good
-Jikes compiler, this means that you can give Jikes the +E option and jEdit
-will parse the errors like it does with javac, etc)
-<li>Javadoc (/** ... */) comments are now displayed in a different color
-(thanks to Juha Lindfors &lt;jplindfo@cc.helsinki.fi&gt; for providing the code)
-<li>`Save All Buffers' and `Select Line Range' commands added
-<li>Search and replace now has `Replace in Selection' command
-</ul>
-
-<h2>Enhancements</h2>
-
-<ul>
-<li>First text field in `Search &amp; Replace' and `HyperSearch' now gets
-keyboard focus by default
-<li>`Replace All' button in Search &amp; Replace now has an Alt+R mnemonic
-<li>`Scroll to Current Line' shortcut changed to C+e C+j, C+e C+l is now
-select line range (and this makes it consitent with Go to Line which is
-C+l)
-</ul>
-
-<h2>Bug Fixes</h2>
-<ul>
-<li>Fixed minor bug where Compile Errors menu would be empty instead of
-displaying `No Errors'
-<li>Minor documentation updates
-<li>Command output window no longer displays `+++ Command finished' since
-it would sometimes be displayed before the command had finished
-<li>`Go to Next/Previous Error' dialog has a proper title now
-<li>Fixed incorrect percentage display in the status bar
-<li>C/C++/Java/JavaScript modes would throw an ArrayIndexOutOfBoundsException
-if an accented character was found
-<li>HTML mode could throw an ArrayIndexOutOfBounds under obscure circumstances
-<li>StringIndexOutOfBoundsException would be thrown if jEdit's CLASSPATH
-was `jedit.jar' with no leading directory name
-<li>Fixed incorrect painting of text area after a mode change
-<li>Partial fix for incorrect colorization of ?: in C/C++/Java/JavaScript modes
-</ul>
-
-<a name=14pre1>
-<h1>Version 1.4pre1</h1>
-</a>
-
-<h2>New Features</h2>
-
-<ul>
-<li>Semi-intelligent indent in C/C++/Java modes
-<li>Experimental compiler error parsing added
-<li>`Electric borders' - scrolling starts when caret is 4 lines from
-the top or bottom
-<li>Usage hints (ie, Tips of the Day) are displayed in the title bar
-until you start typing
-<li>`Scroll to Line', `Exchange Anchor and Caret', `Go to End of Indent',
-`Paste Predefined' and `Generate Random Text' (it's funny, so laugh) commands
-added
-<li>`Accent Converter' plugin by Romain Guy &lt;RomainGuy@aol.com&gt;
-</ul>
-
-<h2>Enhancements</h2>
-
-<ul>
-<li>Status bar removed, dirty and read only status now displayed in the
-title bar, line number is displayed in the menu bar
-<li>Warning if file has changed on disk by another program
-<li>Improved keyboard shortcuts
-<li>New menu item class displays key bindings in the correct place
-<li>Several options dialog updates
-<li>Several autosave updates 
-<li>Backup is only made only once per file visit (like Emacs)
-<li>Default JVM changed to `java' to make it easier for people with JDK 1.2
-<li>Swapped position of Search and Tools menus to make GUI more consistent
-</ul>
-
-<h2>Bug Fixes</h2>
-<ul>
-<li>Buffers menu's modified flag wasn't updated after a marker was set
-<li>Compiler setting wasn't saved
-<li>`Next Paragraph',  `Delete Paragraph' and `Delete Line' had problems
-when working on the last line of the document
-<li>Various dialogs didn't respond properly to Escape
-<li>Incorrect message was displayed in the `save before compiling' dialog
-<li>CTokenMarker (colorizer used in C/C++/Java/JavaScript modes)
-would throw an exception if the last character on a line
-was `/'
-<li>Fixed the jEdit.regionMatches bug (jEdit 1.3 had a fix for this, but
-it caused more problems than the bug itself)
-<li>URLs didn't work properly with the desktop feature on Unix
-</ul>
 </body>
 </html>

@@ -22,11 +22,12 @@ package org.gjt.sp.jedit;
 import javax.swing.text.Element;
 import javax.swing.text.Position;
 import java.io.File;
+import org.gjt.sp.jedit.event.*;
 
 /**
  * A compiler error.
  */
-public class CompilerError
+public class CompilerError implements EditorListener
 {
 	/**
 	 * Creates a new compiler error.
@@ -40,6 +41,8 @@ public class CompilerError
 			"user.dir"),path);
 		this.lineNo = lineNo - 1;
 		this.error = error;
+
+		jEdit.addEditorListener(this);
 
 		name = new File(path).getName();
 
@@ -108,8 +111,35 @@ public class CompilerError
 		return name + ":" + getLineNo() + ":" + getError();
 	}
 
-	// package private members
-	void openNotify(Buffer buffer)
+	// event listeners
+	
+	// BEGIN EDITOR LISTENER
+	public void bufferCreated(EditorEvent evt)
+	{
+		if(evt.getBuffer().getPath().equals(path))
+			openNotify(evt.getBuffer());
+	}
+
+	public void bufferClosed(EditorEvent evt)
+	{
+		if(evt.getBuffer() == buffer)
+			closeNotify();
+	}
+
+	public void viewCreated(EditorEvent evt) {}
+	public void viewClosed(EditorEvent evt) {}
+	public void bufferDirtyChanged(EditorEvent evt) {}
+	// END EDITOR LISTENER
+
+	// private members
+	private String path;
+	private String name;
+	private Buffer buffer;
+	private int lineNo;
+	private Position linePos;
+	private String error;
+
+	private void openNotify(Buffer buffer)
 	{
 		this.buffer = buffer;
 		Element map = buffer.getDefaultRootElement();
@@ -124,17 +154,9 @@ public class CompilerError
 		}
 	}
 
-	void closeNotify()
+	private void closeNotify()
 	{
 		buffer = null;
 		linePos = null;
 	}
-
-	// private members
-	private String path;
-	private String name;
-	private Buffer buffer;
-	private int lineNo;
-	private Position linePos;
-	private String error;
 }

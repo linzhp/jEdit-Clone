@@ -26,7 +26,8 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
 import java.util.*;
-import org.gjt.sp.jedit.gui.SyntaxTextArea;
+import org.gjt.sp.jedit.event.*;
+import org.gjt.sp.jedit.gui.*;
 
 /**
  * A <code>View</code> edits buffers. There is no public constructor in the
@@ -35,7 +36,8 @@ import org.gjt.sp.jedit.gui.SyntaxTextArea;
  * @see Buffer
  */
 public class View extends JFrame
-implements CaretListener, KeyListener, WindowListener
+implements BufferListener, EditorListener,
+CaretListener, KeyListener, WindowListener
 {	
 	/**
 	 * Reloads various settings from the properties.
@@ -357,7 +359,10 @@ implements CaretListener, KeyListener, WindowListener
 	public void setBuffer(Buffer buffer)
 	{
 		if(this.buffer != null)
+		{
 			saveCaretInfo();
+			this.buffer.removeBufferListener(this);
+		}
 		this.buffer = buffer;
 		textArea.setDocument(buffer);
 		updateLineSepMenu();
@@ -365,6 +370,7 @@ implements CaretListener, KeyListener, WindowListener
 		updateModeMenu();
 		updateTitle();
 		updateLineNumber(true);
+		buffer.addBufferListener(this);
 	}
 
 	/**
@@ -375,6 +381,43 @@ implements CaretListener, KeyListener, WindowListener
 		return textArea;
 	}
 	
+	/**
+	 * Returns this view's command console.
+	 */
+	public Console getConsole()
+	{
+		return console;
+	}
+
+	/**
+	 * Toggles the visiblity of the view's console.
+	 */
+	public void toggleConsoleVisibility()
+	{
+		int max = splitter.getMaximumDividerLocation();
+		int height = splitter.getHeight();
+		if(splitter.getDividerLocation() >= max)
+		{
+			int lastHeight = splitter.getLastDividerLocation();
+			if(lastHeight < max)
+				splitter.setDividerLocation(0.75);
+			else
+				splitter.setDividerLocation(lastHeight);
+			console.getCommandField().requestFocus();
+		}
+		else
+			splitter.setDividerLocation(height);
+	}
+
+	/**
+	 * Returns this view's divider, which separates the text area
+	 * and command console.
+	 */
+	public JSplitPane getSplitPane()
+	{
+		return splitter;
+	}
+
 	/**
 	 * Saves the caret information to the current buffer.
 	 */
@@ -413,10 +456,60 @@ implements CaretListener, KeyListener, WindowListener
 	}
 
 	// event handlers
+
+	// BEGIN CARET LISTENER
 	public void caretUpdate(CaretEvent evt)
 	{
 		updateLineNumber(evt.getDot(),false);
 	}
+	// END CARET LISTENER
+
+	// BEGIN EDITOR LISTENER
+	public void bufferCreated(EditorEvent evt)
+	{
+		updateBuffersMenu();
+	}
+
+	public void bufferClosed(EditorEvent evt)
+	{
+		// Files are added to the recent list when they are closed
+		updateOpenRecentMenu();
+
+		// XXX: todo: change when we start using array model
+		Enumeration buffers = jEdit.getBuffers();
+		if(buffers.hasMoreElements())
+			setBuffer((Buffer)buffers.nextElement());
+
+		updateBuffersMenu();
+	}
+
+	public void viewCreated(EditorEvent evt) {}
+	public void viewClosed(EditorEvent evt) {}
+
+	public void bufferDirtyChanged(EditorEvent evt)
+	{
+		updateTitle();
+		updateBuffersMenu();
+	}
+	// END EDITOR LISTENER
+
+	// BEGIN BUFFER LISTENER
+	public void bufferMarkersChanged(BufferEvent evt)
+	{
+		updateMarkerMenus();
+	}
+
+	public void bufferLineSepChanged(BufferEvent evt)
+	{
+		updateLineSepMenu();
+	}
+
+	public void bufferModeChanged(BufferEvent evt)
+	{
+		updateModeMenu();
+		textArea.repaint();
+	}
+	// END BUFFER LISTENER
 
 	public void keyPressed(KeyEvent evt)
 	{
@@ -554,9 +647,6 @@ implements CaretListener, KeyListener, WindowListener
 
 		FontMetrics fm = getToolkit().getFontMetrics(textArea
 			.getFont());
-		JViewport viewport = scroller.getViewport();
-		viewport.setPreferredSize(new Dimension(80 * fm.charWidth('m'),
-			25 * fm.getHeight()));
 
 		if(buffer == null)
 			setBuffer((Buffer)jEdit.getBuffers().nextElement());
@@ -564,7 +654,16 @@ implements CaretListener, KeyListener, WindowListener
 			setBuffer(buffer);
 		updateBuffersMenu();
 
-		getContentPane().add("Center",scroller);
+		console = new Console(this);
+
+		splitter = new JSplitPane(JSplitPane.VERTICAL_SPLIT,
+			scroller,console);
+		splitter.setOneTouchExpandable(true);
+		splitter.setPreferredSize(new Dimension(81 * fm.charWidth('m'),
+			26 * fm.getHeight()));
+
+		getContentPane().add("Center",splitter);
+
 		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 		addKeyListener(this);
 		addWindowListener(this);
@@ -576,9 +675,30 @@ implements CaretListener, KeyListener, WindowListener
 			location.x += 20;
 			location.y += 20;
 			setLocation(location);
+
+			splitter.setDividerLocation(view.getSplitPane()
+				.getLastDividerLocation());
 		}
 		else
+		{
 			GUIUtilities.loadGeometry(this,"view");
+
+			try
+			{
+				splitter.setDividerLocation(Integer
+					.parseInt(jEdit.getProperty(
+					"view.divider")));
+			}
+			catch(Exception e)
+			{
+				splitter.setLastDividerLocation((getSize()
+					.height * 3) / 4);
+			}
+		}
+
+		splitter.setDividerLocation(1.0);
+
+		jEdit.addEditorListener(this);
 
 		show();
 	}
@@ -603,6 +723,17 @@ implements CaretListener, KeyListener, WindowListener
 			return null;
 	}
 	
+	void close()
+	{
+		GUIUtilities.saveGeometry(this,"view");
+		jEdit.setProperty("view.divider",String.valueOf(splitter
+			.getDividerLocation()));
+		console.getCommandField().save();
+
+		buffer.removeBufferListener(this);
+		jEdit.removeEditorListener(this);
+	}
+
 	// private members
 	private JMenu buffers;
 	private JMenu openRecent;
@@ -615,6 +746,8 @@ implements CaretListener, KeyListener, WindowListener
 	private Hashtable currentPrefix;
 	private JScrollPane scroller;
 	private SyntaxTextArea textArea;
+	private Console console;
+	private JSplitPane splitter;
 	private JLabel lineNumber;
 	private Segment lineSegment;
 	private int lastLine;

@@ -29,6 +29,7 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 import java.util.zip.*;
+import org.gjt.sp.jedit.event.*;
 import org.gjt.sp.jedit.gui.SyntaxTextArea;
 import org.gjt.sp.jedit.syntax.*;
 
@@ -341,18 +342,10 @@ implements DocumentListener, UndoableEditListener
 			saveMarkers();
 			adirty = dirty = newFile = readOnly = false;
 			autosaveFile.delete();
-			updateTitles();
-			updateBufferMenus();
+			jEdit.fireEditorEvent(new EditorEvent(EditorEvent
+				.BUFFER_DIRTY_CHANGED,view,this));
 			if(mode == null)
-			{
 				setMode();
-				view.getTextArea().repaint();
-			}
-			else
-			{
-				updateTitles();
-				updateBufferMenus();
-			}
 			modTime = file.lastModified();
 			return true;
 		}
@@ -582,8 +575,8 @@ implements DocumentListener, UndoableEditListener
 		if(!((dirty && adirty) || readOnly))
 		{
 			adirty = dirty = !init;
-			updateTitles();
-			updateBufferMenus();
+			jEdit.fireEditorEvent(new EditorEvent(EditorEvent
+				.BUFFER_DIRTY_CHANGED,null,this));
 		}
 	}
 
@@ -653,6 +646,8 @@ implements DocumentListener, UndoableEditListener
 			colors.clear();
 			mode.enter(this);
 		}
+
+		fireBufferEvent(new BufferEvent(BufferEvent.MODE_CHANGED,this));
 	}
 
 	/**
@@ -766,14 +761,14 @@ implements DocumentListener, UndoableEditListener
 				if(marker.getStart() > start)
 				{
 					markers.insertElementAt(markerN,i);
-					updateMarkers();
 					return;
 				}
 			}
 		}
 		markers.addElement(markerN);
-		if(!init)
-			updateMarkers();
+		fireBufferEvent(new BufferEvent(BufferEvent.MARKERS_CHANGED,this));
+		jEdit.fireEditorEvent(new EditorEvent(EditorEvent
+			.BUFFER_DIRTY_CHANGED,null,this));
 	}
 
 	/**
@@ -785,16 +780,15 @@ implements DocumentListener, UndoableEditListener
 		if(readOnly)
 			return;
 		dirty = !init;
-		for(int i = 0; i < markers.size(); i++)
+loop:		for(int i = 0; i < markers.size(); i++)
 		{
 			Marker marker = (Marker)markers.elementAt(i);
 			if(marker.getName().equals(name))
-			{
 				markers.removeElementAt(i);
-				updateMarkers();
-				return;
-			}
 		}
+		fireBufferEvent(new BufferEvent(BufferEvent.MARKERS_CHANGED,this));
+		jEdit.fireEditorEvent(new EditorEvent(EditorEvent
+			.BUFFER_DIRTY_CHANGED,null,this));
 	}
 	
 	/**
@@ -885,7 +879,36 @@ implements DocumentListener, UndoableEditListener
 		return savedSelEnd;
 	}
 
+	/**
+	 * Adds a buffer event listener to this buffer.
+	 * @param listener The event listener
+	 */
+	public void addBufferListener(BufferListener listener)
+	{
+		multicaster.addListener(listener);
+	}
+
+	/**	
+	 * Removes a buffer event listener from this buffer.
+	 * @param listener The event listener
+	 */
+	public void removeBufferListener(BufferListener listener)
+	{
+		multicaster.removeListener(listener);
+	}
+
+	/**
+	 * Forwards a buffer event to all registered listeners.
+	 * @param evt The event
+	 */
+	public void fireBufferEvent(BufferEvent evt)
+	{
+		multicaster.fire(evt);
+	}
+
 	// event handlers
+
+	// BEGIN UNDO LISTENER
 	public void undoableEditHappened(UndoableEditEvent evt)
 	{
 		if(compoundEdit != null)
@@ -893,7 +916,9 @@ implements DocumentListener, UndoableEditListener
 		else
 			undo.addEdit(evt.getEdit());
 	}
+	// END UNDO LISTENER
 
+	// BEGIN DOCUMENT LISTENER
 	public void insertUpdate(DocumentEvent evt)
 	{
 		dirty();
@@ -934,8 +959,8 @@ implements DocumentListener, UndoableEditListener
 		if(mode instanceof DocumentListener)
 			((DocumentListener)mode).changedUpdate(evt);
 	}
+	// END DOCUMENT LISTENER
 
-	// crude hack for CloseDialog
 	/**
 	 * Returns a string representation of this buffer.
 	 * This simply returns the path name.
@@ -979,6 +1004,7 @@ implements DocumentListener, UndoableEditListener
 	private int savedSelEnd;
 	private TokenMarker tokenMarker;
 	private Hashtable colors;
+	private EventMulticaster multicaster;
 
 	private void init()
 	{	
@@ -989,6 +1015,7 @@ implements DocumentListener, UndoableEditListener
 		undo = new UndoManager();
 		markers = new Vector();
 		colors = new ColorList();
+		multicaster = new EventMulticaster();
 		addDocumentListener(this);
 		setPath();
 		if(!newFile)
@@ -1009,7 +1036,6 @@ implements DocumentListener, UndoableEditListener
 		else
 			setMode();
 		addUndoableEditListener(this);
-		updateMarkers();
 		propertiesChanged();
 		init = false;
 	}
@@ -1443,41 +1469,6 @@ implements DocumentListener, UndoableEditListener
 			}
 		}
 		return -1 - count;
-	}
-
-	private void updateTitles()
-	{
-		Enumeration enum = jEdit.getViews();
-		while(enum.hasMoreElements())
-		{
-			View view = (View)enum.nextElement();
-			if(view.getBuffer() == this)
-				view.updateTitle();
-		}
-	}
-
-	private void updateBufferMenus()
-	{
-		Enumeration enum = jEdit.getViews();
-		while(enum.hasMoreElements())
-		{
-			((View)enum.nextElement()).updateBuffersMenu();
-		}
-	}
-
-	private void updateMarkers()
-	{
-		Enumeration enum = jEdit.getViews();
-		while(enum.hasMoreElements())
-		{
-			View view = (View)enum.nextElement();
-			view.updateBuffersMenu();
-			if(view.getBuffer() == this)
-			{
-				view.updateTitle();
-				view.updateMarkerMenus();
-			}
-		}
 	}
 
 	private void tokenizeLines()
