@@ -30,7 +30,7 @@ import org.gjt.sp.jedit.*;
  * @author Slava Pestov
  * @version $Id$
  */
-public class FileFilterOptionPane extends OptionPane
+public class FileFilterOptionPane extends AbstractOptionPane
 {
 	public FileFilterOptionPane()
 	{
@@ -204,6 +204,9 @@ class FileFilterTableModel extends AbstractTableModel
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.2  1999/10/04 03:20:51  sp
+ * Option pane change, minor tweaks and bug fixes
+ *
  * Revision 1.1  1999/10/03 04:13:26  sp
  * Forgot to add some files
  *

@@ -23,7 +23,7 @@ import javax.swing.*;
 import java.awt.*;
 import org.gjt.sp.jedit.*;
 
-public class GeneralOptionPane extends OptionPane
+public class GeneralOptionPane extends AbstractOptionPane
 {
 	public GeneralOptionPane()
 	{
@@ -130,7 +130,7 @@ public class GeneralOptionPane extends OptionPane
 	public void save()
 	{
 		String lf = lfs[lookAndFeel.getSelectedIndex()].getClassName();
-		jEdit.setProperty("lf",lf);
+		jEdit.setProperty("lookAndFeel",lf);
 		jEdit.setProperty("saveDesktop",saveDesktop.getModel()
 			.isSelected() ? "on" : "off");
 		jEdit.setProperty("saveGeometry",saveGeometry.getModel()

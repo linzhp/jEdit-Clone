@@ -39,9 +39,6 @@ public class JARClassLoader extends ClassLoader
 		index = classLoaders.size();
 		classLoaders.addElement(this);
 
-		String[] args = { path };
-		System.out.println(jEdit.getProperty("jar.scanning",args));
-
 		zipFile = new ZipFile(path);
 
 		Enumeration entires = zipFile.entries();
@@ -354,6 +351,9 @@ public class JARClassLoader extends ClassLoader
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.16  1999/10/04 03:20:51  sp
+ * Option pane change, minor tweaks and bug fixes
+ *
  * Revision 1.15  1999/09/30 12:21:04  sp
  * No net access for a month... so here's one big jEdit 2.1pre1
  *

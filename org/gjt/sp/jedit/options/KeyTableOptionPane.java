@@ -31,7 +31,7 @@ import org.gjt.sp.jedit.*;
  * @author Slava Pestov
  * @version $Id$
  */
-public class KeyTableOptionPane extends OptionPane
+public class KeyTableOptionPane extends AbstractOptionPane
 {
 	public KeyTableOptionPane()
 	{
@@ -199,6 +199,9 @@ class KeyTableModel extends AbstractTableModel
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.5  1999/10/04 03:20:51  sp
+ * Option pane change, minor tweaks and bug fixes
+ *
  * Revision 1.4  1999/09/30 12:21:04  sp
  * No net access for a month... so here's one big jEdit 2.1pre1
  *

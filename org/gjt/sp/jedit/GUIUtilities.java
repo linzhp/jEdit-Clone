@@ -415,7 +415,9 @@ public class GUIUtilities
 	 */
 	public static String showFileDialog(View view, String file, int type)
 	{
-		JFileChooser chooser = new JFileChooser(file);
+		File _file = new File(file);
+		JFileChooser chooser = new JFileChooser(_file.getParent());
+		chooser.setSelectedFile(_file);
 		chooser.setDialogType(type);
 		chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
 
@@ -675,6 +677,9 @@ public class GUIUtilities
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.29  1999/10/04 03:20:50  sp
+ * Option pane change, minor tweaks and bug fixes
+ *
  * Revision 1.28  1999/09/30 12:21:04  sp
  * No net access for a month... so here's one big jEdit 2.1pre1
  *

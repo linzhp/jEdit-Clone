@@ -60,7 +60,7 @@ implements ActionListener, KeyListener, WindowListener
 	public void addOptionPane(OptionPane pane)
 	{
 		tabs.addTab(jEdit.getProperty("options." + pane.getName()
-			+ ".label"),pane);
+			+ ".label"),pane.getComponent());
 		panes.addElement(pane);
 	}
 
@@ -126,6 +126,9 @@ implements ActionListener, KeyListener, WindowListener
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.5  1999/10/04 03:20:51  sp
+ * Option pane change, minor tweaks and bug fixes
+ *
  * Revision 1.4  1999/09/30 12:21:04  sp
  * No net access for a month... so here's one big jEdit 2.1pre1
  *

@@ -57,7 +57,7 @@ public class jEdit
 	public static String getBuild()
 	{
 		// (major) (minor) (<99 = preX, 99 = final) (bug fix)
-		return "02.01.02.00";
+		return "02.01.03.00";
 	}
 
 	/**
@@ -178,9 +178,9 @@ public class jEdit
 		initMisc();
 		initSystemProperties();
 		initModes();
-		initActions();
 		initPlugins();
 		initUserProperties();
+		initActions();
 		initPLAF();
 		initKeyBindings();
 		propertiesChanged();
@@ -1316,7 +1316,7 @@ public class jEdit
 	 */
 	private static void initPLAF()
 	{
-		String lf = getProperty("lf");
+		String lf = getProperty("lookAndFeel");
 		try
 		{
 			if(lf != null && lf.length() != 0)
@@ -1631,26 +1631,14 @@ public class jEdit
 		initOldAPI();
 		oldAPI.addPluginAction(action);
 	}
-
-	/**
-	 * Registers an option pane with the editor.
-	 * @param clazz The option pane's class. This must be a
-	 * subclass of <code>OptionPane</code>.
-	 * @see org.gjt.sp.jedit.OptionPane
-	 *
-	 * @deprecated As of jEdit 2.1pre1, use EditPlugin.createMenuItems()
-	 * instead
-	 */
-	public static void addOptionPane(Class clazz)
-	{
-		initOldAPI();
-		oldAPI.addOptionPane(clazz);
-	}
 }
 
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.131  1999/10/04 03:20:51  sp
+ * Option pane change, minor tweaks and bug fixes
+ *
  * Revision 1.130  1999/10/03 03:47:15  sp
  * Minor stupidity, IDL mode
  *

@@ -35,7 +35,7 @@ import org.gjt.sp.jedit.*;
  * @author Slava Pestov
  * @version $Id$
  */
-public class StyleOptionPane extends OptionPane
+public class StyleOptionPane extends AbstractOptionPane
 {
 	public static final EmptyBorder noFocusBorder = new EmptyBorder(1,1,1,1);
 
@@ -539,6 +539,9 @@ implements ActionListener, KeyListener
 /**
  * ChangeLog:
  * $Log$
+ * Revision 1.7  1999/10/04 03:20:51  sp
+ * Option pane change, minor tweaks and bug fixes
+ *
  * Revision 1.6  1999/09/30 12:21:04  sp
  * No net access for a month... so here's one big jEdit 2.1pre1
  *

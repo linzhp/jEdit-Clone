@@ -60,7 +60,6 @@ public interface Plugin
 	{
 		Vector pluginActions = new Vector();
 		Vector pluginMenus = new Vector();
-		Vector optionPanes = new Vector();
 
 		// Called by jEdit.addPluginAction
 		void addPluginAction(EditAction action)
@@ -71,11 +70,6 @@ public interface Plugin
 		void addPluginMenu(String menu)
 		{
 			pluginMenus.addElement(menu);
-		}
-
-		void addOptionPane(Class clazz)
-		{
-			optionPanes.addElement(clazz);
 		}
 
 		public void createMenuItems(View view, Vector menus, Vector menuItems)
@@ -95,26 +89,6 @@ public interface Plugin
 					.getName()));
 			}
 		}
-
-		public void createOptionPanes(OptionsDialog optionsDialog)
-		{
-			Enumeration optionPaneEnum = optionPanes.elements();
-			while(optionPaneEnum.hasMoreElements())
-			{
-				try
-				{
-					optionsDialog.addOptionPane((OptionPane)
-						((Class)optionPaneEnum.nextElement())
-						.newInstance());
-				}
-				catch(Exception e)
-				{
-					System.err.println(getClass().getName()
-						+ ": error creating option pane:");
-					e.printStackTrace();
-				}
-			}
-		}
 	}
 
 	/**
@@ -126,7 +100,6 @@ public interface Plugin
 		Wrapper(Plugin plugin) { this.plugin = plugin; }
 		public void start() { plugin.start(); }
 		public void stop() { plugin.stop(); }
-		String _getName() { return plugin.getClass().getName(); }
 
 		/**
 		 * Returns the underlying old API plugin.

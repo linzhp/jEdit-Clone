@@ -23,7 +23,7 @@ import javax.swing.*;
 import java.awt.*;
 import org.gjt.sp.jedit.*;
 
-public class EditorOptionPane extends OptionPane
+public class EditorOptionPane extends AbstractOptionPane
 {
 	public EditorOptionPane()
 	{

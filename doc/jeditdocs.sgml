@@ -266,7 +266,7 @@
     the top of the editor window are called <firstterm>menus</>. Generally,
     <guimenu>File</> contains global file-related commands,
     <guimenu>Edit</> contains editing commands,
-    <guimenu>Registers</> contains register and marker-related commands,
+    <guimenu>Registers</> contains register commands,
     <guimenu>Search</> contains search &amp; replace commands,
     and <guimenu>Plugins</> contains menus and menu items created
     by plugins.
@@ -1077,8 +1077,7 @@
   </para>
   <para>
    <indexterm><primary>Paste Previous command</></indexterm>
-   <indexterm><primary>Registers command</></indexterm>
-   <guimenu>Registers</>&gt;<guimenuitem>Paste Previous</> (keyboard equivalent:
+   <guimenu>Edit</>&gt;<guimenuitem>Paste Previous</> (keyboard equivalent:
    <keycap>F5</>) will display a list of previously pasted strings, most
    recent first.
    The last 25 are listed. Selecting one will insert it at the caret
@@ -1091,14 +1090,6 @@
     see <xref linkend=global-opts>.
    </para>
   </tip>
-  <indexterm><primary>old jEdit versions</></indexterm>
-  <sidebar>
-   <bridgehead renderas=sect3>jEdit 2.0 Users</>
-   <para>
-    In jEdit 2.0, the <guimenuitem>Paste Previous</> command was in the
-    <guimenu>Edit</> menu.
-   </para>
-  </sidebar>
   <figure><title>The Paste Previous dialog box</>
    <graphic scale=75 fileref=dialog-pasteprev></>
   </figure>
@@ -1312,7 +1303,7 @@
     character entered at the keyboard, and replaces the selection with the
     contents of that register. Every time you paste from a register,
     the pasted text is added to the clipboard history displayed in the
-    <guimenu>Registers</>&gt;<guimenuitem>Paste Previous</> dialog box;
+    <guimenu>Edit</>&gt;<guimenuitem>Paste Previous</> dialog box;
     see <xref linkend=clipboard>.
    </para>
    <para>
@@ -1529,15 +1520,6 @@
        <entry>Default edit mode. Does nothing special.</>
       </row>
       <row>
-       <entry>AMS-TeX</>
-       <entry>amstex</>
-       <entry>AMS-TeX edit mode. Automatically selected for files for files
-       with extension <quote>.tex</>  that
-       contain <quote>\documentclass</> but not <quote>\begin</>
-       in the first 100 lines. Otherwise exactly the same as TeX mode.
-       </entry>
-      </row>
-      <row>
        <entry>Batch File</>
        <entry>bat</>
        <entry>MS-DOS Batch File edit mode. Automatically selected for
@@ -1573,6 +1555,17 @@
        <sgmltag>script</> tags).</entry>
       </row>
       <row>
+       <entry>IDL</>
+       <entry>idl</>
+       <entry>CORBA IDL (Interface Definition Language) edit mode.
+       Automatically selected for
+       files with extension <quote>.idl</>. Performs
+       IDL syntax highlighting and enables automatic curly bracket
+       indent. Also the underscore (<quote>_</>) is not treated as
+       a word separator by the <guimenuitem>Expand Abbreviation</>
+       command and when double-clicking to select words.</entry>
+      </row>
+      <row>
        <entry>Java</>
        <entry>java</>
        <entry>Java source code edit mode. Automatically selected for
@@ -1591,15 +1584,6 @@
        indent. Also the underscore (<quote>_</>) is not treated as
        a word separator by the <guimenuitem>Expand Abbreviation</>
        command and when double-clicking to select words.</entry>
-      </row>
-      <row>
-       <entry>LaTeX</>
-       <entry>latex</>
-       <entry>LaTeX edit mode. Automatically selected for files with
-       extension <quote>.tex</> that
-       contain <quote>\documentclass</> and <quote>\begin</>
-       in the first 100 lines. Otherwise exactly the same as TeX mode.
-       </entry>
       </row>
       <row>
        <entry>Makefile</>
@@ -1660,9 +1644,7 @@
        <entry>TeX</>
        <entry>tex</>
        <entry>TeX edit mode. Automatically selected for files with
-       extension <quote>.tex</> that do not contain AMS-TeX and
-       LaTeX specific commands in the first 100 lines. Performs TeX
-       syntax highlighting.
+       extension <quote>.tex</>. Performs TeX syntax highlighting.
        </entry>
       </row>
       <row>
@@ -1722,8 +1704,8 @@
   <sect2><title>Inserting Predefined Strings</>
    <para>
     <indexterm><primary>Paste Predefined command</></indexterm>
-    <indexterm><primary>Registers menu</></indexterm>
-    <guimenu>Registers</>&gt;<guimenuitem>Paste Predefined</> (keyboard
+    <indexterm><primary>Edit menu</></indexterm>
+    <guimenu>Edit</>&gt;<guimenuitem>Paste Predefined</> (keyboard
     equivalent: <keycap>F6</>) displays the paste predefined dialog box.
     The paste predefined dialog box can be used for inserting frequently
     used strings. It is similar to string registers, but the predefined
@@ -1743,14 +1725,6 @@
     changes made to the clippings are saved, even if you cancel.</para>
     </listitem>
    </itemizedlist>
-   <indexterm><primary>old jEdit versions</></indexterm>
-   <sidebar>
-    <bridgehead renderas=sect3>jEdit 2.0 Users</>
-    <para>
-     In jEdit 2.0, the <guimenuitem>Paste Predefined</> command was in the
-     <guimenu>Edit</> menu.
-    </para>
-   </sidebar>
    <figure><title>The Paste Predefined dialog box</>
     <graphic scale=75 fileref=dialog-pastepredef></>
    </figure>
@@ -3137,21 +3111,25 @@ import org.gjt.sp.jedit.View;</>
  <sect1 id=plugin-options><title>Plugin Option Panes</>
   <para>
    The Plugin Options dialog box is a common location for changing plugin settings.
-   Each tab in the dialog box is implemented as a subclass of
-   <classname>org.gjt.sp.jedit.OptionPane</>.
+   Each tab in the dialog box is implemented as an implementation of the
+   <classname>org.gjt.sp.jedit.OptionPane</> interface (though most plugins
+   will subclass the <classname>org.gjt.sp.jedit.AbstractOptionPane</> class
+   which provides a default layout implementation).
   </para>
   <indexterm><primary>old jEdit versions</></indexterm>
   <sidebar>
    <bridgehead renderas=sect3>jEdit 2.0 Users</>
    <para>
     jEdit 2.0 and earlier took a different approach to option panes.
-    The old <function>jEdit.addOptionPane()</> method is still supported
-    for backwards compatibility, but should not be used in new plugins.
+    The old <function>jEdit.addOptionPane()</> method is no longer
+    supported.
    </para>
   </sidebar>
-  <indexterm><primary>class</><secondary>OptionPane</></indexterm>
+  <indexterm><primary>interface</><secondary>OptionPane</></indexterm>
+  <indexterm><primary>class</><secondary>AbstractOptionPane</></indexterm>
   <bridgehead renderas=sect3>OptionPane class</>
-  <programlisting>public abstract class OptionPane extends JPanel
+  <programlisting>public abstract class AbstractOptionPane extends JPanel
+implements OptionPane
 {
         public OptionPane(String name);
         public String getName();
@@ -3160,7 +3138,10 @@ import org.gjt.sp.jedit.View;</>
         public void addComponent(Component comp);
 }</programlisting>
   <para>
-   <classname>OptionPane</> instances, like many other jEdit objects, have
+   Most plugins will want to use the <classname>AbstractOptionPane</> class,
+   instead of the <classname>OptionPane</> interface; only the former will
+   be covered here.
+   <classname>AbstractOptionPane</> instances, like many other jEdit objects, have
    <quote>names</> which are used to query properties. In the case of
    option panes, the only property currently supported is
    <property>options.<replaceable>name</>.label</property>, which stores
@@ -3195,7 +3176,7 @@ import org.gjt.sp.jedit.View;</>
    <funcsynopsisinfo>import org.gjt.sp.jedit.OptionsDialog;</>
    <funcprototype>
     <funcdef>public void <function>createOptionPanes</></funcdef>
-    <paramdef>OptionsDialog <parameter>dialoge</></paramdef>
+    <paramdef>OptionsDialog <parameter>dialog</></paramdef>
    </funcprototype>
   </funcsynopsis>
   <para>

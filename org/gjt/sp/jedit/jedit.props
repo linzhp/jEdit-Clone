@@ -212,14 +212,14 @@ mode.extension.shtml=html
 mode.extension.htm=html
 
 # IDL mode
-mode.java.name=IDL
-mode.java.noWordSep=_
-mode.java.indentOpenBrackets={
-mode.java.indentCloseBrackets=}
-mode.java.commentStart=/*
-mode.java.commentEnd=*/
-mode.java.blockComment=//
-mode.java.boxComment=\ *
+mode.idl.name=IDL
+mode.idl.noWordSep=_
+mode.idl.indentOpenBrackets={
+mode.idl.indentCloseBrackets=}
+mode.idl.commentStart=/*
+mode.idl.commentEnd=*/
+mode.idl.blockComment=//
+mode.idl.boxComment=\ *
 mode.extension.idl=idl
 
 # Java mode

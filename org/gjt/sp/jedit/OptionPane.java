@@ -1,6 +1,6 @@
 /*
  * OptionPane.java - Option pane interface
- * Copyright (C) 1998, 1999 Slava Pestov
+ * Copyright (C) 1999 Slava Pestov
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -19,11 +19,10 @@
 
 package org.gjt.sp.jedit;
 
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Component;
 
 /**
- * The class all option panes must extend.  An option pane is a tab
+ * The interface all option panes must implement.  An option pane is a tab
  * in the `Global Options' dialog.<p>
  *
  * The <i>internal name</i> of an option pane is that passed to
@@ -36,97 +35,34 @@ import java.awt.*;
  * tab in the options dialog
  * </ul>
  *
- * @see org.gjt.sp.jedit.jEdit
+ * @see org.gjt.sp.jedit.AbstractOptionPane
  */
-public abstract class OptionPane extends JPanel
+public interface OptionPane
 {
-	/**
-	 * Creates a new option pane.
-	 * @param name The internal name
-	 */
-	public OptionPane(String name)
-	{
-		this.name = name;
-		setLayout(gridBag = new GridBagLayout());
-	}
-
 	/**
 	 * Returns the internal name of this option pane.
 	 */
-	public String getName()
-	{
-		return name;
-	}
+	public String getName();
+
+	/**
+	 * Returns the component that should be displayed for this option pane.
+	 */
+	public Component getComponent();
 
 	/**
 	 * Called when the options dialog's `ok' button is closed.
 	 * This should save any properties saved in this option
 	 * pane.
 	 */
-	public void save() {}
-
-	// protected members
-
-	/**
-	 * The layout manager.
-	 */
-	protected GridBagLayout gridBag;
-
-	/**
-	 * The number of components already added to the layout manager.
-	 */
-	protected int y;
-
-	/**
-	 * Adds a labeled component to the option pane.
-	 * @param label The label
-	 * @param comp The component
-	 */
-	protected void addComponent(String label, Component comp)
-	{
-		GridBagConstraints cons = new GridBagConstraints();
-		cons.gridy = y++;
-		cons.gridheight = 1;
-		cons.gridwidth = 3;
-		cons.fill = GridBagConstraints.BOTH;
-		cons.weightx = 1.0f;
-
-		cons.gridx = 0;
-		JLabel l = new JLabel(label,SwingConstants.RIGHT);
-		gridBag.setConstraints(l,cons);
-		add(l);
-
-		cons.gridx = 3;
-		cons.gridwidth = 1;
-		gridBag.setConstraints(comp,cons);
-		add(comp);
-	}
-
-	/**
-	 * Adds a component to the option pane.
-	 * @param comp The component
-	 */
-	protected void addComponent(Component comp)
-	{
-		GridBagConstraints cons = new GridBagConstraints();
-		cons.gridy = y++;
-		cons.gridheight = 1;
-		cons.gridwidth = cons.REMAINDER;
-		cons.fill = GridBagConstraints.NONE;
-		cons.anchor = GridBagConstraints.WEST;
-		cons.weightx = 1.0f;
-
-		gridBag.setConstraints(comp,cons);
-		add(comp);
-	}
-
-	// private members
-	private String name;
+	public void save();
 }
 
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.4  1999/10/04 03:20:51  sp
+ * Option pane change, minor tweaks and bug fixes
+ *
  * Revision 1.3  1999/10/02 01:12:36  sp
  * Search and replace updates (doesn't work yet), some actions moved to TextTools
  *

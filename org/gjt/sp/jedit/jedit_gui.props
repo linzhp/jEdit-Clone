@@ -140,6 +140,8 @@ edit=undo \
      cut \
      copy \
      paste \
+     paste-previous \
+     paste-predefined \
      select-all \
      select-none \
      - \
@@ -160,6 +162,8 @@ redo.label=Re$do
 cut.label=$Cut
 copy.label=C$opy
 paste.label=$Paste
+paste-previous.label=Paste Pre$vious...
+paste-predefined.label=Paste Predef$ined...
 select-all.label=Se$lect All
 select-none.label=Select $None
 tab.label=$Spaces to Tabs
@@ -235,8 +239,6 @@ registers=cut-string-register \
 	  select-caret-register \
 	  exchange-caret-register \
 	  - \
-	  paste-previous \
-          paste-predefined \
 	  view-registers
 registers.label=$Registers
 cut-string-register.label=$Cut to Register
@@ -248,8 +250,6 @@ set-caret-register.label=Save $Caret to Register
 goto-register.label=$Go to Register
 select-caret-register.label=Se$lect to Register
 exchange-caret-register.label=S$wap Caret with Register
-paste-previous.label=Paste Pre$vious...
-paste-predefined.label=Pas$te Predefined...
 view-registers.label=$View Registers...
 
 ### Search menu
@@ -362,12 +362,11 @@ about.message=jEdit version {0} (JDK {1}, {2} {3})\n\
 	disclamer.\n\
 	\n\
 	Thanks to Aziz Sharif, Chris Laird, George Latkiewicz, Henrik Falk\n\
-	Jason Ginchereau, Jonathan Revusky, Juha Lindfors\n\
-	Mike Dillon, Nathan Tenney, Romain Guy, Tal Davison\n\
+	Jason Ginchereau, Jonathan Revusky, Juha Lindfors, Mike Dillon,\n\
+	Nathan Tenney, Romain Guy and Tal Davison.\n\
 	\n\
 	... plus all the users, plugin authors, and people who sent me\n\
-	feedback, bug reports, and comments. jEdit would be dead were\n\
-	it not for you... thanks.
+	feedback and bug reports.
 
 # IO Error dialog, {0}=the error message
 ioerror.title=I/O Error
@@ -612,11 +611,11 @@ docindex.header=<html><head><title>Documentation Index</title></head>\n\
 	<body><h1>Documentation Index</h1>
 
 docindex.general=<h2>Miscellaneous</h2><ul>
-docindex.general.entry=<li><a href=file:{0}/{1}>{1}</a>
+docindex.general.entry=<li><a href={0}>{1}</a>
 
 docindex.books=</ul><h2>jEdit Documentation</h2><ul>
-docindex.books.jeditdocs=<li><a href=file:{0}/jeditdocs/index.html>jEdit User's Guide</a>
-docindex.books.api=<li><a href=file:{0}/api/packages.html>jEdit API Documentation</a>
+docindex.books.jeditdocs=<li><a href={0}>jEdit User Guide</a>
+docindex.books.api=<li><a href={0}>jEdit API Documentation</a>
 
 docindex.plugins=</ul><h2>Plugin Documentation</h2><ul>
 docindex.plugins.entry=<li><a href={3}>{0} {2}</a> (by {1})

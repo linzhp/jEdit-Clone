@@ -6,6 +6,7 @@
 #
 
 classes=org/gjt/sp/jedit/jEdit.class \
+	org/gjt/sp/jedit/AbstractOptionPane.class \
 	org/gjt/sp/jedit/Autosave.class \
 	org/gjt/sp/jedit/Buffer.class \
 	org/gjt/sp/jedit/EditAction.class \

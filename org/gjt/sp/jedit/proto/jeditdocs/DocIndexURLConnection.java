@@ -40,7 +40,7 @@ public class DocIndexURLConnection extends URLConnection
 
 		String textFileEntry = jEdit.getProperty("docindex.general.entry");
 		String[] textFiles = docDir.list();
-		String[] args = new String[1];
+		String[] args = new String[2];
 
 		for(int i = 0; i < textFiles.length; i++)
 		{
@@ -48,11 +48,14 @@ public class DocIndexURLConnection extends URLConnection
 			{
 				args[0] = "\"file:" + docDir.getPath()
 					+ File.separator + textFiles[i] + "\"";
+				args[1] = textFiles[i];
 				buf.append(MessageFormat.format(textFileEntry,args));
 			}
 		}
 
 		// Books
+		args = new String[1];
+
 		buf.append(jEdit.getProperty("docindex.books"));
 
 		String path = docDir.getPath() + File.separator
