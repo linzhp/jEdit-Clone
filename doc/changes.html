@@ -58,6 +58,11 @@ created
 in HTML, Batch File mode
 <li>`Replace in Selection' didn't work sometimes
 <li>`Save All Buffers' saved all buffers - should only save changed ones
+<li>jEdit should now work with `custom' classloaders
+<li>Fixed bug with plugin classes >8K (thanks to 
+Mike Dillon &lt;mdillon@uclink4.berkeley.edu&gt; for the fix)
+<li>Indentifiers such as the_class and no_break would be colorized incorrectly
+in C/C++/Java mode
 </ul>
 
 <a name=14pre2>
@@ -70,7 +75,7 @@ in HTML, Batch File mode
 Jikes compiler, this means that you can give Jikes the +E option and jEdit
 will parse the errors like it does with javac, etc)
 <li>Javadoc (/** ... */) comments are now displayed in a different color
-(thanks to Juha Lindfors &lt;jplindfo@cc.helsinki.fi&gt;)
+(thanks to Juha Lindfors &lt;jplindfo@cc.helsinki.fi&gt; for providing the code)
 <li>`Save All Buffers' and `Select Line Range' commands added
 <li>Search and replace now has `Replace in Selection' command
 </ul>

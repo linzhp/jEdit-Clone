@@ -68,7 +68,8 @@ loop:		for(int i = offset; i < length; i++)
 					int off = i;
 					while(--off >= lastOffset)
 					{
-						if(!Character.isLetter(line.array[off]))
+						char h = line.array[off];
+						if(!Character.isLetter(h) && h != '_')
 							break;
 					}
 					off++;
@@ -169,7 +170,8 @@ loop:		for(int i = offset; i < length; i++)
 			int off = length;
 			while(--off >= lastOffset)
 			{
-				if(!Character.isLetter(line.array[off]))
+				char h = line.array[off];
+				if(!Character.isLetter(h) && h != '_')
 					break;
 			}
 			off++;

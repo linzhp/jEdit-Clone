@@ -45,7 +45,7 @@ public class jEdit
 	 * The date when a change was last made to the source code,
 	 * in <code>YYYYMMDD</code> format.
 	 */
-	public static final String BUILD = "19990208";
+	public static final String BUILD = "19990210";
 
 	/**
 	 * AWK regexp syntax.
@@ -241,16 +241,16 @@ public class jEdit
 		// Load properties
 		try
 		{
-			loadProps(props.getClass().getResourceAsStream(
+			loadProps(jEdit.class.getResourceAsStream(
 				"/org/gjt/sp/jedit/jedit.props"),
 				jEditHome + "jedit.props");
-			loadProps(props.getClass().getResourceAsStream(
+			loadProps(jEdit.class.getResourceAsStream(
 				"/org/gjt/sp/jedit/jedit_gui.props"),jEditHome
 				+ "jedit_gui.props");
-			loadProps(props.getClass().getResourceAsStream(
+			loadProps(jEdit.class.getResourceAsStream(
 				"/org/gjt/sp/jedit/jedit_keys.props"),jEditHome
 				+ "jedit_keys.props");
-			loadProps(props.getClass().getResourceAsStream(
+			loadProps(jEdit.class.getResourceAsStream(
 				"/org/gjt/sp/jedit/jedit_tips.props"),jEditHome
 				+ "jedit_tips.props");	
 		}
@@ -1851,8 +1851,19 @@ loop:		for(int i = 0; i < str.length(); i++)
 			{
 				int len = (int)entry.getSize();
 				byte[] cls = new byte[len];
-				in.read(cls,0,len);
+				int success = 0;
+				int offset = 0;
 				String clsName = jEdit.fileToClass(entryName);
+				while (success < len) {
+					len -= success;
+					offset += success;
+					success = in.read(cls,offset,len);
+					if (success == -1)
+					{
+						System.err.println("Error loading class " + clsName + " from " + jar.getName());
+						return null;
+					}
+				}
 				classes.put(clsName,cls);
 				return clsName;
 			}
