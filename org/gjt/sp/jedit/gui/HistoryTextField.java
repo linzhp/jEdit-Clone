@@ -56,11 +56,11 @@ public class HistoryTextField extends JTextField implements KeyListener
 	public void addCurrentToHistory()
 	{
 		String text = getText();
-		if(text == null || text.length() == 0)
+		if(text == null || text.length() == 0 ||
+			text.equals(history[0]))
 			return;
 		System.arraycopy(history,0,history,1,history.length - 1);
 		history[0] = text;
-		setText(null);
 	}
 
 	public void keyTyped(KeyEvent evt) {}

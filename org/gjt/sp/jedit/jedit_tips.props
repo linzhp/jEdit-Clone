@@ -102,4 +102,5 @@ tip.96=Try right clicking on the text area
 tip.97=Search & Replace and HyperSearch have a history - use Up/Down arrow keys
 tip.98=There is a `Keep Dialog' option in Search & Replace
 tip.99=The console window has a history - use Up/Down arrow keys
+tip.100=The tool bar can be disabled in Tools->Options->General
 tip.count=100

@@ -28,7 +28,7 @@ can be used by all users on the system. Plugins in a user's plugin
 directory can only be used by the respective user.<p>
 
 On Unix, the system plugin directory is
-/opt/slava/share/jedit-<code>&lt;version&gt;</code>/jars, Each user has a
+/opt/slava/share/jedit-<i>version</i>/jars, Each user has a
 plugin directory in $HOME/.jedit-jars.<p>
 
 On Windows 95 and 98, the system plugin directory is C:\Program
@@ -44,9 +44,9 @@ Windows 95/98, but each user has a plugin directory in
 
 Once a plugin is installed, jEdit will say so during startup.
 
-<blockquote><pre>
+<blockquote><code>
 	Loading plugin /home/slava/.jedit-jars/rot13.jar
-</pre></blockquote>
+</code></blockquote>
 
 If all goes well during startup, the plugins should also appear in the
 `Plugins' menu. If a newly installed plugin doesn't appear to be loaded,
@@ -61,8 +61,8 @@ entities, reverse text, and rot13 text. They are installed when jEdit
 is installed.<p>
 
 Also, several color schemes (`themes') are included with jEdit in the
-`themes' directory. Move them to a plugin directory to use them (only install
-one at a time).
+`themes' directory. Move them to a plugin directory to use them (only
+install one at a time).
 
 <a name=develop>
 <h1>Developing Plugins</h1>
@@ -88,23 +88,23 @@ properties that can be defined for edit modes.
 
 <table border=3>
 <tr>
-<td>mode.&lt;modename&gt;.name</td> <td>The name that appears in the `Mode'
+<td>mode.<i>modename</i>.name</td> <td>The name that appears in the `Mode'
 menu and several other places</td>
 </tr>
 <tr>
-<td>mode&lt;modename&gt;.&lt;property&gt;</td> <td>The default value of
+<td>mode<i>modename</i>.<i>property</i></td> <td>The default value of
 the buffer-local property named <code>property</code> for the specified
 edit mode</td>
 <tr>
-<td>mode.extension.&lt;ext&gt;</td> <td>The mode to use for files with
+<td>mode.extension.<i>ext</i></td> <td>The mode to use for files with
 extension <code>ext</code></td>
 </tr>
 <tr>
-<td>mode.filename.&lt;filename&gt;</td> <td>The mode to use for files named
+<td>mode.filename.<i>filename</i></td> <td>The mode to use for files named
 <code>filename</code></td>
 </tr>
 <tr>
-<td>mode.firstline.&lt;firstline&gt;</td> <td>The mode to use for files whose
+<td>mode.firstline.<i>firstline</i></td> <td>The mode to use for files whose
 first line is <code>firstline</code></td>
 </tr>
 </table>
@@ -112,9 +112,9 @@ first line is <code>firstline</code></td>
 <h2>Commands</h2>
 
 jEdit commands extend the <code>org.gjt.sp.jedit.EditAction</a></code> class.<p>
-The command's menu label is stored in the <code>&lt;command&gt;.label</code>
+The command's menu label is stored in the <code><i>command</i>.label</code>
 property where <code>command</code> is the command name. The shortcut can
-also be specified with the <code>&lt;command&gt;.shortcut</code> property.
+also be specified with the <code><i>command</i>.shortcut</code> property.
 
 </body>
 </html>

@@ -40,13 +40,13 @@ public class jEdit
 	/**
 	 * The jEdit version.
 	 */
-	public static final String VERSION = "1.4pre7";
+	public static final String VERSION = "1.4pre8";
 	
 	/**
 	 * The date when a change was last made to the source code,
 	 * in <code>YYYYMMDD</code> format.
 	 */
-	public static final String BUILD = "19990224";
+	public static final String BUILD = "19990226";
 
 	/**
 	 * AWK regexp syntax.
@@ -941,6 +941,8 @@ public class jEdit
 	 */
 	public static void closeView(View view)
 	{
+		GUIUtilities.saveGeometry(view,"view");
+		
 		if(views.size() == 1)
 			jEdit.exit(view);
 		else

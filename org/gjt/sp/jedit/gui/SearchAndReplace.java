@@ -116,19 +116,6 @@ implements ActionListener, KeyListener, WindowListener
 		find.requestFocus();
 	}
 	
-	public void save()
-	{
-		find.save();
-		replace.save();
-		jEdit.setProperty("search.keepDialog.toggle",keepDialog
-			.getModel().isSelected() ? "on" : "off");
-		jEdit.setProperty("search.ignoreCase.toggle",ignoreCase
-			.getModel().isSelected() ? "on" : "off");
-		jEdit.setProperty("search.regexp.value",(String)regexpSyntax
-			.getSelectedItem());
-		GUIUtilities.saveGeometry(this,"search");
-	}
-	
 	public void actionPerformed(ActionEvent evt)
 	{
 		save();
@@ -205,6 +192,19 @@ implements ActionListener, KeyListener, WindowListener
 	private int selStart;
 	private int selEnd;
 	
+	private void save()
+	{
+		find.save();
+		replace.save();
+		jEdit.setProperty("search.keepDialog.toggle",keepDialog
+			.getModel().isSelected() ? "on" : "off");
+		jEdit.setProperty("search.ignoreCase.toggle",ignoreCase
+			.getModel().isSelected() ? "on" : "off");
+		jEdit.setProperty("search.regexp.value",(String)regexpSyntax
+			.getSelectedItem());
+		GUIUtilities.saveGeometry(this,"search");
+	}
+
 	private void disposeOrKeepDialog()
 	{
 		if(keepDialog.getModel().isSelected())

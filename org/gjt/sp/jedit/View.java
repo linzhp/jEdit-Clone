@@ -500,7 +500,6 @@ implements CaretListener, KeyListener, WindowListener
 	
 	public void windowClosing(WindowEvent evt)
 	{
-		GUIUtilities.saveGeometry(this,"view");
 		jEdit.closeView(this);
 	}
 	

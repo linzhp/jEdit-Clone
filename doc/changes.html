@@ -3,6 +3,8 @@
 <h1>Version History</h1>
 
 <a href=#wishlist>To Do For Future Versions</a><br>
+<a href=#showstop>Version 1.4 Showstoppers</a><br>
+<a href=#14pre8>Version 1.4pre8</a><br>
 <a href=#14pre7>Version 1.4pre7</a><br>
 <a href=#14pre6>Version 1.4pre6</a><br>
 <a href=#14pre5>Version 1.4pre5</a><br>
@@ -24,6 +26,7 @@ dynamically parsed, maybe in a separate thread
 <li>Bracket matching code should skip comments and quoted literals
 <li>Fix lazy colorizing of multiline statements and make syntax
 colorizing faster (with a cache or something)
+<li>Search and replace needs a reworking, it's too messy right now
 <li>Event system, with BufferEvent, ViewEvent notifying components when
 buffers/views are opened and closed. Would make a lot of existing code
 cleaner
@@ -43,6 +46,41 @@ confusion and messy error lists
 <li>Context menu - mnemonics/arrows don't work, and selection is extended if
 mouse is held down
 <li>Command line parameter to not open a new view when connecting to the server
+</ul>
+
+<a name=showstop>
+<h1>Version 1.4 Showstoppers</h1>
+</a>
+
+<ul>
+<li><b>Error list doesn't work for some people</b>
+<li>Geometry isn't saved/restored properly, for views only it seems
+(and this only happends on X11, dammit)
+<li>When the session is being restored, the text area doesn't scroll to the
+correct line sometimes
+</ul>
+
+<a name=14pre8>
+<h1>Version 1.4pre8</h1>
+</a>
+
+<h2>Enhancements</h2>
+
+<ul>
+<li>Minor documentation updates
+</ul>
+
+<h2>Bug Fixes</h2>
+
+<ul>
+<li>Processes invoked from the console that read from standard input
+hung forever
+<li>`Keep dialog' didn't work properly - it cleared the text fields,
+so you had to press up arrow after each search
+<li>`Replace All' didn't work if the replacement string was shorter than
+the search string (really embarrassing bug, and it has been around
+since 1.4pre2!!!)
+<li>Fix in Configure script for JVM paths that include slashes
 </ul>
 
 <a name=14pre7>

@@ -153,12 +153,12 @@ implements DocumentListener, UndoableEditListener
 	 * Replaces all occurances of the search string with the replacement
 	 * string.
 	 * @param view The view
-	 * @param index The index where to start the search
-	 * @param length The end offset of the search
+	 * @param start The index where to start the search
+	 * @param end The end offset of the search
 	 * @return True if the replace operation was successful, false
 	 * if no matches were found
 	 */
-	public boolean replaceAll(View view, int index, int length)
+	public boolean replaceAll(View view, int start, int end)
 	{
 		if(!view.getTextArea().isEditable())
 			return false;
@@ -173,23 +173,44 @@ implements DocumentListener, UndoableEditListener
 				endCompoundEdit();
 				return false;
 			}
+			
 			REMatch match;
-			while((match = regexp.getMatch(getText(index,
-				length - index))) != null)
+
+			Element map = getDefaultRootElement();
+			int startLine = map.getElementIndex(start);
+			int endLine = map.getElementIndex(end);
+
+			for(int i = startLine; i <= endLine; i++)
 			{
-				int start = match.getStartIndex() + index;
-				int len = match.getEndIndex() - match
-					.getStartIndex();
-				String str = getText(start,len);
-				remove(start,len);
-				String subst = regexp.substitute(str,replaceStr);
-				index = start + subst.length();
-				insertString(start,subst,null);
+				Element lineElement = map.getElement(i);
+				int lineStart;
+				int lineEnd;
+
+				if(i == startLine)
+					lineStart = start;
+				else
+					lineStart = lineElement.getStartOffset();
+
+				if(i == endLine)
+					lineEnd = end;
+				else
+					lineEnd = lineElement.getEndOffset() - 1;
+
+				lineEnd -= lineStart;
+				String line = getText(lineStart,lineEnd);
+				String newLine = regexp.substituteAll(line,replaceStr);
+				if(line.equals(newLine)) // XXX slow
+					continue;
+				remove(lineStart,lineEnd);
+				insertString(lineStart,newLine,null);
+
+				end += (newLine.length() - lineEnd);
 				found = true;
 			}
 		}
 		catch(Exception e)
 		{
+			found = false;
 			Object[] args = { e.getMessage() };
 			if(args[0] == null)
 				args[0] = e.toString();

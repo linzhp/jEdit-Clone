@@ -84,6 +84,7 @@ implements ActionListener, KeyListener, ListSelectionListener, WindowListener
 		try
 		{
 			process = Runtime.getRuntime().exec(command);
+			process.getOutputStream().close();
 		}
 		catch(IOException io)
 		{
@@ -197,6 +198,7 @@ implements ActionListener, KeyListener, ListSelectionListener, WindowListener
 		if(s != null && s.length() != 0)
 		{
 			cmd.addCurrentToHistory();
+			cmd.setText(null);
 			run(s);
 		}
 	}

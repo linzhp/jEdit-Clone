@@ -70,7 +70,6 @@ implements ActionListener, KeyListener, ListSelectionListener, WindowListener
 
 		results = new JList();
 		results.setVisibleRowCount(10);
-		results.setFont(view.getTextArea().getFont());
 		results.addListSelectionListener(this);
 		stretchPanel.add(new JScrollPane(results), BorderLayout.CENTER);
 
