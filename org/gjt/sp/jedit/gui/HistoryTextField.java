@@ -39,7 +39,7 @@ public class HistoryTextField extends JComboBox
 		int i = 0;
 		while((line = jEdit.getProperty("history." + name + "." + i)) != null)
 		{
-			insertItemAt(line,0);
+			addItem(line);
 			i++;
 		}
 		setEditable(true);
@@ -55,13 +55,13 @@ public class HistoryTextField extends JComboBox
 		String text = (String)getEditor().getItem();
 		if(text == null)
 			text = (String)getSelectedItem();
-		if(text != null && text.length() != 0)
-			addItem(text);
+		if(text == null)
+			text = "";
+		insertItemAt(text,0);
 		for(int i = 0; i < getItemCount(); i++)
 		{
 			jEdit.setProperty("history." + name + "." +
-				(getItemCount() - i - 1),
-				(String)getItemAt(i));
+				i,(String)getItemAt(i));
 		}
 	}
 
@@ -70,8 +70,9 @@ public class HistoryTextField extends JComboBox
 		String text = (String)getEditor().getItem();
 		if(text == null)
 			text = (String)getSelectedItem();
-		if(text != null && text.length() != 0)
-			addItem(text);
+		if(text == null)
+			text = "";
+		insertItemAt(text,0);
 		if(getItemCount() > 100)
 			removeItemAt(getItemCount() - 1);
 	}
@@ -133,6 +134,9 @@ public class HistoryTextField extends JComboBox
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.17  1999/03/21 08:37:16  sp
+ * Slimmer action system, history text field update
+ *
  * Revision 1.16  1999/03/20 01:55:42  sp
  * New color option pane, fixed search & replace bug
  *

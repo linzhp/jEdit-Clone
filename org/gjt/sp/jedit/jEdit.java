@@ -642,9 +642,9 @@ public class jEdit
 	 * Registers an action with the editor.
 	 * @param action The action
 	 */
-	public static void addAction(Action action)
+	public static void addAction(EditAction action)
 	{
-		actionHash.put(action.getValue(Action.NAME),action);
+		actionHash.put(action.getName(),action);
 	}
 
 	/**
@@ -662,9 +662,9 @@ public class jEdit
 	 * action list (so it will appear in the plugins menu).
 	 * @param action The action
 	 */
-	public static void addPluginAction(Action action)
+	public static void addPluginAction(EditAction action)
 	{
-		actionHash.put(action.getValue(Action.NAME),action);
+		actionHash.put(action.getName(),action);
 		pluginActions.addElement(action);
 	}
 
@@ -672,24 +672,24 @@ public class jEdit
 	 * Returns a named action.
 	 * @param action The action
 	 */
-	public static Action getAction(String action)
+	public static EditAction getAction(String action)
 	{
-		return (Action)actionHash.get(action);
+		return (EditAction)actionHash.get(action);
 	}
 
 	/**
 	 * Returns the list of actions registered with the editor.
 	 */
-	public static Action[] getActions()
+	public static EditAction[] getActions()
 	{
 		if(actions == null)
 		{
-			actions = new Action[actionHash.size()];
+			actions = new EditAction[actionHash.size()];
 			Enumeration enum = actionHash.elements();
 			int i = 0;
 			while(enum.hasMoreElements())
 			{
-				actions[i++] = (Action)enum.nextElement();
+				actions[i++] = (EditAction)enum.nextElement();
 			}
 		}
 		return actions;
@@ -698,9 +698,9 @@ public class jEdit
 	/**
 	 * Returns an array of installed plugin actions.
 	 */
-	public static Action[] getPluginActions()
+	public static EditAction[] getPluginActions()
 	{
-		Action[] array = new Action[pluginActions.size()];
+		EditAction[] array = new EditAction[pluginActions.size()];
 		pluginActions.copyInto(array);
 		return array;
 	}
@@ -1160,7 +1160,7 @@ public class jEdit
 	private static Server server;
 	private static Autosave autosave;
 	private static Hashtable actionHash;
-	private static Action[] actions;
+	private static EditAction[] actions;
 	private static Vector modes;
 	private static Vector plugins;
 	private static Vector pluginActions;
@@ -1518,6 +1518,9 @@ public class jEdit
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.59  1999/03/21 08:37:16  sp
+ * Slimmer action system, history text field update
+ *
  * Revision 1.58  1999/03/21 07:53:14  sp
  * Plugin doc updates, action API change, new method in MiscUtilities, new class
  * loader, new plugin interface

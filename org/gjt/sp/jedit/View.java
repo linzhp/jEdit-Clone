@@ -159,7 +159,7 @@ public class View extends JFrame
 	{
 		if(openRecent.getMenuComponentCount() != 0)
 			openRecent.removeAll();
-		Action action = jEdit.getAction("open-path");
+		EditAction action = jEdit.getAction("open-path");
 		String[] recentArray = jEdit.getRecent();
 		if(recentArray.length == 0)
 		{
@@ -185,8 +185,8 @@ public class View extends JFrame
 			clearMarker.removeAll();
 		if(gotoMarker.getMenuComponentCount() != 0)
 			gotoMarker.removeAll();
-		Action clearMarkerAction = jEdit.getAction("clear-marker");
-		Action gotoMarkerAction = jEdit.getAction("goto-marker");
+		EditAction clearMarkerAction = jEdit.getAction("clear-marker");
+		EditAction gotoMarkerAction = jEdit.getAction("goto-marker");
 		Enumeration enum = buffer.getMarkers();
 		if(!enum.hasMoreElements())
 		{
@@ -216,7 +216,7 @@ public class View extends JFrame
 	{
 		if(plugins.getMenuComponentCount() != 0)
 			plugins.removeAll();
-		Action[] pluginArray = jEdit.getPluginActions();
+		EditAction[] pluginArray = jEdit.getPluginActions();
 		if(pluginArray.length == 0)
 		{
 			plugins.add(GUIUtilities.loadMenuItem(this,"no-plugins"));
@@ -224,7 +224,7 @@ public class View extends JFrame
 		}
 		for(int i = 0; i < pluginArray.length; i++)
 		{
-			String action = (String)pluginArray[i].getValue(Action.NAME);
+			String action = (String)pluginArray[i].getName();
 			JMenuItem mi = GUIUtilities.loadMenuItem(this,action);
 			plugins.add(mi);
 		}
@@ -774,7 +774,7 @@ public class View extends JFrame
 					}
 					else
 						cmd = null;
-					Action action = jEdit.getAction(s);
+					EditAction action = jEdit.getAction(s);
 					if(action == null)
 					{
 						System.out.println("Invalid key"
@@ -819,6 +819,9 @@ public class View extends JFrame
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.53  1999/03/21 08:37:16  sp
+ * Slimmer action system, history text field update
+ *
  * Revision 1.52  1999/03/21 07:53:14  sp
  * Plugin doc updates, action API change, new method in MiscUtilities, new class
  * loader, new plugin interface

@@ -19,19 +19,21 @@
 
 package org.gjt.sp.jedit;
 
-import javax.swing.text.JTextComponent;
-import javax.swing.*;
+import javax.swing.JPopupMenu;
+import java.awt.event.ActionListener;
 import java.awt.Component;
 import java.util.EventObject;
 
 /**
- * The class all jEdit actions must extend. It is a Swing
- * <code>AbstractAction</code> with support for finding out the view and
- * buffer that invoked the action.<p>
+ * The class all jEdit actions must extend. It is an
+ * <code>ActionListener</code> implementation with support for finding out
+ * the view and buffer that invoked the action.<p>
  *
- * The <i>internal</i> name of an action is the class name without the
- * package prefix. An action instance can be obtained from it's internal
- * name with the <code>jEdit.getAction()</code> method.
+ * The <i>internal</i> name of an action is the string passed to the
+ * EditAction constructor. An action instance can be obtained from it's
+ * internal name with the <code>jEdit.getAction()</code> method. An
+ * action's internal name can be obtained with the <code>getName()</code>
+ * method.<p>
  *
  * Actions can be added at run-time with the <code>jEdit.addAction()</code>
  * method, or the <code>jEdit.addPluginAction()</code> method if the action
@@ -59,7 +61,7 @@ import java.util.EventObject;
  * @see jEdit#addAction(Action)
  * @see GUIUtilities#loadMenubar(View,String)
  */
-public abstract class EditAction extends AbstractAction
+public abstract class EditAction implements ActionListener 
 {
 	/**
 	 * Creates a new <code>EditAction</code>.
@@ -67,7 +69,15 @@ public abstract class EditAction extends AbstractAction
 	 */
 	public EditAction(String name)
 	{
-		super(name);
+		this.name = name;
+	}
+
+	/**
+	 * Returns the internal name of this action.
+	 */
+	public String getName()
+	{
+		return name;
 	}
 
 	/**
@@ -113,11 +123,17 @@ public abstract class EditAction extends AbstractAction
 			return view.getBuffer();
 		return null;
 	}
+
+	// private members
+	private String name;
 }
 
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.8  1999/03/21 08:37:15  sp
+ * Slimmer action system, history text field update
+ *
  * Revision 1.7  1999/03/21 07:53:14  sp
  * Plugin doc updates, action API change, new method in MiscUtilities, new class
  * loader, new plugin interface

@@ -209,7 +209,7 @@ public class GUIUtilities
 		else
 			mi = new EnhancedMenuItem(label,keyStroke);
 		
-		Action a = jEdit.getAction(action);
+		EditAction a = jEdit.getAction(action);
 		if(a == null)
 			mi.setEnabled(false);
 		else
@@ -364,7 +364,7 @@ public class GUIUtilities
 		}
 		else
 			actionCommand = null;
-		Action action = jEdit.getAction(name);
+		EditAction action = jEdit.getAction(name);
 		if(action == null)
 			button.setEnabled(false);
 		else
@@ -625,6 +625,9 @@ public class GUIUtilities
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.14  1999/03/21 08:37:15  sp
+ * Slimmer action system, history text field update
+ *
  * Revision 1.13  1999/03/20 01:55:42  sp
  * New color option pane, fixed search & replace bug
  *
