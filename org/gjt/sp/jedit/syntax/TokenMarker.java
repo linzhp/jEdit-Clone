@@ -48,27 +48,10 @@ public abstract class TokenMarker
 	{
 		lastToken = null;
 
-		LineInfo info = lineInfo[lineIndex];
-		if(info == null)
-		{
-			info = new LineInfo(Token.NULL,null);
-			lineInfo[lineIndex] = info;
-		}
-
-		byte token;
-
-		if(lineIndex == 0)
-			token = Token.NULL;
-		else
-		{
-			LineInfo prevInfo = lineInfo[lineIndex - 1];
-			if(prevInfo != null)
-				token = prevInfo.token;
-			else
-				token = Token.NULL;
-		}
-
-		info.token = markTokensImpl(token,line,lineIndex);
+		/* optimization :) */
+		lineInfo[lineIndex] = markTokensImpl((lineIndex == 0 ?
+			Token.NULL : lineInfo[lineIndex -1].token),
+			line,lineIndex);
 
 		addToken(0,Token.END);
 
@@ -111,6 +94,9 @@ public abstract class TokenMarker
 		int len = index + lines;
 		System.arraycopy(lineInfo,index,lineInfo,len,
 			lineInfo.length - len);
+
+		for(int i = index + lines - 1; i >= index; i--)
+			lineInfo[i] = new LineInfo();
 	}
 	
 	/**
@@ -226,7 +212,16 @@ public abstract class TokenMarker
 	public class LineInfo
 	{
 		/**
-		 * Creates a new LineInfo object.
+		 * Creates a new LineInfo object with token = Token.NULL
+		 * and obj = null.
+		 */
+		public LineInfo()
+		{
+		}
+
+		/**
+		 * Creates a new LineInfo object with the specified
+		 * parameters.
 		 */
 		public LineInfo(byte token, Object obj)
 		{
@@ -252,6 +247,9 @@ public abstract class TokenMarker
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.17  1999/04/26 07:55:00  sp
+ * Event multicaster tweak, console shows exit code of processes
+ *
  * Revision 1.16  1999/04/23 22:37:55  sp
  * Tips updated, TokenMarker.LineInfo is public now
  *

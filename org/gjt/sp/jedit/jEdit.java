@@ -40,13 +40,13 @@ public class jEdit
 	/**
 	 * The jEdit version.
 	 */
-	public static final String VERSION = "1.6pre3";
+	public static final String VERSION = "1.6pre4";
 	
 	/**
 	 * The date when a change was last made to the source code,
 	 * in <code>YYYYMMDD</code> format.
 	 */
-	public static final String BUILD = "19990425";
+	public static final String BUILD = "19990426";
 
 	/**
 	 * The main method of the jEdit application.
@@ -1522,6 +1522,9 @@ public class jEdit
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.85  1999/04/26 07:54:59  sp
+ * Event multicaster tweak, console shows exit code of processes
+ *
  * Revision 1.84  1999/04/25 07:23:36  sp
  * Documentation updates, reload bug fix, console bug fix
  *

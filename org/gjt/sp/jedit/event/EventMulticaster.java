@@ -50,6 +50,8 @@ public class EventMulticaster
 	 */
 	public void addListener(EventListener listener)
 	{
+		checkLock();
+
 		EventMulticaster mx = this;
 		while(mx != null)
 		{
@@ -70,6 +72,8 @@ public class EventMulticaster
 	 */
 	public void removeListener(EventListener listener)
 	{
+		checkLock();
+
 		EventMulticaster mx = this;
 		EventMulticaster prev = null;
 
@@ -95,12 +99,17 @@ public class EventMulticaster
 	 */
 	public void fire(AbstractEditorEvent evt)
 	{
+		boolean prevLock = lock;
+		lock = true;
+
 		EventMulticaster mx = this;
 		while(mx != null)
 		{
 			evt.fire(mx.listener);
 			mx = mx.next;
 		}
+
+		lock = prevLock;
 	}
 
 	/**
@@ -115,6 +124,7 @@ public class EventMulticaster
 	// private members
 	private EventMulticaster next;
 	private EventListener listener;
+	private boolean lock;
 
 	private EventMulticaster(EventListener listener,
 		EventMulticaster next)
@@ -122,11 +132,24 @@ public class EventMulticaster
 		this.listener = listener;
 		this.next = next;
 	}
+
+	private void checkLock()
+	{
+		if(lock)
+		{
+			System.err.println("BUG: add/removeListener() called inside fire()");
+			System.err.println("Report this to Slava Pestov <sp@gjt.org>");
+			throw new InternalError("Stack trace");
+		}
+	}
 }
 
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.5  1999/04/26 07:54:59  sp
+ * Event multicaster tweak, console shows exit code of processes
+ *
  * Revision 1.4  1999/04/24 01:55:28  sp
  * MiscUtilities.constructPath() bug fixed, event system bug(s) fix
  *

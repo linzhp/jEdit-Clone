@@ -470,6 +470,8 @@ clipedit.title=Clipping Editor
 console.output=Output
 console.errors=Errors
 console.ioerror=I/O error: {0}
+console.killed=Process {0} killed
+console.exited=Process {0} exited with code {1}
 console.help=This is the jEdit console, a tool for executing programs and\n\
 	opening files. There are many useful tricks you can use here;\n\
 	see Help->Help Contents->The Console for details.\n\

@@ -23,6 +23,8 @@ This is what needs to be done as soon as possible:
 <li>Console's stdin stuff needs to be fixed.<p>
 Probably a silly bug in Console.java.
 
+<li>Sometimes closing a view stuffs up all other event listeners.
+
 <li>Event system needs to be debugged and documented better.<p>
 With the current EventMulticaster, event listeners cannot
 be removed from the fire() method or one of the methods it
@@ -40,24 +42,27 @@ the best way, because it already implements thread-safety.
 </ul>
 
 <li>View extension API<p>
-Several plugins are being written for jEdit which add GUI
-components to views. Because of the fragile nature of the
-current system, they conflict and cannot work together.<p>
 
-Several types of components need to be considered:
+<b>The case against view extensions:</b> on small screens,
+sticking everything into one window saves space, etc. However,
+nowadays most monitors are at least 800x600 where multiple
+frames can be easily seen and manipulated.<p>
 
-<ul>
-<li>Tool/button bars - for example the BufferSelector plugin.
-These could be added to a container with a vertical layout at
-the top of the view, but then dockable toolbars will not be
-supported. Alternatively, a MultiBorderLayout can be
-implemented.
-<li>Larger components - for example the QuickFile plugin.
-The console already has an addTab() method, however not all
-components are well suited to the console's shape. A second
-`gutter' can be added to the left of the view where such
-components can be added.
-</ul>
+Witness the decreasing popularity of MDI (child windows inside
+one big parent window). People prefer having several top-level
+frames. They are much easier to work with and more flexible.<p>
+
+The MacOS is considered the most intuitive UI that exists
+right now. No Mac apps use MDI, or lots of controls in one
+window for that matter.<p>
+
+Frames exist for a reason; don't overlook their usefulness
+and stick everything in one frame.<p>
+
+<b>Having said that,</b> a system for adding toolbars to
+views should still be provided, to cleanly accomodate the
+BufferSelector plugin.
+
 </ul>
 
 <a name=shortterm>
@@ -79,8 +84,6 @@ loaded plugins.
 <li>Add quote parsing to console.<p>
 The current system of argument parsing is very limited. Arguments
 enclosed with quotes should be treated as one.
-
-<li>Console should show command exit status.
 
 <li>Help viewer should support bookmarks.<p>
 As more and more documentation is written, this becomes more of

@@ -116,8 +116,6 @@ implements ActionListener, ListSelectionListener
 	 */
 	public void run(String command)
 	{
-		stop();
-
 		if(command.equalsIgnoreCase("clear"))
 		{
 			try
@@ -145,7 +143,11 @@ implements ActionListener, ListSelectionListener
 			return;
 		}
 
-		// It must be a command
+		
+		// It must be a command; kill currently running process,
+		// if any
+		stop();
+
 		if(appendEXE)
 		{
 			// append .exe to command name on Windows and OS/2
@@ -193,6 +195,7 @@ implements ActionListener, ListSelectionListener
 		}
 
 		command = buf.toString();
+		this.processName = command;
 
 		appendText("\n> " + command,infoColor);
 
@@ -237,8 +240,11 @@ implements ActionListener, ListSelectionListener
 			stdin.stop();
 			stdout.stop();
 			stderr.stop();
-			//process.destroy(); // Keep running
+			process.destroy();
 			process = null;
+			String[] args = { processName };
+			appendText("\n" + jEdit.getProperty("console.killed",args),
+				errorColor);
 		}
 	}
 
@@ -410,6 +416,7 @@ implements ActionListener, ListSelectionListener
 	private Color errorColor;
 	private Color parsedErrorColor;
 
+	private String processName;
 	private Process process;
 	private StdinThread stdin;
 	private StdoutThread stdout;
@@ -586,12 +593,22 @@ implements ActionListener, ListSelectionListener
 					addOutput(line,null);
 				}
 				in.close();
-					
+
+				int exitCode = process.waitFor();
+				Object[] args = { processName,
+					new Integer(exitCode) };
+				appendText("\n" + jEdit.getProperty(
+					"console.exited",args),infoColor);
+				process = null;
+				
 			}
 			catch(IOException io)
 			{
 				Object[] args = { io.getMessage() };
 				GUIUtilities.error(view,"ioerror",args);
+			}
+			catch(InterruptedException ie)
+			{
 			}
 		}
 	}
@@ -631,6 +648,9 @@ implements ActionListener, ListSelectionListener
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.28  1999/04/26 07:55:00  sp
+ * Event multicaster tweak, console shows exit code of processes
+ *
  * Revision 1.27  1999/04/25 07:23:36  sp
  * Documentation updates, reload bug fix, console bug fix
  *
