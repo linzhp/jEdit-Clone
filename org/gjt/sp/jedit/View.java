@@ -644,6 +644,8 @@ public class View extends JFrame
 		console.getCommandField().save();
 		console.stop();
 
+		saveCaretInfo();
+
 		Buffer[] bufferArray = jEdit.getBuffers();
 		for(int i = 0; i < bufferArray.length; i++)
 			bufferArray[i].removeBufferListener(bufferListener);
@@ -751,7 +753,7 @@ public class View extends JFrame
 	}
 
 	// event listeners
-	private class ViewBufferListener implements BufferListener
+	class ViewBufferListener implements BufferListener
 	{
 		public void bufferDirtyChanged(BufferEvent evt)
 		{
@@ -782,7 +784,7 @@ public class View extends JFrame
 		}
 	}
 
-	private class ViewEditorListener extends EditorAdapter
+	class ViewEditorListener extends EditorAdapter
 	{
 		public void bufferCreated(EditorEvent evt)
 		{
@@ -811,7 +813,7 @@ public class View extends JFrame
 		}
 	}
 
-	private class ViewCaretListener implements CaretListener
+	class ViewCaretListener implements CaretListener
 	{
 		public void caretUpdate(CaretEvent evt)
 		{
@@ -819,7 +821,7 @@ public class View extends JFrame
 		}
 	}
 
-	private class ViewKeyListener extends KeyAdapter
+	class ViewKeyListener extends KeyAdapter
 	{
 		public void keyPressed(KeyEvent evt)
 		{
@@ -883,7 +885,7 @@ public class View extends JFrame
 		}
 	}
 
-	private class ViewWindowListener extends WindowAdapter
+	class ViewWindowListener extends WindowAdapter
 	{
 		public void windowClosing(WindowEvent evt)
 		{
@@ -895,6 +897,9 @@ public class View extends JFrame
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.47  1999/03/17 05:32:51  sp
+ * Event system bug fix, history text field updates (but it still doesn't work), code cleanups, lots of banging head against wall
+ *
  * Revision 1.46  1999/03/15 03:12:34  sp
  * Fixed compile error with javac that jikes silently ignored (FUCK YOU IBM),
  * maybe some other stuff fixed too

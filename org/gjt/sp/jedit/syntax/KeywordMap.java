@@ -105,7 +105,7 @@ public class KeywordMap
 	}
 
 	// private members
-	private class Keyword
+	class Keyword
 	{
 		public Keyword(char[] keyword, String id, Keyword next)
 		{
@@ -126,6 +126,9 @@ public class KeywordMap
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.11  1999/03/17 05:32:52  sp
+ * Event system bug fix, history text field updates (but it still doesn't work), code cleanups, lots of banging head against wall
+ *
  * Revision 1.10  1999/03/13 08:50:39  sp
  * Syntax colorizing updates and cleanups, general code reorganizations
  *

@@ -1429,7 +1429,7 @@ loop:		for(int i = 0; i < markers.size(); i++)
 		}
 	}
 
-	private class BufferProps extends Hashtable
+	class BufferProps extends Hashtable
 	{
 		public Object get(Object key)
 		{
@@ -1468,7 +1468,7 @@ loop:		for(int i = 0; i < markers.size(); i++)
 		}
 	}
 
-	private class ColorList extends Hashtable
+	class ColorList extends Hashtable
 	{
 		public Object get(Object key)
 		{
@@ -1495,7 +1495,7 @@ loop:		for(int i = 0; i < markers.size(); i++)
 	}
 
 	// event handlers
-	private class BufferEditorListener
+	class BufferEditorListener
 	extends EditorAdapter
 	{
 		public void propertiesChanged(EditorEvent evt)
@@ -1504,7 +1504,7 @@ loop:		for(int i = 0; i < markers.size(); i++)
 		}
 	}
 
-	private class BufferUndoableEditListener
+	class BufferUndoableEditListener
 	implements UndoableEditListener
 	{
 		public void undoableEditHappened(UndoableEditEvent evt)
@@ -1516,7 +1516,7 @@ loop:		for(int i = 0; i < markers.size(); i++)
 		}
 	}
 
-	private class BufferDocumentListener
+	class BufferDocumentListener
 	implements DocumentListener
 	{
 		public void insertUpdate(DocumentEvent evt)
@@ -1561,6 +1561,9 @@ loop:		for(int i = 0; i < markers.size(); i++)
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.61  1999/03/17 05:32:51  sp
+ * Event system bug fix, history text field updates (but it still doesn't work), code cleanups, lots of banging head against wall
+ *
  * Revision 1.60  1999/03/15 03:40:23  sp
  * Search and replace updates, TSQL mode/token marker updates
  *

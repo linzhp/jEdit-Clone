@@ -214,9 +214,9 @@ block-comment.label=Block Comment
 ### Tools menu
 tools=word-count \
       - \
+      compile \
       pipe-selection \
       toggle-console \
-      compile \
       - \
       prev-error \
       next-error \
@@ -233,7 +233,7 @@ word-count.label=Word Co$unt...
 pipe-selection.label=Fi$lter Selection...
 toggle-console.label=Show/Hi$de Console
 compile.label=$Compile...
-prev-error.label=Go to Pre$vious Error
+prev-error.label=Go to $Previous Error
 next-error.label=Go to $Next Error
 browser-open-sel.label=$Open Selection in WWW Browser
 browser-open-url.label=Open in $WWW Browser
@@ -243,7 +243,7 @@ options.label=Opt$ions...
 mode.label=$Mode
 
 ### Plugins menu
-plugins.label=$Plugins
+plugins.label=$Plu$gins
 no-plugins.label=No Plugins
 
 ### Search menu

@@ -175,10 +175,7 @@ implements ActionListener, KeyListener, ListSelectionListener, WindowListener
 			Buffer buffer = view.getBuffer();
 			int tabSize = buffer.getTabSize();
 			Vector data = new Vector();
-			RE regexp = new RE((String)find.getSelectedItem(),
-				(ignoreCase.getModel().isSelected()
-				? RE.REG_ICASE : 0),jEdit.getRESyntax(jEdit
-				.getProperty("search.regexp.value")));
+			RE regexp = jEdit.getRE();
 			Element map = buffer.getDefaultRootElement();
 			int lines = map.getElementCount();
 			for(int i = 1; i <= lines; i++)

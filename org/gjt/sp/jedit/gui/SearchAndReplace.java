@@ -24,8 +24,12 @@ import java.awt.*;
 import java.awt.event.*;
 import org.gjt.sp.jedit.*;
 
+/**
+ * Search and replace dialog.
+ * @author Slava Pestov
+ * @version $Id$
+ */
 public class SearchAndReplace extends JDialog
-implements ActionListener, KeyListener, WindowListener
 {
 	public SearchAndReplace(View view, String defaultFind)
 	{
@@ -66,27 +70,26 @@ implements ActionListener, KeyListener, WindowListener
 		GridBagConstraints constraints = new GridBagConstraints();
 		constraints.gridwidth = constraints.gridheight = 1;
 		constraints.fill = constraints.BOTH;
-		constraints.weightx = 0.0f;
 		JLabel label = new JLabel(jEdit.getProperty("search.find"),
 			SwingConstants.RIGHT);
 		layout.setConstraints(label,constraints);
 		panel.add(label);
-		constraints.weightx = 1.0f;
 		constraints.gridx = 1;
-		constraints.gridwidth = 4;
+		constraints.gridwidth = constraints.REMAINDER;
+		constraints.weightx = 1.0f;
 		layout.setConstraints(find,constraints);
 		panel.add(find);
-		constraints.weightx = 0.0f;
 		constraints.gridx = 0;
 		constraints.gridwidth = 1;
-		constraints.gridy = 2;
+		constraints.gridy = 1;
+		constraints.weightx = 0.0f;
 		label = new JLabel(jEdit.getProperty("search.replace"),
 			SwingConstants.RIGHT);
 		layout.setConstraints(label,constraints);
 		panel.add(label);
-		constraints.weightx = 1.0f;
 		constraints.gridx = 1;
-		constraints.gridwidth = 4;
+		constraints.gridwidth = constraints.REMAINDER;
+		constraints.weightx = 1.0f;
 		layout.setConstraints(replace,constraints);
 		panel.add(replace);
 		getContentPane().add("North",panel);
@@ -104,15 +107,22 @@ implements ActionListener, KeyListener, WindowListener
 		getRootPane().setDefaultButton(findBtn);
 		getContentPane().add("South",panel);
 
-		find.addKeyListener(this);
-		replace.addKeyListener(this);
-		addKeyListener(this);
-		addWindowListener(this);
-		findBtn.addActionListener(this);
-		replaceSelection.addActionListener(this);
-		replaceAll.addActionListener(this);
-		cancel.addActionListener(this);
 		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+
+		SearchKeyListener keyListener = new SearchKeyListener();
+		addKeyListener(keyListener);
+		find.addKeyListener(keyListener);
+		replace.addKeyListener(keyListener);
+
+		addWindowListener(new SearchWindowListener());
+
+		SearchActionListener actionListener = new SearchActionListener();
+		find.addActionListener(actionListener);
+		replace.addActionListener(actionListener);
+		findBtn.addActionListener(actionListener);
+		replaceSelection.addActionListener(actionListener);
+		replaceAll.addActionListener(actionListener);
+		cancel.addActionListener(actionListener);
 		
 		pack();
 		GUIUtilities.loadGeometry(this,"search");
@@ -120,68 +130,6 @@ implements ActionListener, KeyListener, WindowListener
 		show();
 		find.requestFocus();
 	}
-	
-	public void actionPerformed(ActionEvent evt)
-	{
-		save();
-		Object source = evt.getSource();
-		if(source == cancel)
-			dispose();
-		else if(source == findBtn)
-		{
-			if(view.getBuffer().find(view,false))
-				disposeOrKeepDialog();
-		}
-		else if(source == replaceSelection)
-		{
-			if(view.getBuffer().replaceAll(view,selStart,selEnd))
-				disposeOrKeepDialog();
-			else
-				getToolkit().beep();
-		}
-		else if(source == replaceAll)
-		{
-			if(view.getBuffer().replaceAll(view,0,
-				view.getBuffer().getLength()))
-				disposeOrKeepDialog();
-			else
-				getToolkit().beep();
-		}
-	}
-
-	public void keyPressed(KeyEvent evt)
-	{
-		switch(evt.getKeyCode())
-		{
-		case KeyEvent.VK_ENTER:
-			save();
-			if(view.getBuffer().find(view,false));
-				disposeOrKeepDialog();
-			break;
-		case KeyEvent.VK_ESCAPE:
-			save();
-			dispose();
-			break;
-		}
-	}
-	
-	public void keyReleased(KeyEvent evt) {}
-
-	public void keyTyped(KeyEvent evt) {}
-	
-	public void windowOpened(WindowEvent evt) {}
-	
-	public void windowClosing(WindowEvent evt)
-	{
-		save();
-		dispose();
-	}
-	
-	public void windowClosed(WindowEvent evt) {}
-	public void windowIconified(WindowEvent evt) {}
-	public void windowDeiconified(WindowEvent evt) {}
-	public void windowActivated(WindowEvent evt) {}
-	public void windowDeactivated(WindowEvent evt) {}
 
         // private members
 	private View view;
@@ -216,4 +164,64 @@ implements ActionListener, KeyListener, WindowListener
 			return;
 		dispose();
 	}
+
+	class SearchActionListener implements ActionListener
+	{
+		public void actionPerformed(ActionEvent evt)
+		{
+			save();
+			Object source = evt.getSource();
+			if(source == cancel)
+				dispose();
+			else if(source == findBtn || source == find
+				|| source == replace)
+			{
+				if(view.getBuffer().find(view,false))
+					disposeOrKeepDialog();
+			}
+			else if(source == replaceSelection)
+			{
+				if(view.getBuffer().replaceAll(view,
+					selStart,selEnd))
+					disposeOrKeepDialog();
+				else
+					getToolkit().beep();
+			}
+			else if(source == replaceAll)
+			{
+				if(view.getBuffer().replaceAll(view,0,
+					view.getBuffer().getLength()))
+					disposeOrKeepDialog();
+				else
+					getToolkit().beep();
+			}
+		}
+	}
+
+	class SearchKeyListener extends KeyAdapter
+	{
+		public void keyPressed(KeyEvent evt)
+		{
+			if(evt.getKeyCode() == KeyEvent.VK_ESCAPE)
+			{
+				dispose();
+			}
+		}
+	}
+
+	class SearchWindowListener extends WindowAdapter
+	{
+		public void windowClosing(WindowEvent evt)
+		{
+			dispose();
+		}
+	}
 }
+
+/*
+ * ChangeLog:
+ * $Log$
+ * Revision 1.19  1999/03/17 05:32:52  sp
+ * Event system bug fix, history text field updates (but it still doesn't work), code cleanups, lots of banging head against wall
+ *
+ */

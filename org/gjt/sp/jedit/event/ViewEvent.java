@@ -109,6 +109,7 @@ public class ViewEvent extends AbstractEditorEvent
 			break;
 		case BUFFER_CHANGED:
 			l.viewBufferChanged(this);
+			break;
 		default:
 			// shouldn't happen
 			throw new InternalError();
@@ -132,6 +133,9 @@ public class ViewEvent extends AbstractEditorEvent
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.4  1999/03/17 05:32:52  sp
+ * Event system bug fix, history text field updates (but it still doesn't work), code cleanups, lots of banging head against wall
+ *
  * Revision 1.3  1999/03/16 04:34:46  sp
  * HistoryTextField updates, moved generate-text to a plugin, fixed spelling mistake in EditAction Javadocs
  *

@@ -47,7 +47,7 @@ public class jEdit
 	 * The date when a change was last made to the source code,
 	 * in <code>YYYYMMDD</code> format.
 	 */
-	public static final String BUILD = "19990316";
+	public static final String BUILD = "19990317";
 
 	/**
 	 * AWK regexp syntax.
@@ -896,16 +896,19 @@ public class jEdit
 
 	/**
 	 * Creates a new view of a buffer.
-	 * @param view The view from which to take the geometry from
+	 * @param view The view from which to take the geometry, buffer and
+	 * caret position from
 	 * @param buffer The buffer
 	 */
 	public static View newView(View view, Buffer buffer)
 	{
-		View _view = new View(view,buffer);
-		views.addElement(_view);
+		if(view != null)
+			view.saveCaretInfo();
+		View newView = new View(view,buffer);
+		views.addElement(newView);
 		fireEditorEvent(new EditorEvent(EditorEvent.VIEW_CREATED,
-			view,buffer));
-		return _view;
+			newView,buffer));
+		return newView;
 	}
 
 	/**
@@ -1573,6 +1576,9 @@ public class jEdit
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.51  1999/03/17 05:32:51  sp
+ * Event system bug fix, history text field updates (but it still doesn't work), code cleanups, lots of banging head against wall
+ *
  * Revision 1.50  1999/03/16 04:34:45  sp
  * HistoryTextField updates, moved generate-text to a plugin, fixed spelling mistake in EditAction Javadocs
  *

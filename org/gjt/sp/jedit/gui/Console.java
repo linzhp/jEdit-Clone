@@ -68,9 +68,7 @@ implements ActionListener, ListSelectionListener
 	{
 		stop();
 
-		output.append("> ");
-		output.append(command);
-		output.append("\n");
+		output.setText("> " + command + "\n");
 
 		if(appendEXE)
 		{
@@ -172,7 +170,6 @@ implements ActionListener, ListSelectionListener
 	{
 		if(evt.getSource() == cmd)
 		{
-			System.out.println("HELLO WORLD");
 			String s = (String)cmd.getSelectedItem();
 			if(s != null && s.length() != 0)
 			{
@@ -342,7 +339,7 @@ implements ActionListener, ListSelectionListener
 		errors.addElement(new CompilerError(path,lineNo,error));
 	}
 
-	private class StdoutThread extends Thread
+	class StdoutThread extends Thread
 	{
 		StdoutThread()
 		{
@@ -375,7 +372,7 @@ implements ActionListener, ListSelectionListener
 		}
 	}
 
-	private class StderrThread extends Thread
+	class StderrThread extends Thread
 	{
 		StderrThread()
 		{
@@ -406,7 +403,7 @@ implements ActionListener, ListSelectionListener
 		}
 	}
 
-	private class SafeAppender implements Runnable
+	class SafeAppender implements Runnable
 	{
 		private String msg;
 
@@ -426,6 +423,9 @@ implements ActionListener, ListSelectionListener
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.12  1999/03/17 05:32:52  sp
+ * Event system bug fix, history text field updates (but it still doesn't work), code cleanups, lots of banging head against wall
+ *
  * Revision 1.11  1999/03/16 04:34:46  sp
  * HistoryTextField updates, moved generate-text to a plugin, fixed spelling mistake in EditAction Javadocs
  *

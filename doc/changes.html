@@ -15,9 +15,12 @@
 <ul>
 <li>Document and clean up org.gjt.sp.jedit.gui package
 <li>Color options panel should be a JTable
+<li>JOptionPanes should have history widgets
 <li><b>insertLines()/deleteLines() still acts weird</b>
 <li><b>Fix uncomment command</b>
-<li><b>HistoryTextField doesn't work well sometimes</b>
+<li><b>HistoryTextField fires an action event when a previous item is
+selected from the history, also getSelectedItem() doesn't return a valid
+value until after enter is pressed</b>
 </ul>
 
 <a name=15pre2>
@@ -29,13 +32,25 @@
 <ul>
 <li>History text field now has a combo box widget for graphically
 selecting previous strings
+<li>When a new view is created, it takes the caret position from the
+view that created it
 </ul>
 
 <h2>Enhancements</h2>
 
 <ul>
-<li>Event system slimmed down a bit
+<li>Removed unneccessary AbstractEditorListener and AbstractEditorAdapter
+classes
 <li>Minor documentation updates
+<li>Distribution slimmed down a bit
+</ul>
+
+<h2>Bug Fixes</h2>
+
+<ul>
+<li>VIEW_CREATED events returned the wrong value with the getView() method
+<li>ViewEvent would throw an InternalError when firing a VIEW_BUFFER_CHANGED
+event
 </ul>
 
 <a name=15pre1>

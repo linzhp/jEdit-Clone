@@ -28,16 +28,14 @@ public class HistoryTextField extends JComboBox
 {
 	public HistoryTextField(String name)
 	{
-		history = new DefaultComboBoxModel();
 		this.name = name;
 		String line;
 		int i = 0;
 		while((line = jEdit.getProperty("history." + name + "." + i)) != null)
 		{
-			history.addElement(line);
+			addItem(line);
 			i++;
 		}
-		setModel(history);
 		setEditable(true);
 		setMaximumRowCount(10);
 		setSelectedItem(null);
@@ -47,12 +45,11 @@ public class HistoryTextField extends JComboBox
 	{
 		String text = (String)getSelectedItem();
 		if(text != null && text.length() != 0)
-			history.insertElementAt(text,0);
-
-		for(int i = 0; i < history.getSize(); i++)
+			insertItemAt(text,0);
+		for(int i = 0; i < getItemCount(); i++)
 		{
 			jEdit.setProperty("history." + name + "." + i,
-				(String)history.getElementAt(i));
+				(String)getItemAt(i));
 		}
 	}
 
@@ -60,12 +57,11 @@ public class HistoryTextField extends JComboBox
 	{
 		String text = (String)getSelectedItem();
 		if(text != null && text.length() != 0)
-			history.insertElementAt(text,0);
-		if(history.getSize() > 100)
-			history.removeElementAt(history.getSize() - 1);
+			insertItemAt(text,0);
+		if(getItemCount() > 100)
+			removeItemAt(getItemCount() - 1);
 	}
 
 	// private members
 	private String name;
-	private DefaultComboBoxModel history;
 }

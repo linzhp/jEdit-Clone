@@ -34,7 +34,8 @@ import org.gjt.sp.jedit.jEdit;
  * A subclass of <code>JEditorPane</code> whose default editor kit is
  * <code>SyntaxEditorKit</code>. It also does current line and bracket
  * highlighting.
- * @see org.gjt.sp.jedit.syntax.SyntaxEditorKit
+ * @author Slava Pestov
+ * @version $Id$
  */
 public class SyntaxTextArea extends JEditorPane
 implements MouseListener, MouseMotionListener
@@ -302,7 +303,7 @@ implements MouseListener, MouseMotionListener
 	private boolean block;
 	private Segment lineSegment;
 
-	private class SyntaxCaret extends DefaultCaret
+	class SyntaxCaret extends DefaultCaret
 		implements PropertyChangeListener
 	{
 		public void install(JTextComponent c)
@@ -346,24 +347,9 @@ implements MouseListener, MouseMotionListener
 			SyntaxCaret.this.setVisible(true);
 		}
 
-		public void adjustVisibility(final Rectangle rect)
+		public void adjustVisibility(Rectangle rect)
 		{
-			SwingUtilities.invokeLater(new Runnable() {
-				public void run()
-				{
-					int height = getToolkit().getFontMetrics(
-						getFont()).getHeight();
-					int y = Math.max(0,rect.y - height
-						* electricLines);
-					int lines = height * electricLines * 2;
-					if(y + lines + rect.height <= getHeight())
-					{
-						rect.y = y;
-						rect.height += lines;
-					}
-					scrollRectToVisible(rect);
-				}
-			});
+			SwingUtilities.invokeLater(new SyntaxSafeScroller(rect));
 		}
 
 		public void damage(Rectangle r)
@@ -401,7 +387,31 @@ implements MouseListener, MouseMotionListener
 		}
 	}
 
-	private class CurrentLineHighlighter implements Highlighter.HighlightPainter
+	class SyntaxSafeScroller implements Runnable
+	{
+		private Rectangle rect;
+
+		SyntaxSafeScroller(Rectangle rect)
+		{
+			this.rect = rect;
+		}
+
+		public void run()
+		{
+			int height = getToolkit().getFontMetrics(
+				getFont()).getHeight();
+			int y = Math.max(0,rect.y - height * electricLines);
+			int lines = height * electricLines * 2;
+			if(y + lines + rect.height <= getHeight())
+			{
+				rect.y = y;
+				rect.height += lines;
+			}
+			scrollRectToVisible(rect);
+		}
+	}
+			
+	class CurrentLineHighlighter implements Highlighter.HighlightPainter
 	{
 		public void paint(Graphics g, int p0, int p1, Shape bounds,
 			JTextComponent textComponent)
@@ -422,7 +432,7 @@ implements MouseListener, MouseMotionListener
 		}
 	}
 
-	private class BracketHighlighter implements Highlighter.HighlightPainter
+	class BracketHighlighter implements Highlighter.HighlightPainter
 	{
 		public void paint(Graphics g, int p0, int p1, Shape bounds,
 			JTextComponent textComponent)
@@ -453,3 +463,11 @@ implements MouseListener, MouseMotionListener
 		}
 	}
 }
+
+/*
+ * ChangeLog:
+ * $Log$
+ * Revision 1.13  1999/03/17 05:32:52  sp
+ * Event system bug fix, history text field updates (but it still doesn't work), code cleanups, lots of banging head against wall
+ *
+ */

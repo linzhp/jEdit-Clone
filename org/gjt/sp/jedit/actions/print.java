@@ -135,7 +135,7 @@ public class print extends EditAction
 		job.end();
 	}
 
-	private class PrintSyntaxView extends SyntaxView
+	class PrintSyntaxView extends SyntaxView
 	{
 		private int leftMargin;
 		private int tabSize;
