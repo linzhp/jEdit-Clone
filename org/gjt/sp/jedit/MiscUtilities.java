@@ -19,19 +19,70 @@
 
 package org.gjt.sp.jedit;
 
+import gnu.regexp.*;
 import java.io.*;
 
 /**
  * Class with several useful miscallaneous functions.<p>
  *
  * It provides methods for converting file names to class names, for
- * constructing path names, and for various indentation calculations.
+ * constructing path names, and for various indentation calculations.<p>
+ *
+ * It also provides several regular expression-related methods.
  *
  * @author Slava Pestov
  * @version $Id$
  */
 public class MiscUtilities
 {
+	/**
+	 * AWK regexp syntax.
+	 */
+	public static final String AWK = "awk";
+	
+	/**
+	 * ED regexp syntax.
+	 */
+	public static final String ED = "ed";
+	
+	/**
+	 * EGREP regexp syntax.
+	 */
+	public static final String EGREP = "egrep";
+	
+	/**
+	 * EMACS regexp syntax.
+	 */
+	public static final String EMACS = "emacs";
+	
+	/**
+	 * GREP regexp syntax.
+	 */
+	public static final String GREP = "grep";
+	
+	/**
+	 * PERL4 regexp syntax.
+	 */
+	public static final String PERL4 = "perl4";
+	
+	/**
+	 * PERL5 regexp syntax.
+	 */
+	public static final String PERL5 = "perl5";
+	
+	/**
+	 * SED regexp syntax.
+	 */
+	public static final String SED = "sed";
+
+	/**
+	 * The values that can be stored in the
+	 * <code>search.regexp.value</code> property to specify the regexp
+	 * syntax.
+	 */
+	public static final String[] SYNTAX_LIST = { AWK, ED, EGREP, EMACS,
+		GREP, PERL4, PERL5, SED };
+
 	/**
 	 * Converts a file name to a class name. All slash characters are
 	 * replaced with periods and the trailing '.class' is removed.
@@ -157,6 +208,46 @@ loop:		for(int i = 0; i < str.length(); i++)
 		return buf.toString();
 	}
 
+	/**
+	 * Returns the current regular expression.
+	 * @exception REException if the stored regular expression is invalid
+	 */
+	public static RE getRE()
+		throws REException
+	{
+		String pattern = jEdit.getProperty("history.find.0");
+		if(pattern == null || "".equals(pattern))
+			return null;
+		return new RE(pattern,("on".equals(jEdit.getProperty(
+			"search.ignoreCase.toggle")) ? RE.REG_ICASE : 0)
+			| RE.REG_MULTILINE,getRESyntax(
+			jEdit.getProperty("search.regexp.value")));
+	}
+
+	/**
+	 * Converts a syntax name to an <code>RESyntax</code> instance.
+	 * @param name The syntax name
+	 */
+	public static RESyntax getRESyntax(String name)
+	{
+		if(AWK.equals(name))
+			return RESyntax.RE_SYNTAX_AWK;
+		else if(ED.equals(name))
+			return RESyntax.RE_SYNTAX_ED;
+		else if(EGREP.equals(name))
+			return RESyntax.RE_SYNTAX_EGREP;
+		else if(EMACS.equals(name))
+			return RESyntax.RE_SYNTAX_EMACS;
+		else if(GREP.equals(name))
+			return RESyntax.RE_SYNTAX_GREP;
+		else if(SED.equals(name))
+			return RESyntax.RE_SYNTAX_SED;
+		else if(PERL4.equals(name))
+			return RESyntax.RE_SYNTAX_PERL4;
+		else
+			return RESyntax.RE_SYNTAX_PERL5;
+	}
+
 	// private members
 	private MiscUtilities() {}
 
@@ -176,6 +267,9 @@ loop:		for(int i = 0; i < str.length(); i++)
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.7  1999/04/19 05:47:35  sp
+ * ladies and gentlemen, 1.6pre1
+ *
  * Revision 1.6  1999/03/21 07:53:14  sp
  * Plugin doc updates, action API change, new method in MiscUtilities, new class
  * loader, new plugin interface

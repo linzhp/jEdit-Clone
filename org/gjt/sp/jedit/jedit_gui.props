@@ -12,14 +12,18 @@ common.cancel=Cancel
 common.insert=Insert
 common.close=Close
 
+lineSep.unix=Unix (\\n)
+lineSep.windows=DOS/Windows (\\r\\n)
+lineSep.mac=MacOS (\\r)
+
 ###
 ### TOOLBAR
 ###
 view.toolbar=new-file open-file open-url close-file - save save-all - \
 	send print - undo redo - cut copy paste - \
 	find find-next hypersearch - \
-	prev-error next-error - exit - \
-	help@index.html
+	prev-error next-error - \
+	help
 
 new-file.icon=New.gif
 open-file.icon=Open.gif
@@ -39,8 +43,7 @@ find-next.icon=VCRFastForward.gif
 hypersearch.icon=DocumentIn.gif
 prev-error.icon=Left.gif
 next-error.icon=Right.gif
-exit.icon=VCROpen.gif
-help@index.html.icon=Help.gif
+help.icon=Help.gif
 
 
 ###
@@ -53,10 +56,12 @@ view.context=undo redo - cut copy paste paste-previous paste-predefined - \
 ###
 ### MENUBAR
 ###
-view.mbar=buffers file edit tools search help
+view.mbar=buffers file edit tools search help-menu
 
 ### Buffers menu
 buffers.label=$Buffers
+next-buffer.label=Open $Next Buffer
+prev-buffer.label=Open $Previous Buffer
 
 ### File menu
 file=new-file \
@@ -215,7 +220,6 @@ block-comment.label=Block Comment
 tools=word-count \
       - \
       compile \
-      pipe-selection \
       toggle-console \
       - \
       prev-error \
@@ -230,8 +234,7 @@ tools=word-count \
       %plugins
 tools.label=$Tools
 word-count.label=Word Co$unt...
-compile.label=$Compile...
-pipe-selection.label=Fi$lter Selection...
+compile.label=$Compile
 toggle-console.label=Show/Hi$de Console
 prev-error.label=Go to $Previous Error
 next-error.label=Go to $Next Error
@@ -279,11 +282,13 @@ goto-marker.label=$Go to Marker
 no-markers.label=No Markers Defined
 
 ### Help menu
-help=about \
-     help@index.html
-help.label=$Help
+help-menu=about \
+     help \
+     plugin-help
+help-menu.label=$Help
 about.label=About jEdit...
-help@index.html.label=Help Contents...
+help.label=Help Contents...
+plugin-help.label=Plugin Help Contents...
 
 ###
 ### MISC STUFF
@@ -306,11 +311,6 @@ view.lineNumber={0} - {1}/{2} - {3}%
 # {0} - the hint of the day
 view.hintBar=Hint: {0}
 
-# Line separator strings
-lineSep.unix=Unix (\\n)
-lineSep.windows=DOS/Windows (\\r\\n)
-lineSep.mac=MacOS (\\r)
-
 ###
 ### VARIOUS DIALOGS
 ###
@@ -322,24 +322,23 @@ lineSep.mac=MacOS (\\r)
 # {3} - OS name
 # {4} - OS version
 # {5} - OS architecture
-# {6} - Free memory
-# {7} - Total memory
 about.title=About jEdit
 about.message=jEdit version {0} build {1}\n\
 	jEdit was written by Slava Pestov with the help of several others;\n\
-	See Help->Help Contents->About jEdit for a full list.\n\
+	See Help->Help Contents->Introduction for a full list.\n\
 	\n\
 	jEdit homepage: <http://www.gjt.org/~sp/jedit.html>.\n\
 	jEdit e-mail: <sp@gjt.org>.\n\
 	\n\
 	This is free software, and you are welcome to redistribute it under\n\
-	certain conditions; see Help->Help Contents->Copying for details.\n\
+	certain conditions; see Help->Help Contents->Introduction\n\
+	for details.\n\
 	\n\
-	Java version {2} running on {3}/{5} version {4}.\n\
-	Java heap space: (free/total) {6}/{7}Kb
+	Java {2} running on {3}/{5} {4}.
 
 # IO Error dialog, {0}=the error message
 ioerror.title=I/O Error
+# {0} - the error message
 ioerror.message=An I/O error occured ({0})
 
 # File not found dialog
@@ -351,25 +350,22 @@ notfounderror.message=The file could not be found: {0}
 openurl.title=Open URL
 openurl.message=URL to open:
 
-# Execute command dialog
-execute.title=Execute Command
-execute.message=Command to execute (%p = file path, %u = file URL):
+# Malformed URL error
+badurl.title=Invalid URL
+# {0} - the URL
+badurl.message=The following URL is invalid: {0}
 
 # Couldn't load browser dialog
 wwwerror.title=WWW Browser Error
+# {0} - the WWW browser
 wwwerror.message=There was an error while starting the WWW browser.\n\
 	({0})\n\
-	Check that the `browser` setting in the Options dialog box\n\
-	is set correctly.
+	Check that the browser is set correctly in\n\
+	Tools->Global Options->General.
+
 # Save To URL dialog
 saveurl.title=Save To URL
 saveurl.message=URL to save file to:
-
-# Command error dialog
-cmderr.title=Command Output
-# {0} - command output
-cmderr.message=The command reported the following error(s):\n\
-	{0}
 
 # Send dialog
 send.title=Send
@@ -377,6 +373,7 @@ send.smtp=SMTP Server:\
 send.from=From:\ 
 send.to=To:\ 
 send.subject=Subject:\ 
+send.selectionOnly=Send selected text only
 send.send=Send
 sendempty.title=Send Error
 sendempty.message=The SMTP Server, From and To fields must all be\n\
@@ -401,6 +398,9 @@ gotoline.message=Line number to go to:
 
 # Word count dialog
 wordcount.title=Word Count
+# {0} - characters
+# {1} - words
+# {2} - lines
 wordcount.message=Characters: {0}\nWords: {1}\nLines: {2}
 
 # Set marker dialog
@@ -420,7 +420,7 @@ changedreload.message=File has been modified since last save;\n\
 # Autosave file exists dialog
 autosaveexists.title=Autosave File Exists
 # {0} - autosave file name
-autosaveexists.message=An autosave file {0} was found.\n\
+autosaveexists.message=An autosave file {0} was found!\n\
 	This probably means that jEdit crashed before you could save.\n\
 	Open it to see your unsaved data.
 
@@ -451,6 +451,7 @@ hypersearch.ignoreCase=Ignore Case
 
 # Invalid regexp dialog
 reerror.title=Invalid Regular Expression
+# {0} - error message
 reerror.message=The regular expression is invalid. ({0})
 
 # Paste previous dialog
@@ -472,9 +473,20 @@ console.cmd=Command:\
 console.output=Output
 console.errors=Errors
 console.ioerror=I/O error: {0}
-
-# Compile error dialog
-error.title=Compiler Error
+console.help=This is the jEdit console, a tool for executing programs and\n\
+	opening files. There are many useful tricks you can use here;\n\
+	see Help->Help Contents->The Console for details.\n\
+	\n\
+	Here are some examples of what you can enter here:\n\
+	\n\
+	ls (OS commands - .exe is automatically appended on Windows)\n\
+	cc %f (c%f expands to the file path)\n\
+	netscape %u (%u is the current file's URL)\n\
+	make -C %d (%d is the current file's parent directory)\n\
+	clear (removes all text from the console)\n\
+	file:/etc/passwd (will open the file)\n\
+	file:C:\\Documents\\doc.txt (Windows file paths)\n\
+	http://www.sun.com (will open the URL)\n
 
 # File changed on disk dialog
 filechanged.title=File Changed on Disk
@@ -490,10 +502,7 @@ selectlinerange.end=End line:\
 
 # Buffer options dialog
 buffer_options.title=Buffer Options
-buffer_options.tabSize=Tab size:\ 
 buffer_options.mode=Edit mode:\ 
-buffer_options.lineSeparator=Line separator:\ 
-buffer_options.noTabs=Soft (emulated with spaces) tabs
 
 # Global options dialog
 options.title=Global Options
@@ -514,6 +523,7 @@ options.general.server=Enable jEdit server
 options.general.showTips=Show hints in status bar
 options.general.showToolbar=Show toolbar
 options.editor.label=Editor
+options.editor.defaultMode=Default edit mode:\ 
 options.editor.font=Text font:\ 
 options.editor.fontstyle=Text font style:\ 
 options.editor.plain=Plain
@@ -525,7 +535,8 @@ options.editor.tabSize=Tab width:\
 options.editor.lineHighlight=Current line highlighting
 options.editor.bracketHighlight=Bracket highlighting
 options.editor.syntax=Highlight syntax tokens
-options.editor.autoIndent=Indent line when Tab key is pressed
+options.editor.indentOnTab=Indent line when Tab key is pressed
+options.editor.indentOnEnter=Indent line when Enter key is pressed
 options.editor.blinkCaret=Blinking caret
 options.editor.blockCaret=Block-shaped caret
 options.editor.electricBorders=Electric (auto scroll) borders
@@ -549,13 +560,32 @@ options.colors.keyword3Color=Keyword 3
 options.colors.operatorColor=Operator
 options.colors.invalidColor=Invalid token
 
-# Color chooser, used by options.colors[12]
+# Color chooser, used by options.colors
 colorChooser.title=Pick a Color
 
 # Help viewer
 helpviewer.title=jEdit Help
 helpviewer.width=600
 helpviewer.height=400
+helpviewer.url=URL:\ 
 helpviewer.back=Back
 helpviewer.forward=Forward
 helpviewer.home=Contents
+
+# Plugin list protocol (jeditplugins:)
+pluginlist.header=<html>\n\
+	<head><title>Plugin Documentation</title><head>\n\
+	<body>\n\
+	<h1>Documentation For Installed Plugins</h1>\n\
+	<table border=3>\n\
+	<tr bgcolor=#cc90ff><th>Name</th><th>Author</th><th>Version</th>\
+	<th>Documentation</th></tr>\n
+
+# {0} - plugin name
+# {1} - plugin author
+# {2} - plugin version
+# {3} - plugin documentation URL
+pluginlist.entry=<tr><td>{0}</td><td>{1}</td><td>{2}</td>\
+	<td><a href={3}>Documentation</a></td></tr>
+
+pluginlist.footer=</table>\n</body>\n</html>

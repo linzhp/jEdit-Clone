@@ -29,19 +29,13 @@ package org.gjt.sp.jedit;
  *
  * As of jEdit 1.5, EditActions and Modes aren't automatically loaded from
  * plugin JAR files on startup; it is the responsibility of the plugin
- * class implementation to do so.<p>
+ * class implementation to do so.
  *
  * @author Slava Pestov
  * @version $Id$
  */
 public interface Plugin
 {
-	/**
-	 * Returns the plugin's internal name, which is used to fetch
-	 * several properties.
-	 */
-	public String getName();
-
 	/**
 	 * Called at start up time when the plugin is being loaded.
 	 */

@@ -21,6 +21,7 @@
 package org.gjt.sp.jedit;
 
 import java.io.*;
+import java.net.*;
 import java.util.*;
 import java.util.zip.*;
 
@@ -73,8 +74,9 @@ public class JARClassLoader extends ClassLoader
 		if(Plugin.class.isAssignableFrom(clazz))
 		{
 			Plugin plugin = (Plugin)clazz.newInstance();
+			pluginName = plugin.getClass().getName();
 			System.out.println(" -- loaded plugin: " +
-				plugin.getName());
+				pluginName);
 			jEdit.addPlugin(plugin);
 		}
 	}
@@ -131,13 +133,55 @@ public class JARClassLoader extends ClassLoader
 		}
 	}
 
+	public InputStream getResourceAsStream(String name)
+	{
+		try
+		{
+			return zipFile.getInputStream(
+				zipFile.getEntry(name));
+		}
+		catch(IOException io)
+		{
+			return null;
+		}
+	}
+
+	public URL getResource(String name)
+	{
+		try
+		{
+			return new URL(getResourceAsPath(name));
+		}
+		catch(MalformedURLException mu)
+		{
+			return null;
+		}
+	}
+
+	public String getResourceAsPath(String name)
+	{
+		return "jeditresource:" + pluginName + "/" + name;
+	}
+
 	// private members
 	private ZipFile zipFile;
+
+	/* This is the name of the last plugin loaded. It is used
+	 * to create resource URLs (the resource URL handler looks
+	 * up the JAR loader by plugin name)
+	 */
+	private String pluginName;
 }
 
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.4  1999/04/19 05:47:35  sp
+ * ladies and gentlemen, 1.6pre1
+ *
+ * Revision 1.3  1999/04/02 00:39:19  sp
+ * Fixed console bug, syntax API changes, minor jEdit.java API change
+ *
  * Revision 1.2  1999/03/24 05:45:27  sp
  * Juha Lidfors' backup directory patch, removed debugging messages from various locations, documentation updates
  *

@@ -49,6 +49,16 @@ public class Buffer extends DefaultSyntaxDocument
 	public static final String LINESEP = "lineSeparator";
 
 	/**
+	 * Reloads settings from the properties. This should be called
+	 * after the <code>syntax</code> buffer-local property is
+	 * changed.
+	 */
+	public void propertiesChanged()
+	{
+		syntaxColorizing = "on".equals(getProperty("syntax"));
+	}
+
+	/**
 	 * Finds the next instance of the search string in this buffer,
 	 * starting at the end of the selected text, or the caret position
 	 * if nothing is selected.
@@ -72,7 +82,7 @@ public class Buffer extends DefaultSyntaxDocument
 	{
 		try
 		{
-			RE regexp = jEdit.getRE();
+			RE regexp = MiscUtilities.getRE();
 			if(regexp == null)
 			{
 				view.getToolkit().beep();
@@ -123,7 +133,7 @@ public class Buffer extends DefaultSyntaxDocument
 		}
 		try
 		{
-			RE regexp = jEdit.getRE();
+			RE regexp = MiscUtilities.getRE();
 			String replaceStr = jEdit.getProperty("history.replace.0");
 			if(regexp == null)
 			{
@@ -163,7 +173,7 @@ public class Buffer extends DefaultSyntaxDocument
 		beginCompoundEdit();
 		try
 		{
-			RE regexp = jEdit.getRE();
+			RE regexp = MiscUtilities.getRE();
 			if(regexp == null)
 			{
 				endCompoundEdit();
@@ -338,14 +348,17 @@ public class Buffer extends DefaultSyntaxDocument
 			file = saveFile;
 			setPath();
 			saveMarkers();
-			adirty = dirty = newFile = readOnly = false;
+			adirty = dirty = readOnly = false;
 			autosaveFile.delete();
 
 			fireBufferEvent(new BufferEvent(BufferEvent
 				.DIRTY_CHANGED,this));
 
-			if(mode == null)
+			if(newFile)
 				setMode();
+
+			newFile = false;
+
 			modTime = file.lastModified();
 			return true;
 		}
@@ -429,6 +442,14 @@ public class Buffer extends DefaultSyntaxDocument
 		return lineCount - 1;
 	}
 
+	/**
+	 * Returns the URL this buffer is editing.
+	 */
+	public URL getURL()
+	{
+		return url;
+	}
+	
 	/**
 	 * Returns the file this buffer is editing.
 	 */
@@ -555,9 +576,10 @@ public class Buffer extends DefaultSyntaxDocument
 		if(this.mode == mode)
 			return;
 
+		View[] views = jEdit.getViews();
+
 		if(this.mode != null)
 		{
-			View[] views = jEdit.getViews();
 			for(int i = 0; i < views.length; i++)
 			{
 				View view = views[i];
@@ -569,25 +591,16 @@ public class Buffer extends DefaultSyntaxDocument
 
 		this.mode = mode;
 
-		if(mode == null)
-		{
-			tokenMarker = null;
-		}
-		else
-		{
-			setTokenMarker(mode.createTokenMarker());
-			((Hashtable)getColors()).clear(); // XXX
+		mode.enter(this);
 
-			mode.enter(this);
+		setTokenMarker(mode.createTokenMarker());
+		loadColors();
 
-			View[] views = jEdit.getViews();
-			for(int i = 0; i < views.length; i++)
-			{
-				View view = views[i];
-				if(view.getBuffer() == this)
-					this.mode.enterView(view);
-			}
-			this.mode.enter(this);
+		for(int i = 0; i < views.length; i++)
+		{
+			View view = views[i];
+			if(view.getBuffer() == this)
+				this.mode.enterView(view);
 		}
 
 		fireBufferEvent(new BufferEvent(BufferEvent.MODE_CHANGED,this));
@@ -622,8 +635,10 @@ public class Buffer extends DefaultSyntaxDocument
 				{
 					String line = getText(start,lineElement
 						.getEndOffset() - start - 1);
-					setMode(jEdit.getMode(jEdit.getProperty(
-						"mode.firstline." + line)));
+					mode = jEdit.getMode(jEdit.getProperty(
+						"mode.firstline." + line));
+					if(mode != null)
+						setMode(mode);
 				}
 				catch(BadLocationException bl)
 				{
@@ -637,7 +652,7 @@ public class Buffer extends DefaultSyntaxDocument
 	 */
 	public TokenMarker getTokenMarker()
 	{
-		if(jEdit.getSyntaxColorizing())
+		if(syntaxColorizing)
 			return tokenMarker;
 		else
 			return null;
@@ -839,15 +854,21 @@ loop:		for(int i = 0; i < markers.size(); i++)
 		this.newFile = newFile;
 		this.readOnly = readOnly;
 		setDocumentProperties(new BufferProps());
-
-		// silly hack for backspace to work
 		putProperty("i18n",Boolean.FALSE);
+		
+		multicaster = new EventMulticaster();
 		undo = new UndoManager();
 		markers = new Vector();
-		setColors(new ColorList());
-		multicaster = new EventMulticaster();
-		addDocumentListener(new BufferDocumentListener());
+		addDocumentListener(new DocumentHandler());
+		
 		setPath();
+
+		// Set default mode
+		setMode(jEdit.getMode(jEdit.getProperty("buffer.defaultMode")));
+
+		// Load syntax property
+		propertiesChanged();
+
 		if(!newFile)
 		{
 			if(file.exists())
@@ -860,14 +881,22 @@ loop:		for(int i = 0; i < markers.size(); i++)
 			load(view);
 			loadMarkers();
 		}
+
+		// XXX
 		String userMode = (String)getProperty("mode");
 		if(userMode != null)
-			setMode(jEdit.getMode(userMode));
+		{
+			Mode m = jEdit.getMode(userMode);
+			if(m != null)
+				setMode(m);
+			else
+				setMode();
+		}
 		else
 			setMode();
 
-		addUndoableEditListener(new BufferUndoableEditListener());
-		jEdit.addEditorListener(new BufferEditorListener());
+		addUndoableEditListener(new UndoHandler());
+		jEdit.addEditorListener(new EditorHandler());
 		
 		init = false;
 	}
@@ -887,6 +916,7 @@ loop:		for(int i = 0; i < markers.size(); i++)
 	private boolean dirty;
 	private boolean readOnly;
 	private boolean alreadyBackedUp;
+	private boolean syntaxColorizing;
 	private Mode mode;
 	private UndoManager undo;
 	private CompoundEdit compoundEdit;
@@ -1049,6 +1079,30 @@ loop:		for(int i = 0; i < markers.size(); i++)
 			Object[] args = { io.toString() };
 			GUIUtilities.error(view,"ioerror",args);
 		}
+	}
+
+	private void loadColors()
+	{
+		colors[Token.COMMENT1] = GUIUtilities.parseColor(
+			(String)getProperty("colors.comment1"));
+		colors[Token.COMMENT2] = GUIUtilities.parseColor(
+			(String)getProperty("colors.comment2"));
+		colors[Token.KEYWORD1] = GUIUtilities.parseColor(
+			(String)getProperty("colors.keyword1"));
+		colors[Token.KEYWORD2] = GUIUtilities.parseColor(
+			(String)getProperty("colors.keyword2"));
+		colors[Token.KEYWORD3] = GUIUtilities.parseColor(
+			(String)getProperty("colors.keyword3"));
+		colors[Token.LABEL] = GUIUtilities.parseColor(
+			(String)getProperty("colors.label"));
+		colors[Token.LITERAL1] = GUIUtilities.parseColor(
+			(String)getProperty("colors.literal1"));
+		colors[Token.LITERAL2] = GUIUtilities.parseColor(
+			(String)getProperty("colors.literal2"));
+		colors[Token.OPERATOR] = GUIUtilities.parseColor(
+			(String)getProperty("colors.operator"));
+		colors[Token.INVALID] = GUIUtilities.parseColor(
+			(String)getProperty("colors.invalid"));
 	}
 
 	private void processProperty(String prop)
@@ -1329,14 +1383,8 @@ loop:		for(int i = 0; i < markers.size(); i++)
 				return o;
 
 			// Now try mode.<mode>.<property>
-			String value = null;
-			if(mode != null)
-			{
-				String clazz = mode.getClass().getName();
-				value = jEdit.getProperty("mode."
-					+ clazz.substring(clazz
-					.lastIndexOf('.')+1) + "." + key);
-			}
+			String value = jEdit.getProperty("mode."
+				+ mode.getName() + "." + key);
 
 			// Now try buffer.<property>
 			if(value == null)
@@ -1358,43 +1406,18 @@ loop:		for(int i = 0; i < markers.size(); i++)
 		}
 	}
 
-	class ColorList extends Hashtable
-	{
-		public Object get(Object key)
-		{
-			Object o = super.get(key);
-			if(o != null)
-				return o;
-			String clazz = mode.getClass().getName();
-			String value = jEdit.getProperty("mode." + clazz
-				.substring(clazz.lastIndexOf('.')+1)
-					+ ".colors." + key);
-			if(value == null)
-			{
-				value = jEdit.getProperty("buffer.colors."
-					+ key);
-				if(value == null)
-					return null;
-			}
-			Color color = GUIUtilities.parseColor(value);
-			if(color == null)
-				return null;
-			put(key,color);
-			return color;
-		}
-	}
-
 	// event handlers
-	class BufferEditorListener
+	class EditorHandler
 	extends EditorAdapter
 	{
 		public void propertiesChanged(EditorEvent evt)
 		{
-			((Hashtable)getColors()).clear();
+			Buffer.this.propertiesChanged();
+			loadColors();
 		}
 	}
 
-	class BufferUndoableEditListener
+	class UndoHandler
 	implements UndoableEditListener
 	{
 		public void undoableEditHappened(UndoableEditEvent evt)
@@ -1406,7 +1429,7 @@ loop:		for(int i = 0; i < markers.size(); i++)
 		}
 	}
 
-	class BufferDocumentListener
+	class DocumentHandler
 	implements DocumentListener
 	{
 		public void insertUpdate(DocumentEvent evt)
@@ -1429,6 +1452,12 @@ loop:		for(int i = 0; i < markers.size(); i++)
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.71  1999/04/19 05:47:35  sp
+ * ladies and gentlemen, 1.6pre1
+ *
+ * Revision 1.70  1999/04/02 00:39:19  sp
+ * Fixed console bug, syntax API changes, minor jEdit.java API change
+ *
  * Revision 1.69  1999/03/28 01:36:24  sp
  * Backup system overhauled, HistoryTextField updates
  *
@@ -1458,14 +1487,4 @@ loop:		for(int i = 0; i < markers.size(); i++)
  *
  * Revision 1.60  1999/03/15 03:40:23  sp
  * Search and replace updates, TSQL mode/token marker updates
- *
- * Revision 1.59  1999/03/14 02:22:13  sp
- * Syntax colorizing tweaks, server bug fix
- *
- * Revision 1.58  1999/03/13 08:50:39  sp
- * Syntax colorizing updates and cleanups, general code reorganizations
- *
- * Revision 1.57  1999/03/12 23:51:00  sp
- * Console updates, uncomment removed cos it's too buggy, cvs log tags added
- *
  */

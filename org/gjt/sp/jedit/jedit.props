@@ -3,6 +3,10 @@
 ### By Slava Pestov <sp@gjt.org>
 ###
 
+###
+### GLOBAL SETTINGS
+###
+
 # Look and feel class
 #lf=com.sun.java.swing.plaf.motif.MotifLookAndFeel
 #lf=com.sun.java.swing.plaf.windows.WindowsLookAndFeel
@@ -41,6 +45,7 @@ browser=jedit_moz_remote
 
 ###
 ### BUFFER SETTINGS
+### These can also be specified as buffer-local properties
 ###
 
 # Line separator
@@ -53,11 +58,26 @@ browser=jedit_moz_remote
 # Tab width
 buffer.tabSize=8
 
+# Auto indent
+buffer.indentOnTab=on
+buffer.indentOnEnter=off
+
 # Brackets
 buffer.openBrackets=([{
 buffer.closeBrackets=)]}
 
-# Print margins
+# Default edit mode
+buffer.defaultMode=text
+
+# Maximum line length (for Format command)
+buffer.maxLineLen=72
+
+# Non-alphabet characters that count as word characters anyway
+# (for Expand Abbreviation command)
+buffer.noWordSep=
+
+# Print margins (these cannot be set on a per-buffer basis currently.
+# Not much point fixing this though)
 buffer.margin.top=0.5
 buffer.margin.left=0.5
 buffer.margin.bottom=0.5
@@ -66,7 +86,7 @@ buffer.margin.right=0.5
 # Syntax colorizing
 buffer.syntax=on
 
-# Colors
+# Syntax colors
 buffer.colors.comment1=red
 buffer.colors.comment2=#990033
 buffer.colors.keyword1=blue
@@ -77,7 +97,6 @@ buffer.colors.literal1=#650099
 buffer.colors.literal2=#650099
 buffer.colors.operator=orange
 buffer.colors.invalid=#ff9900
-buffer.colors.alt=black
 
 ###
 ### VIEW SETTINGS
@@ -95,7 +114,7 @@ view.fontsize=14
 # 0=plain, 1=bold, 2=italic, 3=boldItalic
 view.fontstyle=0
 
-# Background and foreground colors
+# Background and foreground colors (for the text area)
 view.bgColor=white
 view.fgColor=black
 
@@ -120,20 +139,19 @@ view.caretBlinkRate=500
 view.blockCaret=off
 
 # Electric borders
-view.electricBorders=4
-
-# Auto indent
-view.autoindent=on
+view.electricBorders=3
 
 ###
 ### EDIT MODES
 ###
 
 # Text mode
-mode.none.name=Text
+mode.text.name=Text
 
-# Auto Indent mode
-mode.autoindent.name=Auto Indent
+# AMSTeX mode
+mode.amstex.name=AMS-TeX
+mode.amstex.blockComment=%
+mode.amstex.compiler=amstex %f
 
 # Batch File mode
 mode.bat.name=Batch File
@@ -148,8 +166,8 @@ mode.c.indentCloseBrackets=}
 mode.c.commentStart=/*
 mode.c.commentEnd=*/
 mode.c.blockComment=//
-mode.c.boxComment=*
-mode.c.compiler=cc -O %p
+mode.c.boxComment=\ *
+mode.c.compiler=cc -O %f
 mode.extension.c=c
 mode.extension.h=c
 
@@ -162,7 +180,7 @@ mode.cc.commentStart=/*
 mode.cc.commentEnd=*/
 mode.cc.blockComment=//
 mode.cc.boxComment=*
-mode.cc.compiler=c++ -O2 %p
+mode.cc.compiler=c++ -O2 %f
 # I wish the C++ file extensions were more standard... jeez...
 mode.extension.cc=cc
 mode.extension.hh=cc
@@ -179,16 +197,16 @@ mode.extension.shtml=html
 mode.extension.htm=html
 
 # Java mode
-mode.java_mode.name=Java
-mode.java_mode.noWordSep=_
-mode.java_mode.indentOpenBrackets={
-mode.java_mode.indentCloseBrackets=}
-mode.java_mode.commentStart=/*
-mode.java_mode.commentEnd=*/
-mode.java_mode.blockComment=//
-mode.java_mode.boxComment=*
-mode.java_mode.compiler=javac %p
-mode.extension.java=java_mode
+mode.java.name=Java
+mode.java.noWordSep=_
+mode.java.indentOpenBrackets={
+mode.java.indentCloseBrackets=}
+mode.java.commentStart=/*
+mode.java.commentEnd=*/
+mode.java.blockComment=//
+mode.java.boxComment=\ *
+mode.java.compiler=javac %f
+mode.extension.java=java
 
 # JavaScript mode
 mode.javascript.name=JavaScript
@@ -198,12 +216,18 @@ mode.javascript.indentCloseBrackets=}
 mode.javascript.commentStart=/*
 mode.javascript.commentEnd=*/
 mode.javascript.blockComment=//
-mode.javascript.boxComment=*
+mode.javascript.boxComment=\ *
 mode.extension.js=javascript
+
+# LaTeX mode
+mode.latex.name=LaTeX
+mode.latex.blockComment=%
+mode.latex.compiler=latex %f
 
 # Makefile mode
 mode.makefile.name=Makefile
 mode.makefile.blockComment=#
+mode.makefile.compiler=make -C %d -f %f
 mode.filename.gnumakefile=makefile
 mode.filename.makefile=makefile
 
@@ -214,6 +238,7 @@ mode.extension.patch=patch
 
 # Props mode
 mode.props.name=Properties/INI
+mode.patch.blockComment=#
 mode.extension.props=props
 mode.extension.properties=props
 mode.extension.ini=props
@@ -245,20 +270,10 @@ mode.firstline.#!/usr/local/bin/tcsh=sh
 # TeX mode
 mode.tex.name=TeX
 mode.tex.blockComment=%
-mode.tex.compiler=tex %p
+mode.tex.compiler=tex %f
 mode.extension.tex=tex
 mode.extension.sty=tex
 mode.extension.aux=tex
-
-# AMSTeX mode
-mode.amstex.name=AMS-TeX
-mode.amstex.blockComment=%a
-mode.amstex.compiler=amstex %p
-
-# LaTeX mode
-mode.latex.name=LaTeX
-mode.latex.blockComment=%
-mode.latex.compiler=latex %p
 
 # Transact-SQL mode (written by Mike Dillon <mdillon@uclink4.berkeley.edu>)
 mode.tsql.name=Transact-SQL

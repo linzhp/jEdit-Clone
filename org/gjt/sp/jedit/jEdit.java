@@ -22,7 +22,6 @@ package org.gjt.sp.jedit;
 import javax.swing.text.Element;
 import javax.swing.text.Segment;
 import javax.swing.*;
-import gnu.regexp.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
@@ -41,66 +40,19 @@ public class jEdit
 	/**
 	 * The jEdit version.
 	 */
-	public static final String VERSION = "1.5.2";
+	public static final String VERSION = "1.6pre1";
 	
 	/**
 	 * The date when a change was last made to the source code,
 	 * in <code>YYYYMMDD</code> format.
 	 */
-	public static final String BUILD = "19990408";
+	public static final String BUILD = "19990417";
 
-	/**
-	 * AWK regexp syntax.
-	 */
-	public static final String AWK = "awk";
-	
-	/**
-	 * ED regexp syntax.
-	 */
-	public static final String ED = "ed";
-	
-	/**
-	 * EGREP regexp syntax.
-	 */
-	public static final String EGREP = "egrep";
-	
-	/**
-	 * EMACS regexp syntax.
-	 */
-	public static final String EMACS = "emacs";
-	
-	/**
-	 * GREP regexp syntax.
-	 */
-	public static final String GREP = "grep";
-	
-	/**
-	 * PERL4 regexp syntax.
-	 */
-	public static final String PERL4 = "perl4";
-	
-	/**
-	 * PERL5 regexp syntax.
-	 */
-	public static final String PERL5 = "perl5";
-	
-	/**
-	 * SED regexp syntax.
-	 */
-	public static final String SED = "sed";
-	
 	/**
 	 * The user properties file.
 	 */
 	public static final String USER_PROPS = System.getProperty("user.home")
 		+ File.separator + ".jedit-props";
-	/**
-	 * The values that can be stored in the
-	 * <code>search.regexp.value</code> property to specify the regexp
-	 * syntax.
-	 */
-	public static final String[] SYNTAX_LIST = { AWK, ED, EGREP, EMACS,
-		GREP, PERL4, PERL5, SED };
 
 	/**
 	 * The main method of the jEdit application.
@@ -115,9 +67,8 @@ public class jEdit
 		boolean readOnly = false;
 		String userHome = System.getProperty("user.home");
 		String userDir = System.getProperty("user.dir");
-		usrProps = System.getProperty("user.home") + File.separator
-			+ ".jedit-props";
-		portFile = new File(userHome,".jedit-server");
+		usrProps = userHome + File.separator + ".jedit-props";
+		portFile = userHome + File.separator + ".jedit-server";
 		boolean desktop = true;
 		boolean showSplash = true;
 		int lineNo = -1;
@@ -152,7 +103,7 @@ public class jEdit
 				else if(arg.startsWith("-usrprops="))
 					usrProps = arg.substring(10);
 				else if(arg.startsWith("-portfile="))
-					portFile = new File(arg.substring(10));
+					portFile = arg.substring(10);
 				else if(arg.equals("-readonly"))
 					readOnly = true;
 				else if(arg.startsWith("-+"))
@@ -178,7 +129,7 @@ public class jEdit
 		}
 
 		// Try to connect to the server
-		if(portFile != null && portFile.exists())
+		if(portFile != null && new File(portFile).exists())
 		{
 			try
 			{
@@ -212,234 +163,28 @@ public class jEdit
 			}
 			catch(Exception e)
 			{
-				System.out.println("jEdit: stale port file deleted");
-				portFile.delete();
+				System.out.println("jEdit: connection to server failed");
 			}
 		}
+
+		// Ok, server isn't running; start jEdit
 
 		// Show the kool splash screen
 		SplashScreen splash = null;
 		if(showSplash)
 			splash = new SplashScreen();
 
-		// Create several objects
-		props = new Properties();
-		actionHash = new Hashtable();
-		modes = new Vector();
-		plugins = new Vector();
-		pluginActions = new Vector();
-		buffers = new Vector();
-		views = new Vector();
-		recent = new Vector();
-		clipHistory = new Vector();
-		multicaster = new EventMulticaster();
-
-		// Add PROPERTIES_CHANGED listener
-		addEditorListener(new JEditEditorListener());
-		
-		// Determine installation directory
-		jEditHome = System.getProperty("jedit.home");
-		if(jEditHome == null)
-		{
-			String classpath = System
-				.getProperty("java.class.path");
-			int index = classpath.toLowerCase()
-				.indexOf("jedit.jar");
-			int start = classpath.lastIndexOf(File
-				.pathSeparator,index) + 1;
-			if(index > start)
-			{
-				jEditHome = classpath.substring(start,
-					index - 1);
-			}
-			else
-				jEditHome = userDir;
-		}
-		jEditHome = jEditHome + File.separator;
-
-		// Load properties
-		try
-		{
-			loadProps(jEdit.class.getResourceAsStream(
-				"/org/gjt/sp/jedit/jedit.props"));
-			loadProps(jEdit.class.getResourceAsStream(
-				"/org/gjt/sp/jedit/jedit_gui.props"));
-			loadProps(jEdit.class.getResourceAsStream(
-				"/org/gjt/sp/jedit/jedit_keys.props"));
-			loadProps(jEdit.class.getResourceAsStream(
-				"/org/gjt/sp/jedit/jedit_predef.props"));
-			loadProps(jEdit.class.getResourceAsStream(
-				"/org/gjt/sp/jedit/jedit_tips.props"));	
-		}
-		catch(Exception e)
-		{
-			System.err.println(">> ERROR LOADING SYSTEM PROPERTIES <<\n"
-				+ "One of the following property files could not be loaded:\n"
-				+ "- jedit.props\n"
-				+ "- jedit_gui.props\n"
-				+ "- jedit_keys.props\n"
-				+ "- jedit_predef.props\n"
-				+ "- jedit_tips.props\n"
-				+ "Try reinstalling jEdit.");
-			return;
-		}
-
-		// Load edit modes
-		addMode(new org.gjt.sp.jedit.mode.autoindent());
-		addMode(new org.gjt.sp.jedit.mode.amstex());
-		addMode(new org.gjt.sp.jedit.mode.bat());
-                addMode(new org.gjt.sp.jedit.mode.c());
-                addMode(new org.gjt.sp.jedit.mode.cc());
-		addMode(new org.gjt.sp.jedit.mode.html());
-		addMode(new org.gjt.sp.jedit.mode.java_mode());
-		addMode(new org.gjt.sp.jedit.mode.javascript());
-		addMode(new org.gjt.sp.jedit.mode.latex());
-		addMode(new org.gjt.sp.jedit.mode.makefile());
-		addMode(new org.gjt.sp.jedit.mode.patch());
-		addMode(new org.gjt.sp.jedit.mode.props());
-		addMode(new org.gjt.sp.jedit.mode.sh());
-		addMode(new org.gjt.sp.jedit.mode.tex());
-		addMode(new org.gjt.sp.jedit.mode.tsql());
-
-		// Load actions
-		addAction(new org.gjt.sp.jedit.actions.about());
-		addAction(new org.gjt.sp.jedit.actions.block_comment());
-		addAction(new org.gjt.sp.jedit.actions.box_comment());
-		addAction(new org.gjt.sp.jedit.actions.browser_open_sel());
-		addAction(new org.gjt.sp.jedit.actions.browser_open_url());
-		addAction(new org.gjt.sp.jedit.actions.buffer_options());
-		addAction(new org.gjt.sp.jedit.actions.clear());
-		addAction(new org.gjt.sp.jedit.actions.clear_marker());
-		addAction(new org.gjt.sp.jedit.actions.close_file());
-		addAction(new org.gjt.sp.jedit.actions.close_view());
-		addAction(new org.gjt.sp.jedit.actions.compile());
-		addAction(new org.gjt.sp.jedit.actions.copy());
-		addAction(new org.gjt.sp.jedit.actions.cut());
-		addAction(new org.gjt.sp.jedit.actions.delete_end_line());
-		addAction(new org.gjt.sp.jedit.actions.delete_line());
-		addAction(new org.gjt.sp.jedit.actions.delete_no_indent());
-		addAction(new org.gjt.sp.jedit.actions.delete_paragraph());
-		addAction(new org.gjt.sp.jedit.actions.delete_start_line());
-		addAction(new org.gjt.sp.jedit.actions.exchange_anchor());
-		addAction(new org.gjt.sp.jedit.actions.exit());
-		addAction(new org.gjt.sp.jedit.actions.expand_abbrev());
-		addAction(new org.gjt.sp.jedit.actions.find());
-		addAction(new org.gjt.sp.jedit.actions.find_next());
-		addAction(new org.gjt.sp.jedit.actions.find_selection());
-		addAction(new org.gjt.sp.jedit.actions.format());
-		addAction(new org.gjt.sp.jedit.actions.global_options());
-		addAction(new org.gjt.sp.jedit.actions.goto_anchor());
-		addAction(new org.gjt.sp.jedit.actions.goto_end_indent());
-		addAction(new org.gjt.sp.jedit.actions.goto_line());
-		addAction(new org.gjt.sp.jedit.actions.goto_marker());
-		addAction(new org.gjt.sp.jedit.actions.help());
-		addAction(new org.gjt.sp.jedit.actions.hypersearch());
-                addAction(new org.gjt.sp.jedit.actions.indent_line());
-		addAction(new org.gjt.sp.jedit.actions.insert_date());
-		addAction(new org.gjt.sp.jedit.actions.join_lines());
-		addAction(new org.gjt.sp.jedit.actions.locate_bracket());
-		addAction(new org.gjt.sp.jedit.actions.new_file());
-		addAction(new org.gjt.sp.jedit.actions.new_view());
-		addAction(new org.gjt.sp.jedit.actions.next_error());
-		addAction(new org.gjt.sp.jedit.actions.next_paragraph());
-		addAction(new org.gjt.sp.jedit.actions.open_file());
-		addAction(new org.gjt.sp.jedit.actions.open_path());
-		addAction(new org.gjt.sp.jedit.actions.open_selection());
-		addAction(new org.gjt.sp.jedit.actions.open_url());
-		addAction(new org.gjt.sp.jedit.actions.paste());
-		addAction(new org.gjt.sp.jedit.actions.paste_predefined());
-		addAction(new org.gjt.sp.jedit.actions.paste_previous());
-		addAction(new org.gjt.sp.jedit.actions.pipe_selection());
-		addAction(new org.gjt.sp.jedit.actions.prev_error());
-		addAction(new org.gjt.sp.jedit.actions.prev_paragraph());
-		addAction(new org.gjt.sp.jedit.actions.print());
-		addAction(new org.gjt.sp.jedit.actions.redo());
-		addAction(new org.gjt.sp.jedit.actions.reload());
-		addAction(new org.gjt.sp.jedit.actions.replace());
-		addAction(new org.gjt.sp.jedit.actions.replace_all());
-		addAction(new org.gjt.sp.jedit.actions.replace_in_selection());
-		addAction(new org.gjt.sp.jedit.actions.replace_next());
-		addAction(new org.gjt.sp.jedit.actions.save());
-		addAction(new org.gjt.sp.jedit.actions.save_all());
-		addAction(new org.gjt.sp.jedit.actions.save_as());
-		addAction(new org.gjt.sp.jedit.actions.save_url());
-		addAction(new org.gjt.sp.jedit.actions.scroll_line());
-		addAction(new org.gjt.sp.jedit.actions.select_all());
-		addAction(new org.gjt.sp.jedit.actions.select_anchor());
-		addAction(new org.gjt.sp.jedit.actions.select_block());
-		addAction(new org.gjt.sp.jedit.actions.select_buffer());
-		addAction(new org.gjt.sp.jedit.actions.select_line_range());
-		addAction(new org.gjt.sp.jedit.actions.select_next_paragraph());
-		addAction(new org.gjt.sp.jedit.actions.select_no_indent());
-		addAction(new org.gjt.sp.jedit.actions.select_prev_paragraph());
-		addAction(new org.gjt.sp.jedit.actions.send());
-		addAction(new org.gjt.sp.jedit.actions.set_anchor());
-		addAction(new org.gjt.sp.jedit.actions.set_marker());
-		addAction(new org.gjt.sp.jedit.actions.shift_left());
-		addAction(new org.gjt.sp.jedit.actions.shift_right());
-		addAction(new org.gjt.sp.jedit.actions.tab());
-		addAction(new org.gjt.sp.jedit.actions.toggle_console());
-		addAction(new org.gjt.sp.jedit.actions.to_lower());
-		addAction(new org.gjt.sp.jedit.actions.to_upper());
-		addAction(new org.gjt.sp.jedit.actions.undo());
-		addAction(new org.gjt.sp.jedit.actions.untab());
-		addAction(new org.gjt.sp.jedit.actions.wing_comment());
-		addAction(new org.gjt.sp.jedit.actions.word_count());
-
-		// Load plugins
-		loadPlugins(jEditHome + "jars");
-		loadPlugins(System.getProperty("user.home") + File.separator
-			+ ".jedit-jars");
-
-		// Load user properties
-		props = new Properties(props);
-		if(usrProps != null)
-		{
-			try
-			{
-				loadProps(new FileInputStream(USER_PROPS));
-			}
-			catch(FileNotFoundException fnf)
-			{
-			}
-			catch(IOException e)
-			{
-				System.err.println("Error while loading user"
-					+ " properties:");
-				e.printStackTrace();
-			}
-		}
-
+		// Get things rolling
+		initMisc();
+		initSystemProperties();
+		initModes();
+		initActions();
+		initPlugins();
+		initUserProperties();
+		initPLAF();
 		propertiesChanged();
-
-		// Set look and feel
-		String lf = props.getProperty("lf");
-		try
-		{
-			if(lf != null)
-				UIManager.setLookAndFeel(lf);
-		}
-		catch(Exception e)
-		{
-			System.err.println("Error loading L&F!");
-			e.printStackTrace();
-		}
-		
-		// Load recent file list
-		for(int i = 0; i < maxRecent; i++)
-		{
-			String recentFile = getProperty("recent." + i);
-			if(recentFile != null)
-				recent.addElement(recentFile);
-		}
-
-		// Load clip history
-		for(int i = 0; i < maxClipHistory; i++)
-		{
-			String clip = getProperty("clipHistory." + i);
-			if(clip != null)
-				clipHistory.addElement(clip);
-		}
+		initRecent();
+		initClipHistory();
 
 		// Load files specified on the command line
 		Buffer buffer = null;
@@ -558,12 +303,11 @@ public class jEdit
 		}
 		if(autosave != null)
 			autosave.interrupt();
+
 		if("on".equals(getProperty("server"))
 			&& portFile != null)
 			server = new Server();
 			
-		autoindent = "on".equals(getProperty("view.autoindent"));
-		syntax = "on".equals(getProperty("buffer.syntax"));
 		autosave = new Autosave();
 		try
 		{
@@ -574,10 +318,6 @@ public class jEdit
 		{
 			maxRecent = 8;
 		}
-		for(int i = recent.size() - maxRecent; i > 0; i--)
-		{
-			recent.removeElementAt(i);
-		}
 		try
 		{
 			maxClipHistory = Integer.parseInt(getProperty(
@@ -585,11 +325,7 @@ public class jEdit
 		}
 		catch(NumberFormatException nf)
 		{
-			maxClipHistory = 100;
-		}
-		for(int i = clipHistory.size() - maxClipHistory; i > 0; i--)
-		{
-			clipHistory.removeElementAt(i);
+			maxClipHistory = 25;
 		}
 	}
 	
@@ -617,7 +353,7 @@ public class jEdit
 			}
 			catch(Throwable e)
 			{
-				System.err.println("Error loading plugin: "
+				System.err.println("-- error loading plugin: "
 					+ plugins[i]);
 				e.printStackTrace();
 			}
@@ -635,12 +371,19 @@ public class jEdit
 	}
 
 	/**
-	 * Registers an action with the editor.
-	 * @param action The action
+	 * Returns a plugin by it's class name.
+	 * @param name The plugin to return
 	 */
-	public static void addAction(EditAction action)
+	public static Plugin getPlugin(String name)
 	{
-		actionHash.put(action.getName(),action);
+		for(int i = 0; i < plugins.size(); i++)
+		{
+			Plugin p = (Plugin)plugins.elementAt(i);
+			if(p.getClass().getName().equals(name))
+				return p;
+		}
+
+		return null;
 	}
 
 	/**
@@ -651,6 +394,15 @@ public class jEdit
 		Plugin[] pluginArray = new Plugin[plugins.size()];
 		plugins.copyInto(pluginArray);
 		return pluginArray;
+	}
+
+	/**
+	 * Registers an action with the editor.
+	 * @param action The action
+	 */
+	public static void addAction(EditAction action)
+	{
+		actionHash.put(action.getName(),action);
 	}
 
 	/**
@@ -716,13 +468,10 @@ public class jEdit
 	 */
 	public static Mode getMode(String name)
 	{
-		if(name == null)
-			return null;
 		for(int i = 0; i < modes.size(); i++)
 		{
 			Mode mode = (Mode)modes.elementAt(i);
-			String clsName = mode.getClass().getName();
-			if(clsName.substring(clsName.lastIndexOf('.') + 1).equals(name))
+			if(mode.getName().equals(name))
 				return mode;
 		}
 		return null;
@@ -734,15 +483,8 @@ public class jEdit
 	 */
 	public static String getModeName(Mode mode)
 	{
-		if(mode == null)
-			return jEdit.props.getProperty("mode.none.name");
-		else
-		{
-			String clsName = mode.getClass().getName();
-			return jEdit.props.getProperty("mode." +
-				clsName.substring(clsName.lastIndexOf('.') + 1)
-				+ ".name");
-		}
+		return jEdit.props.getProperty("mode." +
+			mode.getName() + ".name");
 	}
 
 	/**
@@ -848,13 +590,17 @@ public class jEdit
 	 */
 	public static boolean closeBuffer(View view, Buffer buffer)
 	{
-		if(!_closeBuffer(view,buffer))
+		if(_closeBuffer(view,buffer))
+			buffers.removeElement(buffer);
+		else
 			return false;
-		if(buffers.size() == 1)
+
+		if(buffers.size() == 0)
 			exit(view);
-		buffers.removeElement(buffer);
+
 		fireEditorEvent(new EditorEvent(EditorEvent.BUFFER_CLOSED,
 			view,buffer));
+
 		return true;
 	}
 
@@ -951,62 +697,6 @@ public class jEdit
 	}
 
 	/**
-	 * Returns the current regular expression.
-	 * @exception REException if the stored regular expression is invalid
-	 */
-	public static RE getRE()
-		throws REException
-	{
-		String pattern = getProperty("history.find.0");
-		if(pattern == null || "".equals(pattern))
-			return null;
-		return new RE(pattern,("on".equals(getProperty(
-			"search.ignoreCase.toggle")) ? RE.REG_ICASE : 0)
-			| RE.REG_MULTILINE,getRESyntax(getProperty(
-			"search.regexp.value")));
-	}
-
-	/**
-	 * Converts a syntax name to an <code>RESyntax</code> instance.
-	 * @param name The syntax name
-	 */
-	public static RESyntax getRESyntax(String name)
-	{
-		if(AWK.equals(name))
-			return RESyntax.RE_SYNTAX_AWK;
-		else if(ED.equals(name))
-			return RESyntax.RE_SYNTAX_ED;
-		else if(EGREP.equals(name))
-			return RESyntax.RE_SYNTAX_EGREP;
-		else if(EMACS.equals(name))
-			return RESyntax.RE_SYNTAX_EMACS;
-		else if(GREP.equals(name))
-			return RESyntax.RE_SYNTAX_GREP;
-		else if(SED.equals(name))
-			return RESyntax.RE_SYNTAX_SED;
-		else if(PERL4.equals(name))
-			return RESyntax.RE_SYNTAX_PERL4;
-		else
-			return RESyntax.RE_SYNTAX_PERL5;
-	}
-
-	/**
-	 * Returns true if syntax colorizing is enabled.
-	 */
-	public static boolean getSyntaxColorizing()
-	{
-		return syntax;
-	}
-
-	/**
-	 * Returns true if auto indent is enabled.
-	 */
-	public static boolean getAutoIndent()
-	{
-		return autoindent;
-	}
-
-	/**
 	 * Adds an editor event listener to the global editor listener
 	 * list.
 	 * @param listener The editor event listener
@@ -1041,7 +731,15 @@ public class jEdit
 	 */
 	public static void addToClipHistory(String str)
 	{
+		int index = clipHistory.indexOf(str);
+		if(index != -1)
+			clipHistory.removeElementAt(index);
 		clipHistory.addElement(str);
+		for(int i = clipHistory.size() - maxClipHistory - 1;
+			i >= 0; i--)
+		{
+			clipHistory.removeElementAt(i);
+		}
 	}
 
 	/**
@@ -1071,12 +769,8 @@ public class jEdit
 					continue;
 				setProperty("desktop." + bufNum + ".path",
 					buffer.getPath());
-				Mode mode = buffer.getMode();
-				String clazz = (mode == null ? "none"
-					: mode.getClass().getName());
 				setProperty("desktop." + bufNum + ".mode",
-					clazz.substring(clazz.lastIndexOf('.')
-					+ 1));
+					buffer.getMode().getName());
 				setProperty("desktop." + bufNum + ".readOnly",
 					buffer.isReadOnly() ? "yes" : "no");
 				setProperty("desktop." + bufNum + ".current",
@@ -1126,6 +820,7 @@ public class jEdit
 			String clip = (String)clipHistory.elementAt(i);
 			setProperty("clipHistory." + i,clip);
 		}
+		unsetProperty("recent." + maxClipHistory);
 
 		// Write the user properties file
 		if(usrProps != null)
@@ -1146,17 +841,15 @@ public class jEdit
 
 		// Byebye...
 		System.out.println("Thank you for using jEdit. Send an e-mail"
-			+ " to <sp@gjt.org>.");
+			+ " to Slava Pestov <sp@gjt.org>.");
 		System.exit(0);
 	}
 
 	// private members
 	private static String jEditHome;
 	private static String usrProps;
-	private static File portFile;
+	private static String portFile;
 	private static Properties props;
-	private static boolean autoindent;
-	private static boolean syntax;
 	private static Server server;
 	private static Autosave autosave;
 	private static Hashtable actionHash;
@@ -1202,6 +895,283 @@ public class jEdit
 	private static void version()
 	{
 		System.err.println("jEdit " + VERSION + " build " + BUILD);
+	}
+
+	/**
+	 * Initialise various objects, register protocol handlers,
+	 * register editor listener, and determine installation
+	 * directory.
+	 */
+	private static void initMisc()
+	{
+		buffers = new Vector();
+		views = new Vector();
+		multicaster = new EventMulticaster();
+
+		// Add our protcols to java.net.URL's list
+		System.getProperties().put("java.protocol.handler.pkgs",
+			"org.gjt.sp.jedit.proto|" +
+			System.getProperty("java.protocol.handler.pkgs",""));
+
+		// Add PROPERTIES_CHANGED listener
+		addEditorListener(new JEditEditorListener());
+		
+		// Determine installation directory
+		jEditHome = System.getProperty("jedit.home");
+		if(jEditHome == null)
+		{
+			String classpath = System
+				.getProperty("java.class.path");
+			int index = classpath.toLowerCase()
+				.indexOf("jedit.jar");
+			int start = classpath.lastIndexOf(File
+				.pathSeparator,index) + 1;
+			if(index > start)
+			{
+				jEditHome = classpath.substring(start,
+					index - 1);
+			}
+			else
+				jEditHome = System.getProperty("user.dir");
+		}
+		jEditHome = jEditHome + File.separator;
+	}
+
+	/**
+	 * Load system properties.
+	 */
+	private static void initSystemProperties()
+	{
+		props = new Properties();
+		
+		try
+		{
+			loadProps(jEdit.class.getResourceAsStream(
+				"/org/gjt/sp/jedit/jedit.props"));
+			loadProps(jEdit.class.getResourceAsStream(
+				"/org/gjt/sp/jedit/jedit_gui.props"));
+			loadProps(jEdit.class.getResourceAsStream(
+				"/org/gjt/sp/jedit/jedit_keys.props"));
+			loadProps(jEdit.class.getResourceAsStream(
+				"/org/gjt/sp/jedit/jedit_tips.props"));	
+		}
+		catch(Exception e)
+		{
+			System.err.println(">> ERROR LOADING SYSTEM PROPERTIES <<\n"
+				+ "One of the following property files could not be loaded:\n"
+				+ "- jedit.props\n"
+				+ "- jedit_gui.props\n"
+				+ "- jedit_keys.props\n"
+				+ "- jedit_tips.props\n"
+				+ "Try reinstalling jEdit.");
+			System.exit(1);
+		}
+	}
+	
+	/**
+	 * Load edit modes.
+	 */
+	private static void initModes()
+	{
+		modes = new Vector();
+
+		addMode(new org.gjt.sp.jedit.mode.text());
+		addMode(new org.gjt.sp.jedit.mode.amstex());
+		addMode(new org.gjt.sp.jedit.mode.bat());
+                addMode(new org.gjt.sp.jedit.mode.c());
+                addMode(new org.gjt.sp.jedit.mode.cc());
+		addMode(new org.gjt.sp.jedit.mode.html());
+		addMode(new org.gjt.sp.jedit.mode.java_mode());
+		addMode(new org.gjt.sp.jedit.mode.javascript());
+		addMode(new org.gjt.sp.jedit.mode.latex());
+		addMode(new org.gjt.sp.jedit.mode.makefile());
+		addMode(new org.gjt.sp.jedit.mode.patch());
+		addMode(new org.gjt.sp.jedit.mode.props());
+		addMode(new org.gjt.sp.jedit.mode.sh());
+		addMode(new org.gjt.sp.jedit.mode.tex());
+		addMode(new org.gjt.sp.jedit.mode.tsql());
+	}
+
+	/**
+	 * Load actions.
+	 */
+	private static void initActions()
+	{
+		actionHash = new Hashtable();
+		pluginActions = new Vector();
+
+		addAction(new org.gjt.sp.jedit.actions.about());
+		addAction(new org.gjt.sp.jedit.actions.block_comment());
+		addAction(new org.gjt.sp.jedit.actions.box_comment());
+		addAction(new org.gjt.sp.jedit.actions.browser_open_sel());
+		addAction(new org.gjt.sp.jedit.actions.browser_open_url());
+		addAction(new org.gjt.sp.jedit.actions.buffer_options());
+		addAction(new org.gjt.sp.jedit.actions.clear());
+		addAction(new org.gjt.sp.jedit.actions.clear_marker());
+		addAction(new org.gjt.sp.jedit.actions.close_file());
+		addAction(new org.gjt.sp.jedit.actions.close_view());
+		addAction(new org.gjt.sp.jedit.actions.compile());
+		addAction(new org.gjt.sp.jedit.actions.copy());
+		addAction(new org.gjt.sp.jedit.actions.cut());
+		addAction(new org.gjt.sp.jedit.actions.delete_end_line());
+		addAction(new org.gjt.sp.jedit.actions.delete_line());
+		addAction(new org.gjt.sp.jedit.actions.delete_no_indent());
+		addAction(new org.gjt.sp.jedit.actions.delete_paragraph());
+		addAction(new org.gjt.sp.jedit.actions.delete_start_line());
+		addAction(new org.gjt.sp.jedit.actions.exchange_anchor());
+		addAction(new org.gjt.sp.jedit.actions.exit());
+		addAction(new org.gjt.sp.jedit.actions.expand_abbrev());
+		addAction(new org.gjt.sp.jedit.actions.find());
+		addAction(new org.gjt.sp.jedit.actions.find_next());
+		addAction(new org.gjt.sp.jedit.actions.find_selection());
+		addAction(new org.gjt.sp.jedit.actions.format());
+		addAction(new org.gjt.sp.jedit.actions.global_options());
+		addAction(new org.gjt.sp.jedit.actions.goto_anchor());
+		addAction(new org.gjt.sp.jedit.actions.goto_end_indent());
+		addAction(new org.gjt.sp.jedit.actions.goto_line());
+		addAction(new org.gjt.sp.jedit.actions.goto_marker());
+		addAction(new org.gjt.sp.jedit.actions.help());
+		addAction(new org.gjt.sp.jedit.actions.hypersearch());
+                addAction(new org.gjt.sp.jedit.actions.indent_on_enter());
+                addAction(new org.gjt.sp.jedit.actions.indent_on_tab());	
+		addAction(new org.gjt.sp.jedit.actions.insert_date());
+		addAction(new org.gjt.sp.jedit.actions.join_lines());
+		addAction(new org.gjt.sp.jedit.actions.locate_bracket());
+		addAction(new org.gjt.sp.jedit.actions.new_file());
+		addAction(new org.gjt.sp.jedit.actions.new_view());
+		addAction(new org.gjt.sp.jedit.actions.next_buffer());
+		addAction(new org.gjt.sp.jedit.actions.next_error());
+		addAction(new org.gjt.sp.jedit.actions.next_paragraph());
+		addAction(new org.gjt.sp.jedit.actions.open_file());
+		addAction(new org.gjt.sp.jedit.actions.open_path());
+		addAction(new org.gjt.sp.jedit.actions.open_selection());
+		addAction(new org.gjt.sp.jedit.actions.open_url());
+		addAction(new org.gjt.sp.jedit.actions.paste());
+		addAction(new org.gjt.sp.jedit.actions.paste_predefined());
+		addAction(new org.gjt.sp.jedit.actions.paste_previous());
+		addAction(new org.gjt.sp.jedit.actions.plugin_help());
+		addAction(new org.gjt.sp.jedit.actions.prev_buffer());
+		addAction(new org.gjt.sp.jedit.actions.prev_error());
+		addAction(new org.gjt.sp.jedit.actions.prev_paragraph());
+		addAction(new org.gjt.sp.jedit.actions.print());
+		addAction(new org.gjt.sp.jedit.actions.redo());
+		addAction(new org.gjt.sp.jedit.actions.reload());
+		addAction(new org.gjt.sp.jedit.actions.replace());
+		addAction(new org.gjt.sp.jedit.actions.replace_all());
+		addAction(new org.gjt.sp.jedit.actions.replace_in_selection());
+		addAction(new org.gjt.sp.jedit.actions.replace_next());
+		addAction(new org.gjt.sp.jedit.actions.save());
+		addAction(new org.gjt.sp.jedit.actions.save_all());
+		addAction(new org.gjt.sp.jedit.actions.save_as());
+		addAction(new org.gjt.sp.jedit.actions.save_url());
+		addAction(new org.gjt.sp.jedit.actions.scroll_line());
+		addAction(new org.gjt.sp.jedit.actions.select_all());
+		addAction(new org.gjt.sp.jedit.actions.select_anchor());
+		addAction(new org.gjt.sp.jedit.actions.select_block());
+		addAction(new org.gjt.sp.jedit.actions.select_buffer());
+		addAction(new org.gjt.sp.jedit.actions.select_line_range());
+		addAction(new org.gjt.sp.jedit.actions.select_next_paragraph());
+		addAction(new org.gjt.sp.jedit.actions.select_no_indent());
+		addAction(new org.gjt.sp.jedit.actions.select_prev_paragraph());
+		addAction(new org.gjt.sp.jedit.actions.send());
+		addAction(new org.gjt.sp.jedit.actions.set_anchor());
+		addAction(new org.gjt.sp.jedit.actions.set_marker());
+		addAction(new org.gjt.sp.jedit.actions.shift_left());
+		addAction(new org.gjt.sp.jedit.actions.shift_right());
+		addAction(new org.gjt.sp.jedit.actions.tab());
+		addAction(new org.gjt.sp.jedit.actions.toggle_console());
+		addAction(new org.gjt.sp.jedit.actions.to_lower());
+		addAction(new org.gjt.sp.jedit.actions.to_upper());
+		addAction(new org.gjt.sp.jedit.actions.undo());
+		addAction(new org.gjt.sp.jedit.actions.untab());
+		addAction(new org.gjt.sp.jedit.actions.wing_comment());
+		addAction(new org.gjt.sp.jedit.actions.word_count());
+	}
+
+	/**
+	 * Loads plugins.
+	 */
+	private static void initPlugins()
+	{
+		plugins = new Vector();
+		loadPlugins(jEditHome + "jars");
+		loadPlugins(System.getProperty("user.home") + File.separator
+			+ ".jedit-jars");
+	}
+
+	/**
+	 * Loads user properties.
+	 */
+	private static void initUserProperties()
+	{
+		props = new Properties(props);
+
+		if(usrProps != null)
+		{
+			try
+			{
+				loadProps(new FileInputStream(USER_PROPS));
+			}
+			catch(FileNotFoundException fnf)
+			{
+			}
+			catch(IOException e)
+			{
+				System.err.println("Error while loading user"
+					+ " properties:");
+				e.printStackTrace();
+			}
+		}
+	}
+
+	/**
+	 * Sets the Swing look and feel.
+	 */
+	private static void initPLAF()
+	{
+		String lf = props.getProperty("lf");
+		try
+		{
+			if(lf != null)
+				UIManager.setLookAndFeel(lf);
+		}
+		catch(Exception e)
+		{
+			System.err.println("Error loading L&F!");
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * Loads the recent file list.
+	 */
+	private static void initRecent()
+	{
+		recent = new Vector();
+
+		for(int i = 0; i < maxRecent; i++)
+		{
+			String recentFile = getProperty("recent." + i);
+			if(recentFile != null)
+				recent.addElement(recentFile);
+		}
+	}
+
+	/**
+	 * Loads the clip history.
+	 */
+	private static void initClipHistory()
+	{
+		clipHistory = new Vector();
+
+		for(int i = 0; i < maxClipHistory; i++)
+		{
+			String clip = getProperty("clipHistory." + i);
+			if(clip != null)
+				clipHistory.addElement(clip);
+			else
+				break;
+		}
 	}
 
 	private static Buffer loadDesktop()
@@ -1327,11 +1297,11 @@ public class jEdit
 				{
 					return;
 				}
+				if(interrupted())
+					return;
 				Buffer[] bufferArray = jEdit.getBuffers();
 				for(int i = 0; i < bufferArray.length; i++)
 					bufferArray[i].autosave();
-				if(interrupted())
-					return;
 			}
 		}
 	}
@@ -1350,8 +1320,6 @@ public class jEdit
 
 		public void run()
 		{
-			if(portFile.exists())
-				return;
 			try
 			{
 				server = new ServerSocket(0);
@@ -1402,7 +1370,7 @@ public class jEdit
 			{
 				io.printStackTrace();
 			}
-			portFile.delete();
+			new File(portFile).delete();
 		}
 	}
 
@@ -1519,6 +1487,9 @@ public class jEdit
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.71  1999/04/19 05:47:35  sp
+ * ladies and gentlemen, 1.6pre1
+ *
  * Revision 1.70  1999/04/08 04:44:51  sp
  * New _setBuffer method in View class, new addTab method in Console class
  *
@@ -1549,59 +1520,4 @@ public class jEdit
  *
  * Revision 1.61  1999/03/26 04:14:45  sp
  * EnhancedMenuItem tinkering, fixed compile error, fixed backup bug
- *
- * Revision 1.60  1999/03/24 09:33:22  sp
- * Fixed backup.directory bug, updated options dialog, updated documentation
- *
- * Revision 1.59  1999/03/21 08:37:16  sp
- * Slimmer action system, history text field update
- *
- * Revision 1.58  1999/03/21 07:53:14  sp
- * Plugin doc updates, action API change, new method in MiscUtilities, new class
- * loader, new plugin interface
- *
- * Revision 1.57  1999/03/20 04:52:55  sp
- * Buffer-specific options panel finished, attempt at fixing OS/2 caret bug, code
- * cleanups
- *
- * Revision 1.56  1999/03/20 02:07:59  sp
- * Starting work on buffer-specific options panel
- *
- * Revision 1.55  1999/03/20 01:55:42  sp
- * New color option pane, fixed search & replace bug
- *
- * Revision 1.54  1999/03/20 00:26:48  sp
- * Console fix, backed out new JOptionPane code, updated tips
- *
- * Revision 1.53  1999/03/19 06:03:34  sp
- * Fixed history text field bug, some other small changes maybe
- *
- * Revision 1.52  1999/03/18 04:24:57  sp
- * HistoryTextField hacking, some other minor changes
- *
- * Revision 1.51  1999/03/17 05:32:51  sp
- * Event system bug fix, history text field updates (but it still doesn't work), code cleanups, lots of banging head against wall
- *
- * Revision 1.50  1999/03/16 04:34:45  sp
- * HistoryTextField updates, moved generate-text to a plugin, fixed spelling mistake in EditAction Javadocs
- *
- * Revision 1.49  1999/03/15 03:40:23  sp
- * Search and replace updates, TSQL mode/token marker updates
- *
- * Revision 1.48  1999/03/15 03:12:34  sp
- * Fixed compile error with javac that jikes silently ignored (FUCK YOU IBM),
- * maybe some other stuff fixed too
- *
- * Revision 1.47  1999/03/14 02:22:13  sp
- * Syntax colorizing tweaks, server bug fix
- *
- * Revision 1.46  1999/03/14 00:08:07  sp
- * Build number updated
- *
- * Revision 1.45  1999/03/13 08:50:39  sp
- * Syntax colorizing updates and cleanups, general code reorganizations
- *
- * Revision 1.44  1999/03/12 23:51:00  sp
- * Console updates, uncomment removed cos it's too buggy, cvs log tags added
- *
  */

@@ -31,12 +31,35 @@ public class EditorOptionPane extends OptionPane
 		GridBagLayout layout = new GridBagLayout();
 		setLayout(layout);
 		GridBagConstraints cons = new GridBagConstraints();
+
 		cons.gridx = cons.gridy = 0;
 		cons.gridwidth = 3;
 		cons.gridheight = 1;
 		cons.fill = GridBagConstraints.BOTH;
 		cons.weightx = 1.0f;
 		JLabel label = new JLabel(jEdit.getProperty("options.editor"
+			+ ".defaultMode"),SwingConstants.RIGHT);
+		layout.setConstraints(label,cons);
+		add(label);
+		cons.gridx = 3;
+		cons.gridwidth = 1;
+		modes = jEdit.getModes();
+		String[] modeNames = new String[modes.length];
+		for(int i = 0; i < modes.length; i++)
+		{
+			modeNames[i] = jEdit.getModeName(modes[i]);
+		}
+		defaultMode = new JComboBox(modeNames);
+		defaultMode.setSelectedItem(jEdit.getProperty(
+			"mode." + jEdit.getProperty("buffer.defaultMode")
+			+ ".name"));
+		layout.setConstraints(defaultMode,cons);
+		add(defaultMode);
+
+		cons.gridx = 0;
+		cons.gridy = 1;
+		cons.gridwidth = 3;
+		label = new JLabel(jEdit.getProperty("options.editor"
 			+ ".font"),SwingConstants.RIGHT);
 		layout.setConstraints(label,cons);
 		add(label);
@@ -48,7 +71,7 @@ public class EditorOptionPane extends OptionPane
 		add(font);
 
 		cons.gridx = 0;
-		cons.gridy = 1;
+		cons.gridy = 2;
 		cons.gridwidth = 3;
 		label = new JLabel(jEdit.getProperty("options.editor.fontstyle"),
 			SwingConstants.RIGHT);
@@ -73,7 +96,7 @@ public class EditorOptionPane extends OptionPane
 		add(style);
 
 		cons.gridx = 0;
-		cons.gridy = 2;
+		cons.gridy = 3;
 		cons.gridwidth = 3;
 		label = new JLabel(jEdit.getProperty("options.editor.fontsize"),
 			SwingConstants.RIGHT);
@@ -89,7 +112,7 @@ public class EditorOptionPane extends OptionPane
 		add(size);
 
 		cons.gridx = 0;
-		cons.gridy = 3;
+		cons.gridy = 4;
 		cons.gridwidth = 3;
 		label = new JLabel(jEdit.getProperty("options.editor.tabSize"),
 			SwingConstants.RIGHT);
@@ -105,7 +128,7 @@ public class EditorOptionPane extends OptionPane
 		add(tabSize);
 
 		cons.gridx = 0;
-		cons.gridy = 4;
+		cons.gridy = 5;
 		cons.gridwidth = cons.REMAINDER;
 		cons.fill = GridBagConstraints.NONE;
 		cons.anchor = GridBagConstraints.WEST;
@@ -116,7 +139,7 @@ public class EditorOptionPane extends OptionPane
 		layout.setConstraints(lineHighlight,cons);
 		add(lineHighlight);
 
-		cons.gridy = 5;
+		cons.gridy = 6;
 		bracketHighlight = new JCheckBox(jEdit.getProperty("options.editor"
 			+ ".bracketHighlight"));
 		bracketHighlight.getModel().setSelected("on".equals(jEdit
@@ -124,7 +147,7 @@ public class EditorOptionPane extends OptionPane
 		layout.setConstraints(bracketHighlight,cons);
 		add(bracketHighlight);
 
-		cons.gridy = 6;
+		cons.gridy = 7;
 		syntax = new JCheckBox(jEdit.getProperty("options.editor"
 			+ ".syntax"));
 		syntax.getModel().setSelected("on".equals(jEdit.getProperty(
@@ -132,15 +155,23 @@ public class EditorOptionPane extends OptionPane
 		layout.setConstraints(syntax,cons);
 		add(syntax);
 
-		cons.gridy = 7;
-		autoIndent = new JCheckBox(jEdit.getProperty("options.editor"
-			+ ".autoIndent"));
-		autoIndent.getModel().setSelected("on".equals(jEdit.getProperty(
-			"view.autoindent")));
-		layout.setConstraints(autoIndent,cons);
-		add(autoIndent);
-
 		cons.gridy = 8;
+		indentOnTab = new JCheckBox(jEdit.getProperty("options.editor"
+			+ ".indentOnTab"));
+		indentOnTab.getModel().setSelected("on".equals(jEdit.getProperty(
+			"buffer.indentOnTab")));
+		layout.setConstraints(indentOnTab,cons);
+		add(indentOnTab);
+
+		cons.gridy = 9;
+		indentOnEnter = new JCheckBox(jEdit.getProperty("options.editor"
+			+ ".indentOnEnter"));
+		indentOnEnter.getModel().setSelected("on".equals(jEdit.getProperty(
+			"buffer.indentOnEnter")));
+		layout.setConstraints(indentOnEnter,cons);
+		add(indentOnEnter);
+
+		cons.gridy = 10;
 		noTabs = new JCheckBox(jEdit.getProperty("options.editor"
 			+ ".noTabs"));
 		noTabs.getModel().setSelected("yes".equals(jEdit.getProperty(
@@ -148,7 +179,7 @@ public class EditorOptionPane extends OptionPane
 		layout.setConstraints(noTabs,cons);
 		add(noTabs);
 
-		cons.gridy = 9;
+		cons.gridy = 11;
 		blinkCaret = new JCheckBox(jEdit.getProperty("options.editor"
 			+ ".blinkCaret"));
 		blinkCaret.getModel().setSelected(!"0".equals(jEdit.getProperty(
@@ -156,7 +187,7 @@ public class EditorOptionPane extends OptionPane
 		layout.setConstraints(blinkCaret,cons);
 		add(blinkCaret);
 
-		cons.gridy = 10;
+		cons.gridy = 12;
 		blockCaret = new JCheckBox(jEdit.getProperty("options.editor"
 			+ ".blockCaret"));
 		blockCaret.getModel().setSelected("on".equals(jEdit.getProperty(
@@ -164,7 +195,7 @@ public class EditorOptionPane extends OptionPane
 		layout.setConstraints(blockCaret,cons);
 		add(blockCaret);
 
-		cons.gridy = 11;
+		cons.gridy = 13;
 		electricBorders = new JCheckBox(jEdit.getProperty("options.editor"
 			+ ".electricBorders"));
 		electricBorders.getModel().setSelected(!"0".equals(jEdit.getProperty(
@@ -175,6 +206,8 @@ public class EditorOptionPane extends OptionPane
 
 	public void save()
 	{
+		jEdit.setProperty("buffer.defaultMode",
+			modes[defaultMode.getSelectedIndex()].getName());
 		jEdit.setProperty("view.font",(String)font.getSelectedItem());
 		jEdit.setProperty("view.fontsize",(String)size.getSelectedItem());
 		jEdit.setProperty("view.fontstyle",String.valueOf(style
@@ -187,7 +220,9 @@ public class EditorOptionPane extends OptionPane
 			.isSelected() ? "on" : "off");
 		jEdit.setProperty("buffer.syntax",syntax.getModel().isSelected()
 			? "on" : "off");
-		jEdit.setProperty("view.autoindent",autoIndent.getModel()
+		jEdit.setProperty("buffer.indentOnTab",indentOnTab.getModel()
+			.isSelected() ? "on" : "off");
+		jEdit.setProperty("buffer.indentOnEnter",indentOnEnter.getModel()
 			.isSelected() ? "on" : "off");
 		jEdit.setProperty("view.caretBlinkRate",blinkCaret.getModel()
 			.isSelected() ? "500" : "0");
@@ -200,6 +235,8 @@ public class EditorOptionPane extends OptionPane
 	}
 
 	// private members
+	private Mode[] modes;
+	private JComboBox defaultMode;
 	private JComboBox font;
 	private JComboBox style;
 	private JComboBox size;
@@ -207,7 +244,8 @@ public class EditorOptionPane extends OptionPane
 	private JCheckBox lineHighlight;
 	private JCheckBox bracketHighlight;
 	private JCheckBox syntax;
-	private JCheckBox autoIndent;
+	private JCheckBox indentOnTab;
+	private JCheckBox indentOnEnter;
 	private JCheckBox blinkCaret;
 	private JCheckBox blockCaret;
 	private JCheckBox electricBorders;

@@ -131,6 +131,11 @@ public class View extends JFrame
 	{
 		if(buffers.getMenuComponentCount() != 0)
 			buffers.removeAll();
+
+		buffers.add(GUIUtilities.loadMenuItem(this,"prev-buffer"));
+		buffers.add(GUIUtilities.loadMenuItem(this,"next-buffer"));
+		buffers.addSeparator();
+
 		ButtonGroup grp = new ButtonGroup();
 		Buffer[] bufferArray = jEdit.getBuffers();
 		for(int i = 0; i < bufferArray.length; i++)
@@ -340,18 +345,20 @@ public class View extends JFrame
 	{
 		int value = splitter.getDividerLocation();
 		int min = splitter.getMinimumDividerLocation();
-		if(value < min)
+		if(value <= min)
 		{
 			int lastLocation = splitter.getLastDividerLocation();
-			if(lastLocation >= min)
+			if(lastLocation > min)
 				splitter.setDividerLocation(lastLocation);
 			else
-				splitter.setDividerLocation(min);
+				splitter.resetToPreferredSizes();
+			console.getCommandField().requestFocus();
 		}
 		else
+		{
 			splitter.setDividerLocation(0.0);
-
-		console.getCommandField().requestFocus();
+			textArea.requestFocus();
+		}
 	}
 
 	/**
@@ -361,10 +368,10 @@ public class View extends JFrame
 	{
 		int value = splitter.getDividerLocation();
 		int min = splitter.getMinimumDividerLocation();
-		if(value < min)
+		if(value <= min)
 		{
 			int lastLocation = splitter.getLastDividerLocation();
-			if(lastLocation >= min)
+			if(lastLocation > min)
 				splitter.setDividerLocation(lastLocation);
 			else
 				splitter.setDividerLocation(min);
@@ -460,9 +467,11 @@ public class View extends JFrame
 		bindings = new Hashtable();
 		currentPrefix = bindings;
 		
-                // Register tab
+                // Register indentation keys
+		addKeyBinding(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER,0),
+			"indent-on-enter");
                 addKeyBinding(KeyStroke.getKeyStroke(KeyEvent.VK_TAB,0),
-			"indent-line");
+			"indent-on-tab");
 
 		textArea = new JEditTextArea();
 		scroller = new JScrollPane(textArea,ScrollPaneConstants
@@ -556,17 +565,17 @@ public class View extends JFrame
 
 		updateLineNumber();
 
-		bufferListener = new ViewBufferListener();
+		bufferListener = new BufferHandler();
 
 		Buffer[] bufferArray = jEdit.getBuffers();
 		for(int i = 0; i < bufferArray.length; i++)
 			bufferArray[i].addBufferListener(bufferListener);
 
-		jEdit.addEditorListener(editorListener = new ViewEditorListener());
-		textArea.addKeyListener(new ViewKeyListener());
-		textArea.addCaretListener(new ViewCaretListener());
-		addKeyListener(new ViewKeyListener());
-		addWindowListener(new ViewWindowListener());
+		jEdit.addEditorListener(editorListener = new EditorHandler());
+		textArea.addKeyListener(new KeyHandler());
+		textArea.addCaretListener(new CaretHandler());
+		addKeyListener(new KeyHandler());
+		addWindowListener(new WindowHandler());
 		
 		show();
 	}
@@ -629,7 +638,7 @@ public class View extends JFrame
 	private EditorListener editorListener;
 
 	// event listeners
-	class ViewBufferListener implements BufferListener
+	class BufferHandler implements BufferListener
 	{
 		public void bufferDirtyChanged(BufferEvent evt)
 		{
@@ -651,7 +660,7 @@ public class View extends JFrame
 		}
 	}
 
-	class ViewEditorListener extends EditorAdapter
+	class EditorHandler extends EditorAdapter
 	{
 		public void bufferCreated(EditorEvent evt)
 		{
@@ -662,15 +671,19 @@ public class View extends JFrame
 	
 		public void bufferClosed(EditorEvent evt)
 		{
+			Buffer buf = evt.getBuffer();
+
+			buf.removeBufferListener(bufferListener);
+
+			if(buf == buffer)
+			{
+				Buffer[] bufferArray = jEdit.getBuffers();
+				if(bufferArray.length != 0)
+					_setBuffer(bufferArray[bufferArray.length - 1]);
+			}
+
 			updateOpenRecentMenu();
-
-			Buffer[] bufferArray = jEdit.getBuffers();
-			if(bufferArray.length != 0)
-				_setBuffer(bufferArray[bufferArray.length - 1]);
-	
 			updateBuffersMenu();
-
-			evt.getBuffer().removeBufferListener(bufferListener);
 		}
 	
 		public void propertiesChanged(EditorEvent evt)
@@ -679,7 +692,7 @@ public class View extends JFrame
 		}
 	}
 
-	class ViewCaretListener implements CaretListener
+	class CaretHandler implements CaretListener
 	{
 		public void caretUpdate(CaretEvent evt)
 		{
@@ -687,14 +700,16 @@ public class View extends JFrame
 		}
 	}
 
-	class ViewKeyListener extends KeyAdapter
+	class KeyHandler extends KeyAdapter
 	{
 		public void keyPressed(KeyEvent evt)
 		{
 			int keyCode = evt.getKeyCode();
 			int modifiers = evt.getModifiers();
-			if((modifiers & ~InputEvent.SHIFT_MASK) != 0 ||
-				evt.isActionKey() || keyCode == KeyEvent.VK_TAB)
+			if((modifiers & ~InputEvent.SHIFT_MASK) != 0
+				|| evt.isActionKey()
+				|| keyCode == KeyEvent.VK_TAB
+				|| keyCode == KeyEvent.VK_ENTER)
 			{
 				KeyStroke keyStroke = KeyStroke.getKeyStroke(keyCode,
 					modifiers);
@@ -751,7 +766,7 @@ public class View extends JFrame
 		}
 	}
 
-	class ViewWindowListener extends WindowAdapter
+	class WindowHandler extends WindowAdapter
 	{
 		public void windowClosing(WindowEvent evt)
 		{
@@ -763,6 +778,9 @@ public class View extends JFrame
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.61  1999/04/19 05:47:35  sp
+ * ladies and gentlemen, 1.6pre1
+ *
  * Revision 1.60  1999/04/08 04:44:51  sp
  * New _setBuffer method in View class, new addTab method in Console class
  *
@@ -797,24 +815,5 @@ public class View extends JFrame
  * Revision 1.50  1999/03/20 04:52:55  sp
  * Buffer-specific options panel finished, attempt at fixing OS/2 caret bug, code
  * cleanups
- *
- * Revision 1.49  1999/03/19 08:32:22  sp
- * Added a status bar to views, Escape key now works in dialog boxes
- *
- * Revision 1.48  1999/03/18 04:24:57  sp
- * HistoryTextField hacking, some other minor changes
- *
- * Revision 1.47  1999/03/17 05:32:51  sp
- * Event system bug fix, history text field updates (but it still doesn't work), code cleanups, lots of banging head against wall
- *
- * Revision 1.46  1999/03/15 03:12:34  sp
- * Fixed compile error with javac that jikes silently ignored (FUCK YOU IBM),
- * maybe some other stuff fixed too
- *
- * Revision 1.45  1999/03/14 02:22:13  sp
- * Syntax colorizing tweaks, server bug fix
- *
- * Revision 1.44  1999/03/12 23:51:00  sp
- * Console updates, uncomment removed cos it's too buggy, cvs log tags added
  *
  */
