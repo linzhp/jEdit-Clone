@@ -399,21 +399,21 @@ public class tsql extends autoindent
 
   private static void addOperators()
   {
-    keywords.add("ALL",Token.OPERATOR2);
-    keywords.add("AND",Token.OPERATOR2);
-    keywords.add("ANY",Token.OPERATOR2);
-    keywords.add("BETWEEN",Token.OPERATOR2);
-    keywords.add("CROSS",Token.OPERATOR2);
-    keywords.add("EXISTS",Token.OPERATOR2);
-    keywords.add("IN",Token.OPERATOR2);
-    keywords.add("INTERSECT",Token.OPERATOR2);
-    keywords.add("JOIN",Token.OPERATOR2);
-    keywords.add("LIKE",Token.OPERATOR2);
-    keywords.add("NOT",Token.OPERATOR2);
-    keywords.add("NULL",Token.OPERATOR2);
-    keywords.add("OR",Token.OPERATOR2);
-    keywords.add("OUTER",Token.OPERATOR2);
-    keywords.add("SOME",Token.OPERATOR2);
+    keywords.add("ALL",Token.KEYWORD1);
+    keywords.add("AND",Token.KEYWORD1);
+    keywords.add("ANY",Token.KEYWORD1);
+    keywords.add("BETWEEN",Token.KEYWORD1);
+    keywords.add("CROSS",Token.KEYWORD1);
+    keywords.add("EXISTS",Token.KEYWORD1);
+    keywords.add("IN",Token.KEYWORD1);
+    keywords.add("INTERSECT",Token.KEYWORD1);
+    keywords.add("JOIN",Token.KEYWORD1);
+    keywords.add("LIKE",Token.KEYWORD1);
+    keywords.add("NOT",Token.KEYWORD1);
+    keywords.add("NULL",Token.KEYWORD1);
+    keywords.add("OR",Token.KEYWORD1);
+    keywords.add("OUTER",Token.KEYWORD1);
+    keywords.add("SOME",Token.KEYWORD1);
   }
 
   private static void addSystemStoredProcedures()
