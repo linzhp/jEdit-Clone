@@ -842,6 +842,7 @@ public class jEdit
 					error.openNotify(buffer);
 			}
 		}
+		BrowserEngine.openNotify(buffer);
 		return buffer;
 	}
 
@@ -891,6 +892,7 @@ public class jEdit
 					error.closeNotify();
 			}
 		}
+		BrowserEngine.closeNotify(buffer);
 		return true;
 	}
 

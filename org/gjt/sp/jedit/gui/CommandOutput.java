@@ -200,7 +200,7 @@ implements KeyListener
 			error = msg.trim();
 			errorMode = GENERIC;
 
-			jEdit.addError(view.getBuffer().getPath(),lineNo,error);
+			jEdit.addError(file,lineNo,error);
 			break;
 		}
 	}

@@ -323,6 +323,7 @@ implements DocumentListener, UndoableEditListener
 				updateBufferMenus();
 			}
 			modTime = file.lastModified();
+			BrowserEngine.saveNotify(this);
 			return true;
 		}
 		catch(IOException io)
