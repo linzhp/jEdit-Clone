@@ -535,6 +535,10 @@ hypersearch.title=HyperSearch
 hypersearch.find=Search For:\ 
 hypersearch.findBtn=Find All
 
+# Replace all results
+replace-results.title=Replacement Complete
+replace-results.message=Changed {0} line(s) in {1} buffer(s).
+
 # Search and replace error dialog
 searcherror.title=Search and Replace Error
 # {0} - error message

@@ -308,7 +308,8 @@ loop:			for(;;)
 	 */
 	public static boolean replaceAll(View view)
 	{
-		boolean retVal = false;
+		int lineCount = 0;
+		int fileCount = 0;
 
 		// Show the wait cursor
 		GUIUtilities.showWaitCursor(view);
@@ -323,7 +324,12 @@ loop:			for(;;)
 				try
 				{
 					buffer.beginCompoundEdit();
-					retVal |= replaceAll(view,buffer);
+					int retVal = replaceAll(view,buffer);
+					if(retVal != 0)
+					{
+						fileCount++;
+						lineCount += retVal;
+					}
 				}
 				finally
 				{
@@ -344,10 +350,16 @@ loop:			for(;;)
 		// Hide the wait cursor
 		GUIUtilities.hideWaitCursor(view);
 
-		if(!retVal)
+		if(fileCount == 0)
 			view.getToolkit().beep();
+		else
+		{
+			Object[] args = { new Integer(lineCount),
+				new Integer(fileCount) };
+			GUIUtilities.message(view,"replace-results",args);
+		}
 
-		return retVal;
+		return (fileCount != 0);
 	}
 
 	/**
@@ -358,18 +370,17 @@ loop:			for(;;)
 	 * @return True if the replace operation was successful, false
 	 * if no matches were found
 	 */
-	public static boolean replaceAll(View view, Buffer buffer)
+	public static int replaceAll(View view, Buffer buffer)
 		throws BadLocationException
 	{
 		if(!view.getTextArea().isEditable())
-			return false;
-
-		boolean found = false;
+			return 0;
 
 		SearchMatcher matcher = getSearchMatcher();
 		if(matcher == null)
-			return false;
+			return 0;
 
+		int lineCount = 0;
 		Element map = buffer.getDefaultRootElement();
 
 		for(int i = 0; i < map.getElementCount(); i++)
@@ -386,10 +397,10 @@ loop:			for(;;)
 			buffer.remove(lineStart,lineEnd);
 			buffer.insertString(lineStart,newLine,null);
 
-			found = true;
+			lineCount++;
 		}
 
-		return found;
+		return lineCount;
 	}
 
 	/**
@@ -429,6 +440,10 @@ loop:			for(;;)
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.14  1999/10/06 05:52:34  sp
+ * Macros were being played twice, dialog box shows how many replacements
+ * 'replace all' made, tab command bug fix, documentation updates
+ *
  * Revision 1.13  1999/10/02 01:12:36  sp
  * Search and replace updates (doesn't work yet), some actions moved to TextTools
  *

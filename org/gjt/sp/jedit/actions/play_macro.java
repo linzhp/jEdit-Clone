@@ -37,7 +37,7 @@ implements InputHandler.NonRepeatable
 		String macro = evt.getActionCommand();
 
 		for(int i = view.getTextArea().getInputHandler()
-			.getRepeatCount(); i >= 0; i--)
+			.getRepeatCount() - 1; i >= 0; i--)
 		{
 			Macros.playMacro(view,macro);
 		}

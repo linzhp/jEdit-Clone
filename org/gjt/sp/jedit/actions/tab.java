@@ -34,15 +34,15 @@ public class tab extends EditAction
 	
 	public void actionPerformed(ActionEvent evt)
 	{
-		View view = getView(evt);
-		JEditTextArea textArea = view.getTextArea();
+                View view = getView(evt);
+                JEditTextArea textArea = view.getTextArea();
 
-		if(!textArea.isEditable() || textArea.getSelectionStart()
-			== textArea.getSelectionEnd())
-		{
-			view.getToolkit().beep();
-			return;
-		}
+                if(!textArea.isEditable() || textArea.getSelectionStart()
+                	== textArea.getSelectionEnd())
+                {
+                	view.getToolkit().beep();
+                	return;
+                }
 
 		textArea.setSelectedText(doTab(textArea.getSelectedText(),
 			view.getBuffer().getTabSize()));
@@ -51,8 +51,9 @@ public class tab extends EditAction
 	private String doTab(String in, int tabSize)
 	{
 		StringBuffer buf = new StringBuffer();
-		for(int i = 0, width = 0, whitespace = 0;
-			i < in.length(); i++)
+		int width = 0;
+		int whitespace = 0;
+		for(int i = 0; i < in.length(); i++)
 		{
 			switch(in.charAt(i))
 			{
@@ -66,6 +67,11 @@ public class tab extends EditAction
 				whitespace += tab;
 				break;
 			case '\n':
+				if(whitespace != 0)
+				{
+					buf.append(MiscUtilities
+						.createWhiteSpace(whitespace,tabSize));
+				}
 				whitespace = 0;
 				width = 0;
 				buf.append('\n');
@@ -73,30 +79,20 @@ public class tab extends EditAction
 			default:
 				if(whitespace != 0)
 				{
-					if(whitespace >= tabSize / 2)
-					{
-						int indent = whitespace +
-							((width-whitespace)
-							% tabSize);
-						int tabs = indent / tabSize;
-						int spaces = indent % tabSize;
-						while(tabs-- > 0)
-							buf.append('\t');
-						while(spaces-- > 0)
-							buf.append(' ');
-					}
-					else
-					{
-						while(whitespace-- > 0)
-							buf.append(' ');
-					}
-					whitespace = 0;
+					buf.append(MiscUtilities
+						.createWhiteSpace(whitespace,tabSize));
 				}
 				buf.append(in.charAt(i));
 				width++;
 				break;
 			}
-		}	
+		}
+
+		if(whitespace != 0)
+		{
+			buf.append(MiscUtilities.createWhiteSpace(whitespace,tabSize));
+		}
+
                 return buf.toString();
 	}
 }

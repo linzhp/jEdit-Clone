@@ -259,16 +259,17 @@
    <indexterm><primary>File menu</></indexterm>
    <indexterm><primary>Edit menu</></indexterm>
    <indexterm><primary>Registers menu</></indexterm>
+   <indexterm><primary>Macros menu</></indexterm>
    <indexterm><primary>Search menu</></indexterm>
    <indexterm><primary>Plugins menu</></indexterm>
    <para>
     The labels that run across
     the top of the editor window are called <firstterm>menus</>. Generally,
     <guimenu>File</> contains global file-related commands,
-    <guimenu>Edit</> contains editing commands,
-    <guimenu>Registers</> contains register commands,
-    <guimenu>Search</> contains search &amp; replace commands,
-    and <guimenu>Plugins</> contains menus and menu items created
+    <guimenu>Edit</> contains editing commands, and
+    <guimenu>Registers</>, <guimenu>Search</> and <guimenu>Macros</>
+    contain commands for the appropriate jEdit features.
+    <guimenu>Plugins</> contains menus and menu items created
     by plugins.
     </para>
    <para>
@@ -1199,258 +1200,6 @@
    </para>
   </sidebar>
  </sect1>
- <sect1 id=repeats><title>Repeating Commands</>
-  <indexterm><primary>Edit menu</></indexterm>
-  <indexterm><primary>Go to Line command</></indexterm>
-  <para>
-   Quite often while editing text, you need to insert a character or perform
-   a command several times in a row. jEdit's repeat feature facilitates this.
-  </para>
-  <para>
-   Pressing <keycombo><keycap>Control</><keycap>Enter</></keycombo> allows
-   you to enter the numbers 0-9, which add the specified digit to the repeat
-   count. The first non-digit character, or key stroke entered will be
-   repeated the number of times you specify. For example,
-   <quote><keycombo><keycap>Control</><keycap>Enter</></keycombo>
-   <keycap>1</> <keycap>4</>
-   <keycombo><keycap>Control</><keycap>D</></keycombo>
-   <keycombo><keycap>Control</><keycap>D</></keycombo></quote> will delete
-   14 lines, and <quote><keycombo><keycap>Control</><keycap>Enter</></keycombo>
-   <keycap>8</> <keycap>0</>
-   <keycap>#</></quote>
-   will insert the <quote>#</> character 80 times.
-  </para>
-  <para>
-   Most commands behave as expected when repeated, with one exception:
-   if given a repeat count, the <guimenu>Edit</>&gt;<guimenuitem>Go to Line</>
-   command will move the caret to that line. If no repeat count is given, it
-   will display the go to line dialog box.
-  </para>
-  <note>
-   <para>
-    Currently, only keystrokes can be repeated, not menu item commands. This is
-    due to two reasons:
-   </para>
-   <itemizedlist>
-    <listitem><para>Menu item repeating is messy to implement</para></listitem>
-    <listitem><para>Menu item repeating is not very useful</para></listitem>
-   </itemizedlist>
-  </note>
- </sect1>
- <sect1 id=rect-select><title>Rectangular Selection</>
-  <para>
-   <indexterm><primary>selecting</><secondary>columns of text</></indexterm>
-   Not only is it possible to select continous runs of text, but
-   columns of text can also be selected.
-  </para>
-  <para>
-   There are three ways to create a rectangular selection. The simplest
-   way is to drag the mouse from one corner of the rectangle to another
-   while holding down the <keycap>Control</> key.
-  </para>
-  <para>
-   Clicking the mouse button while holding down <keycombo><keycap>Shift</>
-   <keycap>Control</></keycombo> will create a rectangle from the caret
-   position to where the mouse was clicked.
-  </para>
-  <para>
-   Finally, pressing <keycombo><keycap>Control</><keycap>\</></keycombo>
-   will toggle the current selection between continous and rectangular mode.
-  </para>
-  <para>
-   It is possible to select a rectangle with zero width, but non-zero height.
-   For example, this can be used to insert a column between two existing
-   columns. Such selections are shown as a thin vertical line.
-  </para>
-  <para>
-   Deleting, replacing, copying, pasting, and so on works as expected on
-   rectangles. Some plugins might not be rectangle-aware, and
-   cause problems. All commands built in to jEdit should work, however.
-  </para>
-  <note>
-   <para>
-    Because rectangles rely on character offsets, rather than absolute
-    screen positions, they may behave strangely when proportional-width
-    fonts, or tabs, are used. Try to use monospaced fonts and soft tabs
-    when editing columnar files.
-   </para>
-  </note>
-  <figure><title>A rectangular selection</>
-   <graphic scale=75 fileref=window-editor-rect-sel></>
-  </figure>
- </sect1>
- <sect1 id=registers><title>Registers</>
-  <para>
-   A <firstterm>register</> is place where you can save a string or caret
-   position for later use.
-   Each register has a single-character name (hence the number of registers
-   is limited by how many distinct keys can be typed on your keyboard),
-   and can contain a string or a caret position.
-  </para>
-  <para>
-   All register-related commands except for <guimenuitem>View Registers</>,
-   once invoked, grab the next character entered at the keyboard and use
-   that as the register to operate on. So to copy the selection to register
-   <filename>X</>, you can type <keycombo><keycap>Control</><keycap>R</></keycombo>
-   <keycombo><keycap>Control</><keycap>C</></keycombo> <keycap>X</>.
-  </para>
-  <para>
-   Registers are global; all buffers share the same set. The contents of
-   registers are not saved across editing sessions.
-  </para>
-  <sect2 id=string-registers><title>String Registers</>
-   <indexterm><primary>Registers menu</></indexterm>
-   <indexterm><primary>Cut to Register command</></indexterm>
-   <indexterm><primary>Copy to Register command</></indexterm>
-   <indexterm><primary>Append to Register command</></indexterm>
-   <indexterm><primary>Paste from Register command</></indexterm>
-   <indexterm><primary>Paste Previous command</></indexterm>
-   <indexterm><primary>clipboard</></indexterm>
-   <indexterm><primary>selection</></indexterm>
-   <para>
-    When you want to insert a text string multiple times in a buffer,
-    it may be inconvinient to use the clipboard; you might want to
-    preserve its contents, and so on.
-   </para>
-   <para>
-    <guimenu>Registers</>&gt;<guimenuitem>Cut to Register</>
-    (keyboard equivalent: <keycombo><keycap>Control</><keycap>R</></keycombo>
-    <keycombo><keycap>Control</><keycap>X</></keycombo>) reads the next
-    character entered at the keyboard, and copies the selected text to that
-    register, removing it from the buffer.
-   </para>
-   <para>
-    <guimenu>Registers</>&gt;<guimenuitem>Copy to Register</>
-    (keyboard equivalent: <keycombo><keycap>Control</><keycap>R</></keycombo>
-    <keycombo><keycap>Control</><keycap>C</></keycombo>) reads the next
-    character entered at the keyboard, and copies the selected text to that
-    register, leaving it in the buffer.
-   </para>
-   <para>
-    <guimenu>Registers</>&gt;<guimenuitem>Append to Register</>
-    (keyboard equivalent: <keycombo><keycap>Control</><keycap>R</></keycombo>
-    <keycombo><keycap>Control</><keycap>C</></keycombo>) reads the next
-    character entered at the keyboard, and appends the selected text to that
-    register, leaving it in the buffer. This can be used to merge several
-    text strings and insert them into a different buffer in one operation.
-   </para>
-   <para>
-    <guimenu>Registers</>&gt;<guimenuitem>Paste from Register</>
-    (keyboard equivalent: <keycombo><keycap>Control</><keycap>R</></keycombo>
-    <keycombo><keycap>Control</><keycap>V</></keycombo>) reads the next
-    character entered at the keyboard, and replaces the selection with the
-    contents of that register. Every time you paste from a register,
-    the pasted text is added to the clipboard history displayed in the
-    <guimenu>Edit</>&gt;<guimenuitem>Paste Previous</> dialog box;
-    see <xref linkend=clipboard>.
-   </para>
-   <para>
-    The register <filename>$</> is an alias for the clipboard; so copying
-    to that register has the same effect as
-    <guimenu>Edit</>&gt;<guimenu>Copy</>.
-   </para>
-  </sect2>
-  <sect2 id=pos-registers><title>Caret Registers</>
-   <indexterm><primary>Registers menu</></indexterm>
-   <indexterm><primary>Save Caret to Register command</></indexterm>
-   <indexterm><primary>Go to Register command</></indexterm>
-   <indexterm><primary>Select to Register command</></indexterm>
-   <indexterm><primary>Swap Caret with Register command</></indexterm>
-   <indexterm><primary>selection</></indexterm>
-   <para>
-    When working with a long, complex, document, it is sometimes
-    desirable to save multiple positions and go back to them later.
-    Markers can be used for this, but they are better suited for
-    more permanent locations, such as the headings in a document.
-   </para>
-   <para>
-    <guimenu>Registers</>&gt;<guimenuitem>Save Caret to Register</>
-    (keyboard equivalent: <keycombo><keycap>Control</><keycap>T</></keycombo>)
-    reads the next character entered at the keyboard, and saves the current
-    buffer name and caret position to that register. Because the buffer name
-    is saved in caret registers, you can use them to quickly flip between
-    multiple buffers.
-   </para>
-   <para>
-    <guimenu>Registers</>&gt;<guimenuitem>Go to Register</>
-    (keyboard equivalent: <keycombo><keycap>Control</><keycap>Y</></keycombo>)
-    reads the next character entered at the keyboard, switches to the buffer
-    name saved in that register (opening it if necessary), and moves the caret
-    to the saved position.
-   </para>
-   <para>
-    <guimenu>Registers</>&gt;<guimenuitem>Select to Register</>
-    (keyboard equivalent: <keycombo><keycap>Control</><keycap>U</></keycombo>)
-    reads the next character entered at the keyboard, and creates a selection
-    from the caret position to the offset specified in that register.
-    Keep in mind that if the register points to a different buffer,
-    the selection may be meaningless.
-   </para>
-   <para>
-    <guimenu>Registers</>&gt;<guimenuitem>Swap Caret with Register</>
-    (keyboard equivalent: <keycombo><keycap>Control</><keycap>K</></keycombo>)
-    reads the next character entered at the keyboard, and swaps the caret
-    position and current buffer with that entered in the register. If invoked
-    repeatedly, it can be used to flip between two buffers and/or caret
-    positions.
-   </para>
-   <indexterm><primary>old jEdit versions</></indexterm>
-   <sidebar>
-    <bridgehead renderas=sect3>jEdit 2.0 Users</>
-    <para>
-     The new registers feature replaces the anchor found in jEdit 2.0.
-     The anchor was like having only one register, that could only store a
-     caret position.
-    </para>
-   </sidebar>
-  </sect2>
-  <sect2 id=filename-registers><title>File Name Registers</>
-   <indexterm><primary>Registers menu</></indexterm>
-   <indexterm><primary>Save Filename to Register command</></indexterm>
-   <indexterm><primary>Go to Register command</></indexterm>
-   <para>
-    Registers can also be used to store file names to visit. Internally,
-    jEdit makes no distinction between a file name and string register;
-    they can be used interchangably.
-   </para>
-   <para>
-    <guimenu>Registers</>&gt;<guimenuitem>Save Filename to Register</>
-    (keyboard equivalent: <keycombo><keycap>Control</><keycap>R</></keycombo>
-    <keycombo><keycap>Control</><keycap>F</></keycombo>) reads the next
-    character entered at the keyboard, and saves the current buffer's path
-    name to that register.
-   </para>
-   <para>
-    <guimenu>Registers</>&gt;<guimenuitem>Go to Register</>
-    (keyboard equivalent: <keycombo><keycap>Control</><keycap>T</></keycombo>)
-    reads the next character entered at the keyboard, and opens the buffer
-    named by the contents of that register. This is the same command
-    used to go to a caret register.
-   </para>
-  </sect2>
-  <sect2><title>Viewing Register Contents</>
-   <indexterm><primary>Registers menu</></indexterm>
-   <indexterm><primary>View Registers command</></indexterm>
-   <para>
-    <guimenu>Registers</>&gt;<guimenuitem>View Registers</>
-    (keyboard equivalent: <keycap>F7</>) shows a
-    dialog box displaying all defined registers. Double clicking on a line,
-    or selecting it and clicking <guibutton>View</> will display its contents
-    in a new dialog box.
-   </para>
-   <para>
-    The contents of string registers are shown. For caret registers, the
-    file name and position is displayed.
-   </para>
-   <para>
-    Currently, it is not possible to change or add registers from this
-    dialog box; use the register commands instead.
-   </para>
-   <figure><title>The View Registers dialog box</>
-    <graphic scale=75 fileref=dialog-view-registers></>
-   </figure>
-  </sect2>
- </sect1>
  <sect1 id=markers><title>Markers</>
   <para>
    <indexterm><primary>Unix</></indexterm>
@@ -1705,6 +1454,354 @@
      </tbody>
     </tgroup>
    </table>
+  </sect2>
+ </sect1>
+ <sect1 id=repeats><title>Repeating Commands</>
+  <indexterm><primary>Edit menu</></indexterm>
+  <indexterm><primary>Go to Line command</></indexterm>
+  <para>
+   Quite often while editing text, you need to insert a character or perform
+   a command several times in a row. jEdit's repeat feature facilitates this.
+   Currently, only keyboard commands can be repeated, not
+   menu item selections.
+   The one exception to this rule is that commands for invoking macros
+   in the <guimenu>Macros</> menu <emphasis>can</> be repeated
+   by selecting their menu items.
+  </para>
+  <para>
+   Pressing <keycombo><keycap>Control</><keycap>Enter</></keycombo> allows
+   you to enter the numbers 0-9, which add the specified digit to the repeat
+   count. The first non-digit character, or key stroke entered will be
+   repeated the number of times you specify. For example,
+   <quote><keycombo><keycap>Control</><keycap>Enter</></keycombo>
+   <keycap>1</> <keycap>4</>
+   <keycombo><keycap>Control</><keycap>D</></keycombo>
+   <keycombo><keycap>Control</><keycap>D</></keycombo></quote> will delete
+   14 lines, and <quote><keycombo><keycap>Control</><keycap>Enter</></keycombo>
+   <keycap>8</> <keycap>0</>
+   <keycap>#</></quote>
+   will insert the <quote>#</> character 80 times.
+  </para>
+  <para>
+   Most commands behave as expected when repeated, with one exception:
+   if given a repeat count, the <guimenu>Edit</>&gt;<guimenuitem>Go to Line</>
+   command will move the caret to that line. If no repeat count is given, it
+   will display the go to line dialog box.
+  </para>
+ </sect1>
+ <sect1 id=rect-select><title>Rectangular Selection</>
+  <para>
+   <indexterm><primary>selecting</><secondary>columns of text</></indexterm>
+   Not only is it possible to select continous runs of text, but
+   columns of text can also be selected.
+  </para>
+  <para>
+   There are three ways to create a rectangular selection. The simplest
+   way is to drag the mouse from one corner of the rectangle to another
+   while holding down the <keycap>Control</> key.
+  </para>
+  <para>
+   Clicking the mouse button while holding down <keycombo><keycap>Shift</>
+   <keycap>Control</></keycombo> will create a rectangle from the caret
+   position to where the mouse was clicked.
+  </para>
+  <para>
+   Finally, pressing <keycombo><keycap>Control</><keycap>\</></keycombo>
+   will toggle the current selection between continous and rectangular mode.
+  </para>
+  <para>
+   It is possible to select a rectangle with zero width, but non-zero height.
+   For example, this can be used to insert a column between two existing
+   columns. Such selections are shown as a thin vertical line.
+  </para>
+  <para>
+   Deleting, replacing, copying, pasting, and so on works as expected on
+   rectangles. Some plugins might not be rectangle-aware, and
+   cause problems. All commands built in to jEdit should work, however.
+  </para>
+  <note>
+   <para>
+    Because rectangles rely on character offsets, rather than absolute
+    screen positions, they may behave strangely when proportional-width
+    fonts, or tabs, are used. Try to use monospaced fonts and soft tabs
+    when editing columnar files.
+   </para>
+  </note>
+  <figure><title>A rectangular selection</>
+   <graphic scale=75 fileref=window-editor-rect-sel></>
+  </figure>
+ </sect1>
+ <sect1 id=registers><title>Registers</>
+  <para>
+   A <firstterm>register</> is place where you can save a string or caret
+   position for later use.
+   Each register has a single-character name (hence the number of registers
+   is limited by how many distinct keys can be typed on your keyboard),
+   and can contain a string or a caret position.
+  </para>
+  <para>
+   All register-related commands except for <guimenuitem>View Registers</>,
+   once invoked, grab the next character entered at the keyboard and use
+   that as the register to operate on. So to copy the selection to register
+   <filename>X</>, you can type <keycombo><keycap>Control</><keycap>R</></keycombo>
+   <keycombo><keycap>Control</><keycap>C</></keycombo> <keycap>X</>.
+  </para>
+  <para>
+   Registers are global; all buffers share the same set. The contents of
+   registers are not saved across editing sessions.
+  </para>
+  <sect2 id=string-registers><title>String Registers</>
+   <indexterm><primary>Registers menu</></indexterm>
+   <indexterm><primary>Cut to Register command</></indexterm>
+   <indexterm><primary>Copy to Register command</></indexterm>
+   <indexterm><primary>Append to Register command</></indexterm>
+   <indexterm><primary>Paste from Register command</></indexterm>
+   <indexterm><primary>Paste Previous command</></indexterm>
+   <indexterm><primary>clipboard</></indexterm>
+   <indexterm><primary>selection</></indexterm>
+   <para>
+    When you want to insert a text string multiple times in a buffer,
+    it may be inconvinient to use the clipboard; you might want to
+    preserve its contents, and so on.
+   </para>
+   <para>
+    <guimenu>Registers</>&gt;<guimenuitem>Cut to Register</>
+    (keyboard equivalent: <keycombo><keycap>Control</><keycap>R</></keycombo>
+    <keycombo><keycap>Control</><keycap>X</></keycombo>) reads the next
+    character entered at the keyboard, and copies the selected text to that
+    register, removing it from the buffer.
+   </para>
+   <para>
+    <guimenu>Registers</>&gt;<guimenuitem>Copy to Register</>
+    (keyboard equivalent: <keycombo><keycap>Control</><keycap>R</></keycombo>
+    <keycombo><keycap>Control</><keycap>C</></keycombo>) reads the next
+    character entered at the keyboard, and copies the selected text to that
+    register, leaving it in the buffer.
+   </para>
+   <para>
+    <guimenu>Registers</>&gt;<guimenuitem>Append to Register</>
+    (keyboard equivalent: <keycombo><keycap>Control</><keycap>R</></keycombo>
+    <keycombo><keycap>Control</><keycap>C</></keycombo>) reads the next
+    character entered at the keyboard, and appends the selected text to that
+    register, leaving it in the buffer. This can be used to merge several
+    text strings and insert them into a different buffer in one operation.
+   </para>
+   <para>
+    <guimenu>Registers</>&gt;<guimenuitem>Paste from Register</>
+    (keyboard equivalent: <keycombo><keycap>Control</><keycap>R</></keycombo>
+    <keycombo><keycap>Control</><keycap>V</></keycombo>) reads the next
+    character entered at the keyboard, and replaces the selection with the
+    contents of that register. Every time you paste from a register,
+    the pasted text is added to the clipboard history displayed in the
+    <guimenu>Edit</>&gt;<guimenuitem>Paste Previous</> dialog box;
+    see <xref linkend=clipboard>.
+   </para>
+   <para>
+    The register <filename>$</> is an alias for the clipboard; so copying
+    to that register has the same effect as
+    <guimenu>Edit</>&gt;<guimenu>Copy</>.
+   </para>
+  </sect2>
+  <sect2 id=pos-registers><title>Caret Registers</>
+   <indexterm><primary>Registers menu</></indexterm>
+   <indexterm><primary>Save Caret to Register command</></indexterm>
+   <indexterm><primary>Go to Register command</></indexterm>
+   <indexterm><primary>Select to Register command</></indexterm>
+   <indexterm><primary>Swap Caret with Register command</></indexterm>
+   <indexterm><primary>selection</></indexterm>
+   <para>
+    When working with a long, complex, document, it is sometimes
+    desirable to save multiple positions and go back to them later.
+    Markers can be used for this, but they are better suited for
+    more permanent locations, such as the headings in a document.
+   </para>
+   <para>
+    <guimenu>Registers</>&gt;<guimenuitem>Save Caret to Register</>
+    (keyboard equivalent: <keycombo><keycap>Control</><keycap>T</></keycombo>)
+    reads the next character entered at the keyboard, and saves the current
+    buffer name and caret position to that register. Because the buffer name
+    is saved in caret registers, you can use them to quickly flip between
+    multiple buffers.
+   </para>
+   <para>
+    <guimenu>Registers</>&gt;<guimenuitem>Go to Register</>
+    (keyboard equivalent: <keycombo><keycap>Control</><keycap>Y</></keycombo>)
+    reads the next character entered at the keyboard, switches to the buffer
+    name saved in that register (opening it if necessary), and moves the caret
+    to the saved position.
+   </para>
+   <para>
+    <guimenu>Registers</>&gt;<guimenuitem>Select to Register</>
+    (keyboard equivalent: <keycombo><keycap>Control</><keycap>U</></keycombo>)
+    reads the next character entered at the keyboard, and creates a selection
+    from the caret position to the offset specified in that register.
+    Keep in mind that if the register points to a different buffer,
+    the selection may be meaningless.
+   </para>
+   <para>
+    <guimenu>Registers</>&gt;<guimenuitem>Swap Caret with Register</>
+    (keyboard equivalent: <keycombo><keycap>Control</><keycap>K</></keycombo>)
+    reads the next character entered at the keyboard, and swaps the caret
+    position and current buffer with that entered in the register. If invoked
+    repeatedly, it can be used to flip between two buffers and/or caret
+    positions.
+   </para>
+   <indexterm><primary>old jEdit versions</></indexterm>
+   <sidebar>
+    <bridgehead renderas=sect3>jEdit 2.0 Users</>
+    <para>
+     The new registers feature replaces the anchor found in jEdit 2.0.
+     The anchor was like having only one register, that could only store a
+     caret position.
+    </para>
+   </sidebar>
+  </sect2>
+  <sect2 id=filename-registers><title>File Name Registers</>
+   <indexterm><primary>Registers menu</></indexterm>
+   <indexterm><primary>Save Filename to Register command</></indexterm>
+   <indexterm><primary>Go to Register command</></indexterm>
+   <para>
+    Registers can also be used to store file names to visit. Internally,
+    jEdit makes no distinction between a file name and string register;
+    they can be used interchangably.
+   </para>
+   <para>
+    <guimenu>Registers</>&gt;<guimenuitem>Save Filename to Register</>
+    (keyboard equivalent: <keycombo><keycap>Control</><keycap>R</></keycombo>
+    <keycombo><keycap>Control</><keycap>F</></keycombo>) reads the next
+    character entered at the keyboard, and saves the current buffer's path
+    name to that register.
+   </para>
+   <para>
+    <guimenu>Registers</>&gt;<guimenuitem>Go to Register</>
+    (keyboard equivalent: <keycombo><keycap>Control</><keycap>T</></keycombo>)
+    reads the next character entered at the keyboard, and opens the buffer
+    named by the contents of that register. This is the same command
+    used to go to a caret register.
+   </para>
+  </sect2>
+  <sect2><title>Viewing Register Contents</>
+   <indexterm><primary>Registers menu</></indexterm>
+   <indexterm><primary>View Registers command</></indexterm>
+   <para>
+    <guimenu>Registers</>&gt;<guimenuitem>View Registers</>
+    (keyboard equivalent: <keycap>F7</>) shows a
+    dialog box displaying all defined registers. Double clicking on a line,
+    or selecting it and clicking <guibutton>View</> will display its contents
+    in a new dialog box.
+   </para>
+   <para>
+    The contents of string registers are shown. For caret registers, the
+    file name and position is displayed.
+   </para>
+   <para>
+    Currently, it is not possible to change or add registers from this
+    dialog box; use the register commands instead.
+   </para>
+   <figure><title>The View Registers dialog box</>
+    <graphic scale=75 fileref=dialog-view-registers></>
+   </figure>
+  </sect2>
+ </sect1>
+ <sect1 id=macros><title>Macros</>
+  <para>
+   A <firstterm>macro</> is a prerecorded sequence of events that can be
+   played back at any time. Macros can be used to automate complex operations
+   and repeat a set of commands many times.
+  </para>
+  <sect2 id=macro-files><title>Macro Files</>
+   <para>
+    Each macro is stored as a separate file in the <filename>.jedit/macros</>
+    subdirectory of the user's home directory. Macro files have the
+    extension <quote>.macro</> and use a very simple syntax, with
+    one command per line. Lines starting with a hash (<quote>#</>) are
+    ignored by the macro interpreter and can be used to add commentary
+    to macros, etc.
+   </para>
+   <indexterm><primary>Macros menu</></indexterm>
+   <indexterm><primary>Rescan Macros command</></indexterm>
+   <para>
+    The <guimenu>Macros</> menu lists all known macros, in addition
+    to commands for working with them. The
+    <guimenu>Macros</> menu is automatically
+    refreshed when you update or create a macro file from within jEdit;
+    it can also be manually refreshed with the
+    <guimenu>Macros</>&gt;<guimenuitem>Rescan Macros</> command, if for
+    example you wrote a macro in another editor.
+   </para>
+   <indexterm><primary>Play Last Macro command</></indexterm>
+   <para>
+    To play a macro, select it from the <guimenu>Macros</> menu. The
+    most recently recorded or played macro can be invoked with the
+    <guimenu>Macros</>&gt;<guimenuitem>Play Last Macro</> command (keyboard
+    equivalent:
+    <keycombo><keycap>Control</><keycap>E</></keycombo>
+    <keycombo><keycap>Control</><keycap>M</></keycombo>
+    <keycombo><keycap>Control</><keycap>L</></keycombo>).
+   </para>
+  </sect2>
+  <sect2 id=macro-record><title>Recording Macros</>
+   <indexterm><primary>Macros menu</></indexterm>
+   <indexterm><primary>Record Macro command</></indexterm>
+   <para>
+    <guimenu>Macros</>&gt;<guimenuitem>Record Macro</> (keyboard
+    equivalent:
+    <keycombo><keycap>Control</><keycap>E</></keycombo>
+    <keycombo><keycap>Control</><keycap>M</></keycombo>
+    <keycombo><keycap>Control</><keycap>R</></keycombo>) prompts for
+    a macro name, and begins recording to a file with that name
+    suffixed with <quote>.macro</> in the user's home directory.
+   </para>
+   <para>
+    While a recording is in progress, <quote>Macro recording</> is
+    displayed in the status bar, instead of the caret position information.
+    Currently, jEdit records all key strokes and commands invoked from
+    the keyboard; recording of menu item selections is not yet possible.
+   </para>
+   <indexterm><primary>Stop Recording command</></indexterm>
+   <para>
+    <guimenu>Macros</>&gt;<guimenuitem>Stop Recording</> (keyboard
+    equivalent:
+    <keycombo><keycap>Control</><keycap>E</></keycombo>
+    <keycombo><keycap>Control</><keycap>M</></keycombo>
+    <keycombo><keycap>Control</><keycap>S</></keycombo>) stops any
+    recording currently in progress. It also switches to the buffer where
+    the macro was being recorded, giving you a chance to check over the
+    commands
+    and make any necessary changes.
+    When you are happy with the macro, simply
+    save it and it will automatically appear in the <guimenu>Macros</>
+    menu. If you wish to discard the macro, close it without
+    saving.
+   </para>
+  </sect2>
+  <sect2 id=macro-temp><title>Temporary Macros</>
+   <para>
+    Sometimes, a complicated action only needs to be repeated a couple of
+    times, and it is not worth creating a new macro file. The
+    temporary macro feature is useful in those situations.
+   </para>
+   <indexterm><primary>Macros menu</></indexterm>
+   <indexterm><primary>Record Temporary Macro command</></indexterm>
+   <para>
+    <guimenu>Macros</>&gt;<guimenuitem>Record Temporary Macro</> (keyboard
+    equivalent:
+    <keycombo><keycap>Control</><keycap>E</></keycombo>
+    <keycombo><keycap>Control</><keycap>M</></keycombo>
+    <keycombo><keycap>Control</><keycap>M</></keycombo>) works in a
+    similar fashion to the <guimenuitem>Record Macro</> command, except that
+    it records to a buffer named <filename>&lt;&lt; temporary macro &gt;&gt;</>.
+    Once recording is complete, the buffer should not be saved.
+   </para>
+   <indexterm><primary>Play Temporary Macro command</></indexterm>
+   <para>
+     <guimenu>Macros</>&gt;<guimenuitem>Play Temporary Macro</> (keyboard
+    equivalent:
+    <keycombo><keycap>Control</><keycap>E</></keycombo>
+    <keycombo><keycap>Control</><keycap>M</></keycombo>
+    <keycombo><keycap>Control</><keycap>P</></keycombo>) plays the
+    macro recorded to the <filename>&lt;&lt; temporary macro &gt;&gt;</> buffer.
+   </para>
   </sect2>
  </sect1>
  <sect1 id=misc-commands><title>Miscellaneous Commands</>
@@ -2705,14 +2802,10 @@ proc-&gt;getThread("__gui")-&gt;sendPulse(P_WAKE_UP); */</screen>
    When jEdit starts up, it prints a number of messages detailing the
    plugin load process.
   </para>
-  <screen>Scanning directory: /usr/local/share/jedit-2.1pre1/jars
-Scanning JAR file: /usr/local/share/jedit-2.1pre1/jars/LatestVersion.jar
+  <screen>Scanning directory: /usr/local/share/jedit-2.1pre3/jars
 Scanning directory: /home/slava/.jedit/jars
-Scanning JAR file: /home/slava/.jedit/jars/Console.jar
-Scanning JAR file: /home/slava/.jedit/jars/WWWBrowser.jar
-Loaded successfully: LatestVersionPlugin
-Loaded successfully: ConsolePlugin
-Loaded successfully: WWWBrowserPlugin</screen>
+Loading plugins: ConsolePlugin EditBusPlugin JBrowsePlugin
+LatestVersionPlugin QuickFilePlugin WWWBrowserPlugin</screen>
   <para>
    jEdit scans two directories for plugins on startup;
    the system-wide plugin directory, where plugins that are to be available
@@ -2721,11 +2814,10 @@ Loaded successfully: WWWBrowserPlugin</screen>
   </para>
   <para>
    Plugins are distributed as ZIP or GZipped TAR files. Uncompressing
-   them will result in a JAR file named <filename><replaceable>Plugin</>.jar</>,
-   and a directory named by the plugin. The JAR file can be made available
-   for jEdit by moving it into one of the two plugin directories. The
-   directory contains source code for the plugin, which isn't necessary
-   for normal usage.
+   them will result in a JAR file which contains the plugin's code and
+   resources, and a directory which contains the source code. Only the JAR
+   file is required by jEdit; the source code is for developers and the
+   curious.
   </para>
  </sect1>
  <sect1 id=dependency-errors><title>Dependency Errors</>
@@ -2738,7 +2830,7 @@ Loaded successfully: WWWBrowserPlugin</screen>
   <screen>Dependency check failed: ConsolePlugin
 The following is required to use this plugin:
         JDK version >= 1.1
-        jEdit version >= 1.7pre5</screen>
+        jEdit version >= 2.1pre3</screen>
   <para>
    This is a simple example; some plugins might not only depend on
    a jEdit and JDK version, but also other plugins and class libraries.
@@ -2770,7 +2862,8 @@ The following is required to use this plugin:
 <chapter id=developing-plugins><title>Developing Plugins</>
  <para>
   This chapter overviews jEdit plugin development. A knowlege
-  of Java and the core APIs, as well as Swing, is assumed. This chapter
+  of Java, Swing, and the core JDK tools (<application>javac</> and
+  <application>jar</>, or equivalent) is assumed. This chapter
   is meant to be read together with the jEdit API documentation; the
   text in this chapter presents brief <quote>cookbook</>-style instructions
   for the most common tasks, while the API documentation gives more
@@ -2781,23 +2874,44 @@ The following is required to use this plugin:
  </para>
  <para>
   This section is still under construction; information about edit modes,
-  option panes, views, buffers and the text area is still to come.
+  views, buffers and the text area is still to come.
  </para>
  <indexterm><primary>old jEdit versions</></indexterm>
  <sidebar>
   <bridgehead renderas=sect3>jEdit 2.0 Users</>
   <para>
-   Because plugins access jEdit's classes and methods directly, there
-   will always be some incompatibilities between versions. Most API
-   changes are documented in the <filename>CHANGES.txt</> file.
+   jEdit 2.1 introduced a new plugin API, based around the
+   <classname>EditPlugin</> class. Old jEdit 2.0 plugins will continue
+   to work, but all new plugins should be coded for the 2.1 API.
   </para>
  </sidebar>
+ <sect1 id=plugin-jar><title>General Structure of a Plugin</>
+  <para>
+   A plugin is a JAR (Java Archive) file that adds to or modifies jEdit's
+   functionality. The JAR file can contain class files, property files
+   (more on that later), or any other file type, such as images, and so on.
+  </para>
+  <para>
+   jEdit handles the loading of property and class files from plugins
+   automatically, but other file types such as images can be fetched
+   with the <function>getResource()</> method of the <classname>Class</>
+   class.
+  </para>
+  <para>
+   Plugins can use classes loaded from other plugins; an example of this
+   is the <quote>EditBus</> plugin, which provides enhanced communication
+   services to other plugins.
+  </para>
+ </sect1>
  <sect1 id=plugin-class><title>The EditPlugin Class</>
   <para>
    At the heart of every plugin is an implementation of the
    <classname>org.gjt.sp.jedit.EditPlugin</> class. It registers the plugin's
    actions and edit modes with jEdit, takes care of setting up the
-   plugin's menus and menu items, and so on.
+   plugin's menus and menu items, and so on. When a plugin JAR is
+   loaded, jEdit scans for any class files whose names end with
+   <filename>Plugin</> (for example, <filename>FooPlugin</>). Those classes
+   are instantiated and added to jEdit's plugin list.
   </para>
   <indexterm><primary>class</><secondary>EditPlugin</></indexterm>
   <bridgehead renderas=sect3>EditPlugin class</>
@@ -2838,12 +2952,12 @@ The following is required to use this plugin:
  <sect1 id=plugin-props><title>Plugin Properties</>
   <para>
    Plugins can use property files to store name/value pairs. These name/value
-   pairs can contain information for use by jEdit, or it can be for the
-   plugin itself.
+   pairs should be used to store human-readable strings and settings used
+   by the plugin. Some properties can contain information for use by jEdit.
   </para>
   <para>
    When a plugin JAR is being loaded, all files with extension
-   <filename>.props</> are loaded into jEdit's property list. Property
+   <filename>.props</> are read into jEdit's property list. Property
    files have a very simple syntax. Each line either starts with a
    hash (<quote>#</>) in which case it is a comment and is ignored,
    or contains a name/value pair with an equals sign (<quote>=</>)
@@ -2855,7 +2969,7 @@ plugin.FooPlugin.name=Wonderful Foo Plugin
 plugin.FooPlugin.version=18.27beta9
 
 # Properties with arbitriary names can also be used by a plugin for
-# it's own purposes
+# storing strings and user preferences
 foo.baz=Hello World
 qux=$</programlisting>
   <para>
@@ -2906,7 +3020,8 @@ System.out.println("Foo",args);</>
   <para>
    This method sets the value of the specified named property. Once a
    property is set with this method, it will be saved to the user
-   properties file and its value will be persistent for future sessions.
+   properties file (the original property files in the JAR are never
+   modified) and its value will be persistent for future sessions.
    To set properties which are not persistent, see the next method.
   </para>
   <indexterm><primary>method</><secondary>setDefaultProperty() of jEdit class</></indexterm>
@@ -2922,7 +3037,7 @@ System.out.println("Foo",args);</>
    This method is similar to <function>setProperty()</>, except that it
    sets the property in the default property list, which means it will not
    be saved to the user properties file. This can be used to set properties
-   that are only to remain for the duration of the current session.
+   that are only to remain for the duration of the current editing session.
   </para>
  </sect1>
  <sect1 id=plugin-info><title>Plugin Documentation</>
@@ -2956,7 +3071,41 @@ System.out.println("Foo",args);</>
  </sect1>
  <sect1 id=plugin-dependencies><title>Plugin Dependencies</>
   <para>
+   You can use plugin dependencies to prevent your plugin from loading on
+   versions of jEdit and the JDK earlier than you specify. This should be
+   used if your plugin uses features specific to those versions to
+   prevent people with earlier software from seeing endless streams of
+   exceptions.
   </para>
+  <para>
+   Before a plugin is loaded, jEdit checks for dependency properties
+   defined by the plugin. These properties are named
+   <property>plugin.<replaceable>plugin</>.depend.<replaceable>n</></>,
+   where <replaceable>plugin</> is the class name of the 
+   <classname>EditPlugin</> instance, and <replaceable>i</> is an index.
+   The indexing of the dependencies must start at 0 and be consecutive.
+  </para>
+  <para>
+   The value of each dependency property should be either <quote>jedit</>
+   or <quote>jdk</>, followed by a space then a version number.
+   The <quote>jedit</> directive requires the jEdit <quote>build</>,
+   which is at the very top of the <filename>org/gjt/sp/jedit/jEdit.java</>
+   file.
+   Here is a typical example for a plugin that requires JDK 1.2 and
+   jEdit 2.1pre3:
+  </para>
+  <programlisting>plugin.BazPlugin.depend.0=jdk 1.2
+plugin.BazPlugin.depend.1=jedit 02.02.03.00</>
+  <para>
+   How do you know exactly which jEdit version your plugin requires?
+   The EditPlugin API was added in jEdit 2.1pre1 (build 02.01.01.00), so most
+   plugins will require that version. Futhermore, the option pane API changed
+   in jEdit 2.1pre3 (build 02.01.03.00), so plugins
+   using option panes will require that.
+   If your plugin uses the old API, many older releases will also work,
+   but pinpointing which one it was is rather tricky, so just specify
+   that it requires 2.0final (build 02.00.99.00).
+  </itemizedlist>
  </sect1>
  <sect1 id=plugin-actions><title>Plugin Actions</>
   <para>
@@ -3050,18 +3199,6 @@ System.out.println("Foo",args);</>
    inflexible and not easily localizable. This chapter describes
    how to do it the jEdit way.
   </para>
-  <indexterm><primary>old jEdit versions</></indexterm>
-  <sidebar>
-   <bridgehead renderas=sect3>jEdit 2.0 Users</>
-   <para>
-    jEdit 2.0 and earlier took a simpler, rather inflexible approach
-    to building the Plugins menu. jEdit 2.1 still supports
-    the old way of doing things (<function>addPluginAction()</> and
-    <function>addPluginMenu()</> methods in the <classname>jEdit</>
-    class) for the sake of compatibility,
-    but all new plugins should use the jEdit 2.1 API.
-   </para>
-  </sidebar>
   <indexterm><primary>class</><secondary>EditPlugin</></indexterm>
   <indexterm><primary>method</><secondary>createMenuItems() of EditPlugin class</></indexterm>
   <bridgehead renderas=sect3>EditPlugin.createMenuItems() method</>
@@ -3154,15 +3291,6 @@ import org.gjt.sp.jedit.View;</>
    will subclass the <classname>org.gjt.sp.jedit.AbstractOptionPane</> class
    which provides a default layout implementation).
   </para>
-  <indexterm><primary>old jEdit versions</></indexterm>
-  <sidebar>
-   <bridgehead renderas=sect3>jEdit 2.0 Users</>
-   <para>
-    jEdit 2.0 and earlier took a different approach to option panes.
-    The old <function>jEdit.addOptionPane()</> method is no longer
-    supported.
-   </para>
-  </sidebar>
   <indexterm><primary>interface</><secondary>OptionPane</></indexterm>
   <indexterm><primary>class</><secondary>AbstractOptionPane</></indexterm>
   <bridgehead renderas=sect3>OptionPane class</>
