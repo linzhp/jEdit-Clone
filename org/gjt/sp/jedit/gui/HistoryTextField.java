@@ -61,6 +61,7 @@ public class HistoryTextField extends JTextField implements KeyListener
 			return;
 		System.arraycopy(history,0,history,1,history.length - 1);
 		history[0] = text;
+		historyPos = 0;
 	}
 
 	public void keyTyped(KeyEvent evt) {}

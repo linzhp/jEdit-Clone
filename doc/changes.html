@@ -54,7 +54,7 @@ mouse is held down
 
 <ul>
 <li><b>Error list doesn't work for some people</b>
-<li>Geometry isn't saved/restored properly, for views only it seems
+<li>Geometry isn't saved/restored
 (and this only happends on X11, dammit)
 <li>When the session is being restored, the text area doesn't scroll to the
 correct line sometimes
@@ -68,13 +68,15 @@ correct line sometimes
 
 <ul>
 <li>Minor documentation updates
+<li>When something is copied or pasted, it isn't added to the
+paste previous list if it is already there
 </ul>
 
 <h2>Bug Fixes</h2>
 
 <ul>
 <li>Processes invoked from the console that read from standard input
-hung forever
+hang forever
 <li>`Keep dialog' didn't work properly - it cleared the text fields,
 so you had to press up arrow after each search
 <li>`Replace All' didn't work if the replacement string was shorter than
@@ -82,6 +84,7 @@ the search string (really embarrassing bug, and it has been around
 since 1.4pre2!!!)
 <li>Fix in Configure script for JVM paths that include slashes
 <li>Error list didn't work with DOS/Windows paths (E:\filename\file)
+<li>HistoryTextField didn't set historyPos to -1 after addToHistory()
 </ul>
 
 <a name=14pre7>

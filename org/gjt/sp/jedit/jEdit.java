@@ -1038,9 +1038,7 @@ public class jEdit
 	 */
 	public static void addToClipHistory(String str)
 	{
-		int index = clipHistory.indexOf(str);
-		if(index != -1)
-			clipHistory.removeElementAt(index);
+		clipHistory.removeElement(str);
 		clipHistory.addElement(str);
 	}
 
