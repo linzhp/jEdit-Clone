@@ -195,8 +195,6 @@ public class BufferOptions extends JDialog
 		buffer.putProperty("noTabs",noTabs.getModel().isSelected()
 			? "yes" : "no");
 
-		buffer.dirty(); // because lineSeparator was changed
-
 		dispose();
 	}
 
@@ -225,6 +223,9 @@ public class BufferOptions extends JDialog
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.6  1999/04/08 04:44:51  sp
+ * New _setBuffer method in View class, new addTab method in Console class
+ *
  * Revision 1.5  1999/04/07 05:22:46  sp
  * Buffer options bug fix, keyword map API change (get/setIgnoreCase() methods)
  *

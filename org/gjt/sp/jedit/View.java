@@ -273,10 +273,13 @@ public class View extends JFrame
 	}
 
 	/**
-	 * Sets the buffer being edited by this view.
+	 * Sets the buffer being edited by this view, without updating
+	 * the `Buffers' menu. This is for internal use by the
+	 * select-buffer action only, don't call this method in other
+	 * situations.
 	 * @param buffer The buffer to edit.
 	 */
-	public void setBuffer(Buffer buffer)
+	public void _setBuffer(Buffer buffer)
 	{
 		if(this.buffer == buffer)
 			return;
@@ -302,6 +305,16 @@ public class View extends JFrame
 		// Fire event
 		fireViewEvent(new ViewEvent(ViewEvent.BUFFER_CHANGED,this,
 			oldBuffer));
+	}
+
+	/**
+	 * Sets the buffer being edited by this view.
+	 * @param buffer The buffer to edit.
+	 */
+	public void setBuffer(Buffer buffer)
+	{
+		_setBuffer(buffer);
+		updateBuffersMenu();
 	}
 
 	/**
@@ -503,7 +516,6 @@ public class View extends JFrame
 		}
 		else
 			setBuffer(buffer);
-		updateBuffersMenu();
 
 		console = new Console(this);
 
@@ -654,7 +666,7 @@ public class View extends JFrame
 
 			Buffer[] bufferArray = jEdit.getBuffers();
 			if(bufferArray.length != 0)
-				setBuffer(bufferArray[bufferArray.length - 1]);
+				_setBuffer(bufferArray[bufferArray.length - 1]);
 	
 			updateBuffersMenu();
 
@@ -751,6 +763,9 @@ public class View extends JFrame
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.60  1999/04/08 04:44:51  sp
+ * New _setBuffer method in View class, new addTab method in Console class
+ *
  * Revision 1.59  1999/04/07 05:01:26  sp
  * Search and replace tweak, UI tweaks
  *

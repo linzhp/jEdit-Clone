@@ -50,11 +50,11 @@ implements ActionListener, ListSelectionListener
 		cmd.addActionListener(this);
 		add(BorderLayout.NORTH,panel);
 
-		JTabbedPane tabs = new JTabbedPane(SwingConstants.BOTTOM);
-		tabs.addTab(jEdit.getProperty("console.output"),
+		tabs = new JTabbedPane(SwingConstants.BOTTOM);
+		addTab(jEdit.getProperty("console.output"),
 			new JScrollPane(output = new JTextArea()));
 		output.setEditable(false);
-		tabs.addTab(jEdit.getProperty("console.errors"),
+		addTab(jEdit.getProperty("console.errors"),
 			new JScrollPane(errorList = new JList(getErrorList())));
 		errorList.setVisibleRowCount(15);
 		errorList.addListSelectionListener(this);
@@ -182,6 +182,16 @@ implements ActionListener, ListSelectionListener
 		return errorList.getSelectedIndex();
 	}
 
+	/**
+	 * Adds a new tab to the console.
+	 * @param label The tab's label
+	 * @param comp The component to be displayed in the tab
+	 */
+	public void addTab(String label, Component comp)
+	{
+		tabs.addTab(label,comp);
+	}
+
 	public void actionPerformed(ActionEvent evt)
 	{
 		if(evt.getSource() == cmd)
@@ -216,13 +226,14 @@ implements ActionListener, ListSelectionListener
 		{
 			buffer.setCaretInfo(start,start);
 			view.setBuffer(buffer);
-			view.updateBuffersMenu();
 		}
 	}
 
 	// private members
 	private boolean appendEXE;
 
+	private JTabbedPane tabs;
+	
 	private HistoryTextField cmd;
 	private JTextArea output;
 	private JList errorList;
@@ -453,6 +464,9 @@ implements ActionListener, ListSelectionListener
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.21  1999/04/08 04:44:51  sp
+ * New _setBuffer method in View class, new addTab method in Console class
+ *
  * Revision 1.20  1999/04/02 02:39:46  sp
  * Updated docs, console fix, getDefaultSyntaxColors() method, hypersearch update
  *

@@ -47,7 +47,7 @@ public class jEdit
 	 * The date when a change was last made to the source code,
 	 * in <code>YYYYMMDD</code> format.
 	 */
-	public static final String BUILD = "19990405";
+	public static final String BUILD = "19990408";
 
 	/**
 	 * AWK regexp syntax.
@@ -132,6 +132,7 @@ public class jEdit
 				else if(arg.equals("-usage"))
 				{
 					version();
+					System.err.println();
 					usage();
 					System.exit(1);
 				}
@@ -1192,7 +1193,8 @@ public class jEdit
 		System.err.println("    -portfile=<file>: Write server port to"
 			+ " <file>");
 		System.err.println("    -readonly: Open files read-only");
-		System.err.println("    -+<line>: Go to line <line>");
+		System.err.println("    -+<line>: Go to line number <line> of"
+			+ " opened file");
 		System.err.println();
 		System.err.println("Report bugs to Slava Pestov <sp@gjt.org>.");
 	}
@@ -1517,6 +1519,9 @@ public class jEdit
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.70  1999/04/08 04:44:51  sp
+ * New _setBuffer method in View class, new addTab method in Console class
+ *
  * Revision 1.69  1999/04/07 05:01:26  sp
  * Search and replace tweak, UI tweaks
  *

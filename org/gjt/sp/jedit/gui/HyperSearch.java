@@ -234,7 +234,6 @@ public class HyperSearch extends JDialog
 			{
 				buffer.setCaretInfo(start,end);
 				view.setBuffer(buffer);
-				view.updateBuffersMenu();
 			}
 		}
 	}
@@ -243,6 +242,9 @@ public class HyperSearch extends JDialog
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.27  1999/04/08 04:44:51  sp
+ * New _setBuffer method in View class, new addTab method in Console class
+ *
  * Revision 1.26  1999/04/02 03:21:09  sp
  * Added manifest file, common strings such as OK, etc are no longer duplicated
  * many times in jedit_gui.props
