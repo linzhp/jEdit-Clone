@@ -25,7 +25,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
-import org.gjt.sp.jedit.syntax.SyntaxTextArea;
+import org.gjt.sp.jedit.gui.SyntaxTextArea;
 
 /**
  * A <code>View</code> edits buffers. There is no public constructor in the
@@ -41,6 +41,7 @@ implements CaretListener, KeyListener, WindowListener
 	 */
 	public void propertiesChanged()
 	{
+		SwingUtilities.updateComponentTreeUI(this);
 		Font font = jEdit.getFont();
 		textArea.setFont(font);
 		status.setFont(font);
@@ -64,7 +65,6 @@ implements CaretListener, KeyListener, WindowListener
 			textArea.setCaretBlinkRate(0);
 		}
 		updateOpenRecentMenu();
-		SwingUtilities.updateComponentTreeUI(this);
 	}
 	
 	/**
@@ -418,26 +418,6 @@ implements CaretListener, KeyListener, WindowListener
 		bindings = new Hashtable();
 		currentPrefix = bindings;
 		lineSegment = new Segment();
-		int x;
-		int y;
-		try
-		{
-			x = Integer.parseInt(jEdit.getProperty(
-				"view.geometry.x"));
-		}
-		catch(Exception e)
-		{
-			x = 100;
-		}
-		try
-		{
-			y = Integer.parseInt(jEdit.getProperty(
-				"view.geometry.y"));
-		}
-		catch(Exception e)
-		{
-			y = 50;
-		}
 		int w = 80;
 		int h = 30;
 		try
@@ -481,8 +461,11 @@ implements CaretListener, KeyListener, WindowListener
 		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 		addKeyListener(this);
 		addWindowListener(this);
+		Dimension screen = getToolkit().getScreenSize();
 		pack();
-		setLocation(x,y);
+		setLocation((screen.width - getSize().width) / 2,
+			(screen.height - getSize().height) / 2);
+		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 		show();
 	}
 

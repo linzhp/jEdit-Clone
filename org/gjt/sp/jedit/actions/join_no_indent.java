@@ -58,7 +58,6 @@ public class join_no_indent extends EditAction
 		{
 			buffer.remove(end - 1,jEdit.getLeadingWhiteSpace(
 				buffer.getText(nextStart,nextEnd - nextStart)) + 1);
-			buffer.insertString(end - 1," ",null);
 		}
 		catch(BadLocationException bl)
 		{

@@ -1,5 +1,5 @@
 /*
- * goto_anchor.java
+ * SplashScreen.java - Splash screen
  * Copyright (C) 1998 Slava Pestov
  *
  * This program is free software; you can redistribute it and/or
@@ -17,27 +17,28 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-package org.gjt.sp.jedit.actions;
+package org.gjt.sp.jedit.gui;
 
-import java.awt.event.ActionEvent;
-import org.gjt.sp.jedit.*;
-import org.gjt.sp.jedit.gui.SyntaxTextArea;
+import javax.swing.*;
+import java.awt.*;
+import java.net.URL;
+import org.gjt.sp.jedit.jEdit;
 
-public class goto_anchor extends EditAction
+public class SplashScreen extends JWindow
 {
-	public goto_anchor()
+	public SplashScreen()
 	{
-		super("goto-anchor");
-	}
-	
-	public void actionPerformed(ActionEvent evt)
-	{
-		View view = getView(evt);
-		SyntaxTextArea textArea = view.getTextArea();
-		int pos = view.getBuffer().getAnchor();
-		if(pos != -1)
-			textArea.setCaretPosition(pos);
-		else
-			view.getToolkit().beep();
+		getContentPane().setLayout(new BorderLayout());
+		URL url = getClass().getResource("/jedit_logo.gif");
+		if(url != null)
+			getContentPane().add("Center",new JLabel(new ImageIcon(url)));
+		getContentPane().add("South",new JLabel("jEdit version "
+			+ jEdit.VERSION + " build " + jEdit.BUILD,
+			SwingConstants.CENTER));
+		Dimension screen = getToolkit().getScreenSize();
+		pack();
+		setLocation((screen.width - getSize().width) / 2,
+			(screen.height - getSize().height) / 2);
+		show();
 	}
 }

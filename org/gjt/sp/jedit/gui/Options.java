@@ -20,353 +20,112 @@
 package org.gjt.sp.jedit.gui;
 
 import javax.swing.*;
-import javax.swing.border.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.util.Enumeration;
+import java.util.*;
+import org.gjt.sp.jedit.options.*;
 import org.gjt.sp.jedit.*;
 
 public class Options extends JDialog
-implements ActionListener
+implements ActionListener, KeyListener, WindowListener
 {
-	public static final String METAL = "javax.swing.plaf.metal"
-		+ ".MetalLookAndFeel";
-	public static final String MOTIF = "com.sun.java.swing.plaf.motif"
-		+ ".MotifLookAndFeel";
-	public static final String WINDOWS = "com.sun.java.swing.plaf.windows"
-		+ ".WindowsLookAndFeel";
-	public static final String LF = "\n";
-	public static final String CRLF = "\r\n";
-	public static final String CR = "\r";
-	private JRadioButton metal;
-	private JRadioButton motif;
-	private JRadioButton windows;
-	private JCheckBox server;
-	private JTextField maxrecent;
-	private JTextField autosave;
-	private JTextField backups;
-	private JRadioButton newlineUnix;
-	private JRadioButton newlineWindows;
-	private JRadioButton newlineMac;
-	private JComboBox font;
-	private JComboBox fontSize;
-	private JTextField tabSize;
-	private JCheckBox autoindent;
-	private JCheckBox syntax;
-	private JTextField top;
-	private JTextField left;
-	private JTextField bottom;
-	private JTextField right;
-	private JButton ok;
-	private JButton cancel;
-
 	public Options(View view)
 	{
 		super(view,jEdit.getProperty("options.title"),true);
-		GridBagLayout layout = new GridBagLayout();
-		GridBagConstraints constraints = new GridBagConstraints();
-		constraints.fill = constraints.BOTH;
-		constraints.weightx = 1.0f;
-		Container content = getContentPane();
-		content.setLayout(layout);
-		JPanel panel = createLfPanel();
-		layout.setConstraints(panel,constraints);
-		content.add(panel);
-		constraints.gridy = 1;
-		panel = createOpeningPanel();
-		layout.setConstraints(panel,constraints);
-		content.add(panel);
-		constraints.gridy = 2;
-		panel = createSavingPanel();
-		layout.setConstraints(panel,constraints);
-		content.add(panel);
-		constraints.gridy = 3;
-		panel = createEditingPanel();
-		layout.setConstraints(panel,constraints);
-		content.add(panel);
-		constraints.gridy = 4;
-		panel = createPrintingPanel();
-		layout.setConstraints(panel,constraints);
-		content.add(panel);
-		constraints.gridy = 5;
-		panel = createButtonsPanel();
-		layout.setConstraints(panel,constraints);
-		content.add(panel);
+		getContentPane().setLayout(new BorderLayout());
+		panes = new Vector();
+		tabs = new JTabbedPane();
+		addOptionPane(new GeneralOptionPane());
+		addOptionPane(new EditorOptionPane());
+		addOptionPane(new ColorsOptionPane());
+		getContentPane().add("Center",tabs);
+		JPanel buttons = new JPanel();
+		ok = new JButton(jEdit.getProperty("options.ok"));
+		ok.addActionListener(this);
+		buttons.add(ok);
+		getRootPane().setDefaultButton(ok);
+		cancel = new JButton(jEdit.getProperty("options.cancel"));
+		cancel.addActionListener(this);
+		buttons.add(cancel);
+		getContentPane().add("South",buttons);
+		addKeyListener(this);
+		addWindowListener(this);
 		Dimension screen = getToolkit().getScreenSize();
 		pack();
 		setLocation((screen.width - getSize().width) / 2,
 			(screen.height - getSize().height) / 2);
-		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 		show();
 	}
-
-	private JPanel createLfPanel()
+	
+	public void ok()
 	{
-		JPanel content = new JPanel();
-		content.setBorder(new TitledBorder(jEdit.getProperty(
-			"options.lf")));
-		String lf = UIManager.getLookAndFeel().getClass().getName();
-		ButtonGroup grp = new ButtonGroup();
-		metal = new JRadioButton(jEdit.getProperty(
-			"options.lf.metal"));
-		metal.getModel().setSelected(METAL.equals(lf));
-		grp.add(metal);
-		content.add(metal);
-		motif = new JRadioButton(jEdit.getProperty(
-			"options.lf.motif"));
-		motif.getModel().setSelected(MOTIF.equals(lf));
-		grp.add(motif);
-		content.add(motif);
-		windows = new JRadioButton(jEdit.getProperty(
-			"options.lf.windows"));
-		windows.getModel().setSelected(WINDOWS.equals(lf));
-		grp.add(windows);
-		content.add(windows);
-		return content;
+		Enumeration enum = panes.elements();
+		while(enum.hasMoreElements())
+			((OptionPane)enum.nextElement()).save();
+
+		jEdit.propertiesChanged();
+
+		enum = jEdit.getBuffers();
+		while(enum.hasMoreElements())
+			((Buffer)enum.nextElement()).propertiesChanged();
+		
+		enum = jEdit.getViews();
+		while(enum.hasMoreElements())
+			((View)enum.nextElement()).propertiesChanged();
+
+		dispose();
 	}
 
-	private JPanel createOpeningPanel()
-	{
-		JPanel content = new JPanel();
-		content.setBorder(new TitledBorder(jEdit.getProperty(
-			"options.opening")));
-		GridBagLayout layout = new GridBagLayout();
-		content.setLayout(layout);
-		GridBagConstraints constraints = new GridBagConstraints();
-		constraints.fill = constraints.BOTH;
-		constraints.weightx = 1.0f;
-		server = new JCheckBox(jEdit.getProperty(
-			"options.opening.server"));
-		server.getModel().setSelected("on".equals(jEdit
-			.getProperty("daemon.server.toggle")));
-		layout.setConstraints(server,constraints);
-		content.add(server);
-		constraints.gridy = 1;
-		JLabel label = new JLabel(jEdit.getProperty(
-			"options.opening.maxrecent"),SwingConstants.RIGHT);
-		layout.setConstraints(label,constraints);
-		content.add(label);
-		constraints.gridx = 1;
-		maxrecent = new JTextField(jEdit.getProperty(
-			"buffermgr.recent"),5);
-		layout.setConstraints(maxrecent,constraints);
-		content.add(maxrecent);
-		return content;
-	}
-
-	private JPanel createSavingPanel()
-	{
-		JPanel content = new JPanel();
-		content.setBorder(new TitledBorder(jEdit.getProperty(
-			"options.saving")));
-		GridBagLayout layout = new GridBagLayout();
-		content.setLayout(layout);
-		GridBagConstraints constraints = new GridBagConstraints();
-		constraints.fill = constraints.BOTH;
-		constraints.weightx = 1.0f;
-		constraints.gridwidth = 3;
-		JLabel label = new JLabel(jEdit.getProperty(
-			"options.saving.autosave"),SwingConstants.RIGHT);
-		layout.setConstraints(label,constraints);
-		content.add(label);
-		constraints.gridx = 3;
-		autosave = new JTextField(jEdit.getProperty("daemon."
-			+ "autosave.interval"),5);
-		layout.setConstraints(autosave,constraints);
-		content.add(autosave);
-		constraints.gridx = 0;
-		constraints.gridy = 1;
-		constraints.gridwidth = 3;
-		label = new JLabel(jEdit.getProperty(
-			"options.saving.backups"),SwingConstants.RIGHT);
-		layout.setConstraints(label,constraints);
-		content.add(label);
-		constraints.gridx = 3;
-		backups = new JTextField(jEdit.getProperty("buffer."
-			+ "backup.count"),5);
-		layout.setConstraints(backups,constraints);
-		content.add(backups);
-		constraints.gridx = 0;
-		constraints.gridy = 2;
-		constraints.gridwidth = 1;
-		label = new JLabel(jEdit.getProperty(
-			"options.saving.newline"),SwingConstants.RIGHT);
-		layout.setConstraints(label,constraints);
-		content.add(label);
-		String newline = jEdit.getProperty("buffer.line."
-			+ "separator",System.getProperty("line.separator"));
-		ButtonGroup grp = new ButtonGroup();
-		constraints.gridx = 1;
-		newlineUnix = new JRadioButton(jEdit.getProperty(
-			"options.saving.newline.unix"));
-		grp.add(newlineUnix);
-		newlineUnix.getModel().setSelected(LF.equals(newline));
-		layout.setConstraints(newlineUnix,constraints);
-		content.add(newlineUnix);
-		constraints.gridx = 2;
-		newlineWindows = new JRadioButton(jEdit.getProperty(
-			"options.saving.newline.windows"));
-		grp.add(newlineWindows);
-		newlineWindows.getModel().setSelected(CRLF.equals(newline));
-		layout.setConstraints(newlineWindows,constraints);
-		content.add(newlineWindows);
-		constraints.gridx = 3;
-		newlineMac = new JRadioButton(jEdit.getProperty(
-			"options.saving.newline.mac"));
-		grp.add(newlineMac);
-		newlineMac.getModel().setSelected(CR.equals(newline));
-		layout.setConstraints(newlineMac,constraints);
-		content.add(newlineMac);
-		return content;
-	}
-	
-	private JPanel createEditingPanel()
-	{
-		JPanel content = new JPanel();
-		content.setBorder(new TitledBorder(jEdit.getProperty(
-			"options.editing")));
-		GridBagLayout layout = new GridBagLayout();
-		content.setLayout(layout);
-		GridBagConstraints constraints = new GridBagConstraints();
-		constraints.fill = constraints.BOTH;
-		constraints.weightx = 1.0f;
-		constraints.gridwidth = 1;
-		JLabel label = new JLabel(jEdit.getProperty(
-			"options.editing.font"),SwingConstants.RIGHT);
-		layout.setConstraints(label,constraints);
-		content.add(label);
-		constraints.gridx = 1;
-		constraints.gridwidth = 2;
-		font = new JComboBox(getToolkit().getFontList());
-		font.setSelectedItem(jEdit.getProperty("view.font"));
-		layout.setConstraints(font,constraints);
-		content.add(font);
-		constraints.gridx = 3;
-		constraints.gridwidth = 1;
-		Object[] sizes = { "9", "10", "12", "14", "18", "24" };
-		fontSize = new JComboBox(sizes);
-		fontSize.setSelectedItem(jEdit.getProperty(
-			"view.fontsize"));
-		layout.setConstraints(fontSize,constraints);
-		content.add(fontSize);
-		constraints.gridx = 0;
-		constraints.gridy = 1;
-		label = new JLabel(jEdit.getProperty(
-			"options.editing.tabsize"),SwingConstants.RIGHT);
-		layout.setConstraints(label,constraints);
-		content.add(label);
-		constraints.gridx = 1;
-		tabSize = new JTextField(jEdit.getProperty(
-			"buffer.tabSize"),5);
-		layout.setConstraints(tabSize,constraints);
-		content.add(tabSize);
-		constraints.gridx = 2;
-		autoindent = new JCheckBox(jEdit.getProperty(
-			"options.editing.autoindent"));
-		autoindent.getModel().setSelected("on".equals(jEdit
-			.getProperty("view.autoindent")));
-		layout.setConstraints(autoindent,constraints);
-		content.add(autoindent);
-		constraints.gridx = 3;
-		syntax = new JCheckBox(jEdit.getProperty(
-			"options.editing.syntax"));
-		syntax.getModel().setSelected("on".equals(jEdit
-			.getProperty("buffer.syntax")));
-		layout.setConstraints(syntax,constraints);
-		content.add(syntax);
-		return content;
-	}
-	
-	private JPanel createPrintingPanel()
-	{
-		JPanel content = new JPanel();
-		content.setBorder(new TitledBorder(jEdit.getProperty(
-			"options.printing")));
-		content.setLayout(new GridLayout(2,4));
-		content.add(new JLabel(jEdit.getProperty(
-			"options.printing.top"),SwingConstants.RIGHT));
-		top = new JTextField(jEdit.getProperty("buffer.margin."
-			+ "top"),5);
-		content.add(top);
-		content.add(new JLabel(jEdit.getProperty(
-			"options.printing.left"),SwingConstants.RIGHT));
-		left = new JTextField(jEdit.getProperty("buffer.margin."
-			+ "left"),5);
-		content.add(left);
-		content.add(new JLabel(jEdit.getProperty(
-			"options.printing.bottom"),SwingConstants.RIGHT));
-		bottom = new JTextField(jEdit.getProperty(
-			"buffer.margin.bottom"),5);
-		content.add(bottom);
-		content.add(new JLabel(jEdit.getProperty(
-			"options.printing.right"),SwingConstants.RIGHT));
-		right = new JTextField(jEdit.getProperty("buffer.margin"
-			+ ".right"),5);
-		content.add(right);
-		return content;
-	}
-	
-	private JPanel createButtonsPanel()
-	{
-		JPanel content = new JPanel();
-		ok = new JButton(jEdit.getProperty("options.ok"));
-		ok.addActionListener(this);
-		content.add(ok);
-		cancel = new JButton(jEdit
-			.getProperty("options.cancel"));
-		cancel.addActionListener(this);
-		content.add(cancel);
-		return content;
-	}
-	
 	public void actionPerformed(ActionEvent evt)
 	{
 		Object source = evt.getSource();
-		if(source == cancel)
+		if(source == ok)
+			ok();
+		else if(source == cancel)
 			dispose();
-		else if(source == ok)
+	}
+
+	public void keyPressed(KeyEvent evt)
+	{
+		switch(evt.getKeyCode())
 		{
-			String lf;
-			if(motif.getModel().isSelected())
-				lf = MOTIF;
-			else if(windows.getModel().isSelected())
-				lf = WINDOWS;
-			else
-				lf = METAL;
-			jEdit.setProperty("lf",lf);
-			jEdit.setProperty("daemon.server.toggle",server.getModel()
-				.isSelected() ? "on" : "off");
-			jEdit.setProperty("buffermgr.recent",maxrecent.getText());
-			jEdit.setProperty("daemon.autosave.interval",autosave.getText());
-			jEdit.setProperty("buffer.backup.count",backups.getText());
-			String newline;
-			if(newlineWindows.getModel().isSelected())
-				newline = CRLF;
-			else if(newlineMac.getModel().isSelected())
-				newline = CR;
-			else
-				newline = LF;
-			jEdit.setProperty("buffer.line.separator",newline);
-			jEdit.setProperty("view.font",(String)font.getSelectedItem());
-			jEdit.setProperty("view.fontsize",(String)fontSize.getSelectedItem());
-			jEdit.setProperty("buffer.tabSize",tabSize.getText());
-			jEdit.setProperty("view.autoindent",autoindent
-				.getModel().isSelected() ? "on" : "off");
-			jEdit.setProperty("buffer.syntax",syntax.getModel()
-				.isSelected() ? "on" : "off");
-			jEdit.setProperty("buffer.margin.top",top.getText());
-			jEdit.setProperty("buffer.margin.left",left.getText());
-			jEdit.setProperty("buffer.margin.bottom",bottom.getText());
-			jEdit.setProperty("buffer.margin.right",right.getText());
-			jEdit.propertiesChanged();
-			Enumeration enum = jEdit.getViews();
-			while(enum.hasMoreElements())
-				((View)enum.nextElement()).propertiesChanged();
-			enum = jEdit.getBuffers();
-			while(enum.hasMoreElements())
-				((Buffer)enum.nextElement())
-					.propertiesChanged();
+		case KeyEvent.VK_ENTER:
+			ok();
+			break;
+		case KeyEvent.VK_ESCAPE:
 			dispose();
+			break;
 		}
+	}
+
+	public void keyReleased(KeyEvent evt) {}
+
+	public void keyTyped(KeyEvent evt) {}
+	
+	public void windowOpened(WindowEvent evt) {}
+	
+	public void windowClosing(WindowEvent evt)
+	{
+		dispose();
+	}
+	
+	public void windowClosed(WindowEvent evt) {}
+	public void windowIconified(WindowEvent evt) {}
+	public void windowDeiconified(WindowEvent evt) {}
+	public void windowActivated(WindowEvent evt) {}
+	public void windowDeactivated(WindowEvent evt) {}
+
+	// private members
+	private Vector panes;
+	private JTabbedPane tabs;
+	private JButton ok;
+	private JButton cancel;
+
+	private void addOptionPane(OptionPane pane)
+	{
+		tabs.addTab(jEdit.getProperty("options." + pane.getName()
+			+ ".label"),pane);
+		panes.addElement(pane);
 	}
 }

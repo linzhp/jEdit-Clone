@@ -21,7 +21,7 @@ package org.gjt.sp.jedit.actions;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
-import org.gjt.sp.jedit.syntax.SyntaxTextArea;
+import org.gjt.sp.jedit.gui.SyntaxTextArea;
 import org.gjt.sp.jedit.*;
 
 public class goto_marker extends EditAction

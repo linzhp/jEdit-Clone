@@ -59,10 +59,10 @@ loop:			for(int i = dot - 1; i >= start; i--)
 					break loop;
 				default:
 					if(!Character.isLetterOrDigit(c)
-						&& separators != null
-						&& separators.indexOf(c) == -1)
+						&& (separators == null
+						|| separators.indexOf(c) == -1))
 					{
-						wordStart = i;
+						wordStart = i + 1;
 						break loop;
 					}
 				}
@@ -76,12 +76,14 @@ loop:			for(int i = dot - 1; i >= start; i--)
 						     dot - start);
 			// loop through lines in file looking for previous
 			// occurance of word
-			for(int i = lineNo - 1; i >= 0; i--)
+			for(int i = lineNo; i >= 0; i--)
 			{
 				lineElement = map.getElement(i);
 				int lineStart = lineElement.getStartOffset();
 				int lineLen = lineElement.getEndOffset()
 					- lineStart - 1;
+				if(i == lineNo)
+					lineLen -= (dot - wordStart);
 				line = buffer.getText(lineStart, lineLen);
 				int index = line.lastIndexOf(word);
 				if(index != -1)
@@ -98,8 +100,8 @@ loop2:					for(int j = index + 1; j < lineLen; j++)
 							break loop2;
 						default:
 							if(!Character.isLetterOrDigit(c)
-								&& separators != null
-								&& separators.indexOf(c) == -1)
+								&& (separators == null
+								|| separators.indexOf(c) == -1))
 							{
 								wordEnd = j;
 								break loop2;

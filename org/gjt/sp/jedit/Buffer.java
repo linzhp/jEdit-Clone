@@ -29,7 +29,8 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 import java.util.zip.*;
-import org.gjt.sp.jedit.syntax.*;
+import org.gjt.sp.jedit.gui.SyntaxTextArea;
+import org.gjt.sp.jedit.syntax.TokenMarker;
 
 /**
  * 
@@ -584,26 +585,7 @@ implements DocumentListener, UndoableEditListener
 	public void setTokenMarker(TokenMarker tokenMarker)
 	{
 		this.tokenMarker = tokenMarker;
-		if(tokenMarker == null)
-			return;
-		Segment line = new Segment();
-		try
-		{
-			Element map = getDefaultRootElement();
-			int lines = map.getElementCount();
-			for(int i = 0; i < lines; i++)
-			{
-				Element lineElement = map.getElement(i);
-				int start = lineElement.getStartOffset();
-				getText(start,lineElement.getEndOffset()
-					- start,line);
-				tokenMarker.markTokens(line,i);
-			}
-		}
-		catch(BadLocationException bl)
-		{
-			bl.printStackTrace();
-		}
+		tokenizeLines();
 	}
 
 	/**
@@ -773,7 +755,7 @@ implements DocumentListener, UndoableEditListener
 	 */
 	public void propertiesChanged()
 	{
-		try
+		/*try
 		{
 			Object oldSize = getProperty(tabSizeAttribute);
 			if(oldSize == null)
@@ -785,7 +767,7 @@ implements DocumentListener, UndoableEditListener
 		}
 		catch(NumberFormatException nf)
 		{
-		}
+		}*/
 	}
 	
 	/**
@@ -1033,19 +1015,7 @@ implements DocumentListener, UndoableEditListener
 			 * setPath() is called before the lines are
 			 * available, so we do it here as well.
 			 */
-			if(tokenMarker == null)
-				return;
-			Segment lineSegment = new Segment();
-			Element map = getDefaultRootElement();
-			int lines = map.getElementCount();
-			for(int i = 0; i < lines; i++)
-			{
-				Element lineElement = map.getElement(i);
-				int start = lineElement.getStartOffset();
-				getText(start,lineElement.getEndOffset()
-					- start,lineSegment);
-				tokenMarker.markTokens(lineSegment,i);
-			}
+			tokenizeLines();
 		}
 		catch(BadLocationException bl)
 		{
@@ -1382,6 +1352,29 @@ implements DocumentListener, UndoableEditListener
 			dirty = !init;
 			updateStatus();
 			updateBufferMenus();
+		}
+	}
+
+	private void tokenizeLines()
+	{
+		if(tokenMarker == null)
+			return;
+		Segment lineSegment = new Segment();
+		Element map = getDefaultRootElement();
+		int lines = map.getElementCount();
+		try
+		{
+			for(int i = 0; i < lines; i++)
+			{
+				Element lineElement = map.getElement(i);
+				int start = lineElement.getStartOffset();
+				getText(start,lineElement.getEndOffset()
+					- start - 1,lineSegment);
+				tokenMarker.markTokens(lineSegment,i);
+			}
+		}
+		catch(BadLocationException bl)
+		{
 		}
 	}
 

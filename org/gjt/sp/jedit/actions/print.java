@@ -25,7 +25,8 @@ import javax.swing.text.PlainView;
 import java.awt.event.ActionEvent;
 import java.awt.*;
 import org.gjt.sp.jedit.*;
-import org.gjt.sp.jedit.syntax.*;
+import org.gjt.sp.jedit.gui.SyntaxTextArea;
+import org.gjt.sp.jedit.syntax.SyntaxView;
 
 public class print extends EditAction
 {

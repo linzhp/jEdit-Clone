@@ -26,7 +26,7 @@ import gnu.regexp.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.Vector;
-import org.gjt.sp.jedit.syntax.SyntaxTextArea;
+import org.gjt.sp.jedit.gui.SyntaxTextArea;
 import org.gjt.sp.jedit.jEdit;
 import org.gjt.sp.jedit.Buffer;
 import org.gjt.sp.jedit.View;

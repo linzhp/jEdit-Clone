@@ -20,7 +20,7 @@
 package org.gjt.sp.jedit.actions;
 
 import java.awt.event.ActionEvent;
-import org.gjt.sp.jedit.syntax.SyntaxTextArea;
+import org.gjt.sp.jedit.gui.SyntaxTextArea;
 import org.gjt.sp.jedit.*;
 
 public class to_lower extends EditAction

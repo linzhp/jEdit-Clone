@@ -1,5 +1,5 @@
 /*
- * select_prev_line.java
+ * ColorsOptionPane.java - Colors options panel
  * Copyright (C) 1998 Slava Pestov
  *
  * This program is free software; you can redistribute it and/or
@@ -17,30 +17,19 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-package org.gjt.sp.jedit.actions;
+package org.gjt.sp.jedit.options;
 
-import javax.swing.text.Element;
-import java.awt.event.ActionEvent;
-import org.gjt.sp.jedit.*;
-import org.gjt.sp.jedit.gui.SyntaxTextArea;
+import javax.swing.*;
 
-public class select_prev_line extends EditAction
+public class ColorsOptionPane extends OptionPane
 {
-	public select_prev_line()
+	public ColorsOptionPane()
 	{
-		super("select-prev-line");
+		super("colors");
+		add(new JButton("coming soon..."));
 	}
 
-	public void actionPerformed(ActionEvent evt)
+	public void save()
 	{
-		View view = getView(evt);
-		SyntaxTextArea textArea = view.getTextArea();
-		Buffer buffer = view.getBuffer();
-		Element map = buffer.getDefaultRootElement();
-		Element lineElement = map.getElement(map.getElementIndex(
-			textArea.getSelectionStart()));
-		int start = Math.max(0,lineElement.getStartOffset() - 1);
-		textArea.select(start,Math.max(textArea.getSelectionEnd(),
-			lineElement.getEndOffset() - 1));
 	}
 }

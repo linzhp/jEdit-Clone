@@ -23,7 +23,7 @@ import javax.swing.text.BadLocationException;
 import java.awt.event.ActionEvent;
 import java.io.*;
 import org.gjt.sp.jedit.*;
-import org.gjt.sp.jedit.syntax.SyntaxTextArea;
+import org.gjt.sp.jedit.gui.SyntaxTextArea;
 
 public class pipe_selection extends EditAction
 {
