@@ -19,6 +19,8 @@
 
 <ul>
 <li>WWW Browser commands unbundled into a `WWW Browser' plugin
+<li>Menubar rearranged
+<li>Documentation updates
 </ul>
 
 <h2>API Changes</h2>
@@ -27,6 +29,8 @@
 <li>MiscUtilities.createWhiteSpace(int length, int tabSize, boolean noTabs)
 changed to MiscUtilities.createWhiteSpace(int length, int tabSize). To use
 soft tabs, 0 should be passed as as `tabSize'.
+<li>GUIUtilities.message/error/input/inputProperty() methods changed to
+take a Frame as a parameter, instead of a JFrame
 </ul>
 
 <h2>Bug Fixes</h2>

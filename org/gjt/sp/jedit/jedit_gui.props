@@ -20,13 +20,15 @@ lineSep.mac=MacOS (\\r)
 ### JAR LOADER MESSAGES
 ###
 
+jar.scanningdir=Scanning directory: {0}
 jar.scanning=Scanning JAR file: {0}
 jar.error.load=Error loading {0}
 jar.error.zip=Error loading class {0} from {1}
-jar.disabled=-- disabled at user request: {0}
-jar.loaded=-- loaded successfully: {0}
-jar.error.init=-- initialization failed: {0}
-jar.error.deps=-- dependency check failed: {0}\nThe following is required:
+jar.disabled=Disabled at user request: {0}
+jar.loaded=Loaded successfully: {0}
+jar.error.init=Initialization failed: {0}
+jar.error.deps=Dependency check failed: {0}\n\
+	The following is required to use this plugin:
 jar.what.jdk=\tJDK version >= {0}
 jar.what.jedit=\tjEdit version >= {0}
 jar.what.class=\tExistance of class {0}

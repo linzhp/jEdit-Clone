@@ -347,6 +347,10 @@ public class jEdit
 	 */
 	public static void loadPlugins(String directory)
 	{
+		String[] args = { directory };
+		System.err.println(jEdit.getProperty(
+			"jar.scanningdir",args));
+
 		File file = new File(directory);
 		if(!(file.exists() || file.isDirectory()))
 			return;
@@ -365,9 +369,9 @@ public class jEdit
 			}
 			catch(IOException io)
 			{
-				String[] args = { plugin };
+				String[] args2 = { plugin };
 				System.err.println(jEdit.getProperty(
-					"jar.error.load",args));
+					"jar.error.load",args2));
 				io.printStackTrace();
 			}
 		}
@@ -1524,6 +1528,9 @@ public class jEdit
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.105  1999/05/27 00:02:50  sp
+ * Documentation updates, minor tweaks for WWW browser command unbundling
+ *
  * Revision 1.104  1999/05/26 22:01:07  sp
  * Unbundling WWW Browser commands, documentation updates
  *
@@ -1553,17 +1560,5 @@ public class jEdit
  *
  * Revision 1.95  1999/05/06 07:16:14  sp
  * Plugins can use classes from other loaded plugins
- *
- * Revision 1.94  1999/05/06 05:16:17  sp
- * Syntax text are compile fix, FAQ updated
- *
- * Revision 1.93  1999/05/05 07:20:45  sp
- * jEdit 1.6pre5
- *
- * Revision 1.92  1999/05/04 04:51:25  sp
- * Fixed HistoryTextField for Swing 1.1.1
- *
- * Revision 1.91  1999/05/03 08:28:14  sp
- * Documentation updates, key binding editor, syntax text area bug fix
  *
  */

@@ -402,7 +402,7 @@ public class GUIUtilities
 	 * @param args Positional parameters to be substituted into the
 	 * message text
 	 */
-	public static void message(JFrame frame, String name, Object[] args)
+	public static void message(Frame frame, String name, Object[] args)
 	{
 		hideSplashScreen();
 
@@ -424,7 +424,7 @@ public class GUIUtilities
 	 * @param args Positional parameters to be substituted into the
 	 * message text
 	 */
-	public static void error(JFrame frame, String name, Object[] args)
+	public static void error(Frame frame, String name, Object[] args)
 	{
 		hideSplashScreen();
 
@@ -443,7 +443,7 @@ public class GUIUtilities
 	 * @param name The name of the dialog
 	 * @param def The text to display by default in the input field
 	 */
-	public static String input(JFrame frame, String name, Object def)
+	public static String input(Frame frame, String name, Object def)
 	{
 		hideSplashScreen();
 
@@ -463,7 +463,7 @@ public class GUIUtilities
 	 * @param name The name of the dialog
 	 * @param def The property whose text to display in the input field
 	 */
-	public static String inputProperty(JFrame frame, String name, String def)
+	public static String inputProperty(Frame frame, String name, String def)
 	{
 		hideSplashScreen();
 
@@ -625,6 +625,9 @@ public class GUIUtilities
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.20  1999/05/27 00:02:50  sp
+ * Documentation updates, minor tweaks for WWW browser command unbundling
+ *
  * Revision 1.19  1999/05/08 00:13:00  sp
  * Splash screen change, minor documentation update, toolbar API fix
  *
