@@ -240,76 +240,12 @@ implements ActionListener, ListSelectionListener
 		tabs.addTab(label,comp);
 	}
 
-	public void actionPerformed(ActionEvent evt)
-	{
-		if(evt.getSource() == cmd)
-		{
-			String s = (String)cmd.getSelectedItem();
-			if(s != null && s.length() != 0)
-			{
-				cmd.addCurrentToHistory();
-				cmd.setSelectedItem(null);
-
-				run(s);
-			}
-		}
-	}
-
-	public void valueChanged(ListSelectionEvent evt)
-	{
-		if(errorList.isSelectionEmpty() || evt.getValueIsAdjusting())
-			return;
-
-		CompilerError error = getError(errorList.getSelectedIndex());
-		
-		Buffer buffer = error.openFile();
-		int lineNo = error.getLineNo();
-		Element lineElement = buffer.getDefaultRootElement()
-			.getElement(lineNo);
-		int start = (lineElement == null ? 0 : lineElement
-			.getStartOffset());
-		if(view.getBuffer() == buffer)
-			view.getTextArea().setCaretPosition(start);
-		else
-		{
-			buffer.setCaretInfo(start,start);
-			view.setBuffer(buffer);
-		}
-	}
-
-	public Dimension getMinimumSize()
-	{
-		return new Dimension(0,0);
-	}
-
-	// private members
-	private boolean appendEXE;
-
-	private JTabbedPane tabs;
-	
-	private HistoryTextField cmd;
-	private JTextArea output;
-	private JList errorList;
-
-	private View view;
-
-	private DefaultListModel errors;
-
-	private Process process;
-	private StdinThread stdin;
-	private StdoutThread stdout;
-	private StderrThread stderr;
-
-	private static final int GENERIC = 0;
-	private static final int TEX = 1;
-	private static final int EMACS = 2;
-	private int errorMode;
-
-	private String file;
-	private int lineNo;
-	private String error;
-
-	private synchronized void addOutput(String msg)
+	/**
+	 * Prints a line of text in the console. Error parsing
+	 * is performed.
+	 * @param msg The text to print
+	 */
+	public synchronized void addOutput(String msg)
 	{
 		SwingUtilities.invokeLater(new SafeAppend(msg));
 
@@ -410,6 +346,75 @@ implements ActionListener, ListSelectionListener
 			break;
 		}
 	}
+	
+	public void actionPerformed(ActionEvent evt)
+	{
+		if(evt.getSource() == cmd)
+		{
+			String s = (String)cmd.getSelectedItem();
+			if(s != null && s.length() != 0)
+			{
+				cmd.addCurrentToHistory();
+				cmd.setSelectedItem(null);
+
+				run(s);
+			}
+		}
+	}
+
+	public void valueChanged(ListSelectionEvent evt)
+	{
+		if(errorList.isSelectionEmpty() || evt.getValueIsAdjusting())
+			return;
+
+		CompilerError error = getError(errorList.getSelectedIndex());
+		
+		Buffer buffer = error.openFile();
+		int lineNo = error.getLineNo();
+		Element lineElement = buffer.getDefaultRootElement()
+			.getElement(lineNo);
+		int start = (lineElement == null ? 0 : lineElement
+			.getStartOffset());
+		if(view.getBuffer() == buffer)
+			view.getTextArea().setCaretPosition(start);
+		else
+		{
+			buffer.setCaretInfo(start,start);
+			view.setBuffer(buffer);
+		}
+	}
+
+	public Dimension getMinimumSize()
+	{
+		return new Dimension(0,0);
+	}
+
+	// private members
+	private boolean appendEXE;
+
+	private JTabbedPane tabs;
+	
+	private HistoryTextField cmd;
+	private JTextArea output;
+	private JList errorList;
+
+	private View view;
+
+	private DefaultListModel errors;
+
+	private Process process;
+	private StdinThread stdin;
+	private StdoutThread stdout;
+	private StderrThread stderr;
+
+	private static final int GENERIC = 0;
+	private static final int TEX = 1;
+	private static final int EMACS = 2;
+	private int errorMode;
+
+	private String file;
+	private int lineNo;
+	private String error;
 
 	private void addError(String path, int lineNo, String error)
 	{
@@ -548,6 +553,9 @@ implements ActionListener, ListSelectionListener
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.24  1999/04/22 06:12:49  sp
+ * Minor doc updates, console.addOutput() now public
+ *
  * Revision 1.23  1999/04/20 06:38:26  sp
  * jEdit.addPluginMenu() method added
  *
