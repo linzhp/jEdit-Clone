@@ -21,38 +21,14 @@ This is what needs to be done as soon as possible:
 
 <ul>
 
-<li>Caps lock doesn't work ??? !!!
+<li>Caps lock doesn't work ??? !!!<p>
+This appears to be a JDK/Swing bug. Should check if this occurs
+on Windows as well.
 
-<li>After the first find, the wrong text is selected ?
-
-<li>Command names in the keyboard shortcut editor need to be sorted.<p>
-Very easy to implement, not if only I could find that quicksort.java...
-
-<li>Console's stdin stuff needs to be fixed.<p>
-Probably a silly bug in Console.java.
-
-<li>Multiline token colorization needs some work.<p>
-The C+END `bug' still exists.
-
-<li>Sometimes closing a view stuffs up all other event listeners.<p>
-This usually occurs with views created by the server. Probably
-a side effect of the EventMulticaster re-entrancy problems.
-
-<li>Event system needs to be debugged and documented better.<p>
-With the current EventMulticaster, event listeners cannot
-be removed from the fire() method or one of the methods it
-calls directly.<p>
-
-There are several ways to fix this:
-<ul>
-<li>Document it, and suggest SwingUtilities.invokeLater() as
-an alternative. This is not very good because invokeLater()
-has several subtle issues.
-<li>Make EventMulticaster thread-safe. This is very hard with
-the current way of storing listeners in a linked list.
-<li>Use Swing's EventListenerList class. This is probably
-the best way, because it already implements thread-safety.
-</ul>
+<li>After the first find, the wrong text is selected ?<p>
+This only seems to happen with Swing 1.1.1. So, it either a
+problem with Swing, or a bug in JEditTextArea.PropertyHandler
+or SyntaxTextArea.doElectricScroll().
 
 </ul>
 
@@ -64,32 +40,19 @@ This is what needs to be done sometime during the 1.6preX
 series:
 
 <ul>
-<li>Proof-read and enhance all documentation.<p>
-The documentation, both for users and developers, is incomplete
-and possibly inaccurate at the moment.<p>
-Documentation for extending the console and using the history
-text field should be provided. Also, some information about the
-tool bar API in the View class needs to be written.
+<li>Console's stdin stuff needs to be fixed.<p>
+Probably a silly bug in Console.java. ... or maybe not. It looks
+like an implementation bug.
+
+<li>Multiline token colorization needs some work.<p>
+The C+END `bug' still exists.
+
+<li>Sometimes closing a view stuffs up all other event listeners.<p>
+This usually occurs with views created by the server.
 
 <li>Inter-plugin class dependencies.<p>
 Classes from one plugin should be able to use classes from other
 loaded plugins.
-
-<li>Add quote parsing to console.<p>
-The current system of argument parsing is very limited. Arguments
-enclosed with quotes should be treated as one.
-
-<li>Help viewer should support bookmarks.<p>
-As more and more documentation is written, this becomes more of
-an issue.
-
-<li>Syntax colorizing optimizations.<p>
-If we override the paint() method of the View class then we will
-be able to fetch the document and token marker once per paint
-request, rather than once per line.<p>
-Also, a direct setClipBounds()/paintSyntaxLine() should be used
-to repaint lines after a multiline token.
-</ul>
 
 </ul>
 
@@ -142,20 +105,20 @@ current getView()/getBuffer() system is limited.
 The console's support for `built in' commands should be improved.
 Versions of `ls', `mkdir', etc should be provided for Windows/MacOS
 users. More than one output area should be supported. Maybe some
-way of redirecting System.out/err to the console should be provided?
+way of redirecting System.out/err to the console should be provided?<p>
+The current system of argument parsing is very limited. Arguments
+enclosed with quotes should be treated as one.
 
-<li>Auto indent improvements.<p>
-Auto indent should support `smart' indent (for example, shifting
-the indent on the next line after an `if'). Also, it should line
-up closing and opening brackets, instead of the current indent
-shifting that does not always work correctly.<p>
+<li>Help viewer should support bookmarks.<p>
+As more and more documentation is written, this becomes more of
+an issue.
 
-Pressing keys such as {, } or : in C mode should invoke indentation
-routines automatically.<p>
-
-If we include XMode, we might as well get as much out of the
-XML parser as possible- a simple way of specifying indentation
-using XML should be supported.
+<li>Syntax colorizing optimizations.<p>
+If we override the paint() method of the View class then we will
+be able to fetch the document and token marker once per paint
+request, rather than once per line.<p>
+Also, a direct setClipBounds()/paintSyntaxLine() should be used
+to repaint lines after a multiline token.
 
 </ul>
 
@@ -172,6 +135,19 @@ modes than the current `manual' way.<p>
 
 XMode is evolving very quickly so it might be ready in time
 for the jEdit 1.6 release.
+
+<li>Auto indent improvements.<p>
+Auto indent should support `smart' indent (for example, shifting
+the indent on the next line after an `if'). Also, it should line
+up closing and opening brackets, instead of the current indent
+shifting that does not always work correctly.<p>
+
+Pressing keys such as {, } or : in C mode should invoke indentation
+routines automatically.<p>
+
+If we include XMode, we might as well get as much out of the
+XML parser as possible- a simple way of specifying indentation
+using XML should be supported.
 
 <li>Macro language.<p>
 

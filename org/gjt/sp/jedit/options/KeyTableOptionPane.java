@@ -83,7 +83,7 @@ class KeyTableModel extends AbstractTableModel
 				continue;
 			label = GUIUtilities.prettifyMenuLabel(label);
 			String shortcut = jEdit.getProperty(name + ".shortcut");
-			bindings.addElement(new KeyBinding(name,label,shortcut));
+			addKeyBinding(new KeyBinding(name,label,shortcut));
 		}
 	}
 
@@ -160,6 +160,22 @@ class KeyTableModel extends AbstractTableModel
 		}
 	}
 
+	/* This is slow */
+	private void addKeyBinding(KeyBinding binding)
+	{
+		for(int i = 0; i < bindings.size(); i++)
+		{
+			KeyBinding b = (KeyBinding)bindings.elementAt(i);
+			if(b.label.compareTo(binding.label) >= 0)
+			{
+				bindings.insertElementAt(binding,i);
+				return;
+			}
+		}
+
+		bindings.addElement(binding);
+	}
+
 	class KeyBinding
 	{
 		KeyBinding(String name, String label, String shortcut)
@@ -178,6 +194,9 @@ class KeyTableModel extends AbstractTableModel
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.2  1999/05/04 07:45:22  sp
+ * Event mutlicaster is now re-entrant, key binding editor updates
+ *
  * Revision 1.1  1999/05/03 08:28:14  sp
  * Documentation updates, key binding editor, syntax text area bug fix
  *
