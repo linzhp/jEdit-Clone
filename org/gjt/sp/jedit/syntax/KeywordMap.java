@@ -43,7 +43,13 @@ public class KeywordMap
 		this.ignoreCase = ignoreCase;
 	}
 
-	protected KeywordMap(boolean ignoreCase, int mapLength)
+	/**
+	 * Creates a new <code>KeywordMap</code>.
+	 * @param ignoreCase True if the keys are case insensitive
+	 * @param mapLength The number of `buckets' to create.
+	 * A value of 52 will give good performance for most maps.
+	 */
+	public KeywordMap(boolean ignoreCase, int mapLength)
 	{
 		this.mapLength = mapLength;
 		this.ignoreCase = ignoreCase;
@@ -145,6 +151,9 @@ public class KeywordMap
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.14  1999/05/01 00:55:11  sp
+ * Option pane updates (new, easier API), syntax colorizing updates
+ *
  * Revision 1.13  1999/04/19 05:38:20  sp
  * Syntax API changes
  *

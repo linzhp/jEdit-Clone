@@ -56,14 +56,11 @@ public abstract class TokenMarker
 			Token.NULL : lineInfo[lineIndex -1].token),
 			line,lineIndex);
 
-		if(oldToken != token)
-		{
-			System.out.println("Shit: " + lineIndex);
-			info.token = token;
-			nextLineRequested = true;
-		}
-		else
-			nextLineRequested = false;
+		info.token = token;
+
+		/* don't force repaint for empty lines */
+		nextLineRequested = (oldToken != token &&
+			lastToken != null);
 
 		addToken(0,Token.END);
 
@@ -274,6 +271,9 @@ public abstract class TokenMarker
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.20  1999/05/01 00:55:11  sp
+ * Option pane updates (new, easier API), syntax colorizing updates
+ *
  * Revision 1.19  1999/04/30 23:20:38  sp
  * Improved colorization of multiline tokens
  *

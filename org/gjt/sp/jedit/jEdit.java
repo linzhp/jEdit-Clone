@@ -1522,6 +1522,9 @@ public class jEdit
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.88  1999/05/01 00:55:11  sp
+ * Option pane updates (new, easier API), syntax colorizing updates
+ *
  * Revision 1.87  1999/04/30 23:20:38  sp
  * Improved colorization of multiline tokens
  *
@@ -1556,18 +1559,5 @@ public class jEdit
  *
  * Revision 1.77  1999/04/22 05:31:17  sp
  * Documentation updates, minor SyntaxTextArea update
- *
- * Revision 1.76  1999/04/22 04:41:41  sp
- * Help viewer update (Juha Lindfors), splash screen & jEdit update (Mike Dillon)
- *
- * Revision 1.75  1999/04/21 07:39:19  sp
- * FAQ added, plugins can now add panels to the options dialog
- *
- * Revision 1.74  1999/04/21 06:13:26  sp
- * Fixed bug in loadDesktop(), added idiot-proofing to Buffer.setMode()
- *
- * Revision 1.73  1999/04/20 06:38:26  sp
- * jEdit.addPluginMenu() method added
- *
  *
  */

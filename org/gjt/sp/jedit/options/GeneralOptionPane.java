@@ -37,27 +37,10 @@ public class GeneralOptionPane extends OptionPane
 	public GeneralOptionPane()
 	{
 		super("general");
-		GridBagLayout layout = new GridBagLayout();
-		setLayout(layout);
-		GridBagConstraints cons = new GridBagConstraints();
-		cons.gridx = cons.gridy = 0;
-		cons.gridwidth = 4;
-		cons.gridheight = 1;
-		cons.fill = GridBagConstraints.BOTH;
-		cons.weightx = 1.0f;
-		JLabel label = new JLabel(jEdit.getProperty("options.general.lf.note"),
-			SwingConstants.CENTER);
-		layout.setConstraints(label,cons);
-		add(label);
 
-		cons.gridy = 1;
-		cons.gridwidth = 3;
-		label = new JLabel(jEdit.getProperty("options.general.lf"),
-			SwingConstants.RIGHT);
-		layout.setConstraints(label,cons);
-		add(label);
-		cons.gridx = 3;
-		cons.gridwidth = 1;
+		/* Look and feel */
+		addComponent(new JLabel(jEdit.getProperty("options.general.lf.note")));
+
 		String lf = UIManager.getLookAndFeel().getClass().getName();
 		String[] lfs = { "Java", "Mac", "Motif", "Windows" };
 		lookAndFeel = new JComboBox(lfs);
@@ -69,112 +52,43 @@ public class GeneralOptionPane extends OptionPane
 			lookAndFeel.setSelectedIndex(2);
 		else if(WINDOWS.equals(lf))
 			lookAndFeel.setSelectedIndex(3);
-		layout.setConstraints(lookAndFeel,cons);
-		add(lookAndFeel);
-		
-		cons.gridx = 0;
-		cons.gridy = 2;
-		cons.gridwidth = 3;
-		label = new JLabel(jEdit.getProperty("options.general.recent"),
-			SwingConstants.RIGHT);
-		layout.setConstraints(label,cons);
-		add(label);
-		cons.gridx = 3;
-		cons.gridwidth = 1;
+		addComponent(jEdit.getProperty("options.general.lf"),
+			lookAndFeel);
+
+		/* Recent file count */
 		recent = new JTextField(jEdit.getProperty("recent"));
-		layout.setConstraints(recent,cons);
-		add(recent);
+		addComponent(jEdit.getProperty("options.general.recent"),recent);
 
-		cons.gridx = 0;
-		cons.gridy = 3;
-		cons.gridwidth = 3;
-		label = new JLabel(jEdit.getProperty("options.general.history"),
-			SwingConstants.RIGHT);
-		layout.setConstraints(label,cons);
-		add(label);
-		cons.gridx = 3;
-		cons.gridwidth = 1;
+		/* History count */
 		history = new JTextField(jEdit.getProperty("history"));
-		layout.setConstraints(history,cons);
-		add(history);
+		addComponent(jEdit.getProperty("options.general.history"),history);
 
-		cons.gridx = 0;
-		cons.gridy = 4;
-		cons.gridwidth = 3;
-		label = new JLabel(jEdit.getProperty("options.general.autosave"),
-			SwingConstants.RIGHT);
-		layout.setConstraints(label,cons);
-		add(label);
-		cons.gridx = 3;
-		cons.gridwidth = 1;
+		/* Autosave interval */
 		autosave = new JTextField(jEdit.getProperty("autosave"));
-		layout.setConstraints(autosave,cons);
-		add(autosave);
+		addComponent(jEdit.getProperty("options.general.autosave"),autosave);
 
-		cons.gridx = 0;
-		cons.gridy = 5;
-		cons.gridwidth = 3;
-		label = new JLabel(jEdit.getProperty("options.general.backups"),
-			SwingConstants.RIGHT);
-		layout.setConstraints(label,cons);
-		add(label);
-		cons.gridx = 3;
-		cons.gridwidth = 1;
+		/* Backup count */
 		backups = new JTextField(jEdit.getProperty("backups"));
-		layout.setConstraints(backups,cons);
-		add(backups);
+		addComponent(jEdit.getProperty("options.general.backups"),backups);
 
-		cons.gridx = 0;
-		cons.gridy = 6;
-		cons.gridwidth = 3;
-		label = new JLabel(jEdit.getProperty("options.general.backupDirectory"),
-			SwingConstants.RIGHT);
-		layout.setConstraints(label,cons);
-		add(label);
-		cons.gridx = 3;
-		cons.gridwidth = 1;
-		backupDirectory = new JTextField(jEdit
-			.getProperty("backup.directory"));
-		layout.setConstraints(backupDirectory,cons);
-		add(backupDirectory);
+		/* Backup directory */
+		backupDirectory = new JTextField(jEdit.getProperty(
+			"backup.directory"));
+		addComponent(jEdit.getProperty("options.general.backupDirectory"),
+			backupDirectory);
 
-		cons.gridx = 0;
-		cons.gridy = 7;
-		cons.gridwidth = 3;
-		label = new JLabel(jEdit.getProperty("options.general.backupPrefix"),
-			SwingConstants.RIGHT);
-		layout.setConstraints(label,cons);
-		add(label);
-		cons.gridx = 3;
-		cons.gridwidth = 1;
-		backupPrefix = new JTextField(jEdit
-			.getProperty("backup.prefix"));
-		layout.setConstraints(backupPrefix,cons);
-		add(backupPrefix);
+		/* Backup filename prefix */
+		backupPrefix = new JTextField(jEdit.getProperty("backup.prefix"));
+		addComponent(jEdit.getProperty("options.general.backupPrefix"),
+			backupPrefix);
 
-		cons.gridx = 0;
-		cons.gridy = 8;
-		cons.gridwidth = 3;
-		label = new JLabel(jEdit.getProperty("options.general.backupSuffix"),
-			SwingConstants.RIGHT);
-		layout.setConstraints(label,cons);
-		add(label);
-		cons.gridx = 3;
-		cons.gridwidth = 1;
-		backupSuffix = new JTextField(jEdit
-			.getProperty("backup.suffix"));
-		layout.setConstraints(backupSuffix,cons);
-		add(backupSuffix);
+		/* Backup suffix */
+		backupSuffix = new JTextField(jEdit.getProperty(
+			"backup.suffix"));
+		addComponent(jEdit.getProperty("options.general.backupSuffix"),
+			backupSuffix);
 
-		cons.gridx = 0;
-		cons.gridy = 9;
-		cons.gridwidth = 3;
-		label = new JLabel(jEdit.getProperty("options.general.lineSeparator"),
-			SwingConstants.RIGHT);
-		layout.setConstraints(label,cons);
-		add(label);
-		cons.gridx = 3;
-		cons.gridwidth = 1;
+		/* Line separator */
 		String[] lineSeps = { jEdit.getProperty("lineSep.unix"),
 			jEdit.getProperty("lineSep.windows"),
 			jEdit.getProperty("lineSep.mac") };
@@ -187,61 +101,45 @@ public class GeneralOptionPane extends OptionPane
 			lineSeparator.setSelectedIndex(1);
 		else if("\r".equals(lineSep))
 			lineSeparator.setSelectedIndex(2);
-		layout.setConstraints(lineSeparator,cons);
-		add(lineSeparator);
+		addComponent(jEdit.getProperty("options.general.lineSeparator"),
+			lineSeparator);
 
-		cons.gridx = 0;
-		cons.gridy = 10;
-		cons.gridwidth = 3;
-		label = new JLabel(jEdit.getProperty("options.general.browser"),
-			SwingConstants.RIGHT);
-		layout.setConstraints(label,cons);
-		add(label);
-		cons.gridx = 3;
-		cons.gridwidth = 1;
+		/* WWW browser */
 		String[] browsers = { "jedit_moz_remote", "iexplore.exe",
 			"netscape.exe" };
 		browser = new JComboBox(browsers);
 		browser.setEditable(true);
 		browser.setSelectedItem(jEdit.getProperty("browser"));
-		layout.setConstraints(browser,cons);
-		add(browser);
+		addComponent(jEdit.getProperty("options.general.browser"),
+			browser);
 
-		cons.gridx = 0;
-		cons.gridy = 11;
-		cons.gridwidth = cons.REMAINDER;
-		cons.fill = GridBagConstraints.NONE;
-		cons.anchor = GridBagConstraints.WEST;
+		/* Session management */
 		saveDesktop = new JCheckBox(jEdit.getProperty(
 			"options.general.saveDesktop"));
 		saveDesktop.getModel().setSelected("on".equals(jEdit.getProperty(
 			"saveDesktop")));
-		layout.setConstraints(saveDesktop,cons);
-		add(saveDesktop);
+		addComponent(saveDesktop);
 
-		cons.gridy = 12;
+		/* Server */
 		server = new JCheckBox(jEdit.getProperty(
 			"options.general.server"));
 		server.getModel().setSelected("on".equals(jEdit.getProperty(
 			"server")));
-		layout.setConstraints(server,cons);
-		add(server);
+		addComponent(server);
 
-		cons.gridy = 13;
+		/* Show hints in status bar */
 		showTips = new JCheckBox(jEdit.getProperty(
 			"options.general.showTips"));
 		showTips.getModel().setSelected("on".equals(jEdit.getProperty(
 			"view.showTips")));
-		layout.setConstraints(showTips,cons);
-		add(showTips);
+		addComponent(showTips);
 
-		cons.gridy = 14;
+		/* Show toolbar */
 		showToolbar = new JCheckBox(jEdit.getProperty(
 			"options.general.showToolbar"));
 		showToolbar.getModel().setSelected("on".equals(jEdit.getProperty(
 			"view.showToolbar")));
-		layout.setConstraints(showToolbar,cons);
-		add(showToolbar);
+		addComponent(showToolbar);
 	}
 
 	public void save()
@@ -290,9 +188,9 @@ public class GeneralOptionPane extends OptionPane
 
 	// private members
 	private JComboBox lookAndFeel;
-	private JTextField autosave;
 	private JTextField recent;
 	private JTextField history;
+	private JTextField autosave;
 	private JTextField backups;
 	private JTextField backupDirectory;
 	private JTextField backupPrefix;

@@ -19,7 +19,8 @@
 
 package org.gjt.sp.jedit;
 
-import javax.swing.JPanel;
+import javax.swing.*;
+import java.awt.*;
 
 /**
  * The class all option panes must extend.  An option pane is a tab
@@ -51,6 +52,7 @@ public abstract class OptionPane extends JPanel
 	public OptionPane(String name)
 	{
 		this.name = name;
+		setLayout(gridBag = new GridBagLayout());
 	}
 
 	/**
@@ -68,6 +70,61 @@ public abstract class OptionPane extends JPanel
 	 */
 	public void save() {}
 
+	// protected members
+
+	/**
+	 * The layout manager.
+	 */
+	protected GridBagLayout gridBag;
+
+	/**
+	 * The number of components already added to the layout manager.
+	 */
+	protected int y;
+
+	/**
+	 * Adds a labeled component to the option pane.
+	 * @param label The label
+	 * @param comp The component
+	 */
+	protected void addComponent(String label, Component comp)
+	{
+		GridBagConstraints cons = new GridBagConstraints();
+		cons.gridy = y++;
+		cons.gridheight = 1;
+		cons.gridwidth = 3;
+		cons.fill = GridBagConstraints.BOTH;
+		cons.weightx = 1.0f;
+
+		cons.gridx = 0;
+		JLabel l = new JLabel(label,SwingConstants.RIGHT);
+		gridBag.setConstraints(l,cons);
+		add(l);
+
+		cons.gridx = 3;
+		cons.gridwidth = 1;
+		gridBag.setConstraints(comp,cons);
+		add(comp);
+	}
+
+	/**
+	 * Adds a component to the option pane.
+	 * @param comp The component
+	 */
+	protected void addComponent(Component comp)
+	{
+		GridBagConstraints cons = new GridBagConstraints();
+		cons.gridy = y++;
+		cons.gridheight = 1;
+		cons.gridwidth = cons.REMAINDER;
+		cons.fill = GridBagConstraints.NONE;
+		cons.anchor = GridBagConstraints.WEST;
+		cons.weightx = 1.0f;
+
+		gridBag.setConstraints(comp,cons);
+		add(comp);
+	}
+
 	// private members
 	private String name;
 }
@@ -75,6 +132,9 @@ public abstract class OptionPane extends JPanel
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.2  1999/05/01 00:55:11  sp
+ * Option pane updates (new, easier API), syntax colorizing updates
+ *
  * Revision 1.1  1999/04/21 07:39:18  sp
  * FAQ added, plugins can now add panels to the options dialog
  *

@@ -28,21 +28,8 @@ public class EditorOptionPane extends OptionPane
 	public EditorOptionPane()
 	{
 		super("editor");
-		GridBagLayout layout = new GridBagLayout();
-		setLayout(layout);
-		GridBagConstraints cons = new GridBagConstraints();
 
-		cons.gridx = cons.gridy = 0;
-		cons.gridwidth = 3;
-		cons.gridheight = 1;
-		cons.fill = GridBagConstraints.BOTH;
-		cons.weightx = 1.0f;
-		JLabel label = new JLabel(jEdit.getProperty("options.editor"
-			+ ".defaultMode"),SwingConstants.RIGHT);
-		layout.setConstraints(label,cons);
-		add(label);
-		cons.gridx = 3;
-		cons.gridwidth = 1;
+		/* Modes */
 		modes = jEdit.getModes();
 		String[] modeNames = new String[modes.length];
 		for(int i = 0; i < modes.length; i++)
@@ -53,32 +40,15 @@ public class EditorOptionPane extends OptionPane
 		defaultMode.setSelectedItem(jEdit.getProperty(
 			"mode." + jEdit.getProperty("buffer.defaultMode")
 			+ ".name"));
-		layout.setConstraints(defaultMode,cons);
-		add(defaultMode);
+		addComponent(jEdit.getProperty("options.editor.defaultMode"),
+			defaultMode);
 
-		cons.gridx = 0;
-		cons.gridy = 1;
-		cons.gridwidth = 3;
-		label = new JLabel(jEdit.getProperty("options.editor"
-			+ ".font"),SwingConstants.RIGHT);
-		layout.setConstraints(label,cons);
-		add(label);
-		cons.gridx = 3;
-		cons.gridwidth = 1;
+		/* Font */
 		font = new JComboBox(getToolkit().getFontList());
 		font.setSelectedItem(jEdit.getProperty("view.font"));
-		layout.setConstraints(font,cons);
-		add(font);
+		addComponent(jEdit.getProperty("options.editor.font"),font);
 
-		cons.gridx = 0;
-		cons.gridy = 2;
-		cons.gridwidth = 3;
-		label = new JLabel(jEdit.getProperty("options.editor.fontstyle"),
-			SwingConstants.RIGHT);
-		layout.setConstraints(label,cons);
-		add(label);
-		cons.gridx = 3;
-		cons.gridwidth = 1;
+		/* Font style */
 		String[] styles = { jEdit.getProperty("options.editor.plain"),
 			jEdit.getProperty("options.editor.bold"),
 			jEdit.getProperty("options.editor.italic"),
@@ -92,116 +62,85 @@ public class EditorOptionPane extends OptionPane
 		catch(NumberFormatException nf)
 		{
 		}
-		layout.setConstraints(style,cons);
-		add(style);
+		addComponent(jEdit.getProperty("options.editor.fontstyle"),
+			style);
 
-		cons.gridx = 0;
-		cons.gridy = 3;
-		cons.gridwidth = 3;
-		label = new JLabel(jEdit.getProperty("options.editor.fontsize"),
-			SwingConstants.RIGHT);
-		layout.setConstraints(label,cons);
-		add(label);
-		cons.gridx = 3;
-		cons.gridwidth = 1;
+		/* Font size */
 		String[] sizes = { "9", "10", "12", "14", "18", "24" };
 		size = new JComboBox(sizes);
 		size.setEditable(true);
 		size.setSelectedItem(jEdit.getProperty("view.fontsize"));
-		layout.setConstraints(size,cons);
-		add(size);
+		addComponent(jEdit.getProperty("options.editor.fontsize"),size);
 
-		cons.gridx = 0;
-		cons.gridy = 4;
-		cons.gridwidth = 3;
-		label = new JLabel(jEdit.getProperty("options.editor.tabSize"),
-			SwingConstants.RIGHT);
-		layout.setConstraints(label,cons);
-		add(label);
-		cons.gridx = 3;
-		cons.gridwidth = 1;
+		/* Tab size */
 		String[] tabSizes = { "8", "4" };
 		tabSize = new JComboBox(tabSizes);
 		tabSize.setEditable(true);
 		tabSize.setSelectedItem(jEdit.getProperty("buffer.tabSize"));
-		layout.setConstraints(tabSize,cons);
-		add(tabSize);
+		addComponent(jEdit.getProperty("options.editor.tabSize"),tabSize);
 
-		cons.gridx = 0;
-		cons.gridy = 5;
-		cons.gridwidth = cons.REMAINDER;
-		cons.fill = GridBagConstraints.NONE;
-		cons.anchor = GridBagConstraints.WEST;
+		/* Line highlight */
 		lineHighlight = new JCheckBox(jEdit.getProperty("options.editor"
 			+ ".lineHighlight"));
 		lineHighlight.getModel().setSelected("on".equals(jEdit
 			.getProperty("view.lineHighlight")));
-		layout.setConstraints(lineHighlight,cons);
-		add(lineHighlight);
+		addComponent(lineHighlight);
 
-		cons.gridy = 6;
+		/* Bracket highlight */
 		bracketHighlight = new JCheckBox(jEdit.getProperty("options.editor"
 			+ ".bracketHighlight"));
 		bracketHighlight.getModel().setSelected("on".equals(jEdit
 			.getProperty("view.bracketHighlight")));
-		layout.setConstraints(bracketHighlight,cons);
-		add(bracketHighlight);
+		addComponent(bracketHighlight);
 
-		cons.gridy = 7;
+		/* Syntax colorizing */
 		syntax = new JCheckBox(jEdit.getProperty("options.editor"
 			+ ".syntax"));
 		syntax.getModel().setSelected("on".equals(jEdit.getProperty(
 			"buffer.syntax")));
-		layout.setConstraints(syntax,cons);
-		add(syntax);
+		addComponent(syntax);
 
-		cons.gridy = 8;
+		/* Indent on tab */
 		indentOnTab = new JCheckBox(jEdit.getProperty("options.editor"
 			+ ".indentOnTab"));
 		indentOnTab.getModel().setSelected("on".equals(jEdit.getProperty(
 			"buffer.indentOnTab")));
-		layout.setConstraints(indentOnTab,cons);
-		add(indentOnTab);
+		addComponent(indentOnTab);
 
-		cons.gridy = 9;
+		/* Indent on enter */
 		indentOnEnter = new JCheckBox(jEdit.getProperty("options.editor"
 			+ ".indentOnEnter"));
 		indentOnEnter.getModel().setSelected("on".equals(jEdit.getProperty(
 			"buffer.indentOnEnter")));
-		layout.setConstraints(indentOnEnter,cons);
-		add(indentOnEnter);
+		addComponent(indentOnEnter);
 
-		cons.gridy = 10;
+		/* Soft tabs */
 		noTabs = new JCheckBox(jEdit.getProperty("options.editor"
 			+ ".noTabs"));
 		noTabs.getModel().setSelected("yes".equals(jEdit.getProperty(
 			"buffer.noTabs")));
-		layout.setConstraints(noTabs,cons);
-		add(noTabs);
+		addComponent(noTabs);
 
-		cons.gridy = 11;
+		/* Blinking caret */
 		blinkCaret = new JCheckBox(jEdit.getProperty("options.editor"
 			+ ".blinkCaret"));
 		blinkCaret.getModel().setSelected(!"0".equals(jEdit.getProperty(
 			"view.caretBlinkRate")));
-		layout.setConstraints(blinkCaret,cons);
-		add(blinkCaret);
+		addComponent(blinkCaret);
 
-		cons.gridy = 12;
+		/* Block caret */
 		blockCaret = new JCheckBox(jEdit.getProperty("options.editor"
 			+ ".blockCaret"));
 		blockCaret.getModel().setSelected("on".equals(jEdit.getProperty(
 			"view.blockCaret")));
-		layout.setConstraints(blockCaret,cons);
-		add(blockCaret);
+		addComponent(blockCaret);
 
-		cons.gridy = 13;
+		/* Electric borders */
 		electricBorders = new JCheckBox(jEdit.getProperty("options.editor"
 			+ ".electricBorders"));
 		electricBorders.getModel().setSelected(!"0".equals(jEdit.getProperty(
 			"view.electricBorders")));
-		layout.setConstraints(electricBorders,cons);
-		add(electricBorders);
+		addComponent(electricBorders);
 	}
 
 	public void save()

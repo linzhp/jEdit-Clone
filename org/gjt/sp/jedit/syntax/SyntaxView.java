@@ -44,6 +44,7 @@ public class SyntaxView extends PlainView
 	{
 		super(elem);
 		line = new Segment();
+		newRect = new Rectangle();
 	}
 	
 	/**
@@ -108,7 +109,7 @@ public class SyntaxView extends PlainView
 					syntaxDocument,tokenMarker,def);
 
 				if(tokenMarker.isNextLineRequested())
-					forceRepaint(y);
+					forceRepaint(g,x,y);
 			}
 		}
 		catch(BadLocationException bl)
@@ -126,6 +127,7 @@ public class SyntaxView extends PlainView
 
 	// private members
 	private Segment line;
+	private Rectangle newRect;
 
 	private void paintSyntaxLine(Segment line, int lineIndex, int x, int y,
 		Graphics g, SyntaxDocument syntaxDocument,
@@ -158,18 +160,23 @@ public class SyntaxView extends PlainView
 	}
 
 	/** Stupid hack that repaints from y to the end of the text component */
-	private void forceRepaint(int y)
+	private void forceRepaint(Graphics g, int x, int y)
 	{
-		System.out.println("Repaint forced");
 		Component host = getContainer();
 		Dimension size = host.getSize();
-		host.repaint(0,y,size.height - y,size.width);
+
+		System.out.println("Repaint forced");
+
+		host.repaint(x,y,size.width - x,size.height - y);
 	}
 }
 
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.19  1999/05/01 00:55:11  sp
+ * Option pane updates (new, easier API), syntax colorizing updates
+ *
  * Revision 1.18  1999/04/30 23:20:38  sp
  * Improved colorization of multiline tokens
  *
