@@ -1194,7 +1194,8 @@ public class jEdit
 			{
 				OutputStream out = new FileOutputStream(
 					usrProps);
-				props.save(out,"jEdit properties file");
+				props.save(out,"Use the -nousrprops switch"
+					+ " if you want to edit this file in jEdit");
 				out.close();
 			}
 			catch(IOException io)
