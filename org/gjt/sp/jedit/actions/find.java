@@ -32,6 +32,6 @@ public class find extends EditAction
 	
 	public void actionPerformed(ActionEvent evt)
 	{
-		new SearchAndReplace(getView(evt));
+		new SearchAndReplace(getView(evt),null);
 	}
 }

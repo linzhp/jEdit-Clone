@@ -225,6 +225,9 @@ loop:
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.5  1999/03/15 03:40:23  sp
+ * Search and replace updates, TSQL mode/token marker updates
+ *
  * Revision 1.4  1999/03/13 00:09:07  sp
  * Console updates, uncomment removed cos it's too buggy, cvs log tags added
  *

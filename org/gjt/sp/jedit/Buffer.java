@@ -49,14 +49,16 @@ public class Buffer extends PlainDocument implements SyntaxDocument
 	public static final String LINESEP = "lineSeparator";
 
 	/**
-	 * Finds the next instance of the search string in this buffer.
+	 * Finds the next instance of the search string in this buffer,
+	 * starting at the end of the selected text, or the caret position
+	 * if nothing is selected.
 	 * @param view The view
 	 * @param done For internal use. False if a `keep searching'
 	 * dialog should be shown if no more matches have been found.
 	 */
 	public boolean find(View view, boolean done)
 	{
-		return find(view,view.getTextArea().getCaretPosition(),done);
+		return find(view,view.getTextArea().getSelectionEnd(),done);
 	}
 
 	/**
@@ -1559,6 +1561,9 @@ loop:		for(int i = 0; i < markers.size(); i++)
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.60  1999/03/15 03:40:23  sp
+ * Search and replace updates, TSQL mode/token marker updates
+ *
  * Revision 1.59  1999/03/14 02:22:13  sp
  * Syntax colorizing tweaks, server bug fix
  *

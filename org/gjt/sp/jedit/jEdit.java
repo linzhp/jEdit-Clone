@@ -47,7 +47,7 @@ public class jEdit
 	 * The date when a change was last made to the source code,
 	 * in <code>YYYYMMDD</code> format.
 	 */
-	public static final String BUILD = "19990314";
+	public static final String BUILD = "19990315";
 
 	/**
 	 * AWK regexp syntax.
@@ -1574,6 +1574,9 @@ public class jEdit
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.49  1999/03/15 03:40:23  sp
+ * Search and replace updates, TSQL mode/token marker updates
+ *
  * Revision 1.48  1999/03/15 03:12:34  sp
  * Fixed compile error with javac that jikes silently ignored (FUCK YOU IBM),
  * maybe some other stuff fixed too

@@ -20,6 +20,7 @@
 package org.gjt.sp.jedit.actions;
 
 import java.awt.event.ActionEvent;
+import org.gjt.sp.jedit.gui.SearchAndReplace;
 import org.gjt.sp.jedit.*;
 
 public class find_selection extends EditAction
@@ -36,10 +37,7 @@ public class find_selection extends EditAction
 		String selection = view.getTextArea()
 			.getSelectedText();
 		if(selection != null)
-		{
-			jEdit.setProperty("history.find.0",selection);
-			buffer.find(view,false);
-		}
+			new SearchAndReplace(view,selection);
 		else
 			view.getToolkit().beep();
 	}

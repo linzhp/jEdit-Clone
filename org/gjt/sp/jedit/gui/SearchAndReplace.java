@@ -27,7 +27,7 @@ import org.gjt.sp.jedit.*;
 public class SearchAndReplace extends JDialog
 implements ActionListener, KeyListener, WindowListener
 {
-	public SearchAndReplace(View view)
+	public SearchAndReplace(View view, String defaultFind)
 	{
 		super(view,jEdit.getProperty("search.title"),false);
 		this.view = view;
@@ -37,6 +37,8 @@ implements ActionListener, KeyListener, WindowListener
 		selEnd = view.getTextArea().getSelectionEnd();
 
 		find = new HistoryTextField("find",30);
+		find.setText(defaultFind);
+
 		replace = new HistoryTextField("replace",30);
 		keepDialog = new JCheckBox(jEdit.getProperty(
 			"search.keepDialog"),"on".equals(jEdit.getProperty(

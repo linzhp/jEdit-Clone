@@ -12,7 +12,7 @@
 <ul>
 <li>Document and clean up org.gjt.sp.jedit.gui package
 <li>Color options panel should be a JTable
-<li><b>insertLines()/deleteLines()</b> still acts weird
+<li><b>insertLines()/deleteLines() still acts weird</b>
 <li><b>Fix uncomment command</b>
 <li><b>HistoryTextField doesn't work well sometimes</b>
 </ul>
@@ -28,16 +28,20 @@
 <li>Console automatically appends .exe to command names on Windows and OS/2
 <li>Accent converter plugin now accepts German accents
 <li>Event system added
-<li><code>org.gjt.sp.jedit.syntax</code> package can be used on it's own -
-documentation on how to do this coming soon
 </ul>
 
 <h2>Enhancements</h2>
 
 <ul>
+<li>Find selection shows the search and replace dialog with the selection
+already entered, instead of finding the selection immediately
+<li>Find next now starts the search from the end of the selection, rather than
+the caret position (which could be the start of the selection sometimes)
 <li>jEdit should be easier to install on OS/2 now
 <li>New tool bar icons
 <li>Documentation updates
+<li><code>org.gjt.sp.jedit.syntax</code> package can be used on it's own -
+documentation on how to do this coming soon
 <li>API change: jEdit.getBuffers()/getViews()/etc return arrays, not enumerations
 <li>API change: Key and document events aren't automatically forwarded to
 modes anymore, you must manually add listeners now

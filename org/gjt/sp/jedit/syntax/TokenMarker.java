@@ -119,12 +119,12 @@ public abstract class TokenMarker
 	protected int length;
 
 	/**
-	 * Creates a new <code>TokenMarker</code>. This creates the
-	 * initial <code>lineInfo</code> array.
+	 * Creates a new <code>TokenMarker</code>. This DOES NOT create
+	 * a lineInfo array; an initial call to <code>insertLines()</code>
+	 * does that.
 	 */
 	protected TokenMarker()
 	{
-		lineInfo = new String[0];
 	}
 
 	/**
@@ -140,7 +140,9 @@ public abstract class TokenMarker
 	 */
 	protected void ensureCapacity(int index)
 	{
-		if(lineInfo.length <= index)
+		if(lineInfo == null)
+			lineInfo = new String[index + 1];
+		else if(lineInfo.length <= index)
 		{
 			String[] lineInfoN = new String[(index + 1) * 2];
 			System.arraycopy(lineInfo,0,lineInfoN,0,
@@ -186,6 +188,9 @@ public abstract class TokenMarker
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.12  1999/03/15 03:40:23  sp
+ * Search and replace updates, TSQL mode/token marker updates
+ *
  * Revision 1.11  1999/03/14 04:13:40  sp
  * Fixed ArrayIndexOutOfBounds in TokenMarker, minor Javadoc updates, minor documentation updates
  *
