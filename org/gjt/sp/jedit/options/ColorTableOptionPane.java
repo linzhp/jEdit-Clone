@@ -35,7 +35,7 @@ import org.gjt.sp.jedit.jEdit;
  * @author Mike Dillon
  * @version $Id$
  */
-public class ColorTableOptionPane extends OptionPane
+public class ColorTableOptionPane extends ColorsOptionPane
 	implements ListSelectionListener, TableColumnModelListener
 {
 	public ColorTableOptionPane()
@@ -518,11 +518,7 @@ class ColorChoice
 /*
  * ChangeLog:
  * $Log$
- * Revision 1.2  1999/03/20 04:52:55  sp
- * Buffer-specific options panel finished, attempt at fixing OS/2 caret bug, code
- * cleanups
- *
- * Revision 1.1  1999/03/20 01:55:42  sp
- * New color option pane, fixed search & replace bug
+ * Revision 1.3  1999/03/20 05:07:26  sp
+ * Buffer-specific options pane, code cleanups, OS/2 caret bug fix
  *
  */
