@@ -251,6 +251,9 @@ public class jEdit
 				"/org/gjt/sp/jedit/jedit_keys.props"),jEditHome
 				+ "jedit_keys.props");
 			loadProps(jEdit.class.getResourceAsStream(
+				"/org/gjt/sp/jedit/jedit_predef.props"),jEditHome
+				+ "jedit_predef.props");
+			loadProps(jEdit.class.getResourceAsStream(
 				"/org/gjt/sp/jedit/jedit_tips.props"),jEditHome
 				+ "jedit_tips.props");	
 		}
@@ -261,6 +264,7 @@ public class jEdit
 				+ "- jedit.props\n"
 				+ "- jedit_gui.props\n"
 				+ "- jedit_keys.props\n"
+				+ "- jedit_predef.props\n"
 				+ "- jedit_tips.props\n"
 				+ "Try reinstalling jEdit.");
 			return;

@@ -106,32 +106,6 @@ public class EditorOptionPane extends OptionPane
 
 		cons.gridx = 0;
 		cons.gridy = 4;
-		cons.gridwidth = 3;
-		label = new JLabel(jEdit.getProperty("options.editor.width"),
-			SwingConstants.RIGHT);
-		layout.setConstraints(label,cons);
-		add(label);
-		cons.gridx = 3;
-		cons.gridwidth = 1;
-		viewWidth = new JTextField(jEdit.getProperty("view.geometry.w"));
-		layout.setConstraints(viewWidth,cons);
-		add(viewWidth);
-
-		cons.gridx = 0;
-		cons.gridy = 5;
-		cons.gridwidth = 3;
-		label = new JLabel(jEdit.getProperty("options.editor.height"),
-			SwingConstants.RIGHT);
-		layout.setConstraints(label,cons);
-		add(label);
-		cons.gridx = 3;
-		cons.gridwidth = 1;
-		viewHeight = new JTextField(jEdit.getProperty("view.geometry.h"));
-		layout.setConstraints(viewHeight,cons);
-		add(viewHeight);
-		
-		cons.gridx = 0;
-		cons.gridy = 6;
 		cons.gridwidth = cons.REMAINDER;
 		lineHighlight = new JCheckBox(jEdit.getProperty("options.editor"
 			+ ".lineHighlight"));
@@ -140,7 +114,7 @@ public class EditorOptionPane extends OptionPane
 		layout.setConstraints(lineHighlight,cons);
 		add(lineHighlight);
 
-		cons.gridy = 7;
+		cons.gridy = 5;
 		bracketHighlight = new JCheckBox(jEdit.getProperty("options.editor"
 			+ ".bracketHighlight"));
 		bracketHighlight.getModel().setSelected("on".equals(jEdit
@@ -148,7 +122,7 @@ public class EditorOptionPane extends OptionPane
 		layout.setConstraints(bracketHighlight,cons);
 		add(bracketHighlight);
 
-		cons.gridy = 8;
+		cons.gridy = 6;
 		syntax = new JCheckBox(jEdit.getProperty("options.editor"
 			+ ".syntax"));
 		syntax.getModel().setSelected("on".equals(jEdit.getProperty(
@@ -156,7 +130,7 @@ public class EditorOptionPane extends OptionPane
 		layout.setConstraints(syntax,cons);
 		add(syntax);
 
-		cons.gridy = 9;
+		cons.gridy = 7;
 		autoIndent = new JCheckBox(jEdit.getProperty("options.editor"
 			+ ".autoIndent"));
 		autoIndent.getModel().setSelected("on".equals(jEdit.getProperty(
@@ -164,7 +138,7 @@ public class EditorOptionPane extends OptionPane
 		layout.setConstraints(autoIndent,cons);
 		add(autoIndent);
 
-		cons.gridy = 10;
+		cons.gridy = 8;
 		blinkCaret = new JCheckBox(jEdit.getProperty("options.editor"
 			+ ".blinkCaret"));
 		blinkCaret.getModel().setSelected(!"0".equals(jEdit.getProperty(
@@ -172,7 +146,7 @@ public class EditorOptionPane extends OptionPane
 		layout.setConstraints(blinkCaret,cons);
 		add(blinkCaret);
 
-		cons.gridy = 11;
+		cons.gridy = 9;
 		blockCaret = new JCheckBox(jEdit.getProperty("options.editor"
 			+ ".blockCaret"));
 		blockCaret.getModel().setSelected("on".equals(jEdit.getProperty(
@@ -180,7 +154,7 @@ public class EditorOptionPane extends OptionPane
 		layout.setConstraints(blockCaret,cons);
 		add(blockCaret);
 
-		cons.gridy = 12;
+		cons.gridy = 10;
 		electricBorders = new JCheckBox(jEdit.getProperty("options.editor"
 			+ ".electricBorders"));
 		electricBorders.getModel().setSelected(!"0".equals(jEdit.getProperty(
@@ -188,7 +162,7 @@ public class EditorOptionPane extends OptionPane
 		layout.setConstraints(electricBorders,cons);
 		add(electricBorders);
 
-		cons.gridy = 13;
+		cons.gridy = 11;
 		noTabs = new JCheckBox(jEdit.getProperty("options.editor"
 			+ ".noTabs"));
 		noTabs.getModel().setSelected("yes".equals(jEdit.getProperty(
@@ -203,8 +177,6 @@ public class EditorOptionPane extends OptionPane
 		jEdit.setProperty("view.fontsize",(String)size.getSelectedItem());
 		jEdit.setProperty("view.fontstyle",String.valueOf(style
 			.getSelectedIndex()));
-		jEdit.setProperty("view.geometry.w",viewWidth.getText());
-		jEdit.setProperty("view.geometry.h",viewHeight.getText());
 		jEdit.setProperty("buffer.tabSize",(String)tabSize
 			.getSelectedItem());
 		jEdit.setProperty("view.lineHighlight",lineHighlight.getModel()
@@ -230,8 +202,6 @@ public class EditorOptionPane extends OptionPane
 	private JComboBox style;
 	private JComboBox size;
 	private JComboBox tabSize;
-	private JTextField viewWidth;
-	private JTextField viewHeight;
 	private JCheckBox lineHighlight;
 	private JCheckBox bracketHighlight;
 	private JCheckBox syntax;
