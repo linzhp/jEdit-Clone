@@ -29,7 +29,6 @@ public class TeXTokenMarker extends TokenMarker
 	
 	public Token markTokens(Segment line, int lineIndex)
 	{
-		ensureCapacity(lineIndex);
 		lastToken = null;
 		String token = lineIndex == 0 ? null : lineInfo[lineIndex - 1];
 		int offset = line.offset;

@@ -27,7 +27,6 @@ public class ShellScriptTokenMarker extends TokenMarker
 
 	public Token markTokens(Segment line, int lineIndex)
 	{
-		ensureCapacity(lineIndex);
 		lastToken = null;
 		String token = lineIndex == 0 ? null : lineInfo[lineIndex - 1];
 		byte cmdState = 0; // 0 = space before command, 1 = inside

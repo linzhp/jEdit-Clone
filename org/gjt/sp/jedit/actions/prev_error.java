@@ -56,6 +56,7 @@ public class prev_error extends EditAction
 			{
 				buffer.setCaretInfo(start,start);
 				view.setBuffer(buffer);
+				view.updateBuffersMenu();
 			}
 		}
 		catch(Exception e)

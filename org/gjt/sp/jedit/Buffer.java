@@ -360,6 +360,13 @@ implements DocumentListener, UndoableEditListener
 
 		load();
 		loadMarkers();
+		
+		// Reset token marker
+		if(tokenMarker == null)
+		{
+			tokenMarker.deleteLines(0,getDefaultRootElement()
+				.getElementCount());
+		}
 		tokenizeLines();
 
 		// The anchor gets f*cked across reloads, so clear it
@@ -962,6 +969,7 @@ implements DocumentListener, UndoableEditListener
 		undo = new UndoManager();
 		markers = new Vector();
 		colors = new ColorList();
+		addDocumentListener(this);
 		setPath();
 		if(!newFile)
 		{
@@ -980,7 +988,6 @@ implements DocumentListener, UndoableEditListener
 			setMode(jEdit.getMode(userMode));
 		else
 			setMode();
-		addDocumentListener(this);
 		addUndoableEditListener(this);
 		updateMarkers();
 		propertiesChanged();
@@ -1457,9 +1464,12 @@ implements DocumentListener, UndoableEditListener
 	{
 		if(tokenMarker == null)
 			return;
+		// Crude hack, heh?
 		Segment lineSegment = new Segment();
 		Element map = getDefaultRootElement();
 		int lines = map.getElementCount();
+		// Will need to check if this works properly on reload
+		tokenMarker.insertLines(0,lines);
 		try
 		{
 			for(int i = 0; i < lines; i++)

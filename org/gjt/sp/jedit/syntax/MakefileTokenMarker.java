@@ -25,7 +25,6 @@ public class MakefileTokenMarker extends TokenMarker
 	// public members
 	public Token markTokens(Segment line, int lineIndex)
 	{
-		ensureCapacity(lineIndex);
 		lastToken = null;
 		String token = lineIndex == 0 ? null : lineInfo[lineIndex - 1];
 		int offset = line.offset;

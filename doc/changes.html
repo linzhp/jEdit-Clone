@@ -36,6 +36,9 @@ that HTML and TeX modes can subclass?
 <li>Insert file command
 <li>`Literal' search (no regexp) option
 <li>`Fix' jEdit's lazy colorizing (no, I'm not going to do it)
+<li>`Locate Bracket' and `Select Block' should skip
+comments/quoted literals that might contain unmatched brackets.
+<li>Backup directory feature, where all ...~ files are placed
 </ul>
 
 <a name=todo>
@@ -43,13 +46,13 @@ that HTML and TeX modes can subclass?
 </a>
 
 <ul>
-<li>`Locate Bracket' and `Select Block' should skip
-comments/quoted literals that might contain unmatched brackets.
-<li>Backup directory feature, where all ...~ files are placed
 <li>Syntax colorizing is still slow - should use a visible line cache to speed
 up scrolling
 <li>Context menu - mnemonics/arrows don't work, and selection is extended if
 mouse is held down
+<li>Error list component/toolbar/dialog
+<li>Finish history - add stuff when changed, and etc
+<li>Keep dialog option in Search &amp; Replace
 </ul>
 
 <a name=14pre5>
@@ -61,6 +64,8 @@ mouse is held down
 <ul>
 <li>Reload command added
 <li>Right click menu added to text area (doesn't work very well yet)
+<li>History in Search &amp; Replace and HyperSearch - use up and down
+arrow keys to recall previous search strings
 </ul>
 
 <h2>Enhancements</h2>
@@ -70,8 +75,10 @@ mouse is held down
 lines from the top or bottom, not four like before
 <li>Block caret is now off by default
 <li>Files are added to the recent list when they're closed, not opened
+<li>HyperSearch dialog beeps when no matches were found
 <li>Transact-SQL mode optimizations (Mike Dillon)
 <li>Minor syntax colorizing speedups (less array copying) (Mike Dillon)
+<li>Redundant calls to ensureCapacity() removed from token markers (Mike Dillon)
 </ul>
 
 <h2>Bug Fixes</h2>
@@ -83,6 +90,10 @@ mess up in the options dialog box?)
 <li>Fixed obscure backup bug nobody has ever seen (if you do a `save as'
 to a different directory than the original file, the backup is created
 in the wrong directory)
+<li>Some constructs would be colorized as labels in C/C++/Java mode
+<li>Fixed very obscure syntax colorizing bug (insertLine() was called
+one too many times, this is probably what caused the random multiline
+comment glitches, and so on)
 </ul>
 
 <a name=14pre4>

@@ -1,6 +1,6 @@
 /*
  * HyperSearch.java - HyperSearch dialog
- * Copyright (C) 1998 Slava Pestov
+ * Copyright (C) 1998, 1999 Slava Pestov
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -35,7 +35,7 @@ public class HyperSearch extends JDialog
 implements ActionListener, KeyListener, ListSelectionListener, WindowListener
 {
 	private View view;
-	private JTextField find;
+	private HistoryTextField find;
 	private JCheckBox ignoreCase;
 	private JComboBox regexpSyntax;
 	private JButton findBtn;
@@ -53,7 +53,7 @@ implements ActionListener, KeyListener, ListSelectionListener, WindowListener
 		JPanel panel = new JPanel(new BorderLayout());
 		panel.add(new JLabel(jEdit.getProperty("hypersearch.find")),
 			BorderLayout.WEST);
-		find = new JTextField(jEdit.getProperty("search.find.value"),20);
+		find = new HistoryTextField("find",20);
 		panel.add(find, BorderLayout.CENTER);
 		content.add(panel, BorderLayout.NORTH);
 
@@ -100,7 +100,7 @@ implements ActionListener, KeyListener, ListSelectionListener, WindowListener
 	
 	public void save()
 	{
-		jEdit.setProperty("search.find.value",find.getText());
+		find.save();
 		jEdit.setProperty("search.ignoreCase.toggle",ignoreCase
 			.getModel().isSelected() ? "on" : "off");
 		jEdit.setProperty("search.regexp.value",(String)regexpSyntax
@@ -125,10 +125,10 @@ implements ActionListener, KeyListener, ListSelectionListener, WindowListener
 			Buffer buffer = view.getBuffer();
 			int tabSize = buffer.getTabSize();
 			Vector data = new Vector();
-			RE regexp = new RE(find.getText(),(ignoreCase
-				.getModel().isSelected() ? RE.REG_ICASE : 0),
-				jEdit.getRESyntax(jEdit.getProperty(
-				"search.regexp.value")));
+			RE regexp = new RE(find.getText(),
+				(ignoreCase.getModel().isSelected()
+				? RE.REG_ICASE : 0),jEdit.getRESyntax(jEdit
+				.getProperty("search.regexp.value")));
 			Element map = buffer.getDefaultRootElement();
 			int lines = map.getElementCount();
 			for(int i = 1; i <= lines; i++)
@@ -148,6 +148,8 @@ implements ActionListener, KeyListener, ListSelectionListener, WindowListener
 						.getStartIndex()));
 				}
 			}
+			if(data.isEmpty())
+				view.getToolkit().beep();
 			results.setListData(data);
 		}
 		catch(Exception e)

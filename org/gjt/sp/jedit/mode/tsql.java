@@ -24,7 +24,7 @@ public class tsql extends autoindent
 {
   public TokenMarker createTokenMarker()
   {
-    return new TSQLTokenMarker(getKeywordMap());
+    return new SQLTokenMarker(getKeywordMap(), true);
   }
 
   public static KeywordMap getKeywordMap()

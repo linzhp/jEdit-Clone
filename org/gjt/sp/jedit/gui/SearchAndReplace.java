@@ -28,8 +28,8 @@ public class SearchAndReplace extends JDialog
 implements ActionListener, KeyListener, WindowListener
 {
 	private View view;
-	private JTextField find;
-	private JTextField replace;
+	private HistoryTextField find;
+	private HistoryTextField replace;
 	private JCheckBox ignoreCase;
 	private JComboBox regexpSyntax;
 	private JButton findBtn;
@@ -48,10 +48,8 @@ implements ActionListener, KeyListener, WindowListener
 		selStart = view.getTextArea().getSelectionStart();
 		selEnd = view.getTextArea().getSelectionEnd();
 
-		find = new JTextField(jEdit.getProperty("search.find"
-			+ ".value"),30);
-		replace = new JTextField(jEdit
-			.getProperty("search.replace.value"),30);
+		find = new HistoryTextField("find",30);
+		replace = new HistoryTextField("replace",30);
 		ignoreCase = new JCheckBox(jEdit.getProperty(
 			"search.ignoreCase"),
 			"on".equals(jEdit.getProperty("search."
@@ -127,8 +125,8 @@ implements ActionListener, KeyListener, WindowListener
 	
 	public void save()
 	{
-		jEdit.setProperty("search.find.value",find.getText());
-		jEdit.setProperty("search.replace.value",replace.getText());
+		find.save();
+		replace.save();
 		jEdit.setProperty("search.ignoreCase.toggle",ignoreCase
 			.getModel().isSelected() ? "on" : "off");
 		jEdit.setProperty("search.regexp.value",(String)regexpSyntax

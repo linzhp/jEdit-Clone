@@ -51,7 +51,7 @@ public abstract class TokenMarker
 	 */
 	public void init()
 	{
-		lineInfo = new String[100];
+		lineInfo = new String[1000];
 		length = 0;
 		lastToken = null;
 	}
@@ -79,13 +79,13 @@ public abstract class TokenMarker
 	 */
 	public void insertLines(int lineIndex, int lines)
 	{
-		if (lines <= 0)
+		if(--lines <= 0) // Lines seems to be +=1...
 			return;
- 		int lastIndex = Math.max(length,(lineIndex - 1) + lines);
-		length = length + lines;
-		ensureCapacity(length);
-		System.arraycopy(lineInfo,lineIndex,lineInfo,lineIndex + lines,
-			lastIndex - lineIndex);
+		int len = lineIndex + lines;
+		length += lines;
+		ensureCapacity(len);
+		System.arraycopy(lineInfo,lineIndex,lineInfo,len,
+			lineInfo.length - len);
 	}
 	
 	/**
@@ -97,12 +97,12 @@ public abstract class TokenMarker
 	 */
 	public void deleteLines(int lineIndex, int lines)
 	{
-		if (lines <= 0)
+		if (--lines <= 0) // Lines seems to be +=1...
 			return;
-		int lastIndex = Math.max(length,(lineIndex - 1) + lines);
-		length = length - lines;
-		System.arraycopy(lineInfo,lineIndex + lines,lineInfo,lineIndex,
-			lastIndex - lineIndex);
+		int len = lineIndex + lines;
+		length -= lines;
+		System.arraycopy(lineInfo,len,lineInfo,
+			lineIndex,lineInfo.length - len);
 	}
 
 	// protected members

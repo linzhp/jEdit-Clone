@@ -83,7 +83,7 @@ view.showTips=on
 
 # Geometry
 view.geometry.w=80
-view.geometry.h=25
+view.geometry.h=30
 
 # Font
 view.font=Monospaced
@@ -139,7 +139,7 @@ mode.extension.cmd=bat
 
 # C mode
 mode.c.name=C
-mode.c.noWordSep=._
+mode.c.noWordSep=_
 mode.c.indentOpenBrackets={
 mode.c.indentCloseBrackets=}
 mode.c.commentStart=/*
@@ -152,7 +152,7 @@ mode.extension.h=c
 
 # C++ mode
 mode.cc.name=C++
-mode.cc.noWordSep=._
+mode.cc.noWordSep=_
 mode.cc.indentOpenBrackets={
 mode.cc.indentCloseBrackets=}
 mode.cc.commentStart=/*
@@ -179,7 +179,7 @@ mode.extension.htm=html
 
 # Java mode
 mode.java_mode.name=Java
-mode.java_mode.noWordSep=._
+mode.java_mode.noWordSep=_
 mode.java_mode.indentOpenBrackets={
 mode.java_mode.indentCloseBrackets=}
 mode.java_mode.commentStart=/*
@@ -191,7 +191,7 @@ mode.extension.java=java_mode
 
 # JavaScript mode
 mode.javascript.name=JavaScript
-mode.javascript.noWordSep=._
+mode.javascript.noWordSep=_
 mode.javascript.indentOpenBrackets={
 mode.javascript.indentCloseBrackets=}
 mode.javascript.commentStart=/*

@@ -31,7 +31,6 @@ public class CTokenMarker extends TokenMarker
 
 	public Token markTokens(Segment line, int lineIndex)
 	{
-		ensureCapacity(lineIndex);
 		lastToken = null;
 		String token = lineIndex == 0 ? null : lineInfo[lineIndex - 1];
 		int offset = line.offset;
@@ -65,14 +64,6 @@ loop:		for(int i = offset; i < length; i++)
 				backslash = false;
 				if(token == null)
 				{
-					/*int off = i;
-					while(--off >= lastOffset)
-					{
-						char h = line.array[off];
-						if(!Character.isLetter(h) && h != '_')
-							break;
-					}
-					off++;*/
 					int len = i - lastKeyword;
 					String id = keywords.lookup(line,lastKeyword,len);
 					if(id != null)
@@ -87,9 +78,7 @@ loop:		for(int i = offset; i < length; i++)
 				break;
 			case ':':
 				backslash = false;
-				if(token == null && i > offset &&
-					(Character.isLetter(line.array[i-1]) ||
-					line.array[i-1] == ':'))
+				if(token == null && lastKeyword == offset)
 				{
 					addToken((i+1) - lastOffset,Token.LABEL);
 					lastOffset = i + 1;
@@ -167,14 +156,6 @@ loop:		for(int i = offset; i < length; i++)
 		}
 		if(token == null)
 		{
-			/*int off = length;
-			while(--off >= lastOffset)
-			{
-				char h = line.array[off];
-				if(!Character.isLetter(h) && h != '_')
-					break;
-			}
-			off++;*/
 			int len = length - lastKeyword;
 			String id = keywords.lookup(line,lastKeyword,len);
 			if(id != null)
