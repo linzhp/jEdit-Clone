@@ -21,7 +21,7 @@ package org.gjt.sp.jedit.textarea;
 
 import javax.swing.event.*;
 import javax.swing.text.*;
-import java.awt.FontMetrics;
+import java.awt.*;
 import org.gjt.sp.jedit.syntax.*;
 
 /**
@@ -52,7 +52,7 @@ public class TextAreaModel
 	{
 		FontMetrics fm = textArea.getPainter().getFontMetrics();
 		return (line - textArea.getFirstLine()) * fm.getHeight()
-			- fm.getLeading() - fm.getDescent();
+			- fm.getLeading() - fm.getMaxDescent();
 	}
 
 	public int yToLine(int y)
@@ -68,28 +68,89 @@ public class TextAreaModel
 	{
 		TokenMarker tokenMarker = getTokenMarker();
 
+		int returnValue;
+
 		/* Use painter's cached info for speed */
 		TextAreaPainter painter = textArea.getPainter();
 		FontMetrics fm = painter.getFontMetrics();
-		Segment currentLine = painter.currentLine;
+		Segment lineSegment = painter.currentLine;
 
 		if(painter.currentLineIndex != line)
 		{
-			getLineText(line,currentLine);
-			painter.currentLineIndex = line;
+			getLineText(line,lineSegment);
 		}
 
+		/* Because this is called in the middle of paintLine(),
+		 * we need to save the segment's state.
+		 */
+		int segmentOffset = lineSegment.offset;
+		int segmentCount = lineSegment.count;
+
+		/* If syntax coloring is disabled, do simple translation */
 		if(tokenMarker == null)
 		{
-			int oldCount = currentLine.count;
-			currentLine.count = offset;
-			int x = Utilities.getTabbedTextWidth(currentLine,
+			lineSegment.count = offset;
+			int x = Utilities.getTabbedTextWidth(lineSegment,
 				fm,0,painter,0);
-			currentLine.count = oldCount;
-			return x + textArea.getHorizontalOffset();
+			returnValue = x;
 		}
+		/* If syntax coloring is enabled, we have to do this because
+		 * tokens can vary in width */
 		else
-			return 0;
+		{
+			// XXX: token list is computed twice for lines
+			// that are highlighted
+			Token tokens = tokenMarker.markTokens(lineSegment,line);
+
+			int x = 0;
+			int index = 0;
+			Toolkit toolkit = painter.getToolkit();
+			Font defaultFont = painter.getFont();
+			SyntaxStyle[] styles = painter.getStyles();
+
+			for(;;)
+			{
+				byte id = tokens.id;
+				if(id == Token.END)
+				{
+					returnValue = x;
+					break;
+				}
+
+				if(id == Token.NULL)
+					fm = toolkit.getFontMetrics(defaultFont);
+				else
+				{
+					fm = toolkit.getFontMetrics(styles[id]
+						.getStyledFont(defaultFont));
+				}
+
+				int length = tokens.length;
+
+				if(offset < index + length)
+				{
+					lineSegment.count = offset - index;
+					returnValue = x + Utilities.getTabbedTextWidth(
+						lineSegment,fm,x,painter,segmentOffset + index);
+					break;
+				}
+				else
+				{
+					lineSegment.count = length;
+					x += Utilities.getTabbedTextWidth(
+						lineSegment,fm,x,painter,
+						lineSegment.offset + index);
+					lineSegment.offset += length;
+					index += length;
+				}
+				tokens = tokens.next;
+			}
+		}
+
+		lineSegment.offset = segmentOffset;
+		lineSegment.count = segmentCount;
+
+		return returnValue + textArea.getHorizontalOffset();
 	}
 
 	public int xToOffset(int line, int x)
@@ -101,23 +162,23 @@ public class TextAreaModel
 		/* Use painter's cached info for speed */
 		TextAreaPainter painter = textArea.getPainter();
 		FontMetrics fm = painter.getFontMetrics();
-		Segment currentLine = painter.currentLine;
-
+		Segment lineSegment = painter.currentLine;
+		char[] segmentArray = lineSegment.array;
+		int segmentOffset = lineSegment.offset;
+		int segmentCount = lineSegment.count;
+			
 		if(painter.currentLineIndex != line)
 		{
-			getLineText(line,currentLine);
+			getLineText(line,lineSegment);
 			painter.currentLineIndex = line;
 		}
 
 		if(tokenMarker == null)
 		{
-			int offset = currentLine.offset;
-			int count = currentLine.count;
-			char[] array = currentLine.array;
 			int width = 0;
-			for(int i = 0; i < count; i++)
+			for(int i = 0; i < segmentCount; i++)
 			{
-				char c = array[i + offset];
+				char c = segmentArray[i + segmentOffset];
 				int charWidth;
 				if(c == '\t')
 					charWidth = (int)painter.nextTabStop(width,i)
@@ -131,10 +192,58 @@ public class TextAreaModel
 				width += charWidth;
 			}
 
-			return count;
+			return segmentCount;
 		}
 		else
-			return 0;
+		{
+			// XXX: token list is computed twice for lines
+			// that are highlighted
+			Token tokens = tokenMarker.markTokens(
+				lineSegment,line);
+
+			int offset = 0;
+			Toolkit toolkit = painter.getToolkit();
+			Font defaultFont = painter.getFont();
+			SyntaxStyle[] styles = painter.getStyles();
+
+			int width = 0;
+
+			for(;;)
+			{
+				byte id = tokens.id;
+				if(id == Token.END)
+					return offset;
+
+				if(id == Token.NULL)
+					fm = toolkit.getFontMetrics(defaultFont);
+				else
+				{
+					fm = toolkit.getFontMetrics(styles[id]
+						.getStyledFont(defaultFont));
+				}
+
+				int length = tokens.length;
+
+				for(int i = 0; i < length; i++)
+				{
+					char c = segmentArray[segmentOffset + offset + i];
+					int charWidth;
+					if(c == '\t')
+						charWidth = (int)painter.nextTabStop(width,offset + i)
+							- width;
+					else
+						charWidth = fm.charWidth(c);
+	
+					if(x - charWidth / 2 < width)
+						return offset + i;
+	
+					width += charWidth;
+				}
+
+				offset += length;
+				tokens = tokens.next;
+			}
+		}
 	}
 
 	public int xyToOffset(int x, int y)
@@ -275,36 +384,45 @@ public class TextAreaModel
 
 	public void select(int start, int end)
 	{
-		start = Math.max(0,start);
-		end = Math.min(getLength(),end);
-
+		int newStart, newEnd;
+		boolean newBias;
 		if(start <= end)
 		{
-			selectionStart = start;
-			selectionEnd = end;
-			biasLeft = false;
+			newStart = start;
+			newEnd = end;
+			newBias = false;
 		}
 		else
 		{
-			selectionStart = end;
-			selectionEnd = start;
-			biasLeft = true;
+			newStart = end;
+			newEnd = start;
+			newBias = true;
 		}
 
-		int oldSelectionStartLine = selectionStartLine;
-		int oldSelectionEndLine = selectionEndLine;
+		if(newStart < 0 || newEnd > getLength())
+		{
+			throw new IllegalArgumentException("Bounds out of"
+				+ " range: " + newStart + "," +
+				newEnd);
+		}
 
-		selectionStartLine = getLineOfOffset(selectionStart);
-		selectionEndLine = getLineOfOffset(selectionEnd);
+		int newStartLine = getLineOfOffset(newStart);
+		int newEndLine = getLineOfOffset(newEnd);
 
 		textArea.getPainter()._invalidateLineRange(
-			Math.min(oldSelectionStartLine,selectionStartLine),
-			Math.max(oldSelectionEndLine,selectionEndLine));
+			Math.min(selectionStartLine,newStartLine),
+			Math.max(selectionEndLine,newEndLine));
 
-		int line = getCaretLine();
+		int line = (newBias ? newStartLine : newEndLine);
 		int lineStart = getLineStartOffset(line);
-		if(!textArea.scrollTo(line,getCaretPosition() - start))
+		if(!textArea.scrollTo(line,(newBias ? newStart : newEnd) - start))
 			textArea.getPainter().repaint();
+
+		selectionStart = newStart;
+		selectionEnd = newEnd;
+		selectionStartLine = newStartLine;
+		selectionEndLine = newEndLine;
+		biasLeft = newBias;
 	}
 
 	public int getCaretPosition()
@@ -315,6 +433,16 @@ public class TextAreaModel
 	public int getCaretLine()
 	{
 		return (biasLeft ? selectionStartLine : selectionEndLine);
+	}
+
+	public int getMarkPosition()
+	{
+		return (biasLeft ? selectionEnd : selectionStart);
+	}
+
+	public int getMarkLine()
+	{
+		return (biasLeft ? selectionEndLine : selectionStartLine);
 	}
 
 	public void setCaretPosition(int caret)
@@ -377,7 +505,6 @@ public class TextAreaModel
 		}
 	
 		public void removeUpdate(DocumentEvent evt)
-	
 		{
 			updateDisplay(evt);
 		}
@@ -391,6 +518,9 @@ public class TextAreaModel
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.6  1999/06/28 09:17:20  sp
+ * Perl mode javac compile fix, text area hacking
+ *
  * Revision 1.5  1999/06/27 04:53:16  sp
  * Text selection implemented in text area, assorted bug fixes
  *

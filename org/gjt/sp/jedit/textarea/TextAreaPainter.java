@@ -43,6 +43,7 @@ public class TextAreaPainter extends Component implements TabExpander
 		this.cols = cols;
 		this.rows = rows;
 		currentLine = new Segment();
+		currentLineIndex = -1;
 
 		firstInvalid = lastInvalid = -1;
 
@@ -180,6 +181,14 @@ public class TextAreaPainter extends Component implements TabExpander
 			firstInvalid = Math.min(firstInvalid,firstLine);
 			lastInvalid = Math.max(lastInvalid,lastLine);
 		}
+
+		/* Because the model uses cached text and token lists
+		 * for the current line, we must invalidate that info
+		 * if the current line changes.
+		 */
+		if(currentLineIndex >= firstInvalid &&
+			currentLineIndex <= lastInvalid)
+			currentLineIndex = -1;
 	}
 
 	public void invalidateLineRange(int firstLine, int lastLine)
@@ -310,21 +319,19 @@ public class TextAreaPainter extends Component implements TabExpander
 		int x = textArea.getHorizontalOffset();
 		int y = model.lineToY(firstLine);
 
-		int linesPainted = firstLine;
-		while(linesPainted <= lastLine)
+		currentLineIndex = firstLine;
+		while(currentLineIndex <= lastLine)
 		{
-			linesPainted += paintLine(model,offGfx,linesPainted,x,y);
+			currentLineIndex += paintLine(model,offGfx,x,y);
 			y += model.getLineHeight();
 		}
 
-		return linesPainted - firstLine;
+		return currentLineIndex - firstLine;
 	}
 
-	protected int paintLine(TextAreaModel model, Graphics gfx, int lineIndex,
+	protected int paintLine(TextAreaModel model, Graphics gfx,
 		int x, int y)
 	{
-		currentLineIndex = lineIndex;
-
 		TokenMarker tokenMarker = model.getTokenMarker();
 		Font defaultFont = getFont();
 		Color defaultColor = getForeground();
@@ -337,7 +344,8 @@ public class TextAreaPainter extends Component implements TabExpander
 				
 		gfx.setFont(defaultFont);
 
-		if(lineIndex < 0 || lineIndex >= model.getLineCount())
+		if(currentLineIndex < 0
+			|| currentLineIndex >= model.getLineCount())
 		{
 			gfx.setColor(defaultColor);
 			gfx.drawString("~",0,y + model.getLineHeight());
@@ -345,46 +353,56 @@ public class TextAreaPainter extends Component implements TabExpander
 		}
 
 		// Get the text
-		model.getLineText(lineIndex,currentLine);
+		model.getLineText(currentLineIndex,currentLine);
 
 		// draw the highlights
-		if(lineIndex >= model.getSelectionStartLine()
-			&& lineIndex <= model.getSelectionEndLine())
-			paintHighlight(model,gfx,lineIndex,y);
+		if(currentLineIndex >= model.getSelectionStartLine()
+			&& currentLineIndex <= model.getSelectionEndLine())
+			paintHighlight(model,gfx,y);
+
+		gfx.setColor(defaultColor);
 
 		if(tokenMarker == null)
 		{
 			paintPlainLine(model,gfx,defaultFont,defaultColor,
-				lineIndex,x,y + model.getLineHeight());
+				x,y + model.getLineHeight());
 			return 1;
 		}
 		else
 		{
 			int count = 0;
+			int lastVisibleLine = textArea.getFirstLine()
+				+ textArea.getVisibleLines();
 			do
 			{
+				model.getLineText(currentLineIndex,currentLine);
+				currentLineTokens = tokenMarker.markTokens(
+					currentLine,currentLineIndex);
+				currentLineIndex++;
+
+				if(currentLineIndex <= lastVisibleLine)
+				{
+					y += model.getLineHeight();
+					paintSyntaxLine(model,gfx,defaultFont,
+						defaultColor,x,y);
+				}
+
 				count++;
-				y += model.getLineHeight();
 			}
-			while(paintSyntaxLine(model,gfx,tokenMarker,defaultFont,
-				defaultColor,lineIndex++,x,y));
+			while(tokenMarker.isNextLineRequested());
 			return count;
 		}
 	}
 
 	protected void paintPlainLine(TextAreaModel model, Graphics gfx,
-		Font defaultFont, Color defaultColor, int lineIndex, int x, int y)
+		Font defaultFont, Color defaultColor, int x, int y)
 	{
-		gfx.setColor(defaultColor);
 		Utilities.drawTabbedText(currentLine,x,y,gfx,this,0);
 	}
 
-	protected boolean paintSyntaxLine(TextAreaModel model, Graphics gfx,
-		TokenMarker tokenMarker, Font defaultFont, Color defaultColor,
-		int lineIndex, int x, int y)
+	protected void paintSyntaxLine(TextAreaModel model, Graphics gfx,
+		Font defaultFont, Color defaultColor, int x, int y)
 	{
-		gfx.setColor(defaultColor);
-		currentLineTokens = tokenMarker.markTokens(currentLine,lineIndex);
 		int offset = 0;
 		for(;;)
 		{
@@ -410,12 +428,9 @@ public class TextAreaPainter extends Component implements TabExpander
 
 			currentLineTokens = currentLineTokens.next;
 		}
-
-		return tokenMarker.isNextLineRequested();
 	}
 
-	protected void paintHighlight(TextAreaModel model, Graphics gfx,
-		int lineIndex, int y)
+	protected void paintHighlight(TextAreaModel model, Graphics gfx, int y)
 	{
 		FontMetrics fm = getFontMetrics();
 		int height = fm.getHeight();
@@ -438,26 +453,26 @@ public class TextAreaPainter extends Component implements TabExpander
 
 			int selectionStartLine = model.getSelectionStartLine();
 			int selectionEndLine = model.getSelectionEndLine();
-			int lineStart = model.getLineStartOffset(lineIndex);
+			int lineStart = model.getLineStartOffset(currentLineIndex);
 
 			int x1, x2;
 			if(selectionStartLine == selectionEndLine)
 			{
-				x1 = model.offsetToX(lineIndex,selectionStart
+				x1 = model.offsetToX(currentLineIndex,selectionStart
 					- lineStart);
-				x2 = model.offsetToX(lineIndex,selectionEnd
+				x2 = model.offsetToX(currentLineIndex,selectionEnd
 					- lineStart);
 			}
-			else if(lineIndex == selectionStartLine)
+			else if(currentLineIndex == selectionStartLine)
 			{
-				x1 = model.offsetToX(lineIndex,selectionStart
+				x1 = model.offsetToX(currentLineIndex,selectionStart
 					- lineStart);
 				x2 = offImg.getWidth(this);
 			}
-			else if(lineIndex == selectionEndLine)
+			else if(currentLineIndex == selectionEndLine)
 			{
 				x1 = 0;
-				x2 = model.offsetToX(lineIndex,selectionEnd
+				x2 = model.offsetToX(currentLineIndex,selectionEnd
 					- lineStart);
 			}
 			else
@@ -470,11 +485,11 @@ public class TextAreaPainter extends Component implements TabExpander
 		}
 
 		if(textArea.getCaretVisible()
-			&& lineIndex == model.getCaretLine())
+			&& currentLineIndex == model.getCaretLine())
 		{
 			int offset = model.getCaretPosition() 
-				- model.getLineStartOffset(lineIndex);
-			int caretX = model.offsetToX(lineIndex,offset);
+				- model.getLineStartOffset(currentLineIndex);
+			int caretX = model.offsetToX(currentLineIndex,offset);
 			int caretWidth = (blockCaret ?
 				fm.charWidth('w') : 1);
 			gfx.setColor(caretColor);
@@ -486,6 +501,9 @@ public class TextAreaPainter extends Component implements TabExpander
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.6  1999/06/28 09:17:20  sp
+ * Perl mode javac compile fix, text area hacking
+ *
  * Revision 1.5  1999/06/27 04:53:16  sp
  * Text selection implemented in text area, assorted bug fixes
  *

@@ -452,8 +452,11 @@ public class JEditTextArea extends Container
 			switch(evt.getClickCount())
 			{
 			case 1:
-				model.setCaretPosition(model.xyToOffset(
-					evt.getX(),evt.getY()));
+				int offset = model.xyToOffset(evt.getX(),evt.getY());
+				if((evt.getModifiers() & InputEvent.SHIFT_MASK) != 0)
+					model.setSelectionEnd(offset);
+				else
+					model.setCaretPosition(offset);
 				break;
 			case 2:
 				break;
@@ -469,7 +472,6 @@ public class JEditTextArea extends Container
 		public void mousePressed(MouseEvent evt)
 		{
 			int offset = model.xyToOffset(evt.getX(),evt.getY());
-
 			if((evt.getModifiers() & InputEvent.SHIFT_MASK) != 0)
 				model.setSelectionEnd(offset);
 			else
@@ -485,18 +487,16 @@ public class JEditTextArea extends Container
 			int start = model.getLineStartOffset(line);
 			int offset = start + model.xToOffset(line,evt.getX());
 
-			// Opposite of caret
-			int caret = (model.getLeftBias() ?
-				model.getSelectionEnd() : model.getSelectionStart());
+			int mark = model.getMarkPosition();
 
-			if(offset < caret)
+			if(offset < mark)
 			{
-				model.select(offset,caret);
+				model.select(offset,mark);
 				model.setLeftBias(true);
 			}
 			else
 			{
-				model.select(caret,offset);
+				model.select(mark,offset);
 				model.setLeftBias(false);
 			}
 		}
@@ -506,6 +506,9 @@ public class JEditTextArea extends Container
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.6  1999/06/28 09:17:20  sp
+ * Perl mode javac compile fix, text area hacking
+ *
  * Revision 1.5  1999/06/27 04:53:16  sp
  * Text selection implemented in text area, assorted bug fixes
  *

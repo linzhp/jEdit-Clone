@@ -30,8 +30,8 @@ public class PerlTokenMarker extends TokenMarker
 {
 	// public members
 	public static final byte S_ONE = Token.INTERNAL_FIRST;
-	public static final byte S_TWO = Token.INTERNAL_FIRST + 1;
-	public static final byte S_END = Token.INTERNAL_FIRST + 2;
+	public static final byte S_TWO = (byte)(Token.INTERNAL_FIRST + 1);
+	public static final byte S_END = (byte)(Token.INTERNAL_FIRST + 2);
 
 	public PerlTokenMarker()
 	{
@@ -697,6 +697,9 @@ loop:		for(int i = offset; i < length; i++)
 /**
  * ChangeLog:
  * $Log$
+ * Revision 1.8  1999/06/28 09:17:20  sp
+ * Perl mode javac compile fix, text area hacking
+ *
  * Revision 1.7  1999/06/09 05:22:11  sp
  * Find next now supports multi-file searching, minor Perl mode tweak
  *
