@@ -290,6 +290,18 @@ public class jEdit
 	}
 
 	/**
+	 * Sets a property to a new value. This method does not override
+	 * properties set in the user property list, nor are the
+	 * properties set with this method saved in the user properties.
+	 * @param name The property
+	 * @param value The new value
+	 */
+	public static void setDefaultProperty(String name, String value)
+	{
+		defaultProps.put(name,value);
+	}
+
+	/**
 	 * Unsets (clears) a property.
 	 * @param name The property
 	 */
@@ -903,6 +915,7 @@ public class jEdit
 	private static String jEditHome;
 	private static String usrProps;
 	private static String portFile;
+	private static Properties defaultProps;
 	private static Properties props;
 	private static Server server;
 	private static Autosave autosave;
@@ -998,7 +1011,7 @@ public class jEdit
 	 */
 	private static void initSystemProperties()
 	{
-		props = new Properties();
+		defaultProps = props = new Properties();
 		
 		try
 		{
@@ -1173,7 +1186,7 @@ public class jEdit
 	 */
 	private static void initUserProperties()
 	{
-		props = new Properties(props);
+		props = new Properties(defaultProps);
 
 		if(usrProps != null)
 		{
@@ -1558,6 +1571,9 @@ public class jEdit
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.79  1999/04/22 06:20:06  sp
+ * Minor API change for XMode
+ *
  * Revision 1.78  1999/04/22 06:03:25  sp
  * Syntax colorizing change
  *
