@@ -1,0 +1,206 @@
+<html>
+
+<head><title>jEdit To Do</title></head>
+
+<body>
+
+<h1>jEdit To Do</h1>
+
+<ul>
+<li><a href=#veryshortterm>Very Short Term</a>
+<li><a href=#shortterm>Short Term</a>
+<li><a href=#medterm>Medium Term</a>
+<li><a href=#longterm>Long Term</a>
+</ul>
+
+<a name=veryshortterm>
+<h1>Very Short Term</h1>
+</a>
+
+This is what needs to be done as soon as possible:
+
+<ul>
+<li>Console's stdin stuff needs to be fixed.<p>
+Probably a silly bug in Console.java.
+
+<li>Event system needs to be debugged and documented better.<p>
+With the current EventMulticaster, event listeners cannot
+be removed from the fire() method or one of the methods it
+calls directly.<p>
+
+There are several ways to fix this:
+<ul>
+<li>Document it, and suggest SwingUtilities.invokeLater() as
+an alternative. This is not very good because invokeLater()
+has several subtle issues.
+<li>Make EventMulticaster thread-safe. This is very hard with
+the current way of storing listeners in a linked list.
+<li>Use Swing's EventListenerList class. This is probably
+the best way, because it already implements thread-safety.
+</ul>
+
+<li>View extension API<p>
+Several plugins are being written for jEdit which add GUI
+components to views. Because of the fragile nature of the
+current system, they conflict and cannot work together.<p>
+
+Several types of components need to be considered:
+
+<ul>
+<li>Tool/button bars - for example the BufferSelector plugin.
+These could be added to a container with a vertical layout at
+the top of the view, but then dockable toolbars will not be
+supported. Alternatively, a MultiBorderLayout can be
+implemented.
+<li>Larger components - for example the QuickFile plugin.
+The console already has an addTab() method, however not all
+components are well suited to the console's shape. A second
+`gutter' can be added to the left of the view where such
+components can be added.
+</ul>
+</ul>
+
+<a name=shortterm>
+<h1>Short Term</h1>
+</a>
+
+This is what needs to be done sometime during the 1.6preX
+series:
+
+<ul>
+<li>Proof-read and enhance all documentation.<p>
+The documentation, both for users and developers, is incomplete
+and possibly inaccurate at the moment.
+
+<li>Inter-plugin class dependencies.<p>
+Classes from one plugin should be able to use classes from other
+loaded plugins.
+
+<li>Add quote parsing to console.<p>
+The current system of argument parsing is very limited. Arguments
+enclosed with quotes should be treated as one.
+
+<li>Help viewer should support bookmarks.<p>
+As more and more documentation is written, this becomes more of
+an issue.
+</ul>
+
+</ul>
+
+<a name=medterm>
+<h1>Medium Term</h1>
+</a>
+
+This is what needs to be done either in the 1.7 series, or
+possibly in the 1.6 series:
+
+<ul>
+<li>Proper colorization of multiline statements.<p>
+Currently, when a change on one line affects the colorization
+of subsequent lines, the display isn't automatically updated.<p>
+
+This is tricky to implement unless we cache token lists of all
+lines in the document. There are also a whole lot of smaller
+issues (what do we do with lines that are not visible but should
+be retokenized anyway?).
+
+<li>Editor needs to be embeddable in other applications.<p>
+There are several levels of integration that should be looked into:
+
+<ul>
+<li>jEdit as an editing service for other applications.<p>
+This way, jEdit will still be a standalone application, but the
+server will be extended to support notification of buffers being
+closed and such. A simple client - a wrapper around the server
+should also be written.
+
+<li>jEdit as an editing service of other applications, running
+inside that application.<p>
+This way, jEdit will provide support for running inside another
+application. An AppOwner or similar interface will provide
+support for exiting, fetching properties, and so on.
+
+<li>jEdit as a component inside another application.<p>
+This way, an application will be able to add a view or similar to
+it's component hierarchy. This will require views to be
+modularized and separated out into distinct components. The
+action system will need to be overhauled as well, since the
+current getView()/getBuffer() system is limited.
+</ul>
+</ul>
+
+<a name=longterm>
+<h1>Long Term</h1>
+</a>
+
+This is what needs to be done in jEdit versions after 1.6:
+
+<ul>
+<li>Integrate XMode.<p>
+Mike Dillon's XMode is a much better way of writing syntax
+modes than the current `manual' way.<p>
+
+XMode is evolving very quickly so it might be ready in time
+for the jEdit 1.6 release.
+
+<li>Auto indent improvements.<p>
+Auto indent should support `smart' indent (for example, shifting
+the indent on the next line after an `if'). Also, it should line
+up closing and opening brackets, instead of the current indent
+shifting that does not always work correctly.<p>
+
+Pressing keys such as {, } or : in C mode should invoke indentation
+routines automatically.<p>
+
+If we include XMode, we might as well get as much out of the
+XML parser as possible- a simple way of specifying indentation
+using XML should be supported.
+
+<li>Macro language.<p>
+
+Some operations are very tedious without a macro language.<p>
+
+The following issues need to be considered:
+
+<ul>
+<li>What language?<p>
+JPython, being quite complete, fast and easy
+to learn is a good choice for this.
+
+<li>What level of integration? Should it be a macro language only,
+or should it integrate deeply with jEdit, with parts of the editor
+written in this language?<p>
+
+If we choose to do full integration, actions can be eliminated,
+being replaced by short prodedures in that language.<p>
+
+If we choose to keep actions, how should they be invoked from the
+language? As functions? With a special wrapper?
+
+<li>Should properties be obsoleted?<p>
+Manual calls to jEdit.setProperty(), or global variables in that
+language can be used instead. No need to parse two different
+file types at startup.
+
+<li>Should the Java-based plugin API be obsoleted?<p>
+This is unlikely,
+since the extension language will be slower and more limited than
+pure Java, no matter what we do. Also, installing a .jar is much
+easier than a whole bunch of .py or whatever files.
+</ul>
+
+The `Paste Predefined' command can be removed when a macro
+language is available.
+
+<li>Piece content.<p>
+Mike Dillon once said he was planning on implementing a piece
+content similar to one used in Microsoft Word and many other
+programs.<p>
+
+This will lead to faster autosave, better undo, and faster
+editing in general.
+
+</ul>
+
+</body>
+</html>

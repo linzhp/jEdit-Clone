@@ -245,7 +245,7 @@ public class Buffer extends DefaultSyntaxDocument
 				/* workaround for JDK 1.2 bug */
 				autosaveFile.delete();
 				autosaveTmp.renameTo(autosaveFile);
-				/* XXX race alert if dirty() runs here */
+				/* XXX race alert if setDirty() runs here */
 				adirty = false;
 			}
 			catch(FileNotFoundException fnf)
@@ -510,14 +510,20 @@ public class Buffer extends DefaultSyntaxDocument
 	/**
 	 * Sets the `dirty' (changed since last save) flag of this buffer.
 	 */
-	public void dirty()
+	public void setDirty(boolean d)
 	{
-		if(!((dirty && adirty) || readOnly))
+		if(d)
 		{
-			adirty = dirty = !init;
-			fireBufferEvent(new BufferEvent(BufferEvent
-				.DIRTY_CHANGED,this));
+			if(init || readOnly)
+				return;
+			if(dirty && !adirty)
+				return;
+			dirty = true;
 		}
+		else
+			dirty = false;
+		fireBufferEvent(new BufferEvent(BufferEvent.DIRTY_CHANGED,
+			this));
 	}
 
 	/**
@@ -1439,17 +1445,17 @@ loop:		for(int i = 0; i < markers.size(); i++)
 	{
 		public void insertUpdate(DocumentEvent evt)
 		{
-			dirty();
+			setDirty(true);
 		}
 	
 		public void removeUpdate(DocumentEvent evt)
 		{
-			dirty();
+			setDirty(true);
 		}
 	
 		public void changedUpdate(DocumentEvent evt)
 		{
-			dirty();
+			setDirty(true);
 		}
 	}
 }
@@ -1457,6 +1463,9 @@ loop:		for(int i = 0; i < markers.size(); i++)
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.76  1999/04/24 07:34:46  sp
+ * Documentation updates
+ *
  * Revision 1.75  1999/04/23 07:35:10  sp
  * History engine reworking (shared history models, history saved to
  * .jedit-history)

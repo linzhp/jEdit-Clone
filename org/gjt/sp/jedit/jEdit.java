@@ -645,15 +645,17 @@ public class jEdit
 	 * @param buffer The buffer
 	 * @return True if the buffer was really closed, false otherwise
 	 */
-	public static boolean closeBuffer(View view, Buffer buffer)
+	public static boolean exit(View view, Buffer buffer)
 	{
 		if(_closeBuffer(view,buffer))
-			buffers.removeElement(buffer);
+		{
+			if(buffers.size() == 1)
+				exit(view);
+			else
+				buffers.removeElement(buffer);
+		}
 		else
 			return false;
-
-		if(buffers.size() == 0)
-			exit(view);
 
 		fireEditorEvent(new EditorEvent(EditorEvent.BUFFER_CLOSED,
 			view,buffer));
@@ -1266,7 +1268,10 @@ public class jEdit
 					return false;
 			}
 			else if(result == JOptionPane.NO_OPTION)
+			{
 				buffer.getAutosaveFile().delete();
+				buffer.setDirty(false);
+			}
 			else
 				return false;
 		}
@@ -1514,6 +1519,9 @@ public class jEdit
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.82  1999/04/24 07:34:46  sp
+ * Documentation updates
+ *
  * Revision 1.81  1999/04/23 07:35:10  sp
  * History engine reworking (shared history models, history saved to
  * .jedit-history)

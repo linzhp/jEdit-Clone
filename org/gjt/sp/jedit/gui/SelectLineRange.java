@@ -46,13 +46,13 @@ implements ActionListener, KeyListener
 		panel.setLayout(new GridLayout(2,2));		
 		panel.add(new JLabel(jEdit.getProperty("selectlinerange.start"),
 			SwingConstants.RIGHT));
-		panel.add(start = new HistoryTextField("line"));
-		start.getEditor().getEditorComponent().addKeyListener(this);
+		panel.add(start = new JTextField());
+		start.addKeyListener(this);
 
 		panel.add(new JLabel(jEdit.getProperty("selectlinerange.end"),
 			SwingConstants.RIGHT));
-		panel.add(end = new HistoryTextField("line"));
-		end.getEditor().getEditorComponent().addKeyListener(this);
+		panel.add(end = new JTextField());
+		end.addKeyListener(this);
 		getContentPane().add(BorderLayout.CENTER,panel);
 
 		panel = new JPanel();
@@ -99,8 +99,8 @@ implements ActionListener, KeyListener
 
 	// private members
 	private Buffer buffer;
-	private HistoryTextField start;
-	private HistoryTextField end;
+	private JTextField start;
+	private JTextField end;
 	private JButton ok;
 	private JButton cancel;
 
@@ -111,10 +111,8 @@ implements ActionListener, KeyListener
 
 		try
 		{
-			startLine = Integer.parseInt((String)start.getSelectedItem())
-				- 1;
-			endLine = Integer.parseInt((String)end.getSelectedItem())
-				- 1;
+			startLine = Integer.parseInt(start.getText()) - 1;
+			endLine = Integer.parseInt(end.getText()) - 1;
 		}
 		catch(NumberFormatException nf)
 		{
@@ -140,9 +138,6 @@ implements ActionListener, KeyListener
 
 		((View)getParent()).getTextArea().select(startOffset,endOffset);
 
-		start.addCurrentToHistory();
-		end.addCurrentToHistory();
-
 		dispose();
 	}
 }
@@ -150,6 +145,9 @@ implements ActionListener, KeyListener
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.7  1999/04/24 07:34:46  sp
+ * Documentation updates
+ *
  * Revision 1.6  1999/04/23 07:35:11  sp
  * History engine reworking (shared history models, history saved to
  * .jedit-history)
