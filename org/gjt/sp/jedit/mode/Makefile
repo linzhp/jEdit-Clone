@@ -4,15 +4,13 @@
 # It compiles files in the above package.
 #
 
-classes=org/gjt/sp/jedit/mode/amstex.class \
-	org/gjt/sp/jedit/mode/bat.class \
+classes=org/gjt/sp/jedit/mode/bat.class \
 	org/gjt/sp/jedit/mode/c.class \
 	org/gjt/sp/jedit/mode/cc.class \
 	org/gjt/sp/jedit/mode/html.class \
 	org/gjt/sp/jedit/mode/idl.class \
 	org/gjt/sp/jedit/mode/java_mode.class \
 	org/gjt/sp/jedit/mode/javascript.class \
-	org/gjt/sp/jedit/mode/latex.class \
 	org/gjt/sp/jedit/mode/makefile.class \
 	org/gjt/sp/jedit/mode/patch.class \
 	org/gjt/sp/jedit/mode/perl.class \
