@@ -7,7 +7,7 @@
 all: subdirs
 
 subdirs:
-	$(MAKE) -f org/gjt/sp/jedit/proto/jeditplugins/Makefile
+	$(MAKE) -f org/gjt/sp/jedit/proto/jeditdocs/Makefile
 	$(MAKE) -f org/gjt/sp/jedit/proto/jeditresource/Makefile
 
 include Rules.make

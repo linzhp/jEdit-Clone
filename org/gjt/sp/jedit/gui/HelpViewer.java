@@ -24,6 +24,7 @@ import javax.swing.event.*;
 import javax.swing.text.html.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.File;
 import java.io.IOException;
 import java.net.*;
 import org.gjt.sp.jedit.*;
@@ -157,7 +158,16 @@ public class HelpViewer extends JFrame
 				}
 			}
 			else if(source == home)
-				gotoURL(getClass().getResource("/doc/index.html"),true);
+			{
+				try
+				{
+					gotoURL(new URL("jeditdocs:"),true);
+				}
+				catch(MalformedURLException mu)
+				{
+					mu.printStackTrace();
+				}
+			}
 		}
 	}
 

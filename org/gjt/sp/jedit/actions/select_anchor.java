@@ -35,6 +35,11 @@ public class select_anchor extends EditAction
 		View view = getView(evt);
 		JEditTextArea textArea = view.getTextArea();
 		int pos = view.getBuffer().getAnchor();
+		if(pos == -1)
+		{
+			view.getToolkit().beep();
+			return;
+		}
 		int dot = textArea.getCaretPosition();
 		if(dot > pos)
 		{
@@ -42,9 +47,6 @@ public class select_anchor extends EditAction
 			pos = dot;
 			dot = tmp;
 		}
-		if(pos != -1)
-			textArea.select(dot,pos);
-		else
-			view.getToolkit().beep();
+		textArea.select(dot,pos);
 	}
 }

@@ -50,7 +50,6 @@ classes=org/gjt/sp/jedit/actions/about.class \
 	org/gjt/sp/jedit/actions/paste.class \
 	org/gjt/sp/jedit/actions/paste_predefined.class \
 	org/gjt/sp/jedit/actions/paste_previous.class \
-	org/gjt/sp/jedit/actions/plugin_help.class \
 	org/gjt/sp/jedit/actions/plugin_options.class \
 	org/gjt/sp/jedit/actions/prev_buffer.class \
 	org/gjt/sp/jedit/actions/prev_paragraph.class \

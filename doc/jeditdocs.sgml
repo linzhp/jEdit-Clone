@@ -1,0 +1,3266 @@
+<!-- jEdit documentation, (C) 1999 Slava Pestov -->
+<!-- Released under the GNU General Public License; see COPYING.txt -->
+
+<!-- jEdit buffer-local properties: -->
+<!-- :mode=html:tabSize=1:noTabs=yes:compiler=scripts/mk_ps: -->
+
+<!DOCTYPE book PUBLIC "-//Davenport//DTD DocBook V3.0//EN" [
+<!ENTITY index.sgml SYSTEM "index.sgml">
+]>
+<book>
+
+<!-- General information -->
+<bookinfo>
+ <title>jEdit 2.0 User's Guide</>
+ <author><firstname>Slava</><surname>Pestov</></author>
+ <legalnotice><title>Legal Notice</>
+  <para>
+   This book is released under the GNU General Public License. A copy
+   of the GPL is available in the <filename>COPYING.txt</> file
+   supplied with jEdit.
+  </para>
+ </legalnotice>
+ <copyright><year>1999</year><holder>Slava Pestov</holder></copyright>
+</bookinfo>
+
+<chapter id=general-info><title>General Information</title>
+ <sect1 id=about-jedit><title>About jEdit</title>
+  <para>
+   Thanks for obtaining a copy of jEdit, a text
+   editor written in Java. I hope it is as useful for you as for me.
+  </para>
+  <para>
+   The latest version of jEdit, general information, and plugins
+   can all be obtained from its homepage: <indexterm>
+   <primary>home page</><secondary>jEdit</></indexterm>
+   <ulink url="http://www.gjt.org/~sp/jedit.html">
+   http://www.gjt.org/~sp/jedit.html</>. If you are not sure what
+   version of jEdit you have, or you obtained your copy some time
+   ago, it is recommended you upgrade to the latest available version.
+  </para>
+  <para>
+   There is a jEdit mailing list. <indexterm>
+   <primary>mailing list</><secondary>jEdit</></indexterm>
+   New plugins and jEdit versions are
+   announced there, and general discussion takes place. Please
+   try to keep the messages posted to the list on-topic and generally
+   interesting to other subscribers.
+   <itemizedlist>
+    <listitem><para>
+     To subscribe: Send mail to <email>jedit-subscribe@listbot.com</>
+    </para></listitem>
+    <listitem><para>
+     To unsubscribe: Send mail to <email>jedit-unsubscribe@listbot.com</>
+    </para></listitem>
+    <listitem><para>
+     To send a message to the list: Send mail to <email>jedit@listbot.com</>
+    </para></listitem>
+    <listitem><para>
+     To view the list archive: Go to <ulink url="http://jedit.listbot.com">
+     http://jedit.listbot.com</>.
+    </para></listitem>
+   </itemizedlist>
+  </para>
+  <para>
+   You may also contact the author of jEdit directly. My e-mail address
+   is <email>sp@gjt.org</>.
+  </para>
+ </sect1>
+ <sect1 id=licensing><title>Licensing Information</>
+  <para>
+   Most of jEdit is released under the GNU General Public License, except
+   for the following packages which are released under the GNU Lesser
+   General Public License, which allows them to be used in commercial programs:
+  </para>
+  <itemizedlist>
+   <listitem><para>
+    org.gjt.sp.jedit.rmi (RMI interfaces)
+   </para></listitem>
+   <listitem><para>
+    org.gjt.sp.jedit.syntax (Syntax highlighting core and parsers)
+   </para></listitem>
+   <listitem><para>
+    org.gjt.sp.jedit.textarea (Syntax highlighting text area component)
+   </para></listitem>
+  </itemizedlist>
+  <para>
+   jEdit comes with ABSOLUTELY NO WARRANTY OF ANY KIND; see
+   section 11 and 12 of the GNU General Public License for details.
+   The GNU General and Lesser Public Licenses can be found in the
+   <filename>COPYING.txt</> and
+   <filename>COPYING-LIB.txt</> files of the jEdit distribution, respectively.
+   </para>
+ </sect1>
+ <sect1 id=release-notes><title>Release Notes</>
+  <para>
+   The following is an overview of the major changes in jEdit 2.0 since
+   1.6. A complete list can be found in the file named
+   <filename>CHANGES.txt</>, which is part of the jEdit distribution.
+  </para>
+  <itemizedlist>
+   <listitem><para>
+    Rewritten text component. It is faster than the old Swing-based one,
+    it can properly edit files longer than 2000 lines, and has
+    more functionality
+   </para></listitem>
+   <listitem><para>
+    Perl syntax highlighting
+   </para></listitem>
+   <listitem><para>
+    Text styles (bold, italic), in addition to colors, are used to
+    highlight syntax tokens
+   </para></listitem>
+   <listitem><para>
+    Literal search option
+   </para></listitem>
+   <listitem><para>
+    Multi-file search and replace option
+   </para></listitem>
+   <listitem><para>
+    RMI interface, allowing other applications to remotely control jEdit
+   </para></listitem>
+   <listitem><para>
+    The syntax package is licensed under the GNU Lesser General Public
+    License
+   </para></listitem>
+   <listitem><para>
+    A plugin is included that periodically checks if a later release of
+    jEdit is available
+   </para></listitem>
+   <listitem><para>
+    Console and WWW browser commands have been unbundled into plugins
+    (available from <ulink url="http://www.icg-online.de/jedit">
+    http://www.icg-online.de/jedit</>)
+   </para></listitem>
+   <listitem><para>
+    Busy/wait cursor is displayed while performing lengthy operations
+   </para></listitem>
+   <listitem><para>
+    Configuration files are now stored in a <filename>.jedit</>
+    subdirectory of the home directory. To retain your previous settings,
+    move the following files as follows:
+    <itemizedlist>
+     <listitem><para>
+      <filename>$HOME/.jedit-props</>
+      to <filename>$HOME/.jedit/properties</>
+     </para></listitem>
+     <listitem><para>
+      <filename>$HOME/.jedit-history</>
+      to <filename>$HOME/.jedit/history</>
+     </para></listitem>
+     <listitem><para>
+      <filename>$HOME/.jedit-jars</> to
+      <filename>$HOME/.jedit/jars</>
+     </para></listitem>
+     <listitem><para>
+      (other files such as <filename>.jedit-desktop</>
+      and <filename>.jedit-server-*</> can be
+      deleted because they are only used by older versions of jEdit)
+     </para></listitem>
+    </itemizedlist>
+   </para></listitem>
+   <listitem><para>
+    The documentation has been rewritten in SGML-DocBook. It covers
+    jEdit in much more detail, and is now available in
+    HTML and PostScript format.
+   </para></listitem>
+  </itemizedlist>
+  <para>
+   This is not a complete list; there were many less significant changes,
+   as well as bug fixes. Of course there are probably some new bugs, too :)
+  </para>
+ </sect1>
+ <sect1 id=features><title>jEdit Features</>
+  <para>
+   jEdit itself aims to provide most of the features needed to edit
+   text files. That's it. No IDE features (project manager, etc), no file
+   management, no built in e-mail reader (*cough* *cough* emacs). Those
+   and other non-essential features can be coded as plugins, which the
+   user installs when necessary. Having said that, jEdit still boasts an
+   impressive set of features, the most important being:
+  </para>
+  <itemizedlist>
+   <listitem><para>
+    Syntax highlighting of language tokens using colors and styles
+   </para></listitem>
+   <listitem><para>
+    Automatic indentation and support for soft tabs
+   </para></listitem>
+   <listitem><para>
+    Bracket matching and highlighting
+   </para></listitem>
+   <listitem><para>
+    Powerful search and replace that supports multi-file searching
+    and regular expressions (inexact sequences of text)
+   </para></listitem>
+   <listitem><para>
+    HyperSearch feature that shows all lines in the document that
+    contain a specified string
+   </para></listitem>
+   <listitem><para>
+    A variety of commands for working with words, lines and paragraphs
+   </para></listitem>
+   <listitem><para>
+    Support for files with Unix, Windows and MacOS line separators
+   </para></listitem>
+   <listitem><para>
+    The ability to set <quote>markers</> to rapidly move around long documents
+   </para></listitem>
+   <listitem><para>
+    Sending of files via E-mail
+   </para></listitem>
+   <listitem><para>
+    Transparent editing of GZipped files - useful for browsing Linux HOWTO
+    documents, which are usually GZipped, and for editing PostScript,
+    which again is often GZipped
+   </para></listitem>
+   <listitem><para>
+    Comprehensive plugin system
+   </para></listitem>
+  </itemizedlist>
+ </sect1>
+</chapter>
+
+<chapter id=conventions><title>Conventions Used in This Manual</title>
+ <para>
+  Keyboard shortcuts and menu items are presented in a certain way
+  in this manual. This chapter overviews the conventions used.
+ </para>
+ <sect1 id=menu-items><title>Menu Items</>
+  <indexterm><primary>menu bar</></indexterm>
+  <para>
+   Because jEdit's menu hierarchy is rather complicated at times, the
+   following convention is used to present menu items. First of all, the
+   top level menu is listed, followed by successive levels of submenus,
+   followed by the menu item itself. All menu components are separated
+   by greater-than symbols (<quote>&gt;</>). For example,
+   <guimenu>Edit</>&gt;<guisubmenu>Line Operations</>&gt;<guimenuitem>Delete
+   Line</> refers to the <guimenuitem>Delete Line</> item of the
+   <guisubmenu>Line Operations</> submenu of the <guimenu>Edit</> menu.
+  </para>
+  <para>
+   Menu items that end with an ellipisis (...) display a dialog
+   box, and usually provide an option to cancel.
+   Other menu items take effect immediately (but they may possibly
+   show alerts or errors).
+  </para>
+ </sect1>
+ <sect1 id=shortcuts><title>Keyboard Shortcuts</>
+  <indexterm><primary>keyboard shortcuts</><secondary>
+  multiple keystroke</></indexterm>
+  <para>
+   In jEdit, most operations can be performed from the keyboard.
+   Because there are quite a few commands, it is very difficult to
+   make them all accessible with one keystroke. So jEdit supports
+   multiple keystroke bindings. To invoke a command with a multiple
+   keystroke binding, all keystrokes have to be pressed, in order,
+   with nothing in between.
+  </para>
+  <para>
+   In this manual, key bindings are written in the form
+   <keycombo><keycap>Modifier</><keycap>Key</></keycombo>, where
+   <keycap>Modifier</> is the modifier key that must be pressed in
+   addition to <keycap>Key</> to invoke that command. When multiple
+   keystrokes are present in a binding,they will be listed in order,
+   for example the shortcut for <guimenuitem>Open URL</> is
+   <keycombo><keycap>Control</><keycap>E</></keycombo>
+   <keycombo><keycap>Control</><keycap>O</></keycombo>.
+  </para>
+ </sect1>
+</chapter>
+<chapter id=basic-file-ops><title>Basic File Operations</>
+ <para>
+  This chapter describes jEdit's basic file-related operations, such as
+  opening, saving, printing, and so on.
+ </para>
+ <sect1 id=starting><title>Starting jEdit</>
+  <indexterm><primary>command line</></indexterm>
+  <indexterm><primary>editor window</></indexterm>
+  <indexterm><primary>session saving</></indexterm>
+  <indexterm><primary>desktop saving</></indexterm>
+  <indexterm><primary>keyboard shortcuts</>
+  <secondary>for accessing the menu bar</></indexterm>
+  <para>
+   Exactly how jEdit is started depends on the operating system;
+   most often you would type <quote>jedit</quote> at the command line
+   or double click on the jEdit icon (or select it from a menu,
+   or whatever). Once started, it will print some information messages as
+   it loads up, then after a short delay the editor window will appear.
+   </para>
+  <note>
+   <para>
+    jEdit accepts various command line parameters; see
+    <xref linkend=cli-usage>.
+   </para>
+  </note>
+  <tip>
+   <para>
+    When started with no file names on the command line, jEdit will
+    open any files that were open in the previous session. This can
+    be disabled in the <guimenu>File</>&gt;<guimenuitem>Global Options</>
+    dialog box; see <xref linkend=global-opts>.
+    </para>
+  </tip>
+  <figure><title>The editor window</title>
+   <graphic fileref=window-editor></>
+  </figure>
+  <sect2 id=menubar><title>The Menu Bar</>
+   <indexterm><primary>menu bar</></indexterm>
+   <indexterm><primary>File menu</></indexterm>
+   <indexterm><primary>Edit menu</></indexterm>
+   <indexterm><primary>Search menu</></indexterm>
+   <indexterm><primary>Plugins menu</></indexterm>
+   <para>
+    The labels (Buffers, File, Edit, and so on) that run across
+    the top of the editor window are the <firstterm>menus</>. Generally,
+    <guimenu>File</> contains global file-related commands,
+    <guimenu>Edit</> contains editing commands,
+    <guimenu>Search</> contains search &amp; replace commands,
+    and <guimenu>Plugins</> contains menus and menu items created
+    by plugins.
+    </para>
+   <para>
+    Pressing <keycap>Alt</> in addition to an underlined character in the
+    menu bar will display the respective menu. Once a menu is open,
+    <keycap>Alt</> in addition to an underlined character in a menu item
+    label will invoke that menu item as if it was selected with the mouse,
+    and the arrow keys can be used to navigate the menu bar;
+    <keycap>Left Arrow</> and <keycap>Right Arrow</> open the previous
+    and next menu, respectively, and <keycap>Up Arrow</> and <keycap>Down Arrow</>
+    move up and down the currently open menu.
+   </para>
+  </sect2>
+  <sect2 id=toolbar><title>The Tool Bar</>
+   <indexterm><primary>tool bar</></indexterm>
+   <indexterm><primary>tool tips</></indexterm>
+   <para>
+    The strip of buttons underneath the menu bar is called the
+    <firstterm>tool bar</>. Moving the mouse pointer over a
+    button and holding it still will display a
+    <firstterm>tooltip</> - a brief description of the button.
+   </para>
+   <figure><title>A tooltip</>
+    <graphic fileref=window-editor-tooltip></>
+   </figure>
+   <tip>
+    <para>
+     The tool bar can be disabled in the
+     <guimenu>File</>&gt;<guimenuitem>Global Options</> dialog box; see
+     <xref linkend=global-opts>.
+    </para>
+   </tip>
+  </sect2>
+  <sect2 id=textarea><title>The Text Area</>
+   <indexterm><primary>text area</></indexterm>
+   <indexterm><primary>caret</></indexterm>
+   <indexterm><primary>scrolling</></indexterm>
+   <indexterm><primary>current line highlighting</></indexterm>
+   <indexterm><primary>line highlighting</></indexterm>
+   <indexterm><primary>end of line markers</></indexterm>
+   <indexterm><primary>invalid lines</></indexterm>
+   <indexterm><primary>context menu</></indexterm>
+   <indexterm><primary>right-click menu</></indexterm>
+   <para>
+    Most of the editor window is occupied by the text area. The text area
+    displays the contents of the currently opened buffer.
+    The two scroll bars can be used to move around the buffer when there
+    is more text than can fit on the screen. The blinking red line
+    is called the <firstterm>caret</firstterm>. All text editing
+    occurs at the caret, and before any text can be changed,
+    the caret must be moved to the appropriate position.
+   </para>
+   <para>
+    Notice how the line with the caret is highlighted, and a
+    blue dot appears at the end of each line. The current line highlighting
+    aids in locating the caret, and the dot is an <firstterm>end of
+    line marker</>.
+   </para>
+   <para>
+    The lines painted with red tildes (<quote>~</quote>)
+    are <firstterm>invalid lines</firstterm> - they are visible,
+    but don't actually exist in the document. In the case of the
+    example document shown in the screen shot, all visible lines after the
+    first two are invalid because the document only has two lines.
+   </para>
+   <para>
+    Clicking the text area with the right mouse button will
+    display the <firstterm>context menu</>, which contains frequently-used
+    editing commands.
+   </para>
+   <tip>
+    <para>
+     Many characteristics of the text area can be changed in the
+     <guimenu>File</>&gt;<guimenuitem>Global Options</> dialog box;
+     see <xref linkend=global-opts>.
+    </para>
+   </tip>
+  </sect2>
+  <sect2 id=status><title>The Status Area</>
+   <indexterm><primary>status bar</></indexterm>
+   <indexterm><primary>line number display</></indexterm>
+   <para>
+    The status area is at the very bottom of the editor window. It
+    displays a new usage hint every time jEdit is started, as well
+    as various information about the caret. The caret information is
+    displayed in the following format:
+    <screen>30 - 2/2 - 100%</screen>
+    The first number is the <firstterm>column position</>, or how
+    far the caret is from the start of the line. The second pair of
+    numbers is the current line, and the total number of lines in
+    the buffer. The third number is the ratio of the current line
+    to the total number of lines; ie, where the caret is positioned
+    inside the buffer.
+   </para>
+  </sect2>
+ </sect1>
+ <sect1 id=opening><title>Opening Files</>
+  <indexterm><primary>buffer</></indexterm>
+  <indexterm><primary>Buffers menu</></indexterm>
+  <indexterm><primary>view</></indexterm>
+  <indexterm><primary sortas="modified">(modified)</>
+  <secondary>in the title bar</></indexterm>
+  <indexterm><primary sortas="readonly">(read only)</>
+  <secondary>in the title bar</></indexterm>
+  <indexterm><primary>command line switches</>
+  <secondary>-readonly</></indexterm>
+  <indexterm><primary>markers</></indexterm>
+  <indexterm><primary>command line</></indexterm>
+  <indexterm><primary>saving</></indexterm>
+  <para>
+   Before a file can be edited, it must first be <firstterm>opened</>.
+   When jEdit opens a file, it reads it into memory and creates a
+   new <firstterm>buffer</>.
+   In this manual, a <firstterm>file</> is the file itself, on disk;
+   a <firstterm>buffer</> is an open file as it exists in memory,
+   with any unsaved changes, etc.
+  </para>
+  <para>
+   All open buffers are listed in the <guimenu>Buffers</> menu; selecting
+   one will make the current view edit it.
+  </para>
+  <para>
+   If a buffer has unsaved changes, the string <quote>(modified)</> will
+   be displayed in the title bar. The string will be displayed until the
+   buffer is saved (or the changes are discarded by reloading).
+  </para>
+  <para>
+   Sometimes the string <quote>(read only)</>
+   will be shown in the title bar. When a buffer is read only, no
+   changes can be made. Markers can be set but they will not be saved.
+  </para>
+  <para>
+   Files that you do not have write access to are automatically opened
+   read only. Files can also be opened read only from the command line
+   by specifying the <userinput>-readonly</> option.
+  </para>
+  <para>
+   To make a read only buffer read-write, save it.
+   If the save was successful, the read only flag will be cleared (the
+   rationale behind this is that if the save was successful, you have
+   write access to the file).
+  </para>
+  <sect2 id=opencli><title>Opening Files From the Command Line</>
+   <para>
+    <indexterm><primary>moving the caret</><secondary>
+    to a line number</></indexterm>
+    <indexterm><primary>command line switches</><secondary>
+    -+</></indexterm>
+    <indexterm><primary>command line switches</><secondary>
+    --</></indexterm>
+    <indexterm><primary>moving the caret</><secondary>
+    to a marker</></indexterm>
+    <indexterm><primary>Unix</></indexterm>
+    <indexterm><primary>markers</></indexterm>
+    Any file names passed on the command line are opened by jEdit.
+    It is possible to have the caret positioned on a specific line
+    after the buffer is opened. For example, to open <filename>paper.tex</>
+    and go to line number 247, you would invoke:
+    <screen><prompt>$</> <userinput>jedit -+247 paper.tex</></screen>
+    Only one line number specification is allowed per command line.
+    It is also possible to move the caret to a specific marker.
+    For example, to open <filename>Kernel.java</> and go to
+    the marker named <filename>getCommandStack</>, you would invoke:
+    <screen><prompt>$</> <userinput>jedit Kernel.java#getCommandStack</></screen>
+    On Unix, you will need to escape the <quote>#</> by prefixing
+    it with a backslash (<quote>\</>) to stop the shell from
+    interpreting it.
+   </para>
+   <para>
+    If your file name includes a dash (<quote>-</>), you will need
+    to specify the <userinput>--</> (dash-dash) command line parameter before
+    it so that it is not treated as a command line switch. For
+    example:
+    <screen><prompt>$</> <userinput>jedit -- -file-name-starting-with-a-dash</></screen>
+   </para>
+  </sect2>
+  <sect2><title>Opening Files With the Open File Command</>
+   <para>
+    <indexterm><primary>Open File command</></indexterm>
+    <indexterm><primary>File menu</></indexterm>
+    <guimenu>File</>&gt;<guimenuitem>Open File</>
+    (keyboard equivalent: <keycombo><keycap>Control</><keycap>O</></keycombo>)
+    will display the file open dialog box. Double clicking (or single
+    clicking and then clicking <guibutton>Open</>) on a file will open
+    it. Double clicking on a directory will list that directory.
+   </para>
+  </sect2>
+  <sect2 id=openurl><title>Opening Files With the Open URL Command</>
+   <para>
+    <indexterm><primary>Open URL command</></indexterm>
+    <indexterm><primary>File menu</></indexterm>
+    <guimenu>File</>&gt;<guimenuitem>Open URL</>
+    (keyboard equivalent: <keycombo><keycap>Control</><keycap>E</></keycombo>
+    <keycombo><keycap>Control</><keycap>O</></keycombo>)
+    will display the Open URL dialog box. A URL or a file path name
+    (relative path names are prefixed with the current buffer's parent
+    directory) can be
+    entered. Most Java implementations support the <filename>ftp:</>
+    and <filename>http:</> URL protocols, so jEdit can open files from
+    the Internet directly. However, saving to URLs is not supported on any
+    current Java version.
+   </para>
+  </sect2>
+  <sect2 id=recent><title>Opening Files With the Open Recent Menu</>
+   <para>
+    <indexterm><primary>Open Recent menu</></indexterm>
+    <indexterm><primary>File menu</></indexterm>
+    The <guisubmenu>Open Recent</> submenu of the <guimenu>File</> menu
+    lists the 8 most recently opened files. When a buffer is closed,
+    it is added to this list.
+   </para>
+   <note>
+    <para>
+     The number of recent files can be changed in the
+     <guimenu>File</>&gt;<guimenuitem>Global Options</> dialog box;
+     see <xref linkend=global-opts>.
+    </para>
+   </note>
+  </sect2>
+  <sect2><title>Creating New Files</>
+   <indexterm><primary>New File command</></indexterm>
+   <indexterm><primary>File menu</></indexterm>
+   <para>
+    A special case of opening a file is when you need to create a
+    new, blank, file. There are two ways to do this:
+   </para>
+   <itemizedlist>
+    <listitem><para>
+     <guimenu>File</>&gt;<guimenuitem>New File</> (keyboard equivalent:
+     <keycombo><keycap>Control</><keycap>N</></keycombo>) will create a new
+     <quote>Untitled</> file.
+     <indexterm><primary>untitled files</></indexterm>
+    </para></listitem>
+    <listitem><para>
+     Open a non-existent file. If you open a
+     non-existent file using any technique described in this
+     section, a new file with that name will be created when the buffer
+     is first saved.
+    </para></listitem>
+   </itemizedlist>
+  </sect2>
+ </sect1>
+  <sect1 id=saving><title>Saving Files</>
+  <para>
+   <indexterm><primary>buffer</></indexterm>
+   <indexterm><primary>saving</></indexterm>
+   Any changes made to a buffer aren't actually stored to disk immediately
+   (but see autosave below); instead, they are stored in the computer's high
+   speed memory (RAM) until they are <firstterm>saved</>.
+  </para>
+  <sect2><title>Autosave and Backups</>
+   <para>
+    <indexterm><primary>autosave</></indexterm>
+    Because computers crash from time to time, not saving
+    changes to disk until the user manually does so is not a very good
+    idea; most people don't like having to hit <quote>save</> every 2
+    minutes, just in case. So jEdit has an autosave feature that should protect
+    against possible disasters. Every 15 seconds, all buffers with changes are
+    written out to their respective file names, enclosed in hash
+    (<quote>#</>) characters. For example, <filename>program.c</> will
+    be autosaved to <filename>#program.c#</>. These autosave files do
+    not clutter up your disk; they are deleted when the buffer is explicitly
+    saved.
+    The point of autosaving is so that if jEdit crashes, it should be
+    reasonably easy to recover your work - just open the autosave file(s)
+    and copy over the autosaved data.
+   </para>
+   <para>
+    <indexterm><primary>backups</></indexterm>
+    Another useful safety feature is file backups. When you save a buffer
+    for the first time after opening it, its original contents are
+    saved to the buffer's file name suffixed with a tilde (<quote>~</>).
+    For example, <filename>paper.tex</> is backed up to <filename>paper.tex~</>.
+    The point of backups so that if you make extensive changes to a file that you
+    are not happy with, you can go back to the previous version.
+   </para>
+   <tip>
+    <para>
+     The autosave interval and various backup settings can be changed in the
+     <guimenu>File</>&gt;<guimenuitem>Global Options</> dialog box;
+     see <xref linkend=global-opts>.
+    </para>
+   </tip>
+  </sect2>
+  <sect2><title>Line Separator Characters</>
+   <para>
+    <indexterm><primary>MacOS</></indexterm>
+    <indexterm><primary>Windows</></indexterm>
+    <indexterm><primary>Unix</></indexterm>
+    <indexterm><primary>line separator</></indexterm>
+    Different operating systems have various conventions for end-of-line
+    markers. The MacOS uses Carriage-Return (\r, ^M) for that purpose. Unix
+    uses Newline (\n, ^J). DOS and Windows use Carriage-Return-Newline
+    (\r\n, ^M^J). jEdit can handle all three file formats.
+   </para>
+   <para>
+    When a file is loaded, jEdit tries to guess the line separators used
+    in that file. The line separator can be changed manually on a per-buffer
+    basis in the <guimenu>File</>&gt;<guimenuitem>Buffer Options</> dialog box;
+    see <xref linkend=buffer-opts>.
+    The default for new files can be changed in the Editor tab of the
+    <guimenu>File</>&gt;<guimenuitem>Global Options</> dialog box;
+    see <xref linkend=global-opts>.
+   </para>
+  </sect2>
+  <sect2><title>When Another Application Modifies the File</>
+   <indexterm><primary>Reload command</></indexterm>
+   <indexterm><primary>File menu</></indexterm>
+   <para>
+    If you go to save a buffer and jEdit notices that another application
+    has changed it on disk, a warning message is displayed. You may
+    continue with the save, but the changes by the other application
+    will be lost.
+   </para>
+   <para>
+    <guimenu>File</>&gt;<guimenuitem>Reload</> will discard your changes
+    and instead reload the file from disk. If the buffer has unsaved changes,
+    you will be asked for confirmation first.
+   </para>
+   <figure><title>Warning message displayed when another application
+   changed the file on disk</>
+    <graphic fileref=dialog-diskmod></>
+   </figure>
+  </sect2>
+  <sect2><title>Saving Files With the Save Command</>
+   <para>
+    <indexterm><primary>untitled files</></indexterm>
+    <indexterm><primary>Save command</></indexterm>
+    <indexterm><primary>File menu</></indexterm>
+    <guimenu>File</>&gt;<guimenuitem>Save</> (keyboard equivalent:
+    <keycombo><keycap>Control</><keycap>S</></keycombo>)
+    will immediately save the buffer to disk, unless the buffer is a
+    new file created with the <guimenu>New File</> command, in which
+    case the standard save file dialog box will be
+    displayed, prompting for a file name and destination directory.
+   </para>
+  </sect2>
+  <sect2><title>Saving Files With the Save As Command</>
+   <para>
+    <indexterm><primary>Save As command</></indexterm>
+    <indexterm><primary>File menu</></indexterm>
+    <guimenu>File</>&gt;<guimenuitem>Save As</>
+    will prompt for an alternate file name to save the buffer to.
+    The changes made since the last save will <emphasis>only</>
+    be saved to the new file specified in the save dialog box;
+    hence if you make some changes and <quote>Save As</>, the old
+    file will not contain the changes, and the new file will.
+    This can be used to create an alternative version of the file and so on.
+   </para>
+  </sect2>
+  <sect2><title>Saving Files With the Save to URL Command</>
+   <para>
+    <indexterm><primary>Save to URL command</></indexterm>
+    <indexterm><primary>File menu</></indexterm>
+    <guimenu>File</>&gt;<guimenuitem>Save to URL</>
+    will prompt for a URL to save the buffer to. At the moment, this
+    command does nothing useful. It is a placeholder until real URL
+    saving is supported by Java.
+   </para>
+  </sect2>
+  <sect2><title>Saving All Open Files</>
+   <para>
+    <indexterm><primary>Save All Buffers command</></indexterm>
+    <indexterm><primary>File menu</></indexterm>
+    <guimenu>File</>&gt;<guimenuitem>Save All Buffers</>
+    (keyboard equivalent: <keycap>F3</>) will save all buffers;
+    a confirmation dialog box is issued first.
+   </para>
+  </sect2>
+ </sect1>
+ <sect1 id=printing-sending><title>Printing and Sending Files</>
+  <para>
+   <indexterm><primary>Print command</></indexterm>
+   <indexterm><primary>File menu</></indexterm>
+   <indexterm><primary>Send command</></indexterm>
+   <indexterm><primary>selection</></indexterm>
+   <guimenu>File</>&gt;<guimenuitem>Print</>
+   (keyboard equivalent: <keycombo><keycap>Control</><keycap>P</></keycombo>)
+   will print the current buffer. The printed output will have syntax
+   highlighting, and a header with the file name at the top of each page.
+   <indexterm><primary>syntax highlighting</></indexterm>
+  </para>
+  <para>
+   <guimenu>File</>&gt;<guimenuitem>Send</>
+   (keyboard equivalent: <keycap>F4</>) will display the send file
+   dialog box. <quote>SMTP Server</> should be set to your outgoing
+   mail server. <quote>From</> and <quote>To</> are self-explanatory.
+   <quote>Subject</> is set to the file name by default; this should
+   be changed to something a little more descriptive. If
+   <guibutton>Send selected text only</> is selected, only the selected
+   text is sent; this is useful for e-mailing code snippets.
+  </para>
+  <figure><title>The Send dialog box</>
+   <graphic fileref=dialog-send></>
+  </figure>
+ </sect1>
+ <sect1 id=closing-exiting><title>Closing Files and Exiting jEdit</>
+  <para>
+   <indexterm><primary>Close File command</></indexterm>
+   <indexterm><primary>File menu</></indexterm>
+   <indexterm><primary>Exit command</></indexterm>
+   <indexterm><primary>saving</></indexterm>
+   <guimenu>File</>&gt;<guimenuitem>Close File</>
+   (keyboard equivalent: <keycombo><keycap>Control</><keycap>W</></keycombo>)
+   will close the current buffer. If it has unsaved changes, jEdit
+   will ask if they should be saved first. The
+   <guibutton>No</> option discards the unsaved changes with no further
+   ado. If you decide you didn't want to close the buffer after all,
+   <guibutton>Cancel</> cancels the close operation and
+   returns to the editor.
+  </para>
+  <figure><title>The message displayed if a file has unsaved changes</>
+   <graphic fileref=dialog-unsaved></>
+  </figure>
+  <para>
+   <guimenu>File</>&gt;<guimenuitem>Exit</>
+   (keyboard equivalent: <keycombo><keycap>Control</><keycap>E</></keycombo>
+   <keycombo><keycap>Control</><keycap>Q</></keycombo>) will completely
+   close jEdit, asking if any unsaved buffers should be saved first.
+   (Closing all buffers one by one will also exit jEdit.)
+  </para>
+ </sect1>
+</chapter>
+
+<chapter id=basic-text-edit><title>Basic Text Editing</>
+ <para>
+  <indexterm><primary>MacOS</></indexterm>
+  <indexterm><primary>Windows</></indexterm>
+  <indexterm><primary>Unix</></indexterm>
+  <indexterm><primary>Emacs text editor</></indexterm>
+  <indexterm><primary>VIM text editor</></indexterm>
+  jEdit works in much the same fashion as any MacOS or Windows text
+  editor; if you have used one before, quickly skim this section to pick up
+  the few jEdit-specific features. If you are more familiar with a
+  Unix editor such as Emacs or VIM, read
+  this section more carefully; jEdit works in a slightly different fashion
+  to those text editors.
+ </para>
+ <sect1 id=moving-caret><title>Moving the Caret</>
+  <para>
+   <indexterm><primary>caret</></indexterm>
+   <indexterm><primary>moving the caret</>
+   <secondary>by clicking the mouse</></indexterm>
+   Recall that the caret is the location where most text insertion and
+   deletion takes place. Moving the caret is one of the most
+   frequently performed operations; there are many different ways
+   to do it.
+  </para>
+  <para>
+   Clicking the left or middle mouse button will move the caret to
+   the mouse position. This is most useful when moving the caret over
+   large distances, where doing it from the keyboard is impractical.
+  </para>
+  <para>
+   <indexterm><primary>moving the caret</>
+   <secondary>with the arrow keys</></indexterm>
+   Pressing one of the arrow keys will move the caret in the
+   respective direction. The <keycap>Up Arrow</> and <keycap>Down Arrow</>
+   arrow keys remember the original caret position; for example, if
+   the caret is on position 48 of a line, and it is moved up to a line
+   which is only 30 characters long, it will end up on position 30.
+   If it is <emphasis>immediately</> moved up again to a line that
+   is 50 characters long, it will end up back at position 48. The arrow
+   keys should be used to move the caret by a few characters or lines.
+  </para>
+  <para>
+   <indexterm><primary>moving the caret</>
+   <secondary>a word at a time</></indexterm>
+   <indexterm><primary>moving the caret</>
+   <secondary>a paragraph at a time</></indexterm>
+   Pressing one of the arrow keys while holding down <keycap>Control</>
+   will move backwards or forwards by one word in the case of
+   <keycap>Left Arrow</> and <keycap>Right Arrow</>, or backwards or
+   forwards by one paragraph in the case of <keycap>Up Arrow</> and
+   <keycap>Down Arrow</>. A paragraph is defined as a run of text
+   delimited by double newlines. jEdit has no support for indented
+   paragraphs, HTML <command>&lt;p&gt;</> tags, etc. These commands
+   can be used for moving over longer distances when you want to
+   keep your hands on the keyboard.
+  </para>
+  <para>
+   <indexterm><primary>moving the caret</>
+   <secondary>to the start of the line</></indexterm>
+   <indexterm><primary>moving the caret</>
+   <secondary>to the first visible position</></indexterm>
+   <indexterm><primary>moving the caret</>
+   <secondary>to the start of the buffer</></indexterm>
+   <indexterm><primary>moving the caret</>
+   <secondary>to the end of the line</></indexterm>
+   <indexterm><primary>moving the caret</>
+   <secondary>to the last visible position</></indexterm>
+   <indexterm><primary>moving the caret</>
+   <secondary>to the end of the buffer</></indexterm>
+   In most text editors, the <keycap>Home</> key moves the caret to the first
+   character of the current line, and the <keycap>End</> key moves the
+   caret to the last character of the current line. jEdit takes this
+   one step further - if the caret is <emphasis>already</> on the first
+   or last character of the line, it will be moved to the first or last
+   <firstterm>visible position</>, respectively. If it already on the first
+   or last visible position, it will be moved to the start or end of
+   the buffer.
+  </para>
+  <indexterm><primary>Control+HOME command, lack of</></indexterm>
+  <indexterm><primary>Control+END command, lack of</></indexterm>
+  <para>
+   Most text editors also have <keycombo><keycap>Control</><keycap>Home</>
+   </keycombo> and <keycombo><keycap>Control</><keycap>End</>
+   </keycombo> commands for moving the caret to the start and end of the
+   buffer. jEdit has no equivalent; instead, press <keycap>Home</> or
+   <keycap>End</> three times.
+  </para>
+  <para>
+   <indexterm><primary>moving the caret</>
+   <secondary>by screenfuls</></indexterm>
+   <keycap>Page Up</> (on some keyboards, this is labelled
+   <keycap>Prev</>) will move the caret up by one screenful.
+   <keycap>Page Down</> (on some keyboards, this is labelled
+   <keycap>Next</>) will move the caret down by one screenful.
+  </para>
+  <para>
+   <indexterm><primary>moving the caret</>
+   <secondary>to a line number</></indexterm>
+   <indexterm><primary>Go to Line command</></indexterm>
+   <indexterm><primary>Search menu</></indexterm>
+   <guimenu>Search</>&gt;<guimenuitem>Go to Line</> (keyboard
+   equivalent: <keycombo><keycap>Control</><keycap>L</></keycombo>)
+   will display a dialog box where a line number can be entered. The caret
+   will then be moved to that line.
+  </para>
+ </sect1>
+ <sect1 id=selecting-text><title>Selecting Text</>
+  <para>
+   <indexterm><primary>selection</></indexterm>
+   Often it is necessary to move, delete, or otherwise operate on an
+   arbitrary range of characters. With the exception of the line and
+   paragraph oriented features, all text editing commands operate on
+   the current <firstterm>selection</>. Selected text
+   is drawn with a highlight.
+  </para>
+  <para>
+   <indexterm><primary>caret</></indexterm>
+   <indexterm><primary>mark</></indexterm>
+   A selection is defined as the range of text between the caret and
+   the <firstterm>mark</>; when no selection is active, the mark and the
+   caret have the same position. When text is selected,
+   the mark is at the start of the selection, and the caret is at the
+   end.
+  </para>
+  <para>
+   <indexterm><primary>selecting</>
+   <secondary>by dragging</></indexterm>
+   The easiest way to select text is by dragging from the start of the
+   desired region to the end with
+   the left or middle mouse button (dragging means pressing the mouse button,
+   and moving the mouse without releasing it).
+  </para>
+  <para>
+   <indexterm><primary>selecting</>
+   <secondary>words by double-clicking</></indexterm>
+   Double clicking the left or middle mouse button will select the
+   word at the mouse position. A <firstterm>word</> is defined as a
+   run of alphanumeric characters.
+  </para>
+  <para>
+   <indexterm><primary>selecting</><secondary>lines by
+   triple-clicking</></indexterm>
+   Triple clicking the left or middle mouse button will select the
+   line at the mouse position. The newline character at the end of
+   the line is <emphasis>not</> selected.
+  </para>
+  <para>
+   <indexterm><primary>selecting</>
+   <secondary>changing the selection</></indexterm>
+   Once you have selected some text, it is sometimes necessary to
+   move the caret but not the mark; in other words, enlarge (or shrink)
+   the selection. The easiest way to achieve this is to click where you
+   want to move the caret (end of the selection) while
+   holding down the <keycap>Shift</> key. This can also be used
+   to create a selection if none is active; Shift-clicking at a
+   location will create a selection from the caret to where you
+   clicked.
+  </para>
+  <para>
+   Holding down <keycap>Shift</> in addition to one of the caret
+   movement commands (the arrow keys, <keycap>Home</>, <keycap>End</>,
+   etc) will extend the selection, instead of just moving the caret.
+   Again, this can be used to create a selection if none is active.
+  </para>
+  <para>
+   <indexterm><primary>selecting</><secondary>ranges of lines</>
+   </indexterm>
+   <indexterm><primary>Select Line Range command</></indexterm>
+   <indexterm><primary>Search menu</></indexterm>
+   <guimenu>Search</>&gt;<guimenuitem>Select Line Range</> (keyboard
+   equivalent: <keycombo><keycap>Control</><keycap>E</></keycombo>
+   <keycombo><keycap>Control</><keycap>L</></keycombo>) will display
+   a dialog box where the starting line and end line can be entered.
+   The specified range of lines will be selected.
+  </para>
+  <para>
+   <indexterm><primary>selecting</><secondary>the entire buffer
+   </></indexterm>
+   <indexterm><primary>Select All command</></indexterm>
+   <indexterm><primary>Edit menu</></indexterm>
+   <guimenu>Edit</>&gt;<guimenuitem>Select All</>
+   (keyboard equivalent: <keycombo><keycap>Control</><keycap>A</> </keycombo>)
+   will select the entire buffer.
+  </para>
+  <tip>
+   <para>
+    For an easier way to select very long ranges of text, see
+    <xref linkend=anchor>.
+   </para>
+  </tip>
+  <figure><title>A sample selection</>
+   <graphic fileref=window-editor-select></>
+  </figure>
+ </sect1>
+ <sect1 id=entering-text><title>Entering Text</>
+  <indexterm><primary>overstrike mode</></indexterm>
+  <indexterm><primary>Insert key</></indexterm>
+  <para>
+   Unless overstrike mode is on (see below) any text typed at the
+   keyboard is inserted into the document. The <keycap>Tab</>
+   and <keycap>Enter</> keys might not behave entirely like you
+   expect because various indentation features are enabled;
+   see <xref linkend=indent>.
+  </para>
+  <para>
+   Another way of entering text is using the overstrike mode. Pressing
+   <keycap>Insert</> will change the caret into the overstrike caret.
+   Now, entered text will not be <emphasis>inserted</>, but it will
+   <emphasis>overwrite</> the existing text, character by character.
+  </para>
+  <para>
+   <indexterm><primary>selection</></indexterm>
+   Regardless if overstrike mode is on, entering text while a selection
+   is active will replace the selection with the newly entered text.
+  </para>
+ </sect1>
+ <sect1 id=deleting-text><title>Deleting Text</>
+  <para>
+   <indexterm><primary>deleting</><secondary>characters</></indexterm>
+   <indexterm><primary>Backspace key</></indexterm>
+   <indexterm><primary>Delete key</></indexterm>
+   The <keycap>Backspace</> key deletes the character <firstterm>before</>
+   the caret, and <keycap>Delete</> deletes the character <firstterm>in front of</>
+   the caret.
+  </para>
+  <para>
+   <indexterm><primary>deleting</><secondary>lines</></indexterm>
+   <indexterm><primary>Delete Line command</></indexterm>
+   <indexterm><primary>Line Operations menu</></indexterm>
+   <indexterm><primary>Edit menu</></indexterm>
+   <guimenu>Edit</>&gt;<guisubmenu>Line Operations</>&gt;<guimenuitem>Delete Line</>
+   (keyboard equivalent: <keycombo><keycap>Control</><keycap>D</>
+   </keycombo> <keycombo><keycap>Control</><keycap>D</></keycombo>) will
+   delete the line that the caret is positioned on.
+  </para>
+  <para>
+   <indexterm><primary>deleting</><secondary>paragraphs</></indexterm>
+   <indexterm><primary>Delete Paragraph command</></indexterm>
+   <indexterm><primary>Paragraph Operations menu</></indexterm>
+   <guimenu>Edit</>&gt;<guisubmenu>Paragraph Operations</>&gt;<guimenuitem>Delete
+   Paragraph</> (keyboard equivalent: <keycombo><keycap>Control</><keycap>D</>
+   </keycombo> <keycombo><keycap>Control</><keycap>E</></keycombo>) will
+   delete the paragraph containing the caret.
+  </para>
+  <para>
+   <indexterm><primary>deleting</><secondary>selected text</></indexterm>
+   <indexterm><primary>selection</></indexterm>
+   If a range of text is selected, it can be deleted by pressing
+   <keycap>Backspace</> or <keycap>Delete</>. Both behave the same
+   way when a selection is active.
+  </para>
+ </sect1>
+ <sect1 id=undo-redo><title>Undo and Redo</>
+  <para>
+   Everybody makes mistakes. Especially when editing text. That's
+   when jEdit's undo feature is useful.
+  </para>
+  <para>
+   <indexterm><primary>Undo command</></indexterm>
+   <indexterm><primary>Edit menu</></indexterm>
+   <guimenu>File</>&gt;<guimenuitem>Undo</> (keyboard equivalent:
+   <keycombo><keycap>Control</><keycap>Z</></keycombo>) will reverse the
+   last editing action. For example, if some text was deleted, this
+   will bring it back again.
+  </para>
+  <para>
+   <indexterm><primary>Redo command</></indexterm>
+   <guimenu>File</>&gt;<guimenuitem>Redo</> (keyboard equivalent:
+   <keycombo><keycap>Control</><keycap>R</></keycombo>) will redo the
+   last undone action. For example, if a text insertion was undone,
+   the text will once again appear.
+  </para>
+  <para>
+   jEdit stores the last 100 editing actions. An editing action is
+   either an insertion of text, or deletion. Some commands such as
+   <guimenuitem>Replace All</> batch their editing into one action,
+   so it can be undone in one go. Keep in mind that if you undo some actions
+   and then perform some editing, redo will no longer be able to redo the
+   actions undone at the start.
+  </para>
+ </sect1>
+ <sect1 id=clipboard><title>The Clipboard</>
+  <para>
+   <indexterm><primary>clipboard</></indexterm>
+   The clipboard is a storage area where text and other data can be
+   temporarily stored. It is system-wide, and can be used to transfer
+   data between applications.
+  </para>
+  <para>
+   <indexterm><primary>Unix</></indexterm>
+   <indexterm><primary>X Window System</><secondary>cut buffer</>
+   </indexterm>
+   On Unix systems with the X Window System, there are two clipboards;
+   one is used by many applications to store the currently selected
+   text, and the other is used with the Cut, Copy and Paste commands.
+   jEdit only uses the latter; in fact, it is the only clipboard Java
+   allows access to.
+  </para>
+  <para>
+   <indexterm><primary>selection</></indexterm>
+   <indexterm><primary>Copy command</></indexterm>
+   <indexterm><primary>Edit menu</></indexterm>
+   <guimenu>Edit</>&gt;<guimenuitem>Copy</>
+   (keyboard equivalent: <keycombo><keycap>Control</><keycap>C</></keycombo>)
+   copies the selected text into the clipboard.
+  </para>
+  <para>
+   <indexterm><primary>Cut command</></indexterm>
+   <guimenu>Edit</>&gt;<guimenuitem>Cut</>
+   (keyboard equivalent: <keycombo><keycap>Control</><keycap>X</></keycombo>)
+   copies the selected text into the clipboard and deletes it from the
+   document.
+  </para>
+  <para>
+   <indexterm><primary>Paste command</></indexterm>
+   <guimenu>File</>&gt;<guimenuitem>Paste</>
+   (keyboard equivalent: <keycombo><keycap>Control</><keycap>V</></keycombo>)
+   will insert the most recently copied or cut text at the caret position
+   (replacing the selection if there is one).
+  </para>
+  <para>
+   <indexterm><primary>Paste Previous command</></indexterm>
+   <guimenu>Edit</>&gt;<guimenuitem>Paste Previous</> (keyboard equivalent:
+   <keycap>F5</>) will display a list of previously pasted strings, most
+   recent first.
+   The last 25 are listed. Selecting one will insert it at the caret
+   position.
+  </para>
+  <tip>
+   <para>
+    The number of pasted strings to remember can be changed in the
+    <guimenu>File</>&gt;<guimenuitem>Global Options</> dialog box;
+    see <xref linkend=global-opts>.
+   </para>
+  </tip>
+  <figure><title>The Paste Previous dialog box</>
+   <graphic fileref=dialog-pasteprev></>
+  </figure>
+ </sect1>
+</chapter>
+
+<chapter id=advanced-text-edit><title>Advanced Text Editing</>
+ <para>
+  jEdit goes far beyond the basics when it comes to text editing; this
+  chapter covers the more advanced features.
+ </para>
+ <sect1 id=views><title>Editing With Multiple Views</>
+  <para>
+   <indexterm><primary>view</></indexterm>
+   <indexterm><primary>editor window</></indexterm>
+   By default, jEdit only opens one editor window, or <firstterm>view</>.
+   However, it is possible to have any number of views open at once, with
+   each buffer being edited in one or more views.
+  </para>
+  <para>
+   <indexterm><primary>New View command</></indexterm>
+   <indexterm><primary>File menu</></indexterm>
+   <guimenu>File</>&gt;<guimenuitem>New View</>
+   (keyboard equivalent: <keycombo><keycap>Control</><keycap>E</></keycombo>
+   <keycombo><keycap>Control</><keycap>N</></keycombo>) will open a new
+   view. It will edit the same buffer as the current view. When more than
+   one view edits a buffer, changes made in one view are immediately
+   visible in all others. A different buffer can also be selected from
+   the <guimenu>Buffers</> menu.
+  </para>
+  <para>
+   <indexterm><primary>Close View command</></indexterm>
+   <guimenu>File</>&gt;<guimenuitem>Close View</>
+   (keyboard equivalent: <keycombo><keycap>Control</><keycap>E</></keycombo>
+   <keycombo><keycap>Control</><keycap>N</></keycombo>) will close the
+   current view. jEdit will exit if all open views are closed.
+  </para>
+ <note>
+  <para>
+   Try not to have too many views editing the same buffer - the more views
+   need to be updated after every keystroke, the slower jEdit will be.
+  </para>
+ </note>
+ </sect1>
+ <sect1 id=rmi><title>The RMI Interface</>
+  <para>
+   RMI, or Remote Method Invocation, allows Java applications to call
+   each other's methods. This way, they can share services, call
+   each other, etc.
+  </para>
+  <para>
+   <indexterm><primary>RMI registry</></indexterm>
+   <indexterm><primary>Windows</></indexterm>
+   <indexterm><primary>Unix</></indexterm>
+   <indexterm><primary>AUTOEXEC.bat file</></indexterm>
+   <indexterm><primary>command line</></indexterm>
+   Before RMI will work, the RMI registry daemon must be started. How this
+   is done is operating-system specific; on Unix and Windows, you can
+   type <command>rmiregistry</> in a command line. It is advisable that
+   you place this command in your <filename>AUTOEXEC.BAT</> (on Windows)
+   or a shell initialization file (on Unix) so that the RMI registry
+   is started when you log in.
+  </para>
+  <para>
+   If jEdit's RMI interface is enabled (it is by default), jEdit will
+   register itself as an RMI service on startup. When a new instance of
+   jEdit is opened, it will try connecting to the RMI service first.
+  </para>
+  <para>
+   The end result is that you can start jEdit as many times as necessary,
+   but only one copy will actually be open at once. Also, other applications
+   can use jEdit's editing services (assuming they know about RMI).
+  </para>
+  <para>
+   <indexterm><primary>command line switches</><secondary>-normi</></indexterm>
+   <indexterm><primary>command line</></indexterm>
+   <indexterm><primary>command line switches</><secondary>-rmi</></indexterm>
+   The <command>-normi</> command line switch disables the RMI interface entirely;
+   no connection will be attempted, and no sever will be started. The
+   <command>-rmi</> command line switch can be used to change the name
+   jEdit registers itself with in the registry. This can be used when
+   you want to run more than one copy of jEdit at once. For example:
+   <screen>
+<prompt>$</> <userinput>jedit -rmi=my_jedit_instance_number_2</>
+   </screen>
+   The same <command>-rmi</> parameter must be passed to <emphasis>both</>
+   the server and client.
+  </para>
+  <para>
+   <indexterm><primary>command line switches</><secondary>-nosettings</></indexterm>
+   <indexterm><primary>command line switches</><secondary>-settings</></indexterm>
+   <indexterm><primary>command line switches</><secondary>-nosplash</></indexterm>
+   <indexterm><primary>command line switches</><secondary>-nodesktop</></indexterm>
+   <indexterm><primary>command line</></indexterm>
+   All jEdit command line parameters except those that affect initial
+   startup (<command>-nosettings</>, <command>-settings</>, <command>-nosplash</>,
+   and <command>-nodesktop</>) are handled appropriately by the RMI interface.
+  </para>
+  <para>
+   <indexterm><primary>command line switches</><secondary>-wait</></indexterm>
+   In some circumstances, it might be desirable for the client instance
+   to exit only after the buffers it opened were closed. This can be
+   accomplished by passing the <command>-wait</> switch on the command
+   line to the client.
+  </para>
+  <important>
+   <para>
+    <indexterm><primary>stub classes</></indexterm>
+    Because the RMI registry caches <quote>stub</> classes, it must be
+    restarted after a new version of jEdit is installed. If you don't
+    do so, the RMI interface might fail with a <quote>version mismatch</>
+    error.
+   </para>
+  </important>
+ </sect1>
+ <sect1 id=anchor><title>The Anchor</>
+  <para>
+   <indexterm><primary>moving the caret</>
+    <secondary>between predefined locations</></indexterm>
+   <indexterm><primary>selecting</>
+    <secondary>long ranges of text</></indexterm>
+   <indexterm><primary>selection</></indexterm>
+   The <firstterm>anchor</> is a floating marker that can be used
+   for navigating around long buffers and selecting long ranges
+   of text. Each buffer has its own anchor. If text is inserted or
+   deleted before the anchor, it will move appropriately; it
+   <firstterm>floats</>.
+  </para>
+  <para>
+   <indexterm><primary>Set Anchor command</></indexterm>
+   <indexterm><primary>Anchor Operations menu</></indexterm>
+   <indexterm><primary>Edit menu</></indexterm>
+   <guimenu>Edit</>&gt;<guisubmenu>Anchor Operations</>&gt;<guimenuitem>Set Anchor</>
+   (keyboard equivalent: <keycombo><keycap>Control</><keycap>T</></keycombo>)
+   will move the anchor to the caret position.
+  </para>
+  <indexterm><primary>Go to Anchor command</></indexterm>
+  <para>
+   <guimenu>Edit</>&gt;<guisubmenu>Anchor Operations</>&gt;<guimenuitem>Go to Anchor</>
+   (keyboard equivalent: <keycombo><keycap>Control</><keycap>Y</></keycombo>) will
+   return the caret to the anchor position (ie, it will return the caret
+   to where it was when
+   <keycombo><keycap>Control</><keycap>T</></keycombo> was pressed).
+   This will beep if the anchor is not set.
+  </para>
+  <para>
+   <indexterm><primary>Select to Anchor command</></indexterm>
+   <guimenu>Edit</>&gt;<guisubmenu>Anchor Operations</>&gt;<guimenuitem>Select to Anchor</>
+   (keyboard equivalent: <keycombo><keycap>Control</><keycap>U</></keycombo>) will
+   select from the anchor position to the caret position. This will
+   beep if the anchor is not set.
+  </para>
+  <para>
+   <indexterm><primary>Exchange Anchor and Caret command</></indexterm>
+   <guimenu>Edit</>&gt;<guisubmenu>Anchor Operations</>&gt;<guimenuitem>Exchange Anchor and Caret</>
+   (keyboard equivalent: <keycombo><keycap>Control</><keycap>K</></keycombo>) will
+   swap the caret and anchor position. This will beep if the anchor is
+   not set. This is useful for repeatedly jumping between two
+   positions.
+  </para>
+ </sect1>
+ <sect1 id=markers><title>Markers</>
+  <para>
+   <indexterm><primary>Unix</></indexterm>
+   <indexterm><primary>.filename.marks file</></indexterm>
+   <indexterm><primary>markers</></indexterm>
+   A marker is a named location in a buffer. There can be any number
+   of markers defined. Markers are preserved across editing sessions;
+   markers for file <filename>filename</> are saved to
+   <filename>.filename.marks</>. The dot prefix is necessary to make
+   the file hidden on Unix systems.
+  </para>
+  <para>
+   Markers are always stored sorted according to their position in the
+   buffer. Combined with the fact that they are saved across editing
+   sessions, this makes them very useful for marking chapters in a book,
+   etc.
+  </para>
+  <para>
+   <indexterm><primary>Set Marker command</></indexterm>
+   <indexterm><primary>Search menu</></indexterm>
+   <indexterm><primary>selection</></indexterm>
+   <guimenu>Search</>&gt;<guimenuitem>Set Marker</> (keyboard equivalent:
+   <keycombo><keycap>Control</><keycap>M</></keycombo>) will prompt for
+   a marker name (the default being the selected text) and set a
+   marker at the caret position.
+  </para>
+  <para>
+   <indexterm><primary>moving the caret</><secondary>to a
+   marker</></indexterm>
+   <indexterm><primary>Go to Marker menu</></indexterm>
+   The <guimenu>Search</>&gt;<guisubmenu>Go to Marker</> menu lists all
+   markers defined in the current buffer. Selecting a marker will move the
+   caret to that marker.
+  </para>
+  <para>
+   <indexterm><primary>Clear Marker menu</></indexterm>
+   The <guimenu>Search</>&gt;<guisubmenu>Clear Marker</> menu lists all
+   markers defined in the current buffer. Selecting a marker will delete
+   it from the buffer.
+  </para>
+ </sect1>
+ <sect1 id=modes><title>Edit Modes</>
+  <indexterm><primary>syntax highlighting</></indexterm>
+  <indexterm><primary>auto indent</></indexterm>
+  <indexterm><primary>edit modes</></indexterm>
+  <para>
+   Because it is impossible to provide optimal editing for all types of
+   files at once, jEdit provides various <firstterm>edit modes</>. An edit mode
+   is an editor configuration suitable for editing a specific
+   type of file. Edit modes can specify syntax highlighting, auto indent,
+   and various other settings for editing a file type.
+  </para>
+  <sect2><title>Automatic Mode Selection</>
+   <para>
+    <indexterm><primary>file name extensions</></indexterm>
+    When a file is opened, jEdit uses various techniques to guess the
+    most appropriate edit mode. First of all, it checks the file's
+    <quote>extension</> (the part after the last period, if there is
+    one). For example, files whose names end with
+    <quote>.c</> are edited in C mode. Then, it checks the entire
+    <emphasis>file name</> against a list of known file names. For
+    example, a file named <quote>CONFIG.SYS</> will be
+    edited in DOS INI mode. Finally, the first line of the file is
+    checked. For example, if the first line of
+    a file is <quote>#!/bin/sh</>, (signifying a Unix shell script)
+    the file will be edited in Shell Script mode.
+   </para>
+  </sect2>
+  <sect2><title>Manually Setting the Edit Mode</>
+   <indexterm><primary>buffer-local properties</>
+   <secondary>mode</></indexterm>
+   <para>
+    If none of those techniques are appropriate, the edit mode can
+    be specified manually. To set the current buffer's edit mode
+    on a one-time basis, select the edit mode in the
+    <guimenu>File</>&gt;<guimenuitem>Buffer Options</> dialog box;
+    see <xref linkend=buffer-opts>.
+    To have a buffer open with a specific edit mode every time,
+    set the <quote>mode</> buffer-local property to the
+    <firstterm>internal</> name of the desired edit mode by placing
+    the following text in one of the first 10 lines of the buffer:
+    <screen>
+:mode=<replaceable>edit mode</>:
+    </screen>
+    The internal names of edit modes are listed in the following
+    table.
+   </para>
+  </sect2>
+  <sect2><title>Available Edit Modes</>
+   <table><title>Table of edit modes</>
+    <tgroup cols=3>
+     <colspec colnum=1 colwidth=1.5in>
+     <colspec colnum=2 colwidth=1.5in>
+     <thead>
+      <row>
+       <entry>Mode name</>
+       <entry>Internal name</>
+       <entry>Comments</>
+      </row>
+     </thead>
+     <tbody>
+      <row>
+       <entry>Text</>
+       <entry>text</>
+       <entry>Default edit mode. Does nothing special.</>
+      </row>
+      <row>
+       <entry>AMS-TeX</>
+       <entry>amstex</>
+       <entry>AMS-TeX edit mode. Automatically selected for files for files
+       with extension <quote>.tex</>  that
+       contain <quote>\documentclass</> but not <quote>\begin</>
+       in the first 100 lines. Otherwise exactly the same as TeX mode.
+       </entry>
+      </row>
+      <row>
+       <entry>Batch File</>
+       <entry>bat</>
+       <entry>MS-DOS Batch File edit mode. Automatically selected for
+       files with extension <quote>.bat</>. Performs batch file
+       syntax highlighting.</entry>
+      </row>
+      <row>
+       <entry>C</>
+       <entry>c</>
+       <entry>C source code edit mode. Automatically selected for
+       files with extension <quote>.c</> or <quote>.h</>. Performs
+       C syntax highlighting and enables automatic curly bracket
+       indent. Also the underscore (<quote>_</>) is not treated as
+       a word separator by the <guimenuitem>Expand Abbreviation</>
+       command and when double-clicking to select words.</entry>
+      </row>
+      <row>
+       <entry>C++</>
+       <entry>cc</>
+       <entry>C++ source code edit mode. Automatically selected for
+       files with a variety of C++ extensions. Performs
+       C++ syntax highlighting and enables automatic curly bracket
+       indent. Also the underscore (<quote>_</>) is not treated as
+       a word separator by the <guimenuitem>Expand Abbreviation</>
+       command and when double-clicking to select words.</entry>
+      </row>
+      <row>
+       <entry>HTML</>
+       <entry>html</>
+       <entry>HTML source code edit mode. Automatically selected for
+       files with extension <quote>.html</>, <quote>.shtml</> or <quote>.htm</>.
+       Performs HTML syntax highlighting (and JavaScript highlighting inside
+       <command>&lt;script&gt;</> tags).</entry>
+      </row>
+      <row>
+       <entry>Java</>
+       <entry>java</>
+       <entry>Java source code edit mode. Automatically selected for
+       files with extension <quote>.java</>. Performs
+       Java syntax highlighting and enables automatic curly bracket
+       indent. Also the underscore (<quote>_</>) is not treated as
+       a word separator by the <guimenuitem>Expand Abbreviation</>
+       command and when double-clicking to select words.</entry>
+      </row>
+      <row>
+       <entry>JavaScript</>
+       <entry>javascript</>
+       <entry>JavaScript source code edit mode. Automatically selected for
+       files with extension <quote>.js</>. Performs
+       JavaScript syntax highlighting and enables automatic curly bracket
+       indent. Also the underscore (<quote>_</>) is not treated as
+       a word separator by the <guimenuitem>Expand Abbreviation</>
+       command and when double-clicking to select words.</entry>
+      </row>
+      <row>
+       <entry>LaTeX</>
+       <entry>latex</>
+       <entry>LaTeX edit mode. Automatically selected for files with
+       extension <quote>.tex</> that
+       contain <quote>\documentclass</> and <quote>\begin</>
+       in the first 100 lines. Otherwise exactly the same as TeX mode.
+       </entry>
+      </row>
+      <row>
+       <entry>Makefile</>
+       <entry>make</>
+       <entry>Makefile edit mode. Automatically selected for files named
+       <quote>Makefile</> or <quote>GNUmakefile</>. Performs Makefile
+       syntax highlighting.
+       </entry>
+      </row>
+      <row>
+       <entry>Patch/DIFF</>
+       <entry>patch</>
+       <entry>Edit mode for Unix diffs and patches. Automatically selected
+       for files with extension <quote>.diff</> or <quote>.patch</>.
+       Performs patch syntax highlighting (lines are highlighted differently
+       if they start with <quote>+</>, <quote>-</>, or one of the other
+       patch commands).
+       </entry>
+      </row>
+      <row>
+       <entry>Perl</>
+       <entry>perl</>
+       <entry>Perl edit mode. Automatically selected for files with
+       extension <quote>.pl</> or <quote>.pm</>. Performs Perl syntax
+       highlighting (but it's not perfect yet; namely, multi line matches
+       are not yet properly highlighted).
+       </entry>
+      </row>
+      <row>
+       <entry>Properties/INI</>
+       <entry>props</>
+       <entry>Java property file and MS-DOS INI edit mode. Automatically
+       selected for files with extension <quote>.props</> or <quote>.ini</>,
+       and files named <quote>config.sys</> or <quote>properties</>.
+       Performs property syntax highlighting (name/value pairs are
+       highlighted).
+       </entry>
+      </row>
+      <row>
+       <entry>Shell Script</>
+       <entry>sh</>
+       <entry>Unix shell script edit mode. Automatically selected for files
+       with extension <quote>.sh</>, and files whose first line is
+       <quote>#!</> followed by one of the various Unix shell names.
+       Performs shell syntax highlighting.
+       </entry>
+      </row>
+      <row>
+       <entry>TeX</>
+       <entry>tex</>
+       <entry>TeX edit mode. Automatically selected for files with
+       extension <quote>.tex</> that do not contain AMS-TeX and
+       LaTeX specific commands in the first 100 lines. Performs TeX
+       syntax highlighting.
+       </entry>
+      </row>
+      <row>
+       <entry>Transact-SQL</>
+       <entry>tsql</>
+       <entry>Transact-SQL edit mode. Automatically selected for files with
+       extension <quote>.tsql</> or <quote>.sql</>. Performs
+       Transact-SQL syntax highlighting.
+       </entry>
+      </row>
+     </tbody>
+    </tgroup>
+   </table>
+  </sect2>
+ </sect1>
+ <sect1 id=misc-commands><title>Miscellaneous Commands</>
+  <para>
+   Over time, jEdit has accumulated a number of miscellaneous commands that
+   defy categorization, yet are useful in some circumstances. This section
+   will describe them.
+  </para>
+  <sect2><title>Open Selection</>
+   <para>
+    <indexterm><primary>Open Selection command</></indexterm>
+    <indexterm><primary>File menu</></indexterm>
+    <indexterm><primary>selection</></indexterm>
+    <guimenu>File</>&gt;<guimenuitem>Open Selection</> opens the file or
+    URL specified by the selected text. If there is no selection, it will
+    beep.
+   </para>
+  </sect2>
+  <sect2><title>Word Count</>
+   <para>
+    <indexterm><primary>Word Count command</></indexterm>
+    <indexterm><primary>File menu</></indexterm>
+    <guimenu>File</>&gt;<guimenuitem>Word Count</> (keyboard equivalent:
+    <keycap>F2</>) displays a dialog box with the number of characters,
+    words and lines in the current buffer. A word is a string of text
+    delimited by spaces.
+   </para>
+   <figure><title>The word count dialog box</>
+    <graphic fileref=dialog-wordcount></>
+   </figure>
+  </sect2>
+  <sect2><title>Inserting Predefined Strings</>
+   <para>
+    <indexterm><primary>Paste Predefined command</></indexterm>
+    <indexterm><primary>Edit menu</></indexterm>
+    <guimenu>Edit</>&gt;<guimenuitem>Paste Predefined</> (keyboard
+    equivalent: <keycap>F6</>) displays the paste predefined dialog box.
+    The paste predefined dialog box can be used for inserting frequently
+    used strings.
+   </para>
+   <itemizedlist>
+    <listitem><para><guibutton>Insert</> inserts the currently selected
+    clip at the caret position and closes the dialog box. Double-clicking
+    on a clip has the same effect.</para></listitem>
+    <listitem><para><guibutton>Add</> displays a dialog box where a clip
+    can be entered, and adds it to the list.</para></listitem>
+    <listitem><para><guibutton>Remove</> removes the currently selected
+    clip.</para></listitem>
+    <listitem><para><guibutton>Edit</> displays a dialog box where the
+    currently selected clip can be edited.</para></listitem>
+    <listitem><para><guibutton>Cancel</> closes the dialog box. Any
+    changes made to the clippings are saved, even if you cancel.</para>
+    </listitem>
+   </itemizedlist>
+  </sect2>
+  <sect2><title>Line Related Commands</>
+   <para>
+    <indexterm><primary>Delete to Start of Line command</></indexterm>
+    <indexterm><primary>Line Operations menu</></indexterm>
+    <indexterm><primary>deleting</><secondary>to the start
+    of the line</></indexterm>
+    <guimenu>Edit</>&gt;<guisubmenu>Line Operations</>&gt;<guimenuitem>Delete to
+    Start of Line</> (keyboard equivalent: <keycombo><keycap>Control</><keycap>D</></keycombo>
+    <keycombo><keycap>Control</><keycap>S</></keycombo>) deletes from the
+    start of the current line to the caret position.
+   </para>
+   <para>
+    <indexterm><primary>Delete to End of Line command</></indexterm>
+    <indexterm><primary>deleting</><secondary>to the end
+    of the line</></indexterm>
+    <guimenu>Edit</>&gt;<guisubmenu>Line Operations</>&gt;<guimenuitem>Delete to
+    End of Line</> (keyboard equivalent: <keycombo><keycap>Control</><keycap>D</></keycombo>
+    <keycombo><keycap>Control</><keycap>F</></keycombo>) deletes from the
+    caret position to the end of the current line.
+   </para>
+   <para>
+    <indexterm><primary>Join Lines command</></indexterm>
+    <indexterm><primary>joining lines</></indexterm>
+    <guimenu>Edit</>&gt;<guisubmenu>Line Operations</>&gt;<guimenuitem>Join
+    Lines</> (keyboard equivalent: <keycombo><keycap>Control</><keycap>J</></keycombo>)
+    removes any whitespace from the start of the next line and joins the
+    current and next lines. This will beep if the caret is on the last
+    line of the buffer. For example, if the caret is on the first line
+    of the following example Java code:
+    <screen>new Widget(Foo
+        .createDefaultFoo());</screen>
+    <guimenuitem>Join Lines</> will change it to:
+    <screen>new Widget(Foo.createDefaultFoo());</screen>
+   </para>
+   <para>
+    <indexterm><primary>scrolling</></indexterm>
+    <indexterm><primary>Scroll to Line command</></indexterm>
+    <guimenu>Edit</>&gt;<guisubmenu>Line Operations</>&gt;<guimenuitem>Scroll
+    to Current Line</> (keyboard equivalent: <keycombo><keycap>Control</><keycap>E</></keycombo>
+    <keycombo><keycap>Control</><keycap>J</></keycombo>) centers
+    the current line on the screen.
+   </para>
+  </sect2>
+  <sect2><title>Text Manipulation Commands</>
+   <indexterm><primary>selection</></indexterm>
+   <para>
+    <indexterm><primary>To Uppercase command</></indexterm>
+    <guimenu>Edit</>&gt;<guimenuitem>To Uppercase</> converts the current
+    selection to upper case.
+   </para>
+   <para>
+    <indexterm><primary>To Lowercase command</></indexterm>
+    <guimenu>Edit</>&gt;<guimenuitem>To Lowercase</> converts the current
+    selection to lower case.
+   </para>
+   <para>
+    <indexterm><primary>Format command</></indexterm>
+    <indexterm><primary>filling paragraphs</></indexterm>
+    <indexterm><primary>formatting text</></indexterm>
+    <indexterm><primary>buffer-local properties</>
+    <secondary>maxLineLen</></indexterm>
+    <guimenu>Edit</>&gt;<guimenuitem>Format Text</> (keyboard equivalent:
+    <keycombo><keycap>Control</><keycap>E</></keycombo>
+    <keycombo><keycap>Control</><keycap>F</></keycombo>) fills all paragraphs
+    in the selection to a specified text width. The text width
+    can be changed using buffer-local properties by placing the
+    following in the first 10 lines of the buffer:
+    <screen>:maxLineLen=<replaceable>width</>:
+    </screen>
+    Where <replaceable>width</> is the width, the default being 72.
+   </para>
+   <para>
+    <indexterm><primary>Insert Date command</></indexterm>
+    <guimenu>Edit</>&gt;<guimenuitem>Insert Date</> inserts the current
+    date and time at the caret position.
+   </para>
+  </sect2>
+  <sect2><title>Dynamic Abbreviation Expansion</>
+   <para>
+    <indexterm><primary>Expand Abbreviation command</></indexterm>
+    <guimenu>Edit</>&gt;<guimenuitem>Expand Abbreviation</> (keyboard
+    equivalent:
+    <keycombo><keycap>Control</><keycap>B</></keycombo>) attempts to
+    compete the current word by scanning backwards in the buffer for
+    other words beginning with the current word. This can be used to
+    complete long identifiers in program source, for example.
+   </para>
+   <para>
+    <indexterm><primary>buffer-local properties</>
+    <secondary>noWordSep</></indexterm>
+    A word is defined as a string of alphanumeric characters, and
+    any non-alphanumeric characters listed in the <quote>noWordSep</>
+    buffer-local property. For example, to expand words containing
+    hyphens (<quote>-</>), place the following in the first 10 lines of
+    the buffer:
+    <screen>
+:noWordSep=-:
+    </screen>
+   </para>
+  </sect2>
+ </sect1>
+</chapter>
+
+<chapter id=source-edit><title>Source Code Editing</>
+ <para>
+  Most often, a text editor is used to edit files with some sort
+  of structure, like program source code, or HTML, TeX, and so on.
+  jEdit has several features for making this easier, including
+  commenting commands, various indentation features, bracket
+  matching, and syntax highlighting.
+ </para>
+ <sect1 id=commenting><title>Commenting Out Code</>
+  <indexterm><primary>selection</></indexterm>
+  <para>
+   Most programming languages support <quote>comments</>, or regions of
+   code which are ignored by the compiler/interpreter. jEdit has several
+   commands which make commenting out code slightly easier.
+  </para>
+  <sect2><title>Wing Comments</>
+   <para>
+    <indexterm><primary>Wing Comment command</></indexterm>
+    <indexterm><primary>Code Block Operations menu</></indexterm>
+    <indexterm><primary>Edit menu</></indexterm>
+    <indexterm><primary>buffer-local properties</>
+    <secondary>commentStart</></indexterm>
+    <indexterm><primary>buffer-local properties</>
+    <secondary>commentEnd</></indexterm>
+    <guimenu>Edit</>&gt;<guisubmenu>Code Block Operations</>&gt;<guimenuitem>Wing Comment</>
+    (keyboard equivalent: <keycombo><keycap>Control</><keycap>E</></keycombo>
+    <keycombo><keycap>Control</><keycap>C</></keycombo>) will enclose the
+    selection with comment start and end strings. An example of C++
+    wing commented code looks like so:
+    <screen>/* Process *proc = Process::getThisProcess();
+proc-&gt;getMainThread()-&gt;postMessage(msg);
+proc-&gt;getThread("__gui")-&gt;sendPulse(P_WAKE_UP); */</screen>
+    The strings used for wing commenting can be changed using buffer-local
+    properties. For example, placing the following in the first 10 lines
+    of a buffer will change the wing comment characters to <quote>(*</> and
+    <quote>*)</>:
+    <screen>:commentStart=(*:commentEnd=*):</screen>
+   </para>
+  </sect2>
+  <sect2><title>Box Comments</>
+   <para>
+    <indexterm><primary>Box Comment command</></indexterm>
+    <indexterm><primary>buffer-local properties</>
+    <secondary>commentStart</></indexterm>
+    <indexterm><primary>buffer-local properties</>
+    <secondary>commentEnd</></indexterm>
+    <indexterm><primary>buffer-local properties</>
+    <secondary>boxComment</></indexterm>
+    <guimenu>Edit</>&gt;<guisubmenu>Code Block Operations</>&gt;<guimenuitem>Box Comment</>
+    (keyboard equivalent: <keycombo><keycap>Control</><keycap>E</></keycombo>
+    <keycombo><keycap>Control</><keycap>K</></keycombo>) will enclose the
+    selection with comment start and end strings, and places the box
+    comment string at the start of each line. An example of C++
+    box commented code looks like so:
+    <screen>/* Process *proc = Process::getThisProcess();
+* proc-&gt;getMainThread()-&gt;postMessage(msg);
+* proc-&gt;getThread("__gui")-&gt;sendPulse(P_WAKE_UP); */</screen>
+    The strings used for box commenting can be changed using buffer-local
+    properties. For example, placing the following in the first 10 lines
+    of a buffer will change the box comment characters to <quote>(*</> and
+    <quote>*</>), with <quote>(-</> placed at the start of each line:
+    <screen>:commentStart=(*:commentEnd=*):boxComment=(-:</screen>
+   </para>
+  </sect2>
+  <sect2><title>Block Comments</>
+   <para>
+    <indexterm><primary>Block Comment command</></indexterm>
+    <indexterm><primary>buffer-local properties</>
+    <secondary>blockComment</></indexterm>
+    <guimenu>Edit</>&gt;<guisubmenu>Code Block Operations</>&gt;<guimenuitem>Block Comment</>
+    (keyboard equivalent: <keycombo><keycap>Control</><keycap>E</></keycombo>
+    <keycombo><keycap>Control</><keycap>B</></keycombo>) will place the
+    block comment character at the start of each line in the selection.
+    An example of C++ block commented code looks like so:
+    <screen>
+// Process *proc = Process::getThisProcess();
+// proc-&gt;getMainThread()-&gt;postMessage(msg);
+// proc-&gt;getThread("__gui")-&gt;sendPulse(P_WAKE_UP);
+    </screen>
+    The string used for block commenting can be changed using buffer-local
+    properties. For example, placing the following in the first 10 lines
+    of a buffer will change the box comment characters to <quote>--</>:
+    <screen>
+:blockComment=--:
+    </screen>
+   </para>
+  </sect2>
+ </sect1>
+ <sect1 id=indent><title>Tabbing and Indentation</>
+  <para>
+   A <firstterm>tab</> is a special character that moves the caret to
+   the next tab stop. Many programming languages rely
+   on tabs to indent lines of source depending on how deeply they
+   are nested in the code. jEdit has several features that make
+   tabs and indentation easier to deal width.
+  </para>
+  <sect2><title>Changing the Tab Width</>
+   <indexterm><primary>buffer-local properties</>
+   <secondary>tabSize</></indexterm>
+   <indexterm><primary>tab width</></indexterm>
+   <para>
+    Many believe that the One True Tab Size is 8, others think that
+    all code should be indented with a tab width of 4, and the GNU
+    Project refuses to accept code with a tab width of anything but 2.
+   </para>
+   <para>
+    There are three ways to change the tab size:
+    <itemizedlist>
+     <listitem><para>The tab size can be changed on a global basis in
+     the Editor tab of the <guimenu>File</>&gt;<guimenuitem>Global Options</> dialog box;
+     see <xref linkend=global-opts>.</para></listitem>
+     <listitem><para>The tab size can be changed in the current buffer
+     for the duration of the editing session in the
+     <guimenu>File</>&gt;<guimenuitem>Buffer Options</> dialog box;
+    see <xref linkend=buffer-opts>.
+     </para></listitem>
+     <listitem><para>The tab size can be changed in the current buffer
+     for future editing sessions by setting the <quote>tabSize</>
+     buffer-local property to the desired tab size, by placing the
+     following in the first 10 lines of the buffer:
+     <screen>:tabSize=<replaceable>n</>:</screen>
+     Where <replaceable>n</> is of course the desired tab size.
+     </para></listitem>
+    </itemizedlist>
+   </para>
+  </sect2>
+  <sect2><title>Soft Tabs</>
+   <para>
+    <indexterm><primary>soft tabs</></indexterm>
+    <indexterm><primary>buffer-local properties</>
+    <secondary>noTabs</></indexterm>
+    Some people prefer using multiple spaces to indent code, instead of
+    <quote>real</> tabs. The main advantage of this is that
+    the file will still be readable if viewed with a different default
+    tab size. jEdit supports this with its <quote>Soft Tabs</>
+    feature. If the <keycap>Tab</> key is pressed with soft tabs enabled,
+    the number of spaces necessary to move the caret to the next tab
+    stop will be inserted, instead of a <quote>real</> tab.
+   </para>
+   <para>
+    There are three ways to use soft tabs:
+    <itemizedlist>
+     <listitem><para>Soft tabs can be selected on a global basis in the
+     Editor tab of the <guimenu>File</>&gt;<guimenuitem>Global Options</>
+     dialog box; see <xref linkend=global-opts>.</para></listitem>
+     <listitem><para>Soft tabs can be enabled in the current buffer for
+     the duration of the editing session in the
+     <guimenu>File</>&gt;<guimenuitem>Buffer Options</> dialog box;
+    see <xref linkend=buffer-opts>.
+     </para></listitem>
+     <listitem><para>Soft tabs can be selected in the current buffer for
+     future editing sessions by setting the <command>noTabs</> buffer-local
+     property to <quote>yes</>, by placing the following in the first
+     10 lines of the file, where <replaceable>flag</> is either
+     <command>yes</> or <command>no</>:
+     <screen>:noTabs=<replaceable>flag</>:</screen>
+     </para></listitem>
+    </itemizedlist>
+   </para>
+  </sect2>
+  <sect2><title>Indentation-Related Commands</>
+  <indexterm><primary>selection</></indexterm>
+   <para>
+    <indexterm><primary>Go to End Indent command</></indexterm>
+    <indexterm><primary>Line Operations menu</></indexterm>
+    <indexterm><primary>Edit menu</></indexterm>
+    <guimenu>Edit</>&gt;<guisubmenu>Line Operations</>&gt;<guisubmenu>Go to End Indent</>
+    (keyboard equivalent: <keycombo><keycap>Control</><keycap>I</></keycombo>)
+    will move the caret to the first non-whitespace character of the current
+    line.
+   </para>
+   <para>
+    <indexterm><primary>Shift Indent Left command</></indexterm>
+    <guimenu>Edit</>&gt;<guisubmenu>Code Block Operations</>&gt;<guisubmenu>Shift Indent Left</>
+    (keyboard equivalent: <keycombo><keycap>Alt</><keycap>Left Arrow</></keycombo>)
+    will delete one level of indent (a tab, or the number of spaces equivalent
+    to a tab) from the start of the current line, or every line in the
+    selection.
+   </para>
+   <para>
+    <indexterm><primary>Shift Indent Right command</></indexterm>
+    <guimenu>Edit</>&gt;<guisubmenu>Code Block Operations</>&gt;<guisubmenu>Shift Indent Right</>
+    (keyboard equivalent: <keycombo><keycap>Alt</><keycap>Right Arrow</></keycombo>)
+    will add one level of indent (a tab, or the number of spaces equivalent
+    to a tab if soft tabs are enabled) to the start of the current line,
+    or every line in the selection.
+   </para>
+   <para>
+    <indexterm><primary>soft tabs</></indexterm>
+    <indexterm><primary>Spaces to Tabs command</></indexterm>
+    <guimenu>Edit</>&gt;<guisubmenu>Spaces to Tabs</>
+    (keyboard equivalent: <keycombo><keycap>Control</><keycap>E</></keycombo>
+    <keycombo><keycap>Control</><keycap>T</></keycombo>) will convert
+    consecutive spaces to tabs in the selection, or the whole buffer if
+    no selection is active.
+   </para>
+   <para>
+    <indexterm><primary>soft tabs</></indexterm>
+    <indexterm><primary>Tabs to Spaces command</></indexterm>
+    <guimenu>Edit</>&gt;<guisubmenu>Tabs to Spaces</>
+    (keyboard equivalent: <keycombo><keycap>Control</><keycap>E</></keycombo>
+    <keycombo><keycap>Control</><keycap>U</></keycombo>) will convert
+    tabs to soft tabs (multiple spaces) in the selection, or the whole buffer
+    if no selection is active.
+   </para>
+  </sect2>
+  <sect2><title>Automatic Indent</>
+   <indexterm><primary>buffer-local properties</>
+   <secondary>indentOnEnter</></indexterm>
+   <indexterm><primary>buffer-local properties</>
+   <secondary>indentOnTab</></indexterm>
+   <indexterm><primary>buffer-local properties</>
+   <secondary>indentOpenBrackets</></indexterm>
+   <indexterm><primary>buffer-local properties</>
+   <secondary>indentCloseBrackets</></indexterm>
+   <para>
+    Pressing <keycap>Tab</> or <keycap>Space</> at the start of every
+    line to create the appropriate indent is very tedious, so jEdit has
+    an auto indent feature.
+   </para>
+   <para>
+    If indent on enter is enabled, pressing the <keycap>Enter</> key
+    will create a new line, and insert the appropriate amount of
+    indent automatically. This is similar to the way
+    <application>VIM</> performs indentation.
+   </para>
+   <para>
+    If indent on tab is enabled, pressing the <keycap>Tab</> key on
+    an unindented line will insert the appropriate amount of
+    indentation. Pressing it again will insert a tab (or a soft tab).
+    This is similar to the way <application>emacs</> performs
+    indentation.
+   </para>
+   <para>
+    By default, indent on enter is disabled and indent on tab is
+    enabled. There are three ways to specify when indentation should be
+    performed:
+    <itemizedlist>
+     <listitem><para>Indent on enter and tab can be set on a global
+     basis in the Editor tab of the <guimenu>File</>&gt;<guimenuitem>Global Options</>
+     dialog box; see <xref linkend=global-opts>.</para></listitem>
+     <listitem><para>Indent on enter and tab can be set in the
+     current buffer for the duration of the editing session in the
+     <guimenu>File</>&gt;<guimenuitem>Buffer Options</> dialog box;
+    see <xref linkend=buffer-opts>.
+     </para></listitem>
+     <listitem><para>Indent on enter and tab can be set in the
+     current buffer for future editing sessions using buffer-local
+     properties by placing the following in the first 10 lines of a buffer:
+     <screen>:indentOnEnter=<replaceable>flag</>:indentOnTab=<replaceable>flag</>:</screen>
+     Where <replaceable>flag</> is either <quote>on</> or <quote>off</>.
+     </para></listitem>
+    </itemizedlist>
+   </para>
+   <para>
+    The amount of indentation is mode-specific. In most edit modes,
+    it is always the indent of the previous line. However, in C, C++,
+    Java and JavaScript modes, if the previous line contains an open
+    curly bracket (<quote>{</>), an extra tab (or soft tab) is inserted.
+    Similarly, if the <emphasis>current</> line contains a
+    closing curly bracket (<quote>}</>), a level of indentation is
+    removed.
+   </para>
+   <para>
+    The indentation brackets can be changed using buffer-local properties.
+    When editing Lisp code, you might try placing the following in the
+    first 10 lines of the buffer:
+    <screen>:indentOpenBrackets=(:indentCloseBrackets=):</screen>
+   </para>
+  </sect2>
+ </sect1>
+ <sect1 id=bracket-matching><title>Bracket Matching</>
+  <indexterm><primary>bracket matching</></indexterm>
+  <indexterm><primary>Locate Bracket command</></indexterm>
+  <indexterm><primary>Edit menu</></indexterm>
+  <indexterm><primary>selecting</><secondary>a code block</></indexterm>
+  <indexterm><primary>Select Code Block command</></indexterm>
+  <indexterm><primary>Code Block Operations menu</></indexterm>
+  <para>
+   Misplaced and unmatched brackets are one of the most common syntax
+   errors encountered when writing code. jEdit has several features
+   which make brackets easier to deal with.
+  </para>
+  <para>
+   If the caret is in front of a bracket, the matching
+   one is displayed with a border (assuming it is visible on the
+   screen). The bracket highlight color can be changed in the
+   Colors &amp; Styles tab of the <guimenu>File</>&gt;<guimenuitem>Global
+   Options</> dialog box; see <xref linkend=global-opts>.
+   Bracket highlighting can be disabled
+   in the Editor tab of the <guimenu>File</>&gt;<guimenuitem>Global Options</>
+   dialog box; see <xref linkend=global-opts>.
+  </para>
+  <para>
+   <guimenu>Edit</>&gt;<guimenuitem>Locate Bracket</> (keyboard
+   equivalent: <keycombo><keycap>Control</><keycap>]</></keycombo>)
+   will move the caret to the bracket matching the one before the caret.
+  </para>
+  <para>
+   <guimenu>Edit</>&gt;<guisubmenu>Code Block Operations</>&gt;<guimenuitem>Select Code Block</>
+   (keyboard equivalent: <keycombo><keycap>Control</><keycap>[</></keycombo>)
+   will select the code block containing the caret. A code block is defined
+   as a bracket-delimited range of text. Pressing this with a code block
+   already selected will select the next outer code block.
+  </para>
+  <para>
+   Double clicking on a bracket will also select the code block it
+   delimits.
+  </para>
+  <figure><title>Bracket highlighting in action</>
+   <graphic fileref=window-editor-bracket></>
+  </figure>
+ </sect1>
+ <sect1 id=syntax-hilite><title>Syntax Highlighting</>
+  <indexterm><primary>buffer-local properties</>
+  <secondary>syntax</></indexterm>
+  <indexterm><primary>syntax highlighting</></indexterm>
+  <para>
+   Syntax highlighting is the display of various syntax tokens using a
+   different text style or color. All jEdit edit modes except for
+   the Plain Text mode perform syntax highlighting.
+  </para>
+  <para>
+   The colors and styles used to highlight syntax tokens can be changed
+   in the Colors &amp; Styles tab of the <guimenu>File</>&gt;<guimenuitem>Global Options</>
+   dialog box; see <xref linkend=global-opts>.
+  </para>
+  <para>
+   Syntax highlighting can be enabled or disabled in one of
+   the following three ways:
+   <itemizedlist>
+    <listitem><para>Syntax highlighting can be specified on a global basis in the
+    Editor tab of the <guimenu>File</>&gt;<guimenuitem>Global Options</>
+    dialog box;
+    see <xref linkend=global-opts>.</para></listitem>
+    <listitem><para>Syntax highlighting can be specified in the current buffer
+    for the duration of the editing session in the
+    <guimenu>File</>&gt;<guimenuitem>Buffer Options</> dialog box;
+    see <xref linkend=buffer-opts>.
+    </para></listitem>
+    <listitem><para>Syntax highlighting can be specified in the current buffer
+    for future editing sessions with buffer-local properties by placing
+    the following in the first 10 lines of the buffer:
+    <screen>:syntax=off:</screen>
+    If syntax highlighting is disabled, it can be enabled just for that
+    buffer by substituting <quote>off</> with <quote>on</>.
+    </para></listitem>
+   </itemizedlist>
+  </para>
+  <figure><title>Syntax highlighting in action</>
+   <graphic fileref=window-editor-syntax></>
+  </figure>
+ </sect1>
+</chapter>
+
+<chapter id=search-replace><title>Search and Replace</>
+ <para>
+  jEdit has a very powerful search and replace system. It supports
+  multi-file searching and regular expressions, and also a
+  <command>grep</>-like <quote>HyperSearch</> feature. This chapter
+  will cover it in detail.
+ </para>
+ <sect1 id=search-replace-dlog><title>The Search and Replace Dialog Box</>
+  <para>
+   <indexterm><primary>selection</></indexterm>
+   <indexterm><primary>Find command</></indexterm>
+   <indexterm><primary>Search menu</></indexterm>
+   <indexterm><primary>history text fields</></indexterm>
+   <indexterm><primary>multiple file search and replace</></indexterm>
+   <indexterm><primary>regular expressions</></indexterm>
+   <guimenu>Search</>&gt;<guimenuitem>Find</>
+   (keyboard equivalent: <keycombo><keycap>Control</><keycap>F</>
+   </keycombo>) displays the search and replace dialog box.
+  </para>
+  <itemizedlist>
+   <listitem><para>The desired search string can be entered in the
+   <guibutton>Find:</> field. This field supports a history; see
+   <xref linkend=history> for details.</para></listitem>
+   <listitem><para>The desired replacement string can be entered in the
+   <guibutton>Replace With:</> field. This field supports a history;
+   see <xref linkend=history> for details.
+   </para></listitem>
+   <listitem><para>If the <guibutton>Keep Dialog</guibutton> check box
+   is selected, the find dialog box will remain open until it is explicitly
+   closed. Otherwise,
+   it will be closed after a successful search or replace operation.
+   </para></listitem>
+   <listitem<para>If the <guibutton>Regular Expression</> check box
+   is selected, regular expressions can be used to match
+   inexact sequences of text; see <xref linkend=regexps>.
+   </para></listitem>
+   <listitem><para>If the <guibutton>Ignore Case</> check box is selected,
+   the search will be case insensitive; entering
+   <quote>Hello</> in the search field will locate <quote>hello</>,
+   <quote>HELLO</>, and <quote>HeLlO</>
+   </para></listitem>
+   <listitem><para>If the
+   <guibutton>Multi File</> check box, multi file searching will be enabled.
+   For more information
+   about multi-file searching, see <xref linkend=multifile>.
+   </para></listitem>
+   <listitem><para>Clicking <guibutton>Find</guibutton> or pressing
+   <keycap>Enter</> will begin the search. If the search string
+   is found, the next occurrence will be selected. If the search
+   was unsuccessful, a dialog box will prompt if the search should
+   start from the beginning of the buffer (or file set if multi-file
+   searching is enabled).
+   </para></listitem>
+   <listitem><para>Clicking <guibutton>Replace in Selection</>
+   will replace all occurrences of the search string with
+   the replacement string in the selected text. This will beep
+   if there is no selection or if it doesn't contain the search
+   string.
+   </para></listitem>
+   <listitem><para>Clicking <guibutton>Replace All</>
+   will replace all occurrences of the search string with
+   the replacement string, spanning multiple buffers if
+   multi file search is enabled. This will beep
+   if the search string could not be found.
+   </para></listitem>
+   <listitem><para>Clicking <guibutton>Cancel</> will close the search
+   and replace dialog box.</para></listitem>
+  </itemizedlist>
+  <figure><title>The search and replace dialog box</title>
+   <graphic fileref=dialog-search></>
+  </figure>
+ </sect1>
+ <sect1 id=hypersearch-dlog><title>The HyperSearch Dialog Box</>
+  <indexterm><primary>HyperSearch command</></indexterm>
+  <indexterm><primary>Search menu</></indexterm>
+  <indexterm><primary>history text fields</></indexterm>
+  <indexterm><primary>multiple file search and replace</></indexterm>
+  <indexterm><primary>regular expressions</></indexterm>
+   <para>
+   The HyperSearch feature works in a similar fashion to the
+   Unix <command>grep</> command - it lists all lines that
+   contain a specific string.
+  </para>
+  <para>
+   <guimenu>Search</>&gt;<guimenuitem>HyperSearch</> (keyboard equivalent:
+   <keycap>F7</>) displays the HyperSearch dialog box.
+  </para>
+  <itemizedlist>
+   <listitem><para>
+    The desired search string can be entered in the
+    <guibutton>Find:</> field. This field supports a history;
+    see <xref linkend=history> for details.
+   </para></listitem>
+   <listitem><para>
+    If the <guibutton>Regular Expression</> check box is selected,
+    regular expressions can be used to match inexact sequences of text;
+    see <xref linkend=regexps>.
+   </para></listitem>
+   <listitem><para>
+    If the <guibutton>Ignore Case</> check box is
+    selected, the search will be case insensitive; entering
+    <quote>Hello</> in the search field will locate <quote>hello</>,
+    <quote>HELLO</>, and <quote>HeLlO</>
+   </para></listitem>
+   <listitem><para>
+    If the <guibutton>Multi File</> check box is selected, multi file
+    searching will be enabled. For more information
+    about multi-file searching, see <xref linkend=multifile>.
+   </para></listitem>
+   <listitem><para>
+    Clicking <guibutton>Find All</guibutton> or pressing
+    <keycap>Enter</> will list all occurrences of the search
+    string. If no occurrences were found, this will beep.
+   </para></listitem>
+   <listitem><para>Clicking <guibutton>Cancel</> will close the
+   HyperSearch dialog box.</para></listitem>
+  </itemizedlist>
+  <para>
+   Once a search has been performed, the results list displays
+   all matching lines. Clicking on a line will open the buffer
+   where it was found and move the caret to the specified line.
+  </para>
+  <figure><title>The HyperSearch dialog box</>
+   <graphic fileref=dialog-hypersearch></>
+  </figure>
+ </sect1>
+ <sect1 id=history><title>History Text Fields</>
+  <para>
+   <indexterm><primary>history text fields</></indexterm>
+   The text fields in the Search and Replace and HyperSearch dialog
+   boxes remember the last 25 strings entered into them.
+  </para>
+  <para>
+   Previous strings can be recalled by pressing
+   <keycap>Up Arrow</>. If you have backtracked in the history list,
+   <keycap>Down Arrow</> can be used to recall later strings.
+  </para>
+  <para>
+   Pressing <keycombo><keycap>Control</><keycap>Up Arrow</></keycombo>
+   or <keycombo><keycap>Control</><keycap>Down Arrow</></keycombo>
+   will search backwards or forwards, respectively, for strings
+   beginning with the text already entered in the text field. For
+   example, if <quote>Th</> is already entered, and the
+   strings <quote>Three</>, <quote>They</> and
+   <quote>Them</> were previously entered, pressing
+   <keycombo><keycap>Control</><keycap>Up Arrow</></keycombo>
+   would first recall <quote>Three</>, then <quote>They</>,
+   and so on.
+  </para>
+  <para>
+   Clicking the text field with the right mouse button will display
+   a pop-up menu of all previously entered strings; selecting one will
+   input it into the text field. Holding down <keycap>Control</>
+   while clicking will display a menu of all previously entered
+   strings that begin with the text already entered; this works
+   similarly to holding down <keycap>Control</> with the arrow
+   keys.
+  </para>
+ </sect1>
+ <sect1 id=multifile><title>Searching in Multiple Files</>
+  <para>
+   <indexterm><primary>Multifile Search Settings command</></indexterm>
+   <indexterm><primary>Search menu</></indexterm>
+   <indexterm><primary>multiple file search and replace</></indexterm>
+   jEdit has the ability to search and replace in multiple files.
+   To enable multi-file searching, open the Multi File Search
+   Settings dialog box, by clicking the <guibutton>Multi File</>
+   button in the search and replace or HyperSearch dialog box, or
+   by selecting <guimenuitem>Multifile Search Settings</> from
+   the <guimenu>Search</> menu (keyboard equivalent: <keycap>F9</>).
+  </para>
+  <para>
+   Once you have selected the appropriate buffer set and clicked
+   <guibutton>OK</>, any subsequent search and replace operations
+   will be performed on all specified buffers.
+  </para>
+  <warning>
+   <para>
+    <indexterm><primary>Undo command</></indexterm>
+    <indexterm><primary>Edit menu</></indexterm>
+    The <guimenuitem>Undo</> command only undoes editing
+    done in the current buffer. If a multi-file replace has been
+    performed, <guimenuitem>Undo</> will have to be invoked in multiple
+    buffers to fully reverse any changes.
+   </para>
+  </warning>
+  <figure><title>The Multi File Search Settings dialog box</>
+   <graphic fileref=dialog-multifile></>
+  </figure>
+ </sect1>
+</chapter>
+
+<chapter id=customizing><title>Customizing jEdit</>
+ <para>
+  There are many settings and flags that can be changed, on a global
+  or per-buffer basis. This chapter deals with the Buffer Options
+  dialog box, the Global Options dialog box, and buffer-local properties.
+ </para>
+ <sect1 id=buffer-opts><title>The Buffer Options Dialog Box</>
+  <indexterm><primary>Buffer Options command</></indexterm>
+  <indexterm><primary>File menu</></indexterm>
+  <indexterm><primary>edit modes</></indexterm>
+  <indexterm><primary>line separator</></indexterm>
+  <indexterm><primary>auto indent</></indexterm>
+  <indexterm><primary>tab width</></indexterm>
+  <para>
+   <guimenu>File</>&gt;<guimenuitem>Buffer Options</> displays the
+   buffer options dialog box where per-buffer settings can be changed.
+   Any changes made in this dialog box are lost when the buffer is
+   closed and reopened; it can be used to temporarily test various
+   settings or use a different edit mode. See the next section for a
+   way to change settings for future editing sessions.
+  </para>
+  <figure><title>The Buffer Options dialog box</>
+   <graphic fileref=dialog-bufferopts></>
+  </figure>
+ </sect1>
+ <sect1 id=buffer-local><title>Buffer-Local Properties</>
+  <para>
+   The Buffer Options dialog box only changes settings
+   for the duration of the editing session. It is also possible to
+   change settings for all future editing sessions using buffer-local
+   properties.
+  </para>
+  <para>
+   When jEdit loads a file, it checks the first 10 lines for
+   colon-enclosed name/value pairs. The following example
+   will set the tab size to 8 characters, enable soft tabs, and set
+   the default edit mode of the file to Perl:
+   <screen>:noTabs=yes:tabSize=8:mode=perl:</screen>
+   Buffer-local properties take effect the next time the file is opened.
+   The following table lists all valid properties.
+   <!-- can't have index terms in table cells... -->
+   <indexterm><primary>buffer-local properties</><secondary>blockComment</></indexterm>
+   <indexterm><primary>buffer-local properties</><secondary>boxComment</></indexterm>
+   <indexterm><primary>buffer-local properties</><secondary>commentEnd</></indexterm>
+   <indexterm><primary>buffer-local properties</><secondary>commentStart</></indexterm>
+   <indexterm><primary>buffer-local properties</><secondary>indentOnEnter</></indexterm>
+   <indexterm><primary>buffer-local properties</><secondary>indentOnTab</></indexterm>
+   <indexterm><primary>buffer-local properties</><secondary>indentOpenBrackets</></indexterm>
+   <indexterm><primary>buffer-local properties</><secondary>indentCloseBrackets</></indexterm>
+   <indexterm><primary>buffer-local properties</><secondary>maxLineLen</></indexterm>
+   <indexterm><primary>buffer-local properties</><secondary>mode</></indexterm>
+   <indexterm><primary>buffer-local properties</><secondary>noTabs</></indexterm>
+   <indexterm><primary>buffer-local properties</><secondary>noWordSep</></indexterm>
+   <indexterm><primary>buffer-local properties</><secondary>syntax</></indexterm>
+   <indexterm><primary>buffer-local properties</><secondary>tabSize</></indexterm>
+  </para>
+  <table><title>Table of buffer-local properties</>
+   <tgroup cols=2>
+    <colspec colnum=1 colwidth=1.5in>
+    <thead>
+     <row>
+      <entry>Property name</>
+      <entry>Description</>
+     </row>
+    </thead>
+    <tbody>
+     <row>
+      <entry>blockComment</>
+      <entry>The block comment character(s). A block comment is one that
+      extends to the end of the line. For example, in Java mode the
+      default value is <quote>//</>. See <xref linkend=commenting>.</entry>
+     </row>
+     <row>
+      <entry>boxComment</>
+      <entry>The box comment character(s). A box comment is one delimited
+      by the wing comment characters, but with the box comment character
+      also at the start of each line. For example, in Java mode the
+      default value is <quote>*</>. See <xref linkend=commenting>.</entry>
+     </row>
+     <row>
+      <entry>commentEnd</>
+      <entry>The wing comment end character(s). For example, in Java mode
+      the default value is <quote>*/</>. See <xref linkend=commenting>.</entry>
+     </row>
+     <row>
+      <entry>commentStart</>
+      <entry>The wing comment start character(s). For example, in Java mode
+      the default value is <quote>/*</>. See <xref linkend=commenting>.</entry>
+     </row>
+     <row>
+      <entry>indentOnEnter</>
+      <entry>If set to <quote>on</>, indentation will be performed when
+      the <keycap>Enter</> key is pressed. See <xref linkend=indent>.</entry>
+     </row>
+     <row>
+      <entry>indentOnTab</>
+      <entry>If set to <quote>on</>, indentation will be performed when
+      the <keycap>Tab</> key is pressed. See <xref linkend=indent>.</entry>
+     </row>
+     <row>
+      <entry>indentOpenBrackets</>
+      <entry>A list of characters (usually brackets) that add indent to
+      the <emphasis>next line</>. For example, in Java mode the default value is
+      <quote>{</>. See <xref linkend=indent>.</entry>
+     </row>
+     <row>
+      <entry>indentCloseBrackets</>
+      <entry>A list of characters (usually brackets) that subtract indent from
+      the <emphasis>current</> line. For example, in Java mode the default value is
+      <quote>}</>. See <xref linkend=indent>.</entry>
+     </row>
+     <row>
+      <entry>maxLineLen</>
+      <entry>The maximum line length, in characters, used by the
+      <guimenuitem>Format</> command.</entry>
+     </row>
+     <row>
+      <entry>mode</>
+      <entry>The default edit mode for the buffer. The <emphasis>internal</>
+      name of the desired mode must be used. See <xref linkend=modes>.</entry>
+     </row>
+     <row>
+      <entry>noTabs</>
+      <entry>If set to <quote>yes</>, soft tabs (multiple space characters)
+      will be used instead of <quote>real</> tabs. See <xref linkend=indent>.</entry>
+     </row>
+     <row>
+      <entry>noWordSep</>
+      <entry>A list of non-alphanumeric characters that are not to
+      be treated as word separators. For example, in Java mode the
+      default value is <quote>_</> because the underscore can be used
+      in Java identifiers, and it is useful to be able to select
+      and expand them in one operation.</entry>
+     </row>
+     <row>
+      <entry>syntax</>
+      <entry>If set to <quote>on</>, syntax highlighting will be performed.
+      See <xref linkend=syntax-hilite>.</entry>
+     </row>
+     <row>
+      <entry>tabSize</>
+      <entry>The tab width, in characters. This must be an integer.
+      See <xref linkend=indent>.</entry>
+     </row>
+    </tbody>
+   </tgroup>
+  </table>
+ </sect1>
+ <sect1 id=global-opts><title>The Global Options Dialog Box</>
+  <indexterm><primary>Global Options command</></indexterm>
+  <indexterm><primary>File menu</></indexterm>
+  <para>
+   <guimenu>File</>&gt;<guimenuitem>Global Options</> displays the
+   global options dialog box. A whole slew of settings can be
+   customized here. The dialog box is divided into several tabs,
+   each tab containing some of related settings.
+  </para>
+  <sect2><title>The General Tab</>
+   <indexterm><primary>line separator</></indexterm>
+   <indexterm><primary>backups</></indexterm>
+   <indexterm><primary>autosave</></indexterm>
+   <para>
+    The <guibutton>General</> tab allows you to change general settings
+    such as the Swing look and feel, default line separator, backups and
+    autosave, the maximum size of history lists, and global flags such as
+    if window and dialog position saving should be enabled.
+   </para>
+   <figure><title>The General tab of the Global Options dialog box</>
+    <graphic fileref=dialog-options-general></>
+   </figure>
+  </sect2>
+  <sect2><title>The Editor Tab</>
+   <indexterm><primary>tab width</></indexterm>
+   <indexterm><primary>auto indent</></indexterm>
+   <para>
+    The <guibutton>Editor</> tab allows you to change settings used by
+    the text area, such as the font, various indentation flags, and
+    so on.
+   </para>
+   <figure><title>The Editor tab of the Global Options dialog box</>
+    <graphic fileref=dialog-options-editor></>
+   </figure>
+  </sect2>
+  <sect2 id=options-shortcuts><title>The Shortcuts Tab</>
+  <indexterm><primary>keyboard shortcuts</>
+  <secondary>customizing</></indexterm>
+   <para>
+    The <guibutton>Shortcuts</> tab allows you to change jEdit's key
+    bindings. To change a key binding, click in the cell next to its
+    name.
+   </para>
+   <para>
+    Internally, jEdit stores key bindings in the form
+    <replaceable>modifiers</>+<replaceable>key</> where <replaceable>modifiers</>
+    is a list of modifiers, with C being Control, A being Alt, and S being
+    Shift. <replaceable>key</> is either an alphanumeric character, or a
+    named key stroke such as <keycap>PAGE_UP</>. A full list of named
+    key strokes is available in the API documentation for the
+    <filename>java.awt.event.KeyEvent</> class.
+   </para>
+   <para>
+    jEdit also allows multiple keystroke bindings; for example,
+    <guimenuitem>Open URL</> is bound to <keycap>C+e C+o</>. Any number
+    of keystrokes can be present in a key binding.
+   </para>
+   <para>
+    Changes to the key bindings take effect immediately after the key
+    binding editor is closed, but the menu item labels are not updated
+    in currently opened views.
+   </para>
+   <figure><title>The Shortcuts tab of the Global Options dialog box</>
+    <graphic fileref=dialog-options-shortcuts></>
+   </figure>
+  </sect2>
+  <sect2><title>The Colors &amp; Styles Tab</>
+   <indexterm><primary>syntax highlighting</></indexterm>
+   <indexterm><primary>text area</></indexterm>
+   <para>
+    The <guibutton>Colors &amp; Styles</> tab allows you to change various
+    colors used by the text area, and the text styles used by syntax
+    highlighting. Clicking on a color or style will display the appropriate
+    editor for changing it.
+   </para>
+   <figure><title>The Colors &amp; Styles tab of the Global Options dialog box</>
+    <graphic fileref=dialog-options-styles></>
+   </figure>
+  </sect2>
+ </sect1>
+ <sect1 id=property-files><title>Property Files</>
+  <indexterm><primary>property files</></indexterm>
+  <para>
+   Internally, jEdit stores all settings, user-visible strings, and
+   so on in <firstterm>property files</>. A property file is a list of
+   name/value pairs. jEdit keys on specific names to fetch their values.
+  </para>
+  <para>
+   <indexterm><primary>.jedit/properties file</></indexterm>
+   When jEdit starts, it loads various property files from the
+   <filename>jedit.jar</> file, followed by any property files in
+   plugins. Finally, it loads the user-specific settings from
+   <filename>.jedit/properties</> in the user's home directory.
+  </para>
+  <para>
+   All changes made in the options (as well as various transient
+   settings) are saved to the user properties. Other property files
+   are never modified, only read. Therefore, to return jEdit to the
+   default settings, delete the user properties file.
+  </para>
+  <para>
+   The format of property files is described in the API documentation
+   for the <filename>java.util.Properties</> class.
+  </para>
+  <note>
+   <para>
+    <indexterm><primary>.jedit/history file</></indexterm>
+    The <filename>.jedit</> directory also contains the <filename>history</>
+    file, which stores data for history text fields.
+   </para>
+  </note>
+ </sect1>
+</chapter>
+
+<chapter id=plugins><title>Installing and Using Plugins</>
+ <para>
+  jEdit supports plugins, loadable modules of code that extend the
+  editor's functionality. This chapter covers installation and usage
+  of plugins; information on developing plugins will be provided in
+  a later release of this documentation.
+ </para>
+ <sect1 id=installing-plugins><title>Installing Plugins</>
+  <indexterm><primary>.jedit/jars directory</></indexterm>
+  <indexterm><primary>JAR (Java Archive) files</></indexterm>
+  <para>
+   When jEdit starts up, it prints a number of messages detailing the
+   plugin load process.
+   <screen>Scanning directory: /usr/local/share/jedit-2.0pre8/jars
+Scanning JAR file: /usr/local/share/jedit-2.0pre8/jars/LatestVersion.jar
+Scanning directory: /home/slava/.jedit/jars
+Scanning JAR file: /home/slava/.jedit/jars/Console.jar
+Scanning JAR file: /home/slava/.jedit/jars/WWWBrowser.jar
+Loaded successfully: LatestVersionPlugin
+Loaded successfully: ConsolePlugin
+Loaded successfully: WWWBrowserPlugin</screen>
+   jEdit scans two directories for plugins on startup;
+   the system-wide plugin directory, where plugins that are to be available
+   to all users can be placed, and the other is the user-specific plugin
+   directory, where plugins for a specific user can be placed.
+  </para>
+  <para>
+   Plugins are distributed as ZIP or GZipped TAR files. Uncompressing
+   them will result in a JAR file named <filename><replaceable>Plugin</>.jar</>,
+   and a directory named by the plugin. The JAR file can be made available
+   for jEdit by moving it into one of the two plugin directories. The
+   directory contains source code for the plugin, which isn't necessary
+   for normal usage.
+  </para>
+ </sect1>
+ <sect1 id=depend-errors><title>Dependency Errors</>
+  <indexterm><primary>internal version number</></indexterm>
+  <indexterm><primary>build number</></indexterm>
+  <indexterm><primary>dependency errors</></indexterm>
+  <para>
+   If jEdit detects that the plugin requires some capability
+   that is not currently available, a
+   <quote>dependency error</> will be printed.
+   <screen>Dependency check failed: LatestVersionPlugin
+The following is required to use this plugin:
+        JDK version >= 1.1
+        jEdit version >= 02.00.99.01</screen>
+   This is a simple example; some plugins might not only depend on
+   a jEdit and JDK version, but also other plugins and class libraries.
+   Two things to note about the dependency display is that all
+   dependencies are displayed, not just the unsatisfied ones, and also
+   that the jEdit version is shown in <firstterm>internal</> form, also
+   known as the <firstterm>build</>.
+   The first number in the internal form is the major version number.
+   The second number is the minor version number.
+   The third number is the pre-release number;
+   99 means a <quote>final version</>. The fourth number is the bug fix
+   release. So the version number in the example is <quote>2.0.1</>.
+   (but jEdit 2.0.1 doesn't exist yet...)
+   As another example, the internal version <quote>01.06.05.00</>
+   corresponds to jEdit version <quote>1.6pre5</>.
+  </para>
+ </sect1>
+ <sect1 id=using-plugins><title>Using Plugins</>
+  <indexterm><primary>Plugins menu</></indexterm>
+  <indexterm><primary>Plugin Options command</></indexterm>
+  <indexterm><primary>File menu</></indexterm>
+  <indexterm><primary>Help Contents command</></indexterm>
+  <indexterm><primary>Help menu</></indexterm>
+  <para>
+   Exactly how a plugin can be used of course depends on the plugin. The
+   first place to look in should probably be the plugin's help; plugins
+   with documentation are listed in the online help, which can be opened
+   by selecting <guimenu>Help</>&gt;<guimenuitem>Help Contents</>. Some
+   plugins might not have any documentation, however.
+  </para>
+  <para>
+   Most plugins add submenus or menu items to the <guimenu>Plugins</> menu.
+   Some plugins with options that can be changed add tabs to the
+   <guimenu>File</>&gt;<guimenuitem>Plugin Options</> dialog box.
+  </para>
+ </sect1>
+</chapter>
+
+<chapter id=developing-plugins><title>Developing Plugins</>
+ <para>
+  This chapter overviews jEdit plugin development. A knowlege
+  of Java is assumed. Because plugins can call all Java APIs and do a
+  rather large number of things, describing all the things that can be done
+  is out of the scope of this manual; only the basics are covered here.
+ </para>
+ <para>
+  Another source of information about plugin development is the jEdit
+  API documentation, which can be viewed through the help system, or
+  by opening <filename>doc/api/packages.html</> in a WWW browser.
+ </para>
+ <sect1 id=jar-files><title>JAR Files</>
+ <indexterm><primary>JAR (Java Archive) files</></indexterm>
+ <indexterm><primary>property files</></indexterm>
+  <para>
+   Recall that jEdit loads plugins from JAR files. JARs are Java Archives,
+   created with the <filename>jar</> tool. Documentation for <filename>jar</>
+   can be found in the JDK.
+  </para>
+  <para>
+   jEdit only loads two types of entries from JARs - property files and
+   classes. Property files must have a filename extension <quote>.props</>.
+   They are loaded and added to jEdit's property list. Java class files
+   are loaded on demand.
+  </para>
+  <para>
+   All other types of entries are ignored. They can be loaded using the
+   standard Java resource loading methods (<filename>getResource()</>
+   and friends).
+  </para>
+ </sect1>
+ <sect1 id=plugin-properties><title>Properties</>
+  <indexterm><primary>internal version number</></indexterm>
+  <indexterm><primary>build number</></indexterm>
+  <indexterm><primary>property files</></indexterm>
+  <indexterm><primary>dependency errors</></indexterm>
+  <indexterm><primary>plugin properties</><secondary>plugin.<replaceable>plugin</>.name</></indexterm>
+  <indexterm><primary>plugin properties</><secondary>plugin.<replaceable>plugin</>.version</></indexterm>
+  <indexterm><primary>plugin properties</><secondary>plugin.<replaceable>plugin</>.author</></indexterm>
+  <indexterm><primary>plugin properties</><secondary>plugin.<replaceable>plugin</>.docs</></indexterm>
+  <indexterm><primary>plugin properties</><secondary>plugin.<replaceable>plugin</>.depend.<replaceable>n</></></indexterm>
+  <indexterm><primary>classes</><secondary>org.gjt.sp.jedit.Plugin</></indexterm>
+  <indexterm><primary>classes</><secondary>org.gjt.sp.jedit.jEdit</></indexterm>
+  <indexterm><primary>methods</><secondary>getProperty() of jEdit class</></indexterm>
+  <indexterm><primary>methods</><secondary>setProperty() of jEdit class</></indexterm>
+  <indexterm><primary>methods</><secondary>setDefaultProperty() of jEdit class</></indexterm>
+  <para>
+   All files with extension <filename>.props</> are loaded into jEdit's
+   property list. Properties can be fetched with the various
+   <filename>getProperty()</> methods of the <filename>org.gjt.sp.jedit.jEdit</>
+   class. Properties set with the <filename>setProperty()</> method will
+   be saved to the user properties file; those set with <filename>setDefaultProperty()</>
+   will not.
+  </para>
+  <para>
+   Certain properties are fetched by jEdit to obtain information about
+   plugins. Currently, these informational properties are only used by
+   the help system (all the properties must be specified for the plugin
+   to appear in the help). In these properties, <replaceable>plugin</> is
+   the class name of the Plugin instance:
+  </para>
+  <itemizedlist>
+   <listitem><para>
+    <filename>plugin.<replaceable>plugin</>.name</filename>: the human-readable
+    name of this plugin
+   </para></listitem>
+   <listitem><para>
+    <filename>plugin.<replaceable>plugin</>.version</filename>: the version
+    number of this plugin
+   </para></listitem>
+   <listitem><para>
+    <filename>plugin.<replaceable>plugin</>.author</filename>: the author
+    of this plugin
+   </para></listitem>
+   <listitem><para>
+    <filename>plugin.<replaceable>plugin</>.docs</filename>: a filename
+    relative to the root of the plugin JAR where documentation for this
+    plugin can be found. This should be an HTML document
+   </para></listitem>
+  </itemizedlist>
+  <para>
+   Plugin dependencies are also specified using properties. jEdit checks
+   properties named <filename>plugin.<replaceable>plugin</>.depend.<replaceable>n</>
+   </filename>, where <replaceable>n</> is a number, starting from 0. All
+   dependencies must be numbered in a continuous sequence. Dependency
+   entries consist of the dependency class, followed by an argument.
+   The supported dependency classes are:
+  </para>
+  <itemizedlist>
+   <listitem><para>
+    <filename>jedit</>: the argument is the internal
+    version of jEdit that this plugin requires. See <xref linkend=depend-errors>
+    for information about the internal version number.
+   </para></listitem>
+   <listitem><para>
+    <filename>jdk</>: the argument is the JDK version required by this
+    plugin. Currently, this can only be 1.1 or 1.2.
+   </para></listitem>
+   <listitem><para>
+    <filename>class</>: the argument is the full name of a class required
+    for this plugin to work. This can be used to ensure that a certain class
+    library is installed, by adding a <filename>class</> entry with one
+    of the classes from that library.
+   </para></listitem>
+  </itemizedlist>
+  <para>
+   A sample dependency entry for a plugin that requires JDK 1.1, jEdit 2.0pre8
+   and an XML parser is as follows:
+  </para>
+  <programlisting>plugin.SamplePlugin.depend.0=jdk 1.1
+plugin.SamplePlugin.depend.1=jedit 02.00.08.00
+plugin.SamplePlugin.depend.2=class com.microstar.xml.XmlReader</programlisting>
+ </sect1>
+ <sect1 id=plugin-interface><title>The Plugin Interface</>
+  <indexterm><primary>classes</><secondary>org.gjt.sp.jedit.Plugin</></indexterm>
+  <indexterm><primary>methods</><secondary>start() of Plugin interface</></indexterm>
+  <indexterm><primary>methods</><secondary>stop() of Plugin interface</></indexterm>
+  <para>
+   When a JAR is being loaded, all classes whose names end with
+   <quote>Plugin</> and that implement the <filename>org.gjt.sp.jedit.Plugin</>
+   interface are added to jEdit's plugin list.
+  </para>
+  <para>
+   The plugin interface is defined as follows:
+  </para>
+  <programlisting>public interface Plugin
+{
+        public abstract void start();
+        public abstract void stop();
+}</programlisting>
+  <para>
+   <filename>start()</> is called for each plugin at the very end of
+   jEdit's startup sequence. Commands and edit modes should be registered
+   in the <filename>start()</> method, and other startup tasks should be
+   performed. The <filename>stop()</> method is called before jEdit
+   exits. Usually nothing needs to be done in that method.
+  </para>
+ </sect1>
+ <sect1 id=writing-commands><title>Writing New Commands</>
+  <indexterm><primary>views</></indexterm>
+  <indexterm><primary>buffers</></indexterm>
+  <indexterm><primary>keyboard shortcuts</>
+  <secondary>in plugins</></indexterm>
+  <indexterm><primary>Plugins menu</></indexterm>
+  <indexterm><primary>plugin properties</><secondary><replaceable>action</>.label</></indexterm>
+  <indexterm><primary>plugin properties</><secondary><replaceable>action</>.shortcut</></indexterm>
+  <indexterm><primary>classes</><secondary>org.gjt.sp.jedit.EditAction</></indexterm>
+  <indexterm><primary>classes</><secondary>org.gjt.sp.jedit.jEdit</></indexterm>
+  <indexterm><primary>methods</><secondary>addAction() of jEdit class</></indexterm>
+  <indexterm><primary>methods</><secondary>addPluginAction() of jEdit class</></indexterm>
+  <indexterm><primary>methods</><secondary>addPluginMenu() of jEdit class</></indexterm>
+  <indexterm><primary>methods</><secondary>getName() of EditAction class</></indexterm>
+  <indexterm><primary>methods</><secondary>actionPerformed() of EditAction class</></indexterm>
+  <indexterm><primary>methods</><secondary>getView() of EditAction class</></indexterm>
+  <indexterm><primary>methods</><secondary>getBuffer() of EditAction class</></indexterm>
+  <indexterm><primary>methods</><secondary>start() of Plugin class</></indexterm>
+  <para>
+   Each jEdit command is an instance of a class extending
+   <filename>org.gjt.sp.jedit.EditAction</>. The EditAction class is defined
+   as follows:
+  </para>
+  <programlisting>public class EditAction implements ActionListener
+{
+        public EditAction(String name);
+        public String getName();
+        public abstract void actionPerformed(ActionEvent evt);
+        public static View getView(ActionEvent evt);
+        public static Buffer getBuffer(ActionEvent evt);
+}</programlisting>
+  <para>
+   The constructor must be passed a name for this edit action. The
+   <filename>getName()</> method can be used to obtain it. The
+   <filename>actionPerformed()</> method is called when the action is
+   invoked, either from the keyboard or with mouse. It can call
+   the <filename>getView()</> and <filename>getBuffer()</> methods,
+   passing them the action event, to obtain the view and buffer that
+   the action was invoked from.
+  </para>
+  <para>
+   The following properties are fetched by jEdit to obtain information
+   about edit actions, where <replaceable>action</> is the name of the
+   action in question:
+  </para>
+  <itemizedlist>
+   <listitem><para>
+    <filename><replaceable>action</>.label</>: the menu item label for
+    this action. If a dollar sign (<quote>$</>) appears in the string,
+    the next character becomes the menu item mnemonic. The dollar sign
+    does not appear in the menu item label, but the next character
+    does.
+   </para></listitem>
+   <listitem><para>
+    <filename><replaceable>action</>.shortcut</>: (optional) the keyboard
+    shortcut for this action. The format of keyboard shortcuts is
+    described in <xref linkend=options-shortcuts>. Specifying keyboard
+    shortcuts in plugins is discouraged; a future jEdit release may
+    use those keys for its own commands.
+   </para></listitem>
+  </itemizedlist>
+  <para>
+   Plugin edit actions must be registered with jEdit to appear in the
+   <guimenu>Plugins</> menu. If you want the action be be a menu item
+   in the <guimenu>Plugins</> menu, call the <filename>addPluginAction()</>
+   method of the <filename>org.gjt.sp.jedit.jEdit</> class.
+  </para>
+  <para>
+   To add a submenu with multiple menu items in it, first define a
+   property with a list of actions, and a property with the menu label.
+   An example:
+  </para>
+  <programlisting>sample-menu=action-1 - action-2 action-3
+sample-menu.label=Sample Plugin Menu</programlisting>
+  <para>
+   Note that <quote>-</> can be used to insert a separator.
+   Then in the plugin's <filename>start()</> method, call
+   <filename>addAction()</> (<emphasis>not</> <filename>addPluginAction()</>)
+   for each action, followed by
+   <filename>addPluginMenu()</> with the name of the menu property.
+   An example:
+  </para>
+  <programlisting>public void start()
+{
+        jEdit.addAction(new action_1());
+        jEdit.addAction(new action_2());
+        jEdit.addAction(new action_3());
+        jEdit.addPluginMenu("sample-menu");
+}</programlisting>
+ <tip>
+  <para>
+   All jEdit edit actions have all-lowercase class names, with words
+   separated by underscores (<quote>_</>), and all-lowercase action
+   names, with words separated by dashes (<quote>-</>). It is best to
+   follow this convention in your own plugins.
+  </para>
+ </tip>
+ </sect1>
+ <sect1 id=plugin-views><title>Controlling Views</>
+  <para>
+   jEdit stores views as instances of the <filename>org.gjt.sp.jedit.View</>
+   class. Internally, they are stored in a link list, but plugins cannot
+   access the list directly.
+  </para>
+  <para>
+   The <filename>getView()</> method of the <filename>org.gjt.sp.jedit.EditAction</> class
+   takes one parameter, an event object fired from
+   a view. This method then walks the component hierarchy of the
+   event source and returns that view.
+   This is the most frequently used to get the view that invoked an action
+   in the <filename>actionPerformed()</>.
+  </para>
+  <para>
+   The <filename>getViews()</> method of the <filename>org.gjt.sp.jedit.jEdit</> class
+   is an alternative way to obtain a view to work with. It
+   returns an array of all open views.
+  </para>
+  <para>
+   Once you have a view instance, several methods can be used to operate on
+   that view. One of the most frequently used ones is
+   <filename>getTextArea()</> which returns the <filename>org.gjt.sp.jedit.textarea.JEditTextArea</>
+   instance in this view. The text area can be used to obtain the selection,
+   move the caret, etc.
+  </para>
+  <para>
+   The <filename>getBuffer()</> method returns the buffer being edited
+   by this view. The buffer instance can be used to make changes, save,
+   and so on.
+  </para>
+ </sect1>
+ <sect1 id=plugin-buffers><title>Controlling Buffers</>
+  <para>
+   jEdit stores buffers as instances of the <filename>org.gjt.sp.jedit.Buffer</>
+   class. Internally, they are stored in a link list, but plugins cannot
+   access that list directly.
+  </para>
+  <para>
+   The <filename>getBuffer()</> method of the <filename>org.gjt.sp.jedit.View</>
+   class returns the buffer being edited by that view.
+  </para>
+  <para>
+   The <filename>getBuffers()</> method of the <filename>org.gjt.sp.jedit.jEdit</>
+   class returns an array of all open buffers.
+  </para>
+  <para>
+   Because the Buffer class extends <filename>javax.swing.text.PlainDocument</>,
+   all the standard document methods such as <filename>insertString()</>
+   and <filename>remove()</>.
+  </para>
+ </sect1>
+ <sect1 id=plugin-events><title>The Event System</>
+  <para>
+   Not yet written.
+  </para>
+ </sect1>
+ <sect1 id=writing-modes><title>Writing New Edit Modes</>
+  <para>
+   Not yet written.
+  </para>
+ </sect1>
+</chapter>
+
+<appendix id=cli-usage><title>Command Line Usage</>
+ <para>
+  When jEdit is started, it opens any files specified on the
+  command line, and parses the options. An option is a command
+  line argument that begins with <quote>-</>. To open a file
+  whose name begins with <quote>-</>, specify <quote>--</> on
+  the command line before the file name. The <quote>--</>
+  switch makes jEdit ignore any remaining command line switches
+  and interpret them as file names.
+ </para>
+ <indexterm><primary>moving the caret</>
+ <secondary>to a marker</></indexterm>
+ <indexterm><primary>markers</></indexterm>
+ <para>
+  If a file name contains the hash (<quote>#</>) character, the
+  remainder of the file name after the hash will be the name of
+  the marker to move the caret to.
+ </para>
+ <indexterm><primary>RMI registry</></indexterm>
+ <indexterm><primary>command line</></indexterm>
+ <indexterm><primary>command line switches</>
+ <secondary>-version</></indexterm>
+ <indexterm><primary>command line switches</>
+ <secondary>-usage</></indexterm>
+ <indexterm><primary>command line switches</>
+ <secondary>-nosettings</></indexterm>
+ <indexterm><primary>command line switches</>
+ <secondary>-settings</></indexterm>
+ <indexterm><primary>command line switches</>
+ <secondary>-normi</></indexterm>
+ <indexterm><primary>command line switches</>
+ <secondary>-rmi</></indexterm>
+ <indexterm><primary>command line switches</>
+ <secondary>-wait</></indexterm>
+ <indexterm><primary>command line switches</>
+ <secondary>-quit</></indexterm>
+ <indexterm><primary>command line switches</>
+ <secondary>-nodesktop</></indexterm>
+ <indexterm><primary>command line switches</>
+ <secondary>-nosplash</></indexterm>
+ <indexterm><primary>command line switches</>
+ <secondary>-readonly</></indexterm>
+ <indexterm><primary>command line switches</>
+ <secondary>-+</></indexterm>
+ <indexterm><primary>command line switches</>
+ <secondary>--</></indexterm>
+ <indexterm><primary>moving the caret</>
+ <secondary>to a line number</></indexterm>
+ <table><title>Table of command line switches</>
+  <tgroup cols=2>
+   <colspec colnum=1 colwidth=1.5in>
+   <thead>
+    <row><entry>Switch</><entry>Description</></row>
+   </thead>
+   <tbody>
+    <row>
+     <entry>-nodesktop</>
+     <entry>If this switch is specified, jEdit will not open any files
+     from the last session. This switch is not usually used, because
+     the previously opened files are not opened if a file is
+     specified on the command line anyway. Session saving can be
+     disabled permanently in the <guimenu>File</>&gt;<guimenuitem>Global Options</>
+     dialog box; see <xref linkend=global-opts>. Has no effect when connecting to another instance.</entry>
+    </row>
+    <row>
+     <entry>-normi</>
+     <entry>Disables the RMI interface. Does not attempt to
+     connect to the RMI server, and does not start one either.
+     Can be used to force another instance of jEdit to start
+     if one is already running.</entry>
+    </row>
+    <row>
+     <entry>-nosettings</>
+     <entry>Starts jEdit without loading the user-specific settings
+     from <filename>$HOME/.jedit</>. This can be used if the
+     user-specific settings are corrupt, or if a plugin installed
+     in your plugins directory is causing problems. Has no effect
+     when connecting to another instance.</entry>
+    </row>
+    <row>
+     <entry>-nosplash</>
+     <entry>Starts jEdit without displaying the splash screen. This has
+     several uses; first of all, if you start jEdit from your
+     <filename>.xinitrc</> or whatever on Unix, it might be undesirable
+     for the splash screen to appear every time you log in. Another
+     reason this might be used is if you want jEdit to start slightly
+     faster (not much faster; about 500 ms). Has no effect
+     when connecting to another instance.</entry>
+    </row>
+    <row>
+     <entry>-readonly</>
+     <entry>Opens all files specified on the command line read only.</>
+    </row>
+    <row>
+     <entry>-rmi=<replaceable>name</></entry>
+     <entry>Registers the RMI interface under <replaceable>name</> in
+     the registry, instead of the default
+     <filename>org.gjt.sp.jedit/RemoteEditor/<replaceable>username</></filename>.
+     Can be used to start more than one instance of jEdit.</entry>
+    </row>
+    <row>
+     <entry>-settings=<replaceable>dir</></entry>
+     <entry>Loads and saves the user-specific settings from
+     the directory named <replaceable>dir</>, instead of the
+     default <filename>$HOME/.jedit</>. <replaceable>dir</> will
+     be created if it does not exist. Has no effect
+     when connecting to another instance.</entry>
+    </row>
+    <row>
+     <entry>-quit</>
+     <entry>Exits the currently running jEdit instance using RMI.
+     If not connecting to another instance this will cause jEdit
+     to exit immediately.</entry>
+    </row>
+    <row>
+     <entry>-wait</>
+     <entry>Usually when jEdit connects to another running instance, it
+     opens the specified files, and exits. This switch causes the
+     client instance to wait for the new view opened in the server
+     to be closed before exiting. Has no effect if not connecting
+     to another instance.</entry>
+    </row>
+    <row>
+     <entry>-usage</>
+     <entry>Prints a brief command line usage message and exits.
+     This is also shown if an invalid switch was specified.</>
+    </row>
+    <row>
+     <entry>-version</>
+     <entry>Prints the jEdit version number and exists.</>
+    </row>
+    <row>
+     <entry>-+<replaceable>line</></entry>
+     <entry>Moves the caret to line number <replaceable>line</> in the
+     <emphasis>last</> file specified on the command line. If multiple
+     line number switches are specified, only the last one takes effect.
+     There must not be a space between the switch and line number.
+     </entry>
+    </row>
+    <row>
+     <entry>--</>
+     <entry>Specifies the end of the command line switches. Further
+     parameters are treated as file names, even if they begin with
+     a dash. Can be used to open files whose names start with a
+     dash, for example.</entry>
+    </row>
+   </tbody>
+  </tgroup>
+ </table>
+</appendix>
+
+<appendix id=regexps><title>Regular Expressions</>
+ <indexterm><primary>regular expressions</></indexterm>
+ <para>
+  (This appendix is a slightly reformatted version of the
+  <command>gnu.regexp</> documentation.)
+ </para>
+ <para>
+  A regular expression consists of a character string where some
+  characters are given special meaning with regard to pattern matching.
+  Regular expressions have been in use from the early days of computing,
+  and provide a powerful and efficient way to parse, interpret and
+  search and replace text within an application.
+ </para>
+ <sect1 id=regexps-supported><title>Supported Syntax</>
+  <para>
+   Within a regular expression, the following characters have special meaning:
+  </para>
+  <itemizedlist>
+   <listitem><para><emphasis>Positional Operators</></para>
+    <itemizedlist>
+     <listitem><para><command>^</> matches at the beginning of a line</></listitem>
+     <listitem><para><command>$</> matches at the end of a line</></listitem>
+     <listitem><para><command>\A</> matches the start of the entire string</></listitem>
+     <listitem><para><command>\Z</> matches the end of the entire string</></listitem>
+    </itemizedlist>
+   </listitem>
+   <listitem><para><emphasis>One-Character Operators</></para>
+    <itemizedlist>
+     <listitem><para><command>.</> matches any single character</></listitem>
+     <listitem><para><command>\d</> matches any decimal digit</></listitem>
+     <listitem><para><command>\D</> matches any non-digit</></listitem>
+     <listitem><para><command>\n</> matches a newline character</></listitem>
+     <listitem><para><command>\r</> matches a return character</></listitem>
+     <listitem><para><command>\s</> matches any whitespace character</></listitem>
+     <listitem><para><command>\S</> matches any non-whitespace character</></listitem>
+     <listitem><para><command>\t</> matches a horizontal tab character</></listitem>
+     <listitem><para><command>\w</> matches any word (alphanumeric) character</></listitem>
+     <listitem><para><command>\W</> matches any non-word (alphanumeric)
+     character</></listitem>
+     <listitem><para><command>\<replaceable>x</></command> matches the
+     character</></listitem>
+     <listitem><para><replaceable>x</>, if <replaceable>x</> is not one of the above
+     listed escape sequences.</></listitem>
+    </itemizedlist>
+   </listitem>
+   <listitem><para><emphasis>Character Class Operator</></para>
+    <itemizedlist>
+     <listitem><para><command>[<replaceable>abc</>]</command> matches any character in
+     the set <replaceable>a</>, <replaceable>b</> or
+     <replaceable>c</></para></listitem>
+     <listitem><para><command>[^<replaceable>abc</>]</command> matches any character not
+     in the set <replaceable>a</>, <replaceable>b</> or
+     <replaceable>c</></para></listitem>
+     <listitem><para><command>[<replaceable>a-z</>]</command> matches any character in the
+     range <replaceable>a</> to <replaceable>z</>, inclusive.
+     A leading or trailing dash will be interpreted
+     literally.</para></listitem>
+    </itemizedlist>
+    <para>
+     Within a character class expression, the following sequences have special meaning:
+     <itemizedlist>
+      <listitem><para><command>[:alnum:]</> Any alphanumeric
+      character</para></listitem>
+      <listitem><para><command>[:alpha:]</> Any alphabetical character</para></listitem>
+      <listitem><para><command>[:blank:]</> A space or horizontal tab</para></listitem>
+      <listitem><para><command>[:cntrl:]</> A control character</para></listitem>
+      <listitem><para><command>[:digit:]</> A decimal digit</para></listitem>
+      <listitem><para><command>[:graph:]</> A non-space, non-control character</para></listitem>
+      <listitem><para><command>[:lower:]</> A lowercase letter</para></listitem>
+      <listitem><para><command>[:print:]</> Same as graph, but also space and tab</para></listitem>
+      <listitem><para><command>[:punct:]</> A punctuation character</para></listitem>
+      <listitem><para><command>[:space:]</> Any whitespace character, including newline and return</para></listitem>
+      <listitem><para><command>[:upper:]</> An uppercase letter</para></listitem>
+      <listitem><para><command>[:xdigit:]</> A valid hexadecimal digit</para></listitem>
+     </itemizedlist>
+    </para>
+   </listitem>
+   <listitem><para><emphasis>Subexpressions and Backreferences</></para>
+    <itemizedlist>
+     <listitem><para><command>(<replaceable>abc</>)</> matches whatever the expression
+     <replaceable>abc</> would match, and saves it as a subexpression.
+     Also used for grouping.</para></listitem>
+     <listitem><para><command>(?:<replaceable>...</>)</> pure grouping operator, does not
+     save contents</para></listitem>
+     <listitem><para><command>(?#<replaceable>...</>)</> embedded comment, ignored by
+     engine</para></listitem>
+     <listitem><para><command>\<replaceable>n</></> where 0 &lt; <replaceable>n</> &lt; 10,
+     matches the same thing the <replaceable>n</>th
+     subexpression matched.</para></listitem>
+    </itemizedlist>
+   </listitem>
+   <listitem><para><emphasis>Branching (Alternation) Operator</></para>
+    <itemizedlist>
+     <listitem><para><command><replaceable>a</>|<replaceable>b</></command> matches
+     whatever the expression <replaceable>a</> would match, or whatever
+     the expression <replaceable>b</> would match.</para></listitem>
+    </itemizedlist>
+   </listitem>
+   <listitem><para><emphasis>Repeating Operators</></para>
+    <para>
+     These symbols operate on the previous atomic expression.
+    </para>
+    <itemizedlist>
+     <listitem><para><command>?</> matches the preceding expression or the
+     null string</para></listitem>
+     <listitem><para><command>*</> matches the null string or any number of repetitions
+     of the preceding expression</para></listitem>
+     <listitem><para><command>+</> matches one or more repetitions of the preceding
+     expression</para></listitem>
+     <listitem><para><command>{<replaceable>m</>}</> matches exactly <replaceable>m</>
+     repetitions of the one-character expression</para></listitem>
+     <listitem><para><command>{<replaceable>m</>,<replaceable>n</>}</> matches between
+     <replaceable>m</> and <replaceable>n</> repetitions of the preceding
+     expression, inclusive</para></listitem>
+     <listitem><para><command>{<replaceable>m</>,}</> matches <replaceable>m</> or more
+     repetitions of the preceding expression</para></listitem>
+    </itemizedlist>
+   </listitem>
+   <listitem><para><emphasis>Stingy (Minimal) Matching</></para>
+    <para>
+     If a repeating operator (above) is immediately followed by a
+     <command>?</>, the repeating operator will stop at the smallest
+     number of repetitions that can complete the rest of the match.
+    </para>
+   </listitem>
+  </itemizedlist>
+ </sect1>
+ <sect1 id=regexps-unsupported><title>Unsupported Syntax</>
+  <para>
+   Some flavors of regular expression utilities support additional escape
+   sequences, and this is not meant to be an exhaustive list.  In the
+   future, <command>gnu.regexp</> may support some or all of the
+   following:
+   <itemizedlist>
+    <listitem><para><command>(?=<replaceable>...</>)</> positive lookahead operator (Perl5)</para></listitem>
+    <listitem><para><command>(?!<replaceable>...</>)</> negative lookahead operator (Perl5)</para></listitem>
+    <listitem><para><command>(?<replaceable>mods</>)</> inlined compilation/execution modifiers (Perl5)</para></listitem>
+    <listitem><para><command>\G</> end of previous match (Perl5)</para></listitem>
+    <listitem><para><command>\b</> word break positional anchor (Perl5)</para></listitem>
+    <listitem><para><command>\B</> non-word break positional anchor (Perl5)</para></listitem>
+    <listitem><para><command>\&lt;</> start of word positional anchor (egrep)</para></listitem>
+    <listitem><para><command>\&gt;</> end of word positional anchor (egrep)</para></listitem>
+    <listitem><para><command>[.<replaceable>symbol</>.]</> collating symbol in class expression (POSIX)</para></listitem>
+    <listitem><para><command>[=<replaceable>class</>=]</> equivalence class in class expression (POSIX)</para></listitem>
+   </itemizedlist>
+  </para>
+ </sect1>
+</appendix>
+
+<appendix id=jedit-history><title>History of jEdit</>
+ <para>
+  Open Source projects are often started with the author <quote>scratching
+  an itch</>; for example, some programmer itching for a good mail client
+  might write one. jEdit, however, started as more of an experimental
+  hack. I never intended it to be useful; its growth and popularity was
+  completely unexpected to me.
+ </para>
+ <bridgehead renderas=sect2>Early Efforts</>
+ <para>
+  One can say that jEdit started as early as 1996.
+  My first effort at writing an editor, and in fact my first effort
+  at writing a real Java program, was an application called
+  <application>JavaJot</>. The source code totalled to about 5 kilobytes;
+  JavaJot wasn't about to compete with emacs any time soon. I posted
+  JavaJot to my homepage, but didn't get a single e-mail about it (no
+  surprise either)
+ </para>
+ <para>
+  Nearly a year later (late 1997/early 1998) when I got a PC, I started
+  hacking in Java 1.1. I downloaded several Java 1.1 applications, to see how
+  the new features be used. One that particularly
+  impressed me was John Jensen's <application>TextEdit</>.
+  It's most interesting feature was a plugin system; it could
+  load external JAR files to extend the editor. TextEdit got me into
+  text editors again. I liked TextEdit, but knew I could do better.
+ </para>
+ <para>
+  I began coding <quote>JEdit</> (note
+  that the first character was capitalized, unlike today's
+  <quote>jEdit</>). I implemented a plugin system similar to TextEdit's,
+  and added many other features that TextEdit lacked, such as
+  multiple document support. JEdit was never released to the public;
+  I felt that there were so many other trivial Java text editors out
+  there, that JEdit wouldn't make much of a difference.
+ </para>
+ <para>
+  One of the reasons JEdit remained trivial was that at the time,
+  the AWT sucked. Writing complex GUIs was too hard and often one had
+  to write their own components, from scratch, to go beyond the very
+  basic capabilities offered by the AWT. So when Swing 1.0 was released,
+  promising rich, lightweight, customizable components,
+  I immediately downloaded it. I was impressed. So impressed that I
+  wrote an another editor, this time using Swing. I called it JE. It went
+  far beyond the original JEdit in features, and was better than many
+  Java editors available at the time.
+ </para>
+ <para>
+  However, I never released JE either; it had too many limitations and
+  flaws, mostly because I didn't know Swing very well at the time.
+ </para>
+ <bridgehead renderas=sect2>Third Time Lucky</>
+ <para>
+  What I started coding next became the nowadays jEdit. I copied
+  the <quote>good</> bits from JE, such as the plugin system, and
+  rewrote the rest from scratch. I also released early and often. After I
+  implemented file loading, saving, and several other fundamental
+  features, I released the first jEdit with a <quote>version number</>;
+  I called it jEdit 0.2.
+ </para>
+ <para>
+  After jEdit 0.2, I released several more 0.x versions which implemented
+  more basic functionality, such as search and replace.
+  I started announcing jEdit on the Linux
+  news site <quote>freshmeat</>. This heightened publicity attracted
+  several people, including those from the FreeBuilder Java IDE
+  project (and in fact, nowadays FreeBuilder uses jEdit's text component).
+ </para>
+ <bridgehead renderas=sect2>jEdit 1.0 and 1.1</>
+ <para>
+  jEdit 1.0 was released around September 1998. At the time, it
+  was basically a Windows Notepad work-alike/clone,
+  with several additional features such as auto indent (and the plugin
+  system of course). Around the time of 1.0's release, the jEdit mailing
+  list had 2 or 3 members. jEdit 1.1 was released approximately one month
+  later, but it was a relatively minor update.
+ </para>
+ <bridgehead renderas=sect2>jEdit 1.2</>
+ <para>
+  After 1.1, things started to get interesting.
+  I was having an e-mail discussion with Tal Davidson
+  (author of JStyle and Artistic Style) about syntax
+  highlighting. As a quick  hack, he wrote a syntax parser
+  called <application>JSTokenMarker</>.
+  I integrated it into jEdit immediately.
+  jEdit 1.2pre2 was the first release with syntax highlighting, but
+  it didn't cause much of a stir because it was unstable and slow.
+ </para>
+ <para>
+  I continued enhancing JSTokenMarker throughout the 1.2 pre-releases.
+  At version 1.2pre7, it was pretty stable, and it supported
+  HTML and various other file types. Unfortunately, it was too slow, so
+  with 1.2pre8 I rewrote it from scratch. I scrapped Tal's original
+  code (sorry :) ) and wrote my own system, thinking it over more
+  carefully for speed. The result was much better; it was fast enough
+  to be usable.
+ </para>
+ <para>
+  Another major change that occurred in the 1.2 series is the switch
+  to Swing 1.1. This made jEdit compatible with JDK 1.2, and jEdit
+  benefited from Swing 1.1's improved performance and features.
+ </para>
+ <para>
+  By the time 1.2final was released, it had a pretty functional syntax
+  highlighting system, and there were
+  about 30 members on the list. I also started using jEdit as my
+  primary text editor around this time. So jEdit was no longer a stupid hack;
+  it was something that I actually used.
+ </para>
+ <bridgehead renderas=sect2>Beyond 1.2</>
+ <para>
+  jEdit 1.3 and later added many, many exciting features, and interest
+  in jEdit increased; various commercial projects are now using the syntax
+  highlighting system, and as of the time of writing, the mailing list
+  has over 200 members. However, nothing really noteworthy happened
+  after 1.2; once a program builds up critical mass, things tend to
+  settle down a bit.
+ </para>
+ <para>
+  One thing worth mentioning is that the first plugin not written by me
+  appeared only after 1.3final was released, even though jEdit had a plugin
+  system from the very start. That first plugin was the Accent Converter
+  plugin by Romain Guy. (Thanks :) ). For a while, it was the only third-party
+  plugin, but after 1.5final, a slow but steady trickle started coming in.
+ </para>
+</appendix>
+
+&index.sgml;
+
+</book>

@@ -51,7 +51,7 @@ public class jEdit
 	 */
 	public static String getVersion()
 	{
-		return "1.7pre7";
+		return "2.0pre8";
 	}
 
 	/**
@@ -61,7 +61,7 @@ public class jEdit
 	public static String getBuild()
 	{
 		// (major) (minor) (<99 = preX, 99 = final) (bug fix)
-		return "01.07.07.00";
+		return "02.00.08.00";
 	}
 
 	/**
@@ -297,7 +297,7 @@ public class jEdit
 	public static void loadProps(InputStream in)
 		throws IOException
 	{
-		props.load(in);
+		props.load(new BufferedInputStream(in));
 		in.close();
 	}
 
@@ -1275,7 +1275,6 @@ public class jEdit
 		addAction(new org.gjt.sp.jedit.actions.paste());
 		addAction(new org.gjt.sp.jedit.actions.paste_predefined());
 		addAction(new org.gjt.sp.jedit.actions.paste_previous());
-		addAction(new org.gjt.sp.jedit.actions.plugin_help());
 		addAction(new org.gjt.sp.jedit.actions.plugin_options());
 		addAction(new org.gjt.sp.jedit.actions.prev_buffer());
 		addAction(new org.gjt.sp.jedit.actions.prev_paragraph());
@@ -1650,6 +1649,9 @@ public class jEdit
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.125  1999/08/21 01:48:18  sp
+ * jEdit 2.0pre8
+ *
  * Revision 1.124  1999/07/29 08:50:21  sp
  * Misc stuff for 1.7pre7
  *

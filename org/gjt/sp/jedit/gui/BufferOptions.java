@@ -227,8 +227,11 @@ public class BufferOptions extends JDialog
 			? "yes" : "no");
 			
 		buffer.propertiesChanged();
-		
 		dispose();
+
+		// Update text area
+		view.getTextArea().getPainter().invalidateOffscreen();
+		view.getTextArea().getPainter().repaint();
 	}
 
 	class ActionHandler implements ActionListener
@@ -256,6 +259,9 @@ public class BufferOptions extends JDialog
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.9  1999/08/21 01:48:18  sp
+ * jEdit 2.0pre8
+ *
  * Revision 1.8  1999/07/16 23:45:49  sp
  * 1.7pre6 BugFree version
  *

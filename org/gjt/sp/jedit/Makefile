@@ -30,7 +30,7 @@ others='org/gjt/sp/jedit/jEdit$$1.class' \
 	org/gjt/sp/jedit/jedit.props \
 	org/gjt/sp/jedit/jedit_gui.props \
 	org/gjt/sp/jedit/jedit_keys.props \
-	org/gjt/sp/jedit/jedit_logo.jpg \
+	org/gjt/sp/jedit/jedit_logo.gif \
 	org/gjt/sp/jedit/jedit_tips.props
 
 all: $(classes) subdirs

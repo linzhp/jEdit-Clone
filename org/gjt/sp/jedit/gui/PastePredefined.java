@@ -52,7 +52,7 @@ implements ActionListener, KeyListener, MouseListener
 		}
 		clips = new JList(clipModel);
 		clips.setVisibleRowCount(10);
-		clips.setFont(view.getTextArea().getFont());
+		clips.setFont(view.getTextArea().getPainter().getFont());
 		clips.addMouseListener(this);
 		content.add(new JScrollPane(clips), BorderLayout.CENTER);
 

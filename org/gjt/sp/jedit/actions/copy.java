@@ -33,9 +33,6 @@ public class copy extends EditAction
 	public void actionPerformed(ActionEvent evt)
 	{
 		JEditTextArea textArea = getView(evt).getTextArea();
-		if(textArea.isEditable())
-			textArea.copy();
-		else
-			textArea.getToolkit().beep();
+		textArea.copy();
 	}
 }

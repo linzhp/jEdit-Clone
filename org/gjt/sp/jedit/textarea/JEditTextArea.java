@@ -298,7 +298,7 @@ public class JEditTextArea extends JComponent
 		this.horizontalOffset = horizontalOffset;
 		if(horizontalOffset != horizontal.getValue())
 			updateScrollBars();
-		painter.invalidateOffscreen();
+		painter.invalidateLineRange(firstLine,firstLine + visibleLines);
 		painter.repaint();
 	}
 
@@ -312,30 +312,33 @@ public class JEditTextArea extends JComponent
 	public boolean setOrigin(int firstLine, int horizontalOffset)
 	{
 		boolean changed = false;
-		boolean horizChanged = false;
+		boolean fullRepaint = false;
+		int oldFirstLine = this.firstLine;
 
 		if(horizontalOffset != this.horizontalOffset)
 		{
-			horizChanged = true;
 			this.horizontalOffset = horizontalOffset;
-			painter._invalidateLineRange(firstLine,firstLine + visibleLines);
-			changed = true;
+			changed = fullRepaint = true;
 		}
 
 		if(firstLine != this.firstLine)
 		{
-			int oldFirstLine = this.firstLine;
 			this.firstLine = firstLine;
-			// If we scrolled horizontally, this is pointless
-			// since all lines have to be repainted anyway
-			if(!horizChanged)
-				painter.scrollRepaint(oldFirstLine,firstLine);
 			changed = true;
 		}
 
 		if(changed)
 		{
 			updateScrollBars();
+			if(fullRepaint)
+			{
+				painter._invalidateLineRange(firstLine,
+					firstLine + visibleLines);
+			}
+			else
+			{
+				painter.scrollRepaint(oldFirstLine,firstLine);
+			}
 			painter.repaint();
 		}
 
@@ -1224,7 +1227,7 @@ public class JEditTextArea extends JComponent
 	 */
 	public void copy()
 	{
-		if(editable)
+		if(selectionStart != selectionEnd)
 		{
 			Clipboard clipboard = getToolkit().getSystemClipboard();
 			StringSelection selection = new StringSelection(
@@ -1799,6 +1802,9 @@ public class JEditTextArea extends JComponent
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.17  1999/08/21 01:48:18  sp
+ * jEdit 2.0pre8
+ *
  * Revision 1.16  1999/07/29 08:50:21  sp
  * Misc stuff for 1.7pre7
  *

@@ -205,9 +205,13 @@ public class DefaultInputHandler implements InputHandler
 				// prefix is active. Otherwise it will
 				// beep when caps lock is pressed, etc.
 				if(currentBindings != bindings)
+				{
 					Toolkit.getDefaultToolkit().beep();
+					// F10 should be passed on, but C+e F10
+					// shouldn't
+					evt.consume();
+				}
 				currentBindings = bindings;
-				evt.consume();
 				return;
 			}
 			else if(o instanceof ActionListener)

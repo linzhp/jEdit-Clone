@@ -159,6 +159,20 @@ public class JARClassLoader extends ClassLoader
 			return;
 		}
 
+		// Check if a plugin with the same name is already loaded
+		Plugin[] plugins = jEdit.getPlugins();
+
+		for(int i = 0; i < plugins.length; i++)
+		{
+			if(plugins[i].getClass().getName().equals(name))
+			{
+				String[] args = { name };
+				System.err.println(jEdit.getProperty(
+					"jar.error.duplicateName",args));
+				return;
+			}
+		}
+
 		// Check dependencies
 		if(!checkDependencies(name))
 			return;
@@ -329,6 +343,9 @@ public class JARClassLoader extends ClassLoader
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.13  1999/08/21 01:48:18  sp
+ * jEdit 2.0pre8
+ *
  * Revision 1.12  1999/06/07 09:02:40  sp
  * Minor JAR loader tweak
  *

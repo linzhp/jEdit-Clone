@@ -48,7 +48,7 @@ implements ActionListener, KeyListener, MouseListener
 		}
 		clips = new JList(abbrevClipHistory);
 		clips.setVisibleRowCount(10);
-		clips.setFont(view.getTextArea().getFont());
+		clips.setFont(view.getTextArea().getPainter().getFont());
 		clips.addMouseListener(this);
 		insert = new JButton(jEdit.getProperty("common.insert"));
 		cancel = new JButton(jEdit.getProperty("common.cancel"));

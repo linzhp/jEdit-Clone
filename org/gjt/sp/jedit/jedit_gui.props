@@ -24,6 +24,7 @@ jar.scanningdir=Scanning directory: {0}
 jar.scanning=Scanning JAR file: {0}
 jar.error.load=Error loading {0}
 jar.error.zip=Error loading class {0} from {1}
+jar.error.duplicateName=A plugin named {0} is already loaded
 jar.disabled=Disabled at user request: {0}
 jar.loaded=Loaded successfully: {0}
 jar.error.init=Initialization failed: {0}
@@ -140,11 +141,6 @@ edit=undo \
      clear \
      select-all \
      - \
-     %anchor \
-     %line \
-     %paragraph \
-     %block \
-     - \
      tab \
      untab \
      - \
@@ -154,7 +150,12 @@ edit=undo \
      insert-date \
      - \
      expand-abbrev \
-     locate-bracket
+     locate-bracket \
+     - \
+     %anchor \
+     %line \
+     %paragraph \
+     %block
 edit.label=$Edit
 undo.label=$Undo
 redo.label=$Redo
@@ -278,12 +279,10 @@ no-plugins.label=No Plugins
 
 ### Help menu
 help-menu=about \
-     help \
-     plugin-help
+     help
 help-menu.label=$Help
 about.label=About jEdit...
 help.label=Help Contents...
-plugin-help.label=Plugin Help Contents...
 
 ###
 ### TEXT AREA KEY BINDING NAMES
@@ -352,11 +351,19 @@ about.message=jEdit version {0} (JDK {1}, {2} {3})\n\
 	disclamer.\n\
 	\n\
 	I would like to thank the following people:\n\
-	Mike Dillon - code contributor, plugin central maintainer\n\
-	Juha Lindfors - code contributor\n\
-	Nathan Tenney - FTP site\n\
+	\n\
+	- Tal Davidson - without his help, jEdit would never have had a\n\
+	syntax highlighting system. Writing the syntax highlighting\n\
+	system taught me much of what I know about algorithms and\n\
+	optimization, so without syntax highlighting, jEdit would suck.\n\
+	\n\
+	- Mike Dillon - contributed code, maintains plugin central\n\
+	\n\
+	- Nathan Tenney - donated some space on his FTP site\n\
+	\n\
 	... plus all the users, plugin authors, and people who sent me\n\
-	feedback. jEdit would be dead were it not for you... thanks.
+	feedback, bug reports, and comments. jEdit would be dead were\n\
+	it not for you... thanks.
 
 # IO Error dialog, {0}=the error message
 ioerror.title=I/O Error
@@ -596,20 +603,20 @@ helpviewer.back=Back
 helpviewer.forward=Forward
 helpviewer.home=Contents
 
-# Plugin list protocol (jeditplugins:)
-pluginlist.header=<html>\n\
-	<head><title>Plugin Documentation</title><head>\n\
-	<body>\n\
-	<h1>Documentation For Installed Plugins</h1>\n\
-	<table border=3>\n\
-	<tr bgcolor=#cc90ff><th>Name</th><th>Author</th><th>Version</th>\
-	<th>Documentation</th></tr>\n
+# Documentation protocol (jeditdocs:)
+docindex.header=<html><head><title>jEdit Documentation</title></head>\n\
+	<body><h1>jEdit Documentation</h1>
 
-# {0} - plugin name
-# {1} - plugin author
-# {2} - plugin version
-# {3} - plugin documentation URL
-pluginlist.entry=<tr><td>{0}</td><td>{1}</td><td>{2}</td>\
-	<td><a href={3}>Documentation</a></td></tr>
+docindex.general=<h2>Miscallaneous Documents</h2><ul>
+docindex.general.entry=<li><a href=file:{0}/{1}>{1}</a>
 
-pluginlist.footer=</table>\n</body>\n</html>
+docindex.books=</ul><h2>Online Books</h2><ul>
+docindex.books.jeditdocs=<li><a href=file:{0}/jeditdocs/index.html>jEdit User's Guide</a>
+docindex.books.api=<li><a href=file:{0}/api/packages.html>jEdit API Documentation</a>
+
+docindex.plugins=</ul><h2>Plugin Documentation</h2><ul>
+docindex.plugins.entry=<li><a href={3}>{0} {2}</a> (by {1})
+
+docindex.footer=</ul><center><font size=-2>jEdit is (C) 1998, 1999\n\
+	by Slava Pestov. See README.txt for licensing information.\n\
+	</font></center></body></html>

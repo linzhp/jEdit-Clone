@@ -36,9 +36,7 @@ public class help extends EditAction
 	{
 		try
 		{
-			new HelpViewer(new URL("file:" + jEdit.getJEditHome() +
-				File.separator + "doc" + File.separator
-				+ "index.html"));
+			new HelpViewer(new URL("jeditdocs:"));
 		}
 		catch(MalformedURLException mf)
 		{

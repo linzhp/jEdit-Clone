@@ -377,7 +377,7 @@ public class Buffer extends DefaultSyntaxDocument
 		{
 			if(init || readOnly)
 				return;
-			if(dirty && !adirty)
+			if(dirty && adirty)
 				return;
 			dirty = adirty = true;
 		}
@@ -572,6 +572,7 @@ public class Buffer extends DefaultSyntaxDocument
 		{
 			return;
 		}
+		boolean added = false;
 		if(!init)
 		{
 			for(int i = 0; i < markers.size(); i++)
@@ -579,17 +580,20 @@ public class Buffer extends DefaultSyntaxDocument
 				Marker marker = (Marker)markers.elementAt(i);
 				if(marker.getName().equals(name))
 				{
-					markers.setElementAt(markerN,i);
-					break;
+					markers.removeElementAt(i);
 				}
 				if(marker.getStart() > start)
 				{
 					markers.insertElementAt(markerN,i);
-					return;
+					added = true;
+					break;
 				}
 			}
 		}
-		markers.addElement(markerN);
+
+		if(!added)
+			markers.addElement(markerN);
+
 		fireBufferEvent(BufferEvent.MARKERS_CHANGED);
 		fireBufferEvent(BufferEvent.DIRTY_CHANGED);
 	}
@@ -880,7 +884,8 @@ loop:		for(int i = 0; i < markers.size(); i++)
 	{
 		InputStream _in;
 		URLConnection connection = null;
-		StringBuffer sbuf = new StringBuffer();
+		StringBuffer sbuf = new StringBuffer(Math.max(
+			(int)file.length(),IOBUFSIZE * 4));
 		try
 		{
 			
@@ -1338,6 +1343,9 @@ loop:		for(int i = 0; i < markers.size(); i++)
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.92  1999/08/21 01:48:18  sp
+ * jEdit 2.0pre8
+ *
  * Revision 1.91  1999/07/16 23:45:48  sp
  * 1.7pre6 BugFree version
  *

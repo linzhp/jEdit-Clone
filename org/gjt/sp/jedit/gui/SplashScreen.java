@@ -30,7 +30,7 @@ public class SplashScreen extends JWindow
 	public SplashScreen()
 	{
 		JPanel splash = new JPanel(new BorderLayout());
-		URL url = getClass().getResource("/org/gjt/sp/jedit/jedit_logo.jpg");
+		URL url = getClass().getResource("/org/gjt/sp/jedit/jedit_logo.gif");
 		if(url != null)
 		{
 			splash.add(new JLabel(new ImageIcon(url)),

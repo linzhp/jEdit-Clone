@@ -155,7 +155,7 @@ loop:		for(int i = offset; i < length; i++)
 			default:
 				backslash = false;
 				if(token == Token.NULL && c != '_' &&
-					!Character.isLetter(c))
+					!Character.isLetterOrDigit(c))
 				{
 					int len = i - lastKeyword;
 					byte id = keywords.lookup(line,lastKeyword,len);
@@ -259,6 +259,9 @@ loop:		for(int i = offset; i < length; i++)
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.31  1999/08/21 01:48:18  sp
+ * jEdit 2.0pre8
+ *
  * Revision 1.30  1999/06/05 00:22:58  sp
  * LGPL'd syntax package
  *

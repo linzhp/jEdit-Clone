@@ -1,6 +1,6 @@
 /*
  * open_url.java
- * Copyright (C) 1998 Slava Pestov
+ * Copyright (C) 1998, 1999 Slava Pestov
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -33,7 +33,8 @@ public class open_url extends EditAction
 	{
 		View view = getView(evt);
 		Buffer buffer = view.getBuffer();
-		String path = GUIUtilities.inputProperty(view,"openurl","url");
+		String path = GUIUtilities.input(view,"openurl",
+			buffer.getFile().getParent());
 		if(path != null)
 		{
 			jEdit.openFile(view,buffer.getFile().getParent(),
