@@ -1,0 +1,80 @@
+<html>
+<body>
+
+<h1>jEdit Frequently Asked Questions</h1>
+
+<ul>
+<li><a href=#memory>I get OutOfMemoryErrors even though I have lots of free RAM!</a>
+<li><a href=#alt>The Alt-key mnemonics act weird!</a>
+<li><a href=#www>The `Open in WWW Browser' command doesn't work!</a>
+<li><a href=#multi>Why aren't multiline comments, etc colorized correctly?</a>
+<li><a href=#bigfile>Why does the display mess up when editing large files?</a>
+</ul>
+
+<a name=memory>
+<h1>I get OutOfMemoryErrors even though I have lots of free RAM!</h1>
+</a>
+
+When you have lots of buffers open, there might not be enough free
+space in the <i>Java heap</i>, even though lots of RAM is available.
+The solution is to increase the Java heap memory allocation.<p>
+
+On Windows, enter this in an MS-DOS Prompt before starting jEdit,
+or place it in your AUTOEXEC.BAT to have it done every time the
+system starts:
+
+<pre>
+set JEDIT=-mx<i>nn</i>m
+</pre>
+
+Where <i>nn</i> is the size of the Java heap, in megabytes. The
+default is 32 Mb - if you like to open lots of files at once, 64
+might be better.<p>
+
+On Unix, the procedure is the same - set the JEDIT enviroment
+variable (how this is done depends on the shell) and if necessary,
+place the command in your .profile or .cshprofile (depending on
+what shell you are using).
+
+<a name=alt>
+<h1>The Alt-key mnemonics act weird!</h1>
+</a>
+
+On some JDK versions, pressing an Alt-key mnemonic inserts the
+character in the text, rather than selecting the menu. This is
+an AWT/JFC bug; there is nothing I can do about it. The only solution
+is to upgrade to a more recent JDK version.
+
+<a name=www>
+<h1>The `Open in WWW Browser' command doesn't work!</h1>
+</a>
+
+On Unix, make sure that the browser is in your PATH. On Windows,
+make sure that the browser's name ends with `.exe'. Also on some
+systems it might be necessary to enter the full path to the
+browser, not just the name of the executable.
+
+<a name=multi>
+<h1>Why aren't multiline comments, etc colorized correctly?</h1>
+</a>
+
+In jEdit, when you open a multiline comment, the rest of the
+viewscreen isn't automatically colorized accordingly - you must
+force a replaint, by scrolling up or down, or hiding and
+exposing the jEdit window. This is a limitation of how jEdit
+works, and it will be fixed in the near future. BTW, Emacs has
+this problem too.
+
+<a name=bigfile>
+<h1>Why does the display mess up when editing large files?</h1>
+</a>
+
+Due to an AWT limitation or Swing bug (or maybe both) the
+Swing JTextComponent component has problems editing documents
+&gt; 2000 or so lines. The problem is that the viewscreen turns gray
+and GUI elements are repainted incorrectly. Until Sun fixes
+this, other editors will have to be used to edit very large
+files.
+
+</body>
+</html>

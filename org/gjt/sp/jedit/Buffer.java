@@ -1457,6 +1457,9 @@ loop:		for(int i = 0; i < markers.size(); i++)
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.74  1999/04/21 07:39:18  sp
+ * FAQ added, plugins can now add panels to the options dialog
+ *
  * Revision 1.73  1999/04/21 06:13:26  sp
  * Fixed bug in loadDesktop(), added idiot-proofing to Buffer.setMode()
  *
@@ -1490,12 +1493,4 @@ loop:		for(int i = 0; i < markers.size(); i++)
  * Revision 1.63  1999/03/24 05:45:27  sp
  * Juha Lidfors' backup directory patch, removed debugging messages from various locations, documentation updates
  *
- * Revision 1.62  1999/03/22 04:20:01  sp
- * Syntax colorizing updates
- *
- * Revision 1.61  1999/03/17 05:32:51  sp
- * Event system bug fix, history text field updates (but it still doesn't work), code cleanups, lots of banging head against wall
- *
- * Revision 1.60  1999/03/15 03:40:23  sp
- * Search and replace updates, TSQL mode/token marker updates
  */

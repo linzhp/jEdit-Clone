@@ -793,6 +793,9 @@ public class View extends JFrame
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.63  1999/04/21 07:39:18  sp
+ * FAQ added, plugins can now add panels to the options dialog
+ *
  * Revision 1.62  1999/04/20 06:38:26  sp
  * jEdit.addPluginMenu() method added
  *
@@ -822,16 +825,5 @@ public class View extends JFrame
  *
  * Revision 1.53  1999/03/21 08:37:16  sp
  * Slimmer action system, history text field update
- *
- * Revision 1.52  1999/03/21 07:53:14  sp
- * Plugin doc updates, action API change, new method in MiscUtilities, new class
- * loader, new plugin interface
- *
- * Revision 1.51  1999/03/20 05:23:32  sp
- * Code cleanups
- *
- * Revision 1.50  1999/03/20 04:52:55  sp
- * Buffer-specific options panel finished, attempt at fixing OS/2 caret bug, code
- * cleanups
  *
  */

@@ -179,6 +179,7 @@ public class jEdit
 		initSystemProperties();
 		initModes();
 		initActions();
+		initOptions();
 		initPlugins();
 		initUserProperties();
 		initPLAF();
@@ -525,6 +526,29 @@ public class jEdit
 		Mode[] array = new Mode[modes.size()];
 		modes.copyInto(array);
 		return array;
+	}
+
+	/**
+	 * Registers an option pane with the editor.
+	 * @param clazz The option pane's class. This must be a
+	 * subclass of <code>OptionPane</code>.
+	 * @see org.gjt.sp.jedit.OptionPane
+	 */
+	public static void addOptionPane(Class clazz)
+	{
+		optionPanes.addElement(clazz);
+	}
+
+	/**
+	 * Returns an array of registered option pane classes.
+	 * These should be instantiated and cast to <code>OptionPane</code>
+	 * objects.
+	 */
+	public static Class[] getOptionPanes()
+	{
+		Class[] optionPaneArray = new Class[optionPanes.size()];
+		optionPanes.copyInto(optionPaneArray);
+		return optionPaneArray;
 	}
 
 	/**
@@ -884,10 +908,11 @@ public class jEdit
 	private static Autosave autosave;
 	private static Hashtable actionHash;
 	private static EditAction[] actions;
-	private static Vector modes;
 	private static Vector plugins;
 	private static Vector pluginMenus;
 	private static Vector pluginActions;
+	private static Vector modes;
+	private static Vector optionPanes;
 	private static int untitledCount;
 	private static Vector buffers;
 	private static Vector views;
@@ -1117,6 +1142,18 @@ public class jEdit
 		addAction(new org.gjt.sp.jedit.actions.untab());
 		addAction(new org.gjt.sp.jedit.actions.wing_comment());
 		addAction(new org.gjt.sp.jedit.actions.word_count());
+	}
+
+	/**
+	 * Initializes option panels.
+	 */
+	private static void initOptions()
+	{
+		optionPanes = new Vector();
+
+		addOptionPane(org.gjt.sp.jedit.options.GeneralOptionPane.class);
+		addOptionPane(org.gjt.sp.jedit.options.EditorOptionPane.class);
+		addOptionPane(org.gjt.sp.jedit.options.ColorTableOptionPane.class);
 	}
 
 	/**
@@ -1521,6 +1558,9 @@ public class jEdit
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.75  1999/04/21 07:39:19  sp
+ * FAQ added, plugins can now add panels to the options dialog
+ *
  * Revision 1.74  1999/04/21 06:13:26  sp
  * Fixed bug in loadDesktop(), added idiot-proofing to Buffer.setMode()
  *
@@ -1555,12 +1595,4 @@ public class jEdit
  * Documentation updates, fixed bug in DefaultSyntaxDocument, fixed bug in
  * goto-line
  *
- * Revision 1.63  1999/03/27 03:22:15  sp
- * Number of items in a history list can now be set
- *
- * Revision 1.62  1999/03/27 00:44:15  sp
- * Documentation updates, various bug fixes
- *
- * Revision 1.61  1999/03/26 04:14:45  sp
- * EnhancedMenuItem tinkering, fixed compile error, fixed backup bug
  */

@@ -27,8 +27,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Vector;
-import org.gjt.sp.jedit.GUIUtilities;
-import org.gjt.sp.jedit.jEdit;
+import org.gjt.sp.jedit.*;
 
 /**
  * Color table option pane.
@@ -522,6 +521,9 @@ class ColorChoice
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.7  1999/04/21 07:39:19  sp
+ * FAQ added, plugins can now add panels to the options dialog
+ *
  * Revision 1.6  1999/04/01 04:13:00  sp
  * Bug fixing for 1.5final
  *

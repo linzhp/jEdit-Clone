@@ -24,7 +24,6 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
 import org.gjt.sp.jedit.event.*;
-import org.gjt.sp.jedit.options.*;
 import org.gjt.sp.jedit.*;
 
 /**
@@ -41,9 +40,26 @@ implements ActionListener, KeyListener, WindowListener
 		getContentPane().setLayout(new BorderLayout());
 		panes = new Vector();
 		tabs = new JTabbedPane();
-		addOptionPane(new GeneralOptionPane());
-		addOptionPane(new EditorOptionPane());
-		addOptionPane(new ColorTableOptionPane());
+
+		Class[] optionPanes = jEdit.getOptionPanes();
+		for(int i = 0; i < optionPanes.length; i++)
+		{
+			Class clazz = optionPanes[i];
+
+			try
+			{
+				OptionPane pane = (OptionPane)clazz
+					.newInstance();
+				addOptionPane(pane);
+			}
+			catch(Exception e)
+			{
+				System.out.println("Error creating option pane "
+					+ clazz.getName());
+				e.printStackTrace();
+			}
+		}
+
 		getContentPane().add(BorderLayout.CENTER,tabs);
 		JPanel buttons = new JPanel();
 		ok = new JButton(jEdit.getProperty("common.ok"));
@@ -132,6 +148,9 @@ implements ActionListener, KeyListener, WindowListener
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.6  1999/04/21 07:39:19  sp
+ * FAQ added, plugins can now add panels to the options dialog
+ *
  * Revision 1.5  1999/04/02 03:21:09  sp
  * Added manifest file, common strings such as OK, etc are no longer duplicated
  * many times in jedit_gui.props
