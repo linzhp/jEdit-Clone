@@ -27,6 +27,7 @@ import java.io.*;
 import java.net.Socket;
 import org.gjt.sp.jedit.jEdit;
 import org.gjt.sp.jedit.Buffer;
+import org.gjt.sp.jedit.GUIUtilities;
 import org.gjt.sp.jedit.View;
 
 public class SendDialog extends JDialog
@@ -130,7 +131,7 @@ implements ActionListener, KeyListener, Runnable
 		if(smtp.length() == 0 || from.length() == 0
 			|| to.length() == 0)
 		{
-			jEdit.error(view,"sendempty",new Object[0]);
+			GUIUtilities.error(view,"sendempty",new Object[0]);
 			return;
 		}
 		this.smtp.setEnabled(false);
@@ -246,11 +247,11 @@ implements ActionListener, KeyListener, Runnable
 		catch(IOException io)
 		{
 			args[0] = io.toString();
-			jEdit.error(view,"ioerror",args);
+			GUIUtilities.error(view,"ioerror",args);
 		}
 		catch(NumberFormatException nf)
 		{
-			jEdit.error(view,"badport",new Object[0]);
+			GUIUtilities.error(view,"badport",new Object[0]);
 		}
 		catch(BadLocationException bl)
 		{
@@ -260,7 +261,7 @@ implements ActionListener, KeyListener, Runnable
 
 	private void error(String msg)
 	{
-		jEdit.error(view,msg,new Object[0]);
+		GUIUtilities.error(view,msg,new Object[0]);
 		dispose();
 	}
 	

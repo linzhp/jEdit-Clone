@@ -43,7 +43,8 @@ public class select_no_indent extends EditAction
 		try
 		{
 			String str = buffer.getText(start,end - start);
-			int whitespace = start + jEdit.getLeadingWhiteSpace(str);
+			int whitespace = start + TextUtilities
+				.getLeadingWhiteSpace(str);
 			view.getTextArea().select(whitespace,end - 1);
 		}
 		catch(BadLocationException bl)

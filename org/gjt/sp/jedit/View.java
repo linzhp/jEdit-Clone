@@ -67,20 +67,20 @@ implements CaretListener, KeyListener, WindowListener
 		textArea.setFont(font);
 		textArea.setLineHighlight("on".equals(jEdit.getProperty(
 			"view.lineHighlight")));
-		textArea.setLineHighlightColor(jEdit.parseColor(jEdit
-			.getProperty("view.lineHighlightColor")));
+		textArea.setLineHighlightColor(GUIUtilities.parseColor(
+			jEdit.getProperty("view.lineHighlightColor")));
 		textArea.setBracketHighlight("on".equals(jEdit.getProperty(
 			"view.bracketHighlight")));
-		textArea.setBracketHighlightColor(jEdit.parseColor(jEdit
-			.getProperty("view.bracketHighlightColor")));
-		textArea.setCaretColor(jEdit.parseColor(jEdit
-			.getProperty("view.caretColor")));
-		textArea.setSelectionColor(jEdit.parseColor(jEdit
-			.getProperty("view.selectionColor")));
-		textArea.setBackground(jEdit.parseColor(jEdit
-			.getProperty("view.bgColor")));
-		textArea.setForeground(jEdit.parseColor(jEdit
-			.getProperty("view.fgColor")));
+		textArea.setBracketHighlightColor(GUIUtilities.parseColor(
+			jEdit.getProperty("view.bracketHighlightColor")));
+		textArea.setCaretColor(GUIUtilities.parseColor(
+			jEdit.getProperty("view.caretColor")));
+		textArea.setSelectionColor(GUIUtilities.parseColor(
+			jEdit.getProperty("view.selectionColor")));
+		textArea.setBackground(GUIUtilities.parseColor(
+			jEdit.getProperty("view.bgColor")));
+		textArea.setForeground(GUIUtilities.parseColor(
+			jEdit.getProperty("view.fgColor")));
 		textArea.setBlockCaret("on".equals(jEdit.getProperty(
 			"view.blockCaret")));
 		try
@@ -145,7 +145,7 @@ implements CaretListener, KeyListener, WindowListener
 		Enumeration enum = jEdit.getRecent();
 		if(!enum.hasMoreElements())
 		{
-			openRecent.add(jEdit.loadMenuItem(this,"no-recent"));
+			openRecent.add(GUIUtilities.loadMenuItem(this,"no-recent"));
 			return;
 		}
 		while(enum.hasMoreElements())
@@ -172,8 +172,8 @@ implements CaretListener, KeyListener, WindowListener
 		Enumeration enum = buffer.getMarkers();
 		if(!enum.hasMoreElements())
 		{
-			clearMarker.add(jEdit.loadMenuItem(this,"no-markers"));
-			gotoMarker.add(jEdit.loadMenuItem(this,"no-markers"));
+			clearMarker.add(GUIUtilities.loadMenuItem(this,"no-markers"));
+			gotoMarker.add(GUIUtilities.loadMenuItem(this,"no-markers"));
 			return;
 		}
 		while(enum.hasMoreElements())
@@ -202,7 +202,7 @@ implements CaretListener, KeyListener, WindowListener
 		Enumeration enum = jEdit.getErrors();
 		if(enum == null)
 		{
-			errors.add(jEdit.loadMenuItem(this,"no-errors"));
+			errors.add(GUIUtilities.loadMenuItem(this,"no-errors"));
 			return;
 		}
 		int count = 0;
@@ -232,14 +232,14 @@ implements CaretListener, KeyListener, WindowListener
 		Enumeration enum = jEdit.getPlugins();
 		if(!enum.hasMoreElements())
 		{
-			plugins.add(jEdit.loadMenuItem(this,"no-plugins"));
+			plugins.add(GUIUtilities.loadMenuItem(this,"no-plugins"));
 			return;
 		}
 		while(enum.hasMoreElements())
 		{
 			String action = (String)((Action)enum.nextElement())
 				.getValue(Action.NAME);
-			JMenuItem mi = jEdit.loadMenuItem(this,action);
+			JMenuItem mi = GUIUtilities.loadMenuItem(this,action);
 			plugins.add(mi);
 		}
 	}
@@ -437,7 +437,7 @@ implements CaretListener, KeyListener, WindowListener
 		int keyCode = evt.getKeyCode();
 		int modifiers = evt.getModifiers();
 		if((modifiers & ~InputEvent.SHIFT_MASK) != 0 ||
-			evt.isActionKey())
+			evt.isActionKey() || keyCode == KeyEvent.VK_TAB)
 		{
 			KeyStroke keyStroke = KeyStroke.getKeyStroke(keyCode,
 				modifiers);
@@ -494,32 +494,6 @@ implements CaretListener, KeyListener, WindowListener
 		Mode mode = buffer.getMode();
 		if(mode instanceof KeyListener)
 			((KeyListener)mode).keyTyped(evt);
-		else if(keyCode == KeyEvent.VK_TAB)
-		{
-			if(mode != null && jEdit.getAutoIndent()
-				&& mode.indentLine(buffer,this,textArea
-				.getCaretPosition()))
-			{
-				evt.consume();
-				return;
-			}
-			if("yes".equals(buffer.getProperty("noTabs")))
-			{
-				StringBuffer buf = new StringBuffer();
-				for(int i = buffer.getTabSize(); i > 0; i--)
-				{
-					// this is broken cos if we press
-					// tab in a non %tabSize==0 column,
-					// but I can't be fucked fixing it
-					/// right now
-					buf.append(' ');
-				}
-				textArea.replaceSelection(buf.toString());
-			}
-			else
-				textArea.replaceSelection("\t");
-			evt.consume();
-		}
 	}
 
 	public void keyTyped(KeyEvent evt)
@@ -554,19 +528,23 @@ implements CaretListener, KeyListener, WindowListener
 	{
 		showTip = ("on".equals(jEdit.getProperty("view.showTips")));
 		
-		buffers = jEdit.loadMenu(this,"buffers");
-		openRecent = jEdit.loadMenu(this,"open-recent");
-		clearMarker = jEdit.loadMenu(this,"clear-marker");
-		gotoMarker = jEdit.loadMenu(this,"goto-marker");
-		errors = jEdit.loadMenu(this,"errors");
-		plugins = jEdit.loadMenu(this,"plugins");
-		mode = jEdit.loadMenu(this,"mode");
-		lineSep = jEdit.loadMenu(this,"line-separator");
+		buffers = GUIUtilities.loadMenu(this,"buffers");
+		openRecent = GUIUtilities.loadMenu(this,"open-recent");
+		clearMarker = GUIUtilities.loadMenu(this,"clear-marker");
+		gotoMarker = GUIUtilities.loadMenu(this,"goto-marker");
+		errors = GUIUtilities.loadMenu(this,"errors");
+		plugins = GUIUtilities.loadMenu(this,"plugins");
+		mode = GUIUtilities.loadMenu(this,"mode");
+		lineSep = GUIUtilities.loadMenu(this,"line-separator");
 
 		bindings = new Hashtable();
 		currentPrefix = bindings;
 		lineSegment = new Segment();
 		
+                // Register tab
+                addKeyBinding(KeyStroke.getKeyStroke(KeyEvent.VK_TAB,0),
+			"indent-line");
+
 		int w = 80;
 		int h = 30;
 		try
@@ -598,8 +576,9 @@ implements CaretListener, KeyListener, WindowListener
 		updateErrorListMenu();
 		updatePluginsMenu();
 
-		textArea.setContextMenu(jEdit.loadPopupMenu(this,"view.context"));
-		JMenuBar mbar = jEdit.loadMenubar(this,"view.mbar");
+		textArea.setContextMenu(GUIUtilities.loadPopupMenu(this,
+			"view.context"));
+		JMenuBar mbar = GUIUtilities.loadMenubar(this,"view.mbar");
 		mbar.add(new JPanel()); // silly hack to move ruler to right side
 		mbar.add(lineNumber);
 		setJMenuBar(mbar);

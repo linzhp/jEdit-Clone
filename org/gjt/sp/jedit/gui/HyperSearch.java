@@ -29,20 +29,12 @@ import java.util.Vector;
 import org.gjt.sp.jedit.gui.SyntaxTextArea;
 import org.gjt.sp.jedit.jEdit;
 import org.gjt.sp.jedit.Buffer;
+import org.gjt.sp.jedit.GUIUtilities;
 import org.gjt.sp.jedit.View;
 
 public class HyperSearch extends JDialog
 implements ActionListener, KeyListener, ListSelectionListener, WindowListener
 {
-	private View view;
-	private HistoryTextField find;
-	private JCheckBox ignoreCase;
-	private JComboBox regexpSyntax;
-	private JButton findBtn;
-	private JButton close;
-	private JList results;
-	private Vector positions;
-	
 	public HyperSearch(View view)
 	{
 		super(view,jEdit.getProperty("hypersearch.title"),false);
@@ -117,50 +109,6 @@ implements ActionListener, KeyListener, ListSelectionListener, WindowListener
 			doHyperSearch();
 	}
 
-	private void doHyperSearch()
-	{
-		try
-		{
-			positions.removeAllElements();
-			Buffer buffer = view.getBuffer();
-			int tabSize = buffer.getTabSize();
-			Vector data = new Vector();
-			RE regexp = new RE(find.getText(),
-				(ignoreCase.getModel().isSelected()
-				? RE.REG_ICASE : 0),jEdit.getRESyntax(jEdit
-				.getProperty("search.regexp.value")));
-			Element map = buffer.getDefaultRootElement();
-			int lines = map.getElementCount();
-			for(int i = 1; i <= lines; i++)
-			{
-				Element lineElement = map.getElement(i - 1);
-				int start = lineElement.getStartOffset();
-				String lineString = buffer.getText(start,
-					lineElement.getEndOffset() - start
-					- 1);
-				REMatch match = regexp.getMatch(lineString);
-				if(match != null)
-				{
-					data.addElement(i + ":"
-						+ lineString);
-					positions.addElement(buffer
-						.createPosition(start + match
-						.getStartIndex()));
-				}
-			}
-			if(data.isEmpty())
-				view.getToolkit().beep();
-			results.setListData(data);
-		}
-		catch(Exception e)
-		{
-			Object[] args = { e.getMessage() };
-			if(args[0] == null)
-				args[0] = e.toString();
-			jEdit.error(view,"reerror",args);
-		}
-	}
-	
 	public void keyPressed(KeyEvent evt)
 	{
 		switch(evt.getKeyCode())
@@ -208,4 +156,58 @@ implements ActionListener, KeyListener, ListSelectionListener, WindowListener
 	public void windowDeiconified(WindowEvent evt) {}
 	public void windowActivated(WindowEvent evt) {}
 	public void windowDeactivated(WindowEvent evt) {}
+
+	// private members
+	private View view;
+	private HistoryTextField find;
+	private JCheckBox ignoreCase;
+	private JComboBox regexpSyntax;
+	private JButton findBtn;
+	private JButton close;
+	private JList results;
+	private Vector positions;
+
+	private void doHyperSearch()
+	{
+		try
+		{
+			positions.removeAllElements();
+			Buffer buffer = view.getBuffer();
+			int tabSize = buffer.getTabSize();
+			Vector data = new Vector();
+			RE regexp = new RE(find.getText(),
+				(ignoreCase.getModel().isSelected()
+				? RE.REG_ICASE : 0),jEdit.getRESyntax(jEdit
+				.getProperty("search.regexp.value")));
+			Element map = buffer.getDefaultRootElement();
+			int lines = map.getElementCount();
+			for(int i = 1; i <= lines; i++)
+			{
+				Element lineElement = map.getElement(i - 1);
+				int start = lineElement.getStartOffset();
+				String lineString = buffer.getText(start,
+					lineElement.getEndOffset() - start
+					- 1);
+				REMatch match = regexp.getMatch(lineString);
+				if(match != null)
+				{
+					data.addElement(i + ":"
+						+ lineString);
+					positions.addElement(buffer
+						.createPosition(start + match
+						.getStartIndex()));
+				}
+			}
+			if(data.isEmpty())
+				view.getToolkit().beep();
+			results.setListData(data);
+		}
+		catch(Exception e)
+		{
+			Object[] args = { e.getMessage() };
+			if(args[0] == null)
+				args[0] = e.toString();
+			GUIUtilities.error(view,"reerror",args);
+		}
+	}
 }

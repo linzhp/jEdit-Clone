@@ -38,6 +38,6 @@ public class about extends EditAction
 			System.getProperty("os.arch"),
 			new Long(Runtime.getRuntime().freeMemory() / 1024),
 			new Long(Runtime.getRuntime().totalMemory() / 1024) };
-		jEdit.message(getView(evt),"about",aboutArgs);
+		GUIUtilities.message(getView(evt),"about",aboutArgs);
 	}
 }

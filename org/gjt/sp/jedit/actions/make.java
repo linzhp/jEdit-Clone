@@ -36,7 +36,7 @@ public class make extends EditAction
 		View view = getView(evt);
 		Buffer buffer = view.getBuffer();
 		String makeTool = (String)buffer.getProperty("make");
-		makeTool = jEdit.input(view,"make",makeTool);
+		makeTool = GUIUtilities.input(view,"make",makeTool);
 		if(makeTool == null)
 			return;
 		buffer.putProperty("make",makeTool);
@@ -49,7 +49,7 @@ public class make extends EditAction
 		catch(IOException io)
 		{
 			Object[] args = { io.getMessage() };
-			jEdit.error(view,"ioerror",args);
+			GUIUtilities.error(view,"ioerror",args);
 		}
 	}
 }

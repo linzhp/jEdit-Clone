@@ -233,7 +233,8 @@ implements KeyListener
 			catch(IOException io)
 			{
 				Object[] args = { io.getMessage() };
-				jEdit.error((View)getParent(),"ioerror",args);
+				GUIUtilities.error((View)getParent(),"ioerror",
+					args);
 			}
 		}
 	}
@@ -264,7 +265,7 @@ implements KeyListener
 			catch(IOException io)
 			{
 				Object[] args = { io.getMessage() };
-				jEdit.error((View)getParent(),"ioerror",args);
+				GUIUtilities.error((View)getParent(),"ioerror",args);
 			}
 
 			// Update error list menus

@@ -24,6 +24,7 @@ import org.gjt.sp.jedit.syntax.TokenMarker;
 import org.gjt.sp.jedit.jEdit;
 import org.gjt.sp.jedit.Buffer;
 import org.gjt.sp.jedit.Mode;
+import org.gjt.sp.jedit.TextUtilities;
 import org.gjt.sp.jedit.View;
 
 public class autoindent implements Mode
@@ -164,7 +165,7 @@ public class autoindent implements Mode
 
 			// Do it
 			buffer.remove(start,lineWidth);
-			buffer.insertString(start,jEdit.createWhiteSpace(
+			buffer.insertString(start,TextUtilities.createWhiteSpace(
 				prevLineIndent,tabSize,noTabs),null);
 			return true;
 		}

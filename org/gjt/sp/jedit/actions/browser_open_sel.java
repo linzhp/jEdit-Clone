@@ -49,7 +49,7 @@ public class browser_open_sel extends EditAction
 		catch(IOException io)
 		{
 			String[] errorArgs = { io.toString() };
-			jEdit.error(view,"wwwerror",errorArgs);
+			GUIUtilities.error(view,"wwwerror",errorArgs);
 		}
 	}
 }

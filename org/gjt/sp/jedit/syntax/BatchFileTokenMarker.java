@@ -19,7 +19,7 @@
 package org.gjt.sp.jedit.syntax;
 
 import javax.swing.text.Segment;
-import org.gjt.sp.jedit.jEdit;
+import org.gjt.sp.jedit.TextUtilities;
 
 public class BatchFileTokenMarker extends TokenMarker
 {
@@ -88,8 +88,9 @@ loop:		for(int i = line.offset; i < length; i++)
 			case ' ':
 				if(lastOffset == offset)
 				{
-					if(i > 2 && jEdit.regionMatches(true,line,
-							       i - 3,"rem"))
+					if(i > 2 && TextUtilities
+						.regionMatches(true,line,
+					       i - 3,"rem"))
 					{
 						addToken(length - lastOffset,
 							 Token.COMMENT1);

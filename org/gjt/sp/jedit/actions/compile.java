@@ -65,7 +65,7 @@ public class compile extends EditAction
 			}
 		}
 
-		compiler = jEdit.input(view,"compile",compiler);
+		compiler = GUIUtilities.input(view,"compile",compiler);
 		if(compiler == null)
 			return;
 		buffer.putProperty("compiler",compiler);
@@ -106,7 +106,7 @@ public class compile extends EditAction
 		catch(IOException io)
 		{
 			Object[] args = { io.getMessage() };
-			jEdit.error(view,"ioerror",args);
+			GUIUtilities.error(view,"ioerror",args);
 		}
 	}
 }

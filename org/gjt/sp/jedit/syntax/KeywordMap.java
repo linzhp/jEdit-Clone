@@ -20,7 +20,7 @@
 package org.gjt.sp.jedit.syntax;
 
 import javax.swing.text.Segment;
-import org.gjt.sp.jedit.jEdit;
+import org.gjt.sp.jedit.TextUtilities;
 
 /**
  * A <code>KeywordMap</code> is similar to a hashtable in that it maps keys
@@ -69,7 +69,8 @@ public class KeywordMap
 				k = k.next;
 				continue;
 			}
-			if(jEdit.regionMatches(ignoreCase,text,offset,k.keyword))
+			if(TextUtilities.regionMatches(ignoreCase,text,offset,
+				k.keyword))
 				return k.id;
 			k = k.next;
 		}

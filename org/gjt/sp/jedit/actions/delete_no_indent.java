@@ -48,7 +48,8 @@ public class delete_no_indent extends EditAction
 		try
 		{
 			String str = buffer.getText(start,end - start);
-			int whitespace = start + jEdit.getLeadingWhiteSpace(str);
+			int whitespace = start + TextUtilities
+				.getLeadingWhiteSpace(str);
 			buffer.remove(whitespace,end - whitespace - 1);
 		}
 		catch(BadLocationException bl)

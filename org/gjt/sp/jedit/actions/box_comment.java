@@ -59,22 +59,25 @@ public class box_comment extends EditAction
 		{
 			Element lineElement = map.getElement(startLine);
 			int start = lineElement.getStartOffset();
-			int indent = jEdit.getLeadingWhiteSpace(buffer.getText(
-				start,lineElement.getEndOffset() - start));
+			int indent = TextUtilities.getLeadingWhiteSpace(
+				buffer.getText(start,lineElement.getEndOffset()
+				- start));
 			buffer.insertString(Math.max(start + indent,selectionStart),
 				commentStart,null);
 			for(int i = startLine + 1; i <= endLine; i++)
 			{
 				lineElement = map.getElement(i);
 				start = lineElement.getStartOffset();
-				indent = jEdit.getLeadingWhiteSpace(buffer.getText(
-					start,lineElement.getEndOffset() - start));
+				indent = TextUtilities.getLeadingWhiteSpace(
+					buffer.getText(start,lineElement
+					.getEndOffset() - start));
 				buffer.insertString(start + indent,boxComment,null);
 			}
 			lineElement = map.getElement(endLine);
 			start = lineElement.getStartOffset();
-			indent = jEdit.getLeadingWhiteSpace(buffer.getText(
-				start,lineElement.getEndOffset() - start));
+			indent = TextUtilities.getLeadingWhiteSpace(buffer
+				.getText(start,lineElement.getEndOffset()
+				- start));
 			buffer.insertString(Math.max(start + indent,textArea
 				.getSelectionEnd()),commentEnd,null);
 			textArea.select(textArea.getCaretPosition(),

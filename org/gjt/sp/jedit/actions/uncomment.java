@@ -78,7 +78,7 @@ public class uncomment extends EditAction
 		throws BadLocationException
 	{
 		// calculate leading indent
-		int indent = jEdit.getLeadingWhiteSpace(line);
+		int indent = TextUtilities.getLeadingWhiteSpace(line);
 		int istart = start + indent;
 
 		// Remove comment strings from the start and end of the line

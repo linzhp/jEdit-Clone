@@ -35,7 +35,8 @@ public class execute extends EditAction
 	{
 		View view = getView(evt);
 		Buffer buffer = view.getBuffer();
-		String command = jEdit.inputProperty(view,"execute","execute.cmd");
+		String command = GUIUtilities.inputProperty(view,"execute",
+			"execute.cmd");
 		if(command == null)
 			return;
 		StringBuffer buf = new StringBuffer();
@@ -75,7 +76,7 @@ public class execute extends EditAction
 		catch(IOException io)
 		{
 			Object[] error = { io.toString() };
-			jEdit.error(view,"ioerror",error);
+			GUIUtilities.error(view,"ioerror",error);
 		}
 	}
 }

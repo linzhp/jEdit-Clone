@@ -39,7 +39,8 @@ public class pipe_selection extends EditAction
 		int start = textArea.getSelectionStart();
 		int end = textArea.getSelectionEnd();
 		Buffer buffer = view.getBuffer();
-		String command = jEdit.inputProperty(view,"execute","execute.cmd");
+		String command = GUIUtilities.inputProperty(view,"execute",
+			"execute.cmd");
 		if(command == null)
 			return;
 		StringBuffer buf = new StringBuffer();
@@ -97,7 +98,7 @@ public class pipe_selection extends EditAction
 			if(buf.length() != 0)
 			{
 				Object[] args = { buf.toString() };
-				jEdit.error(view,"cmderr",args);
+				GUIUtilities.error(view,"cmderr",args);
 				return;
 			}
 			BufferedReader in = new BufferedReader(
@@ -117,7 +118,7 @@ public class pipe_selection extends EditAction
 		catch(IOException io)
 		{
 			Object[] error = { io.toString() };
-			jEdit.error(view,"ioerror",error);
+			GUIUtilities.error(view,"ioerror",error);
 		}
 		catch(BadLocationException b)
 		{

@@ -35,8 +35,8 @@ public class CompilerError
 	 */
 	public CompilerError(String path, int lineNo, String error)
 	{
-		this.path = jEdit.constructPath(System.getProperty("user.dir"),
-			path);
+		this.path = MiscUtilities.constructPath(System.getProperty(
+			"user.dir"),path);
 		this.lineNo = lineNo - 1;
 		this.error = error;
 

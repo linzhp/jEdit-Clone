@@ -56,7 +56,7 @@ public class join_lines extends EditAction
 		int nextEnd = nextLineElement.getEndOffset();
 		try
 		{
-			buffer.remove(end - 1,jEdit.getLeadingWhiteSpace(
+			buffer.remove(end - 1,TextUtilities.getLeadingWhiteSpace(
 				buffer.getText(nextStart,nextEnd - nextStart)) + 1);
 		}
 		catch(BadLocationException bl)

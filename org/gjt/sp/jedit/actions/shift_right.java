@@ -59,11 +59,13 @@ public class shift_right extends EditAction
 				int lineStart = lineElement.getStartOffset();
 				String line = buffer.getText(lineStart,
 					lineElement.getEndOffset() - lineStart - 1);
-				int whiteSpace = jEdit.getLeadingWhiteSpace(line);
-				int whiteSpaceWidth = jEdit.getLeadingWhiteSpaceWidth(
+				int whiteSpace = TextUtilities
+					.getLeadingWhiteSpace(line);
+				int whiteSpaceWidth = TextUtilities
+					.getLeadingWhiteSpaceWidth(
 					line,tabSize) + tabSize;
 				buffer.remove(lineStart,whiteSpace);
-				buffer.insertString(lineStart,jEdit
+				buffer.insertString(lineStart,TextUtilities
 					.createWhiteSpace(whiteSpaceWidth,
 					tabSize,noTabs),null);
 			}

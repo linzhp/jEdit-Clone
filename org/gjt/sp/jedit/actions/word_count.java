@@ -80,6 +80,6 @@ public class word_count extends EditAction
 		}
 		Object[] args = { new Integer(characters), new Integer(words),
 			new Integer(lines) };
-		jEdit.message(view,"wordcount",args);
+		GUIUtilities.message(view,"wordcount",args);
 	}
 }

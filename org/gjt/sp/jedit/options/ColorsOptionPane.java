@@ -22,7 +22,7 @@ package org.gjt.sp.jedit.options;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import org.gjt.sp.jedit.jEdit;
+import org.gjt.sp.jedit.*;
 
 public abstract class ColorsOptionPane extends OptionPane
 implements ActionListener
@@ -50,7 +50,8 @@ implements ActionListener
 	protected JButton createColorButton(String property)
 	{
 		JButton button = new JButton("    ");
-		button.setBackground(jEdit.parseColor(jEdit.getProperty(property)));
+		button.setBackground(GUIUtilities.parseColor(jEdit
+			.getProperty(property)));
 		button.addActionListener(this);
 		return button;
 	}

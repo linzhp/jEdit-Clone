@@ -108,7 +108,7 @@ implements DocumentListener, UndoableEditListener
 			Object[] args = { e.getMessage() };
 			if(args[0] == null)
 				args[0] = e.toString();
-			jEdit.error(view,"reerror",args);
+			GUIUtilities.error(view,"reerror",args);
 		}
 		return false;
 	}
@@ -145,7 +145,7 @@ implements DocumentListener, UndoableEditListener
 			Object[] args = { e.getMessage() };
 			if(args[0] == null)
 				args[0] = e.toString();
-			jEdit.error(view,"reerror",args);
+			GUIUtilities.error(view,"reerror",args);
 		}
 	}
 
@@ -193,7 +193,7 @@ implements DocumentListener, UndoableEditListener
 			Object[] args = { e.getMessage() };
 			if(args[0] == null)
 				args[0] = e.toString();
-			jEdit.error(view,"reerror",args);
+			GUIUtilities.error(view,"reerror",args);
 		}
 		endCompoundEdit();
 		return found;
@@ -335,7 +335,7 @@ implements DocumentListener, UndoableEditListener
 		catch(IOException io)
 		{
 			Object[] args = { io.toString() };
-			jEdit.error(view,"ioerror",args);
+			GUIUtilities.error(view,"ioerror",args);
 		}
 		catch(BadLocationException bl)
 		{
@@ -971,7 +971,7 @@ implements DocumentListener, UndoableEditListener
 			if(autosaveFile.exists())
 			{
 				Object[] args = { autosaveFile.getPath() };
-				jEdit.message(null,"autosaveexists",args);
+				GUIUtilities.message(null,"autosaveexists",args);
 			}
 			load();
 			loadMarkers();
@@ -1133,12 +1133,12 @@ implements DocumentListener, UndoableEditListener
 		catch(FileNotFoundException fnf)
 		{
 			Object[] args = { path };
-			jEdit.error(null,"notfounderror",args);
+			GUIUtilities.error(null,"notfounderror",args);
 		}
 		catch(IOException io)
 		{
 			Object[] args = { io.toString() };
-			jEdit.error(null,"ioerror",args);
+			GUIUtilities.error(null,"ioerror",args);
 		}
 	}
 
@@ -1536,7 +1536,7 @@ implements DocumentListener, UndoableEditListener
 				if(value == null)
 					return null;
 			}
-			Color color = jEdit.parseColor(value);
+			Color color = GUIUtilities.parseColor(value);
 			if(color == null)
 				return null;
 			put(key,color);

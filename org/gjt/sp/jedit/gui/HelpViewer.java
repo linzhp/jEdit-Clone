@@ -163,7 +163,7 @@ implements ActionListener, HyperlinkListener
 		catch(IOException io)
 		{
 			Object[] args = { io.getMessage() };
-			jEdit.error((View)getParent(),"ioerror",args);
+			GUIUtilities.error((View)getParent(),"ioerror",args);
 		}
 	}
 }

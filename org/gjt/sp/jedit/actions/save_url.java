@@ -32,7 +32,7 @@ public class save_url extends EditAction
 	public void actionPerformed(ActionEvent evt)
 	{
 		View view = getView(evt);
-		String path = jEdit.input(view,"saveurl",view.getBuffer()
+		String path = GUIUtilities.input(view,"saveurl",view.getBuffer()
 			.getPath());
 		if(path != null)
 			view.getBuffer().save(view,path);

@@ -37,7 +37,7 @@ public class set_marker extends EditAction
 		if(buffer.isReadOnly())
 			view.getToolkit().beep();
 		SyntaxTextArea textArea = view.getTextArea();
-		String marker = jEdit.input(view,"setmarker",
+		String marker = GUIUtilities.input(view,"setmarker",
 			textArea.getSelectedText());
 		if(marker != null)
 			buffer.addMarker(marker,textArea.getSelectionStart(),

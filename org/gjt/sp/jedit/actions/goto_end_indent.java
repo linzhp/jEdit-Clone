@@ -43,7 +43,8 @@ public class goto_end_indent extends EditAction
 		try
 		{
 			String str = buffer.getText(start,end - start);
-			int whitespace = start + jEdit.getLeadingWhiteSpace(str);
+			int whitespace = start + TextUtilities
+				.getLeadingWhiteSpace(str);
 			view.getTextArea().setCaretPosition(whitespace);
 		}
 		catch(BadLocationException bl)
