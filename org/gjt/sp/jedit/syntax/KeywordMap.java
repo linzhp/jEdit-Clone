@@ -64,7 +64,7 @@ public class KeywordMap
 		Keyword k = map[getSegmentMapKey(text, offset, length)];
 		while(k != null)
 		{
-			if(length != k.keyword.length())
+			if(length != k.keyword.length)
 			{
 				k = k.next;
 				continue;
@@ -84,7 +84,7 @@ public class KeywordMap
 	public void add(String keyword, String id)
 	{
 		int key = getStringMapKey(keyword);
-		map[key] = new Keyword(keyword,id,map[key]);
+		map[key] = new Keyword(keyword.toCharArray(),id,map[key]);
 	}
 
 	// protected members
@@ -107,14 +107,14 @@ public class KeywordMap
 	// private members
 	private class Keyword
 	{
-		public Keyword(String keyword, String id, Keyword next)
+		public Keyword(char[] keyword, String id, Keyword next)
 		{
 			this.keyword = keyword;
 			this.id = id;
 			this.next = next;
 		}
 
-		public String keyword;
+		public char[] keyword;
 		public String id;
 		public Keyword next;
 	}

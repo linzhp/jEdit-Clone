@@ -182,7 +182,7 @@ implements ActionListener, KeyListener, WindowListener
 		case KeyEvent.VK_ENTER:
 			save();
 			if(view.getBuffer().find(view,false));
-				dispose();
+				_dispose();
 			break;
 		case KeyEvent.VK_ESCAPE:
 			save();
