@@ -103,6 +103,14 @@ public class HistoryTextField extends JComboBox
 		
 		// Don't fire actionEvent here
 	}
+
+	/**
+	 * Making it public so that an inner class can use it.
+	 */
+	public void fireActionEvent()
+	{
+		super.fireActionEvent();
+	}
 	
 	// private members
 	private String name;
@@ -124,6 +132,9 @@ public class HistoryTextField extends JComboBox
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.14  1999/03/19 21:50:16  sp
+ * Made HistoryTextField compile
+ *
  * Revision 1.13  1999/03/19 06:08:45  sp
  * Fixed conflicts from incomplete commit, removed obsolete files
  *
