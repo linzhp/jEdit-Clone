@@ -72,8 +72,7 @@ buffer.colors.label=#cc32ff
 buffer.colors.literal1=#650099
 buffer.colors.literal2=#650099
 buffer.colors.operator=orange
-buffer.colors.invalid=#990033
-
+buffer.colors.invalid=#ff9900
 ###
 ### VIEW SETTINGS
 ###

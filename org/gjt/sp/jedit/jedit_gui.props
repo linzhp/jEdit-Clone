@@ -245,7 +245,7 @@ options.label=Opt$ions...
 mode.label=Mo$de
 
 ### Plugins menu
-plugins.label=P$lugins
+plugins.label=$Plugins
 no-plugins.label=No Plugins
 
 ### Search menu
@@ -356,6 +356,10 @@ notfounderror.message=The file could not be found: {0}
 # Open URL dialog
 openurl.title=Open URL
 openurl.message=URL to open:
+
+# Execute command dialog
+execute.title=Execute Command
+execute.message=Command to execute (%p = file path, %u = file URL):
 
 # Couldn't load browser dialog
 wwwerror.title=WWW Browser Error
