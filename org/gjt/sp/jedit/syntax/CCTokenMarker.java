@@ -38,63 +38,84 @@ public class CCTokenMarker extends CTokenMarker
 		if(ccKeywords == null)
 		{
 			ccKeywords = new KeywordMap(false);
-			ccKeywords.add("char",Token.KEYWORD3);
-			ccKeywords.add("double",Token.KEYWORD3);
-			ccKeywords.add("enum",Token.KEYWORD3);
-			ccKeywords.add("float",Token.KEYWORD3);
-			ccKeywords.add("int",Token.KEYWORD3);
-			ccKeywords.add("long",Token.KEYWORD3);
-			ccKeywords.add("short",Token.KEYWORD3);
-			ccKeywords.add("signed",Token.KEYWORD3);
-			ccKeywords.add("struct",Token.KEYWORD3);
-			ccKeywords.add("typedef",Token.KEYWORD3);
-			ccKeywords.add("union",Token.KEYWORD3);
-			ccKeywords.add("unsigned",Token.KEYWORD3);
-			ccKeywords.add("void",Token.KEYWORD3);
-			ccKeywords.add("auto",Token.KEYWORD1);
-			ccKeywords.add("const",Token.KEYWORD1);
-			ccKeywords.add("extern",Token.KEYWORD1);
-			ccKeywords.add("register",Token.KEYWORD1);
-			ccKeywords.add("static",Token.KEYWORD1);
-			ccKeywords.add("volatile",Token.KEYWORD1);
-			ccKeywords.add("break",Token.KEYWORD1);
-			ccKeywords.add("case",Token.KEYWORD1);
-			ccKeywords.add("continue",Token.KEYWORD1);
-			ccKeywords.add("default",Token.KEYWORD1);
-			ccKeywords.add("do",Token.KEYWORD1);
-			ccKeywords.add("else",Token.KEYWORD1);
-			ccKeywords.add("for",Token.KEYWORD1);
-			ccKeywords.add("goto",Token.KEYWORD1);
-			ccKeywords.add("if",Token.KEYWORD1);
-			ccKeywords.add("return",Token.KEYWORD1);
-			ccKeywords.add("sizeof",Token.KEYWORD1);
-			ccKeywords.add("switch",Token.KEYWORD1);
-			ccKeywords.add("while",Token.KEYWORD1);
-			ccKeywords.add("asm",Token.KEYWORD2);
-			ccKeywords.add("asmlinkage",Token.KEYWORD2);
-			ccKeywords.add("far",Token.KEYWORD2);
-			ccKeywords.add("huge",Token.KEYWORD2);
-			ccKeywords.add("inline",Token.KEYWORD2);
-			ccKeywords.add("near",Token.KEYWORD2);
-			ccKeywords.add("pascal",Token.KEYWORD2);
-			ccKeywords.add("true",Token.LABEL);
-			ccKeywords.add("false",Token.LABEL);
-			ccKeywords.add("NULL",Token.LABEL);
 
-			// C++ stuff
+			ccKeywords.add("and", Token.KEYWORD3);
+			ccKeywords.add("and_eq", Token.KEYWORD3);
+			ccKeywords.add("asm", Token.KEYWORD2);         //
+			ccKeywords.add("auto", Token.KEYWORD1);        //
+			ccKeywords.add("bitand", Token.KEYWORD3);
+			ccKeywords.add("bitor", Token.KEYWORD3);
 			ccKeywords.add("bool",Token.KEYWORD3);
-			ccKeywords.add("class",Token.KEYWORD3);
-			ccKeywords.add("template",Token.KEYWORD3);
-			ccKeywords.add("private",Token.LABEL);
-			ccKeywords.add("public",Token.LABEL);
-			ccKeywords.add("virtual",Token.KEYWORD1);
-			ccKeywords.add("catch",Token.KEYWORD1);
-			ccKeywords.add("default",Token.LABEL);
-			ccKeywords.add("delete",Token.KEYWORD1);
-			ccKeywords.add("friend",Token.KEYWORD1);
-			ccKeywords.add("new",Token.KEYWORD1);
-			ccKeywords.add("throw",Token.KEYWORD1);
-			ccKeywords.add("try",Token.KEYWORD1);
+			ccKeywords.add("break", Token.KEYWORD1);	   //
+			ccKeywords.add("case", Token.KEYWORD1);		   //
+			ccKeywords.add("catch", Token.KEYWORD1);
+			ccKeywords.add("char", Token.KEYWORD3);		   //
+			ccKeywords.add("class", Token.KEYWORD3);
+			ccKeywords.add("compl", Token.KEYWORD3);
+			ccKeywords.add("const", Token.KEYWORD1);	   //
+			ccKeywords.add("const_cast", Token.KEYWORD3);
+			ccKeywords.add("continue", Token.KEYWORD1);	   //
+			ccKeywords.add("default", Token.KEYWORD1);	   //
+			ccKeywords.add("delete", Token.KEYWORD1);
+			ccKeywords.add("do",Token.KEYWORD1);           //
+			ccKeywords.add("double" ,Token.KEYWORD3);	   //
+			ccKeywords.add("dynamic_cast", Token.KEYWORD3);
+			ccKeywords.add("else", 	Token.KEYWORD1);	   //
+			ccKeywords.add("enum",  Token.KEYWORD3);	   //
+			ccKeywords.add("explicit", Token.KEYWORD1);			
+			ccKeywords.add("export", Token.KEYWORD2);
+			ccKeywords.add("extern", Token.KEYWORD2);	   //
+			ccKeywords.add("false", Token.LABEL);
+			ccKeywords.add("float", Token.KEYWORD3);	   //
+			ccKeywords.add("for", Token.KEYWORD1);		   //
+			ccKeywords.add("friend", Token.KEYWORD1);			
+			ccKeywords.add("goto", Token.KEYWORD1);        //
+			ccKeywords.add("if", Token.KEYWORD1);		   //
+			ccKeywords.add("inline", Token.KEYWORD1);
+			ccKeywords.add("int", Token.KEYWORD3);		   //
+			ccKeywords.add("long", Token.KEYWORD3);		   //
+			ccKeywords.add("mutable", Token.KEYWORD3);
+			ccKeywords.add("namespace", Token.KEYWORD2);
+			ccKeywords.add("new", Token.KEYWORD1);
+			ccKeywords.add("not", Token.KEYWORD3);
+			ccKeywords.add("not_eq", Token.KEYWORD3);
+			ccKeywords.add("operator", Token.KEYWORD3);
+			ccKeywords.add("or", Token.KEYWORD3);
+			ccKeywords.add("or_eq", Token.KEYWORD3);
+			ccKeywords.add("private", Token.LABEL);
+			ccKeywords.add("protected", Token.LABEL);
+			ccKeywords.add("public", Token.LABEL);
+			ccKeywords.add("register", Token.KEYWORD1);
+			ccKeywords.add("reinterpret_cast", Token.KEYWORD3);
+			ccKeywords.add("return", Token.KEYWORD1);      //
+			ccKeywords.add("short", Token.KEYWORD3);	   //
+			ccKeywords.add("signed", Token.KEYWORD3);	   //
+			ccKeywords.add("sizeof", Token.KEYWORD1);	   //
+			ccKeywords.add("static", Token.KEYWORD1);	   //
+			ccKeywords.add("static_cast", Token.KEYWORD3);
+			ccKeywords.add("struct", Token.KEYWORD3);	   //
+			ccKeywords.add("switch", Token.KEYWORD1);	   //
+			ccKeywords.add("template", Token.KEYWORD3);
+			ccKeywords.add("this", Token.LABEL);
+			ccKeywords.add("throw", Token.KEYWORD1);
+			ccKeywords.add("true", Token.LABEL);
+			ccKeywords.add("try", Token.KEYWORD1);
+			ccKeywords.add("typedef", Token.KEYWORD3);	   //
+			ccKeywords.add("typeid", Token.KEYWORD3);
+			ccKeywords.add("typename", Token.KEYWORD3);
+			ccKeywords.add("union", Token.KEYWORD3);	   //
+			ccKeywords.add("unsigned", Token.KEYWORD3);	   //
+			ccKeywords.add("using", Token.KEYWORD2);
+			ccKeywords.add("virtual", Token.KEYWORD1);
+			ccKeywords.add("void", Token.KEYWORD1);		   //
+			ccKeywords.add("volatile", Token.KEYWORD1);	   //
+			ccKeywords.add("wchar_t", Token.KEYWORD3);
+			ccKeywords.add("while", Token.KEYWORD1);	   //
+			ccKeywords.add("xor", Token.KEYWORD3);
+			ccKeywords.add("xor_eq", Token.KEYWORD3);            
+
+			// non ANSI keywords
+			ccKeywords.add("NULL", Token.LABEL);
 		}
 		return ccKeywords;
 	}
@@ -106,6 +127,9 @@ public class CCTokenMarker extends CTokenMarker
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.2  1999/04/21 05:00:46  sp
+ * New splash screen!!!!!!!!!!! Also, Juha has sent in a new keyword set for C++
+ *
  * Revision 1.1  1999/03/13 09:11:46  sp
  * Syntax code updates, code cleanups
  *
