@@ -73,7 +73,7 @@ view.context=undo redo - cut copy paste - \
 ###
 ### MENUBAR
 ###
-view.mbar=buffers file edit registers search plugins help-menu
+view.mbar=buffers file edit registers search macros plugins help-menu
 
 ### Buffers menu
 buffers.label=$Buffers
@@ -273,12 +273,33 @@ find-selection.label=F$ind Selection...
 replace-in-selection.label=Re$place in Selection
 replace-all.label=Replace $All
 hypersearch.label=H$yperSearch...
-hypersearch-selection.label=Hy$perSearch for Selection...
+hypersearch-selection.label=HyperSearch for Se$lection...
 multifile-search.label=M$ultifile Search Settings...
-set-marker.label=Set $Marker...
-clear-marker.label=Clear Mar$ker
+set-marker.label=Set Mar$ker...
+clear-marker.label=$Clear Marker
 goto-marker.label=$Go to Marker
 no-markers.label=No Markers Defined
+
+### Macros menu
+macros=record-macro \
+       record-temp-macro \
+       stop-recording \
+       - \
+       play-temp-macro \
+       play-last-macro \
+       edit-macro \
+       - \
+       rescan-macros \
+       -
+macros.label=$Macros
+record-macro.label=Re$cord Macro...
+record-temp-macro.label=Record $to Temporary Buffer
+stop-recording.label=St$op Recording
+play-temp-macro.label=$Play Temporary Macro
+play-last-macro.label=P$lay Last Macro
+edit-macro.label=E$dit Macro...
+rescan-macros.label=Resca$n Macros
+no-macros.label=No Macros
 
 ### Plugins menu
 plugins.label=$Plugins
@@ -290,6 +311,20 @@ help-menu=about \
 help-menu.label=$Help
 about.label=About jEdit...
 help.label=Help Contents...
+
+###
+### MACRO STRINGS
+###
+
+macro.temp.header=# This is a temporary macro. First, check over the\n\
+                  # commands to make sure this is what you intended.\n\
+                  # Then, to execute this macro, switch to the buffer\n\
+                  # where you would like to execute it and press C+e C+m C+p.
+
+macro.header=# This is a freshly recorded macro. First, check over the\n\
+             # commands to make sure this is what you intended. Then,\n\
+             # save this buffer, and the macro should appear in the\n\
+             # Macros menu.
 
 ###
 ### TEXT AREA KEY BINDING NAMES
@@ -333,6 +368,7 @@ repeat.label=Enter Repeat Count
 view.title={0}{1,choice,0#|1# (read only)}{2,choice,0#|1# (modified)}{3,choice,0#|1# (new)}
 
 # Status messages
+view.status.recording=Macro recording
 view.status.cut-string-register=Cut to register?
 view.status.copy-string-register=Copy to register?
 view.status.append-string-register=Append to register?
@@ -445,6 +481,28 @@ autosaveexists.message=An autosave file {0} was found!\n\
 # Save all confirm dialog
 saveall.title=Save All Buffers
 saveall.message=Are you sure you want to save all modified buffers?
+
+# Macro recording already in progress dialog
+already-recording.title=Already Recording
+already-recording.message=A macro recording is already in progress.
+
+# Macro recording not in progress dialog
+not-recording.title=Not Recording
+not-recording.message=A macro is not currently being recorded.
+
+# Record macro dialog
+record.title=Record Macro
+record.message=Macro name:
+
+# Macro error dialog
+macro-error.title=Macro Error
+macro-error.message=Unknown action {2} while executing macro {0}\n\
+	(line {1}).
+
+# Some features don't work with -nosettings dialog
+no-settings.title=Feature Disabled
+no-settings.message=jEdit was started with the -nosettings switch.\n\
+	To use this feature, you must start jEdit without that switch.
 
 # Search and replace dialog
 search.title=Search And Replace
@@ -580,7 +638,6 @@ options.keys.note=Restart jEdit for shortcut changes to take effect
 options.keys.name=Command
 options.keys.binding=Keyboard shortcut
 options.filters.label=File Filters
-options.filters.toggle=File filters in open and save dialogs
 options.filters.name=Name
 options.filters.re=Regular Expression
 

@@ -222,6 +222,52 @@ public class View extends JFrame
 	}
 
 	/**
+	 * Recreates the macros menu.
+	 */
+	public void updateMacrosMenu()
+	{
+		// Because the macros menu contains normal items as
+		// well as dynamically-generated stuff, we are careful
+		// to only remove the dynamic crap here...
+		for(int i = macros.getMenuComponentCount() - 1; i >= 0; i--)
+		{
+			if(macros.getMenuComponent(i) instanceof JSeparator)
+				break;
+			else
+				macros.remove(i);
+		}
+
+		String settings = jEdit.getSettingsDirectory();
+
+		boolean noMacros = true;
+
+		if(settings != null)
+		{
+			EditAction action = jEdit.getAction("play-macro");
+
+			String[] macroFiles = new File(settings +
+				File.separator + "macros").list();
+			for(int i = 0; i < macroFiles.length; i++)
+			{
+				String name = macroFiles[i];
+				if(!name.toLowerCase().endsWith(".macro"))
+					continue;
+
+				noMacros = false;
+
+				name = name.substring(0,name.length() - 6);
+				JMenuItem menuItem = new JMenuItem(name);
+				menuItem.addActionListener(action);
+				menuItem.setActionCommand(name);
+				macros.add(menuItem);
+			}
+		}
+
+		if(noMacros)
+			macros.add(GUIUtilities.loadMenuItem(this,"no-macros"));
+	}
+
+	/**
 	 * Recreates the plugins menu.
 	 */
 	public void updatePluginsMenu()
@@ -439,10 +485,13 @@ public class View extends JFrame
 	{
 		listenerList = new EventListenerList();
 
+		// Dynamic menus
 		buffers = GUIUtilities.loadMenu(this,"buffers");
 		openRecent = GUIUtilities.loadMenu(this,"open-recent");
 		clearMarker = GUIUtilities.loadMenu(this,"clear-marker");
 		gotoMarker = GUIUtilities.loadMenu(this,"goto-marker");
+		macros = GUIUtilities.loadMenu(this,"macros");
+		updateMacrosMenu();
 		plugins = GUIUtilities.loadMenu(this,"plugins");
 		updatePluginsMenu();
 
@@ -494,6 +543,8 @@ public class View extends JFrame
 			return clearMarker;
 		else if(name.equals("goto-marker"))
 			return gotoMarker;
+		else if(name.equals("macros"))
+			return macros;
 		else if(name.equals("plugins"))
 			return plugins;
 		else
@@ -520,6 +571,7 @@ public class View extends JFrame
 	private JMenu openRecent;
 	private JMenu clearMarker;
 	private JMenu gotoMarker;
+	private JMenu macros;
 	private JMenu plugins;
 
 	private Box toolBars;
@@ -589,8 +641,18 @@ public class View extends JFrame
 	{
 		public void bufferDirtyChanged(BufferEvent evt)
 		{
-			if(evt.getBuffer() == buffer)
+			Buffer _buffer = evt.getBuffer();
+			if(_buffer == buffer)
 				updateTitle();
+
+			// Check if it's a macro that's just been saved
+			if(_buffer.getName().toLowerCase().endsWith(".macro")
+				&& !_buffer.isDirty())
+			{
+				// Then update the macros menu
+				updateMacrosMenu();
+			}
+
 			updateBuffersMenu();
 		}
 
@@ -695,6 +757,9 @@ public class View extends JFrame
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.91  1999/10/05 10:55:29  sp
+ * File dialogs open faster, and experimental keyboard macros
+ *
  * Revision 1.90  1999/10/03 03:47:15  sp
  * Minor stupidity, IDL mode
  *

@@ -16,6 +16,7 @@ others='org/gjt/sp/jedit/textarea/DefaultInputHandler$$backspace.class' \
 	'org/gjt/sp/jedit/textarea/DefaultInputHandler$$end.class' \
 	'org/gjt/sp/jedit/textarea/DefaultInputHandler$$home.class' \
 	'org/gjt/sp/jedit/textarea/DefaultInputHandler$$insert_break.class' \
+	'org/gjt/sp/jedit/textarea/DefaultInputHandler$$insert_char.class' \
 	'org/gjt/sp/jedit/textarea/DefaultInputHandler$$insert_tab.class' \
 	'org/gjt/sp/jedit/textarea/DefaultInputHandler$$next_char.class' \
 	'org/gjt/sp/jedit/textarea/DefaultInputHandler$$next_line.class' \
@@ -28,6 +29,7 @@ others='org/gjt/sp/jedit/textarea/DefaultInputHandler$$backspace.class' \
 	'org/gjt/sp/jedit/textarea/DefaultInputHandler$$prev_word.class' \
 	'org/gjt/sp/jedit/textarea/DefaultInputHandler$$repeat.class' \
 	'org/gjt/sp/jedit/textarea/DefaultInputHandler$$toggle_rect.class' \
+	'org/gjt/sp/jedit/textarea/InputHandler$$MacroRecorder.class' \
 	'org/gjt/sp/jedit/textarea/InputHandler$$NonRepeatable.class' \
 	'org/gjt/sp/jedit/textarea/JEditTextArea$$1.class' \
 	'org/gjt/sp/jedit/textarea/JEditTextArea$$AdjustHandler.class' \

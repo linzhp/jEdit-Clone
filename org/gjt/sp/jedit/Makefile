@@ -14,6 +14,7 @@ classes=org/gjt/sp/jedit/jEdit.class \
 	org/gjt/sp/jedit/EditServer.class \
 	org/gjt/sp/jedit/GUIUtilities.class \
 	org/gjt/sp/jedit/JARClassLoader.class \
+	org/gjt/sp/jedit/Macros.class \
 	org/gjt/sp/jedit/Marker.class \
 	org/gjt/sp/jedit/MiscUtilities.class \
 	org/gjt/sp/jedit/Mode.class \
@@ -33,6 +34,8 @@ others='org/gjt/sp/jedit/jEdit$$1.class' \
 	'org/gjt/sp/jedit/Buffer$$DocumentHandler.class' \
 	'org/gjt/sp/jedit/Buffer$$EditorHandler.class' \
 	'org/gjt/sp/jedit/Buffer$$UndoHandler.class' \
+	'org/gjt/sp/jedit/GUIUtilities$$EditorHandler.class' \
+	'org/gjt/sp/jedit/Macros$$BufferRecorder.class' \
 	'org/gjt/sp/jedit/Plugin$$OldAPI.class' \
 	'org/gjt/sp/jedit/Plugin$$Wrapper.class' \
 	'org/gjt/sp/jedit/Registers$$CaretRegister.class' \

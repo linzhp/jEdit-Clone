@@ -106,6 +106,13 @@ set-filename-register.shortcut=C+r C+f
 paste-string-register.shortcut=C+r C+v
 cut-string-register.shortcut=C+r C+x
 
+# C+e C+m
+play-last-macro.shortcut=C+e C+m C+l
+record-temp-macro.shortcut=C+e C+m C+m
+play-temp-macro.shortcut=C+e C+m C+p
+record-macro.shortcut=C+e C+m C+r
+stop-recording.shortcut=C+e C+m C+s
+
 # Other keys
 indent-on-tab.shortcut=TAB
 indent-on-enter.shortcut=ENTER

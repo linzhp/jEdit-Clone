@@ -66,6 +66,9 @@ public class DefaultInputHandler implements InputHandler
 	public static final ActionListener REPEAT = new repeat();
 	public static final ActionListener TOGGLE_RECT = new toggle_rect();
 
+	// Default action
+	public static final ActionListener INSERT_CHAR = new insert_char();
+
 	public static final ActionListener[] ACTIONS = {
 		BACKSPACE, DELETE, END, SELECT_END, INSERT_BREAK,
 		INSERT_TAB, HOME, SELECT_HOME, NEXT_CHAR, NEXT_LINE,
@@ -73,7 +76,7 @@ public class DefaultInputHandler implements InputHandler
 		SELECT_NEXT_PAGE, SELECT_NEXT_WORD, OVERWRITE, PREV_CHAR,
 		PREV_LINE, PREV_PAGE, PREV_WORD, SELECT_PREV_CHAR,
 		SELECT_PREV_LINE, SELECT_PREV_PAGE, SELECT_PREV_WORD,
-		REPEAT, TOGGLE_RECT };
+		REPEAT, TOGGLE_RECT, INSERT_CHAR };
 
 	public static final String[] ACTION_NAMES = {
 		"backspace", "delete", "end", "select-end", "insert-break",
@@ -82,7 +85,7 @@ public class DefaultInputHandler implements InputHandler
 		"select-next-page", "select-next-word", "overwrite", "prev-char",
 		"prev-line", "prev-page", "prev-word", "select-prev-char",
 		"select-prev-line", "select-prev-page", "select-prev-word",
-		"repeat", "toggle-rect" };
+		"repeat", "toggle-rect", "insert-char" };
 
 	/**
 	 * Creates a new input handler with no key bindings defined.
@@ -236,6 +239,25 @@ public class DefaultInputHandler implements InputHandler
 	}
 
 	/**
+	 * Returns the macro recorder. If this is non-null, all executed
+	 * actions should be forwarded to the recorder.
+	 */
+	public InputHandler.MacroRecorder getMacroRecorder()
+	{
+		return recorder;
+	}
+
+	/**
+	 * Sets the macro recorder. If this is non-null, all executed
+	 * actions should be forwarded to the recorder.
+	 * @param recorder The macro recorder
+	 */
+	public void setMacroRecorder(InputHandler.MacroRecorder recorder)
+	{
+		this.recorder = recorder;
+	}
+
+	/**
 	 * Returns a copy of this input handler that shares the same
 	 * key bindings. Setting key bindings in the copy will also
 	 * set them in the original.
@@ -243,6 +265,54 @@ public class DefaultInputHandler implements InputHandler
 	public InputHandler copy()
 	{
 		return new DefaultInputHandler(this);
+	}
+
+	/**
+	 * Executes the specified action.
+	 * @param listener The action listener
+	 * @param source The event source
+	 * @param actionCommand The action command
+	 */
+	public void executeAction(ActionListener listener, Object source,
+		String actionCommand)
+	{
+		/**
+		 * We have to hardcode the recording of 'repeat' because
+		 * when it is first invoked, its action command is null,
+		 * and then input is received from the keyboard.
+		 */
+		if(recorder != null && !(listener instanceof InputHandler.NonRecordable))
+		{
+			int repeatCount = getRepeatCount();
+			if(repeatCount != 1)
+			{
+				// XXX hardcoded
+				recorder.actionPerformed(REPEAT,String.valueOf(repeatCount));
+			}
+			recorder.actionPerformed(listener,actionCommand);
+		}
+
+		ActionEvent evt = new ActionEvent(source,
+			ActionEvent.ACTION_PERFORMED,
+			actionCommand,0);
+
+		boolean oldRepeat = repeat;
+
+		if(listener instanceof InputHandler.NonRepeatable)
+			listener.actionPerformed(evt);
+		else
+		{
+			for(int i = 0; i < Math.max(1,repeatCount); i++)
+				listener.actionPerformed(evt);
+		}
+
+		// If repeat was true originally, clear it
+		// Otherwise it might have been set by the action, etc
+		if(oldRepeat = true)
+		{
+			repeat = false;
+			repeatCount = 0;
+		}
 	}
 
 	/**
@@ -263,7 +333,7 @@ public class DefaultInputHandler implements InputHandler
 		{
 			if(grabAction != null)
 			{
-				handleGrabAction(evt,'\0');
+				handleGrabAction(evt);
 				return;
 			}
 
@@ -292,30 +362,8 @@ public class DefaultInputHandler implements InputHandler
 			{
 				currentBindings = bindings;
 
-				ActionEvent actionEvent = new ActionEvent(
-					evt.getSource(),
-					ActionEvent.ACTION_PERFORMED,
-					null,modifiers);
-				ActionListener listener = ((ActionListener)o);
-
-				// Remember old repeat
-				boolean oldRepeat = repeat;
-				
-				if(listener instanceof InputHandler.NonRepeatable)
-					listener.actionPerformed(actionEvent);
-				else
-				{
-					for(int i = 0; i < Math.max(1,repeatCount); i++)
-						listener.actionPerformed(actionEvent);
-				}
-
-				// Don't clear repeat to false if it changed
-				// from false to true
-				if(oldRepeat == true)
-				{
-					repeat = false;
-					repeatCount = 0;
-				}
+				executeAction(((ActionListener)o),
+					evt.getSource(),null);
 
 				evt.consume();
 				return;
@@ -324,13 +372,6 @@ public class DefaultInputHandler implements InputHandler
 			{
 				currentBindings = (Hashtable)o;
 				evt.consume();
-				return;
-			}
-			else if(keyCode != KeyEvent.VK_ALT
-				&& keyCode != KeyEvent.VK_CONTROL
-				&& keyCode != KeyEvent.VK_SHIFT
-				&& keyCode != KeyEvent.VK_META)
-			{
 				return;
 			}
 		}
@@ -357,11 +398,9 @@ public class DefaultInputHandler implements InputHandler
 			{
 				currentBindings = bindings;
 
-				JEditTextArea textArea = getTextArea(evt);
-
 				if(grabAction != null)
 				{
-					handleGrabAction(evt,c);
+					handleGrabAction(evt);
 					return;
 				}
 
@@ -373,17 +412,8 @@ public class DefaultInputHandler implements InputHandler
 					return;
 				}
 
-				if(textArea.isEditable())
-				{
-					StringBuffer buf = new StringBuffer();
-					for(int i = 0; i < Math.max(1,repeatCount); i++)
-						buf.append(c);
-					textArea.overwriteSetSelectedText(buf.toString());
-				}
-				else
-				{
-					textArea.getToolkit().beep();
-				}
+				executeAction(INSERT_CHAR,evt.getSource(),
+					String.valueOf(evt.getKeyChar()));
 
 				repeatCount = 0;
 				repeat = false;
@@ -490,30 +520,17 @@ public class DefaultInputHandler implements InputHandler
 	private ActionListener grabAction;
 	private boolean repeat;
 	private int repeatCount;
+	private InputHandler.MacroRecorder recorder;
 
 	private DefaultInputHandler(DefaultInputHandler copy)
 	{
 		bindings = currentBindings = copy.bindings;
 	}
 
-	private void handleGrabAction(KeyEvent evt, char c)
+	private void handleGrabAction(KeyEvent evt)
 	{
-		ActionEvent actionEvent = new ActionEvent(evt.getSource(),
-			ActionEvent.ACTION_PERFORMED,
-			String.valueOf(c),
-			evt.getModifiers());
-
-		if(grabAction instanceof InputHandler.NonRepeatable)
-			grabAction.actionPerformed(actionEvent);
-		else
-		{
-			for(int i = 0; i < Math.max(1,repeatCount); i++)
-				grabAction.actionPerformed(actionEvent);
-		}
-
-		repeat = false;
-		repeatCount = 0;
-
+		executeAction(grabAction,evt.getSource(),
+			String.valueOf(evt.getKeyChar()));
 		grabAction = null;
 	}
 
@@ -1048,7 +1065,8 @@ public class DefaultInputHandler implements InputHandler
 		}
 	}
 
-	public static class repeat implements ActionListener
+	public static class repeat implements ActionListener,
+		InputHandler.NonRecordable
 	{
 		public void actionPerformed(ActionEvent evt)
 		{
@@ -1066,11 +1084,37 @@ public class DefaultInputHandler implements InputHandler
 				!textArea.isSelectionRectangular());
 		}
 	}
+
+	public static class insert_char implements ActionListener,
+		InputHandler.NonRepeatable
+	{
+		public void actionPerformed(ActionEvent evt)
+		{
+			JEditTextArea textArea = getTextArea(evt);
+			String str = evt.getActionCommand();
+			int repeatCount = textArea.getInputHandler().getRepeatCount();
+
+			if(textArea.isEditable())
+			{
+				StringBuffer buf = new StringBuffer();
+				for(int i = 0; i < repeatCount; i++)
+					buf.append(str);
+				textArea.overwriteSetSelectedText(buf.toString());
+			}
+			else
+			{
+				textArea.getToolkit().beep();
+			}
+		}
+	}
 }
 
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.9  1999/10/05 10:55:29  sp
+ * File dialogs open faster, and experimental keyboard macros
+ *
  * Revision 1.8  1999/10/05 04:43:58  sp
  * Minor bug fixes and updates
  *

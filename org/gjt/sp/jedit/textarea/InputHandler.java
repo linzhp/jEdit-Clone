@@ -88,6 +88,18 @@ public interface InputHandler extends KeyListener
 	public void setRepeatCount(int repeatCount);
 
 	/**
+	 * Returns the macro recorder. If this is non-null, all executed
+	 * actions should be forwarded to the recorder.
+	 */
+	public MacroRecorder getMacroRecorder();
+
+	/**
+	 * Sets the macro recorder. If this is non-null, all executed
+	 * actions should be forwarded to the recorder.
+	 */
+	public void setMacroRecorder(MacroRecorder recorder);
+
+	/**
 	 * Returns a copy of this input handler that shares the same
 	 * key bindings. Setting key bindings in the copy will also
 	 * set them in the original.
@@ -95,7 +107,40 @@ public interface InputHandler extends KeyListener
 	public InputHandler copy();
 
 	/**
+	 * Executes the specified action.
+	 * @param listener The action listener
+	 * @param source The event source
+	 * @param actionCommand The action command
+	 */
+	public void executeAction(ActionListener listener, Object source,
+		String actionCommand);
+
+	/**
 	 * If an action implements this interface, it should not be repeated.
+	 * Instead, it will handle the repetition itself.
 	 */
 	public static interface NonRepeatable {}
+
+	/**
+	 * If an action implements this interface, it should not be recorded
+	 * by the macro recorder. Instead, it will do its own recording.
+	 */
+	public static interface NonRecordable {}
+
+	/**
+	 * Macro recorder.
+	 */
+	public static interface MacroRecorder
+	{
+		public void actionPerformed(ActionListener listener,
+			String actionCommand);
+	}
 }
+
+/*
+ * ChangeLog:
+ * $Log$
+ * Revision 1.5  1999/10/05 10:55:29  sp
+ * File dialogs open faster, and experimental keyboard macros
+ *
+ */

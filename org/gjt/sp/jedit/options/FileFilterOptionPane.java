@@ -36,23 +36,15 @@ public class FileFilterOptionPane extends AbstractOptionPane
 	{
 		super("filters");
 		setLayout(new BorderLayout());
-		filterToggle = new JCheckBox(jEdit.getProperty("options.filters"
-			+ ".toggle"));
-		filterToggle.getModel().setSelected("on".equals(jEdit.getProperty(
-			"filefilters")));
-		add(BorderLayout.NORTH,filterToggle);
 		add(BorderLayout.CENTER,createFileFilterScroller());
 	}
 
 	public void save()
 	{
 		filterModel.save();
-		jEdit.setProperty("filefilters",filterToggle.getModel()
-			.isSelected() ? "on" : "off");
 	}
 
 	// private members
-	private JCheckBox filterToggle;
 	private JTable filterTable;
 	private FileFilterTableModel filterModel;
 
@@ -204,6 +196,9 @@ class FileFilterTableModel extends AbstractTableModel
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.3  1999/10/05 10:55:29  sp
+ * File dialogs open faster, and experimental keyboard macros
+ *
  * Revision 1.2  1999/10/04 03:20:51  sp
  * Option pane change, minor tweaks and bug fixes
  *

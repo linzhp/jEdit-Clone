@@ -1,0 +1,47 @@
+/*
+ * stop_recording.java
+ * Copyright (C) 1999 Slava Pestov
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+
+package org.gjt.sp.jedit.actions;
+
+import java.awt.event.ActionEvent;
+import org.gjt.sp.jedit.*;
+
+// Implements NonRecordable because we don't want the stop-recording to
+// be part of the macro
+public class stop_recording extends EditAction
+implements org.gjt.sp.jedit.textarea.InputHandler.NonRecordable
+{
+	public stop_recording()
+	{
+		super("stop-recording");
+	}
+
+	public void actionPerformed(ActionEvent evt)
+	{
+		View view = getView(evt);
+
+		if(view.getTextArea().getInputHandler().getMacroRecorder() == null)
+		{
+			GUIUtilities.error(view,"not-recording",new String[0]);
+		}
+
+		view.showStatus(null);
+		Macros.endRecording(view);
+	}
+}

@@ -36,8 +36,6 @@ backup.suffix=~
 ### FILENAME FILTERS
 ###
 
-filefilters=on
-
 filefilter.0.name=Batch Files
 filefilter.0.re=.*\\.bat
 filefilter.1.name=C Source Files
@@ -66,6 +64,8 @@ filefilter.12.name=TeX Files
 filefilter.12.re=.*\\.(tex|sty|aux)
 filefilter.13.name=Transact-SQL Files
 filefilter.13.re=.*\\.sql
+filefilter.14.name=jEdit Macro Files
+filefilter.14.re=.*\\.macro
 
 ###
 ### BUFFER SETTINGS

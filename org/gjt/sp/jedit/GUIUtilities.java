@@ -19,12 +19,14 @@
 
 package org.gjt.sp.jedit;
 
+import gnu.regexp.REException;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
 import java.net.URL;
 import java.util.StringTokenizer;
+import org.gjt.sp.jedit.event.*;
 import org.gjt.sp.jedit.gui.*;
 import org.gjt.sp.jedit.syntax.SyntaxStyle;
 
@@ -421,7 +423,12 @@ public class GUIUtilities
 		JFileChooser chooser = getFileChooser();
 
 		chooser.setCurrentDirectory(_file);
-		chooser.setSelectedFile(_file);
+		chooser.rescanCurrentDirectory();
+		if(_file.isDirectory())
+			chooser.setSelectedFile(null);
+		else
+			chooser.setSelectedFile(_file);
+
 		chooser.setDialogType(type);
 		chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
 
@@ -663,6 +670,11 @@ public class GUIUtilities
 	}
 
 	// private members
+	static
+	{
+		jEdit.addEditorListener(new EditorHandler());
+	}
+
 	private static SplashScreen splash;
 	private static JFileChooser chooser;
 
@@ -676,25 +688,50 @@ public class GUIUtilities
 		{
 			chooser = new JFileChooser();
 
-			if("on".equals(jEdit.getProperty("filefilters")))
+			// Load file filters
+			int i = 0;
+			String name;
+
+			while((name = jEdit.getProperty("filefilter." + i + ".name")) != null
+				&& name.length() != 0)
 			{
-				REFileFilter[] filters = jEdit.getFileFilters();
-				for(int i = 0; i < filters.length; i++)
+				try
 				{
-					chooser.addChoosableFileFilter(filters[i]);
+					chooser.addChoosableFileFilter(new REFileFilter(name,
+						jEdit.getProperty("filefilter." + i + ".re")));
+				}
+				catch(REException re)
+				{
+					System.err.println("Invalid file filter: " + i);
+					re.printStackTrace();
 				}
 
-				chooser.setFileFilter(chooser.getAcceptAllFileFilter());
+				i++;
 			}
+
+			chooser.setFileFilter(chooser.getAcceptAllFileFilter());
 		}
 
 		return chooser;
+	}
+
+	// Because a propertiesChanged() may mean that the filters
+	// have changed, we have to get rid of the cached file chooser
+	static class EditorHandler extends EditorAdapter
+	{
+		public void propertiesChanged(EditorEvent evt)
+		{
+			GUIUtilities.chooser = null;
+		}
 	}
 }
 
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.31  1999/10/05 10:55:29  sp
+ * File dialogs open faster, and experimental keyboard macros
+ *
  * Revision 1.30  1999/10/05 04:43:58  sp
  * Minor bug fixes and updates
  *

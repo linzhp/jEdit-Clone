@@ -19,7 +19,6 @@
 
 package org.gjt.sp.jedit;
 
-import gnu.regexp.REException;
 import javax.swing.event.EventListenerList;
 import javax.swing.text.Element;
 import javax.swing.*;
@@ -169,6 +168,10 @@ public class jEdit
 				e.printStackTrace();
 			}
 		}
+
+		// GUIUtilities.static() adds a listener to our list,
+		// so it must be available before GUIUtilities is first used
+		listenerList = new EventListenerList();
 
 		// Show the kool splash screen
 		if(showSplash)
@@ -353,32 +356,6 @@ public class jEdit
 			maxRecent = 8;
 		}
 
-		// Load file filters
-		Vector _filters = new Vector();
-
-		int i = 0;
-		String name;
-
-		while((name = getProperty("filefilter." + i + ".name")) != null
-			&& name.length() != 0)
-		{
-			try
-			{
-				_filters.addElement(new REFileFilter(name,
-					jEdit.getProperty("filefilter." + i + ".re")));
-			}
-			catch(REException re)
-			{
-				System.err.println("Invalid file filter: " + i);
-				re.printStackTrace();
-			}
-
-			i++;
-		}
-
-		filters = new REFileFilter[_filters.size()];
-		_filters.copyInto(filters);
-
 		fireEditorEvent(EditorEvent.PROPERTIES_CHANGED,null,null);
 	}
 
@@ -535,14 +512,6 @@ public class jEdit
 		Mode[] array = new Mode[modes.size()];
 		modes.copyInto(array);
 		return array;
-	}
-
-	/**
-	 * Returns the registered filename filters.
-	 */
-	public static REFileFilter[] getFileFilters()
-	{
-		return filters;
 	}
 
 	/**
@@ -1021,7 +990,6 @@ public class jEdit
 	private static Vector recent;
 	private static int maxRecent;
 	private static InputHandler inputHandler;
-	private static REFileFilter[] filters;
 	private static EventListenerList listenerList;
 	private static WindowHandler windowHandler;
 
@@ -1084,7 +1052,6 @@ public class jEdit
 	 */
 	private static void initMisc()
 	{
-		listenerList = new EventListenerList();
 		inputHandler = new DefaultInputHandler();
 		windowHandler = new WindowHandler();
 
@@ -1118,6 +1085,9 @@ public class jEdit
 			File _settingsDirectory = new File(settingsDirectory);
 			if(!_settingsDirectory.exists())
 				_settingsDirectory.mkdir();
+			File _macrosDirectory = new File(settingsDirectory,"macros");
+			if(!_macrosDirectory.exists())
+				_macrosDirectory.mkdir();
 		}
 	}
 
@@ -1201,6 +1171,7 @@ public class jEdit
 		addAction(new org.gjt.sp.jedit.actions.delete_line());
 		addAction(new org.gjt.sp.jedit.actions.delete_paragraph());
 		addAction(new org.gjt.sp.jedit.actions.delete_start_line());
+		addAction(new org.gjt.sp.jedit.actions.edit_macro());
 		addAction(new org.gjt.sp.jedit.actions.exchange_caret_register());
 		addAction(new org.gjt.sp.jedit.actions.exit());
 		addAction(new org.gjt.sp.jedit.actions.expand_abbrev());
@@ -1233,15 +1204,21 @@ public class jEdit
 		addAction(new org.gjt.sp.jedit.actions.paste_predefined());
 		addAction(new org.gjt.sp.jedit.actions.paste_previous());
 		addAction(new org.gjt.sp.jedit.actions.paste_string_register());
+		addAction(new org.gjt.sp.jedit.actions.play_last_macro());
+		addAction(new org.gjt.sp.jedit.actions.play_temp_macro());
+		addAction(new org.gjt.sp.jedit.actions.play_macro());
 		addAction(new org.gjt.sp.jedit.actions.plugin_options());
 		addAction(new org.gjt.sp.jedit.actions.prev_bracket_exp());
 		addAction(new org.gjt.sp.jedit.actions.prev_buffer());
 		addAction(new org.gjt.sp.jedit.actions.prev_paragraph());
 		addAction(new org.gjt.sp.jedit.actions.print());
+		addAction(new org.gjt.sp.jedit.actions.record_macro());
+		addAction(new org.gjt.sp.jedit.actions.record_temp_macro());
 		addAction(new org.gjt.sp.jedit.actions.redo());
 		addAction(new org.gjt.sp.jedit.actions.reload());
 		addAction(new org.gjt.sp.jedit.actions.replace_all());
 		addAction(new org.gjt.sp.jedit.actions.replace_in_selection());
+		addAction(new org.gjt.sp.jedit.actions.rescan_macros());
 		addAction(new org.gjt.sp.jedit.actions.save());
 		addAction(new org.gjt.sp.jedit.actions.save_all());
 		addAction(new org.gjt.sp.jedit.actions.save_as());
@@ -1261,6 +1238,7 @@ public class jEdit
 		addAction(new org.gjt.sp.jedit.actions.set_marker());
 		addAction(new org.gjt.sp.jedit.actions.shift_left());
 		addAction(new org.gjt.sp.jedit.actions.shift_right());
+		addAction(new org.gjt.sp.jedit.actions.stop_recording());
 		addAction(new org.gjt.sp.jedit.actions.tab());
 		addAction(new org.gjt.sp.jedit.actions.undo());
 		addAction(new org.gjt.sp.jedit.actions.untab());
@@ -1632,6 +1610,9 @@ public class jEdit
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.133  1999/10/05 10:55:29  sp
+ * File dialogs open faster, and experimental keyboard macros
+ *
  * Revision 1.132  1999/10/05 04:43:58  sp
  * Minor bug fixes and updates
  *

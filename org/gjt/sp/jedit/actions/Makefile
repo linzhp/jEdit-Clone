@@ -20,6 +20,7 @@ classes=org/gjt/sp/jedit/actions/about.class \
 	org/gjt/sp/jedit/actions/delete_line.class \
 	org/gjt/sp/jedit/actions/delete_paragraph.class \
 	org/gjt/sp/jedit/actions/delete_start_line.class \
+	org/gjt/sp/jedit/actions/edit_macro.class \
 	org/gjt/sp/jedit/actions/exchange_caret_register.class \
 	org/gjt/sp/jedit/actions/exit.class \
 	org/gjt/sp/jedit/actions/expand_abbrev.class \
@@ -52,15 +53,21 @@ classes=org/gjt/sp/jedit/actions/about.class \
 	org/gjt/sp/jedit/actions/paste_predefined.class \
 	org/gjt/sp/jedit/actions/paste_previous.class \
 	org/gjt/sp/jedit/actions/paste_string_register.class \
+	org/gjt/sp/jedit/actions/play_last_macro.class \
+	org/gjt/sp/jedit/actions/play_temp_macro.class \
+	org/gjt/sp/jedit/actions/play_macro.class \
 	org/gjt/sp/jedit/actions/plugin_options.class \
 	org/gjt/sp/jedit/actions/prev_bracket_exp.class \
 	org/gjt/sp/jedit/actions/prev_buffer.class \
 	org/gjt/sp/jedit/actions/prev_paragraph.class \
 	org/gjt/sp/jedit/actions/print.class \
+	org/gjt/sp/jedit/actions/record_macro.class \
+	org/gjt/sp/jedit/actions/record_temp_macro.class \
 	org/gjt/sp/jedit/actions/redo.class \
 	org/gjt/sp/jedit/actions/reload.class \
 	org/gjt/sp/jedit/actions/replace_all.class \
 	org/gjt/sp/jedit/actions/replace_in_selection.class \
+	org/gjt/sp/jedit/actions/rescan_macros.class \
 	org/gjt/sp/jedit/actions/save.class \
 	org/gjt/sp/jedit/actions/save_all.class \
 	org/gjt/sp/jedit/actions/save_as.class \
@@ -80,6 +87,7 @@ classes=org/gjt/sp/jedit/actions/about.class \
 	org/gjt/sp/jedit/actions/set_marker.class \
 	org/gjt/sp/jedit/actions/shift_left.class \
 	org/gjt/sp/jedit/actions/shift_right.class \
+	org/gjt/sp/jedit/actions/stop_recording.class \
 	org/gjt/sp/jedit/actions/tab.class \
 	org/gjt/sp/jedit/actions/undo.class \
 	org/gjt/sp/jedit/actions/untab.class \
