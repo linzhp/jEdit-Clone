@@ -129,14 +129,19 @@ public class CompilerError implements EditorListener
 	 */
 	public Buffer openFile()
 	{
-		if(buffer == null)
-			jEdit.openFile(null,null,path,false,false);
-		// We should've gotten an openNotify
+		// Try opening the file
 		if(buffer == null)
 		{
-			System.err.println("BUG: no openNotify() received");
-			System.err.println("Report this to Slava Pestov <sp@gjt.org>");
+			jEdit.openFile(null,null,path,false,false);
+		
+			// We should've gotten an openNotify
+			if(buffer == null)
+			{
+				System.err.println("BUG: no openNotify() received");
+				System.err.println("Report this to Slava Pestov <sp@gjt.org>");
+			}
 		}
+
 		return buffer;
 	}
 
@@ -146,7 +151,7 @@ public class CompilerError implements EditorListener
 	 */
 	public String toString()
 	{
-		return name + ":" + getLineNo() + ":" + getError();
+		return name + ":" + (getLineNo() + 1) + ":" + getError();
 	}
 
 	// event listeners
@@ -203,6 +208,9 @@ public class CompilerError implements EditorListener
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.8  1999/03/22 04:20:01  sp
+ * Syntax colorizing updates
+ *
  * Revision 1.7  1999/03/12 07:23:19  sp
  * Fixed serious view bug, Javadoc updates
  *

@@ -9,7 +9,7 @@
 view.toolbar=new-file open-file open-url close-file - save save-all - \
 	send print - undo redo - cut copy paste - \
 	find find-next hypersearch - \
-	toggle-console - prev-error next-error - exit - \
+	prev-error next-error - exit - \
 	help@index.html
 
 new-file.icon=New.gif
@@ -28,7 +28,6 @@ paste.icon=Paste.gif
 find.icon=Magnify.gif
 find-next.icon=VCRFastForward.gif
 hypersearch.icon=DocumentIn.gif
-toggle-console.icon=Computer.gif
 prev-error.icon=Left.gif
 next-error.icon=Right.gif
 exit.icon=VCROpen.gif

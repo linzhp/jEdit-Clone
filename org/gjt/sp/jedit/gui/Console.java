@@ -191,6 +191,7 @@ implements ActionListener, ListSelectionListener
 		int errorNo = errorList.getSelectedIndex();
 		setCurrentError(errorNo);
 		CompilerError error = getError(errorNo);
+		
 		Buffer buffer = error.openFile();
 		int lineNo = error.getLineNo();
 		Element lineElement = buffer.getDefaultRootElement()
@@ -441,6 +442,9 @@ implements ActionListener, ListSelectionListener
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.15  1999/03/22 04:20:01  sp
+ * Syntax colorizing updates
+ *
  * Revision 1.14  1999/03/20 05:23:32  sp
  * Code cleanups
  *

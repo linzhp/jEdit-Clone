@@ -21,6 +21,8 @@ jEdit-specific stuff
 <li>Options dialog extension API
 <li>Finish plugin documentation
 <li>Do history in JOptionPanes
+<li><b>Views sometimes lose contact with their buffer</b>
+<li><b>CompilerError opens not found files twice</b>
 <li><b>view.splitter property doesn't work properly</b>
 <li><b>Buffer calls insertLines()/deleteLines() twice for each new line</b>
 </ul>
@@ -38,6 +40,9 @@ jEdit-specific stuff
 referenced
 <li>New plugin interface, implementations of which are responsible for
 adding actions and modes to the editor
+<li>New <code>DefaultSyntaxDocument</code> class which provides a
+sample implementation of <code>SyntaxDocument</code>. Should make using
+jEdit's syntax colorizing in other apps easier
 </ul>
 
 <h2>Enhancements</h2>
@@ -57,6 +62,10 @@ Swing action overhead
 <li>The hint bar would obscure the line number display if the view was small
 and the hint was long
 <li>Generate text plugin didn't appear in `Plugins' menu
+<li>Fixed mispelling of Juha Lindfors' name in doc/about.html
+<li>Fixed various event-related problems on exit
+<li>Fixed incorrect line number display in console
+<li>Fixed possible array index out of bounds on reload
 </ul>
 
 <a name=15pre2>

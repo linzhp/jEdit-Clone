@@ -36,7 +36,7 @@ import org.gjt.sp.jedit.syntax.*;
 /**
  * An in-memory copy of an open file.
  */
-public class Buffer extends PlainDocument implements SyntaxDocument
+public class Buffer extends DefaultSyntaxDocument
 {
 	/**
 	 * Size of I/O buffers.
@@ -372,12 +372,6 @@ public class Buffer extends PlainDocument implements SyntaxDocument
 		load();
 		loadMarkers();
 		
-		// Reset token marker
-		if(tokenMarker != null)
-		{
-			tokenMarker.deleteLines(0,getDefaultRootElement()
-				.getElementCount());
-		}
 		tokenizeLines();
 
 		// The anchor gets f*cked across reloads, so clear it
@@ -631,6 +625,8 @@ public class Buffer extends PlainDocument implements SyntaxDocument
 	 */
 	public void setMode(Mode mode)
 	{
+		if(this.mode == mode)
+			return;
 		if(this.mode != null)
 			this.mode.leave(this);
 		this.mode = mode;
@@ -641,7 +637,7 @@ public class Buffer extends PlainDocument implements SyntaxDocument
 		else
 		{
 			setTokenMarker(mode.createTokenMarker());
-			colors.clear();
+			((Hashtable)colors).clear(); // XXX
 			mode.enter(this);
 		}
 
@@ -696,24 +692,6 @@ public class Buffer extends PlainDocument implements SyntaxDocument
 			return tokenMarker;
 		else
 			return null;
-	}
-
-	/**
-	 * Sets the token marker for this buffer.
-	 * @param tokenMarker the new token marker
-	 */
-	public void setTokenMarker(TokenMarker tokenMarker)
-	{
-		this.tokenMarker = tokenMarker;
-		tokenizeLines();
-	}
-
-	/**
-	 * Returns the colors for syntax colorizing.
-	 */
-	public Dictionary getColors()
-	{
-		return colors;
 	}
 
 	/**
@@ -934,8 +912,6 @@ loop:		for(int i = 0; i < markers.size(); i++)
 	private Position anchor;
 	private int savedSelStart;
 	private int savedSelEnd;
-	private TokenMarker tokenMarker;
-	private Hashtable colors;
 	private EventMulticaster multicaster;
 
 	private void init()
@@ -967,8 +943,10 @@ loop:		for(int i = 0; i < markers.size(); i++)
 			setMode(jEdit.getMode(userMode));
 		else
 			setMode();
+
 		addUndoableEditListener(new BufferUndoableEditListener());
 		jEdit.addEditorListener(new BufferEditorListener());
+		
 		init = false;
 	}
 	
@@ -1403,32 +1381,6 @@ loop:		for(int i = 0; i < markers.size(); i++)
 		return -1 - count;
 	}
 
-	private void tokenizeLines()
-	{
-		if(tokenMarker == null)
-			return;
-		// Crude hack, heh?
-		Segment lineSegment = new Segment();
-		Element map = getDefaultRootElement();
-		int lines = map.getElementCount();
-		// Will need to check if this works properly on reload
-		tokenMarker.insertLines(0,lines);
-		try
-		{
-			for(int i = 0; i < lines; i++)
-			{
-				Element lineElement = map.getElement(i);
-				int start = lineElement.getStartOffset();
-				getText(start,lineElement.getEndOffset()
-					- start - 1,lineSegment);
-				tokenMarker.markTokens(lineSegment,i);
-			}
-		}
-		catch(BadLocationException bl)
-		{
-		}
-	}
-
 	class BufferProps extends Hashtable
 	{
 		public Object get(Object key)
@@ -1500,7 +1452,7 @@ loop:		for(int i = 0; i < markers.size(); i++)
 	{
 		public void propertiesChanged(EditorEvent evt)
 		{
-			colors.clear();
+			((Hashtable)colors).clear();
 		}
 	}
 
@@ -1522,33 +1474,11 @@ loop:		for(int i = 0; i < markers.size(); i++)
 		public void insertUpdate(DocumentEvent evt)
 		{
 			dirty();
-			if(tokenMarker == null)
-				return;
-			DocumentEvent.ElementChange ch = evt.getChange(
-				getDefaultRootElement());
-			if(ch == null)
-				return;
-			Element[] children = ch.getChildrenAdded();
-			if(children == null)
-				return;
-			tokenMarker.insertLines(ch.getIndex() + 1,
-				children.length - 1);
 		}
 	
 		public void removeUpdate(DocumentEvent evt)
 		{
 			dirty();
-			if(tokenMarker == null)
-				return;
-			DocumentEvent.ElementChange ch = evt.getChange(
-				getDefaultRootElement());
-			if(ch == null)
-				return;
-			Element[] children = ch.getChildrenRemoved();
-			if(children == null)
-				return;
-			tokenMarker.deleteLines(ch.getIndex() + 1,
-				children.length - 1);
 		}
 	
 		public void changedUpdate(DocumentEvent evt)
@@ -1561,6 +1491,9 @@ loop:		for(int i = 0; i < markers.size(); i++)
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.62  1999/03/22 04:20:01  sp
+ * Syntax colorizing updates
+ *
  * Revision 1.61  1999/03/17 05:32:51  sp
  * Event system bug fix, history text field updates (but it still doesn't work), code cleanups, lots of banging head against wall
  *

@@ -28,7 +28,10 @@ import java.util.Dictionary;
  * tokens, and a method that returns a dictionary that maps identification
  * tags returned by the token marker into <code>Color</code> objects. The
  * possible token identifiers are defined as static fields in the
- * <code>Token</code> class.
+ * <code>Token</code> class.<p>
+ *
+ * For a sample implementation of this interface, see
+ * {@link org.gjt.sp.jedit.syntax.DefaultSyntaxDocument}.
  *
  * @author Slava Pestov
  * @version $Id$
@@ -47,15 +50,34 @@ public interface SyntaxDocument extends Document
 	public TokenMarker getTokenMarker();
 
 	/**
+	 * Sets the token marker that is to be used to split lines of
+	 * this document up into tokens. May throw an exception if
+	 * this is not supported for this type of document.
+	 * @param tm The new token marker
+	 */
+	public void setTokenMarker(TokenMarker tm);
+
+	/**
 	 * Returns the dictionary that maps token identifiers to
 	 * <code>java.awt.Color</code> objects.
 	 */
 	public Dictionary getColors();
+
+	/**
+	 * Sets the dictionary that maps token identifiers to
+	 * <code>java.awt.Color</code> ojects. May throw an exception
+	 * if this is not supported for this type of document.
+	 * @param colors The new color dictionary
+	 */
+	public void setColors(Dictionary colors);
 }
 
 /*
  * ChangeLog:
  * $Log$
+ * Revision 1.2  1999/03/22 04:20:01  sp
+ * Syntax colorizing updates
+ *
  * Revision 1.1  1999/03/13 09:11:46  sp
  * Syntax code updates, code cleanups
  *
