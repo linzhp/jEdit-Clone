@@ -37,7 +37,7 @@ import org.gjt.sp.jedit.IPropertyManager;
  * Syntax utilities that depends on JDK only and syntax package.
  *
  * @author Matthieu Casanova
- * @version $Id$
+ * @version $Id: StandardUtilities.java 9871 2007-06-28 16:33:20Z Vampire0 $
  * @since 4.3pre13
  */
 public class SyntaxUtilities
@@ -66,7 +66,9 @@ public class SyntaxUtilities
 	{
 		if(name == null || name.length() == 0)
 			return defaultColor;
-		else if(name.charAt(0) == '#')
+
+		name = name.trim();
+		if(name.charAt(0) == '#')
 		{
 			try
 			{
