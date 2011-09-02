@@ -3,7 +3,7 @@
  * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2003, 2005 Slava Pestov
- * Portions copyright (C) 2006 Matthieu Casanova
+ * Portions copyright (C) 2006, 2011 Matthieu Casanova
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -34,10 +34,12 @@ import org.gjt.sp.util.Log;
 import org.gjt.sp.util.XMLUtilities;
 import org.gjt.sp.util.IOUtilities;
 
+import javax.swing.*;
+
 /**
  * The basic KillRing of jEdit.
  * @author Matthieu Casanova
- * @version $Id$
+ * @version $Id: ParserRuleSet.java 5471 2006-06-22 06:31:23Z kpouer $
  */
 class JEditKillRing extends KillRing
 {
@@ -67,6 +69,16 @@ class JEditKillRing extends KillRing
 		try
 		{
 			killringXML.load(handler);
+		}
+		catch (OutOfMemoryError oem)
+		{
+			Log.log(Log.ERROR, this, "Unable to load entire Killring, too low memory, increase your jvm max heap size");
+			int confirm = GUIUtilities.confirm(null, "killring.load-memoryerror", null, JOptionPane.YES_NO_OPTION,
+					JOptionPane.ERROR_MESSAGE);
+			if (confirm == JOptionPane.NO_OPTION)
+			{
+				System.exit(-1);
+			}
 		}
 		catch (IOException ioe)
 		{
