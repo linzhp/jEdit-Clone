@@ -37,7 +37,7 @@ import java.util.*;
  * model in order to keep the selection after the filter has been updated
  *
  * @author Matthieu Casanova
- * @version $Id$
+ * @version $Id: Buffer.java 8190 2006-12-07 07:58:34Z kpouer $
  * @since jEdit 4.3pre11
  */
 public abstract class FilteredListModel<E extends ListModel> extends AbstractListModel implements ListDataListener
@@ -133,7 +133,7 @@ public abstract class FilteredListModel<E extends ListModel> extends AbstractLis
 				else
 					resetFilter();
 
-				fireContentsChanged(this, 0, getSize() - 1);
+				fireContentsChanged(FilteredListModel.this, 0, getSize() - 1);
 				restoreSelection(selectedIndices);
 			}
 		};
