@@ -1,6 +1,6 @@
 /*
  * ThreadAbortMonitor.java - Thread Abort Monitor
- * :tabSize=8:indentSize=8:noTabs=false:
+ * :tabSize=4:indentSize=4:noTabs=false:
  * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2006 Matthieu Casanova
@@ -23,7 +23,7 @@ package org.gjt.sp.util;
 
 /**
  * @author Matthieu Casanova
- * @author $Id$
+ * @author $Id: VFS.java 7129 2006-09-25 20:05:57Z kpouer $
  */
 public interface ThreadAbortMonitor
 {

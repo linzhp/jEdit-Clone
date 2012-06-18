@@ -1,6 +1,6 @@
 /*
  * AbstractEditAction.java - Base class for EditAction
- * :tabSize=8:indentSize=8:noTabs=false:
+ * :tabSize=4:indentSize=4:noTabs=false:
  * :folding=explicit:collapseFolds=1:
  *
   * This program is free software; you can redistribute it and/or
@@ -28,7 +28,7 @@ package org.gjt.sp.jedit;
  * @see ActionSet
  *
  * @author S. Pestov, M. Casanova, K. Satoda
- * @version $Id$
+ * @version $Id: EditAction.java 11177 2007-12-01 09:50:50Z k_satoda $
  * @since 4.3pre13
  */
 public abstract class JEditAbstractEditAction<E>

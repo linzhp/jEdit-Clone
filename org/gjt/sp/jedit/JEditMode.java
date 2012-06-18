@@ -1,6 +1,6 @@
 /*
  * JEditMode.java - jEdit editing mode
- * :tabSize=8:indentSize=8:noTabs=false:
+ * :tabSize=4:indentSize=4:noTabs=false:
  * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2007 Matthieu Casanova
@@ -26,7 +26,7 @@ import org.gjt.sp.util.Log;
 
 /**
  * @author Matthieu Casanova
- * @version $Id$
+ * @version $Id: Buffer.java 8190 2006-12-07 07:58:34Z kpouer $
  * @since jEdit 4.3pre10
  */
 class JEditMode extends Mode

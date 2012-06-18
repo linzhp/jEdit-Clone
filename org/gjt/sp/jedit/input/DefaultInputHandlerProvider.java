@@ -1,6 +1,6 @@
 /*
  * DefaultInputHandlerProvider.java - This class provide the input handler
- * :tabSize=8:indentSize=8:noTabs=false:
+ * :tabSize=4:indentSize=4:noTabs=false:
  * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2006 Matthieu Casanova
@@ -25,7 +25,7 @@ package org.gjt.sp.jedit.input;
  * This class provide the input handler used by the textarea.
  *
  * @author Matthieu Casanova
- * @version $Id$
+ * @version $Id: FoldHandler.java 5568 2006-07-10 20:52:23Z kpouer $
  */
 public class DefaultInputHandlerProvider implements InputHandlerProvider
 {

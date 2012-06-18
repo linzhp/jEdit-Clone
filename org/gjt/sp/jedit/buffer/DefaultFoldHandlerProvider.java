@@ -1,6 +1,6 @@
 /*
  * DummyFoldHandler.java - Fold handler used when folding is switched off
- * :tabSize=8:indentSize=8:noTabs=false:
+ * :tabSize=4:indentSize=4:noTabs=false:
  * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2001 Slava Pestov
@@ -27,7 +27,7 @@ import java.util.HashMap;
 
 /**
  * @author Matthieu Casanova
- * @version $Id$
+ * @version $Id: Buffer.java 8190 2006-12-07 07:58:34Z kpouer $
  */
 public class DefaultFoldHandlerProvider implements FoldHandlerProvider
 {

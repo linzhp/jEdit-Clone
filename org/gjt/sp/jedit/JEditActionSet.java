@@ -1,6 +1,6 @@
 /*
  * JEditActionSet.java - A set of actions
- * :tabSize=8:indentSize=8:noTabs=false:
+ * :tabSize=4:indentSize=4:noTabs=false:
  * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2001, 2003 Slava Pestov
@@ -140,7 +140,7 @@ import org.gjt.sp.util.XMLUtilities;
  *
  * @author Slava Pestov
  * @author John Gellene (API documentation)
- * @version $Id$
+ * @version $Id: ActionSet.java 9529 2007-05-12 15:06:52Z ezust $
  * @since jEdit 4.3pre13
  */
 public abstract class JEditActionSet<E extends JEditAbstractEditAction> implements InputHandlerProvider

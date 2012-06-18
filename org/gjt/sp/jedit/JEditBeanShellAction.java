@@ -1,6 +1,6 @@
 /*
  * JEditBeanShellAction.java - jEdit BeanShell action
- * :tabSize=8:indentSize=8:noTabs=false:
+ * :tabSize=4:indentSize=4:noTabs=false:
  * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2007 Matthieu Casanova
@@ -40,7 +40,7 @@ import org.gjt.sp.util.Log;
  *
  * @author Slava Pestov
  * @author Matthieu Casanova
- * @version $Id$
+ * @version $Id: BeanShellAction.java 10803 2007-10-04 20:45:31Z kpouer $
  */
 public class JEditBeanShellAction extends JEditAbstractEditAction<TextArea>
 {
